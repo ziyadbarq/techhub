@@ -1,0 +1,36 @@
+/**
+ * Create Task Use Case
+ *
+ * Business logic for creating a new task.
+ * Demonstrates Clean Architecture use case pattern.
+ */
+
+import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import { Task } from "@/core/domain/entities/task.entity";
+import type { ITaskRepository } from "@/core/repositories/task.repository.interface";
+import type { CreateTaskProps } from "@/core/domain/entities/task.entity";
+
+@injectable()
+export class CreateTaskUseCase {
+  constructor(
+    @inject(DI_TOKENS.ITaskRepository)
+    private readonly taskRepository: ITaskRepository,
+  ) {}
+
+  /**
+   * Execute create task use case
+   *
+   * @param props - Task creation properties
+   * @returns Created task
+   */
+  async execute(props: CreateTaskProps): Promise<Task> {
+    // Create domain entity (includes validation)
+    const task = Task.create(props);
+
+    // Persist to database
+    const createdTask = await this.taskRepository.create(task);
+
+    return createdTask;
+  }
+}

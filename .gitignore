@@ -1,0 +1,56 @@
+# dependencies
+node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+/dist
+/pages/dist
+
+# misc
+.DS_Store
+*.pem
+.vite-inspect
+.remote-assets
+components.d.ts
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+.env
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# data directories
+/data/presentations
+/data/uploads
+/data/exports
+
+# prisma - ignore SQLite database files (development only)
+src/infrastructure/database/prisma/*.db
+src/infrastructure/database/prisma/*.db-journal
+src/infrastructure/database/prisma/*.db-shm
+src/infrastructure/database/prisma/*.db-wal
+
+# vitest
+/coverage
+
+# AI debug artifacts
+/.ai-debug/

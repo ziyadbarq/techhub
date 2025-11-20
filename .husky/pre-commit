@@ -1,0 +1,31 @@
+echo "🔧 Phase 1: Auto-fixing staged files..."
+echo "  → Formatting with Prettier"
+echo "  → Fixing lint issues with ESLint"
+npx lint-staged
+
+if [ $? -ne 0 ]; then
+  echo "❌ Auto-fix failed. Please review the errors above."
+  exit 1
+fi
+
+echo ""
+echo "✅ Auto-fixes completed!"
+echo ""
+
+# Phase 2: Run checks that require manual intervention
+echo "🔍 Phase 2: Checking for issues that need manual editing..."
+
+# Type checking - only checks staged TypeScript files
+echo "  → Running TypeScript type check on staged files..."
+npm run type-check:staged
+
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "❌ Type check failed. Please fix the type errors above."
+  echo "💡 Tip: Run 'npm run type-check' to see all project errors."
+  echo "💡 Tip: Run 'npm run type-check:staged' to check only staged files."
+  exit 1
+fi
+
+echo ""
+echo "✅ All checks passed! Committing..."

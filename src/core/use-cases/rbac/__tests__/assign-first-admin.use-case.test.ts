@@ -1,0 +1,214 @@
+/**
+ * AssignFirstAdminUseCase - Unit Tests
+ *
+ * Ensures the first administrator assignment flow handles:
+ * - Successful first-user assignment
+ * - Missing admin role guardrails
+ * - Existing admin protections
+ * - Duplicate role prevention for the caller
+ */
+
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { AssignFirstAdminUseCase } from "../assign-first-admin.use-case";
+import type { IUserRoleRepository } from "@/core/repositories/user-role-repository.interface";
+import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
+import type { IAuditLogRepository } from "@/core/repositories/audit-log-repository.interface";
+import type { ILoggerService } from "@/core/services";
+import { Role } from "@/core/domain/entities/role.entity";
+import { UserRole } from "@/core/domain/entities/user-role.entity";
+
+/**
+ * Helpers to create deterministic role instances for tests
+ */
+function createAdminRole(
+  overrides: Partial<ReturnType<Role["toObject"]>> = {},
+) {
+  return Role.fromPersistence({
+    id: "role-admin",
+    name: "admin",
+    displayName: "Administrator",
+    description: "System administrator",
+    isSystem: true,
+    isActive: true,
+    createdAt: new Date("2024-01-01T00:00:00.000Z"),
+    updatedAt: new Date("2024-01-01T00:00:00.000Z"),
+    ...overrides,
+  });
+}
+
+class MockRoleRepository implements Partial<IRoleRepository> {
+  private roles = new Map<string, Role>();
+
+  async findByName(name: string): Promise<Role | null> {
+    return this.roles.get(name) ?? null;
+  }
+
+  setRole(role: Role): void {
+    this.roles.set(role.name, role);
+  }
+}
+
+class MockUserRoleRepository implements Partial<IUserRoleRepository> {
+  private assignments: UserRole[] = [];
+
+  async findByRoleId(roleId: string): Promise<UserRole[]> {
+    return this.assignments.filter(
+      (assignment) => assignment.roleId === roleId,
+    );
+  }
+
+  async findByUserId(userId: string): Promise<UserRole[]> {
+    return this.assignments.filter(
+      (assignment) => assignment.userId === userId,
+    );
+  }
+
+  async create(userRole: UserRole): Promise<UserRole> {
+    this.assignments.push(userRole);
+    return userRole;
+  }
+
+  /**
+   * Test helper to seed assignments
+   */
+  addAssignment(userRole: UserRole): void {
+    this.assignments.push(userRole);
+  }
+}
+
+class MockAuditLogRepository implements Partial<IAuditLogRepository> {
+  create = vi.fn().mockResolvedValue({
+    id: "audit-1",
+    action: "role:assign",
+    entityType: "user-role",
+    createdAt: new Date(),
+  });
+}
+
+class MockLogger implements Partial<ILoggerService> {
+  info = vi.fn();
+  warn = vi.fn();
+  error = vi.fn();
+}
+
+describe("AssignFirstAdminUseCase", () => {
+  let useCase: AssignFirstAdminUseCase;
+  let mockRoleRepository: MockRoleRepository;
+  let mockUserRoleRepository: MockUserRoleRepository;
+  let mockAuditLogRepository: MockAuditLogRepository;
+  let mockLogger: MockLogger;
+
+  beforeEach(() => {
+    mockRoleRepository = new MockRoleRepository();
+    mockUserRoleRepository = new MockUserRoleRepository();
+    mockAuditLogRepository = new MockAuditLogRepository();
+    mockLogger = new MockLogger();
+
+    useCase = new AssignFirstAdminUseCase(
+      mockUserRoleRepository as unknown as IUserRoleRepository,
+      mockRoleRepository as unknown as IRoleRepository,
+      mockAuditLogRepository as unknown as IAuditLogRepository,
+      mockLogger as unknown as ILoggerService,
+    );
+  });
+
+  it("should assign admin role to the first user when no admins exist", async () => {
+    // Arrange
+    const adminRole = createAdminRole();
+    mockRoleRepository.setRole(adminRole);
+
+    // Act
+    const result = await useCase.execute({
+      userId: "user-1",
+      metadata: { ipAddress: "1.1.1.1", userAgent: "vitest" },
+    });
+
+    // Assert
+    expect(result).toEqual({
+      success: true,
+      message: "Admin role assigned successfully.",
+    });
+
+    const assignments = await mockUserRoleRepository.findByUserId("user-1");
+    expect(assignments).toHaveLength(1);
+    expect(assignments[0].roleId).toBe(adminRole.id);
+
+    expect(mockAuditLogRepository.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        changes: expect.objectContaining({
+          after: expect.objectContaining({
+            userId: "user-1",
+            roleId: adminRole.id,
+            roleName: "admin",
+          }),
+        }),
+        metadata: expect.objectContaining({
+          reason: "First admin setup",
+          isFirstAdmin: true,
+          ipAddress: "1.1.1.1",
+          userAgent: "vitest",
+        }),
+      }),
+    );
+  });
+
+  it("should fail when admin role is missing", async () => {
+    // Act
+    const result = await useCase.execute({ userId: "user-1" });
+
+    // Assert
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.message).toContain("Admin role not found");
+    }
+    expect(mockAuditLogRepository.create).not.toHaveBeenCalled();
+  });
+
+  it("should fail if an admin already exists", async () => {
+    // Arrange
+    const adminRole = createAdminRole();
+    mockRoleRepository.setRole(adminRole);
+    const existingAdmin = UserRole.create({
+      userId: "admin-user",
+      roleId: adminRole.id,
+      createdBy: "system",
+    });
+    mockUserRoleRepository.addAssignment(existingAdmin);
+
+    // Act
+    const result = await useCase.execute({ userId: "new-user" });
+
+    // Assert
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.message).toBe("Admin user already exists.");
+    }
+    expect(mockAuditLogRepository.create).not.toHaveBeenCalled();
+  });
+
+  it("should fail when the requesting user already has the admin role", async () => {
+    // Arrange
+    const adminRole = createAdminRole();
+    mockRoleRepository.setRole(adminRole);
+    const existingAssignment = UserRole.create({
+      userId: "user-1",
+      roleId: adminRole.id,
+      createdBy: "system",
+    });
+    mockUserRoleRepository.addAssignment(existingAssignment);
+
+    // Force repository to simulate scenario where no other admins exist yet
+    // so the branch that checks the caller's assignments is executed.
+    vi.spyOn(mockUserRoleRepository, "findByRoleId").mockResolvedValue([]);
+
+    // Act
+    const result = await useCase.execute({ userId: "user-1" });
+
+    // Assert
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.message).toBe("User already has admin role.");
+    }
+    expect(mockAuditLogRepository.create).not.toHaveBeenCalled();
+  });
+});

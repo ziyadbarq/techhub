@@ -1,0 +1,15 @@
+{
+  "$schema": "https://partykit.io/schema.json",
+  "name": "barq-app-boilerplate",
+  "main": "partykit/server.ts",
+  "parties": {
+    "task-collaboration": "partykit/servers/task-collaboration.ts",
+    "presence": "partykit/servers/presence.ts"
+  },
+  "serve": {
+    "dist": ".next/static"
+  },
+  "vars": {
+    "NODE_ENV": "development"
+  }
+}

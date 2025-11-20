@@ -1,0 +1,307 @@
+// Prisma Schema for Barq App Boilerplate
+// Database: PostgreSQL
+
+generator client {
+  provider   = "prisma-client"
+  output     = "../../../generated/prisma"
+  engineType = "client" // Prisma 7: Rust-free engine for 90% smaller bundle, 3x faster queries
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// AUTHENTICATION (Better Auth)
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  image         String?
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Authentication tracking
+  lastLoginMethod String?   // 'email' | 'microsoft' | other OAuth providers
+  lastLoginAt     DateTime?
+
+  // Relations
+  accounts Account[]
+  sessions Session[]
+  roles    UserRole[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model Account {
+  id                String    @id @default(cuid())
+  userId            String
+  type              String    @default("oauth")
+  provider          String
+  providerAccountId String
+  refreshToken      String?   @db.Text
+  accessToken       String?   @db.Text
+  expiresAt         DateTime?
+  tokenType         String?
+  scope             String?
+  idToken           String?   @db.Text
+  sessionState      String?
+  password          String?   @db.Text // Better Auth email/password storage
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([identifier])
+  @@map("verification")
+}
+
+// ============================================
+// RBAC (Role-Based Access Control)
+// ============================================
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  displayName String
+  description String?
+  isSystem    Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String?
+
+  // Relations
+  permissions RolePermission[]
+  users       UserRole[]
+
+  @@index([name])
+  @@index([isActive])
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  displayName String
+  description String?
+  resource    String
+  action      String
+  isSystem    Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  roles RolePermission[]
+
+  @@index([resource, action])
+  @@index([isActive])
+  @@map("permissions")
+}
+
+model RolePermission {
+  id           String @id @default(cuid())
+  roleId       String
+  permissionId String
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+model UserRole {
+  id        String    @id @default(cuid())
+  userId    String
+  roleId    String
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  createdBy String?
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@index([userId])
+  @@index([roleId])
+  @@map("user_roles")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String
+  entityType String
+  entityId   String?
+  changes    Json?
+  metadata   Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@map("audit_logs")
+}
+
+// ============================================
+// TASK MODEL (Example CRUD)
+// ============================================
+
+// Task model
+// Demonstrates Clean Architecture CRUD patterns
+model Task {
+  id          String     @id @default(cuid())
+  title       String
+  description String?    @db.Text
+  status      TaskStatus @default(PENDING)
+  createdBy   String? // User ID of task creator (for ownership checks)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Indexes
+  @@index([status])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([createdBy])
+  @@map("tasks")
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+// ============================================
+// MODULAR PROMPT SYSTEM (AI Infrastructure)
+// ============================================
+
+// PromptBlock model
+// Atomic, reusable prompt blocks (DRY principle)
+model PromptBlock {
+  id          String              @id @default(cuid())
+  name        String              @unique
+  category    PromptBlockCategory
+  content     String              @db.Text
+  description String?
+  metadata    Json?
+  version     Int                 @default(1)
+  isActive    Boolean             @default(true)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  // Self-referential for inheritance
+  parentBlockId String?
+  parentBlock   PromptBlock?  @relation("BlockInheritance", fields: [parentBlockId], references: [id], onDelete: SetNull)
+  childBlocks   PromptBlock[] @relation("BlockInheritance")
+
+  // Relations
+  usedInCompositions PromptCompositionBlock[]
+
+  // Indexes
+  @@index([category, isActive])
+  @@index([name])
+  @@map("prompt_blocks")
+}
+
+// PromptComposition model
+// Ordered composition of blocks that form complete prompts
+model PromptComposition {
+  id          String                   @id @default(cuid())
+  name        String                   @unique
+  purpose     PromptPurpose
+  description String?
+  variables   Json?
+  version     Int                      @default(1)
+  isActive    Boolean                  @default(true)
+  createdAt   DateTime                 @default(now())
+  updatedAt   DateTime                 @updatedAt
+
+  // Relations
+  blocks PromptCompositionBlock[]
+
+  // Indexes
+  @@index([purpose, isActive])
+  @@map("prompt_compositions")
+}
+
+// PromptCompositionBlock model
+// Join table with ordering for composition
+model PromptCompositionBlock {
+  id            String            @id @default(cuid())
+  compositionId String
+  composition   PromptComposition @relation(fields: [compositionId], references: [id], onDelete: Cascade)
+  blockId       String
+  block         PromptBlock       @relation(fields: [blockId], references: [id], onDelete: Restrict)
+  order         Int
+  overrides     Json?
+
+  // Indexes
+  @@unique([compositionId, blockId])
+  @@index([compositionId, order])
+  @@map("prompt_composition_blocks")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+// Prompt block categories (granular, reusable blocks)
+enum PromptBlockCategory {
+  CORE_SYNTAX
+  CONTENT_GUIDELINES
+  VALIDATION
+  ADVANCED_FEATURES
+}
+
+// Prompt composition purposes (high-level use cases)
+enum PromptPurpose {
+  OUTLINE
+  CONTENT
+  THEME
+  REVIEW
+  REFINEMENT
+}
