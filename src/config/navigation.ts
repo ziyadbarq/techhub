@@ -37,6 +37,9 @@ import {
   FileText,
   Wrench,
   ClipboardList,
+  Database,
+  Lightbulb,
+  ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -100,8 +103,8 @@ export const navGroups: NavGroup[] = [
         permission: PERMISSIONS.DASHBOARD_VIEW,
       },
       {
-        title: "Asset Dashboard",
-        href: "/assets-dashboard",
+        title: "Analytics",
+        href: "/analytics",
         icon: LayoutDashboard,
         description: "Asset statistics and charts",
         permission: PERMISSIONS.ASSETS_VIEW,
@@ -366,6 +369,41 @@ export const navGroups: NavGroup[] = [
     collapsible: true,
     defaultCollapsed: false,
     permission: PERMISSIONS.USERS_MANAGE,
+  },
+
+  // Documentation - Help and guides for users
+  {
+    id: "documentation",
+    title: "Documentation",
+    items: [
+      {
+        title: "Getting Started",
+        href: "/docs/getting-started",
+        icon: Lightbulb,
+        description: "Foundation layer and data management basics",
+      },
+      {
+        title: "Entity Reference",
+        href: "/docs/entities",
+        icon: Database,
+        description: "Complete guide to all entities",
+      },
+      {
+        title: "Workflows",
+        href: "/docs/workflows",
+        icon: GitBranch,
+        description: "Common workflows and guides",
+      },
+      {
+        title: "Admin Guide",
+        href: "/docs/admin-guide",
+        icon: ShieldCheck,
+        description: "RBAC and user management",
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: true,
   },
 ];
 

@@ -62,12 +62,12 @@ export function MarketingFooter() {
             </h3>
             <ul className="space-y-3 text-sm">
               <li>
-                <a
+                <Link
                   href="/docs"
                   className="text-muted-foreground hover:text-barq-yellow transition-colors"
                 >
                   Documentation
-                </a>
+                </Link>
               </li>
               <li>
                 <a

@@ -176,17 +176,17 @@ private static validateMovementLogic(
 
 ### Asset & Inventory Layer (Layer 2)
 
-| Entity                                        | Purpose                        | Key Fields                                 | Routes                    | Permissions                   |
-| --------------------------------------------- | ------------------------------ | ------------------------------------------ | ------------------------- | ----------------------------- |
-| [Asset](#asset)                               | Physical/digital assets        | `assetTag`, `serialNumber`, `purchaseCost` | `/assets`                 | `ASSETS_*`                    |
-| [AssetCategory](#assetcategory)               | Asset type classification      | `name`, `code`, `lifecycleModelId`         | `/asset-categories`       | `ASSET_CATEGORIES_*`          |
-| [AssetModel](#assetmodel)                     | Vendor-specific models         | `name`, `code`, `assetCategoryId`          | `/asset-models`           | `ASSET_MODELS_*`              |
-| [AssetAssignment](#assetassignment)           | Asset↔Person/OrgUnit/Location | `assetId`, `assigneeType`, `startDate`     | `/asset-assignments`      | `ASSET_ASSIGNMENTS_*`         |
-| [Warranty](#warranty)                         | Asset warranty tracking        | `assetId`, `startDate`, `endDate`          | `/warranties`             | `WARRANTIES_*`                |
-| [MaintenanceSchedule](#maintenanceschedule)   | Preventive maintenance plans   | `assetId`, `scheduleType`, `nextDueDate`   | `/maintenance/schedules`  | `MAINTENANCE_SCHEDULES_*`     |
-| [MaintenanceRecord](#maintenancerecord)       | Maintenance work history       | `assetId`, `status`, `scheduledDate`       | `/maintenance/records`    | `MAINTENANCE_RECORDS_*`       |
-| [StockLocation](#stocklocation)               | Physical storage locations     | `code`, `locationId`                       | `/stock-locations`        | `STOCK_LOCATIONS_*`           |
-| [StockMovement](#stockmovement)               | Inventory movement tracking    | `movementType`, `quantity`, `occurredAt`   | `/stock-movements`        | `STOCK_MOVEMENTS_*`           |
+| Entity                                      | Purpose                        | Key Fields                                 | Routes                   | Permissions               |
+| ------------------------------------------- | ------------------------------ | ------------------------------------------ | ------------------------ | ------------------------- |
+| [Asset](#asset)                             | Physical/digital assets        | `assetTag`, `serialNumber`, `purchaseCost` | `/assets`                | `ASSETS_*`                |
+| [AssetCategory](#assetcategory)             | Asset type classification      | `name`, `code`, `lifecycleModelId`         | `/asset-categories`      | `ASSET_CATEGORIES_*`      |
+| [AssetModel](#assetmodel)                   | Vendor-specific models         | `name`, `code`, `assetCategoryId`          | `/asset-models`          | `ASSET_MODELS_*`          |
+| [AssetAssignment](#assetassignment)         | Asset↔Person/OrgUnit/Location | `assetId`, `assigneeType`, `startDate`     | `/asset-assignments`     | `ASSET_ASSIGNMENTS_*`     |
+| [Warranty](#warranty)                       | Asset warranty tracking        | `assetId`, `startDate`, `endDate`          | `/warranties`            | `WARRANTIES_*`            |
+| [MaintenanceSchedule](#maintenanceschedule) | Preventive maintenance plans   | `assetId`, `scheduleType`, `nextDueDate`   | `/maintenance/schedules` | `MAINTENANCE_SCHEDULES_*` |
+| [MaintenanceRecord](#maintenancerecord)     | Maintenance work history       | `assetId`, `status`, `scheduledDate`       | `/maintenance/records`   | `MAINTENANCE_RECORDS_*`   |
+| [StockLocation](#stocklocation)             | Physical storage locations     | `code`, `locationId`                       | `/stock-locations`       | `STOCK_LOCATIONS_*`       |
+| [StockMovement](#stockmovement)             | Inventory movement tracking    | `movementType`, `quantity`, `occurredAt`   | `/stock-movements`       | `STOCK_MOVEMENTS_*`       |
 
 ---
 

@@ -281,3 +281,76 @@
     @apply focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none;
   }
 }
+
+/* ============================================
+   MDX PROSE STYLING
+   ============================================
+   Enhanced typography and code block styling
+   ============================================ */
+@layer base {
+  /* MDX code inline styling */
+  .prose code {
+    @apply bg-muted text-foreground rounded px-1 py-0.5 text-sm font-semibold;
+  }
+
+  /* MDX code block styling */
+  .prose pre {
+    @apply bg-muted text-foreground overflow-x-auto rounded-lg p-4;
+  }
+
+  .prose pre code {
+    @apply bg-transparent p-0 text-sm;
+  }
+
+  /* MDX image styling */
+  .prose img {
+    @apply rounded-lg shadow-md;
+  }
+
+  /* MDX links with barq yellow */
+  .prose a {
+    @apply text-barq-yellow font-medium hover:underline;
+  }
+
+  /* MDX headings with better spacing */
+  .prose h1 {
+    @apply scroll-m-20 text-4xl font-bold tracking-tight;
+  }
+
+  .prose h2 {
+    @apply scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight;
+  }
+
+  .prose h3 {
+    @apply scroll-m-20 text-2xl font-semibold tracking-tight;
+  }
+
+  /* MDX blockquote with barq yellow accent */
+  .prose blockquote {
+    @apply border-barq-yellow border-l-4 pl-6 italic;
+  }
+
+  /* MDX tables */
+  .prose table {
+    @apply w-full border-collapse;
+  }
+
+  .prose th {
+    @apply border-border border-b px-4 py-2 text-left font-medium;
+  }
+
+  .prose td {
+    @apply border-border border-b px-4 py-2;
+  }
+
+  .prose tr:hover {
+    @apply bg-muted/50;
+  }
+}
+
+/* ============================================
+   SYNTAX HIGHLIGHTING (highlight.js)
+   ============================================
+   Code block syntax highlighting theme
+   ============================================ */
+@import "highlight.js/styles/github-dark.css";

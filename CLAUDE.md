@@ -69,6 +69,41 @@ npm run reset # Reset database + seed (drops all data!)
 - **Components**: `components/marketing/` - Reusable marketing components (hero, features, FAQ, etc.)
 - **Styling**: Barq brand colors (yellow `#ffda00`, light blue `#dff5f7`), dark mode support, Framer Motion animations
 
+### In-App Documentation (MDX)
+
+The application includes a built-in documentation system at `/docs` for end-user guidance:
+
+**Architecture**:
+
+- **Content**: MDX files in `src/content/docs/` with YAML frontmatter (title, description, icon, order)
+- **Renderer**: Dynamic route at `app/(dashboard)/docs/[slug]/page.tsx` using `next-mdx-remote/rsc`
+- **Components**: Custom MDX components in `components/mdx/` (Card, Callout, CodeBlock with copy button)
+- **Plugins**: GFM, syntax highlighting (rehype-highlight), auto-heading links (rehype-slug, rehype-autolink-headings)
+- **Styling**: Tailwind prose classes with custom @layer rules in `globals.css`
+
+**Current Documentation Pages**:
+
+- `/docs/getting-started` - Foundation layer and data management basics
+- `/docs/entities` - Complete entity reference (Layer 1 + Layer 2)
+- `/docs/workflows` - Common workflows and guides
+- `/docs/admin-guide` - RBAC and user management
+
+**Key Files**:
+
+- `src/lib/mdx.ts` - Utilities for reading/parsing MDX files
+- `src/components/mdx/mdx-components.tsx` - Custom component mappings
+- `src/components/mdx/code-block.tsx` - Enhanced code block with copy button
+- `src/app/(dashboard)/docs/layout.tsx` - Documentation layout with sidebar
+
+**IMPORTANT**: MDX plugins are configured in the component (NOT `next.config.ts`) for Turbopack compatibility. The config only sets `pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"]` for future compatibility.
+
+### Dashboards & Analytics
+
+- **Dashboard**: `app/(dashboard)/dashboard/page.tsx` - Main analytics dashboard with widgets (metrics, task queue, activity feed, quick actions)
+- **Analytics**: `app/(dashboard)/analytics/page.tsx` - Asset analytics and charts (renamed from `/assets-dashboard`)
+- **Widgets**: `components/dashboard/widgets/` - Reusable dashboard components
+- **Reports**: `app/(dashboard)/reports/page.tsx` - Custom reports and data exports
+
 ### All Documentation
 
 See [docs/README.md](docs/README.md) for complete documentation index.
@@ -157,6 +192,36 @@ constructor(@inject(DI_TOKENS.ILoggerService) private logger: ILoggerService) {}
 
 **See**: [LOGGING.md](docs/guides/LOGGING.md)
 
+### MDX Documentation
+
+**ALWAYS** configure MDX plugins in the component, NOT in `next.config.ts`:
+
+```typescript
+// ✅ CORRECT: In component (app/(dashboard)/docs/[slug]/page.tsx)
+<MDXRemote
+  source={content}
+  components={customComponents}
+  options={{
+    mdxOptions: {
+      remarkPlugins: [remarkGfm],
+      rehypePlugins: [rehypeHighlight, rehypeSlug, [rehypeAutolinkHeadings, { behavior: "wrap" }]],
+    },
+  }}
+/>
+
+// ❌ WRONG: In next.config.ts with withMDX wrapper (breaks Turbopack)
+const withMDX = createMDX({ options: { remarkPlugins: [...] } });
+export default withMDX(nextConfig);
+```
+
+**MDX Content Files**:
+
+- Store in `src/content/docs/` with `.mdx` extension
+- Include YAML frontmatter: `title`, `description`, `icon`, `order`
+- Use custom components: `<Card>`, `<Callout type="info|warning|error|success">`
+
+**See**: `src/lib/mdx.ts` for utilities, `src/components/mdx/` for custom components
+
 ## Architecture Overview
 
 **Clean Architecture Layers**:
@@ -203,6 +268,7 @@ constructor(@inject(DI_TOKENS.ILoggerService) private logger: ILoggerService) {}
 - Use DI logger (not `console.log`)
 - Validate at boundaries
 - Follow Clean Architecture layers
+- Configure MDX plugins in components (runtime), not next.config.ts (build-time)
 
 ### ❌ DON'T
 
@@ -210,6 +276,7 @@ constructor(@inject(DI_TOKENS.ILoggerService) private logger: ILoggerService) {}
 - Create new `Pool()` or `PrismaClient()` instances (exhausts connections)
 - Access `params`/`searchParams` synchronously (runtime errors in Next.js 16)
 - Create `middleware.ts` (use existing `proxy.ts` instead - Next.js 16 convention)
+- Use `withMDX` wrapper in next.config.ts (breaks Turbopack serialization)
 - Skip permission checks
 - Forget barrel exports for use case modules (breaks pre-commit)
 - Use `console.log` in server code
@@ -234,5 +301,7 @@ constructor(@inject(DI_TOKENS.ILoggerService) private logger: ILoggerService) {}
 - Use Cases: `*.use-case.ts`
 - Repositories: `prisma-*.repository.ts`
 - Interfaces: `*.interface.ts`
+- MDX Content: `*.mdx` (in `src/content/docs/`)
+- MDX Components: `*.tsx` (in `src/components/mdx/`)
 
 **See**: [DATABASE_SCHEMA.md](docs/architecture/DATABASE_SCHEMA.md) for database naming conventions.
