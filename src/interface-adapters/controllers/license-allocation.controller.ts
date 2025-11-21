@@ -1,0 +1,298 @@
+/**
+ * LicenseAllocation Controller - Server Actions
+ */
+
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { resolve } from "@/di/container";
+import { DI_TOKENS } from "@/di/types";
+import { requirePermission } from "@/lib/permissions/server";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import type {
+  CreateLicenseAllocationDTO,
+  UpdateLicenseAllocationDTO,
+  DeallocateLicenseAllocationDTO,
+  LicenseAllocationDTO,
+} from "../dtos/generated/license-allocation.dto";
+import {
+  CreateLicenseAllocationSchema,
+  UpdateLicenseAllocationSchema,
+  DeallocateLicenseAllocationSchema,
+} from "../dtos/generated/license-allocation.dto";
+import { LicenseAllocationPresenter } from "../presenters/license-allocation.presenter";
+import type { CreateLicenseAllocationUseCase } from "@/core/use-cases/license-allocation/create-license-allocation.use-case";
+import type { GetLicenseAllocationUseCase } from "@/core/use-cases/license-allocation/get-license-allocation.use-case";
+import type { ListLicenseAllocationsUseCase } from "@/core/use-cases/license-allocation/list-license-allocations.use-case";
+import type { UpdateLicenseAllocationUseCase } from "@/core/use-cases/license-allocation/update-license-allocation.use-case";
+import type { DeleteLicenseAllocationUseCase } from "@/core/use-cases/license-allocation/delete-license-allocation.use-case";
+import type { DeallocateLicenseAllocationUseCase } from "@/core/use-cases/license-allocation/deallocate-license-allocation.use-case";
+import type { ReactivateLicenseAllocationUseCase } from "@/core/use-cases/license-allocation/reactivate-license-allocation.use-case";
+import type { AllocationTargetType } from "@/core/domain/entities/license-allocation.entity";
+
+/**
+ * Create a new license allocation
+ */
+export async function createLicenseAllocation(
+  data: CreateLicenseAllocationDTO,
+): Promise<
+  | { success: true; data: LicenseAllocationDTO }
+  | { success: false; error: string }
+> {
+  try {
+    await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_CREATE);
+
+    const validated = CreateLicenseAllocationSchema.parse(data);
+
+    const useCase = resolve<CreateLicenseAllocationUseCase>(
+      DI_TOKENS.CreateLicenseAllocationUseCase,
+    );
+
+    const allocation = await useCase.execute({
+      licenseEntitlementId: validated.licenseEntitlementId,
+      targetType: validated.targetType,
+      targetId: validated.targetId,
+      allocatedQuantity: validated.allocatedQuantity,
+      note: validated.note,
+    });
+
+    revalidatePath("/license-allocations");
+
+    return {
+      success: true,
+      data: LicenseAllocationPresenter.toDTO(allocation),
+    };
+  } catch (error) {
+    console.error("Error creating license allocation:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to create license allocation",
+    };
+  }
+}
+
+/**
+ * Get a license allocation by ID
+ */
+export async function getLicenseAllocation(
+  id: string,
+): Promise<
+  | { success: true; data: LicenseAllocationDTO }
+  | { success: false; error: string }
+> {
+  try {
+    await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_VIEW);
+
+    const useCase = resolve<GetLicenseAllocationUseCase>(
+      DI_TOKENS.GetLicenseAllocationUseCase,
+    );
+
+    const allocation = await useCase.execute({ id });
+
+    return {
+      success: true,
+      data: LicenseAllocationPresenter.toDTO(allocation),
+    };
+  } catch (error) {
+    console.error("Error getting license allocation:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to get license allocation",
+    };
+  }
+}
+
+/**
+ * List license allocations with optional filters
+ */
+export async function listLicenseAllocations(params?: {
+  licenseEntitlementId?: string;
+  targetType?: AllocationTargetType;
+  targetId?: string;
+  activeOnly?: boolean;
+}): Promise<
+  | { success: true; data: LicenseAllocationDTO[] }
+  | { success: false; error: string }
+> {
+  try {
+    await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_VIEW);
+
+    const useCase = resolve<ListLicenseAllocationsUseCase>(
+      DI_TOKENS.ListLicenseAllocationsUseCase,
+    );
+
+    const allocations = await useCase.execute(params ?? {});
+
+    return {
+      success: true,
+      data: LicenseAllocationPresenter.toDTOList(allocations),
+    };
+  } catch (error) {
+    console.error("Error listing license allocations:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to list license allocations",
+    };
+  }
+}
+
+/**
+ * Update a license allocation
+ */
+export async function updateLicenseAllocation(
+  data: UpdateLicenseAllocationDTO,
+): Promise<
+  | { success: true; data: LicenseAllocationDTO }
+  | { success: false; error: string }
+> {
+  try {
+    await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_UPDATE);
+
+    const validated = UpdateLicenseAllocationSchema.parse(data);
+
+    const useCase = resolve<UpdateLicenseAllocationUseCase>(
+      DI_TOKENS.UpdateLicenseAllocationUseCase,
+    );
+
+    const allocation = await useCase.execute({
+      id: validated.id,
+      allocatedQuantity: validated.allocatedQuantity,
+      note: validated.note,
+    });
+
+    revalidatePath("/license-allocations");
+    revalidatePath(`/license-allocations/${validated.id}`);
+
+    return {
+      success: true,
+      data: LicenseAllocationPresenter.toDTO(allocation),
+    };
+  } catch (error) {
+    console.error("Error updating license allocation:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to update license allocation",
+    };
+  }
+}
+
+/**
+ * Delete a license allocation
+ */
+export async function deleteLicenseAllocation(
+  id: string,
+): Promise<{ success: true } | { success: false; error: string }> {
+  try {
+    await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_DELETE);
+
+    const useCase = resolve<DeleteLicenseAllocationUseCase>(
+      DI_TOKENS.DeleteLicenseAllocationUseCase,
+    );
+
+    await useCase.execute({ id });
+
+    revalidatePath("/license-allocations");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting license allocation:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to delete license allocation",
+    };
+  }
+}
+
+/**
+ * Deallocate a license allocation (soft deactivation)
+ */
+export async function deallocateLicenseAllocation(
+  data: DeallocateLicenseAllocationDTO,
+): Promise<
+  | { success: true; data: LicenseAllocationDTO }
+  | { success: false; error: string }
+> {
+  try {
+    await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_DEALLOCATE);
+
+    const validated = DeallocateLicenseAllocationSchema.parse(data);
+
+    const useCase = resolve<DeallocateLicenseAllocationUseCase>(
+      DI_TOKENS.DeallocateLicenseAllocationUseCase,
+    );
+
+    const allocation = await useCase.execute({
+      id: validated.id,
+      deallocatedAt: validated.deallocatedAt,
+    });
+
+    revalidatePath("/license-allocations");
+    revalidatePath(`/license-allocations/${validated.id}`);
+
+    return {
+      success: true,
+      data: LicenseAllocationPresenter.toDTO(allocation),
+    };
+  } catch (error) {
+    console.error("Error deallocating license allocation:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to deallocate license allocation",
+    };
+  }
+}
+
+/**
+ * Reactivate a previously deallocated license allocation
+ */
+export async function reactivateLicenseAllocation(
+  id: string,
+): Promise<
+  | { success: true; data: LicenseAllocationDTO }
+  | { success: false; error: string }
+> {
+  try {
+    await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_REACTIVATE);
+
+    const useCase = resolve<ReactivateLicenseAllocationUseCase>(
+      DI_TOKENS.ReactivateLicenseAllocationUseCase,
+    );
+
+    const allocation = await useCase.execute({ id });
+
+    revalidatePath("/license-allocations");
+    revalidatePath(`/license-allocations/${id}`);
+
+    return {
+      success: true,
+      data: LicenseAllocationPresenter.toDTO(allocation),
+    };
+  } catch (error) {
+    console.error("Error reactivating license allocation:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to reactivate license allocation",
+    };
+  }
+}

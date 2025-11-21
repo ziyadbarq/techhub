@@ -124,6 +124,13 @@ export const PERMISSIONS = {
   ASSET_CATEGORIES_DELETE: "asset-categories:delete",
   ASSET_CATEGORIES_MANAGE: "asset-categories:manage",
 
+  // Assets: Asset Category Fields
+  ASSET_CATEGORY_FIELDS_VIEW: "asset-category-fields:view",
+  ASSET_CATEGORY_FIELDS_CREATE: "asset-category-fields:create",
+  ASSET_CATEGORY_FIELDS_UPDATE: "asset-category-fields:update",
+  ASSET_CATEGORY_FIELDS_DELETE: "asset-category-fields:delete",
+  ASSET_CATEGORY_FIELDS_MANAGE: "asset-category-fields:manage",
+
   // Assets: Asset Models
   ASSET_MODELS_VIEW: "asset-models:view",
   ASSET_MODELS_CREATE: "asset-models:create",
@@ -211,6 +218,20 @@ export const PERMISSIONS = {
   ASSET_RESERVATIONS_CONFIRM: "asset-reservations:confirm",
   ASSET_RESERVATIONS_MANAGE: "asset-reservations:manage",
 
+  // CMDB: CI Classes
+  CI_CLASSES_VIEW: "ci-classes:view",
+  CI_CLASSES_CREATE: "ci-classes:create",
+  CI_CLASSES_UPDATE: "ci-classes:update",
+  CI_CLASSES_DELETE: "ci-classes:delete",
+  CI_CLASSES_MANAGE: "ci-classes:manage",
+
+  // CMDB: CI Class Fields
+  CI_CLASS_FIELDS_VIEW: "ci-class-fields:view",
+  CI_CLASS_FIELDS_CREATE: "ci-class-fields:create",
+  CI_CLASS_FIELDS_UPDATE: "ci-class-fields:update",
+  CI_CLASS_FIELDS_DELETE: "ci-class-fields:delete",
+  CI_CLASS_FIELDS_MANAGE: "ci-class-fields:manage",
+
   // CMDB: Configuration Items
   CONFIGURATION_ITEMS_VIEW: "configuration-items:view",
   CONFIGURATION_ITEMS_CREATE: "configuration-items:create",
@@ -231,6 +252,64 @@ export const PERMISSIONS = {
   RELATIONSHIP_TYPES_UPDATE: "relationship-types:update",
   RELATIONSHIP_TYPES_DELETE: "relationship-types:delete",
   RELATIONSHIP_TYPES_MANAGE: "relationship-types:manage",
+
+  // CMDB: Relationship Type Scopes
+  RELATIONSHIP_TYPE_SCOPES_VIEW: "relationship-type-scopes:view",
+  RELATIONSHIP_TYPE_SCOPES_CREATE: "relationship-type-scopes:create",
+  RELATIONSHIP_TYPE_SCOPES_UPDATE: "relationship-type-scopes:update",
+  RELATIONSHIP_TYPE_SCOPES_DELETE: "relationship-type-scopes:delete",
+  RELATIONSHIP_TYPE_SCOPES_MANAGE: "relationship-type-scopes:manage",
+
+  // Contracts: Contract Types
+  CONTRACT_TYPES_VIEW: "contract-types:view",
+  CONTRACT_TYPES_CREATE: "contract-types:create",
+  CONTRACT_TYPES_UPDATE: "contract-types:update",
+  CONTRACT_TYPES_DELETE: "contract-types:delete",
+  CONTRACT_TYPES_MANAGE: "contract-types:manage",
+
+  // Contracts: Contracts
+  CONTRACTS_VIEW: "contracts:view",
+  CONTRACTS_CREATE: "contracts:create",
+  CONTRACTS_UPDATE: "contracts:update",
+  CONTRACTS_DELETE: "contracts:delete",
+  CONTRACTS_MANAGE: "contracts:manage",
+
+  // Contracts: Contract Linked Objects
+  CONTRACT_LINKED_OBJECTS_VIEW: "contract-linked-objects:view",
+  CONTRACT_LINKED_OBJECTS_CREATE: "contract-linked-objects:create",
+  CONTRACT_LINKED_OBJECTS_UPDATE: "contract-linked-objects:update",
+  CONTRACT_LINKED_OBJECTS_DELETE: "contract-linked-objects:delete",
+  CONTRACT_LINKED_OBJECTS_MANAGE: "contract-linked-objects:manage",
+
+  // Licenses: License Products
+  LICENSE_PRODUCTS_VIEW: "license-products:view",
+  LICENSE_PRODUCTS_CREATE: "license-products:create",
+  LICENSE_PRODUCTS_UPDATE: "license-products:update",
+  LICENSE_PRODUCTS_DELETE: "license-products:delete",
+  LICENSE_PRODUCTS_MANAGE: "license-products:manage",
+
+  // Licenses: License Product Fields
+  LICENSE_PRODUCT_FIELDS_VIEW: "license-product-fields:view",
+  LICENSE_PRODUCT_FIELDS_CREATE: "license-product-fields:create",
+  LICENSE_PRODUCT_FIELDS_UPDATE: "license-product-fields:update",
+  LICENSE_PRODUCT_FIELDS_DELETE: "license-product-fields:delete",
+  LICENSE_PRODUCT_FIELDS_MANAGE: "license-product-fields:manage",
+
+  // Licenses: License Entitlements
+  LICENSE_ENTITLEMENTS_VIEW: "license-entitlements:view",
+  LICENSE_ENTITLEMENTS_CREATE: "license-entitlements:create",
+  LICENSE_ENTITLEMENTS_UPDATE: "license-entitlements:update",
+  LICENSE_ENTITLEMENTS_DELETE: "license-entitlements:delete",
+  LICENSE_ENTITLEMENTS_MANAGE: "license-entitlements:manage",
+
+  // Licenses: License Allocations
+  LICENSE_ALLOCATIONS_VIEW: "license-allocations:view",
+  LICENSE_ALLOCATIONS_CREATE: "license-allocations:create",
+  LICENSE_ALLOCATIONS_UPDATE: "license-allocations:update",
+  LICENSE_ALLOCATIONS_DELETE: "license-allocations:delete",
+  LICENSE_ALLOCATIONS_DEALLOCATE: "license-allocations:deallocate",
+  LICENSE_ALLOCATIONS_REACTIVATE: "license-allocations:reactivate",
+  LICENSE_ALLOCATIONS_MANAGE: "license-allocations:manage",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

@@ -1,0 +1,219 @@
+/**
+ * LicenseEntitlement Controller - Server Actions
+ */
+
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { resolve } from "@/di/container";
+import { DI_TOKENS } from "@/di/types";
+import { requirePermission } from "@/lib/permissions/server";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import type {
+  CreateLicenseEntitlementDTO,
+  UpdateLicenseEntitlementDTO,
+  LicenseEntitlementDTO,
+} from "../dtos/generated/license-entitlement.dto";
+import {
+  CreateLicenseEntitlementSchema,
+  UpdateLicenseEntitlementSchema,
+} from "../dtos/generated/license-entitlement.dto";
+import { LicenseEntitlementPresenter } from "../presenters/license-entitlement.presenter";
+import type { CreateLicenseEntitlementUseCase } from "@/core/use-cases/license-entitlement/create-license-entitlement.use-case";
+import type { GetLicenseEntitlementUseCase } from "@/core/use-cases/license-entitlement/get-license-entitlement.use-case";
+import type { ListLicenseEntitlementsUseCase } from "@/core/use-cases/license-entitlement/list-license-entitlements.use-case";
+import type { UpdateLicenseEntitlementUseCase } from "@/core/use-cases/license-entitlement/update-license-entitlement.use-case";
+import type { DeleteLicenseEntitlementUseCase } from "@/core/use-cases/license-entitlement/delete-license-entitlement.use-case";
+
+/**
+ * Create a new license entitlement
+ */
+export async function createLicenseEntitlement(
+  data: CreateLicenseEntitlementDTO,
+): Promise<
+  | { success: true; data: LicenseEntitlementDTO }
+  | { success: false; error: string }
+> {
+  try {
+    await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_CREATE);
+
+    const validated = CreateLicenseEntitlementSchema.parse(data);
+
+    const useCase = resolve<CreateLicenseEntitlementUseCase>(
+      DI_TOKENS.CreateLicenseEntitlementUseCase,
+    );
+
+    const entitlement = await useCase.execute({
+      licenseProductId: validated.licenseProductId,
+      contractId: validated.contractId,
+      purchasedQuantity: validated.purchasedQuantity,
+      effectiveStart: validated.effectiveStart,
+      effectiveEnd: validated.effectiveEnd,
+      allowedScope: validated.allowedScope,
+      note: validated.note,
+    });
+
+    revalidatePath("/license-entitlements");
+
+    return {
+      success: true,
+      data: LicenseEntitlementPresenter.toDTO(entitlement),
+    };
+  } catch (error) {
+    console.error("Error creating license entitlement:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to create license entitlement",
+    };
+  }
+}
+
+/**
+ * Get a license entitlement by ID
+ */
+export async function getLicenseEntitlement(
+  id: string,
+): Promise<
+  | { success: true; data: LicenseEntitlementDTO }
+  | { success: false; error: string }
+> {
+  try {
+    await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_VIEW);
+
+    const useCase = resolve<GetLicenseEntitlementUseCase>(
+      DI_TOKENS.GetLicenseEntitlementUseCase,
+    );
+
+    const entitlement = await useCase.execute({ id });
+
+    return {
+      success: true,
+      data: LicenseEntitlementPresenter.toDTO(entitlement),
+    };
+  } catch (error) {
+    console.error("Error getting license entitlement:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to get license entitlement",
+    };
+  }
+}
+
+/**
+ * List license entitlements with optional filters
+ */
+export async function listLicenseEntitlements(params?: {
+  licenseProductId?: string;
+  contractId?: string;
+  activeOnly?: boolean;
+  asOfDate?: Date;
+}): Promise<
+  | { success: true; data: LicenseEntitlementDTO[] }
+  | { success: false; error: string }
+> {
+  try {
+    await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_VIEW);
+
+    const useCase = resolve<ListLicenseEntitlementsUseCase>(
+      DI_TOKENS.ListLicenseEntitlementsUseCase,
+    );
+
+    const entitlements = await useCase.execute(params ?? {});
+
+    return {
+      success: true,
+      data: LicenseEntitlementPresenter.toDTOList(entitlements),
+    };
+  } catch (error) {
+    console.error("Error listing license entitlements:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to list license entitlements",
+    };
+  }
+}
+
+/**
+ * Update a license entitlement
+ */
+export async function updateLicenseEntitlement(
+  data: UpdateLicenseEntitlementDTO,
+): Promise<
+  | { success: true; data: LicenseEntitlementDTO }
+  | { success: false; error: string }
+> {
+  try {
+    await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_UPDATE);
+
+    const validated = UpdateLicenseEntitlementSchema.parse(data);
+
+    const useCase = resolve<UpdateLicenseEntitlementUseCase>(
+      DI_TOKENS.UpdateLicenseEntitlementUseCase,
+    );
+
+    const entitlement = await useCase.execute({
+      id: validated.id,
+      purchasedQuantity: validated.purchasedQuantity,
+      effectiveStart: validated.effectiveStart,
+      effectiveEnd: validated.effectiveEnd,
+      allowedScope: validated.allowedScope,
+      note: validated.note,
+    });
+
+    revalidatePath("/license-entitlements");
+    revalidatePath(`/license-entitlements/${validated.id}`);
+
+    return {
+      success: true,
+      data: LicenseEntitlementPresenter.toDTO(entitlement),
+    };
+  } catch (error) {
+    console.error("Error updating license entitlement:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to update license entitlement",
+    };
+  }
+}
+
+/**
+ * Delete a license entitlement
+ */
+export async function deleteLicenseEntitlement(
+  id: string,
+): Promise<{ success: true } | { success: false; error: string }> {
+  try {
+    await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_DELETE);
+
+    const useCase = resolve<DeleteLicenseEntitlementUseCase>(
+      DI_TOKENS.DeleteLicenseEntitlementUseCase,
+    );
+
+    await useCase.execute({ id });
+
+    revalidatePath("/license-entitlements");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting license entitlement:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to delete license entitlement",
+    };
+  }
+}

@@ -16,11 +16,13 @@ This file provides high-level guidance to Claude Code when working with this rep
 
 - **Layer 1 (Foundation)**: 11 core entities - OrganizationUnit, Person, Role, Location, Vendor, Lifecycle models, Field definitions
 - **Layer 2 (Asset/Inventory)**: 9 entities - Asset, AssetCategory, AssetModel, AssetAssignment, StockLocation, StockMovement, Warranty, MaintenanceSchedule, MaintenanceRecord
-- **Layer 3 (Advanced ITAM)**: 4 modules, 12 entities
+- **Layer 3 (Advanced ITAM)**: 6 modules, 26 entities
   - **Asset Disposals**: AssetDisposal, DisposalApproval, DisposalDocument (3 entities, 11 use cases)
   - **Asset Kits**: AssetKit, AssetKitItem, AssetKitCheckout, AssetKitCheckoutItem (4 entities, 19 use cases)
   - **Asset Reservations**: AssetReservation, AssetReservationConflict (2 entities, 17 use cases)
-  - **CMDB**: ConfigurationItem, CIRelationship, RelationshipType (3 entities, 15 use cases)
+  - **CMDB**: ConfigurationItem, CIRelationship, RelationshipType, CIClass, CIClassField, RelationshipTypeScope (6 entities, 28 use cases)
+  - **Contract Management**: ContractType, Contract, ContractLinkedObject (3 entities, 17 use cases)
+  - **License Management**: LicenseProduct, LicenseProductField, LicenseEntitlement, LicenseAllocation (4 entities, 23 use cases)
 - **Reference**: Task entity (complete implementation, hidden from UI)
 - **Marketing**: Public landing page showcasing system capabilities
 
@@ -45,6 +47,7 @@ npm run reset # Reset database + seed (drops all data!)
 - **[PRISMA_GUIDE.md](docs/guides/PRISMA_GUIDE.md)** - Critical: Connection pool, imports, type-safe patterns
 - **[NEXTJS_16_GUIDE.md](docs/guides/NEXTJS_16_GUIDE.md)** - Critical: Async APIs, rendering, breaking changes
 - **[STACK_UPGRADES.md](docs/guides/STACK_UPGRADES.md)** - Breaking changes reference (Prisma 7, Next 16, Zod 4, etc.)
+- **[DATABASE_SEEDING.md](docs/guides/DATABASE_SEEDING.md)** - Comprehensive seed system guide: architecture, factories, configuration
 
 ### Architecture & Design
 
@@ -120,7 +123,10 @@ See [docs/README.md](docs/README.md) for complete documentation index.
   - `ASSET_DISPOSALS_*` (VIEW, CREATE, UPDATE, DELETE, APPROVE, REJECT, START, COMPLETE, CANCEL, MANAGE)
   - `ASSET_KITS_*` (VIEW, CREATE, UPDATE, DELETE, CHECKOUT, RETURN, MANAGE)
   - `ASSET_RESERVATIONS_*` (VIEW, CREATE, UPDATE, DELETE, CANCEL, CONFIRM, MANAGE)
-  - `CONFIGURATION_ITEMS_*`, `CI_RELATIONSHIPS_*`, `RELATIONSHIP_TYPES_*` (VIEW, CREATE, UPDATE, DELETE, MANAGE)
+  - `CONFIGURATION_ITEMS_*`, `CI_RELATIONSHIPS_*`, `RELATIONSHIP_TYPES_*`, `CI_CLASSES_*`, `CI_CLASS_FIELDS_*`, `RELATIONSHIP_TYPE_SCOPES_*` (VIEW, CREATE, UPDATE, DELETE, MANAGE)
+  - `CONTRACT_TYPES_*`, `CONTRACTS_*`, `CONTRACT_LINKED_OBJECTS_*` (VIEW, CREATE, UPDATE, DELETE, MANAGE)
+  - `LICENSE_PRODUCTS_*`, `LICENSE_PRODUCT_FIELDS_*`, `LICENSE_ENTITLEMENTS_*` (VIEW, CREATE, UPDATE, DELETE, MANAGE)
+  - `LICENSE_ALLOCATIONS_*` (VIEW, CREATE, UPDATE, DELETE, DEALLOCATE, REACTIVATE, MANAGE)
 - **Navigation**: Automatically filtered based on user permissions (see `navigation.ts`)
 - **See**: [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md)
 
@@ -129,16 +135,25 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - **NEVER** use `console.log` - use DI logger: `@inject(DI_TOKENS.ILoggerService) private logger: ILoggerService`
 - **See**: [LOGGING.md](docs/guides/LOGGING.md)
 
+### Database Seeding
+
+- **Architecture**: Layered seeders (RBAC → Foundation → Assets → Layer 3), centralized cleanup
+- **Configuration**: All test data in `seed-config.ts` (single source of truth)
+- **Factories**: Type-safe builders in `seed-factories.ts` (WarrantyFactory, MaintenanceScheduleFactory, etc.)
+- **Utilities**: Shared helpers in `seed-utils.ts` (date utils, code generation, Prisma relation helpers)
+- **IMPORTANT**: Cleanup only in `seed.ts` main orchestrator (proper dependency order)
+- **See**: [DATABASE_SEEDING.md](docs/guides/DATABASE_SEEDING.md) for complete guide
+
 ### Barrel Exports
 
 - **CRITICAL**: Create `index.ts` in use case modules to export all use cases
 - Pre-commit type-checking **fails** without barrel exports
-- **All Layer 3 features have barrel exports**: `src/core/use-cases/{disposal,asset-kits,reservations,cmdb}/*/index.ts`
+- **All Layer 3 features have barrel exports**: `src/core/use-cases/{disposal,asset-kits,reservations,cmdb,contract,license-*}/*/index.ts`
 - **See**: [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "Adding a New Feature"
 
-## Layer 3 ITAM Features (NEW)
+## Layer 3 ITAM Features
 
-**4 Advanced Modules** - Fully implemented with Clean Architecture patterns:
+**6 Advanced Modules** - Fully implemented with Clean Architecture patterns:
 
 1. **Asset Disposals** (`/asset-disposals`)
    - Multi-step approval workflow (PENDING_APPROVAL → APPROVED → IN_PROGRESS → SANITIZED → COMPLETED)
@@ -171,22 +186,33 @@ See [docs/README.md](docs/README.md) for complete documentation index.
    - Routes: `/configuration-items`, `/ci-relationships`, `/relationship-types`
    - Permissions: `CONFIGURATION_ITEMS_VIEW`, `CI_RELATIONSHIPS_VIEW`, `RELATIONSHIP_TYPES_VIEW`
 
-**Database**: 9 new tables across 4 migrations (see `prisma/migrations/20251121*`)
+5. **Contract Management** (`/contract-types`, `/contracts`)
+   - Contract Types with customizable fields
+   - Contracts with vendor linkage and lifecycle dates
+   - Polymorphic linking to Assets, CIs, License Products
+   - Financial tracking with renewal dates
+   - Permissions: `CONTRACT_TYPES_VIEW`, `CONTRACTS_VIEW`, `CONTRACT_LINKED_OBJECTS_VIEW`
+
+6. **License Management** (`/license-products`, `/license-entitlements`, `/license-allocations`)
+   - License Products with metric types (per_device, per_user, per_core, per_vm, per_cluster)
+   - Entitlements with purchased quantities and date ranges
+   - Polymorphic allocations to Persons, CIs, or Assets
+   - Available quantity tracking (purchased - allocated)
+   - Soft deactivation (deallocate/reactivate) support
+   - Permissions: `LICENSE_PRODUCTS_VIEW`, `LICENSE_ENTITLEMENTS_VIEW`, `LICENSE_ALLOCATIONS_VIEW`
+
+**Database**: 17 new tables (CMDB: 6, Contracts: 3, Licenses: 4, plus config entities: 4)
 
 **DI Modules**: All registered in `src/di/container.ts`:
 
-- `loadDisposalModule()` - Line 112
-- `loadAssetKitsModule()` - Line 115
-- `loadReservationsModule()` - Line 118
-- `bindCMDBDependencies()` - Line 103
+- `bindCMDBDependencies()` - CMDB entities
+- `loadDisposalModule()` - Asset disposals
+- `loadAssetKitsModule()` - Asset kits
+- `loadReservationsModule()` - Asset reservations
+- `bindContractsDependencies()` - Contract management
+- `bindLicensesDependencies()` - License management
 
-**Navigation**: New "CMDB" group added, Asset features updated with granular permissions
-
-**Known Issues**:
-
-- TypeScript errors in 3 form components (CI Relationship, Configuration Item, Relationship Type forms) due to create/update schema differences
-- Forms are functional but need type refinement
-- Workaround: Use `npm run build:fast` to skip type-check
+**Navigation**: New "CMDB", "Contracts", and "Licenses" groups added with permission-based filtering
 
 ## Architecture Overview
 
@@ -217,6 +243,9 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - Validate at boundaries
 - Follow Clean Architecture layers
 - Configure MDX plugins in components (runtime), not next.config.ts (build-time)
+- Add new seed data to `seed-config.ts` (centralized configuration)
+- Use seed factories for complex entity creation
+- Only perform cleanup in `seed.ts` orchestrator
 
 ### ❌ DON'T
 
@@ -230,6 +259,9 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - Use `console.log` in server code
 - Bypass architecture layers
 - Use Docker (macOS native only)
+- Hardcode seed data in seeder files (use `seed-config.ts`)
+- Perform cleanup in individual seeders (only in `seed.ts`)
+- Duplicate logic across seeders (use utilities and factories)
 
 ## Environment
 
@@ -249,6 +281,7 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - Use Cases: `*.use-case.ts`
 - Repositories: `prisma-*.repository.ts`
 - Interfaces: `*.interface.ts`
+- Seeders: `seed-*.ts` (in `src/infrastructure/database/prisma/`)
 - MDX Content: `*.mdx` (in `src/content/docs/`)
 - MDX Components: `*.tsx` (in `src/components/mdx/`)
 

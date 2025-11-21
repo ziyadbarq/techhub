@@ -82,9 +82,25 @@ export const DI_TOKENS = {
   ),
 
   // CMDB Repositories
+  ICIClassRepository: Symbol.for("ICIClassRepository"),
+  ICIClassFieldRepository: Symbol.for("ICIClassFieldRepository"),
   IConfigurationItemRepository: Symbol.for("IConfigurationItemRepository"),
   ICIRelationshipRepository: Symbol.for("ICIRelationshipRepository"),
   IRelationshipTypeRepository: Symbol.for("IRelationshipTypeRepository"),
+  IRelationshipTypeScopeRepository: Symbol.for(
+    "IRelationshipTypeScopeRepository",
+  ),
+
+  // Contracts Repositories
+  IContractTypeRepository: Symbol.for("IContractTypeRepository"),
+  IContractRepository: Symbol.for("IContractRepository"),
+  IContractLinkedObjectRepository: Symbol.for(
+    "IContractLinkedObjectRepository",
+  ),
+
+  // Licenses Repositories
+  ILicenseProductRepository: Symbol.for("ILicenseProductRepository"),
+  ILicenseProductFieldRepository: Symbol.for("ILicenseProductFieldRepository"),
 
   // ==========================================
   // Service Tokens
@@ -254,6 +270,9 @@ export const DI_TOKENS = {
   ListPersonsUseCase: Symbol.for("ListPersonsUseCase"),
   UpdatePersonUseCase: Symbol.for("UpdatePersonUseCase"),
   DeletePersonUseCase: Symbol.for("DeletePersonUseCase"),
+  DeletePersonWithConfirmationUseCase: Symbol.for(
+    "DeletePersonWithConfirmationUseCase",
+  ),
 
   // Foundation: Person Role Assignment Use Cases
   CreatePersonRoleAssignmentUseCase: Symbol.for(
@@ -342,12 +361,29 @@ export const DI_TOKENS = {
     "SendReminderNotificationsUseCase",
   ),
 
+  // CMDB: CI Class Use Cases
+  CreateCIClassUseCase: Symbol.for("CreateCIClassUseCase"),
+  GetCIClassUseCase: Symbol.for("GetCIClassUseCase"),
+  ListCIClassesUseCase: Symbol.for("ListCIClassesUseCase"),
+  UpdateCIClassUseCase: Symbol.for("UpdateCIClassUseCase"),
+  DeleteCIClassUseCase: Symbol.for("DeleteCIClassUseCase"),
+
+  // CMDB: CI Class Field Use Cases
+  CreateCIClassFieldUseCase: Symbol.for("CreateCIClassFieldUseCase"),
+  GetCIClassFieldUseCase: Symbol.for("GetCIClassFieldUseCase"),
+  ListCIClassFieldsUseCase: Symbol.for("ListCIClassFieldsUseCase"),
+  UpdateCIClassFieldUseCase: Symbol.for("UpdateCIClassFieldUseCase"),
+  DeleteCIClassFieldUseCase: Symbol.for("DeleteCIClassFieldUseCase"),
+
   // CMDB: Configuration Item Use Cases
   CreateConfigurationItemUseCase: Symbol.for("CreateConfigurationItemUseCase"),
   GetConfigurationItemUseCase: Symbol.for("GetConfigurationItemUseCase"),
   ListConfigurationItemsUseCase: Symbol.for("ListConfigurationItemsUseCase"),
   UpdateConfigurationItemUseCase: Symbol.for("UpdateConfigurationItemUseCase"),
   DeleteConfigurationItemUseCase: Symbol.for("DeleteConfigurationItemUseCase"),
+  DeleteCIWithConfirmationUseCase: Symbol.for(
+    "DeleteCIWithConfirmationUseCase",
+  ),
 
   // CMDB: CI Relationship Use Cases
   CreateCIRelationshipUseCase: Symbol.for("CreateCIRelationshipUseCase"),
@@ -363,8 +399,109 @@ export const DI_TOKENS = {
   UpdateRelationshipTypeUseCase: Symbol.for("UpdateRelationshipTypeUseCase"),
   DeleteRelationshipTypeUseCase: Symbol.for("DeleteRelationshipTypeUseCase"),
 
+  // CMDB: Relationship Type Scope Use Cases
+  CreateRelationshipTypeScopeUseCase: Symbol.for(
+    "CreateRelationshipTypeScopeUseCase",
+  ),
+  GetRelationshipTypeScopeUseCase: Symbol.for(
+    "GetRelationshipTypeScopeUseCase",
+  ),
+  ListRelationshipTypeScopesUseCase: Symbol.for(
+    "ListRelationshipTypeScopesUseCase",
+  ),
+  UpdateRelationshipTypeScopeUseCase: Symbol.for(
+    "UpdateRelationshipTypeScopeUseCase",
+  ),
+  DeleteRelationshipTypeScopeUseCase: Symbol.for(
+    "DeleteRelationshipTypeScopeUseCase",
+  ),
+
+  // Contracts: Contract Type Use Cases
+  CreateContractTypeUseCase: Symbol.for("CreateContractTypeUseCase"),
+  GetContractTypeUseCase: Symbol.for("GetContractTypeUseCase"),
+  ListContractTypesUseCase: Symbol.for("ListContractTypesUseCase"),
+  UpdateContractTypeUseCase: Symbol.for("UpdateContractTypeUseCase"),
+  DeleteContractTypeUseCase: Symbol.for("DeleteContractTypeUseCase"),
+
+  // Contracts: Contract Use Cases
+  CreateContractUseCase: Symbol.for("CreateContractUseCase"),
+  GetContractUseCase: Symbol.for("GetContractUseCase"),
+  ListContractsUseCase: Symbol.for("ListContractsUseCase"),
+  UpdateContractUseCase: Symbol.for("UpdateContractUseCase"),
+  DeleteContractUseCase: Symbol.for("DeleteContractUseCase"),
+
+  // Contracts: Contract Linked Object Use Cases
+  CreateContractLinkedObjectUseCase: Symbol.for(
+    "CreateContractLinkedObjectUseCase",
+  ),
+  GetContractLinkedObjectUseCase: Symbol.for("GetContractLinkedObjectUseCase"),
+  ListContractLinkedObjectsUseCase: Symbol.for(
+    "ListContractLinkedObjectsUseCase",
+  ),
+  UpdateContractLinkedObjectUseCase: Symbol.for(
+    "UpdateContractLinkedObjectUseCase",
+  ),
+  DeleteContractLinkedObjectUseCase: Symbol.for(
+    "DeleteContractLinkedObjectUseCase",
+  ),
+
+  // Licenses: License Product Use Cases
+  CreateLicenseProductUseCase: Symbol.for("CreateLicenseProductUseCase"),
+  GetLicenseProductUseCase: Symbol.for("GetLicenseProductUseCase"),
+  ListLicenseProductsUseCase: Symbol.for("ListLicenseProductsUseCase"),
+  UpdateLicenseProductUseCase: Symbol.for("UpdateLicenseProductUseCase"),
+  DeleteLicenseProductUseCase: Symbol.for("DeleteLicenseProductUseCase"),
+
+  // Licenses: License Product Field Use Cases
+  CreateLicenseProductFieldUseCase: Symbol.for(
+    "CreateLicenseProductFieldUseCase",
+  ),
+  GetLicenseProductFieldUseCase: Symbol.for("GetLicenseProductFieldUseCase"),
+  ListLicenseProductFieldsUseCase: Symbol.for(
+    "ListLicenseProductFieldsUseCase",
+  ),
+  UpdateLicenseProductFieldUseCase: Symbol.for(
+    "UpdateLicenseProductFieldUseCase",
+  ),
+  DeleteLicenseProductFieldUseCase: Symbol.for(
+    "DeleteLicenseProductFieldUseCase",
+  ),
+
+  // Licenses: License Entitlement Repository
+  ILicenseEntitlementRepository: Symbol.for("ILicenseEntitlementRepository"),
+
+  // Licenses: License Entitlement Use Cases
+  CreateLicenseEntitlementUseCase: Symbol.for(
+    "CreateLicenseEntitlementUseCase",
+  ),
+  GetLicenseEntitlementUseCase: Symbol.for("GetLicenseEntitlementUseCase"),
+  ListLicenseEntitlementsUseCase: Symbol.for("ListLicenseEntitlementsUseCase"),
+  UpdateLicenseEntitlementUseCase: Symbol.for(
+    "UpdateLicenseEntitlementUseCase",
+  ),
+  DeleteLicenseEntitlementUseCase: Symbol.for(
+    "DeleteLicenseEntitlementUseCase",
+  ),
+
+  // Licenses: License Allocation Repository
+  ILicenseAllocationRepository: Symbol.for("ILicenseAllocationRepository"),
+
+  // Licenses: License Allocation Use Cases
+  CreateLicenseAllocationUseCase: Symbol.for("CreateLicenseAllocationUseCase"),
+  GetLicenseAllocationUseCase: Symbol.for("GetLicenseAllocationUseCase"),
+  ListLicenseAllocationsUseCase: Symbol.for("ListLicenseAllocationsUseCase"),
+  UpdateLicenseAllocationUseCase: Symbol.for("UpdateLicenseAllocationUseCase"),
+  DeleteLicenseAllocationUseCase: Symbol.for("DeleteLicenseAllocationUseCase"),
+  DeallocateLicenseAllocationUseCase: Symbol.for(
+    "DeallocateLicenseAllocationUseCase",
+  ),
+  ReactivateLicenseAllocationUseCase: Symbol.for(
+    "ReactivateLicenseAllocationUseCase",
+  ),
+
   // Assets: Asset Category Repository
   IAssetCategoryRepository: Symbol.for("IAssetCategoryRepository"),
+  IAssetCategoryFieldRepository: Symbol.for("IAssetCategoryFieldRepository"),
 
   // Assets: Asset Category Use Cases
   CreateAssetCategoryUseCase: Symbol.for("CreateAssetCategoryUseCase"),
@@ -372,6 +509,19 @@ export const DI_TOKENS = {
   ListAssetCategoriesUseCase: Symbol.for("ListAssetCategoriesUseCase"),
   UpdateAssetCategoryUseCase: Symbol.for("UpdateAssetCategoryUseCase"),
   DeleteAssetCategoryUseCase: Symbol.for("DeleteAssetCategoryUseCase"),
+
+  // Assets: Asset Category Field Use Cases
+  CreateAssetCategoryFieldUseCase: Symbol.for(
+    "CreateAssetCategoryFieldUseCase",
+  ),
+  GetAssetCategoryFieldUseCase: Symbol.for("GetAssetCategoryFieldUseCase"),
+  ListAssetCategoryFieldsUseCase: Symbol.for("ListAssetCategoryFieldsUseCase"),
+  UpdateAssetCategoryFieldUseCase: Symbol.for(
+    "UpdateAssetCategoryFieldUseCase",
+  ),
+  DeleteAssetCategoryFieldUseCase: Symbol.for(
+    "DeleteAssetCategoryFieldUseCase",
+  ),
 
   // Assets: Asset Model Repository
   IAssetModelRepository: Symbol.for("IAssetModelRepository"),
@@ -392,6 +542,9 @@ export const DI_TOKENS = {
   ListAssetsUseCase: Symbol.for("ListAssetsUseCase"),
   UpdateAssetUseCase: Symbol.for("UpdateAssetUseCase"),
   DeleteAssetUseCase: Symbol.for("DeleteAssetUseCase"),
+  DeleteAssetWithConfirmationUseCase: Symbol.for(
+    "DeleteAssetWithConfirmationUseCase",
+  ),
 
   // Assets: Asset Assignment Repository
   IAssetAssignmentRepository: Symbol.for("IAssetAssignmentRepository"),
