@@ -30,12 +30,27 @@ export interface AssetDTO {
   isUnderWarranty: boolean;
   isDepreciated: boolean;
   isFullyDepreciated: boolean;
+  // Display fields (enriched from relations)
+  categoryName?: string | null;
+  modelName?: string | null;
+  vendorName?: string | null;
+  stockLocationName?: string | null;
+  lifecycleStateName?: string | null;
 }
 
 /**
  * Transform a single Asset to DTO
  */
-export function presentAsset(asset: Asset): AssetDTO {
+export function presentAsset(
+  asset: Asset,
+  enrichment?: {
+    categoryName?: string | null;
+    modelName?: string | null;
+    vendorName?: string | null;
+    stockLocationName?: string | null;
+    lifecycleStateName?: string | null;
+  },
+): AssetDTO {
   return {
     id: asset.id,
     assetTag: asset.assetTag,
@@ -61,6 +76,12 @@ export function presentAsset(asset: Asset): AssetDTO {
     isUnderWarranty: asset.isUnderWarranty(),
     isDepreciated: asset.isDepreciated(),
     isFullyDepreciated: asset.isFullyDepreciated(),
+    // Display fields
+    categoryName: enrichment?.categoryName,
+    modelName: enrichment?.modelName,
+    vendorName: enrichment?.vendorName,
+    stockLocationName: enrichment?.stockLocationName,
+    lifecycleStateName: enrichment?.lifecycleStateName,
   };
 }
 
@@ -68,5 +89,5 @@ export function presentAsset(asset: Asset): AssetDTO {
  * Transform an array of Assets to DTOs
  */
 export function presentAssets(assets: Asset[]): AssetDTO[] {
-  return assets.map(presentAsset);
+  return assets.map((asset) => presentAsset(asset));
 }

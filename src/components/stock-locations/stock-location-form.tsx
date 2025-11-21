@@ -1,10 +1,11 @@
 /**
  * Stock Location Form Component
+ * Create and edit stock location records
  */
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
@@ -20,6 +21,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Form,
   FormControl,
   FormDescription,
@@ -30,10 +38,12 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import type { StockLocationDTO } from "@/interface-adapters/presenters/stock-location.presenter";
+import type { LocationDTO } from "@/interface-adapters/presenters/location.presenter";
 import {
   createStockLocationAction,
   updateStockLocationAction,
 } from "@/interface-adapters/controllers/stock-location.controller";
+import { listLocationsAction } from "@/interface-adapters/controllers/location.controller";
 import {
   CreateStockLocationSchema,
   type CreateStockLocationDTO,
@@ -55,6 +65,8 @@ export function StockLocationForm({
   stockLocation,
 }: StockLocationFormProps) {
   const isEditing = !!stockLocation;
+  const [locations, setLocations] = useState<LocationDTO[]>([]);
+  const [loadingData, setLoadingData] = useState(false);
 
   const form = useForm<
     StockLocationFormValues,
@@ -65,17 +77,38 @@ export function StockLocationForm({
     defaultValues: {
       name: stockLocation?.name ?? "",
       code: stockLocation?.code ?? "",
-      description: stockLocation?.description ?? "",
-      locationId: stockLocation?.locationId ?? "",
+      description: stockLocation?.description ?? null,
+      locationId: stockLocation?.locationId ?? null,
     },
   });
 
+  // Load locations
+  useEffect(() => {
+    const loadData = async () => {
+      if (!open) return;
+      setLoadingData(true);
+      try {
+        const locationsResult = await listLocationsAction();
+        if (locationsResult.success) {
+          setLocations(locationsResult.data);
+        }
+      } catch (_error) {
+        toast.error("Failed to load locations");
+      } finally {
+        setLoadingData(false);
+      }
+    };
+
+    loadData();
+  }, [open]);
+
+  // Reset form when stockLocation changes
   useEffect(() => {
     form.reset({
       name: stockLocation?.name ?? "",
       code: stockLocation?.code ?? "",
-      description: stockLocation?.description ?? "",
-      locationId: stockLocation?.locationId ?? "",
+      description: stockLocation?.description ?? null,
+      locationId: stockLocation?.locationId ?? null,
     });
   }, [stockLocation, form]);
 
@@ -104,8 +137,15 @@ export function StockLocationForm({
     }
   };
 
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen) {
+      form.reset();
+    }
+    onOpenChange(newOpen);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
           <DialogTitle>
@@ -188,13 +228,27 @@ export function StockLocationForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Physical Location (Optional)</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Location ID"
-                      {...field}
-                      value={field.value || ""}
-                    />
-                  </FormControl>
+                  <Select
+                    onValueChange={(value) =>
+                      field.onChange(value === "none" ? null : value)
+                    }
+                    value={field.value || "none"}
+                    disabled={loadingData}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a location (optional)" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="none">No Location</SelectItem>
+                      {locations.map((location) => (
+                        <SelectItem key={location.id} value={location.id}>
+                          {location.name} ({location.code})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormDescription>
                     Link to a physical location entity if applicable
                   </FormDescription>
@@ -207,19 +261,17 @@ export function StockLocationForm({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => onOpenChange(false)}
+                onClick={() => handleOpenChange(false)}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                disabled={form.formState.isSubmitting}
+                disabled={form.formState.isSubmitting || loadingData}
                 className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
               >
                 {form.formState.isSubmitting
-                  ? isEditing
-                    ? "Updating..."
-                    : "Creating..."
+                  ? "Saving..."
                   : isEditing
                     ? "Update"
                     : "Create"}

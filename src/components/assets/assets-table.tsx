@@ -5,6 +5,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { type ColumnDef } from "@tanstack/react-table";
 import {
   MoreHorizontal,
@@ -113,11 +114,17 @@ export function AssetsTable({
         <DataTableColumnHeader column={column} title="Asset Tag" />
       ),
       cell: ({ row }) => {
+        const asset = row.original;
         const assetTag = row.getValue("assetTag") as string;
-        const serialNumber = row.original.serialNumber;
+        const serialNumber = asset.serialNumber;
         return (
           <div className="flex flex-col gap-1">
-            <span className="font-medium">{assetTag}</span>
+            <Link
+              href={`/assets/${asset.id}`}
+              className="text-primary font-medium hover:underline"
+            >
+              {assetTag}
+            </Link>
             {serialNumber && (
               <span className="text-muted-foreground text-xs">
                 S/N: {serialNumber}
@@ -128,15 +135,68 @@ export function AssetsTable({
       },
     },
     {
-      accessorKey: "assetCategoryId",
+      accessorKey: "categoryName",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Category" />
       ),
       cell: ({ row }) => {
-        // In a real implementation, we'd join with AssetCategory
+        const categoryName = row.original.categoryName;
         return (
-          <span className="text-muted-foreground text-sm">
-            {row.original.assetCategoryId.slice(0, 8)}...
+          <span className="text-sm">
+            {categoryName || <span className="text-muted-foreground">—</span>}
+          </span>
+        );
+      },
+    },
+    {
+      accessorKey: "modelName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Model" />
+      ),
+      cell: ({ row }) => {
+        const modelName = row.original.modelName;
+        const vendorName = row.original.vendorName;
+
+        if (!modelName && !vendorName) {
+          return <span className="text-muted-foreground text-sm">—</span>;
+        }
+
+        return (
+          <div className="flex flex-col gap-1">
+            {modelName && <span className="text-sm">{modelName}</span>}
+            {vendorName && (
+              <span className="text-muted-foreground text-xs">
+                {vendorName}
+              </span>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "stockLocationName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Location" />
+      ),
+      cell: ({ row }) => {
+        const locationName = row.original.stockLocationName;
+        return (
+          <span className="text-sm">
+            {locationName || <span className="text-muted-foreground">—</span>}
+          </span>
+        );
+      },
+    },
+    {
+      accessorKey: "lifecycleStateName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
+      cell: ({ row }) => {
+        const stateName = row.original.lifecycleStateName;
+        return (
+          <span className="text-sm">
+            {stateName || <span className="text-muted-foreground">—</span>}
           </span>
         );
       },

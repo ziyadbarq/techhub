@@ -1,5 +1,6 @@
 /**
  * Stock Movements Page
+ * Display and manage stock movement transactions
  */
 
 import { StockMovementsPageClient } from "@/components/stock-movements/stock-movements-page-client";

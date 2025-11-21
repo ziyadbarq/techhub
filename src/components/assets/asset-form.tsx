@@ -48,9 +48,13 @@ import {
 import { listAssetCategoriesAction } from "@/interface-adapters/controllers/asset-category.controller";
 import { listAssetModelsAction } from "@/interface-adapters/controllers/asset-model.controller";
 import { listVendorsAction } from "@/interface-adapters/controllers/vendor.controller";
+import { listStockLocationsAction } from "@/interface-adapters/controllers/stock-location.controller";
+import { listLifecycleStatesAction } from "@/interface-adapters/controllers/lifecycle-state.controller";
 import type { AssetCategoryDTO } from "@/interface-adapters/presenters/asset-category.presenter";
 import type { AssetModelDTO } from "@/interface-adapters/presenters/asset-model.presenter";
 import type { VendorDTO } from "@/interface-adapters/presenters/vendor.presenter";
+import type { StockLocationDTO } from "@/interface-adapters/presenters/stock-location.presenter";
+import type { LifecycleStateDTO } from "@/interface-adapters/presenters/lifecycle-state.presenter";
 
 interface AssetFormProps {
   open: boolean;
@@ -73,6 +77,10 @@ export function AssetForm({
   const [categories, setCategories] = useState<AssetCategoryDTO[]>([]);
   const [models, setModels] = useState<AssetModelDTO[]>([]);
   const [vendors, setVendors] = useState<VendorDTO[]>([]);
+  const [stockLocations, setStockLocations] = useState<StockLocationDTO[]>([]);
+  const [lifecycleStates, setLifecycleStates] = useState<LifecycleStateDTO[]>(
+    [],
+  );
   const [loading, setLoading] = useState(true);
 
   const form = useForm<AssetFormValues, undefined, CreateAssetDTO>({
@@ -82,6 +90,8 @@ export function AssetForm({
       assetCategoryId: asset?.assetCategoryId ?? "",
       assetModelId: asset?.assetModelId ?? null,
       vendorId: asset?.vendorId ?? null,
+      currentStockLocationId: asset?.currentStockLocationId ?? null,
+      lifecycleStateId: asset?.lifecycleStateId ?? null,
       serialNumber: asset?.serialNumber ?? "",
       purchaseDate: asset?.purchaseDate
         ? new Date(asset.purchaseDate)
@@ -105,13 +115,19 @@ export function AssetForm({
   const loadData = async () => {
     setLoading(true);
     try {
-      const [categoriesResult, modelsResult, vendorsResult] = await Promise.all(
-        [
-          listAssetCategoriesAction(),
-          listAssetModelsAction(),
-          listVendorsAction(),
-        ],
-      );
+      const [
+        categoriesResult,
+        modelsResult,
+        vendorsResult,
+        stockLocationsResult,
+        lifecycleStatesResult,
+      ] = await Promise.all([
+        listAssetCategoriesAction(),
+        listAssetModelsAction(),
+        listVendorsAction(),
+        listStockLocationsAction(),
+        listLifecycleStatesAction(),
+      ]);
 
       if (categoriesResult.success) {
         setCategories(categoriesResult.data);
@@ -123,6 +139,14 @@ export function AssetForm({
 
       if (vendorsResult.success) {
         setVendors(vendorsResult.data);
+      }
+
+      if (stockLocationsResult.success) {
+        setStockLocations(stockLocationsResult.data);
+      }
+
+      if (lifecycleStatesResult.success) {
+        setLifecycleStates(lifecycleStatesResult.data);
       }
     } catch (_error) {
       toast.error("Failed to load form data");
@@ -137,6 +161,8 @@ export function AssetForm({
       assetCategoryId: asset?.assetCategoryId ?? "",
       assetModelId: asset?.assetModelId ?? null,
       vendorId: asset?.vendorId ?? null,
+      currentStockLocationId: asset?.currentStockLocationId ?? null,
+      lifecycleStateId: asset?.lifecycleStateId ?? null,
       serialNumber: asset?.serialNumber ?? "",
       purchaseDate: asset?.purchaseDate
         ? new Date(asset.purchaseDate)
@@ -308,6 +334,78 @@ export function AssetForm({
                   </Select>
                   <FormDescription>
                     The supplier or manufacturer
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Stock Location */}
+            <FormField
+              control={form.control}
+              name="currentStockLocationId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Stock Location (Optional)</FormLabel>
+                  <Select
+                    onValueChange={(value) =>
+                      field.onChange(value === NONE_OPTION_VALUE ? null : value)
+                    }
+                    value={field.value ?? undefined}
+                    disabled={loading}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a location" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
+                      {stockLocations.map((location) => (
+                        <SelectItem key={location.id} value={location.id}>
+                          {location.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Current physical location of the asset
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Lifecycle State */}
+            <FormField
+              control={form.control}
+              name="lifecycleStateId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Lifecycle State (Optional)</FormLabel>
+                  <Select
+                    onValueChange={(value) =>
+                      field.onChange(value === NONE_OPTION_VALUE ? null : value)
+                    }
+                    value={field.value ?? undefined}
+                    disabled={loading}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a state" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
+                      {lifecycleStates.map((state) => (
+                        <SelectItem key={state.id} value={state.id}>
+                          {state.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Current lifecycle state of the asset
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

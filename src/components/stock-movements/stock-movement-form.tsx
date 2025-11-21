@@ -1,13 +1,16 @@
 /**
  * Stock Movement Form Component
+ * Create stock movement records
  */
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +22,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -36,7 +45,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+import { useSession } from "@/lib/auth/client";
+import type { StockLocationDTO } from "@/interface-adapters/presenters/stock-location.presenter";
+import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
 import { createStockMovementAction } from "@/interface-adapters/controllers/stock-movement.controller";
+import { listStockLocationsAction } from "@/interface-adapters/controllers/stock-location.controller";
+import { listAssetsAction } from "@/interface-adapters/controllers/asset.controller";
 import {
   CreateStockMovementSchema,
   type CreateStockMovementDTO,
@@ -55,6 +70,11 @@ export function StockMovementForm({
   onOpenChange,
   onSuccess,
 }: StockMovementFormProps) {
+  const { data: session } = useSession();
+  const [stockLocations, setStockLocations] = useState<StockLocationDTO[]>([]);
+  const [assets, setAssets] = useState<AssetDTO[]>([]);
+  const [loadingData, setLoadingData] = useState(false);
+
   const form = useForm<
     StockMovementFormValues,
     undefined,
@@ -63,12 +83,12 @@ export function StockMovementForm({
     resolver: zodResolver(CreateStockMovementSchema),
     defaultValues: {
       movementType: "IN",
-      stockLocationFromId: "",
-      stockLocationToId: "",
-      assetId: "",
+      stockLocationFromId: null,
+      stockLocationToId: null,
+      assetId: null,
       quantity: 1,
-      reason: "",
-      performedById: "",
+      reason: null,
+      performedById: session?.user?.id ?? "",
       occurredAt: new Date(),
     },
   });
@@ -78,12 +98,46 @@ export function StockMovementForm({
     name: "movementType",
   });
 
+  // Load data when dialog opens
   useEffect(() => {
-    // Clear location fields when movement type changes
+    const loadData = async () => {
+      if (!open) return;
+      setLoadingData(true);
+      try {
+        const [locationsResult, assetsResult] = await Promise.all([
+          listStockLocationsAction(),
+          listAssetsAction(),
+        ]);
+
+        if (locationsResult.success) {
+          setStockLocations(locationsResult.data);
+        }
+        if (assetsResult.success) {
+          setAssets(assetsResult.data);
+        }
+      } catch (_error) {
+        toast.error("Failed to load form data");
+      } finally {
+        setLoadingData(false);
+      }
+    };
+
+    loadData();
+  }, [open]);
+
+  // Update performedById when session changes
+  useEffect(() => {
+    if (session?.user?.id) {
+      form.setValue("performedById", session.user.id);
+    }
+  }, [session, form]);
+
+  // Clear location fields when movement type changes
+  useEffect(() => {
     if (movementType === "IN") {
-      form.setValue("stockLocationFromId", "");
+      form.setValue("stockLocationFromId", null);
     } else if (movementType === "OUT") {
-      form.setValue("stockLocationToId", "");
+      form.setValue("stockLocationToId", null);
     }
   }, [movementType, form]);
 
@@ -104,13 +158,20 @@ export function StockMovementForm({
     }
   };
 
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen) {
+      form.reset();
+    }
+    onOpenChange(newOpen);
+  };
+
   const showSourceLocation =
     movementType === "OUT" || movementType === "TRANSFER";
   const showDestinationLocation =
     movementType === "IN" || movementType === "TRANSFER";
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Record Stock Movement</DialogTitle>
@@ -169,13 +230,27 @@ export function StockMovementForm({
                     <FormLabel>
                       Source Location {movementType === "TRANSFER" && "*"}
                     </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Stock location ID"
-                        {...field}
-                        value={field.value || ""}
-                      />
-                    </FormControl>
+                    <Select
+                      onValueChange={(value) =>
+                        field.onChange(value === "none" ? null : value)
+                      }
+                      value={field.value || "none"}
+                      disabled={loadingData}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select source location" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="none">No Location</SelectItem>
+                        {stockLocations.map((location) => (
+                          <SelectItem key={location.id} value={location.id}>
+                            {location.name} ({location.code})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormDescription>
                       Location where items are being removed from
                     </FormDescription>
@@ -191,14 +266,31 @@ export function StockMovementForm({
                 name="stockLocationToId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Destination Location *</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Stock location ID"
-                        {...field}
-                        value={field.value || ""}
-                      />
-                    </FormControl>
+                    <FormLabel>
+                      Destination Location{" "}
+                      <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <Select
+                      onValueChange={(value) =>
+                        field.onChange(value === "none" ? null : value)
+                      }
+                      value={field.value || "none"}
+                      disabled={loadingData}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select destination location" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="none">No Location</SelectItem>
+                        {stockLocations.map((location) => (
+                          <SelectItem key={location.id} value={location.id}>
+                            {location.name} ({location.code})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormDescription>
                       Location where items are being added to
                     </FormDescription>
@@ -213,14 +305,28 @@ export function StockMovementForm({
               name="assetId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Asset ID (Optional)</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Asset ID (if applicable)"
-                      {...field}
-                      value={field.value || ""}
-                    />
-                  </FormControl>
+                  <FormLabel>Asset (Optional)</FormLabel>
+                  <Select
+                    onValueChange={(value) =>
+                      field.onChange(value === "none" ? null : value)
+                    }
+                    value={field.value || "none"}
+                    disabled={loadingData}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select an asset (optional)" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="none">No Asset</SelectItem>
+                      {assets.map((asset) => (
+                        <SelectItem key={asset.id} value={asset.id}>
+                          {asset.assetTag} - {asset.serialNumber || "No SN"}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormDescription>
                     Link to a specific asset if this movement relates to one
                   </FormDescription>
@@ -274,65 +380,91 @@ export function StockMovementForm({
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="performedById"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Performed By *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="User ID" {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    User who performed this movement
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="performedById"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Performed By <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="User ID"
+                        {...field}
+                        disabled
+                        className="bg-muted"
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Current user (auto-filled)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="occurredAt"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Occurred At</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="datetime-local"
-                      {...field}
-                      value={
-                        field.value instanceof Date
-                          ? field.value.toISOString().slice(0, 16)
-                          : ""
-                      }
-                      onChange={(e) => field.onChange(new Date(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    When this movement occurred (defaults to now)
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="occurredAt"
+                render={({ field }) => {
+                  const dateValue = field.value as Date | undefined;
+                  return (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Occurred At</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "pl-3 text-left font-normal",
+                                !dateValue && "text-muted-foreground",
+                              )}
+                            >
+                              {dateValue ? (
+                                format(dateValue, "PPP HH:mm")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={dateValue}
+                            onSelect={field.onChange}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormDescription>
+                        When this movement occurred
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+            </div>
 
             <DialogFooter>
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => onOpenChange(false)}
+                onClick={() => handleOpenChange(false)}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                disabled={form.formState.isSubmitting}
+                disabled={form.formState.isSubmitting || loadingData}
                 className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
               >
-                {form.formState.isSubmitting
-                  ? "Recording..."
-                  : "Record Movement"}
+                {form.formState.isSubmitting ? "Saving..." : "Record Movement"}
               </Button>
             </DialogFooter>
           </form>

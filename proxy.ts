@@ -27,6 +27,14 @@ import { isPublicRoute } from "@/config/protected-routes";
 function hasSessionCookie(request: NextRequest): boolean {
   // Better Auth uses "better-auth.session_token" cookie by default
   const sessionToken = request.cookies.get("better-auth.session_token");
+
+  // Debug logging (can be removed after testing)
+  console.log("[Proxy Debug]", {
+    pathname: request.nextUrl.pathname,
+    hasSessionToken: !!sessionToken?.value,
+    allCookies: Array.from(request.cookies.getAll().map((c) => c.name)),
+  });
+
   return !!sessionToken?.value;
 }
 
@@ -38,6 +46,14 @@ export async function proxy(request: NextRequest) {
 
   // Redirect authenticated users from landing page to dashboard
   if (pathname === "/" && hasSessionCookie(request)) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  // Redirect authenticated users from auth pages to dashboard
+  if (
+    (pathname === "/login" || pathname === "/register") &&
+    hasSessionCookie(request)
+  ) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 

@@ -1,5 +1,6 @@
 /**
  * Stock Movements Page Client Component
+ * Orchestrates stock movement list and creation operations
  */
 
 "use client";
@@ -45,13 +46,15 @@ export function StockMovementsPageClient({
     }
   };
 
-  const handleFormClose = () => {
-    setIsFormOpen(false);
-  };
-
   const handleSuccess = () => {
     loadStockMovements();
   };
+
+  // Count movements by type
+  const receivingCount = stockMovements.filter((m) => m.isReceiving).length;
+  const issuingCount = stockMovements.filter((m) => m.isIssuing).length;
+  const transferCount = stockMovements.filter((m) => m.isTransfer).length;
+  const adjustmentCount = stockMovements.filter((m) => m.isAdjustment).length;
 
   return (
     <div className="space-y-6">
@@ -60,8 +63,11 @@ export function StockMovementsPageClient({
         <div>
           <h2 className="text-2xl font-bold">Stock Movements</h2>
           <p className="text-muted-foreground">
-            {stockMovements.length} movement
-            {stockMovements.length !== 1 ? "s" : ""}
+            {stockMovements.length} total movements
+            {receivingCount > 0 && ` • ${receivingCount} received`}
+            {issuingCount > 0 && ` • ${issuingCount} issued`}
+            {transferCount > 0 && ` • ${transferCount} transfers`}
+            {adjustmentCount > 0 && ` • ${adjustmentCount} adjustments`}
           </p>
         </div>
 
@@ -71,7 +77,7 @@ export function StockMovementsPageClient({
             className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90 gap-2"
           >
             <Plus className="h-4 w-4" />
-            Record Movement
+            New Movement
           </Button>
         </PermissionGuard>
       </div>
@@ -86,7 +92,7 @@ export function StockMovementsPageClient({
       {/* Stock Movement Form Dialog */}
       <StockMovementForm
         open={isFormOpen}
-        onOpenChange={handleFormClose}
+        onOpenChange={setIsFormOpen}
         onSuccess={handleSuccess}
       />
     </div>

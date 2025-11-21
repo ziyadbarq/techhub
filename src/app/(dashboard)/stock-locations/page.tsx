@@ -1,5 +1,6 @@
 /**
  * Stock Locations Page
+ * Display and manage stock storage locations
  */
 
 import { StockLocationsPageClient } from "@/components/stock-locations/stock-locations-page-client";

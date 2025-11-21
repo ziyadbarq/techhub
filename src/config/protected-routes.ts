@@ -222,9 +222,14 @@ export const PUBLIC_ROUTES = [
  * Check if a route is public
  */
 export function isPublicRoute(pathname: string): boolean {
-  return PUBLIC_ROUTES.some(
-    (route) => pathname === route || pathname.startsWith(route),
-  );
+  return PUBLIC_ROUTES.some((route) => {
+    // Exact match for root route to avoid matching all routes
+    if (route === "/") {
+      return pathname === "/";
+    }
+    // For other routes, match exact or startsWith pattern
+    return pathname === route || pathname.startsWith(route);
+  });
 }
 
 /**

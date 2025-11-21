@@ -33,6 +33,8 @@ import {
   Warehouse,
   TrendingUp,
   UserCheck,
+  LayoutDashboard,
+  FileText,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -94,6 +96,20 @@ export const navGroups: NavGroup[] = [
         icon: Home,
         description: "Overview and statistics",
         permission: PERMISSIONS.DASHBOARD_VIEW,
+      },
+      {
+        title: "Asset Dashboard",
+        href: "/assets-dashboard",
+        icon: LayoutDashboard,
+        description: "Asset statistics and charts",
+        permission: PERMISSIONS.ASSETS_VIEW,
+      },
+      {
+        title: "Reports",
+        href: "/reports",
+        icon: FileText,
+        description: "Asset management reports",
+        permission: PERMISSIONS.ASSETS_VIEW,
       },
       // Task entity - kept as architectural reference (hidden from UI)
       // Route still accessible at /tasks for code reference

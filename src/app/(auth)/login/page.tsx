@@ -23,7 +23,7 @@ export default function LoginPage() {
   const handleMicrosoftLogin = async () => {
     await authClient.signIn.social({
       provider: "microsoft",
-      callbackURL: "/",
+      callbackURL: "/dashboard",
     });
   };
 

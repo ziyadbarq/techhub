@@ -26,8 +26,8 @@ export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Get the redirect path from query params, default to root dashboard
-  const redirectTo = searchParams.get("from") || "/";
+  // Get the redirect path from query params, default to dashboard
+  const redirectTo = searchParams.get("from") || "/dashboard";
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),

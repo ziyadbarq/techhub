@@ -17,6 +17,24 @@ interface ErrorBoundaryState {
   errorInfo: React.ErrorInfo | null;
 }
 
+type NextControlFlowError = Error & { digest?: string };
+
+const NEXT_CONTROL_FLOW_CODES = ["NEXT_REDIRECT", "NEXT_NOT_FOUND"] as const;
+
+function isNextControlFlowError(error: unknown): error is NextControlFlowError {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+
+  const digest = (error as NextControlFlowError).digest;
+
+  return (
+    NEXT_CONTROL_FLOW_CODES.some((code) => error.message === code) ||
+    (typeof digest === "string" &&
+      NEXT_CONTROL_FLOW_CODES.some((code) => digest === code))
+  );
+}
+
 export class ErrorBoundary extends React.Component<
   ErrorBoundaryProps,
   ErrorBoundaryState
@@ -30,11 +48,23 @@ export class ErrorBoundary extends React.Component<
     };
   }
 
-  static getDerivedStateFromError(error: Error): Partial<ErrorBoundaryState> {
+  static getDerivedStateFromError(
+    error: Error,
+  ): Partial<ErrorBoundaryState> | null {
+    if (isNextControlFlowError(error)) {
+      // Let Next.js handle redirects/not-found flows
+      return null;
+    }
+
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  componentDidCatch(error: NextControlFlowError, errorInfo: React.ErrorInfo) {
+    if (isNextControlFlowError(error)) {
+      // Bubble up the redirect/not-found signal so Next.js can process it
+      throw error;
+    }
+
     // Log error with structured logger
     const scopedLogger = logger.scope("ErrorBoundary");
     scopedLogger.error(

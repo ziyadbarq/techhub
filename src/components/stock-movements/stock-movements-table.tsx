@@ -1,5 +1,6 @@
 /**
  * Stock Movements Table Component
+ * Displays stock movements with filtering, sorting, and actions
  */
 
 "use client";
@@ -126,17 +127,21 @@ export function StockMovementsTable({
       ),
       cell: ({ row }) => {
         const type = row.getValue("movementType") as string;
-        const variant =
-          type === "IN"
-            ? "default"
-            : type === "OUT"
-              ? "secondary"
-              : type === "TRANSFER"
-                ? "outline"
-                : "destructive";
+        const movement = row.original;
+
+        let colorClass = "";
+        if (movement.isReceiving) {
+          colorClass = "bg-green-500/10 text-green-700 dark:text-green-400";
+        } else if (movement.isIssuing) {
+          colorClass = "bg-blue-500/10 text-blue-700 dark:text-blue-400";
+        } else if (movement.isTransfer) {
+          colorClass = "bg-purple-500/10 text-purple-700 dark:text-purple-400";
+        } else if (movement.isAdjustment) {
+          colorClass = "bg-orange-500/10 text-orange-700 dark:text-orange-400";
+        }
 
         return (
-          <Badge variant={variant} className="gap-1.5">
+          <Badge variant="outline" className={`gap-1.5 ${colorClass}`}>
             <MovementTypeIcon type={type} />
             {type}
           </Badge>
@@ -262,7 +267,20 @@ export function StockMovementsTable({
 
   return (
     <>
-      <DataTable columns={columns} data={data} loading={loading} />
+      <DataTable
+        columns={columns}
+        data={data}
+        loading={loading}
+        searchable
+        searchKey="reason"
+        searchPlaceholder="Search by reason..."
+        selectable
+        showColumnToggle
+        emptyMessage="No stock movements found. Create one to get started!"
+        pagination={{
+          pageSize: 20,
+        }}
+      />
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

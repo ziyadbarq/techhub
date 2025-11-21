@@ -1,5 +1,6 @@
 /**
  * Stock Locations Page Client Component
+ * Orchestrates stock location list and CRUD operations
  */
 
 "use client";
@@ -68,8 +69,7 @@ export function StockLocationsPageClient({
         <div>
           <h2 className="text-2xl font-bold">Stock Locations</h2>
           <p className="text-muted-foreground">
-            {stockLocations.length} location
-            {stockLocations.length !== 1 ? "s" : ""}
+            {stockLocations.length} total locations
           </p>
         </div>
 
@@ -79,7 +79,7 @@ export function StockLocationsPageClient({
             className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90 gap-2"
           >
             <Plus className="h-4 w-4" />
-            New Stock Location
+            New Location
           </Button>
         </PermissionGuard>
       </div>
