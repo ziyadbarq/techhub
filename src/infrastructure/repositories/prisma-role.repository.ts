@@ -164,7 +164,8 @@ export class PrismaRoleRepository implements IRoleRepository {
       });
 
       const result = rolePermissions.map(
-        (rp) => rp.permission.name as PermissionKey,
+        (rp: { permission: { name: string } }) =>
+          rp.permission.name as PermissionKey,
       );
 
       this.logger.timed(

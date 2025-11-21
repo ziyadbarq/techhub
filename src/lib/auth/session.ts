@@ -1,5 +1,6 @@
 import type { Session, User } from "./better-auth";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 /**
  * Get session on server components
@@ -87,7 +88,7 @@ export async function requireAuth(): Promise<{
   const { session, user } = await getSession();
 
   if (!session || !user) {
-    throw new Error("Unauthorized");
+    redirect("/login");
   }
 
   return { session, user };

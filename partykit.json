@@ -1,6 +1,6 @@
 {
   "$schema": "https://partykit.io/schema.json",
-  "name": "barq-app-boilerplate",
+  "name": "barq-assets",
   "main": "partykit/server.ts",
   "parties": {
     "task-collaboration": "partykit/servers/task-collaboration.ts",

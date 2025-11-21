@@ -18,3 +18,4 @@ export {
   initializeBadges,
   type BadgeRegistry,
 } from "./use-badge-updates";
+export { useSidebarNavigation } from "./use-sidebar-navigation";

@@ -7,12 +7,13 @@
  * - Database operations via Prisma
  * - Error handling and transformations
  *
- * Example CRUD repository for the boilerplate.
+ * Example CRUD repository for the assets app.
  */
 
 import { inject, injectable } from "inversify";
 import type { PrismaClient } from "@/generated/prisma";
 import type { Task as PrismaTask } from "@/generated/prisma";
+import type { TaskStatus as PrismaTaskStatus } from "@/generated/prisma/enums";
 
 import { DI_TOKENS } from "@/di/types";
 import { Task, TaskStatus } from "@/core/domain/entities/task.entity";
@@ -116,7 +117,7 @@ export class PrismaTaskRepository implements ITaskRepository {
       [TaskStatus.COMPLETED]: 0,
     };
 
-    counts.forEach((count) => {
+    counts.forEach((count: { status: PrismaTaskStatus; _count: number }) => {
       result[count.status as TaskStatus] = count._count;
     });
 

@@ -7,7 +7,7 @@
  * - Immutable ID, mutable business fields
  * - Business methods for state transitions
  *
- * Example CRUD entity for the boilerplate.
+ * Example CRUD entity for the assets app.
  */
 
 import { ValidationError } from "../errors/validation.error";

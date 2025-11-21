@@ -1,6 +1,6 @@
-# Barq App Boilerplate
+# Barq Assets
 
-A production-ready **Next.js 16** starter template built with **Clean Architecture**, **Dependency Injection**, and modern best practices. Includes complete **AI infrastructure** (OpenAI with extended caching), a beautiful **theme system** (OKLCH colors, dark mode), and a full **Task CRUD example** demonstrating the architecture.
+An enterprise **CMDB (Configuration Management Database)** and **IT Asset Management (ITAM)** system built with **Next.js 16**, **Clean Architecture**, and **Dependency Injection**. Provides comprehensive infrastructure for managing IT assets, configuration items, organizational structures, and service dependencies with production-grade RBAC, logging, and real-time capabilities.
 
 ## 🚀 Features
 
@@ -49,15 +49,35 @@ A production-ready **Next.js 16** starter template built with **Clean Architectu
 
 ## 📦 What's Included
 
-### Example Task CRUD
+### Foundation Layer (Layer 1)
 
-A complete **Task management feature** demonstrating the architecture:
+Complete implementation of core building blocks for CMDB/ITAM:
+
+- **11 Foundation Entities** - OrganizationUnit, Person, Role, Location, Vendor, Lifecycle models, Field definitions
+- **Hierarchical Structures** - Self-referencing org units and locations with tree queries
+- **Lifecycle Management** - Reusable state machines for CIs, Assets, and Licenses
+- **Dynamic Field System** - Meta-model for defining custom attributes
+- **55 Use Cases** - Complete CRUD operations with business logic and permission checks
+- **Full UI** - TanStack Table, React Hook Form, collapsible navigation
+
+### RBAC & Security
+
+Complete role-based access control system:
+
+- **Merged Role System** - Single entity for RBAC permissions + organizational job roles
+- **Permission Enforcement** - Multi-layer checks (server actions, use cases, UI components, routes)
+- **Audit Logging** - Complete audit trail for all entity operations
+- **Session Management** - Better Auth integration with automatic first-user admin assignment
+
+### Reference Implementation
+
+Task entity kept as architectural reference (hidden from UI):
 
 - **Domain Entity** (`Task`) with business logic and validation
-- **Repository** interface and Prisma implementation
-- **6 Use Cases** (Create, List, Get, Update, Delete, Complete)
-- **Server Actions** (Next.js 15 controllers)
-- **UI Components** (ready to build)
+- **Complete Layer Implementation** - Shows proper Clean Architecture patterns
+- **Use Cases** - Create, List, Get, Update, Delete, Complete with permission checks
+- **Server Actions** - Next.js 16 controllers with Zod validation
+- **UI Components** - TanStack Table with sorting, filtering, pagination, CSV import/export
 
 ### 35+ UI Components
 
@@ -88,8 +108,8 @@ All shadcn/ui primitives included:
 ### Installation
 
 ```bash
-# 1. Clone or navigate to the boilerplate
-cd /Users/abdullahalzuwayed/dev/barq/barq-app-boilerplate
+# 1. Clone or navigate to the assets app
+cd /Users/abdullahalzuwayed/dev/barq/barq-assets
 
 # 2. Install dependencies
 npm install
@@ -336,18 +356,18 @@ Follow the Task CRUD example as a template for your features. The pattern is:
 ## 📖 Documentation
 
 - **[THEME_SYSTEM.md](docs/THEME_SYSTEM.md)** - Complete theme system guide
-- **[BOILERPLATE_STATUS.md](BOILERPLATE_STATUS.md)** - Build status and progress
+- **[ASSETS_STATUS.md](ASSETS_STATUS.md)** - Build status and progress
 - **DEVELOPER_GUIDE.md** - Comprehensive development guide (to be created)
 - **ARCHITECTURE.md** - Architecture deep dive (to be created)
 - **CLAUDE.md** - AI assistant context (to be created)
 
 ## 🤝 Contributing
 
-This is a boilerplate template. Fork it and make it your own!
+This is a assets app template. Fork it and make it your own!
 
 ## 📄 License
 
-MIT License - feel free to use this boilerplate for any project.
+MIT License - feel free to use this assets app for any project.
 
 ## 🙏 Acknowledgments
 
@@ -358,6 +378,6 @@ MIT License - feel free to use this boilerplate for any project.
 
 ---
 
-**Need help?** Check the [BOILERPLATE_STATUS.md](BOILERPLATE_STATUS.md) file for current build status and next steps.
+**Need help?** Check the [ASSETS_STATUS.md](ASSETS_STATUS.md) file for current build status and next steps.
 
 **Ready to build?** Start by exploring the Task CRUD example in `src/core/domain/entities/task.entity.ts` and following the pattern for your own features!

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Production-ready Next.js 16 boilerplate with Clean Architecture, dependency injection, AI integration, and comprehensive UI components. Includes complete Task CRUD example demonstrating all architectural layers.
+Enterprise CMDB (Configuration Management Database) and IT Asset Management (ITAM) system built with Next.js 16, Clean Architecture, and dependency injection. Implements Layer 1 (Foundation) with 11 core entities (OrganizationUnit, Person, Role, Location, Vendor, Lifecycle models, Field definitions). Task entity maintained as architectural reference (hidden from UI).
 
 **Tech Stack**: Next.js 16 (Turbopack), React 19.2, TypeScript 5.9, Prisma 7 (PostgreSQL), shadcn/ui, OpenAI, InversifyJS 7, Zod 4, T3 Env, Pino Logger, BullMQ, Partykit, TanStack Table, React Hook Form, PapaParse
 
@@ -30,7 +30,11 @@ Production-ready Next.js 16 boilerplate with Clean Architecture, dependency inje
     - `params` and `searchParams` are now `Promise<T>` in pages/layouts
     - `cookies()`, `headers()`, and `draftMode()` must be awaited
     - Client components use `useParams()` and `useSearchParams()` hooks (unchanged)
-  - `middleware.ts` still supported for edge runtime (not migrated to `proxy.ts`)
+  - **Proxy Convention** (replaces middleware.ts):
+    - `middleware.ts` deprecated in favor of `proxy.ts` (runs on Node.js runtime)
+    - Migration: rename file and function from `middleware()` to `proxy()`
+    - Codemod available: `npx @next/codemod@latest middleware-to-proxy .`
+    - middleware.ts still works but will be removed in future versions
 - **React 19.2.0**: Built into Next.js 16
   - View Transitions support
   - New hooks: `useActionState`, `useFormStatus`, `useOptimistic`
@@ -120,6 +124,7 @@ npm run reset # Reset database + seed (drops all data!)
 
 ## Infrastructure
 
+- **Database & Migrations**: [docs/guides/DATABASE_MIGRATIONS.md](docs/guides/DATABASE_MIGRATIONS.md) - Prisma migrations workflow, dev vs production, deployment best practices
 - **Build System**: [docs/guides/BUILD_OPTIMIZATION.md](docs/guides/BUILD_OPTIMIZATION.md) - Turbopack, parallel type checking, bundle analysis
 - **Logging**: [docs/guides/LOGGING.md](docs/guides/LOGGING.md) - Pino structured logging, request correlation, performance monitoring, Prisma query tracing, Better Auth debug flags
 - **Background Jobs**: [docs/guides/BACKGROUND_JOBS.md](docs/guides/BACKGROUND_JOBS.md) - BullMQ + Redis job queue
@@ -216,9 +221,28 @@ Follow layers inside-out:
 8. UI components (`src/components/`)
 9. Routes (`src/app/`)
 
-### Task CRUD Example Reference
+### Foundation Layer (Layer 1) - Primary Implementation
 
-Complete implementation demonstrating all layers:
+Complete implementation of 11 core entities:
+
+1. **OrganizationUnit, Person, Role** - Organizational hierarchy and people management
+2. **Location, Vendor, VendorContact** - Geographical and supplier management
+3. **LifecycleModel, LifecycleState, LifecycleTransition** - Reusable state machines
+4. **PersonRoleAssignment** - Many-to-many Person↔Role with temporal data
+5. **FieldDefinition** - Dynamic field meta-model for custom attributes
+
+**Documentation**:
+- [Foundation Layer Guide](docs/guides/FOUNDATION_LAYER.md) - Complete user guide
+- [Entity Reference](docs/guides/ENTITY_REFERENCE.md) - Quick reference
+- [Layer 1 Implementation](docs/architecture/LAYER_1_IMPLEMENTATION.md) - Technical details
+
+**Use Foundation entities as primary reference when implementing new features (Layer 2+).**
+
+### Task Entity - Architectural Reference
+
+**Status**: Maintained as reference implementation, hidden from UI navigation
+
+Complete implementation demonstrating all architectural layers:
 
 1. **Domain Entity**: [src/core/domain/entities/task.entity.ts](src/core/domain/entities/task.entity.ts)
 2. **Repository Interface**: [src/core/repositories/task-repository.interface.ts](src/core/repositories/task-repository.interface.ts)
@@ -228,9 +252,9 @@ Complete implementation demonstrating all layers:
 6. **Controllers**: [src/interface-adapters/controllers/task.controller.ts](src/interface-adapters/controllers/task.controller.ts)
 7. **DTOs**: [src/interface-adapters/dtos/task.dto.ts](src/interface-adapters/dtos/task.dto.ts)
 8. **UI Components**: [src/components/tasks/](src/components/tasks/)
-9. **Routes**: [src/app/tasks/](src/app/tasks/)
+9. **Routes**: [src/app/tasks/](src/app/tasks/) - **Hidden from navigation** (visible: false in navigation.ts)
 
-Use these files as a blueprint when implementing new features.
+Use as secondary reference for understanding Clean Architecture patterns.
 
 ## Common Patterns
 
@@ -465,6 +489,7 @@ try { } catch (_error) { }
 **Developer Guides**:
 
 - [Developer Guide](docs/guides/DEVELOPER_GUIDE.md) - Comprehensive development guide
+- [Database Migrations & Deployment](docs/guides/DATABASE_MIGRATIONS.md) - Prisma migrations workflow and production deployment
 - [RBAC Developer Guide](docs/guides/RBAC_DEVELOPER_GUIDE.md) - Implementing permissions and protecting features
 - [RBAC Admin Guide](docs/guides/RBAC_ADMIN_GUIDE.md) - Managing roles, permissions, and users
 - [Logging Guide](docs/guides/LOGGING.md) - Production-grade logging system

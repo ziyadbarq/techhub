@@ -1,4 +1,4 @@
-// Prisma Schema for Barq App Boilerplate
+// Prisma Schema for Barq Assets
 // Database: PostgreSQL
 
 generator client {
@@ -29,9 +29,11 @@ model User {
   lastLoginAt     DateTime?
 
   // Relations
-  accounts Account[]
-  sessions Session[]
-  roles    UserRole[]
+  accounts       Account[]
+  sessions       Session[]
+  roles          UserRole[]
+  person         Person?          // Optional link to organizational person
+  auditLogsAsUser AuditLogEntry[] @relation("AuditLogChangedByUser")
 
   @@index([email])
   @@map("users")
@@ -105,8 +107,11 @@ model Role {
   createdBy   String?
 
   // Relations
-  permissions RolePermission[]
-  users       UserRole[]
+  permissions              RolePermission[]
+  users                    UserRole[]
+  personsPrimaryRole       Person[]                @relation("PersonPrimaryRole")
+  personRoleAssignments    PersonRoleAssignment[]  @relation("PersonRoleAssignments")
+  lifecycleTransitions     LifecycleTransition[]   @relation("TransitionRequiredRole")
 
   @@index([name])
   @@index([isActive])
@@ -187,7 +192,1196 @@ model AuditLog {
 }
 
 // ============================================
-// TASK MODEL (Example CRUD)
+// FOUNDATION LAYER: Organization, People, Locations, Vendors, Lifecycle
+// ============================================
+
+// OrganizationUnit model
+// Hierarchy: Company > Business Unit > Department > Team
+model OrganizationUnit {
+  id          String                 @id @default(cuid())
+  parentId    String?
+  name        String
+  code        String                 @unique
+  description String?                @db.Text
+  unitType    OrganizationUnitType   @default(OTHER)
+  managerId   String?
+  costCenter  String?
+  level       Int // 1=Company, 2=BU, 3=Dept, 4=Team
+  isActive    Boolean                @default(true)
+  note        String?                @db.Text
+  metadata    Json?
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+
+  // Relations
+  parent             OrganizationUnit?  @relation("OrgUnitHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children           OrganizationUnit[] @relation("OrgUnitHierarchy")
+  manager            Person?            @relation("OrgUnitManager", fields: [managerId], references: [id], onDelete: SetNull)
+  people             Person[]           @relation("PersonOrgUnit")
+  configurationItems ConfigurationItem[]
+  dataOwnerships     DataOwnership[]    @relation("DataOwnershipOrgUnit")
+
+  // Indexes
+  @@index([parentId])
+  @@index([code])
+  @@index([managerId])
+  @@index([isActive])
+  @@index([level])
+  @@index([unitType])
+  @@map("organization_units")
+}
+
+// Person model
+// Organizational people (different from Better Auth User)
+model Person {
+  id              String    @id @default(cuid())
+  userId          String?   @unique // Optional link to Better Auth User
+  firstName       String
+  lastName        String
+  middleName      String?
+  email           String    @unique
+  phone           String?
+  mobile          String?
+  employeeId      String?   @unique
+  orgUnitId       String
+  primaryRoleId   String
+  managerId       String?
+  title           String?
+  locationId      String?
+  department      String?
+  hireDate        DateTime?
+  terminationDate DateTime?
+  isActive        Boolean   @default(true)
+  metadata        Json?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  user                      User?                    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  orgUnit                   OrganizationUnit         @relation("PersonOrgUnit", fields: [orgUnitId], references: [id], onDelete: Restrict)
+  primaryRole               Role                     @relation("PersonPrimaryRole", fields: [primaryRoleId], references: [id], onDelete: Restrict)
+  manager                   Person?                  @relation("PersonManager", fields: [managerId], references: [id], onDelete: SetNull)
+  directReports             Person[]                 @relation("PersonManager")
+  location                  Location?                @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  managedOrgUnits           OrganizationUnit[]       @relation("OrgUnitManager")
+  roleAssignments           PersonRoleAssignment[]
+  configurationItems        ConfigurationItem[]
+  stockMovements            StockMovement[]
+  verificationCampaigns     VerificationCampaign[]
+  verificationItems         VerificationItem[]
+  auditLogsChanged          AuditLogEntry[]          @relation("AuditLogChangedBy")
+  attachments               Attachment[]
+  dataOwnerships            DataOwnership[]          @relation("DataOwnershipPerson")
+
+  // Indexes
+  @@index([userId])
+  @@index([email])
+  @@index([employeeId])
+  @@index([orgUnitId])
+  @@index([primaryRoleId])
+  @@index([managerId])
+  @@index([locationId])
+  @@index([isActive])
+  @@map("persons")
+}
+
+// PersonRoleAssignment model
+// Many-to-many Person-Role with temporal data
+model PersonRoleAssignment {
+  id        String    @id @default(cuid())
+  personId  String
+  roleId    String
+  scope     String?
+  startDate DateTime  @default(now())
+  endDate   DateTime?
+  isPrimary Boolean   @default(false)
+  isActive  Boolean   @default(true)
+  note      String?   @db.Text
+  metadata  Json?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+  role   Role   @relation("PersonRoleAssignments", fields: [roleId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([personId])
+  @@index([roleId])
+  @@index([isPrimary])
+  @@index([startDate, endDate])
+  @@map("person_role_assignments")
+}
+
+// Location model
+// Hierarchy: Country > City > Campus > Building > Floor > Room > Rack
+model Location {
+  id           String       @id @default(cuid())
+  parentId     String?
+  name         String
+  code         String       @unique
+  description  String?      @db.Text
+  locationType LocationType
+  address      String?
+  addressLine1 String?
+  addressLine2 String?
+  city         String?
+  state        String?
+  country      String?
+  postalCode   String?
+  latitude     Decimal?     @db.Decimal(10, 7)
+  longitude    Decimal?     @db.Decimal(10, 7)
+  timeZone     String?
+  isActive     Boolean      @default(true)
+  metadata     Json?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  // Relations
+  parent             Location?            @relation("LocationHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children           Location[]           @relation("LocationHierarchy")
+  persons            Person[]
+  stockLocations     StockLocation[]
+  configurationItems ConfigurationItem[]
+
+  // Indexes
+  @@index([parentId])
+  @@index([code])
+  @@index([locationType])
+  @@index([city])
+  @@index([country])
+  @@index([isActive])
+  @@map("locations")
+}
+
+// Vendor model
+model Vendor {
+  id           String     @id @default(cuid())
+  name         String
+  code         String     @unique
+  legalName    String?
+  description  String?    @db.Text
+  vendorType   VendorType @default(OTHER)
+  taxId        String?
+  website      String?
+  email        String?
+  phone        String?
+  address      String?
+  city         String?
+  state        String?
+  country      String?
+  postalCode   String?
+  paymentTerms String?    @db.Text
+  isPreferred  Boolean    @default(false)
+  isActive     Boolean    @default(true)
+  tags         String[]
+  note         String?    @db.Text
+  metadata     Json?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  // Relations
+  contacts        VendorContact[]
+  assetModels     AssetModel[]
+  assets          Asset[]
+  contracts       Contract[]
+  licenseProducts LicenseProduct[]
+
+  // Indexes
+  @@index([name])
+  @@index([code])
+  @@index([email])
+  @@index([vendorType])
+  @@index([isActive])
+  @@index([isPreferred])
+  @@map("vendors")
+}
+
+// VendorContact model
+model VendorContact {
+  id        String   @id @default(cuid())
+  vendorId  String
+  firstName String
+  lastName  String
+  title     String?
+  email     String?
+  phone     String?
+  mobile    String?
+  role      String? // Account manager, Support, Sales, etc.
+  isPrimary Boolean  @default(false)
+  isActive  Boolean  @default(true)
+  note      String?  @db.Text
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([vendorId])
+  @@index([email])
+  @@index([isPrimary])
+  @@map("vendor_contacts")
+}
+
+// LifecycleModel model
+// Reusable state machine definitions (for CIs, Assets, Licenses)
+model LifecycleModel {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  states          LifecycleState[]
+  transitions     LifecycleTransition[]
+  ciClasses       CIClass[]
+  assetCategories AssetCategory[]
+  licenseProducts LicenseProduct[]
+
+  // Indexes
+  @@index([name])
+  @@map("lifecycle_models")
+}
+
+// LifecycleState model
+model LifecycleState {
+  id               String    @id @default(cuid())
+  lifecycleModelId String
+  name             String
+  code             String
+  description      String?   @db.Text
+  stateType        StateType @default(ACTIVE)
+  isActiveState    Boolean   @default(false) // true if considered in-use/active
+  isTerminalState  Boolean   @default(false) // true if end-of-life
+  sortOrder        Int
+  isActive         Boolean   @default(true)
+  metadata         Json?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  // Relations
+  lifecycleModel      LifecycleModel        @relation(fields: [lifecycleModelId], references: [id], onDelete: Cascade)
+  transitionsFrom     LifecycleTransition[] @relation("TransitionFrom")
+  transitionsTo       LifecycleTransition[] @relation("TransitionTo")
+  configurationItems  ConfigurationItem[]
+  assets              Asset[]
+
+  // Indexes
+  @@unique([lifecycleModelId, code])
+  @@index([lifecycleModelId])
+  @@index([code])
+  @@index([sortOrder])
+  @@index([stateType])
+  @@map("lifecycle_states")
+}
+
+// LifecycleTransition model
+model LifecycleTransition {
+  id               String   @id @default(cuid())
+  lifecycleModelId String
+  name             String
+  description      String?  @db.Text
+  fromStateId      String
+  toStateId        String
+  requiredRoleId   String? // Optional: role required to execute transition
+  requiresApproval Boolean  @default(false)
+  approvalPolicy   Json? // JSON rule definition
+  conditions       Json?
+  isAutomated      Boolean  @default(false)
+  isActive         Boolean  @default(true)
+  metadata         Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  lifecycleModel LifecycleModel @relation(fields: [lifecycleModelId], references: [id], onDelete: Cascade)
+  fromState      LifecycleState @relation("TransitionFrom", fields: [fromStateId], references: [id], onDelete: Cascade)
+  toState        LifecycleState @relation("TransitionTo", fields: [toStateId], references: [id], onDelete: Cascade)
+  requiredRole   Role?          @relation("TransitionRequiredRole", fields: [requiredRoleId], references: [id], onDelete: SetNull)
+
+  // Indexes
+  @@unique([lifecycleModelId, fromStateId, toStateId])
+  @@index([lifecycleModelId])
+  @@index([fromStateId])
+  @@index([toStateId])
+  @@index([requiredRoleId])
+  @@map("lifecycle_transitions")
+}
+
+// FieldDefinition model
+// Meta-model for dynamic attributes
+model FieldDefinition {
+  id              String            @id @default(cuid())
+  name            String            @unique // internal name, e.g. cpu_cores
+  label           String // display label
+  dataType        FieldDataTypeEnum
+  description     String?           @db.Text
+  entityType      String
+  isGlobal        Boolean           @default(false) // true if reusable across many domains
+  isRequired      Boolean           @default(false)
+  isUnique        Boolean           @default(false)
+  validationRules Json? // min/max, regex, etc.
+  defaultValue    Json?
+  enumOptions     Json? // for ENUM data_type
+  uiGroup         String? // group/tab in UI
+  uiOrder         Int               @default(0)
+  displayOrder    Int               @default(0)
+  isSearchable    Boolean           @default(false)
+  isFilterable    Boolean           @default(false)
+  isActive        Boolean           @default(true)
+  metadata        Json?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  // Relations
+  ciClassFields       CIClassField[]
+  assetCategoryFields AssetCategoryField[]
+  licenseProductFields LicenseProductField[]
+
+  // Indexes
+  @@index([name])
+  @@index([dataType])
+  @@index([entityType])
+  @@index([isGlobal])
+  @@index([isActive])
+  @@map("field_definitions")
+}
+
+// ============================================
+// CMDB: CI CLASSES, CONFIGURATION ITEMS, RELATIONSHIPS
+// ============================================
+
+// CIClass model
+model CIClass {
+  id                  String         @id @default(cuid())
+  name                String         @unique
+  code                String         @unique
+  parentClassId       String?
+  description         String?        @db.Text
+  lifecycleModelId    String?
+  defaultCriticality  CriticalityEnum?
+  defaultEnvironment  EnvironmentEnum?
+  isDiscoverable      Boolean        @default(false)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  // Relations
+  parentClass        CIClass?               @relation("CIClassHierarchy", fields: [parentClassId], references: [id], onDelete: Restrict)
+  childClasses       CIClass[]              @relation("CIClassHierarchy")
+  lifecycleModel     LifecycleModel?        @relation(fields: [lifecycleModelId], references: [id], onDelete: SetNull)
+  fields             CIClassField[]
+  configurationItems ConfigurationItem[]
+  relationshipTypeScopesFrom RelationshipTypeScope[] @relation("RelationshipTypeScopeFrom")
+  relationshipTypeScopesTo   RelationshipTypeScope[] @relation("RelationshipTypeScopeTo")
+  dataOwnerships     DataOwnership[]
+
+  // Indexes
+  @@index([parentClassId])
+  @@index([code])
+  @@index([lifecycleModelId])
+  @@map("ci_classes")
+}
+
+// CIClassField model
+model CIClassField {
+  id                String   @id @default(cuid())
+  ciClassId         String
+  fieldDefinitionId String
+  isRequired        Boolean  @default(false)
+  isUnique          Boolean  @default(false)
+  isVisible         Boolean  @default(true)
+  defaultValue      Json?
+  uiOrder           Int      @default(0)
+  note              String?  @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  ciClass         CIClass         @relation(fields: [ciClassId], references: [id], onDelete: Cascade)
+  fieldDefinition FieldDefinition @relation(fields: [fieldDefinitionId], references: [id], onDelete: Restrict)
+
+  // Indexes
+  @@unique([ciClassId, fieldDefinitionId])
+  @@index([ciClassId])
+  @@index([fieldDefinitionId])
+  @@map("ci_class_fields")
+}
+
+// ConfigurationItem model
+model ConfigurationItem {
+  id                    String           @id @default(cuid())
+  name                  String
+  ciClassId             String
+  lifecycleStateId      String?
+  criticality           CriticalityEnum?
+  environment           EnvironmentEnum?
+  primaryOwnerPersonId  String?
+  primaryOwnerOrgUnitId String?
+  locationId            String?
+  linkedAssetId         String?
+  ciKey                 String?          @unique // unique business key, e.g. hostname
+  description           String?          @db.Text
+  attributes            Json? // dynamic fields per CIClassField
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+
+  // Relations
+  ciClass             CIClass            @relation(fields: [ciClassId], references: [id], onDelete: Restrict)
+  lifecycleState      LifecycleState?    @relation(fields: [lifecycleStateId], references: [id], onDelete: SetNull)
+  primaryOwnerPerson  Person?            @relation(fields: [primaryOwnerPersonId], references: [id], onDelete: SetNull)
+  primaryOwnerOrgUnit OrganizationUnit?  @relation(fields: [primaryOwnerOrgUnitId], references: [id], onDelete: SetNull)
+  location            Location?          @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  linkedAsset         Asset?             @relation(fields: [linkedAssetId], references: [id], onDelete: SetNull)
+  relationshipsFrom   CIRelationship[]   @relation("CIRelationshipFrom")
+  relationshipsTo     CIRelationship[]   @relation("CIRelationshipTo")
+
+  // Indexes
+  @@index([ciClassId])
+  @@index([lifecycleStateId])
+  @@index([primaryOwnerPersonId])
+  @@index([primaryOwnerOrgUnitId])
+  @@index([locationId])
+  @@index([ciKey])
+  @@index([name])
+  @@map("configuration_items")
+}
+
+// RelationshipType model
+model RelationshipType {
+  id          String                      @id @default(cuid())
+  name        String                      @unique
+  code        String                      @unique
+  description String?                     @db.Text
+  direction   RelationshipDirectionEnum
+  isImpacting Boolean                     @default(false) // if failure of "to" impacts "from"
+  createdAt   DateTime                    @default(now())
+  updatedAt   DateTime                    @updatedAt
+
+  // Relations
+  scopes        RelationshipTypeScope[]
+  relationships CIRelationship[]
+
+  // Indexes
+  @@index([code])
+  @@map("relationship_types")
+}
+
+// RelationshipTypeScope model
+model RelationshipTypeScope {
+  id                 String   @id @default(cuid())
+  relationshipTypeId String
+  fromCiClassId      String
+  toCiClassId        String
+  note               String?  @db.Text
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  // Relations
+  relationshipType RelationshipType @relation(fields: [relationshipTypeId], references: [id], onDelete: Cascade)
+  fromCiClass      CIClass          @relation("RelationshipTypeScopeFrom", fields: [fromCiClassId], references: [id], onDelete: Cascade)
+  toCiClass        CIClass          @relation("RelationshipTypeScopeTo", fields: [toCiClassId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@unique([relationshipTypeId, fromCiClassId, toCiClassId])
+  @@index([relationshipTypeId])
+  @@index([fromCiClassId])
+  @@index([toCiClassId])
+  @@map("relationship_type_scopes")
+}
+
+// CIRelationship model
+model CIRelationship {
+  id                 String    @id @default(cuid())
+  fromCiId           String
+  toCiId             String
+  relationshipTypeId String
+  isActive           Boolean   @default(true)
+  validFrom          DateTime  @default(now())
+  validTo            DateTime?
+  note               String?   @db.Text
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  // Relations
+  fromCi           ConfigurationItem @relation("CIRelationshipFrom", fields: [fromCiId], references: [id], onDelete: Cascade)
+  toCi             ConfigurationItem @relation("CIRelationshipTo", fields: [toCiId], references: [id], onDelete: Cascade)
+  relationshipType RelationshipType  @relation(fields: [relationshipTypeId], references: [id], onDelete: Restrict)
+
+  // Indexes
+  @@unique([fromCiId, toCiId, relationshipTypeId])
+  @@index([fromCiId])
+  @@index([toCiId])
+  @@index([relationshipTypeId])
+  @@index([isActive])
+  @@map("ci_relationships")
+}
+
+// ============================================
+// IT ASSET MANAGEMENT (ITAM): ASSETS, MODELS, STOCK
+// ============================================
+
+// AssetCategory model
+model AssetCategory {
+  id               String          @id @default(cuid())
+  name             String          @unique
+  code             String          @unique
+  description      String?         @db.Text
+  lifecycleModelId String?
+  isConsumable     Boolean         @default(false) // true for items like cables, mice
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  // Relations
+  lifecycleModel LifecycleModel?        @relation(fields: [lifecycleModelId], references: [id], onDelete: SetNull)
+  fields         AssetCategoryField[]
+  assetModels    AssetModel[]
+  assets         Asset[]
+  dataOwnerships DataOwnership[]
+
+  // Indexes
+  @@index([code])
+  @@index([lifecycleModelId])
+  @@map("asset_categories")
+}
+
+// AssetCategoryField model
+model AssetCategoryField {
+  id                String   @id @default(cuid())
+  assetCategoryId   String
+  fieldDefinitionId String
+  isRequired        Boolean  @default(false)
+  isUnique          Boolean  @default(false)
+  isVisible         Boolean  @default(true)
+  uiOrder           Int      @default(0)
+  defaultValue      Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  assetCategory   AssetCategory   @relation(fields: [assetCategoryId], references: [id], onDelete: Cascade)
+  fieldDefinition FieldDefinition @relation(fields: [fieldDefinitionId], references: [id], onDelete: Restrict)
+
+  // Indexes
+  @@unique([assetCategoryId, fieldDefinitionId])
+  @@index([assetCategoryId])
+  @@index([fieldDefinitionId])
+  @@map("asset_category_fields")
+}
+
+// AssetModel model
+model AssetModel {
+  id                    String   @id @default(cuid())
+  assetCategoryId       String
+  vendorId              String
+  name                  String
+  code                  String   @unique
+  description           String?  @db.Text
+  defaultWarrantyMonths Int?
+  defaultAttributes     Json? // default specs: RAM, CPU, screen size, etc.
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  // Relations
+  assetCategory AssetCategory @relation(fields: [assetCategoryId], references: [id], onDelete: Restrict)
+  vendor        Vendor        @relation(fields: [vendorId], references: [id], onDelete: Restrict)
+  assets        Asset[]
+
+  // Indexes
+  @@index([code])
+  @@index([assetCategoryId])
+  @@index([vendorId])
+  @@map("asset_models")
+}
+
+// StockLocation model
+model StockLocation {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  locationId  String?
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  location                Location?        @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  assets                  Asset[]
+  stockMovementsFrom      StockMovement[]  @relation("StockMovementFrom")
+  stockMovementsTo        StockMovement[]  @relation("StockMovementTo")
+
+  // Indexes
+  @@index([code])
+  @@index([locationId])
+  @@map("stock_locations")
+}
+
+// StockMovement model
+model StockMovement {
+  id                   String                @id @default(cuid())
+  movementType         StockMovementTypeEnum
+  stockLocationFromId  String?
+  stockLocationToId    String?
+  assetId              String?
+  quantity             Int                   @default(1)
+  reason               String?               @db.Text
+  performedById        String
+  occurredAt           DateTime              @default(now())
+  createdAt            DateTime              @default(now())
+
+  // Relations
+  stockLocationFrom StockLocation? @relation("StockMovementFrom", fields: [stockLocationFromId], references: [id], onDelete: SetNull)
+  stockLocationTo   StockLocation? @relation("StockMovementTo", fields: [stockLocationToId], references: [id], onDelete: SetNull)
+  asset             Asset?         @relation(fields: [assetId], references: [id], onDelete: SetNull)
+  performedBy       Person         @relation(fields: [performedById], references: [id], onDelete: Restrict)
+
+  // Indexes
+  @@index([movementType])
+  @@index([stockLocationFromId])
+  @@index([stockLocationToId])
+  @@index([assetId])
+  @@index([performedById])
+  @@index([occurredAt])
+  @@map("stock_movements")
+}
+
+// Asset model
+model Asset {
+  id                      String    @id @default(cuid())
+  assetTag                String    @unique
+  assetCategoryId         String
+  assetModelId            String?
+  vendorId                String?
+  contractId              String?
+  lifecycleStateId        String?
+  serialNumber            String?   @unique
+  purchaseDate            DateTime?
+  purchaseCost            Decimal?  @db.Decimal(12, 2)
+  currency                String?
+  depreciationModel       String?
+  depreciationStart       DateTime?
+  depreciationEnd         DateTime?
+  warrantyEndDate         DateTime?
+  currentStockLocationId  String?
+  attributes              Json? // dynamic fields per AssetCategoryField
+  note                    String?   @db.Text
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+
+  // Relations
+  assetCategory        AssetCategory         @relation(fields: [assetCategoryId], references: [id], onDelete: Restrict)
+  assetModel           AssetModel?           @relation(fields: [assetModelId], references: [id], onDelete: SetNull)
+  vendor               Vendor?               @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  contract             Contract?             @relation(fields: [contractId], references: [id], onDelete: SetNull)
+  lifecycleState       LifecycleState?       @relation(fields: [lifecycleStateId], references: [id], onDelete: SetNull)
+  currentStockLocation StockLocation?        @relation(fields: [currentStockLocationId], references: [id], onDelete: SetNull)
+  configurationItems   ConfigurationItem[]
+  stockMovements       StockMovement[]
+  assetAssignments     AssetAssignment[]
+
+  // Indexes
+  @@index([assetTag])
+  @@index([assetCategoryId])
+  @@index([assetModelId])
+  @@index([vendorId])
+  @@index([contractId])
+  @@index([lifecycleStateId])
+  @@index([serialNumber])
+  @@index([currentStockLocationId])
+  @@map("assets")
+}
+
+// AssetAssignment model
+model AssetAssignment {
+  id           String            @id @default(cuid())
+  assetId      String
+  assigneeType AssigneeTypeEnum
+  assigneeId   String // points to Person/OrgUnit/Location/CI depending on type
+  startDate    DateTime          @default(now())
+  endDate      DateTime?
+  isPrimary    Boolean           @default(false)
+  note         String?           @db.Text
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  // Relations
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([assetId])
+  @@index([assigneeType, assigneeId])
+  @@index([startDate, endDate])
+  @@map("asset_assignments")
+}
+
+// ============================================
+// CONTRACTS, WARRANTIES, LICENSES
+// ============================================
+
+// ContractType model
+model ContractType {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String   @unique
+  description String?  @db.Text
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  contracts Contract[]
+
+  // Indexes
+  @@index([code])
+  @@index([isActive])
+  @@map("contract_types")
+}
+
+// Contract model
+model Contract {
+  id             String    @id @default(cuid())
+  contractTypeId String
+  vendorId       String
+  name           String
+  contractNumber String?   @unique
+  startDate      DateTime
+  endDate        DateTime?
+  autoRenew      Boolean   @default(false)
+  renewalTerms   String?   @db.Text
+  slaDefinition  Json? // SLA rules
+  totalValue     Decimal?  @db.Decimal(12, 2)
+  currency       String?
+  note           String?   @db.Text
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Relations
+  contractType          ContractType           @relation(fields: [contractTypeId], references: [id], onDelete: Restrict)
+  vendor                Vendor                 @relation(fields: [vendorId], references: [id], onDelete: Restrict)
+  assets                Asset[]
+  linkedObjects         ContractLinkedObject[]
+  licenseEntitlements   LicenseEntitlement[]
+
+  // Indexes
+  @@index([contractTypeId])
+  @@index([vendorId])
+  @@index([contractNumber])
+  @@index([startDate, endDate])
+  @@map("contracts")
+}
+
+// ContractLinkedObject model
+// Polymorphic relation: targetType + targetId handled at application level
+model ContractLinkedObject {
+  id         String                 @id @default(cuid())
+  contractId String
+  targetType TargetObjectTypeEnum
+  targetId   String // CI.id / Asset.id / LicenseEntitlement.id (no FK - polymorphic)
+  note       String?                @db.Text
+  createdAt  DateTime               @default(now())
+
+  // Relations
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([contractId])
+  @@index([targetType, targetId])
+  @@map("contract_linked_objects")
+}
+
+// LicenseProduct model
+model LicenseProduct {
+  id               String          @id @default(cuid())
+  name             String          @unique
+  code             String          @unique
+  vendorId         String
+  metricType       String // per_device, per_user, per_core, per_vm, per_cluster
+  description      String?         @db.Text
+  lifecycleModelId String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  // Relations
+  vendor              Vendor                @relation(fields: [vendorId], references: [id], onDelete: Restrict)
+  lifecycleModel      LifecycleModel?       @relation(fields: [lifecycleModelId], references: [id], onDelete: SetNull)
+  fields              LicenseProductField[]
+  licenseEntitlements LicenseEntitlement[]
+
+  // Indexes
+  @@index([code])
+  @@index([vendorId])
+  @@index([lifecycleModelId])
+  @@map("license_products")
+}
+
+// LicenseProductField model
+model LicenseProductField {
+  id                String   @id @default(cuid())
+  licenseProductId  String
+  fieldDefinitionId String
+  isRequired        Boolean  @default(false)
+  isVisible         Boolean  @default(true)
+  uiOrder           Int      @default(0)
+  defaultValue      Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  licenseProduct  LicenseProduct  @relation(fields: [licenseProductId], references: [id], onDelete: Cascade)
+  fieldDefinition FieldDefinition @relation(fields: [fieldDefinitionId], references: [id], onDelete: Restrict)
+
+  // Indexes
+  @@unique([licenseProductId, fieldDefinitionId])
+  @@index([licenseProductId])
+  @@index([fieldDefinitionId])
+  @@map("license_product_fields")
+}
+
+// LicenseEntitlement model
+model LicenseEntitlement {
+  id                 String    @id @default(cuid())
+  licenseProductId   String
+  contractId         String?
+  purchasedQuantity  Int
+  effectiveStart     DateTime
+  effectiveEnd       DateTime?
+  allowedScope       Json? // e.g. regions, departments, environments
+  note               String?   @db.Text
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  // Relations
+  licenseProduct     LicenseProduct      @relation(fields: [licenseProductId], references: [id], onDelete: Restrict)
+  contract           Contract?           @relation(fields: [contractId], references: [id], onDelete: SetNull)
+  allocations        LicenseAllocation[]
+
+  // Indexes
+  @@index([licenseProductId])
+  @@index([contractId])
+  @@index([effectiveStart, effectiveEnd])
+  @@map("license_entitlements")
+}
+
+// LicenseAllocation model
+// Polymorphic relation: targetType + targetId handled at application level
+model LicenseAllocation {
+  id                     String                      @id @default(cuid())
+  licenseEntitlementId   String
+  targetType             AllocationTargetTypeEnum
+  targetId               String // Person.id / ConfigurationItem.id / Asset.id (no FK - polymorphic)
+  allocatedQuantity      Int
+  allocatedAt            DateTime                    @default(now())
+  deallocatedAt          DateTime?
+  note                   String?                     @db.Text
+  createdAt              DateTime                    @default(now())
+  updatedAt              DateTime                    @updatedAt
+
+  // Relations
+  licenseEntitlement LicenseEntitlement @relation(fields: [licenseEntitlementId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([licenseEntitlementId])
+  @@index([targetType, targetId])
+  @@index([allocatedAt])
+  @@map("license_allocations")
+}
+
+// ============================================
+// GOVERNANCE: DATA DOMAINS, OWNERSHIP, VERIFICATION
+// ============================================
+
+// DataDomain model
+model DataDomain {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String   @unique
+  description String?  @db.Text
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  dataOwnerships DataOwnership[]
+
+  // Indexes
+  @@index([code])
+  @@index([isActive])
+  @@map("data_domains")
+}
+
+// DataOwnership model
+model DataOwnership {
+  id                String   @id @default(cuid())
+  dataDomainId      String
+  ciClassId         String?
+  assetCategoryId   String?
+  ownerPersonId     String?
+  ownerOrgUnitId    String?
+  note              String?  @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  dataDomain      DataDomain        @relation(fields: [dataDomainId], references: [id], onDelete: Cascade)
+  ciClass         CIClass?          @relation(fields: [ciClassId], references: [id], onDelete: Cascade)
+  assetCategory   AssetCategory?    @relation(fields: [assetCategoryId], references: [id], onDelete: Cascade)
+  ownerPerson     Person?           @relation("DataOwnershipPerson", fields: [ownerPersonId], references: [id], onDelete: SetNull)
+  ownerOrgUnit    OrganizationUnit? @relation("DataOwnershipOrgUnit", fields: [ownerOrgUnitId], references: [id], onDelete: SetNull)
+
+  // Indexes
+  @@index([dataDomainId])
+  @@index([ciClassId])
+  @@index([assetCategoryId])
+  @@index([ownerPersonId])
+  @@index([ownerOrgUnitId])
+  @@map("data_ownerships")
+}
+
+// VerificationCampaign model
+model VerificationCampaign {
+  id               String                 @id @default(cuid())
+  name             String
+  description      String?                @db.Text
+  targetType       TargetObjectTypeEnum // CI or ASSET
+  filterDefinition Json? // selection rules (by class, category, location, etc.)
+  scheduledStart   DateTime
+  scheduledEnd     DateTime?
+  createdById      String
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+
+  // Relations
+  createdBy Person              @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  items     VerificationItem[]
+
+  // Indexes
+  @@index([targetType])
+  @@index([createdById])
+  @@index([scheduledStart, scheduledEnd])
+  @@map("verification_campaigns")
+}
+
+// VerificationItem model
+model VerificationItem {
+  id                       String                   @id @default(cuid())
+  verificationCampaignId   String
+  targetType               TargetObjectTypeEnum
+  targetId                 String
+  verifierPersonId         String?
+  status                   VerificationStatusEnum
+  verifiedAt               DateTime?
+  comment                  String?                  @db.Text
+  createdAt                DateTime                 @default(now())
+  updatedAt                DateTime                 @updatedAt
+
+  // Relations
+  verificationCampaign VerificationCampaign @relation(fields: [verificationCampaignId], references: [id], onDelete: Cascade)
+  verifierPerson       Person?              @relation(fields: [verifierPersonId], references: [id], onDelete: SetNull)
+
+  // Indexes
+  @@index([verificationCampaignId])
+  @@index([targetType, targetId])
+  @@index([verifierPersonId])
+  @@index([status])
+  @@map("verification_items")
+}
+
+// AuditLogEntry model (Foundation audit log for CMDB/ITAM)
+model AuditLogEntry {
+  id            String                 @id @default(cuid())
+  targetType    TargetObjectTypeEnum
+  targetId      String
+  fieldName       String?
+  oldValue        String?                @db.Text
+  newValue        String?                @db.Text
+  changedById     String
+  changedByUserId String?                // Optional User link (for direct user actions)
+  changedAt       DateTime               @default(now())
+  sourceSystem    String?                // UI, API, Discovery, Import
+  note            String?                @db.Text
+
+  // Relations
+  changedBy     Person @relation("AuditLogChangedBy", fields: [changedById], references: [id], onDelete: Restrict)
+  changedByUser User?  @relation("AuditLogChangedByUser", fields: [changedByUserId], references: [id], onDelete: Restrict)
+
+  // Indexes
+  @@index([targetType, targetId])
+  @@index([changedById])
+  @@index([changedByUserId])
+  @@index([changedAt])
+  @@map("audit_log_entries")
+}
+
+// ============================================
+// ATTACHMENTS (DIAGRAMS, INVOICES, DOCUMENTS)
+// ============================================
+
+// AttachmentType model
+model AttachmentType {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String   @unique
+  description String?  @db.Text
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  attachments Attachment[]
+
+  // Indexes
+  @@index([code])
+  @@index([isActive])
+  @@map("attachment_types")
+}
+
+// Attachment model
+model Attachment {
+  id               String                 @id @default(cuid())
+  attachmentTypeId String
+  targetType       TargetObjectTypeEnum
+  targetId         String // CI / Asset / Contract / LicenseEntitlement
+  fileName         String
+  filePath         String // or external URL if stored in object storage/DMS
+  mimeType         String?
+  sizeBytes        BigInt?
+  uploadedById     String
+  uploadedAt       DateTime               @default(now())
+  note             String?                @db.Text
+
+  // Relations
+  attachmentType AttachmentType @relation(fields: [attachmentTypeId], references: [id], onDelete: Restrict)
+  uploadedBy     Person         @relation(fields: [uploadedById], references: [id], onDelete: Restrict)
+
+  // Indexes
+  @@index([attachmentTypeId])
+  @@index([targetType, targetId])
+  @@index([uploadedById])
+  @@index([uploadedAt])
+  @@map("attachments")
+}
+
+// ============================================
+// FOUNDATION ENUMS
+// ============================================
+
+enum EnvironmentEnum {
+  PROD
+  UAT
+  DEV
+  DR
+  TEST
+  OTHER
+}
+
+enum CriticalityEnum {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum AssigneeTypeEnum {
+  PERSON
+  ORG_UNIT
+  LOCATION
+  CI
+}
+
+enum AllocationTargetTypeEnum {
+  PERSON
+  CI
+  ASSET
+}
+
+enum TargetObjectTypeEnum {
+  CI
+  ASSET
+  LICENSE_ENTITLEMENT
+  CONTRACT
+}
+
+enum StockMovementTypeEnum {
+  IN
+  OUT
+  TRANSFER
+  ADJUSTMENT
+}
+
+enum FieldDataTypeEnum {
+  STRING
+  TEXT
+  INTEGER
+  DECIMAL
+  BOOLEAN
+  DATE
+  DATETIME
+  ENUM
+  JSON
+  CI_REFERENCE
+  PERSON_REFERENCE
+  ORG_UNIT_REFERENCE
+  LOCATION_REFERENCE
+}
+
+enum RelationshipDirectionEnum {
+  UNIDIRECTIONAL
+  BIDIRECTIONAL
+}
+
+enum VerificationStatusEnum {
+  PENDING
+  IN_PROGRESS
+  VERIFIED
+  EXCEPTION
+}
+
+enum OrganizationUnitType {
+  COMPANY
+  BUSINESS_UNIT
+  DEPARTMENT
+  TEAM
+  DIVISION
+  OTHER
+}
+
+enum VendorType {
+  MANUFACTURER
+  RESELLER
+  SERVICE_PROVIDER
+  CONSULTANT
+  CONTRACTOR
+  OTHER
+}
+
+enum LocationType {
+  COUNTRY
+  CITY
+  CAMPUS
+  BUILDING
+  FLOOR
+  ROOM
+  RACK
+  DATA_CENTER
+  CLOUD_REGION
+  PHYSICAL
+  LOGICAL
+  ZONE
+  AREA
+}
+
+enum StateType {
+  INITIAL
+  ACTIVE
+  INACTIVE
+  TERMINAL
+  TRANSITION
+}
+
+// ============================================
+// TASK MODEL (Example CRUD - kept as reference)
 // ============================================
 
 // Task model

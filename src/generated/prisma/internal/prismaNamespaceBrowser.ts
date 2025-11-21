@@ -63,6 +63,43 @@ export const ModelName = {
   RolePermission: "RolePermission",
   UserRole: "UserRole",
   AuditLog: "AuditLog",
+  OrganizationUnit: "OrganizationUnit",
+  Person: "Person",
+  PersonRoleAssignment: "PersonRoleAssignment",
+  Location: "Location",
+  Vendor: "Vendor",
+  VendorContact: "VendorContact",
+  LifecycleModel: "LifecycleModel",
+  LifecycleState: "LifecycleState",
+  LifecycleTransition: "LifecycleTransition",
+  FieldDefinition: "FieldDefinition",
+  CIClass: "CIClass",
+  CIClassField: "CIClassField",
+  ConfigurationItem: "ConfigurationItem",
+  RelationshipType: "RelationshipType",
+  RelationshipTypeScope: "RelationshipTypeScope",
+  CIRelationship: "CIRelationship",
+  AssetCategory: "AssetCategory",
+  AssetCategoryField: "AssetCategoryField",
+  AssetModel: "AssetModel",
+  StockLocation: "StockLocation",
+  StockMovement: "StockMovement",
+  Asset: "Asset",
+  AssetAssignment: "AssetAssignment",
+  ContractType: "ContractType",
+  Contract: "Contract",
+  ContractLinkedObject: "ContractLinkedObject",
+  LicenseProduct: "LicenseProduct",
+  LicenseProductField: "LicenseProductField",
+  LicenseEntitlement: "LicenseEntitlement",
+  LicenseAllocation: "LicenseAllocation",
+  DataDomain: "DataDomain",
+  DataOwnership: "DataOwnership",
+  VerificationCampaign: "VerificationCampaign",
+  VerificationItem: "VerificationItem",
+  AuditLogEntry: "AuditLogEntry",
+  AttachmentType: "AttachmentType",
+  Attachment: "Attachment",
   Task: "Task",
   PromptBlock: "PromptBlock",
   PromptComposition: "PromptComposition",
@@ -215,6 +252,655 @@ export const AuditLogScalarFieldEnum = {
 
 export type AuditLogScalarFieldEnum =
   (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum];
+
+export const OrganizationUnitScalarFieldEnum = {
+  id: "id",
+  parentId: "parentId",
+  name: "name",
+  code: "code",
+  description: "description",
+  unitType: "unitType",
+  managerId: "managerId",
+  costCenter: "costCenter",
+  level: "level",
+  isActive: "isActive",
+  note: "note",
+  metadata: "metadata",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type OrganizationUnitScalarFieldEnum =
+  (typeof OrganizationUnitScalarFieldEnum)[keyof typeof OrganizationUnitScalarFieldEnum];
+
+export const PersonScalarFieldEnum = {
+  id: "id",
+  userId: "userId",
+  firstName: "firstName",
+  lastName: "lastName",
+  middleName: "middleName",
+  email: "email",
+  phone: "phone",
+  mobile: "mobile",
+  employeeId: "employeeId",
+  orgUnitId: "orgUnitId",
+  primaryRoleId: "primaryRoleId",
+  managerId: "managerId",
+  title: "title",
+  locationId: "locationId",
+  department: "department",
+  hireDate: "hireDate",
+  terminationDate: "terminationDate",
+  isActive: "isActive",
+  metadata: "metadata",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type PersonScalarFieldEnum =
+  (typeof PersonScalarFieldEnum)[keyof typeof PersonScalarFieldEnum];
+
+export const PersonRoleAssignmentScalarFieldEnum = {
+  id: "id",
+  personId: "personId",
+  roleId: "roleId",
+  scope: "scope",
+  startDate: "startDate",
+  endDate: "endDate",
+  isPrimary: "isPrimary",
+  isActive: "isActive",
+  note: "note",
+  metadata: "metadata",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type PersonRoleAssignmentScalarFieldEnum =
+  (typeof PersonRoleAssignmentScalarFieldEnum)[keyof typeof PersonRoleAssignmentScalarFieldEnum];
+
+export const LocationScalarFieldEnum = {
+  id: "id",
+  parentId: "parentId",
+  name: "name",
+  code: "code",
+  description: "description",
+  locationType: "locationType",
+  address: "address",
+  addressLine1: "addressLine1",
+  addressLine2: "addressLine2",
+  city: "city",
+  state: "state",
+  country: "country",
+  postalCode: "postalCode",
+  latitude: "latitude",
+  longitude: "longitude",
+  timeZone: "timeZone",
+  isActive: "isActive",
+  metadata: "metadata",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type LocationScalarFieldEnum =
+  (typeof LocationScalarFieldEnum)[keyof typeof LocationScalarFieldEnum];
+
+export const VendorScalarFieldEnum = {
+  id: "id",
+  name: "name",
+  code: "code",
+  legalName: "legalName",
+  description: "description",
+  vendorType: "vendorType",
+  taxId: "taxId",
+  website: "website",
+  email: "email",
+  phone: "phone",
+  address: "address",
+  city: "city",
+  state: "state",
+  country: "country",
+  postalCode: "postalCode",
+  paymentTerms: "paymentTerms",
+  isPreferred: "isPreferred",
+  isActive: "isActive",
+  tags: "tags",
+  note: "note",
+  metadata: "metadata",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type VendorScalarFieldEnum =
+  (typeof VendorScalarFieldEnum)[keyof typeof VendorScalarFieldEnum];
+
+export const VendorContactScalarFieldEnum = {
+  id: "id",
+  vendorId: "vendorId",
+  firstName: "firstName",
+  lastName: "lastName",
+  title: "title",
+  email: "email",
+  phone: "phone",
+  mobile: "mobile",
+  role: "role",
+  isPrimary: "isPrimary",
+  isActive: "isActive",
+  note: "note",
+  metadata: "metadata",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type VendorContactScalarFieldEnum =
+  (typeof VendorContactScalarFieldEnum)[keyof typeof VendorContactScalarFieldEnum];
+
+export const LifecycleModelScalarFieldEnum = {
+  id: "id",
+  name: "name",
+  description: "description",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type LifecycleModelScalarFieldEnum =
+  (typeof LifecycleModelScalarFieldEnum)[keyof typeof LifecycleModelScalarFieldEnum];
+
+export const LifecycleStateScalarFieldEnum = {
+  id: "id",
+  lifecycleModelId: "lifecycleModelId",
+  name: "name",
+  code: "code",
+  description: "description",
+  stateType: "stateType",
+  isActiveState: "isActiveState",
+  isTerminalState: "isTerminalState",
+  sortOrder: "sortOrder",
+  isActive: "isActive",
+  metadata: "metadata",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type LifecycleStateScalarFieldEnum =
+  (typeof LifecycleStateScalarFieldEnum)[keyof typeof LifecycleStateScalarFieldEnum];
+
+export const LifecycleTransitionScalarFieldEnum = {
+  id: "id",
+  lifecycleModelId: "lifecycleModelId",
+  name: "name",
+  description: "description",
+  fromStateId: "fromStateId",
+  toStateId: "toStateId",
+  requiredRoleId: "requiredRoleId",
+  requiresApproval: "requiresApproval",
+  approvalPolicy: "approvalPolicy",
+  conditions: "conditions",
+  isAutomated: "isAutomated",
+  isActive: "isActive",
+  metadata: "metadata",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type LifecycleTransitionScalarFieldEnum =
+  (typeof LifecycleTransitionScalarFieldEnum)[keyof typeof LifecycleTransitionScalarFieldEnum];
+
+export const FieldDefinitionScalarFieldEnum = {
+  id: "id",
+  name: "name",
+  label: "label",
+  dataType: "dataType",
+  description: "description",
+  entityType: "entityType",
+  isGlobal: "isGlobal",
+  isRequired: "isRequired",
+  isUnique: "isUnique",
+  validationRules: "validationRules",
+  defaultValue: "defaultValue",
+  enumOptions: "enumOptions",
+  uiGroup: "uiGroup",
+  uiOrder: "uiOrder",
+  displayOrder: "displayOrder",
+  isSearchable: "isSearchable",
+  isFilterable: "isFilterable",
+  isActive: "isActive",
+  metadata: "metadata",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type FieldDefinitionScalarFieldEnum =
+  (typeof FieldDefinitionScalarFieldEnum)[keyof typeof FieldDefinitionScalarFieldEnum];
+
+export const CIClassScalarFieldEnum = {
+  id: "id",
+  name: "name",
+  code: "code",
+  parentClassId: "parentClassId",
+  description: "description",
+  lifecycleModelId: "lifecycleModelId",
+  defaultCriticality: "defaultCriticality",
+  defaultEnvironment: "defaultEnvironment",
+  isDiscoverable: "isDiscoverable",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type CIClassScalarFieldEnum =
+  (typeof CIClassScalarFieldEnum)[keyof typeof CIClassScalarFieldEnum];
+
+export const CIClassFieldScalarFieldEnum = {
+  id: "id",
+  ciClassId: "ciClassId",
+  fieldDefinitionId: "fieldDefinitionId",
+  isRequired: "isRequired",
+  isUnique: "isUnique",
+  isVisible: "isVisible",
+  defaultValue: "defaultValue",
+  uiOrder: "uiOrder",
+  note: "note",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type CIClassFieldScalarFieldEnum =
+  (typeof CIClassFieldScalarFieldEnum)[keyof typeof CIClassFieldScalarFieldEnum];
+
+export const ConfigurationItemScalarFieldEnum = {
+  id: "id",
+  name: "name",
+  ciClassId: "ciClassId",
+  lifecycleStateId: "lifecycleStateId",
+  criticality: "criticality",
+  environment: "environment",
+  primaryOwnerPersonId: "primaryOwnerPersonId",
+  primaryOwnerOrgUnitId: "primaryOwnerOrgUnitId",
+  locationId: "locationId",
+  linkedAssetId: "linkedAssetId",
+  ciKey: "ciKey",
+  description: "description",
+  attributes: "attributes",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type ConfigurationItemScalarFieldEnum =
+  (typeof ConfigurationItemScalarFieldEnum)[keyof typeof ConfigurationItemScalarFieldEnum];
+
+export const RelationshipTypeScalarFieldEnum = {
+  id: "id",
+  name: "name",
+  code: "code",
+  description: "description",
+  direction: "direction",
+  isImpacting: "isImpacting",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type RelationshipTypeScalarFieldEnum =
+  (typeof RelationshipTypeScalarFieldEnum)[keyof typeof RelationshipTypeScalarFieldEnum];
+
+export const RelationshipTypeScopeScalarFieldEnum = {
+  id: "id",
+  relationshipTypeId: "relationshipTypeId",
+  fromCiClassId: "fromCiClassId",
+  toCiClassId: "toCiClassId",
+  note: "note",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type RelationshipTypeScopeScalarFieldEnum =
+  (typeof RelationshipTypeScopeScalarFieldEnum)[keyof typeof RelationshipTypeScopeScalarFieldEnum];
+
+export const CIRelationshipScalarFieldEnum = {
+  id: "id",
+  fromCiId: "fromCiId",
+  toCiId: "toCiId",
+  relationshipTypeId: "relationshipTypeId",
+  isActive: "isActive",
+  validFrom: "validFrom",
+  validTo: "validTo",
+  note: "note",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type CIRelationshipScalarFieldEnum =
+  (typeof CIRelationshipScalarFieldEnum)[keyof typeof CIRelationshipScalarFieldEnum];
+
+export const AssetCategoryScalarFieldEnum = {
+  id: "id",
+  name: "name",
+  code: "code",
+  description: "description",
+  lifecycleModelId: "lifecycleModelId",
+  isConsumable: "isConsumable",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type AssetCategoryScalarFieldEnum =
+  (typeof AssetCategoryScalarFieldEnum)[keyof typeof AssetCategoryScalarFieldEnum];
+
+export const AssetCategoryFieldScalarFieldEnum = {
+  id: "id",
+  assetCategoryId: "assetCategoryId",
+  fieldDefinitionId: "fieldDefinitionId",
+  isRequired: "isRequired",
+  isUnique: "isUnique",
+  isVisible: "isVisible",
+  uiOrder: "uiOrder",
+  defaultValue: "defaultValue",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type AssetCategoryFieldScalarFieldEnum =
+  (typeof AssetCategoryFieldScalarFieldEnum)[keyof typeof AssetCategoryFieldScalarFieldEnum];
+
+export const AssetModelScalarFieldEnum = {
+  id: "id",
+  assetCategoryId: "assetCategoryId",
+  vendorId: "vendorId",
+  name: "name",
+  code: "code",
+  description: "description",
+  defaultWarrantyMonths: "defaultWarrantyMonths",
+  defaultAttributes: "defaultAttributes",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type AssetModelScalarFieldEnum =
+  (typeof AssetModelScalarFieldEnum)[keyof typeof AssetModelScalarFieldEnum];
+
+export const StockLocationScalarFieldEnum = {
+  id: "id",
+  name: "name",
+  code: "code",
+  locationId: "locationId",
+  description: "description",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type StockLocationScalarFieldEnum =
+  (typeof StockLocationScalarFieldEnum)[keyof typeof StockLocationScalarFieldEnum];
+
+export const StockMovementScalarFieldEnum = {
+  id: "id",
+  movementType: "movementType",
+  stockLocationFromId: "stockLocationFromId",
+  stockLocationToId: "stockLocationToId",
+  assetId: "assetId",
+  quantity: "quantity",
+  reason: "reason",
+  performedById: "performedById",
+  occurredAt: "occurredAt",
+  createdAt: "createdAt",
+} as const;
+
+export type StockMovementScalarFieldEnum =
+  (typeof StockMovementScalarFieldEnum)[keyof typeof StockMovementScalarFieldEnum];
+
+export const AssetScalarFieldEnum = {
+  id: "id",
+  assetTag: "assetTag",
+  assetCategoryId: "assetCategoryId",
+  assetModelId: "assetModelId",
+  vendorId: "vendorId",
+  contractId: "contractId",
+  lifecycleStateId: "lifecycleStateId",
+  serialNumber: "serialNumber",
+  purchaseDate: "purchaseDate",
+  purchaseCost: "purchaseCost",
+  currency: "currency",
+  depreciationModel: "depreciationModel",
+  depreciationStart: "depreciationStart",
+  depreciationEnd: "depreciationEnd",
+  warrantyEndDate: "warrantyEndDate",
+  currentStockLocationId: "currentStockLocationId",
+  attributes: "attributes",
+  note: "note",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type AssetScalarFieldEnum =
+  (typeof AssetScalarFieldEnum)[keyof typeof AssetScalarFieldEnum];
+
+export const AssetAssignmentScalarFieldEnum = {
+  id: "id",
+  assetId: "assetId",
+  assigneeType: "assigneeType",
+  assigneeId: "assigneeId",
+  startDate: "startDate",
+  endDate: "endDate",
+  isPrimary: "isPrimary",
+  note: "note",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type AssetAssignmentScalarFieldEnum =
+  (typeof AssetAssignmentScalarFieldEnum)[keyof typeof AssetAssignmentScalarFieldEnum];
+
+export const ContractTypeScalarFieldEnum = {
+  id: "id",
+  name: "name",
+  code: "code",
+  description: "description",
+  isActive: "isActive",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type ContractTypeScalarFieldEnum =
+  (typeof ContractTypeScalarFieldEnum)[keyof typeof ContractTypeScalarFieldEnum];
+
+export const ContractScalarFieldEnum = {
+  id: "id",
+  contractTypeId: "contractTypeId",
+  vendorId: "vendorId",
+  name: "name",
+  contractNumber: "contractNumber",
+  startDate: "startDate",
+  endDate: "endDate",
+  autoRenew: "autoRenew",
+  renewalTerms: "renewalTerms",
+  slaDefinition: "slaDefinition",
+  totalValue: "totalValue",
+  currency: "currency",
+  note: "note",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type ContractScalarFieldEnum =
+  (typeof ContractScalarFieldEnum)[keyof typeof ContractScalarFieldEnum];
+
+export const ContractLinkedObjectScalarFieldEnum = {
+  id: "id",
+  contractId: "contractId",
+  targetType: "targetType",
+  targetId: "targetId",
+  note: "note",
+  createdAt: "createdAt",
+} as const;
+
+export type ContractLinkedObjectScalarFieldEnum =
+  (typeof ContractLinkedObjectScalarFieldEnum)[keyof typeof ContractLinkedObjectScalarFieldEnum];
+
+export const LicenseProductScalarFieldEnum = {
+  id: "id",
+  name: "name",
+  code: "code",
+  vendorId: "vendorId",
+  metricType: "metricType",
+  description: "description",
+  lifecycleModelId: "lifecycleModelId",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type LicenseProductScalarFieldEnum =
+  (typeof LicenseProductScalarFieldEnum)[keyof typeof LicenseProductScalarFieldEnum];
+
+export const LicenseProductFieldScalarFieldEnum = {
+  id: "id",
+  licenseProductId: "licenseProductId",
+  fieldDefinitionId: "fieldDefinitionId",
+  isRequired: "isRequired",
+  isVisible: "isVisible",
+  uiOrder: "uiOrder",
+  defaultValue: "defaultValue",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type LicenseProductFieldScalarFieldEnum =
+  (typeof LicenseProductFieldScalarFieldEnum)[keyof typeof LicenseProductFieldScalarFieldEnum];
+
+export const LicenseEntitlementScalarFieldEnum = {
+  id: "id",
+  licenseProductId: "licenseProductId",
+  contractId: "contractId",
+  purchasedQuantity: "purchasedQuantity",
+  effectiveStart: "effectiveStart",
+  effectiveEnd: "effectiveEnd",
+  allowedScope: "allowedScope",
+  note: "note",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type LicenseEntitlementScalarFieldEnum =
+  (typeof LicenseEntitlementScalarFieldEnum)[keyof typeof LicenseEntitlementScalarFieldEnum];
+
+export const LicenseAllocationScalarFieldEnum = {
+  id: "id",
+  licenseEntitlementId: "licenseEntitlementId",
+  targetType: "targetType",
+  targetId: "targetId",
+  allocatedQuantity: "allocatedQuantity",
+  allocatedAt: "allocatedAt",
+  deallocatedAt: "deallocatedAt",
+  note: "note",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type LicenseAllocationScalarFieldEnum =
+  (typeof LicenseAllocationScalarFieldEnum)[keyof typeof LicenseAllocationScalarFieldEnum];
+
+export const DataDomainScalarFieldEnum = {
+  id: "id",
+  name: "name",
+  code: "code",
+  description: "description",
+  isActive: "isActive",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type DataDomainScalarFieldEnum =
+  (typeof DataDomainScalarFieldEnum)[keyof typeof DataDomainScalarFieldEnum];
+
+export const DataOwnershipScalarFieldEnum = {
+  id: "id",
+  dataDomainId: "dataDomainId",
+  ciClassId: "ciClassId",
+  assetCategoryId: "assetCategoryId",
+  ownerPersonId: "ownerPersonId",
+  ownerOrgUnitId: "ownerOrgUnitId",
+  note: "note",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type DataOwnershipScalarFieldEnum =
+  (typeof DataOwnershipScalarFieldEnum)[keyof typeof DataOwnershipScalarFieldEnum];
+
+export const VerificationCampaignScalarFieldEnum = {
+  id: "id",
+  name: "name",
+  description: "description",
+  targetType: "targetType",
+  filterDefinition: "filterDefinition",
+  scheduledStart: "scheduledStart",
+  scheduledEnd: "scheduledEnd",
+  createdById: "createdById",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type VerificationCampaignScalarFieldEnum =
+  (typeof VerificationCampaignScalarFieldEnum)[keyof typeof VerificationCampaignScalarFieldEnum];
+
+export const VerificationItemScalarFieldEnum = {
+  id: "id",
+  verificationCampaignId: "verificationCampaignId",
+  targetType: "targetType",
+  targetId: "targetId",
+  verifierPersonId: "verifierPersonId",
+  status: "status",
+  verifiedAt: "verifiedAt",
+  comment: "comment",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type VerificationItemScalarFieldEnum =
+  (typeof VerificationItemScalarFieldEnum)[keyof typeof VerificationItemScalarFieldEnum];
+
+export const AuditLogEntryScalarFieldEnum = {
+  id: "id",
+  targetType: "targetType",
+  targetId: "targetId",
+  fieldName: "fieldName",
+  oldValue: "oldValue",
+  newValue: "newValue",
+  changedById: "changedById",
+  changedByUserId: "changedByUserId",
+  changedAt: "changedAt",
+  sourceSystem: "sourceSystem",
+  note: "note",
+} as const;
+
+export type AuditLogEntryScalarFieldEnum =
+  (typeof AuditLogEntryScalarFieldEnum)[keyof typeof AuditLogEntryScalarFieldEnum];
+
+export const AttachmentTypeScalarFieldEnum = {
+  id: "id",
+  name: "name",
+  code: "code",
+  description: "description",
+  isActive: "isActive",
+  createdAt: "createdAt",
+  updatedAt: "updatedAt",
+} as const;
+
+export type AttachmentTypeScalarFieldEnum =
+  (typeof AttachmentTypeScalarFieldEnum)[keyof typeof AttachmentTypeScalarFieldEnum];
+
+export const AttachmentScalarFieldEnum = {
+  id: "id",
+  attachmentTypeId: "attachmentTypeId",
+  targetType: "targetType",
+  targetId: "targetId",
+  fileName: "fileName",
+  filePath: "filePath",
+  mimeType: "mimeType",
+  sizeBytes: "sizeBytes",
+  uploadedById: "uploadedById",
+  uploadedAt: "uploadedAt",
+  note: "note",
+} as const;
+
+export type AttachmentScalarFieldEnum =
+  (typeof AttachmentScalarFieldEnum)[keyof typeof AttachmentScalarFieldEnum];
 
 export const TaskScalarFieldEnum = {
   id: "id",

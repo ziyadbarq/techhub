@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document provides a comprehensive overview of the RBAC (Role-Based Access Control) test suite created for the barq-app-boilerplate project. The test suite covers all layers of the Clean Architecture implementation, from permission utilities to controllers.
+This document provides a comprehensive overview of the RBAC (Role-Based Access Control) test suite created for the barq-assets project. The test suite covers all layers of the Clean Architecture implementation, from permission utilities to controllers.
 
 ## Test Coverage Summary
 
@@ -38,7 +38,7 @@ This document provides a comprehensive overview of the RBAC (Role-Based Access C
 ## Test Organization
 
 ```
-barq-app-boilerplate/
+barq-assets/
 ├── src/
 │   ├── lib/permissions/__tests__/
 │   │   └── check-permission.test.ts

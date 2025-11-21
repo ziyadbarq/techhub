@@ -1,6 +1,6 @@
 # Barq Logos
 
-Official barq branding assets for the Barq App Boilerplate.
+Official barq branding assets for the Barq Assets.
 
 ## Files
 

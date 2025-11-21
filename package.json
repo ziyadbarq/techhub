@@ -1,7 +1,7 @@
 {
-  "name": "barq-app-boilerplate",
+  "name": "barq-assets",
   "version": "1.0.0",
-  "description": "Clean Architecture Next.js starter with DI, AI integration, and modern theme system",
+  "description": "Enterprise CMDB and IT Asset Management system with Clean Architecture, DI, RBAC, and comprehensive Foundation layer",
   "private": true,
   "type": "module",
   "scripts": {

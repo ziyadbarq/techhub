@@ -26,6 +26,7 @@ import { logger } from "@/lib/logger";
 import { bindLoggerDependencies } from "./modules/logger.module";
 import { bindDatabaseDependencies } from "./modules/database.module";
 import { bindRBACDependencies } from "./modules/rbac.module";
+import { bindFoundationDependencies } from "./modules/foundation.module";
 
 /**
  * AI Services Module - Currently Disabled
@@ -88,6 +89,9 @@ function createContainer(): Container {
 
   // Bind RBAC dependencies (role, permission, user-role management)
   bindRBACDependencies(newContainer);
+
+  // Bind Foundation dependencies (lifecycle, vendor, organization, location, person)
+  bindFoundationDependencies(newContainer);
 
   /**
    * AI Services - Currently Disabled

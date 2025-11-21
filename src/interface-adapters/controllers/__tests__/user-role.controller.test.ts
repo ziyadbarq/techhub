@@ -121,13 +121,15 @@ vi.mock("@/di/container", () => ({
   })),
 }));
 
-describe("User Role Controller", () => {
-  let prisma: {
-    user: {
-      findMany: ReturnType<typeof vi.fn>;
-      findUnique: ReturnType<typeof vi.fn>;
-    };
+interface MockPrisma {
+  user: {
+    findMany: ReturnType<typeof vi.fn>;
+    findUnique: ReturnType<typeof vi.fn>;
   };
+}
+
+describe("User Role Controller", () => {
+  let prisma: MockPrisma;
 
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -136,7 +138,7 @@ describe("User Role Controller", () => {
     const prismaModule = await import(
       "@/infrastructure/database/prisma/client"
     );
-    prisma = prismaModule.prisma;
+    prisma = prismaModule.prisma as unknown as MockPrisma;
   });
 
   // Sample user data

@@ -1,6 +1,6 @@
 # RBAC Developer Guide
 
-**Complete developer guide** for implementing Role-Based Access Control (RBAC) in the barq-app-boilerplate.
+**Complete developer guide** for implementing Role-Based Access Control (RBAC) in the barq-assets.
 
 ## Table of Contents
 

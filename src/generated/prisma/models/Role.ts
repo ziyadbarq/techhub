@@ -219,6 +219,9 @@ export type RoleWhereInput = {
   createdBy?: Prisma.StringNullableFilter<"Role"> | string | null;
   permissions?: Prisma.RolePermissionListRelationFilter;
   users?: Prisma.UserRoleListRelationFilter;
+  personsPrimaryRole?: Prisma.PersonListRelationFilter;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentListRelationFilter;
+  lifecycleTransitions?: Prisma.LifecycleTransitionListRelationFilter;
 };
 
 export type RoleOrderByWithRelationInput = {
@@ -233,6 +236,9 @@ export type RoleOrderByWithRelationInput = {
   createdBy?: Prisma.SortOrderInput | Prisma.SortOrder;
   permissions?: Prisma.RolePermissionOrderByRelationAggregateInput;
   users?: Prisma.UserRoleOrderByRelationAggregateInput;
+  personsPrimaryRole?: Prisma.PersonOrderByRelationAggregateInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentOrderByRelationAggregateInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionOrderByRelationAggregateInput;
 };
 
 export type RoleWhereUniqueInput = Prisma.AtLeast<
@@ -251,6 +257,9 @@ export type RoleWhereUniqueInput = Prisma.AtLeast<
     createdBy?: Prisma.StringNullableFilter<"Role"> | string | null;
     permissions?: Prisma.RolePermissionListRelationFilter;
     users?: Prisma.UserRoleListRelationFilter;
+    personsPrimaryRole?: Prisma.PersonListRelationFilter;
+    personRoleAssignments?: Prisma.PersonRoleAssignmentListRelationFilter;
+    lifecycleTransitions?: Prisma.LifecycleTransitionListRelationFilter;
   },
   "id" | "name"
 >;
@@ -304,6 +313,9 @@ export type RoleCreateInput = {
   createdBy?: string | null;
   permissions?: Prisma.RolePermissionCreateNestedManyWithoutRoleInput;
   users?: Prisma.UserRoleCreateNestedManyWithoutRoleInput;
+  personsPrimaryRole?: Prisma.PersonCreateNestedManyWithoutPrimaryRoleInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutRoleInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutRequiredRoleInput;
 };
 
 export type RoleUncheckedCreateInput = {
@@ -318,6 +330,9 @@ export type RoleUncheckedCreateInput = {
   createdBy?: string | null;
   permissions?: Prisma.RolePermissionUncheckedCreateNestedManyWithoutRoleInput;
   users?: Prisma.UserRoleUncheckedCreateNestedManyWithoutRoleInput;
+  personsPrimaryRole?: Prisma.PersonUncheckedCreateNestedManyWithoutPrimaryRoleInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutRoleInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutRequiredRoleInput;
 };
 
 export type RoleUpdateInput = {
@@ -332,6 +347,9 @@ export type RoleUpdateInput = {
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   permissions?: Prisma.RolePermissionUpdateManyWithoutRoleNestedInput;
   users?: Prisma.UserRoleUpdateManyWithoutRoleNestedInput;
+  personsPrimaryRole?: Prisma.PersonUpdateManyWithoutPrimaryRoleNestedInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutRoleNestedInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionUpdateManyWithoutRequiredRoleNestedInput;
 };
 
 export type RoleUncheckedUpdateInput = {
@@ -346,6 +364,9 @@ export type RoleUncheckedUpdateInput = {
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   permissions?: Prisma.RolePermissionUncheckedUpdateManyWithoutRoleNestedInput;
   users?: Prisma.UserRoleUncheckedUpdateManyWithoutRoleNestedInput;
+  personsPrimaryRole?: Prisma.PersonUncheckedUpdateManyWithoutPrimaryRoleNestedInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutRoleNestedInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutRequiredRoleNestedInput;
 };
 
 export type RoleCreateManyInput = {
@@ -425,6 +446,11 @@ export type RoleScalarRelationFilter = {
   isNot?: Prisma.RoleWhereInput;
 };
 
+export type RoleNullableScalarRelationFilter = {
+  is?: Prisma.RoleWhereInput | null;
+  isNot?: Prisma.RoleWhereInput | null;
+};
+
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean;
 };
@@ -481,6 +507,86 @@ export type RoleUpdateOneRequiredWithoutUsersNestedInput = {
   >;
 };
 
+export type RoleCreateNestedOneWithoutPersonsPrimaryRoleInput = {
+  create?: Prisma.XOR<
+    Prisma.RoleCreateWithoutPersonsPrimaryRoleInput,
+    Prisma.RoleUncheckedCreateWithoutPersonsPrimaryRoleInput
+  >;
+  connectOrCreate?: Prisma.RoleCreateOrConnectWithoutPersonsPrimaryRoleInput;
+  connect?: Prisma.RoleWhereUniqueInput;
+};
+
+export type RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.RoleCreateWithoutPersonsPrimaryRoleInput,
+    Prisma.RoleUncheckedCreateWithoutPersonsPrimaryRoleInput
+  >;
+  connectOrCreate?: Prisma.RoleCreateOrConnectWithoutPersonsPrimaryRoleInput;
+  upsert?: Prisma.RoleUpsertWithoutPersonsPrimaryRoleInput;
+  connect?: Prisma.RoleWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.RoleUpdateToOneWithWhereWithoutPersonsPrimaryRoleInput,
+      Prisma.RoleUpdateWithoutPersonsPrimaryRoleInput
+    >,
+    Prisma.RoleUncheckedUpdateWithoutPersonsPrimaryRoleInput
+  >;
+};
+
+export type RoleCreateNestedOneWithoutPersonRoleAssignmentsInput = {
+  create?: Prisma.XOR<
+    Prisma.RoleCreateWithoutPersonRoleAssignmentsInput,
+    Prisma.RoleUncheckedCreateWithoutPersonRoleAssignmentsInput
+  >;
+  connectOrCreate?: Prisma.RoleCreateOrConnectWithoutPersonRoleAssignmentsInput;
+  connect?: Prisma.RoleWhereUniqueInput;
+};
+
+export type RoleUpdateOneRequiredWithoutPersonRoleAssignmentsNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.RoleCreateWithoutPersonRoleAssignmentsInput,
+    Prisma.RoleUncheckedCreateWithoutPersonRoleAssignmentsInput
+  >;
+  connectOrCreate?: Prisma.RoleCreateOrConnectWithoutPersonRoleAssignmentsInput;
+  upsert?: Prisma.RoleUpsertWithoutPersonRoleAssignmentsInput;
+  connect?: Prisma.RoleWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.RoleUpdateToOneWithWhereWithoutPersonRoleAssignmentsInput,
+      Prisma.RoleUpdateWithoutPersonRoleAssignmentsInput
+    >,
+    Prisma.RoleUncheckedUpdateWithoutPersonRoleAssignmentsInput
+  >;
+};
+
+export type RoleCreateNestedOneWithoutLifecycleTransitionsInput = {
+  create?: Prisma.XOR<
+    Prisma.RoleCreateWithoutLifecycleTransitionsInput,
+    Prisma.RoleUncheckedCreateWithoutLifecycleTransitionsInput
+  >;
+  connectOrCreate?: Prisma.RoleCreateOrConnectWithoutLifecycleTransitionsInput;
+  connect?: Prisma.RoleWhereUniqueInput;
+};
+
+export type RoleUpdateOneWithoutLifecycleTransitionsNestedInput = {
+  create?: Prisma.XOR<
+    Prisma.RoleCreateWithoutLifecycleTransitionsInput,
+    Prisma.RoleUncheckedCreateWithoutLifecycleTransitionsInput
+  >;
+  connectOrCreate?: Prisma.RoleCreateOrConnectWithoutLifecycleTransitionsInput;
+  upsert?: Prisma.RoleUpsertWithoutLifecycleTransitionsInput;
+  disconnect?: Prisma.RoleWhereInput | boolean;
+  delete?: Prisma.RoleWhereInput | boolean;
+  connect?: Prisma.RoleWhereUniqueInput;
+  update?: Prisma.XOR<
+    Prisma.XOR<
+      Prisma.RoleUpdateToOneWithWhereWithoutLifecycleTransitionsInput,
+      Prisma.RoleUpdateWithoutLifecycleTransitionsInput
+    >,
+    Prisma.RoleUncheckedUpdateWithoutLifecycleTransitionsInput
+  >;
+};
+
 export type RoleCreateWithoutPermissionsInput = {
   id?: string;
   name: string;
@@ -492,6 +598,9 @@ export type RoleCreateWithoutPermissionsInput = {
   updatedAt?: Date | string;
   createdBy?: string | null;
   users?: Prisma.UserRoleCreateNestedManyWithoutRoleInput;
+  personsPrimaryRole?: Prisma.PersonCreateNestedManyWithoutPrimaryRoleInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutRoleInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutRequiredRoleInput;
 };
 
 export type RoleUncheckedCreateWithoutPermissionsInput = {
@@ -505,6 +614,9 @@ export type RoleUncheckedCreateWithoutPermissionsInput = {
   updatedAt?: Date | string;
   createdBy?: string | null;
   users?: Prisma.UserRoleUncheckedCreateNestedManyWithoutRoleInput;
+  personsPrimaryRole?: Prisma.PersonUncheckedCreateNestedManyWithoutPrimaryRoleInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutRoleInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutRequiredRoleInput;
 };
 
 export type RoleCreateOrConnectWithoutPermissionsInput = {
@@ -546,6 +658,9 @@ export type RoleUpdateWithoutPermissionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   users?: Prisma.UserRoleUpdateManyWithoutRoleNestedInput;
+  personsPrimaryRole?: Prisma.PersonUpdateManyWithoutPrimaryRoleNestedInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutRoleNestedInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionUpdateManyWithoutRequiredRoleNestedInput;
 };
 
 export type RoleUncheckedUpdateWithoutPermissionsInput = {
@@ -559,6 +674,9 @@ export type RoleUncheckedUpdateWithoutPermissionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   users?: Prisma.UserRoleUncheckedUpdateManyWithoutRoleNestedInput;
+  personsPrimaryRole?: Prisma.PersonUncheckedUpdateManyWithoutPrimaryRoleNestedInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutRoleNestedInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutRequiredRoleNestedInput;
 };
 
 export type RoleCreateWithoutUsersInput = {
@@ -572,6 +690,9 @@ export type RoleCreateWithoutUsersInput = {
   updatedAt?: Date | string;
   createdBy?: string | null;
   permissions?: Prisma.RolePermissionCreateNestedManyWithoutRoleInput;
+  personsPrimaryRole?: Prisma.PersonCreateNestedManyWithoutPrimaryRoleInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutRoleInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutRequiredRoleInput;
 };
 
 export type RoleUncheckedCreateWithoutUsersInput = {
@@ -585,6 +706,9 @@ export type RoleUncheckedCreateWithoutUsersInput = {
   updatedAt?: Date | string;
   createdBy?: string | null;
   permissions?: Prisma.RolePermissionUncheckedCreateNestedManyWithoutRoleInput;
+  personsPrimaryRole?: Prisma.PersonUncheckedCreateNestedManyWithoutPrimaryRoleInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutRoleInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutRequiredRoleInput;
 };
 
 export type RoleCreateOrConnectWithoutUsersInput = {
@@ -626,6 +750,9 @@ export type RoleUpdateWithoutUsersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   permissions?: Prisma.RolePermissionUpdateManyWithoutRoleNestedInput;
+  personsPrimaryRole?: Prisma.PersonUpdateManyWithoutPrimaryRoleNestedInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutRoleNestedInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionUpdateManyWithoutRequiredRoleNestedInput;
 };
 
 export type RoleUncheckedUpdateWithoutUsersInput = {
@@ -639,6 +766,285 @@ export type RoleUncheckedUpdateWithoutUsersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
   permissions?: Prisma.RolePermissionUncheckedUpdateManyWithoutRoleNestedInput;
+  personsPrimaryRole?: Prisma.PersonUncheckedUpdateManyWithoutPrimaryRoleNestedInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutRoleNestedInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutRequiredRoleNestedInput;
+};
+
+export type RoleCreateWithoutPersonsPrimaryRoleInput = {
+  id?: string;
+  name: string;
+  displayName: string;
+  description?: string | null;
+  isSystem?: boolean;
+  isActive?: boolean;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  createdBy?: string | null;
+  permissions?: Prisma.RolePermissionCreateNestedManyWithoutRoleInput;
+  users?: Prisma.UserRoleCreateNestedManyWithoutRoleInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutRoleInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutRequiredRoleInput;
+};
+
+export type RoleUncheckedCreateWithoutPersonsPrimaryRoleInput = {
+  id?: string;
+  name: string;
+  displayName: string;
+  description?: string | null;
+  isSystem?: boolean;
+  isActive?: boolean;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  createdBy?: string | null;
+  permissions?: Prisma.RolePermissionUncheckedCreateNestedManyWithoutRoleInput;
+  users?: Prisma.UserRoleUncheckedCreateNestedManyWithoutRoleInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutRoleInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutRequiredRoleInput;
+};
+
+export type RoleCreateOrConnectWithoutPersonsPrimaryRoleInput = {
+  where: Prisma.RoleWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.RoleCreateWithoutPersonsPrimaryRoleInput,
+    Prisma.RoleUncheckedCreateWithoutPersonsPrimaryRoleInput
+  >;
+};
+
+export type RoleUpsertWithoutPersonsPrimaryRoleInput = {
+  update: Prisma.XOR<
+    Prisma.RoleUpdateWithoutPersonsPrimaryRoleInput,
+    Prisma.RoleUncheckedUpdateWithoutPersonsPrimaryRoleInput
+  >;
+  create: Prisma.XOR<
+    Prisma.RoleCreateWithoutPersonsPrimaryRoleInput,
+    Prisma.RoleUncheckedCreateWithoutPersonsPrimaryRoleInput
+  >;
+  where?: Prisma.RoleWhereInput;
+};
+
+export type RoleUpdateToOneWithWhereWithoutPersonsPrimaryRoleInput = {
+  where?: Prisma.RoleWhereInput;
+  data: Prisma.XOR<
+    Prisma.RoleUpdateWithoutPersonsPrimaryRoleInput,
+    Prisma.RoleUncheckedUpdateWithoutPersonsPrimaryRoleInput
+  >;
+};
+
+export type RoleUpdateWithoutPersonsPrimaryRoleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  name?: Prisma.StringFieldUpdateOperationsInput | string;
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  permissions?: Prisma.RolePermissionUpdateManyWithoutRoleNestedInput;
+  users?: Prisma.UserRoleUpdateManyWithoutRoleNestedInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutRoleNestedInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionUpdateManyWithoutRequiredRoleNestedInput;
+};
+
+export type RoleUncheckedUpdateWithoutPersonsPrimaryRoleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  name?: Prisma.StringFieldUpdateOperationsInput | string;
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  permissions?: Prisma.RolePermissionUncheckedUpdateManyWithoutRoleNestedInput;
+  users?: Prisma.UserRoleUncheckedUpdateManyWithoutRoleNestedInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutRoleNestedInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutRequiredRoleNestedInput;
+};
+
+export type RoleCreateWithoutPersonRoleAssignmentsInput = {
+  id?: string;
+  name: string;
+  displayName: string;
+  description?: string | null;
+  isSystem?: boolean;
+  isActive?: boolean;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  createdBy?: string | null;
+  permissions?: Prisma.RolePermissionCreateNestedManyWithoutRoleInput;
+  users?: Prisma.UserRoleCreateNestedManyWithoutRoleInput;
+  personsPrimaryRole?: Prisma.PersonCreateNestedManyWithoutPrimaryRoleInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutRequiredRoleInput;
+};
+
+export type RoleUncheckedCreateWithoutPersonRoleAssignmentsInput = {
+  id?: string;
+  name: string;
+  displayName: string;
+  description?: string | null;
+  isSystem?: boolean;
+  isActive?: boolean;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  createdBy?: string | null;
+  permissions?: Prisma.RolePermissionUncheckedCreateNestedManyWithoutRoleInput;
+  users?: Prisma.UserRoleUncheckedCreateNestedManyWithoutRoleInput;
+  personsPrimaryRole?: Prisma.PersonUncheckedCreateNestedManyWithoutPrimaryRoleInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutRequiredRoleInput;
+};
+
+export type RoleCreateOrConnectWithoutPersonRoleAssignmentsInput = {
+  where: Prisma.RoleWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.RoleCreateWithoutPersonRoleAssignmentsInput,
+    Prisma.RoleUncheckedCreateWithoutPersonRoleAssignmentsInput
+  >;
+};
+
+export type RoleUpsertWithoutPersonRoleAssignmentsInput = {
+  update: Prisma.XOR<
+    Prisma.RoleUpdateWithoutPersonRoleAssignmentsInput,
+    Prisma.RoleUncheckedUpdateWithoutPersonRoleAssignmentsInput
+  >;
+  create: Prisma.XOR<
+    Prisma.RoleCreateWithoutPersonRoleAssignmentsInput,
+    Prisma.RoleUncheckedCreateWithoutPersonRoleAssignmentsInput
+  >;
+  where?: Prisma.RoleWhereInput;
+};
+
+export type RoleUpdateToOneWithWhereWithoutPersonRoleAssignmentsInput = {
+  where?: Prisma.RoleWhereInput;
+  data: Prisma.XOR<
+    Prisma.RoleUpdateWithoutPersonRoleAssignmentsInput,
+    Prisma.RoleUncheckedUpdateWithoutPersonRoleAssignmentsInput
+  >;
+};
+
+export type RoleUpdateWithoutPersonRoleAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  name?: Prisma.StringFieldUpdateOperationsInput | string;
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  permissions?: Prisma.RolePermissionUpdateManyWithoutRoleNestedInput;
+  users?: Prisma.UserRoleUpdateManyWithoutRoleNestedInput;
+  personsPrimaryRole?: Prisma.PersonUpdateManyWithoutPrimaryRoleNestedInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionUpdateManyWithoutRequiredRoleNestedInput;
+};
+
+export type RoleUncheckedUpdateWithoutPersonRoleAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  name?: Prisma.StringFieldUpdateOperationsInput | string;
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  permissions?: Prisma.RolePermissionUncheckedUpdateManyWithoutRoleNestedInput;
+  users?: Prisma.UserRoleUncheckedUpdateManyWithoutRoleNestedInput;
+  personsPrimaryRole?: Prisma.PersonUncheckedUpdateManyWithoutPrimaryRoleNestedInput;
+  lifecycleTransitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutRequiredRoleNestedInput;
+};
+
+export type RoleCreateWithoutLifecycleTransitionsInput = {
+  id?: string;
+  name: string;
+  displayName: string;
+  description?: string | null;
+  isSystem?: boolean;
+  isActive?: boolean;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  createdBy?: string | null;
+  permissions?: Prisma.RolePermissionCreateNestedManyWithoutRoleInput;
+  users?: Prisma.UserRoleCreateNestedManyWithoutRoleInput;
+  personsPrimaryRole?: Prisma.PersonCreateNestedManyWithoutPrimaryRoleInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutRoleInput;
+};
+
+export type RoleUncheckedCreateWithoutLifecycleTransitionsInput = {
+  id?: string;
+  name: string;
+  displayName: string;
+  description?: string | null;
+  isSystem?: boolean;
+  isActive?: boolean;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  createdBy?: string | null;
+  permissions?: Prisma.RolePermissionUncheckedCreateNestedManyWithoutRoleInput;
+  users?: Prisma.UserRoleUncheckedCreateNestedManyWithoutRoleInput;
+  personsPrimaryRole?: Prisma.PersonUncheckedCreateNestedManyWithoutPrimaryRoleInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutRoleInput;
+};
+
+export type RoleCreateOrConnectWithoutLifecycleTransitionsInput = {
+  where: Prisma.RoleWhereUniqueInput;
+  create: Prisma.XOR<
+    Prisma.RoleCreateWithoutLifecycleTransitionsInput,
+    Prisma.RoleUncheckedCreateWithoutLifecycleTransitionsInput
+  >;
+};
+
+export type RoleUpsertWithoutLifecycleTransitionsInput = {
+  update: Prisma.XOR<
+    Prisma.RoleUpdateWithoutLifecycleTransitionsInput,
+    Prisma.RoleUncheckedUpdateWithoutLifecycleTransitionsInput
+  >;
+  create: Prisma.XOR<
+    Prisma.RoleCreateWithoutLifecycleTransitionsInput,
+    Prisma.RoleUncheckedCreateWithoutLifecycleTransitionsInput
+  >;
+  where?: Prisma.RoleWhereInput;
+};
+
+export type RoleUpdateToOneWithWhereWithoutLifecycleTransitionsInput = {
+  where?: Prisma.RoleWhereInput;
+  data: Prisma.XOR<
+    Prisma.RoleUpdateWithoutLifecycleTransitionsInput,
+    Prisma.RoleUncheckedUpdateWithoutLifecycleTransitionsInput
+  >;
+};
+
+export type RoleUpdateWithoutLifecycleTransitionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  name?: Prisma.StringFieldUpdateOperationsInput | string;
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  permissions?: Prisma.RolePermissionUpdateManyWithoutRoleNestedInput;
+  users?: Prisma.UserRoleUpdateManyWithoutRoleNestedInput;
+  personsPrimaryRole?: Prisma.PersonUpdateManyWithoutPrimaryRoleNestedInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutRoleNestedInput;
+};
+
+export type RoleUncheckedUpdateWithoutLifecycleTransitionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string;
+  name?: Prisma.StringFieldUpdateOperationsInput | string;
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string;
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+  permissions?: Prisma.RolePermissionUncheckedUpdateManyWithoutRoleNestedInput;
+  users?: Prisma.UserRoleUncheckedUpdateManyWithoutRoleNestedInput;
+  personsPrimaryRole?: Prisma.PersonUncheckedUpdateManyWithoutPrimaryRoleNestedInput;
+  personRoleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutRoleNestedInput;
 };
 
 /**
@@ -648,6 +1054,9 @@ export type RoleUncheckedUpdateWithoutUsersInput = {
 export type RoleCountOutputType = {
   permissions: number;
   users: number;
+  personsPrimaryRole: number;
+  personRoleAssignments: number;
+  lifecycleTransitions: number;
 };
 
 export type RoleCountOutputTypeSelect<
@@ -656,6 +1065,13 @@ export type RoleCountOutputTypeSelect<
 > = {
   permissions?: boolean | RoleCountOutputTypeCountPermissionsArgs;
   users?: boolean | RoleCountOutputTypeCountUsersArgs;
+  personsPrimaryRole?: boolean | RoleCountOutputTypeCountPersonsPrimaryRoleArgs;
+  personRoleAssignments?:
+    | boolean
+    | RoleCountOutputTypeCountPersonRoleAssignmentsArgs;
+  lifecycleTransitions?:
+    | boolean
+    | RoleCountOutputTypeCountLifecycleTransitionsArgs;
 };
 
 /**
@@ -691,6 +1107,36 @@ export type RoleCountOutputTypeCountUsersArgs<
   where?: Prisma.UserRoleWhereInput;
 };
 
+/**
+ * RoleCountOutputType without action
+ */
+export type RoleCountOutputTypeCountPersonsPrimaryRoleArgs<
+  ExtArgs extends
+    runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+> = {
+  where?: Prisma.PersonWhereInput;
+};
+
+/**
+ * RoleCountOutputType without action
+ */
+export type RoleCountOutputTypeCountPersonRoleAssignmentsArgs<
+  ExtArgs extends
+    runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+> = {
+  where?: Prisma.PersonRoleAssignmentWhereInput;
+};
+
+/**
+ * RoleCountOutputType without action
+ */
+export type RoleCountOutputTypeCountLifecycleTransitionsArgs<
+  ExtArgs extends
+    runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+> = {
+  where?: Prisma.LifecycleTransitionWhereInput;
+};
+
 export type RoleSelect<
   ExtArgs extends
     runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
@@ -707,6 +1153,13 @@ export type RoleSelect<
     createdBy?: boolean;
     permissions?: boolean | Prisma.Role$permissionsArgs<ExtArgs>;
     users?: boolean | Prisma.Role$usersArgs<ExtArgs>;
+    personsPrimaryRole?: boolean | Prisma.Role$personsPrimaryRoleArgs<ExtArgs>;
+    personRoleAssignments?:
+      | boolean
+      | Prisma.Role$personRoleAssignmentsArgs<ExtArgs>;
+    lifecycleTransitions?:
+      | boolean
+      | Prisma.Role$lifecycleTransitionsArgs<ExtArgs>;
     _count?: boolean | Prisma.RoleCountOutputTypeDefaultArgs<ExtArgs>;
   },
   ExtArgs["result"]["role"]
@@ -781,6 +1234,13 @@ export type RoleInclude<
 > = {
   permissions?: boolean | Prisma.Role$permissionsArgs<ExtArgs>;
   users?: boolean | Prisma.Role$usersArgs<ExtArgs>;
+  personsPrimaryRole?: boolean | Prisma.Role$personsPrimaryRoleArgs<ExtArgs>;
+  personRoleAssignments?:
+    | boolean
+    | Prisma.Role$personRoleAssignmentsArgs<ExtArgs>;
+  lifecycleTransitions?:
+    | boolean
+    | Prisma.Role$lifecycleTransitionsArgs<ExtArgs>;
   _count?: boolean | Prisma.RoleCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type RoleIncludeCreateManyAndReturn<
@@ -800,6 +1260,9 @@ export type $RolePayload<
   objects: {
     permissions: Prisma.$RolePermissionPayload<ExtArgs>[];
     users: Prisma.$UserRolePayload<ExtArgs>[];
+    personsPrimaryRole: Prisma.$PersonPayload<ExtArgs>[];
+    personRoleAssignments: Prisma.$PersonRoleAssignmentPayload<ExtArgs>[];
+    lifecycleTransitions: Prisma.$LifecycleTransitionPayload<ExtArgs>[];
   };
   scalars: runtime.Types.Extensions.GetPayloadResult<
     {
@@ -1384,6 +1847,45 @@ export interface Prisma__RoleClient<
       >
     | Null
   >;
+  personsPrimaryRole<
+    T extends Prisma.Role$personsPrimaryRoleArgs<ExtArgs> = {},
+  >(
+    args?: Prisma.Subset<T, Prisma.Role$personsPrimaryRoleArgs<ExtArgs>>,
+  ): Prisma.PrismaPromise<
+    | runtime.Types.Result.GetResult<
+        Prisma.$PersonPayload<ExtArgs>,
+        T,
+        "findMany",
+        GlobalOmitOptions
+      >
+    | Null
+  >;
+  personRoleAssignments<
+    T extends Prisma.Role$personRoleAssignmentsArgs<ExtArgs> = {},
+  >(
+    args?: Prisma.Subset<T, Prisma.Role$personRoleAssignmentsArgs<ExtArgs>>,
+  ): Prisma.PrismaPromise<
+    | runtime.Types.Result.GetResult<
+        Prisma.$PersonRoleAssignmentPayload<ExtArgs>,
+        T,
+        "findMany",
+        GlobalOmitOptions
+      >
+    | Null
+  >;
+  lifecycleTransitions<
+    T extends Prisma.Role$lifecycleTransitionsArgs<ExtArgs> = {},
+  >(
+    args?: Prisma.Subset<T, Prisma.Role$lifecycleTransitionsArgs<ExtArgs>>,
+  ): Prisma.PrismaPromise<
+    | runtime.Types.Result.GetResult<
+        Prisma.$LifecycleTransitionPayload<ExtArgs>,
+        T,
+        "findMany",
+        GlobalOmitOptions
+      >
+    | Null
+  >;
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1933,6 +2435,97 @@ export type Role$usersArgs<
   take?: number;
   skip?: number;
   distinct?: Prisma.UserRoleScalarFieldEnum | Prisma.UserRoleScalarFieldEnum[];
+};
+
+/**
+ * Role.personsPrimaryRole
+ */
+export type Role$personsPrimaryRoleArgs<
+  ExtArgs extends
+    runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the Person
+   */
+  select?: Prisma.PersonSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the Person
+   */
+  omit?: Prisma.PersonOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PersonInclude<ExtArgs> | null;
+  where?: Prisma.PersonWhereInput;
+  orderBy?:
+    | Prisma.PersonOrderByWithRelationInput
+    | Prisma.PersonOrderByWithRelationInput[];
+  cursor?: Prisma.PersonWhereUniqueInput;
+  take?: number;
+  skip?: number;
+  distinct?: Prisma.PersonScalarFieldEnum | Prisma.PersonScalarFieldEnum[];
+};
+
+/**
+ * Role.personRoleAssignments
+ */
+export type Role$personRoleAssignmentsArgs<
+  ExtArgs extends
+    runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the PersonRoleAssignment
+   */
+  select?: Prisma.PersonRoleAssignmentSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the PersonRoleAssignment
+   */
+  omit?: Prisma.PersonRoleAssignmentOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PersonRoleAssignmentInclude<ExtArgs> | null;
+  where?: Prisma.PersonRoleAssignmentWhereInput;
+  orderBy?:
+    | Prisma.PersonRoleAssignmentOrderByWithRelationInput
+    | Prisma.PersonRoleAssignmentOrderByWithRelationInput[];
+  cursor?: Prisma.PersonRoleAssignmentWhereUniqueInput;
+  take?: number;
+  skip?: number;
+  distinct?:
+    | Prisma.PersonRoleAssignmentScalarFieldEnum
+    | Prisma.PersonRoleAssignmentScalarFieldEnum[];
+};
+
+/**
+ * Role.lifecycleTransitions
+ */
+export type Role$lifecycleTransitionsArgs<
+  ExtArgs extends
+    runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs,
+> = {
+  /**
+   * Select specific fields to fetch from the LifecycleTransition
+   */
+  select?: Prisma.LifecycleTransitionSelect<ExtArgs> | null;
+  /**
+   * Omit specific fields from the LifecycleTransition
+   */
+  omit?: Prisma.LifecycleTransitionOmit<ExtArgs> | null;
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LifecycleTransitionInclude<ExtArgs> | null;
+  where?: Prisma.LifecycleTransitionWhereInput;
+  orderBy?:
+    | Prisma.LifecycleTransitionOrderByWithRelationInput
+    | Prisma.LifecycleTransitionOrderByWithRelationInput[];
+  cursor?: Prisma.LifecycleTransitionWhereUniqueInput;
+  take?: number;
+  skip?: number;
+  distinct?:
+    | Prisma.LifecycleTransitionScalarFieldEnum
+    | Prisma.LifecycleTransitionScalarFieldEnum[];
 };
 
 /**

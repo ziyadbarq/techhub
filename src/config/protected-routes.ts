@@ -210,9 +210,9 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
  * Public routes that don't require authentication
  */
 export const PUBLIC_ROUTES = [
-  "/",
   "/login",
   "/register",
+  "/unauthorized",
   "/api/auth",
   "/setup",
 ] as const;

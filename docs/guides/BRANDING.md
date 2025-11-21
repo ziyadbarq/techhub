@@ -1,6 +1,6 @@
 # Barq Branding Assets
 
-Complete guide to barq branding in the boilerplate.
+Complete guide to barq branding in the assets app.
 
 ## Logo Files
 
@@ -166,7 +166,7 @@ import Image from "next/image";
 
 ## Brand Colors
 
-The boilerplate includes barq brand colors in the theme system:
+The assets app includes barq brand colors in the theme system:
 
 ```tsx
 import { BARQ_COLORS } from "@/lib/theme/constants";
@@ -215,7 +215,7 @@ The landing page ([`src/app/page.tsx`](src/app/page.tsx)) uses the logo:
   <div className="mb-8 flex justify-center">
     <Logo width={200} height={60} priority />
   </div>
-  <h1 className="text-5xl font-bold">Barq App Boilerplate</h1>
+  <h1 className="text-5xl font-bold">Barq Assets</h1>
 </div>
 ```
 

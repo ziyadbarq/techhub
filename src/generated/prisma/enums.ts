@@ -8,6 +8,155 @@
  * 🟢 You can import this file directly.
  */
 
+export const EnvironmentEnum = {
+  PROD: "PROD",
+  UAT: "UAT",
+  DEV: "DEV",
+  DR: "DR",
+  TEST: "TEST",
+  OTHER: "OTHER",
+} as const;
+
+export type EnvironmentEnum =
+  (typeof EnvironmentEnum)[keyof typeof EnvironmentEnum];
+
+export const CriticalityEnum = {
+  LOW: "LOW",
+  MEDIUM: "MEDIUM",
+  HIGH: "HIGH",
+  CRITICAL: "CRITICAL",
+} as const;
+
+export type CriticalityEnum =
+  (typeof CriticalityEnum)[keyof typeof CriticalityEnum];
+
+export const AssigneeTypeEnum = {
+  PERSON: "PERSON",
+  ORG_UNIT: "ORG_UNIT",
+  LOCATION: "LOCATION",
+  CI: "CI",
+} as const;
+
+export type AssigneeTypeEnum =
+  (typeof AssigneeTypeEnum)[keyof typeof AssigneeTypeEnum];
+
+export const AllocationTargetTypeEnum = {
+  PERSON: "PERSON",
+  CI: "CI",
+  ASSET: "ASSET",
+} as const;
+
+export type AllocationTargetTypeEnum =
+  (typeof AllocationTargetTypeEnum)[keyof typeof AllocationTargetTypeEnum];
+
+export const TargetObjectTypeEnum = {
+  CI: "CI",
+  ASSET: "ASSET",
+  LICENSE_ENTITLEMENT: "LICENSE_ENTITLEMENT",
+  CONTRACT: "CONTRACT",
+} as const;
+
+export type TargetObjectTypeEnum =
+  (typeof TargetObjectTypeEnum)[keyof typeof TargetObjectTypeEnum];
+
+export const StockMovementTypeEnum = {
+  IN: "IN",
+  OUT: "OUT",
+  TRANSFER: "TRANSFER",
+  ADJUSTMENT: "ADJUSTMENT",
+} as const;
+
+export type StockMovementTypeEnum =
+  (typeof StockMovementTypeEnum)[keyof typeof StockMovementTypeEnum];
+
+export const FieldDataTypeEnum = {
+  STRING: "STRING",
+  TEXT: "TEXT",
+  INTEGER: "INTEGER",
+  DECIMAL: "DECIMAL",
+  BOOLEAN: "BOOLEAN",
+  DATE: "DATE",
+  DATETIME: "DATETIME",
+  ENUM: "ENUM",
+  JSON: "JSON",
+  CI_REFERENCE: "CI_REFERENCE",
+  PERSON_REFERENCE: "PERSON_REFERENCE",
+  ORG_UNIT_REFERENCE: "ORG_UNIT_REFERENCE",
+  LOCATION_REFERENCE: "LOCATION_REFERENCE",
+} as const;
+
+export type FieldDataTypeEnum =
+  (typeof FieldDataTypeEnum)[keyof typeof FieldDataTypeEnum];
+
+export const RelationshipDirectionEnum = {
+  UNIDIRECTIONAL: "UNIDIRECTIONAL",
+  BIDIRECTIONAL: "BIDIRECTIONAL",
+} as const;
+
+export type RelationshipDirectionEnum =
+  (typeof RelationshipDirectionEnum)[keyof typeof RelationshipDirectionEnum];
+
+export const VerificationStatusEnum = {
+  PENDING: "PENDING",
+  IN_PROGRESS: "IN_PROGRESS",
+  VERIFIED: "VERIFIED",
+  EXCEPTION: "EXCEPTION",
+} as const;
+
+export type VerificationStatusEnum =
+  (typeof VerificationStatusEnum)[keyof typeof VerificationStatusEnum];
+
+export const OrganizationUnitType = {
+  COMPANY: "COMPANY",
+  BUSINESS_UNIT: "BUSINESS_UNIT",
+  DEPARTMENT: "DEPARTMENT",
+  TEAM: "TEAM",
+  DIVISION: "DIVISION",
+  OTHER: "OTHER",
+} as const;
+
+export type OrganizationUnitType =
+  (typeof OrganizationUnitType)[keyof typeof OrganizationUnitType];
+
+export const VendorType = {
+  MANUFACTURER: "MANUFACTURER",
+  RESELLER: "RESELLER",
+  SERVICE_PROVIDER: "SERVICE_PROVIDER",
+  CONSULTANT: "CONSULTANT",
+  CONTRACTOR: "CONTRACTOR",
+  OTHER: "OTHER",
+} as const;
+
+export type VendorType = (typeof VendorType)[keyof typeof VendorType];
+
+export const LocationType = {
+  COUNTRY: "COUNTRY",
+  CITY: "CITY",
+  CAMPUS: "CAMPUS",
+  BUILDING: "BUILDING",
+  FLOOR: "FLOOR",
+  ROOM: "ROOM",
+  RACK: "RACK",
+  DATA_CENTER: "DATA_CENTER",
+  CLOUD_REGION: "CLOUD_REGION",
+  PHYSICAL: "PHYSICAL",
+  LOGICAL: "LOGICAL",
+  ZONE: "ZONE",
+  AREA: "AREA",
+} as const;
+
+export type LocationType = (typeof LocationType)[keyof typeof LocationType];
+
+export const StateType = {
+  INITIAL: "INITIAL",
+  ACTIVE: "ACTIVE",
+  INACTIVE: "INACTIVE",
+  TERMINAL: "TERMINAL",
+  TRANSITION: "TRANSITION",
+} as const;
+
+export type StateType = (typeof StateType)[keyof typeof StateType];
+
 export const TaskStatus = {
   PENDING: "PENDING",
   IN_PROGRESS: "IN_PROGRESS",

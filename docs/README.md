@@ -1,6 +1,6 @@
 # Documentation Index
 
-Welcome to the comprehensive documentation for Barq App Boilerplate. This index provides quick access to all documentation resources organized by category.
+Welcome to the comprehensive documentation for Barq Assets. This index provides quick access to all documentation resources organized by category.
 
 ## 📚 Quick Start
 
@@ -12,14 +12,27 @@ Welcome to the comprehensive documentation for Barq App Boilerplate. This index 
 Technical documentation for system architecture and design decisions:
 
 - [Architecture Guide](./architecture/ARCHITECTURE.md) - Complete Clean Architecture implementation guide
+- [Layer 1 Implementation](./architecture/LAYER_1_IMPLEMENTATION.md) - Foundation layer technical implementation details
+- [Database Schema Design](./architecture/DATABASE_SCHEMA.md) - Schema design conventions, ID strategies, naming patterns, and best practices
 - [RBAC Architecture](./architecture/RBAC_ARCHITECTURE.md) - Role-Based Access Control system architecture
 - [Theme System](./architecture/THEME_SYSTEM.md) - Centralized theme system with OKLCH color space
 
 ## 👤 Developer Guides
 
-Developer-facing documentation for building with the boilerplate:
+Developer-facing documentation for building with the assets app:
 
 - [Developer Guide](./guides/DEVELOPER_GUIDE.md) - Comprehensive development guide and best practices
+
+### Foundation Layer (Layer 1)
+
+Core building blocks for the CMDB/ITAM system:
+
+- [Foundation Layer Guide](./guides/FOUNDATION_LAYER.md) - Complete user guide for all 11 Foundation entities
+- [Entity Reference](./guides/ENTITY_REFERENCE.md) - Quick reference for OrganizationUnit, Person, Role, Location, Vendor, Lifecycle, and FieldDefinition entities
+
+### Infrastructure & Systems
+
+- [Database Migrations & Deployment](./guides/DATABASE_MIGRATIONS.md) - Prisma migrations workflow, development vs production, and deployment best practices
 - [Build Optimization Guide](./guides/BUILD_OPTIMIZATION.md) - Build performance optimization and bundle analysis
 - [RBAC Developer Guide](./guides/RBAC_DEVELOPER_GUIDE.md) - Implementing permissions and protecting routes/actions/UI
 - [RBAC Admin Guide](./guides/RBAC_ADMIN_GUIDE.md) - Managing roles, permissions, and user access
@@ -99,4 +112,4 @@ When adding new documentation:
 
 ---
 
-**Last Updated**: 2025-11-20
+**Last Updated**: November 2025

@@ -48,6 +48,20 @@ export const DI_TOKENS = {
   IUserRoleRepository: Symbol.for("IUserRoleRepository"),
   IAuditLogRepository: Symbol.for("IAuditLogRepository"),
 
+  // Foundation Repositories
+  ILifecycleModelRepository: Symbol.for("ILifecycleModelRepository"),
+  ILifecycleStateRepository: Symbol.for("ILifecycleStateRepository"),
+  ILifecycleTransitionRepository: Symbol.for("ILifecycleTransitionRepository"),
+  IVendorRepository: Symbol.for("IVendorRepository"),
+  IVendorContactRepository: Symbol.for("IVendorContactRepository"),
+  IOrganizationUnitRepository: Symbol.for("IOrganizationUnitRepository"),
+  ILocationRepository: Symbol.for("ILocationRepository"),
+  IPersonRepository: Symbol.for("IPersonRepository"),
+  IPersonRoleAssignmentRepository: Symbol.for(
+    "IPersonRoleAssignmentRepository",
+  ),
+  IFieldDefinitionRepository: Symbol.for("IFieldDefinitionRepository"),
+
   // ==========================================
   // Service Tokens
   // ==========================================
@@ -152,6 +166,92 @@ export const DI_TOKENS = {
   // Audit Log Use Cases
   ListAuditLogsUseCase: Symbol.for("ListAuditLogsUseCase"),
   CountAuditLogsUseCase: Symbol.for("CountAuditLogsUseCase"),
+
+  // Foundation: Lifecycle Model Use Cases
+  CreateLifecycleModelUseCase: Symbol.for("CreateLifecycleModelUseCase"),
+  GetLifecycleModelUseCase: Symbol.for("GetLifecycleModelUseCase"),
+  ListLifecycleModelsUseCase: Symbol.for("ListLifecycleModelsUseCase"),
+  UpdateLifecycleModelUseCase: Symbol.for("UpdateLifecycleModelUseCase"),
+  DeleteLifecycleModelUseCase: Symbol.for("DeleteLifecycleModelUseCase"),
+
+  // Foundation: Lifecycle State Use Cases
+  CreateLifecycleStateUseCase: Symbol.for("CreateLifecycleStateUseCase"),
+  GetLifecycleStateUseCase: Symbol.for("GetLifecycleStateUseCase"),
+  ListLifecycleStatesUseCase: Symbol.for("ListLifecycleStatesUseCase"),
+  UpdateLifecycleStateUseCase: Symbol.for("UpdateLifecycleStateUseCase"),
+  DeleteLifecycleStateUseCase: Symbol.for("DeleteLifecycleStateUseCase"),
+
+  // Foundation: Lifecycle Transition Use Cases
+  CreateLifecycleTransitionUseCase: Symbol.for(
+    "CreateLifecycleTransitionUseCase",
+  ),
+  GetLifecycleTransitionUseCase: Symbol.for("GetLifecycleTransitionUseCase"),
+  ListLifecycleTransitionsUseCase: Symbol.for(
+    "ListLifecycleTransitionsUseCase",
+  ),
+  UpdateLifecycleTransitionUseCase: Symbol.for(
+    "UpdateLifecycleTransitionUseCase",
+  ),
+  DeleteLifecycleTransitionUseCase: Symbol.for(
+    "DeleteLifecycleTransitionUseCase",
+  ),
+
+  // Foundation: Vendor Use Cases
+  CreateVendorUseCase: Symbol.for("CreateVendorUseCase"),
+  GetVendorUseCase: Symbol.for("GetVendorUseCase"),
+  ListVendorsUseCase: Symbol.for("ListVendorsUseCase"),
+  UpdateVendorUseCase: Symbol.for("UpdateVendorUseCase"),
+  DeleteVendorUseCase: Symbol.for("DeleteVendorUseCase"),
+
+  // Foundation: Vendor Contact Use Cases
+  CreateVendorContactUseCase: Symbol.for("CreateVendorContactUseCase"),
+  GetVendorContactUseCase: Symbol.for("GetVendorContactUseCase"),
+  ListVendorContactsUseCase: Symbol.for("ListVendorContactsUseCase"),
+  UpdateVendorContactUseCase: Symbol.for("UpdateVendorContactUseCase"),
+  DeleteVendorContactUseCase: Symbol.for("DeleteVendorContactUseCase"),
+
+  // Foundation: Organization Unit Use Cases
+  CreateOrganizationUnitUseCase: Symbol.for("CreateOrganizationUnitUseCase"),
+  GetOrganizationUnitUseCase: Symbol.for("GetOrganizationUnitUseCase"),
+  ListOrganizationUnitsUseCase: Symbol.for("ListOrganizationUnitsUseCase"),
+  UpdateOrganizationUnitUseCase: Symbol.for("UpdateOrganizationUnitUseCase"),
+  DeleteOrganizationUnitUseCase: Symbol.for("DeleteOrganizationUnitUseCase"),
+
+  // Foundation: Location Use Cases
+  CreateLocationUseCase: Symbol.for("CreateLocationUseCase"),
+  GetLocationUseCase: Symbol.for("GetLocationUseCase"),
+  ListLocationsUseCase: Symbol.for("ListLocationsUseCase"),
+  UpdateLocationUseCase: Symbol.for("UpdateLocationUseCase"),
+  DeleteLocationUseCase: Symbol.for("DeleteLocationUseCase"),
+
+  // Foundation: Person Use Cases
+  CreatePersonUseCase: Symbol.for("CreatePersonUseCase"),
+  GetPersonUseCase: Symbol.for("GetPersonUseCase"),
+  ListPersonsUseCase: Symbol.for("ListPersonsUseCase"),
+  UpdatePersonUseCase: Symbol.for("UpdatePersonUseCase"),
+  DeletePersonUseCase: Symbol.for("DeletePersonUseCase"),
+
+  // Foundation: Person Role Assignment Use Cases
+  CreatePersonRoleAssignmentUseCase: Symbol.for(
+    "CreatePersonRoleAssignmentUseCase",
+  ),
+  GetPersonRoleAssignmentUseCase: Symbol.for("GetPersonRoleAssignmentUseCase"),
+  ListPersonRoleAssignmentsUseCase: Symbol.for(
+    "ListPersonRoleAssignmentsUseCase",
+  ),
+  UpdatePersonRoleAssignmentUseCase: Symbol.for(
+    "UpdatePersonRoleAssignmentUseCase",
+  ),
+  DeletePersonRoleAssignmentUseCase: Symbol.for(
+    "DeletePersonRoleAssignmentUseCase",
+  ),
+
+  // Foundation: Field Definition Use Cases
+  CreateFieldDefinitionUseCase: Symbol.for("CreateFieldDefinitionUseCase"),
+  GetFieldDefinitionUseCase: Symbol.for("GetFieldDefinitionUseCase"),
+  ListFieldDefinitionsUseCase: Symbol.for("ListFieldDefinitionsUseCase"),
+  UpdateFieldDefinitionUseCase: Symbol.for("UpdateFieldDefinitionUseCase"),
+  DeleteFieldDefinitionUseCase: Symbol.for("DeleteFieldDefinitionUseCase"),
 
   // ==========================================
   // Infrastructure Tokens

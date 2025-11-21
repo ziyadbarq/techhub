@@ -70,7 +70,7 @@ export class PrismaUserRoleRepository implements IUserRoleRepository {
         count: userRoles.length,
       });
 
-      return userRoles.map((ur) => this.toDomain(ur));
+      return userRoles.map((ur: PrismaUserRole) => this.toDomain(ur));
     } catch (error) {
       this.logger.error(
         "findByUserId",
@@ -99,7 +99,7 @@ export class PrismaUserRoleRepository implements IUserRoleRepository {
         count: userRoles.length,
       });
 
-      return userRoles.map((ur) => this.toDomain(ur));
+      return userRoles.map((ur: PrismaUserRole) => this.toDomain(ur));
     } catch (error) {
       this.logger.error(
         "findByRoleId",

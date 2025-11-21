@@ -11,7 +11,7 @@ initContainer();
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Barq App Boilerplate",
+  title: "Barq Assets",
   description:
     "Clean Architecture Next.js starter with DI, AI integration, and modern theme system",
 };

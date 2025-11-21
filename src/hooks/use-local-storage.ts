@@ -49,22 +49,20 @@ export function useLocalStorage<T>(
   const setValue: SetValue<T> = useCallback(
     (value) => {
       try {
-        // Allow value to be a function so we have same API as useState
-        const valueToStore =
-          value instanceof Function ? value(storedValue) : value;
+        setStoredValue((prev) => {
+          const valueToStore = value instanceof Function ? value(prev) : value;
 
-        // Save state
-        setStoredValue(valueToStore);
+          if (typeof window !== "undefined") {
+            window.localStorage.setItem(key, JSON.stringify(valueToStore));
+          }
 
-        // Save to local storage
-        if (typeof window !== "undefined") {
-          window.localStorage.setItem(key, JSON.stringify(valueToStore));
-        }
+          return valueToStore;
+        });
       } catch (error) {
         console.error(`Error setting localStorage key "${key}":`, error);
       }
     },
-    [key, storedValue],
+    [key],
   );
 
   // Sync state when storage changes in another tab/window

@@ -1,6 +1,6 @@
 # RBAC Architecture
 
-**Role-Based Access Control (RBAC)** - Complete architecture documentation for the barq-app-boilerplate permission system.
+**Role-Based Access Control (RBAC)** - Complete architecture documentation for the barq-assets permission system.
 
 ## Table of Contents
 
@@ -441,11 +441,11 @@ import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 **Note**: UI enforcement is for UX only - not security. Always enforce on server.
 
-### Layer 2: Route Middleware (Optional)
+### Layer 2: Route Proxy (Optional)
 
-**Location**: `src/middleware.ts`, `src/config/protected-routes.ts`
+**Location**: `proxy.ts`, `src/config/protected-routes.ts`
 
-Next.js middleware can check basic authentication, but full permission checks should happen in server actions/use cases for performance.
+Next.js proxy (formerly middleware) can check basic authentication, but full permission checks should happen in server actions/use cases for performance.
 
 ```typescript
 // Protected routes configuration

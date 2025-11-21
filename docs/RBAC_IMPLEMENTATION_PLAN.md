@@ -2,7 +2,7 @@
 
 ## Full Role-Based Access Control System for Next.js 16
 
-**Project**: barq-app-boilerplate
+**Project**: barq-assets
 **Stack**: Next.js 16, Better Auth, Prisma (PostgreSQL), TypeScript, Clean Architecture
 **Goal**: Dynamic, database-driven RBAC with centralized admin UI and multi-layer enforcement
 
@@ -25,7 +25,7 @@ This plan implements a production-ready RBAC system with:
 
 ### 1.1 Clone Authentication System
 
-**Goal**: Migrate Better Auth from email-task-manager to barq-app-boilerplate
+**Goal**: Migrate Better Auth from email-task-manager to barq-assets
 
 **Tasks**:
 
@@ -40,8 +40,8 @@ This plan implements a production-ready RBAC system with:
   - `src/lib/auth/index.ts` → Central exports
 - [ ] Create API route handler
   - `src/app/api/auth/[...all]/route.ts`
-- [ ] Update middleware for route protection
-  - `src/middleware.ts` → Session validation and redirects
+- [ ] Update proxy for route protection
+  - `proxy.ts` → Session validation and redirects
 - [ ] Add environment variables to `.env.local`:
 
   ```bash
@@ -62,7 +62,7 @@ This plan implements a production-ready RBAC system with:
 
 - `src/lib/auth/` (5 files)
 - `src/app/api/auth/[...all]/route.ts`
-- `src/middleware.ts`
+- `proxy.ts`
 - `.env.local`
 - `next.config.ts`
 
@@ -441,11 +441,11 @@ export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
 
 ### 5.1 Enhanced Middleware
 
-**Goal**: Add RBAC enforcement to Next.js middleware
+**Goal**: Add RBAC enforcement to Next.js proxy
 
 **Tasks**:
 
-- [ ] Update `src/middleware.ts`:
+- [ ] Update `proxy.ts`:
   - Session validation (already done from Better Auth)
   - Add role-based route protection
   - Add permission-based route protection
@@ -468,11 +468,11 @@ export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
     };
     ```
 
-**Note**: For Next.js 16, middleware permissions should be lightweight (role checks only). Full permission validation should happen in server actions and use cases.
+**Note**: For Next.js 16, proxy permissions should be lightweight (role checks only). Full permission validation should happen in server actions and use cases.
 
 **Files Modified**:
 
-- `src/middleware.ts`
+- `proxy.ts`
 - `src/config/protected-routes.ts` (new)
 
 ### 5.2 Server Action Protection

@@ -19,10 +19,17 @@
 import {
   Home,
   CheckSquare,
-  FileText,
-  Users,
   Shield,
-  Key,
+  Package,
+  GitBranch,
+  Activity,
+  Building2,
+  UserCircle,
+  MapPin,
+  ContactRound,
+  UserCog,
+  Settings2,
+  ArrowRightLeft,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -85,16 +92,144 @@ export const navGroups: NavGroup[] = [
         description: "Overview and statistics",
         permission: PERMISSIONS.DASHBOARD_VIEW,
       },
+      // Task entity - kept as architectural reference (hidden from UI)
+      // Route still accessible at /tasks for code reference
       {
         title: "Tasks",
         href: "/tasks",
         icon: CheckSquare,
         description: "Manage your tasks",
         permission: PERMISSIONS.TASKS_VIEW,
+        visible: false, // Hidden from navigation - reference implementation only
       },
     ],
     visible: true,
     collapsible: false, // Always visible
+  },
+
+  // Lifecycle
+  {
+    id: "lifecycle",
+    title: "Lifecycle",
+    items: [
+      {
+        title: "Models",
+        href: "/lifecycle-models",
+        icon: GitBranch,
+        description: "Manage lifecycle models",
+        permission: PERMISSIONS.LIFECYCLE_MODELS_VIEW,
+      },
+      {
+        title: "States",
+        href: "/lifecycle-states",
+        icon: Activity,
+        description: "Manage lifecycle states",
+        permission: PERMISSIONS.LIFECYCLE_STATES_VIEW,
+      },
+      {
+        title: "Transitions",
+        href: "/lifecycle-transitions",
+        icon: ArrowRightLeft,
+        description: "Manage state transitions",
+        permission: PERMISSIONS.LIFECYCLE_TRANSITIONS_VIEW,
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: false,
+  },
+
+  // Suppliers
+  {
+    id: "suppliers",
+    title: "Suppliers",
+    items: [
+      {
+        title: "Vendors",
+        href: "/vendors",
+        icon: Package,
+        description: "Manage vendors",
+        permission: PERMISSIONS.VENDORS_VIEW,
+      },
+      {
+        title: "Vendor Contacts",
+        href: "/vendor-contacts",
+        icon: ContactRound,
+        description: "Manage vendor contacts",
+        permission: PERMISSIONS.VENDOR_CONTACTS_VIEW,
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: true,
+  },
+
+  // Organization & Locations
+  {
+    id: "organization",
+    title: "Org & Locations",
+    items: [
+      {
+        title: "Organization",
+        href: "/organization-units",
+        icon: Building2,
+        description: "Organization structure",
+        permission: PERMISSIONS.ORGANIZATION_UNITS_VIEW,
+      },
+      {
+        title: "Locations",
+        href: "/locations",
+        icon: MapPin,
+        description: "Manage locations",
+        permission: PERMISSIONS.LOCATIONS_VIEW,
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: true,
+  },
+
+  // People & Roles
+  {
+    id: "people-and-roles",
+    title: "People & Roles",
+    items: [
+      {
+        title: "Persons",
+        href: "/persons",
+        icon: UserCircle,
+        description: "Manage persons",
+        permission: PERMISSIONS.PERSONS_VIEW,
+      },
+      {
+        title: "Role Assignments",
+        href: "/person-role-assignments",
+        icon: UserCog,
+        description: "Manage person role assignments",
+        permission: PERMISSIONS.PERSON_ROLE_ASSIGNMENTS_VIEW,
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: true,
+  },
+
+  // Configuration
+  {
+    id: "configuration",
+    title: "Configuration",
+    items: [
+      {
+        title: "Field Definitions",
+        href: "/field-definitions",
+        icon: Settings2,
+        description: "Manage custom field definitions",
+        permission: PERMISSIONS.FIELD_DEFINITIONS_VIEW,
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: true,
   },
 
   // Admin Section - Permission-based, collapsible
@@ -106,39 +241,8 @@ export const navGroups: NavGroup[] = [
         title: "Admin Dashboard",
         href: "/admin",
         icon: Shield,
-        description: "Admin dashboard and settings",
+        description: "System administration and settings",
         permission: PERMISSIONS.USERS_MANAGE,
-        children: [
-          {
-            title: "Roles",
-            href: "/admin/roles",
-            icon: Shield,
-            description: "Manage user roles",
-            permission: PERMISSIONS.ROLES_VIEW,
-          },
-          {
-            title: "Permissions",
-            href: "/admin/permissions",
-            icon: Key,
-            description: "Manage permissions",
-            permission: PERMISSIONS.PERMISSIONS_VIEW,
-          },
-          {
-            title: "Users",
-            href: "/admin/users",
-            icon: Users,
-            description: "Manage users",
-            permission: PERMISSIONS.USERS_VIEW,
-          },
-          {
-            title: "Audit Logs",
-            href: "/admin/audit-logs",
-            icon: FileText,
-            description: "View audit logs",
-            permission: PERMISSIONS.AUDIT_LOGS_VIEW,
-          },
-        ],
-        defaultExpanded: false,
       },
     ],
     visible: true,

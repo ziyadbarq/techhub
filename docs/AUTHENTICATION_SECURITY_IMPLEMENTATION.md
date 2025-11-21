@@ -41,14 +41,14 @@
 
 **Objective**: Implement defense-in-depth with 3 layers of protection
 
-#### Layer 1: Edge Middleware (Fast Redirect)
+#### Layer 1: Route Proxy (Fast Redirect)
 
-**File**: `/middleware.ts` (created)
+**File**: `/proxy.ts` (created)
 
-**Purpose**: Lightweight cookie check at the edge
+**Purpose**: Lightweight cookie check at network boundary
 
 **How It Works**:
-- Runs on EVERY request (Edge Runtime)
+- Runs on EVERY request (Node.js Runtime - Next.js 16 default)
 - Checks for `better-auth.session_token` cookie
 - If missing → Redirect to `/login?from=/intended-route`
 - If present → Pass through to server components
@@ -252,7 +252,7 @@ openssl rand -hex 32
 
 ### Created Files
 
-1. `/middleware.ts` - Edge middleware for route protection
+1. `/proxy.ts` - Edge middleware for route protection
 2. `/tests/unit/auth-encryption.test.ts` - Encryption unit tests
 3. `/docs/testing/AUTH_SECURITY_TESTING_GUIDE.md` - Manual testing guide
 4. `/docs/AUTHENTICATION_SECURITY_IMPLEMENTATION.md` - This document
@@ -360,7 +360,7 @@ DELETE FROM accounts;
 ### Middleware not redirecting
 
 **Check**:
-1. `middleware.ts` at project root (not `src/`)
+1. `proxy.ts` at project root (not `src/`)
 2. Matcher configuration correct
 3. Restart dev server: `npm run dev`
 4. Clear Next.js cache: `rm -rf .next`

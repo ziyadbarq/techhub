@@ -3,8 +3,9 @@
  *
  * Seeds the database with:
  * 1. RBAC (roles, permissions, role-permission assignments)
- * 2. AI prompt templates (from seed-prompts.ts)
- * 3. Example tasks (for demonstration)
+ * 2. Foundation (lifecycle, vendors, org units, locations, persons, fields)
+ * 3. AI prompt templates (from seed-prompts.ts)
+ * 4. Example tasks (for demonstration)
  */
 
 import { PrismaClient, TaskStatus } from "../../../generated/prisma/client.js";
@@ -12,6 +13,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import { seedPrompts } from "./seed-prompts";
 import { seedRBAC } from "./seed-rbac";
+import { seedFoundation } from "./seed-foundation";
 
 // Prisma v7: Use PostgreSQL adapter
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -25,11 +27,14 @@ async function main() {
   console.log("🔐 Seeding RBAC system...");
   await seedRBAC();
 
-  // 2. Seed AI prompt templates
+  // 2. Seed Foundation (lifecycle, vendors, org units, locations, persons, fields)
+  await seedFoundation(prisma);
+
+  // 3. Seed AI prompt templates
   console.log("🤖 Seeding AI prompt templates...");
   await seedPrompts(prisma);
 
-  // 3. Seed example tasks
+  // 4. Seed example tasks
   console.log("📝 Seeding example tasks...");
 
   // Delete existing tasks
@@ -37,7 +42,7 @@ async function main() {
 
   const exampleTasks = [
     {
-      title: "Welcome to Barq App Boilerplate!",
+      title: "Welcome to Barq Assets!",
       description:
         "This is an example task demonstrating the Clean Architecture pattern. " +
         "Explore the Task entity, repository, and use cases to understand how the architecture works.",

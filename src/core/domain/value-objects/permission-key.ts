@@ -44,6 +44,78 @@ export const PERMISSIONS = {
   // Dashboard
   DASHBOARD_VIEW: "dashboard:view",
   DASHBOARD_ANALYTICS: "dashboard:analytics",
+
+  // Foundation: Organization Units
+  ORGANIZATION_UNITS_VIEW: "organization-units:view",
+  ORGANIZATION_UNITS_CREATE: "organization-units:create",
+  ORGANIZATION_UNITS_UPDATE: "organization-units:update",
+  ORGANIZATION_UNITS_DELETE: "organization-units:delete",
+  ORGANIZATION_UNITS_MANAGE: "organization-units:manage",
+
+  // Foundation: Persons
+  PERSONS_VIEW: "persons:view",
+  PERSONS_CREATE: "persons:create",
+  PERSONS_UPDATE: "persons:update",
+  PERSONS_DELETE: "persons:delete",
+  PERSONS_MANAGE: "persons:manage",
+
+  // Foundation: Person Role Assignments
+  PERSON_ROLES_VIEW: "person-roles:view",
+  PERSON_ROLES_ASSIGN: "person-roles:assign",
+  PERSON_ROLES_REMOVE: "person-roles:remove",
+  PERSON_ROLES_MANAGE: "person-roles:manage",
+
+  PERSON_ROLE_ASSIGNMENTS_VIEW: "person-role-assignments:view",
+  PERSON_ROLE_ASSIGNMENTS_CREATE: "person-role-assignments:create",
+  PERSON_ROLE_ASSIGNMENTS_UPDATE: "person-role-assignments:update",
+  PERSON_ROLE_ASSIGNMENTS_DELETE: "person-role-assignments:delete",
+  PERSON_ROLE_ASSIGNMENTS_MANAGE: "person-role-assignments:manage",
+
+  // Foundation: Locations
+  LOCATIONS_VIEW: "locations:view",
+  LOCATIONS_CREATE: "locations:create",
+  LOCATIONS_UPDATE: "locations:update",
+  LOCATIONS_DELETE: "locations:delete",
+  LOCATIONS_MANAGE: "locations:manage",
+
+  // Foundation: Vendors
+  VENDORS_VIEW: "vendors:view",
+  VENDORS_CREATE: "vendors:create",
+  VENDORS_UPDATE: "vendors:update",
+  VENDORS_DELETE: "vendors:delete",
+  VENDORS_MANAGE: "vendors:manage",
+
+  // Foundation: Vendor Contacts
+  VENDOR_CONTACTS_VIEW: "vendor-contacts:view",
+  VENDOR_CONTACTS_CREATE: "vendor-contacts:create",
+  VENDOR_CONTACTS_UPDATE: "vendor-contacts:update",
+  VENDOR_CONTACTS_DELETE: "vendor-contacts:delete",
+
+  // Foundation: Lifecycle Models
+  LIFECYCLE_MODELS_VIEW: "lifecycle-models:view",
+  LIFECYCLE_MODELS_CREATE: "lifecycle-models:create",
+  LIFECYCLE_MODELS_UPDATE: "lifecycle-models:update",
+  LIFECYCLE_MODELS_DELETE: "lifecycle-models:delete",
+  LIFECYCLE_MODELS_MANAGE: "lifecycle-models:manage",
+
+  // Foundation: Lifecycle States
+  LIFECYCLE_STATES_VIEW: "lifecycle-states:view",
+  LIFECYCLE_STATES_CREATE: "lifecycle-states:create",
+  LIFECYCLE_STATES_UPDATE: "lifecycle-states:update",
+  LIFECYCLE_STATES_DELETE: "lifecycle-states:delete",
+
+  // Foundation: Lifecycle Transitions
+  LIFECYCLE_TRANSITIONS_VIEW: "lifecycle-transitions:view",
+  LIFECYCLE_TRANSITIONS_CREATE: "lifecycle-transitions:create",
+  LIFECYCLE_TRANSITIONS_UPDATE: "lifecycle-transitions:update",
+  LIFECYCLE_TRANSITIONS_DELETE: "lifecycle-transitions:delete",
+
+  // Foundation: Field Definitions
+  FIELD_DEFINITIONS_VIEW: "field-definitions:view",
+  FIELD_DEFINITIONS_CREATE: "field-definitions:create",
+  FIELD_DEFINITIONS_UPDATE: "field-definitions:update",
+  FIELD_DEFINITIONS_DELETE: "field-definitions:delete",
+  FIELD_DEFINITIONS_MANAGE: "field-definitions:manage",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

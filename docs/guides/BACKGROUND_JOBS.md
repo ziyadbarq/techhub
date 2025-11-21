@@ -1,6 +1,6 @@
 # Background Jobs Guide
 
-Complete guide to using the BullMQ-based background job processing system in the Barq boilerplate.
+Complete guide to using the BullMQ-based background job processing system in the Barq assets app.
 
 ## Table of Contents
 

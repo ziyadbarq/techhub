@@ -213,7 +213,7 @@ npm test tests/unit/auth-encryption.test.ts
 **Steps**:
 
 1. **Disable middleware temporarily** (for testing):
-   - Comment out middleware matcher in `middleware.ts`:
+   - Comment out middleware matcher in `proxy.ts`:
      ```typescript
      export const config = {
        matcher: [], // Disabled for testing
@@ -497,7 +497,7 @@ DELETE FROM "accounts";
 ### Issue: Middleware not working
 
 **Solution**:
-1. Verify `middleware.ts` is at project root (not in `src/`)
+1. Verify `proxy.ts` is at project root (not in `src/`)
 2. Check matcher configuration
 3. Restart dev server
 4. Clear Next.js cache: `rm -rf .next`

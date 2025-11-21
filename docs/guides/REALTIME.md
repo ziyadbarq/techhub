@@ -1,6 +1,6 @@
 # Real-time Features Guide
 
-This guide covers the real-time communication features in the Barq App Boilerplate, including Server-Sent Events (SSE) and Partykit (WebSocket).
+This guide covers the real-time communication features in the Barq Assets, including Server-Sent Events (SSE) and Partykit (WebSocket).
 
 ## Table of Contents
 
@@ -14,7 +14,7 @@ This guide covers the real-time communication features in the Barq App Boilerpla
 
 ## Overview
 
-The boilerplate provides two real-time communication strategies:
+The assets app provides two real-time communication strategies:
 
 1. **Server-Sent Events (SSE)**: One-way server-to-client streaming
 2. **Partykit (WebSocket)**: Bi-directional real-time communication

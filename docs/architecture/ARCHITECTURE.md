@@ -1,6 +1,6 @@
 # Architecture Documentation
 
-**Barq App Boilerplate** - Comprehensive architecture guide with diagrams.
+**Barq Assets** - Comprehensive architecture guide with diagrams.
 
 ## Table of Contents
 
@@ -19,7 +19,7 @@
 
 ## Overview
 
-This boilerplate implements **Clean Architecture** (Robert C. Martin) with **Dependency Injection** to create maintainable, testable, and scalable applications.
+This assets app implements **Clean Architecture** (Robert C. Martin) with **Dependency Injection** to create maintainable, testable, and scalable applications.
 
 ### Core Principles
 

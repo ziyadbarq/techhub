@@ -1,6 +1,6 @@
 # Testing Guide
 
-This directory contains integration tests for the Barq App Boilerplate using Vitest and Testcontainers.
+This directory contains integration tests for the Barq Assets using Vitest and Testcontainers.
 
 ## Overview
 
@@ -401,4 +401,4 @@ See `tests/integration/repositories/task.repository.test.ts` for a comprehensive
 - ✅ Data integrity across operations
 - ✅ Status counting and aggregation
 
-This serves as the template for all repository tests in the boilerplate.
+This serves as the template for all repository tests in the assets app.

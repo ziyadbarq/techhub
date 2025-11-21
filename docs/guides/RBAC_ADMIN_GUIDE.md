@@ -1,6 +1,6 @@
 # RBAC Admin Guide
 
-**Administrator's guide** for managing roles, permissions, and user access in the barq-app-boilerplate.
+**Administrator's guide** for managing roles, permissions, and user access in the barq-assets.
 
 ## Table of Contents
 

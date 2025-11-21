@@ -1,6 +1,6 @@
 # Utility Scripts
 
-This directory contains TypeScript and shell scripts to help with development, testing, and maintenance of the Barq App Boilerplate.
+This directory contains TypeScript and shell scripts to help with development, testing, and maintenance of the Barq Assets.
 
 ## Available Scripts
 

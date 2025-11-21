@@ -4,7 +4,10 @@
 
 import { injectable, inject } from "inversify";
 import type { PrismaClient } from "@/generated/prisma";
-import { type PromptBlockCategory, type PromptBlock } from "@/generated/prisma";
+import {
+  type PromptBlockCategory,
+  type PromptBlock as PrismaPromptBlock,
+} from "@/generated/prisma";
 import { DI_TOKENS } from "@/di/types";
 import type { IPromptBlockRepository } from "@/core/repositories/prompt-block.repository.interface";
 import {
@@ -61,7 +64,7 @@ export class PrismaPromptBlockRepository implements IPromptBlockRepository {
       orderBy: { name: "asc" },
     });
 
-    return blocks.map((b) => this.toDomain(b));
+    return blocks.map((b: PrismaPromptBlock) => this.toDomain(b));
   }
 
   async findAllActive(): Promise<PromptBlockEntity[]> {
@@ -70,7 +73,7 @@ export class PrismaPromptBlockRepository implements IPromptBlockRepository {
       orderBy: [{ category: "asc" }, { name: "asc" }],
     });
 
-    return blocks.map((b) => this.toDomain(b));
+    return blocks.map((b: PrismaPromptBlock) => this.toDomain(b));
   }
 
   async findAll(): Promise<PromptBlockEntity[]> {
@@ -78,7 +81,7 @@ export class PrismaPromptBlockRepository implements IPromptBlockRepository {
       orderBy: [{ category: "asc" }, { name: "asc" }],
     });
 
-    return blocks.map((b) => this.toDomain(b));
+    return blocks.map((b: PrismaPromptBlock) => this.toDomain(b));
   }
 
   async update(
@@ -120,7 +123,7 @@ export class PrismaPromptBlockRepository implements IPromptBlockRepository {
   /**
    * Map Prisma model to domain entity
    */
-  private toDomain(prismaBlock: PromptBlock): PromptBlockEntity {
+  private toDomain(prismaBlock: PrismaPromptBlock): PromptBlockEntity {
     return new PromptBlockEntity(
       prismaBlock.id,
       prismaBlock.name,

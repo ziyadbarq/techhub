@@ -282,6 +282,385 @@ const SYSTEM_PERMISSIONS = [
     resource: "dashboard",
     action: "analytics",
   },
+
+  // Foundation: Organization Units
+  {
+    name: PERMISSIONS.ORGANIZATION_UNITS_VIEW,
+    displayName: "View Organization Units",
+    description: "View organization unit list and details",
+    resource: "organization-units",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.ORGANIZATION_UNITS_CREATE,
+    displayName: "Create Organization Units",
+    description: "Create new organization units",
+    resource: "organization-units",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.ORGANIZATION_UNITS_UPDATE,
+    displayName: "Update Organization Units",
+    description: "Edit organization unit information",
+    resource: "organization-units",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.ORGANIZATION_UNITS_DELETE,
+    displayName: "Delete Organization Units",
+    description: "Remove organization units",
+    resource: "organization-units",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.ORGANIZATION_UNITS_MANAGE,
+    displayName: "Manage Organization Units",
+    description: "Full organization unit management access",
+    resource: "organization-units",
+    action: "manage",
+  },
+
+  // Foundation: Persons
+  {
+    name: PERMISSIONS.PERSONS_VIEW,
+    displayName: "View Persons",
+    description: "View person list and details",
+    resource: "persons",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.PERSONS_CREATE,
+    displayName: "Create Persons",
+    description: "Create new person records",
+    resource: "persons",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.PERSONS_UPDATE,
+    displayName: "Update Persons",
+    description: "Edit person information",
+    resource: "persons",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.PERSONS_DELETE,
+    displayName: "Delete Persons",
+    description: "Remove person records",
+    resource: "persons",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.PERSONS_MANAGE,
+    displayName: "Manage Persons",
+    description: "Full person management access",
+    resource: "persons",
+    action: "manage",
+  },
+
+  // Foundation: Person Roles
+  {
+    name: PERMISSIONS.PERSON_ROLES_VIEW,
+    displayName: "View Person Roles",
+    description: "View person role assignments",
+    resource: "person-roles",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.PERSON_ROLES_ASSIGN,
+    displayName: "Assign Person Roles",
+    description: "Assign roles to persons",
+    resource: "person-roles",
+    action: "assign",
+  },
+  {
+    name: PERMISSIONS.PERSON_ROLES_REMOVE,
+    displayName: "Remove Person Roles",
+    description: "Remove role assignments from persons",
+    resource: "person-roles",
+    action: "remove",
+  },
+  {
+    name: PERMISSIONS.PERSON_ROLES_MANAGE,
+    displayName: "Manage Person Roles",
+    description: "Full person role management access",
+    resource: "person-roles",
+    action: "manage",
+  },
+
+  // Foundation: Person Role Assignments
+  {
+    name: PERMISSIONS.PERSON_ROLE_ASSIGNMENTS_VIEW,
+    displayName: "View Person Role Assignments",
+    description: "View role assignment details",
+    resource: "person-role-assignments",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.PERSON_ROLE_ASSIGNMENTS_CREATE,
+    displayName: "Create Person Role Assignments",
+    description: "Create new role assignments",
+    resource: "person-role-assignments",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.PERSON_ROLE_ASSIGNMENTS_UPDATE,
+    displayName: "Update Person Role Assignments",
+    description: "Edit role assignment information",
+    resource: "person-role-assignments",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.PERSON_ROLE_ASSIGNMENTS_DELETE,
+    displayName: "Delete Person Role Assignments",
+    description: "Remove role assignments",
+    resource: "person-role-assignments",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.PERSON_ROLE_ASSIGNMENTS_MANAGE,
+    displayName: "Manage Person Role Assignments",
+    description: "Full role assignment management access",
+    resource: "person-role-assignments",
+    action: "manage",
+  },
+
+  // Foundation: Locations
+  {
+    name: PERMISSIONS.LOCATIONS_VIEW,
+    displayName: "View Locations",
+    description: "View location list and details",
+    resource: "locations",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.LOCATIONS_CREATE,
+    displayName: "Create Locations",
+    description: "Create new locations",
+    resource: "locations",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.LOCATIONS_UPDATE,
+    displayName: "Update Locations",
+    description: "Edit location information",
+    resource: "locations",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.LOCATIONS_DELETE,
+    displayName: "Delete Locations",
+    description: "Remove locations",
+    resource: "locations",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.LOCATIONS_MANAGE,
+    displayName: "Manage Locations",
+    description: "Full location management access",
+    resource: "locations",
+    action: "manage",
+  },
+
+  // Foundation: Vendors
+  {
+    name: PERMISSIONS.VENDORS_VIEW,
+    displayName: "View Vendors",
+    description: "View vendor list and details",
+    resource: "vendors",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.VENDORS_CREATE,
+    displayName: "Create Vendors",
+    description: "Create new vendors",
+    resource: "vendors",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.VENDORS_UPDATE,
+    displayName: "Update Vendors",
+    description: "Edit vendor information",
+    resource: "vendors",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.VENDORS_DELETE,
+    displayName: "Delete Vendors",
+    description: "Remove vendors",
+    resource: "vendors",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.VENDORS_MANAGE,
+    displayName: "Manage Vendors",
+    description: "Full vendor management access",
+    resource: "vendors",
+    action: "manage",
+  },
+
+  // Foundation: Vendor Contacts
+  {
+    name: PERMISSIONS.VENDOR_CONTACTS_VIEW,
+    displayName: "View Vendor Contacts",
+    description: "View vendor contact list and details",
+    resource: "vendor-contacts",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.VENDOR_CONTACTS_CREATE,
+    displayName: "Create Vendor Contacts",
+    description: "Create new vendor contacts",
+    resource: "vendor-contacts",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.VENDOR_CONTACTS_UPDATE,
+    displayName: "Update Vendor Contacts",
+    description: "Edit vendor contact information",
+    resource: "vendor-contacts",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.VENDOR_CONTACTS_DELETE,
+    displayName: "Delete Vendor Contacts",
+    description: "Remove vendor contacts",
+    resource: "vendor-contacts",
+    action: "delete",
+  },
+
+  // Foundation: Lifecycle Models
+  {
+    name: PERMISSIONS.LIFECYCLE_MODELS_VIEW,
+    displayName: "View Lifecycle Models",
+    description: "View lifecycle model list and details",
+    resource: "lifecycle-models",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.LIFECYCLE_MODELS_CREATE,
+    displayName: "Create Lifecycle Models",
+    description: "Create new lifecycle models",
+    resource: "lifecycle-models",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.LIFECYCLE_MODELS_UPDATE,
+    displayName: "Update Lifecycle Models",
+    description: "Edit lifecycle model information",
+    resource: "lifecycle-models",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.LIFECYCLE_MODELS_DELETE,
+    displayName: "Delete Lifecycle Models",
+    description: "Remove lifecycle models",
+    resource: "lifecycle-models",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.LIFECYCLE_MODELS_MANAGE,
+    displayName: "Manage Lifecycle Models",
+    description: "Full lifecycle model management access",
+    resource: "lifecycle-models",
+    action: "manage",
+  },
+
+  // Foundation: Lifecycle States
+  {
+    name: PERMISSIONS.LIFECYCLE_STATES_VIEW,
+    displayName: "View Lifecycle States",
+    description: "View lifecycle state list and details",
+    resource: "lifecycle-states",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.LIFECYCLE_STATES_CREATE,
+    displayName: "Create Lifecycle States",
+    description: "Create new lifecycle states",
+    resource: "lifecycle-states",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.LIFECYCLE_STATES_UPDATE,
+    displayName: "Update Lifecycle States",
+    description: "Edit lifecycle state information",
+    resource: "lifecycle-states",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.LIFECYCLE_STATES_DELETE,
+    displayName: "Delete Lifecycle States",
+    description: "Remove lifecycle states",
+    resource: "lifecycle-states",
+    action: "delete",
+  },
+
+  // Foundation: Lifecycle Transitions
+  {
+    name: PERMISSIONS.LIFECYCLE_TRANSITIONS_VIEW,
+    displayName: "View Lifecycle Transitions",
+    description: "View lifecycle transition list and details",
+    resource: "lifecycle-transitions",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.LIFECYCLE_TRANSITIONS_CREATE,
+    displayName: "Create Lifecycle Transitions",
+    description: "Create new lifecycle transitions",
+    resource: "lifecycle-transitions",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.LIFECYCLE_TRANSITIONS_UPDATE,
+    displayName: "Update Lifecycle Transitions",
+    description: "Edit lifecycle transition information",
+    resource: "lifecycle-transitions",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.LIFECYCLE_TRANSITIONS_DELETE,
+    displayName: "Delete Lifecycle Transitions",
+    description: "Remove lifecycle transitions",
+    resource: "lifecycle-transitions",
+    action: "delete",
+  },
+
+  // Foundation: Field Definitions
+  {
+    name: PERMISSIONS.FIELD_DEFINITIONS_VIEW,
+    displayName: "View Field Definitions",
+    description: "View field definition list and details",
+    resource: "field-definitions",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.FIELD_DEFINITIONS_CREATE,
+    displayName: "Create Field Definitions",
+    description: "Create new field definitions",
+    resource: "field-definitions",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.FIELD_DEFINITIONS_UPDATE,
+    displayName: "Update Field Definitions",
+    description: "Edit field definition information",
+    resource: "field-definitions",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.FIELD_DEFINITIONS_DELETE,
+    displayName: "Delete Field Definitions",
+    description: "Remove field definitions",
+    resource: "field-definitions",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.FIELD_DEFINITIONS_MANAGE,
+    displayName: "Manage Field Definitions",
+    description: "Full field definition management access",
+    resource: "field-definitions",
+    action: "manage",
+  },
 ];
 
 /**

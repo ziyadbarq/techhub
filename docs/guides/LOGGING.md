@@ -1,6 +1,6 @@
 # Logging Guide
 
-Comprehensive guide to structured logging in the Next.js boilerplate using Pino logger with advanced features for production-grade observability.
+Comprehensive guide to structured logging in the Next.js assets app using Pino logger with advanced features for production-grade observability.
 
 ## Table of Contents
 
@@ -24,7 +24,6 @@ Comprehensive guide to structured logging in the Next.js boilerplate using Pino 
 The application uses a production-ready logging system based on Pino with:
 
 - **Structured logging** with JSON output
-- **Request correlation** via AsyncLocalStorage
 - **Performance timing** and slow operation detection
 - **Automatic query logging** for database operations
 - **Enhanced error serialization** for domain errors and Zod validation
@@ -227,71 +226,15 @@ logger.audit({
 
 ## Request Tracking
 
-### Automatic Request Context
+**Current Status:** Request tracking (request IDs, correlation IDs, AsyncLocalStorage context) is not currently implemented in this application.
 
-The application uses AsyncLocalStorage to automatically track request context across all layers.
+**If you need request tracking**, you can implement it by:
+1. Creating request context utilities with AsyncLocalStorage
+2. Integrating into `proxy.ts` to generate/extract request IDs
+3. Adding correlation ID support for distributed tracing
+4. Updating logger service to automatically include context
 
-**Setup** (via [src/proxy.ts](../../src/proxy.ts)):
-
-```typescript
-// Proxy automatically initializes context for every request
-export function proxy(request: NextRequest) {
-  const context: RequestContext = {
-    requestId: generateRequestId(), // req_<uuid>
-    correlationId: request.headers.get("x-correlation-id") || requestId,
-    timestamp: new Date().toISOString(),
-    method: request.method,
-    path: request.url,
-    ip: extractIpAddress(request),
-    userAgent: request.headers.get("user-agent"),
-  };
-
-  return runWithContext(context, () => {
-    // All code here has access to context
-    return NextResponse.next();
-  });
-}
-```
-
-### Using Request Context in Services
-
-```typescript
-import {
-  getRequestContext,
-  createRequestContextLogger,
-} from "@/infrastructure/middleware/request-context";
-
-// Get current request context
-const context = getRequestContext();
-if (context) {
-  console.log(context.requestId); // req_abc123
-  console.log(context.userId); // user_456 (if set)
-}
-
-// Create logger with automatic request context
-const logger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
-const createLogger = createRequestContextLogger(logger);
-
-const requestLogger = createLogger({ module: "UserService" });
-requestLogger.info("Processing");
-// Automatically includes: requestId, correlationId, userId, method, path
-```
-
-### Distributed Tracing
-
-Pass correlation IDs across service boundaries:
-
-```typescript
-// Client sends request with correlation ID
-const response = await fetch("/api/users", {
-  headers: {
-    "x-correlation-id": "trace_xyz789",
-  },
-});
-
-// Server automatically uses it
-// All logs will include: { correlationId: 'trace_xyz789', ... }
-```
+This is an optional feature that can be added when monitoring and debugging requirements justify the additional complexity.
 
 ## Performance Monitoring
 
@@ -723,12 +666,6 @@ AUTH_DEBUG_LOGS=false
    ) {}
    ```
 
-### Request Context Not Available
-
-1. **Ensure proxy is running** ([src/proxy.ts](../../src/proxy.ts))
-2. **Check route matcher** - some routes may be excluded
-3. **Verify AsyncLocalStorage** is supported (Node.js 16+)
-
 ### Slow Query Logs Overwhelming
 
 Adjust thresholds in [src/infrastructure/services/logger/pino-logger.service.ts](../../src/infrastructure/services/logger/pino-logger.service.ts):
@@ -811,8 +748,7 @@ logger.error("Critical error", error, { sentryLevel: "error" });
 ## Next Steps
 
 - Review [Error Handler](../../src/interface-adapters/controllers/error-handler.ts) for controller error patterns
-- Check [Prisma Middleware](../../src/infrastructure/database/prisma/logging-middleware.ts) for query logging details
-- See [Request Context](../../src/infrastructure/middleware/request-context.ts) for distributed tracing setup
+- Check [Prisma Client](../../src/infrastructure/database/prisma/client.ts) for query logging configuration
 - Read [Architecture Guide](../architecture/ARCHITECTURE.md) for overall system design
 
 ## Related Documentation

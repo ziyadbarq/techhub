@@ -92,7 +92,7 @@ export class PrismaAuditLogRepository implements IAuditLogRepository {
           skip: params.offset,
         });
 
-        return logs.map((log) => this.toDomain(log));
+        return logs.map((log: PrismaAuditLog) => this.toDomain(log));
       },
       {
         filters: {
@@ -129,7 +129,7 @@ export class PrismaAuditLogRepository implements IAuditLogRepository {
           skip: offset,
         });
 
-        return logs.map((log) => this.toDomain(log));
+        return logs.map((log: PrismaAuditLog) => this.toDomain(log));
       },
       { userId, limit, offset },
     );
@@ -154,7 +154,7 @@ export class PrismaAuditLogRepository implements IAuditLogRepository {
           orderBy: { createdAt: "desc" },
         });
 
-        return logs.map((log) => this.toDomain(log));
+        return logs.map((log: PrismaAuditLog) => this.toDomain(log));
       },
       { entityType, entityId },
     );
@@ -179,7 +179,7 @@ export class PrismaAuditLogRepository implements IAuditLogRepository {
           skip: offset,
         });
 
-        return logs.map((log) => this.toDomain(log));
+        return logs.map((log: PrismaAuditLog) => this.toDomain(log));
       },
       { action, limit, offset },
     );

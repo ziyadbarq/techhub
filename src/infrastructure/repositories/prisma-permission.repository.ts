@@ -127,7 +127,7 @@ export class PrismaPermissionRepository implements IPermissionRepository {
         includeInactive,
       });
 
-      return permissions.map((p) => this.toDomain(p));
+      return permissions.map((p: PrismaPermission) => this.toDomain(p));
     } catch (error) {
       const duration = timer();
       repoLogger.error("findAll", "Failed to retrieve all permissions", error, {
@@ -159,7 +159,7 @@ export class PrismaPermissionRepository implements IPermissionRepository {
         foundCount: permissions.length,
       });
 
-      return permissions.map((p) => this.toDomain(p));
+      return permissions.map((p: PrismaPermission) => this.toDomain(p));
     } catch (error) {
       const duration = timer();
       repoLogger.error(
@@ -202,7 +202,7 @@ export class PrismaPermissionRepository implements IPermissionRepository {
         },
       );
 
-      return permissions.map((p) => this.toDomain(p));
+      return permissions.map((p: PrismaPermission) => this.toDomain(p));
     } catch (error) {
       const duration = timer();
       repoLogger.error(
@@ -242,7 +242,7 @@ export class PrismaPermissionRepository implements IPermissionRepository {
         },
       );
 
-      return permissions.map((p) => this.toDomain(p));
+      return permissions.map((p: PrismaPermission) => this.toDomain(p));
     } catch (error) {
       const duration = timer();
       repoLogger.error(

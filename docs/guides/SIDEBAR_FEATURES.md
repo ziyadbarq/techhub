@@ -373,7 +373,7 @@ socket.on("task:completed", () => {
 
 **SSE Integration:**
 
-The boilerplate includes an SSE endpoint at `/api/sse/task-updates` for real-time updates:
+The assets app includes an SSE endpoint at `/api/sse/task-updates` for real-time updates:
 
 ```typescript
 // Connect to SSE stream

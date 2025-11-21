@@ -58,58 +58,20 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
-  getVisibleNavGroups,
   isNavItemActive,
   isNavItemSection,
   hasChildren,
-  getGroupDefaultState,
-  getItemDefaultState,
   type NavItem,
   type NavGroup,
 } from "@/config/navigation";
 import { useLocalStorage } from "@/hooks/use-local-storage";
-import { useBadgeUpdates } from "@/hooks/use-badge-updates";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePlatform, getModifierKey } from "@/hooks/use-platform";
-import { usePermissions } from "@/hooks/use-permissions";
+import { useSidebarNavigation } from "@/hooks/use-sidebar-navigation";
 import { debounce } from "@/lib/utils/debounce";
 
 interface SidebarProps {
   className?: string;
-}
-
-/**
- * Initialize group collapsed states based on defaults
- */
-function initializeGroupStates(groups: NavGroup[]): Record<string, boolean> {
-  const states: Record<string, boolean> = {};
-  groups.forEach((group) => {
-    if (group.collapsible) {
-      states[group.id] = getGroupDefaultState(group.id);
-    }
-  });
-  return states;
-}
-
-/**
- * Initialize item expanded states based on defaults
- */
-function initializeItemStates(groups: NavGroup[]): Record<string, boolean> {
-  const states: Record<string, boolean> = {};
-
-  const processItems = (items: NavItem[]) => {
-    items.forEach((item) => {
-      if (hasChildren(item)) {
-        states[item.href] = getItemDefaultState(item.href);
-        if (item.children) {
-          processItems(item.children);
-        }
-      }
-    });
-  };
-
-  groups.forEach((group) => processItems(group.items));
-  return states;
 }
 
 function SidebarComponent({ className }: SidebarProps) {
@@ -123,26 +85,15 @@ function SidebarComponent({ className }: SidebarProps) {
   );
   const [isMobileOpen, setIsMobileOpen] = React.useState(false);
 
-  // Get user permissions
-  const { permissions, isLoading: permissionsLoading } = usePermissions();
-
-  // Get visible navigation groups (memoized, filtered by user permissions)
-  const navGroups = React.useMemo(
-    () => getVisibleNavGroups(permissions),
-    [permissions],
-  );
-
-  // Initialize group and item states
-  const [collapsedGroups, setCollapsedGroups] = useLocalStorage<
-    Record<string, boolean>
-  >("sidebar-groups-collapsed", initializeGroupStates(navGroups));
-
-  const [expandedItems, setExpandedItems] = React.useState<
-    Record<string, boolean>
-  >(() => initializeItemStates(navGroups));
-
-  // Real-time badge updates
-  const badges = useBadgeUpdates();
+  const {
+    navGroups,
+    permissionsLoading,
+    collapsedGroups,
+    expandedItems,
+    toggleGroup,
+    toggleItem,
+    getBadgeValue,
+  } = useSidebarNavigation();
 
   // Focus trap for mobile menu accessibility
   useFocusTrap(sidebarRef, isMobileOpen);
@@ -203,37 +154,6 @@ function SidebarComponent({ className }: SidebarProps) {
 
   const toggleCollapse = () => setIsCollapsed((prev) => !prev);
   const toggleMobile = () => setIsMobileOpen((prev) => !prev);
-
-  // Toggle group collapsed state
-  const toggleGroup = React.useCallback(
-    (groupId: string) => {
-      setCollapsedGroups((prev) => ({
-        ...prev,
-        [groupId]: !prev[groupId],
-      }));
-    },
-    [setCollapsedGroups],
-  );
-
-  // Toggle item expanded state
-  const toggleItem = React.useCallback((itemHref: string) => {
-    setExpandedItems((prev) => ({
-      ...prev,
-      [itemHref]: !prev[itemHref],
-    }));
-  }, []);
-
-  // Get badge value for an item
-  const getBadgeValue = React.useCallback(
-    (item: NavItem): string | undefined => {
-      if (!item.badge) return undefined;
-      if (item.badge === "dynamic") {
-        return badges[item.href];
-      }
-      return item.badge;
-    },
-    [badges],
-  );
 
   return (
     <>

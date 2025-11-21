@@ -90,6 +90,191 @@ export type UserRole = Prisma.UserRoleModel;
  */
 export type AuditLog = Prisma.AuditLogModel;
 /**
+ * Model OrganizationUnit
+ *
+ */
+export type OrganizationUnit = Prisma.OrganizationUnitModel;
+/**
+ * Model Person
+ *
+ */
+export type Person = Prisma.PersonModel;
+/**
+ * Model PersonRoleAssignment
+ *
+ */
+export type PersonRoleAssignment = Prisma.PersonRoleAssignmentModel;
+/**
+ * Model Location
+ *
+ */
+export type Location = Prisma.LocationModel;
+/**
+ * Model Vendor
+ *
+ */
+export type Vendor = Prisma.VendorModel;
+/**
+ * Model VendorContact
+ *
+ */
+export type VendorContact = Prisma.VendorContactModel;
+/**
+ * Model LifecycleModel
+ *
+ */
+export type LifecycleModel = Prisma.LifecycleModelModel;
+/**
+ * Model LifecycleState
+ *
+ */
+export type LifecycleState = Prisma.LifecycleStateModel;
+/**
+ * Model LifecycleTransition
+ *
+ */
+export type LifecycleTransition = Prisma.LifecycleTransitionModel;
+/**
+ * Model FieldDefinition
+ *
+ */
+export type FieldDefinition = Prisma.FieldDefinitionModel;
+/**
+ * Model CIClass
+ *
+ */
+export type CIClass = Prisma.CIClassModel;
+/**
+ * Model CIClassField
+ *
+ */
+export type CIClassField = Prisma.CIClassFieldModel;
+/**
+ * Model ConfigurationItem
+ *
+ */
+export type ConfigurationItem = Prisma.ConfigurationItemModel;
+/**
+ * Model RelationshipType
+ *
+ */
+export type RelationshipType = Prisma.RelationshipTypeModel;
+/**
+ * Model RelationshipTypeScope
+ *
+ */
+export type RelationshipTypeScope = Prisma.RelationshipTypeScopeModel;
+/**
+ * Model CIRelationship
+ *
+ */
+export type CIRelationship = Prisma.CIRelationshipModel;
+/**
+ * Model AssetCategory
+ *
+ */
+export type AssetCategory = Prisma.AssetCategoryModel;
+/**
+ * Model AssetCategoryField
+ *
+ */
+export type AssetCategoryField = Prisma.AssetCategoryFieldModel;
+/**
+ * Model AssetModel
+ *
+ */
+export type AssetModel = Prisma.AssetModelModel;
+/**
+ * Model StockLocation
+ *
+ */
+export type StockLocation = Prisma.StockLocationModel;
+/**
+ * Model StockMovement
+ *
+ */
+export type StockMovement = Prisma.StockMovementModel;
+/**
+ * Model Asset
+ *
+ */
+export type Asset = Prisma.AssetModel;
+/**
+ * Model AssetAssignment
+ *
+ */
+export type AssetAssignment = Prisma.AssetAssignmentModel;
+/**
+ * Model ContractType
+ *
+ */
+export type ContractType = Prisma.ContractTypeModel;
+/**
+ * Model Contract
+ *
+ */
+export type Contract = Prisma.ContractModel;
+/**
+ * Model ContractLinkedObject
+ *
+ */
+export type ContractLinkedObject = Prisma.ContractLinkedObjectModel;
+/**
+ * Model LicenseProduct
+ *
+ */
+export type LicenseProduct = Prisma.LicenseProductModel;
+/**
+ * Model LicenseProductField
+ *
+ */
+export type LicenseProductField = Prisma.LicenseProductFieldModel;
+/**
+ * Model LicenseEntitlement
+ *
+ */
+export type LicenseEntitlement = Prisma.LicenseEntitlementModel;
+/**
+ * Model LicenseAllocation
+ *
+ */
+export type LicenseAllocation = Prisma.LicenseAllocationModel;
+/**
+ * Model DataDomain
+ *
+ */
+export type DataDomain = Prisma.DataDomainModel;
+/**
+ * Model DataOwnership
+ *
+ */
+export type DataOwnership = Prisma.DataOwnershipModel;
+/**
+ * Model VerificationCampaign
+ *
+ */
+export type VerificationCampaign = Prisma.VerificationCampaignModel;
+/**
+ * Model VerificationItem
+ *
+ */
+export type VerificationItem = Prisma.VerificationItemModel;
+/**
+ * Model AuditLogEntry
+ *
+ */
+export type AuditLogEntry = Prisma.AuditLogEntryModel;
+/**
+ * Model AttachmentType
+ *
+ */
+export type AttachmentType = Prisma.AttachmentTypeModel;
+/**
+ * Model Attachment
+ *
+ */
+export type Attachment = Prisma.AttachmentModel;
+/**
  * Model Task
  *
  */

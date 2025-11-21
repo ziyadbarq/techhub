@@ -1,6 +1,6 @@
 # Developer Guide
 
-**Barq App Boilerplate** - A comprehensive guide to building production-ready applications with Clean Architecture.
+**Barq Assets** - A comprehensive guide to building production-ready applications with Clean Architecture.
 
 ## Table of Contents
 
@@ -31,7 +31,7 @@
 
 ## 1. Introduction
 
-### What is Barq App Boilerplate?
+### What is Barq Assets?
 
 A production-ready Next.js 15 starter kit implementing Clean Architecture with dependency injection. Built to accelerate development while maintaining code quality, testability, and scalability.
 
@@ -47,7 +47,7 @@ A production-ready Next.js 15 starter kit implementing Clean Architecture with d
 
 ### Philosophy
 
-This boilerplate follows the **Dependency Inversion Principle** - high-level business logic never depends on low-level implementation details. This makes code:
+This assets app follows the **Dependency Inversion Principle** - high-level business logic never depends on low-level implementation details. This makes code:
 
 - **Testable** - Mock dependencies easily
 - **Maintainable** - Change implementations without touching business logic
@@ -90,7 +90,7 @@ This boilerplate follows the **Dependency Inversion Principle** - high-level bus
 
 ```bash
 # Clone or use as template
-cd barq-app-boilerplate
+cd barq-assets
 
 # Install dependencies
 npm install
@@ -138,7 +138,7 @@ npm run db:studio        # Open Prisma Studio
 ### High-Level Overview
 
 ```
-barq-app-boilerplate/
+barq-assets/
 ├── src/                    # Source code
 │   ├── app/                # Next.js routes (Layer 1)
 │   ├── components/         # React components (Layer 1)
@@ -1116,7 +1116,7 @@ export function registerUseCases(container: Container): void {
 - **Transient** (`.inTransientScope()`) - New instance every time
   - Use for: Use cases, controllers
 - **Request** (`.inRequestScope()`) - One instance per request
-  - Not used in this boilerplate
+  - Not used in this assets app
 
 ---
 
@@ -1228,7 +1228,7 @@ async function main() {
   await prisma.task.createMany({
     data: [
       {
-        title: "Welcome to Barq App Boilerplate!",
+        title: "Welcome to Barq Assets!",
         description: "This is an example task...",
         status: TaskStatus.COMPLETED,
       },
@@ -1266,7 +1266,7 @@ Opens [http://localhost:5555](http://localhost:5555) with a GUI for viewing and 
 
 ### Overview
 
-The boilerplate includes complete OpenAI integration with:
+The assets app includes complete OpenAI integration with:
 
 - ✅ GPT-5 with structured outputs
 - ✅ Extended caching (24-hour cache for prompts)
