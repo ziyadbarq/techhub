@@ -36,6 +36,11 @@ function hasSessionCookie(request: NextRequest): boolean {
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
+  // Redirect authenticated users from landing page to dashboard
+  if (pathname === "/" && hasSessionCookie(request)) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
   // Allow public routes to pass through
   if (isPublicRoute(pathname)) {
     return NextResponse.next();

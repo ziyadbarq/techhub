@@ -90,7 +90,7 @@ export const navGroups: NavGroup[] = [
     items: [
       {
         title: "Dashboard",
-        href: "/",
+        href: "/dashboard",
         icon: Home,
         description: "Overview and statistics",
         permission: PERMISSIONS.DASHBOARD_VIEW,

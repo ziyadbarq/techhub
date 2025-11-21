@@ -11,9 +11,9 @@ initContainer();
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Barq Assets",
+  title: "Barq Assets | Enterprise CMDB & ITAM System",
   description:
-    "Clean Architecture Next.js starter with DI, AI integration, and modern theme system",
+    "Complete asset and inventory management for Barq. Track devices, manage warranties, control inventory, and maintain full audit trails with enterprise-grade architecture.",
 };
 
 export default function RootLayout({

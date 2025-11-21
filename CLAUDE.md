@@ -6,7 +6,7 @@ This file provides high-level guidance to Claude Code when working with this rep
 
 **About Barq**: [Barq](https://barq.com) is a financial services company in Saudi Arabia providing payment, transfer, and digital banking solutions. Governed by SAMA (Saudi Central Bank, formerly Saudi Arabia Monetary Agency).
 
-**This Application**: In-house enterprise CMDB (Configuration Management Database) and IT Asset Management (ITAM) system built **by Barq for Barq employees**. Deployed **on-premises only** for internal IT operations.
+**This Application**: In-house enterprise CMDB (Configuration Management Database) and IT Asset Management (ITAM) system built **by Barq for Barq employees**. Deployed **on-premises only** for internal Technology operations.
 
 **Tech Stack**: Next.js 16 (Turbopack), React 19.2, TypeScript 5.9, Prisma 7 (PostgreSQL), InversifyJS 7, Zod 4, shadcn/ui
 
@@ -15,8 +15,9 @@ This file provides high-level guidance to Claude Code when working with this rep
 **Current Implementation**:
 
 - **Layer 1 (Foundation)**: 11 core entities - OrganizationUnit, Person, Role, Location, Vendor, Lifecycle models, Field definitions
-- **Layer 2 (Asset/Inventory)**: 6 entities - Asset, AssetCategory, AssetModel, AssetAssignment, StockLocation, StockMovement
+- **Layer 2 (Asset/Inventory)**: 7 entities - Asset, AssetCategory, AssetModel, AssetAssignment, StockLocation, StockMovement, Warranty
 - **Reference**: Task entity (complete implementation, hidden from UI)
+- **Marketing**: Public landing page showcasing system capabilities
 
 ## Quick Commands
 
@@ -60,6 +61,13 @@ npm run reset # Reset database + seed (drops all data!)
 
 - [WARRANTY_SYSTEM.md](docs/WARRANTY_SYSTEM.md) - Complete warranty management implementation (reference for Asset layer features)
 
+### Marketing & Public Pages
+
+- **Landing Page**: `app/(marketing)/page.tsx` - Public marketing page at `/` showcasing system capabilities
+- **Route Structure**: Unauthenticated users see landing page, authenticated users auto-redirect to `/dashboard`
+- **Components**: `components/marketing/` - Reusable marketing components (hero, features, FAQ, etc.)
+- **Styling**: Barq brand colors (yellow `#ffda00`, light blue `#dff5f7`), dark mode support, Framer Motion animations
+
 ### All Documentation
 
 See [docs/README.md](docs/README.md) for complete documentation index.
@@ -98,6 +106,27 @@ const params = useParams(); // No await
 **Set `dynamic = "force-dynamic"`** for pages using auth/session.
 
 **See**: [NEXTJS_16_GUIDE.md](docs/guides/NEXTJS_16_GUIDE.md) for migration guide.
+
+### Next.js 16 Proxy Convention
+
+**IMPORTANT**: Next.js 16 uses `proxy.ts` instead of `middleware.ts`
+
+```typescript
+// proxy.ts (at project root)
+export async function proxy(request: NextRequest) {
+  // Request interception logic
+  return NextResponse.next();
+}
+```
+
+**Key Points**:
+
+- File location: `proxy.ts` at **project root** (NOT in src/)
+- Export function named `proxy()` (NOT `middleware()`)
+- Existing proxy handles auth redirect + landing page routing
+- Do NOT create new middleware.ts or modify proxy.ts without checking existing logic
+
+**See**: [NEXTJS_16_GUIDE.md](docs/guides/NEXTJS_16_GUIDE.md) section "Proxy Convention"
 
 ### Type Safety
 
@@ -179,6 +208,7 @@ constructor(@inject(DI_TOKENS.ILoggerService) private logger: ILoggerService) {}
 - Import from `@prisma/client` (causes TypeScript errors)
 - Create new `Pool()` or `PrismaClient()` instances (exhausts connections)
 - Access `params`/`searchParams` synchronously (runtime errors in Next.js 16)
+- Create `middleware.ts` (use existing `proxy.ts` instead - Next.js 16 convention)
 - Skip permission checks
 - Forget barrel exports for use case modules (breaks pre-commit)
 - Use `console.log` in server code
