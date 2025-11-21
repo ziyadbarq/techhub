@@ -1,0 +1,8 @@
+node_modules/
+.next/
+dist/
+build/
+.turbo/
+
+# Generated Prisma client code must stay untouched
+src/generated/prisma/**

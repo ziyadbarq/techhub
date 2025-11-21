@@ -3,7 +3,13 @@
 set -euo pipefail
 
 # Collect staged TS/TSX files (if grep finds none, prevent non-zero exit)
-STAGED_TS_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx)$' || true)
+# Skip generated Prisma output; we never type-check or format those
+STAGED_TS_FILES=$(
+  git diff --cached --name-only --diff-filter=ACM \
+    | grep -E '\.(ts|tsx)$' \
+    | grep -v '^src/generated/prisma/' \
+    || true
+)
 
 if [ -z "$STAGED_TS_FILES" ]; then
   echo "No TypeScript files staged, skipping type check"

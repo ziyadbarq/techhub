@@ -133,6 +133,9 @@
     "vitest": "^4.0.10"
   },
   "lint-staged": {
+    "ignore": [
+      "src/generated/prisma/**"
+    ],
     "*.{ts,tsx}": [
       "prettier --write",
       "eslint --fix"
