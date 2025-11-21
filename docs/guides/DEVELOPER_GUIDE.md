@@ -2206,7 +2206,49 @@ export interface INoteRepository {
 
 5. **Create Use Cases** - Copy Task use cases, replace with Note
 
-6. **Register in DI** (`container.ts`):
+6. **CRITICAL: Create Barrel Export** (`src/core/use-cases/note/index.ts`):
+
+```typescript
+/**
+ * Note Use Cases - Barrel Export
+ */
+export * from "./create-note.use-case";
+export * from "./get-note.use-case";
+export * from "./list-notes.use-case";
+export * from "./update-note.use-case";
+export * from "./delete-note.use-case";
+```
+
+**Why This Is Critical**: Controllers import use cases via `@/core/use-cases/note` path. Without the barrel export (`index.ts`), TypeScript cannot resolve the module during pre-commit type-checking, causing commit failures.
+
+**Example Structure**:
+```
+src/core/use-cases/
+├── note/
+│   ├── create-note.use-case.ts
+│   ├── get-note.use-case.ts
+│   ├── list-notes.use-case.ts
+│   ├── update-note.use-case.ts
+│   ├── delete-note.use-case.ts
+│   └── index.ts                    # ⭐ BARREL EXPORT (REQUIRED)
+└── asset/
+    ├── asset/
+    │   ├── create-asset.use-case.ts
+    │   ├── index.ts                # Exports all asset use cases
+    │   └── ...
+    ├── asset-category/
+    │   └── ...
+    └── index.ts                    # ⭐ BARREL EXPORT (REQUIRED)
+```
+
+**Common Mistake**: Forgetting the barrel export causes this error during `git commit`:
+```
+error TS2307: Cannot find module '@/core/use-cases/note' or its corresponding type declarations.
+```
+
+**Fix**: Always create `index.ts` in the use case module directory that exports all use cases.
+
+7. **Register in DI** (`container.ts`):
 
 ```typescript
 container
@@ -2215,11 +2257,11 @@ container
   .inSingletonScope();
 ```
 
-7. **Create Controller** - Similar to Task controller
+8. **Create Controller** - Similar to Task controller
 
-8. **Create Components** - Similar to Task components
+9. **Create Components** - Similar to Task components
 
-9. **Add Route** - Create `app/notes/page.tsx`
+10. **Add Route** - Create `app/notes/page.tsx`
 
 ---
 
