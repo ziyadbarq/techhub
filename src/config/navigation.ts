@@ -250,6 +250,13 @@ export const navGroups: NavGroup[] = [
         description: "Manage asset assignments",
         permission: PERMISSIONS.ASSET_ASSIGNMENTS_VIEW,
       },
+      {
+        title: "Warranties",
+        href: "/warranties",
+        icon: Shield,
+        description: "Manage asset warranties",
+        permission: PERMISSIONS.WARRANTIES_VIEW,
+      },
     ],
     visible: true,
     collapsible: true,

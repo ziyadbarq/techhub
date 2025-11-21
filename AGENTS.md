@@ -2,13 +2,16 @@ This file provides high-level guidance when working with this repository.
 
 ## Project Overview
 
-Enterprise CMDB (Configuration Management Database) and IT Asset Management (ITAM) system built with **Clean Architecture** and dependency injection.
+**About Barq**: [Barq](https://barq.com) is a financial services company in Saudi Arabia providing payment, transfer, and digital banking solutions. Governed by SAMA (Saudi Central Bank, formerly Saudi Arabia Monetary Agency).
+
+**This Application**: In-house enterprise CMDB (Configuration Management Database) and IT Asset Management (ITAM) system built **by Barq for Barq employees**. Deployed **on-premises only** for internal IT operations.
 
 **Tech Stack**: Next.js 16 (Turbopack), React 19.2, TypeScript 5.9, Prisma 7 (PostgreSQL), InversifyJS 7, Zod 4, shadcn/ui
 
 **Architecture**: 5-layer Clean Architecture (Presentation → Interface Adapters → Use Cases → Domain ← Infrastructure)
 
 **Current Implementation**:
+
 - **Layer 1 (Foundation)**: 11 core entities - OrganizationUnit, Person, Role, Location, Vendor, Lifecycle models, Field definitions
 - **Layer 2 (Asset/Inventory)**: 6 entities - Asset, AssetCategory, AssetModel, AssetAssignment, StockLocation, StockMovement
 - **Reference**: Task entity (complete implementation, hidden from UI)
@@ -51,6 +54,10 @@ npm run reset # Reset database + seed (drops all data!)
 - [LOGGING.md](docs/guides/LOGGING.md) - Structured logging with Pino
 - [BUILD_OPTIMIZATION.md](docs/guides/BUILD_OPTIMIZATION.md) - Turbopack, bundle analysis
 
+### Asset Layer (Layer 2)
+
+- [WARRANTY_SYSTEM.md](docs/WARRANTY_SYSTEM.md) - Complete warranty management implementation (reference for Asset layer features)
+
 ### All Documentation
 
 See [docs/README.md](docs/README.md) for complete documentation index.
@@ -60,11 +67,13 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 ### Prisma Usage
 
 **ALWAYS** import from `@/generated/prisma` (NOT `@prisma/client`):
+
 ```typescript
 import type { PrismaClient, Prisma, Asset } from "@/generated/prisma";
 ```
 
 **ALWAYS** use singleton from `client.ts` (NOT new instances):
+
 ```typescript
 import { prisma } from "@/infrastructure/database/prisma/client";
 ```
@@ -91,6 +100,7 @@ const params = useParams(); // No await
 ### Type Safety
 
 **ALWAYS** use `import type` for type-only imports (ESLint enforces this):
+
 ```typescript
 import type { IRepository } from "@/core/repositories/...";
 ```
@@ -98,6 +108,7 @@ import type { IRepository } from "@/core/repositories/...";
 ### Permissions
 
 **ALWAYS** check permissions at server action layer:
+
 ```typescript
 await requirePermission(PERMISSIONS.ASSETS.UPDATE);
 ```
@@ -107,6 +118,7 @@ await requirePermission(PERMISSIONS.ASSETS.UPDATE);
 ### Logging
 
 **NEVER** use `console.log` - use DI logger:
+
 ```typescript
 constructor(@inject(DI_TOKENS.ILoggerService) private logger: ILoggerService) {}
 ```
@@ -177,6 +189,7 @@ constructor(@inject(DI_TOKENS.ILoggerService) private logger: ILoggerService) {}
 **Docker**: NOT used in this project
 
 **Environment Variables**: Copy `.env.example` to `.env.local`
+
 - Required: `DATABASE_URL`, `REDIS_URL`, `OPENAI_API_KEY`
 - Optional: `PRISMA_VERBOSE_LOGS=true`, `AUTH_DEBUG_LOGS=true`, `LOG_LEVEL=debug`
 

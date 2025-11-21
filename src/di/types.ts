@@ -293,6 +293,22 @@ export const DI_TOKENS = {
   UpdateAssetAssignmentUseCase: Symbol.for("UpdateAssetAssignmentUseCase"),
   DeleteAssetAssignmentUseCase: Symbol.for("DeleteAssetAssignmentUseCase"),
 
+  // Assets: Warranty Repository
+  IWarrantyRepository: Symbol.for("IWarrantyRepository"),
+
+  // Assets: Warranty Use Cases
+  CreateWarrantyUseCase: Symbol.for("CreateWarrantyUseCase"),
+  GetWarrantyUseCase: Symbol.for("GetWarrantyUseCase"),
+  ListWarrantiesUseCase: Symbol.for("ListWarrantiesUseCase"),
+  UpdateWarrantyUseCase: Symbol.for("UpdateWarrantyUseCase"),
+  DeleteWarrantyUseCase: Symbol.for("DeleteWarrantyUseCase"),
+  ListWarrantiesByAssetUseCase: Symbol.for("ListWarrantiesByAssetUseCase"),
+  GetActiveWarrantyForAssetUseCase: Symbol.for(
+    "GetActiveWarrantyForAssetUseCase",
+  ),
+  ListExpiringWarrantiesUseCase: Symbol.for("ListExpiringWarrantiesUseCase"),
+  CheckWarrantyExpirationUseCase: Symbol.for("CheckWarrantyExpirationUseCase"),
+
   // Inventory: Stock Location Repository
   IStockLocationRepository: Symbol.for("IStockLocationRepository"),
 

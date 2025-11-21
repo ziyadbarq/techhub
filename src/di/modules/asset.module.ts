@@ -57,6 +57,21 @@ import { ListAssetAssignmentsUseCase } from "@/core/use-cases/asset/asset-assign
 import { UpdateAssetAssignmentUseCase } from "@/core/use-cases/asset/asset-assignment/update-asset-assignment.use-case";
 import { DeleteAssetAssignmentUseCase } from "@/core/use-cases/asset/asset-assignment/delete-asset-assignment.use-case";
 
+// Warranty Repository
+import type { IWarrantyRepository } from "@/core/repositories/warranty.repository.interface";
+import { PrismaWarrantyRepository } from "@/infrastructure/repositories/prisma-warranty.repository";
+
+// Warranty Use Cases
+import { CreateWarrantyUseCase } from "@/core/use-cases/asset/warranty/create-warranty.use-case";
+import { GetWarrantyUseCase } from "@/core/use-cases/asset/warranty/get-warranty.use-case";
+import { ListWarrantiesUseCase } from "@/core/use-cases/asset/warranty/list-warranties.use-case";
+import { UpdateWarrantyUseCase } from "@/core/use-cases/asset/warranty/update-warranty.use-case";
+import { DeleteWarrantyUseCase } from "@/core/use-cases/asset/warranty/delete-warranty.use-case";
+import { ListWarrantiesByAssetUseCase } from "@/core/use-cases/asset/warranty/list-warranties-by-asset.use-case";
+import { GetActiveWarrantyForAssetUseCase } from "@/core/use-cases/asset/warranty/get-active-warranty-for-asset.use-case";
+import { ListExpiringWarrantiesUseCase } from "@/core/use-cases/asset/warranty/list-expiring-warranties.use-case";
+import { CheckWarrantyExpirationUseCase } from "@/core/use-cases/asset/warranty/check-warranty-expiration.use-case";
+
 const diLogger = logger.scope("DI:AssetModule");
 
 /**
@@ -217,8 +232,72 @@ export function bindAssetDependencies(container: Container): void {
     .to(DeleteAssetAssignmentUseCase)
     .inTransientScope();
 
+  // ==========================================
+  // Warranty Repository
+  // ==========================================
+
+  container
+    .bind<IWarrantyRepository>(DI_TOKENS.IWarrantyRepository)
+    .to(PrismaWarrantyRepository)
+    .inSingletonScope();
+
+  // ==========================================
+  // Warranty Use Cases
+  // ==========================================
+
+  container
+    .bind<CreateWarrantyUseCase>(DI_TOKENS.CreateWarrantyUseCase)
+    .to(CreateWarrantyUseCase)
+    .inTransientScope();
+
+  container
+    .bind<GetWarrantyUseCase>(DI_TOKENS.GetWarrantyUseCase)
+    .to(GetWarrantyUseCase)
+    .inTransientScope();
+
+  container
+    .bind<ListWarrantiesUseCase>(DI_TOKENS.ListWarrantiesUseCase)
+    .to(ListWarrantiesUseCase)
+    .inTransientScope();
+
+  container
+    .bind<UpdateWarrantyUseCase>(DI_TOKENS.UpdateWarrantyUseCase)
+    .to(UpdateWarrantyUseCase)
+    .inTransientScope();
+
+  container
+    .bind<DeleteWarrantyUseCase>(DI_TOKENS.DeleteWarrantyUseCase)
+    .to(DeleteWarrantyUseCase)
+    .inTransientScope();
+
+  container
+    .bind<ListWarrantiesByAssetUseCase>(DI_TOKENS.ListWarrantiesByAssetUseCase)
+    .to(ListWarrantiesByAssetUseCase)
+    .inTransientScope();
+
+  container
+    .bind<GetActiveWarrantyForAssetUseCase>(
+      DI_TOKENS.GetActiveWarrantyForAssetUseCase,
+    )
+    .to(GetActiveWarrantyForAssetUseCase)
+    .inTransientScope();
+
+  container
+    .bind<ListExpiringWarrantiesUseCase>(
+      DI_TOKENS.ListExpiringWarrantiesUseCase,
+    )
+    .to(ListExpiringWarrantiesUseCase)
+    .inTransientScope();
+
+  container
+    .bind<CheckWarrantyExpirationUseCase>(
+      DI_TOKENS.CheckWarrantyExpirationUseCase,
+    )
+    .to(CheckWarrantyExpirationUseCase)
+    .inTransientScope();
+
   diLogger.debug(
     "bindAssetDependencies",
-    "Asset dependencies bound successfully",
+    "Asset dependencies bound successfully (including warranties)",
   );
 }

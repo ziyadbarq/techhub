@@ -16,11 +16,16 @@ import "reflect-metadata";
 import { initContainer } from "@/di/container";
 import { logger } from "@/lib/logger";
 import { BaseWorker } from "./base-worker";
-import { QUEUE_NAMES, TASK_JOBS } from "@/core/domain/jobs/job-names";
+import {
+  QUEUE_NAMES,
+  TASK_JOBS,
+  MAINTENANCE_JOBS,
+} from "@/core/domain/jobs/job-names";
 import {
   handleTaskCompletedNotification,
   handleCleanupOldTasks,
   handleSendTaskReminder,
+  handleWarrantyExpirationCheck,
 } from "./handlers";
 
 /**
@@ -105,18 +110,23 @@ function createMaintenanceWorker(): BaseWorker {
     },
   });
 
+  // Register warranty expiration check (runs daily at 9 AM)
+  worker.registerHandler(
+    MAINTENANCE_JOBS.WARRANTY_EXPIRATION_CHECK,
+    handleWarrantyExpirationCheck,
+  );
+
   /**
-   * TODO: Register maintenance job handlers
+   * TODO: Register additional maintenance job handlers
    *
    * Implementation steps:
-   * 1. Create MAINTENANCE_JOBS constant in @/core/domain/jobs/job-names
-   * 2. Implement handlers in src/infrastructure/services/queue/handlers/
+   * 1. Implement handlers in src/infrastructure/services/queue/handlers/
    *    - handleDatabaseCleanup.handler.ts - Clean up old records, optimize tables
    *    - handleDataExport.handler.ts - Export data for backups or reporting
-   * 3. Import handlers and register them here:
+   * 2. Import handlers and register them here:
    *    worker.registerHandler(MAINTENANCE_JOBS.DATABASE_CLEANUP, handleDatabaseCleanup);
    *    worker.registerHandler(MAINTENANCE_JOBS.DATA_EXPORT, handleDataExport);
-   * 4. Schedule recurring jobs via BullMQ scheduleJob() for daily/weekly maintenance
+   * 3. Schedule recurring jobs via BullMQ scheduleJob() for daily/weekly maintenance
    */
 
   return worker;

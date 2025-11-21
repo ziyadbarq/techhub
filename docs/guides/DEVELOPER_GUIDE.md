@@ -2222,6 +2222,7 @@ export * from "./delete-note.use-case";
 **Why This Is Critical**: Controllers import use cases via `@/core/use-cases/note` path. Without the barrel export (`index.ts`), TypeScript cannot resolve the module during pre-commit type-checking, causing commit failures.
 
 **Example Structure**:
+
 ```
 src/core/use-cases/
 ├── note/
@@ -2242,6 +2243,7 @@ src/core/use-cases/
 ```
 
 **Common Mistake**: Forgetting the barrel export causes this error during `git commit`:
+
 ```
 error TS2307: Cannot find module '@/core/use-cases/note' or its corresponding type declarations.
 ```

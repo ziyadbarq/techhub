@@ -810,6 +810,43 @@ const SYSTEM_PERMISSIONS = [
     action: "manage",
   },
 
+  // Assets: Warranties
+  {
+    name: PERMISSIONS.WARRANTIES_VIEW,
+    displayName: "View Warranties",
+    description: "View warranty list and details",
+    resource: "warranties",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.WARRANTIES_CREATE,
+    displayName: "Create Warranties",
+    description: "Create new warranties",
+    resource: "warranties",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.WARRANTIES_UPDATE,
+    displayName: "Update Warranties",
+    description: "Edit warranty information",
+    resource: "warranties",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.WARRANTIES_DELETE,
+    displayName: "Delete Warranties",
+    description: "Remove warranties",
+    resource: "warranties",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.WARRANTIES_MANAGE,
+    displayName: "Manage Warranties",
+    description: "Full warranty management access",
+    resource: "warranties",
+    action: "manage",
+  },
+
   // Inventory: Stock Locations
   {
     name: PERMISSIONS.STOCK_LOCATIONS_VIEW,

@@ -22,12 +22,15 @@ echo ""
 
 # Build a temporary tsconfig that extends the project config but scopes to staged files
 TMP_TSCONFIG=$(mktemp)
+ROOT_TSCONFIG="$(pwd -P)/tsconfig.json"
 cleanup() {
   rm -f "$TMP_TSCONFIG"
 }
 trap cleanup EXIT
 
 FILES_JSON=$(STAGED_TS_FILES="$STAGED_TS_FILES" node - <<'NODE'
+import path from "node:path";
+
 const files = (process.env.STAGED_TS_FILES || "")
   .split("\n")
   .map((file) => file.trim())
@@ -37,13 +40,15 @@ if (!files.length) {
   process.exit(1);
 }
 
-process.stdout.write(JSON.stringify(files, null, 2));
+const absFiles = files.map((file) => path.resolve(process.cwd(), file));
+
+process.stdout.write(JSON.stringify(absFiles, null, 2));
 NODE
 )
 
 cat >"$TMP_TSCONFIG" <<EOF
 {
-  "extends": "./tsconfig.json",
+  "extends": "$ROOT_TSCONFIG",
   "include": [],
   "files": $FILES_JSON
 }

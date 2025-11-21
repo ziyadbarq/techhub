@@ -30,6 +30,7 @@ export const MAINTENANCE_JOBS = {
   DATABASE_CLEANUP: "database-cleanup",
   DATA_EXPORT: "data-export",
   HEALTH_CHECK: "health-check",
+  WARRANTY_EXPIRATION_CHECK: "warranty-expiration-check",
 } as const;
 
 /**

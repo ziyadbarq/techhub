@@ -7,3 +7,4 @@
 export { handleTaskCompletedNotification } from "./task-completed-notification.handler";
 export { handleCleanupOldTasks } from "./cleanup-old-tasks.handler";
 export { handleSendTaskReminder } from "./send-task-reminder.handler";
+export { handleWarrantyExpirationCheck } from "./warranty-expiration-check.handler";

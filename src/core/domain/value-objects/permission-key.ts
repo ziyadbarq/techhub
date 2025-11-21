@@ -145,6 +145,13 @@ export const PERMISSIONS = {
   ASSET_ASSIGNMENTS_DELETE: "asset-assignments:delete",
   ASSET_ASSIGNMENTS_MANAGE: "asset-assignments:manage",
 
+  // Assets: Warranties
+  WARRANTIES_VIEW: "warranties:view",
+  WARRANTIES_CREATE: "warranties:create",
+  WARRANTIES_UPDATE: "warranties:update",
+  WARRANTIES_DELETE: "warranties:delete",
+  WARRANTIES_MANAGE: "warranties:manage",
+
   // Inventory: Stock Locations
   STOCK_LOCATIONS_VIEW: "stock-locations:view",
   STOCK_LOCATIONS_CREATE: "stock-locations:create",

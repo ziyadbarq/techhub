@@ -384,6 +384,7 @@ model Vendor {
   contacts        VendorContact[]
   assetModels     AssetModel[]
   assets          Asset[]
+  warranties      Warranty[]
   contracts       Contract[]
   licenseProducts LicenseProduct[]
 
@@ -877,6 +878,7 @@ model Asset {
   contract             Contract?             @relation(fields: [contractId], references: [id], onDelete: SetNull)
   lifecycleState       LifecycleState?       @relation(fields: [lifecycleStateId], references: [id], onDelete: SetNull)
   currentStockLocation StockLocation?        @relation(fields: [currentStockLocationId], references: [id], onDelete: SetNull)
+  warranties           Warranty[]
   configurationItems   ConfigurationItem[]
   stockMovements       StockMovement[]
   assetAssignments     AssetAssignment[]
@@ -914,6 +916,38 @@ model AssetAssignment {
   @@index([assigneeType, assigneeId])
   @@index([startDate, endDate])
   @@map("asset_assignments")
+}
+
+// Warranty model
+// Comprehensive warranty tracking with support for multiple warranties per asset
+model Warranty {
+  id               String            @id @default(cuid())
+  assetId          String
+  vendorId         String?           // Nullable to support third-party warranty providers
+  coverageType     WarrantyCoverageType @default(STANDARD)
+  coverageDetails  String?           @db.Text
+  policyReference  String?
+  slaDetails       Json?             // SLA terms, response times, coverage hours
+  startDate        DateTime
+  endDate          DateTime
+  cost             Decimal?          @db.Decimal(12, 2)
+  currency         String?
+  note             String?           @db.Text
+  metadata         Json?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  // Relations
+  asset  Asset   @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  vendor Vendor? @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+
+  // Indexes
+  @@index([assetId])
+  @@index([vendorId])
+  @@index([startDate, endDate])
+  @@index([endDate]) // For expiration queries
+  @@index([coverageType])
+  @@map("warranties")
 }
 
 // ============================================
@@ -1378,6 +1412,19 @@ enum StateType {
   INACTIVE
   TERMINAL
   TRANSITION
+}
+
+enum WarrantyCoverageType {
+  STANDARD
+  EXTENDED
+  ENHANCED
+  PREMIUM
+  BASIC
+  THIRD_PARTY
+  MANUFACTURER
+  DEPOT
+  ONSITE
+  NEXT_BUSINESS_DAY
 }
 
 // ============================================

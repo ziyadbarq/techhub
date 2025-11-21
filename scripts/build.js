@@ -50,9 +50,14 @@ async function runCommand(command, args, stepName) {
     log(`\n${colors.bright}${stepName}${colors.reset}`, colors.blue);
     printSeparator();
 
+    // Clean environment: remove NODE_ENV to let Next.js manage it
+    const cleanEnv = { ...process.env };
+    delete cleanEnv.NODE_ENV;
+
     const proc = spawn(command, args, {
       stdio: "inherit",
       shell: true,
+      env: cleanEnv,
     });
 
     proc.on("close", (code) => {

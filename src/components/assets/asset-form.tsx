@@ -61,6 +61,8 @@ interface AssetFormProps {
 
 type AssetFormValues = z.input<typeof CreateAssetSchema>;
 
+const NONE_OPTION_VALUE = "__none__";
+
 export function AssetForm({
   open,
   onOpenChange,
@@ -78,8 +80,8 @@ export function AssetForm({
     defaultValues: {
       assetTag: asset?.assetTag ?? "",
       assetCategoryId: asset?.assetCategoryId ?? "",
-      assetModelId: asset?.assetModelId ?? "",
-      vendorId: asset?.vendorId ?? "",
+      assetModelId: asset?.assetModelId ?? null,
+      vendorId: asset?.vendorId ?? null,
       serialNumber: asset?.serialNumber ?? "",
       purchaseDate: asset?.purchaseDate
         ? new Date(asset.purchaseDate)
@@ -133,8 +135,8 @@ export function AssetForm({
     form.reset({
       assetTag: asset?.assetTag ?? "",
       assetCategoryId: asset?.assetCategoryId ?? "",
-      assetModelId: asset?.assetModelId ?? "",
-      vendorId: asset?.vendorId ?? "",
+      assetModelId: asset?.assetModelId ?? null,
+      vendorId: asset?.vendorId ?? null,
       serialNumber: asset?.serialNumber ?? "",
       purchaseDate: asset?.purchaseDate
         ? new Date(asset.purchaseDate)
@@ -216,7 +218,7 @@ export function AssetForm({
                   <FormLabel>Asset Category</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    value={field.value || undefined}
                     disabled={loading}
                   >
                     <FormControl>
@@ -248,8 +250,10 @@ export function AssetForm({
                 <FormItem>
                   <FormLabel>Asset Model (Optional)</FormLabel>
                   <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value || undefined}
+                    onValueChange={(value) =>
+                      field.onChange(value === NONE_OPTION_VALUE ? null : value)
+                    }
+                    value={field.value ?? undefined}
                     disabled={loading}
                   >
                     <FormControl>
@@ -258,7 +262,7 @@ export function AssetForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="">None</SelectItem>
+                      <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
                       {models.map((model) => (
                         <SelectItem key={model.id} value={model.id}>
                           {model.name} ({model.code})
@@ -282,8 +286,10 @@ export function AssetForm({
                 <FormItem>
                   <FormLabel>Vendor (Optional)</FormLabel>
                   <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value || undefined}
+                    onValueChange={(value) =>
+                      field.onChange(value === NONE_OPTION_VALUE ? null : value)
+                    }
+                    value={field.value ?? undefined}
                     disabled={loading}
                   >
                     <FormControl>
@@ -292,7 +298,7 @@ export function AssetForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="">None</SelectItem>
+                      <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
                       {vendors.map((vendor) => (
                         <SelectItem key={vendor.id} value={vendor.id}>
                           {vendor.name} ({vendor.code})

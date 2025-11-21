@@ -9,12 +9,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Logo } from "@/components/ui/logo";
+import { ExpiringWarrantiesWidget } from "@/components/warranties/expiring-warranties-widget";
 
 export const dynamic = "force-dynamic";
 
 const quickLinks = [
   { href: "/lifecycle-models", label: "Lifecycle Models" },
   { href: "/vendors", label: "Vendors" },
+  { href: "/warranties", label: "Warranties" },
   { href: "/organization-units", label: "Organization Units" },
   { href: "/locations", label: "Locations" },
   { href: "/persons", label: "People" },
@@ -195,6 +197,9 @@ export default function HomePage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Expiring Warranties Widget */}
+          <ExpiringWarrantiesWidget daysThreshold={30} maxItems={5} />
 
           {/* Tasks & Checks Card - DEMO REFERENCE
             Maintained as example of actionable guidance patterns for dashboard pages.
