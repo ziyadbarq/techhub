@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 # Collect staged TS/TSX files (if grep finds none, prevent non-zero exit)
 STAGED_TS_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx)$' || true)
 
@@ -12,9 +14,34 @@ echo "Type-checking staged files:"
 echo "$STAGED_TS_FILES" | sed 's/^/  - /'
 echo ""
 
-# Run tsc on staged files
-# Note: We use --noEmit to only check, not emit files
-# We use xargs to pass files as arguments (handles spaces and newlines correctly)
-echo "$STAGED_TS_FILES" | xargs npx tsc --noEmit
+# Build a temporary tsconfig that extends the project config but scopes to staged files
+TMP_TSCONFIG=$(mktemp)
+cleanup() {
+  rm -f "$TMP_TSCONFIG"
+}
+trap cleanup EXIT
 
-exit $?
+FILES_JSON=$(STAGED_TS_FILES="$STAGED_TS_FILES" node - <<'NODE'
+const files = (process.env.STAGED_TS_FILES || "")
+  .split("\n")
+  .map((file) => file.trim())
+  .filter(Boolean);
+
+if (!files.length) {
+  process.exit(1);
+}
+
+process.stdout.write(JSON.stringify(files, null, 2));
+NODE
+)
+
+cat >"$TMP_TSCONFIG" <<EOF
+{
+  "extends": "./tsconfig.json",
+  "include": [],
+  "files": $FILES_JSON
+}
+EOF
+
+# Use the temporary project config so compiler options (paths, decorators, target) apply
+npx tsc --noEmit --project "$TMP_TSCONFIG"
