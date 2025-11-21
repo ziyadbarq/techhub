@@ -61,8 +61,25 @@ This assets app follows the **Dependency Inversion Principle** - high-level busi
 
 - **Node.js** 18+ (LTS recommended)
 - **npm** 9+ or **yarn** 1.22+
-- **PostgreSQL** 14+ (local or cloud)
+- **PostgreSQL** 14+ (installed via Homebrew on macOS)
+- **Redis** (installed via Homebrew on macOS)
 - **Git** 2.30+
+
+### Platform & Environment
+
+**IMPORTANT**: This application runs on **macOS only** with native services installed via Homebrew:
+
+```bash
+# Install PostgreSQL
+brew install postgresql@14
+brew services start postgresql@14
+
+# Install Redis
+brew install redis
+brew services start redis
+```
+
+**Docker is NOT used** in this project. All services (PostgreSQL, Redis) run natively on macOS.
 
 ### Recommended Tools
 

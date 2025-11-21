@@ -29,6 +29,10 @@ import { bindRBACDependencies } from "./modules/rbac.module";
 import { bindFoundationDependencies } from "./modules/foundation.module";
 import { bindAssetDependencies } from "./modules/asset.module";
 import { bindInventoryDependencies } from "./modules/inventory.module";
+import { bindCMDBDependencies } from "./modules/cmdb.module";
+import { loadDisposalModule } from "./modules/disposal.module";
+import { loadAssetKitsModule } from "./modules/asset-kits.module";
+import { loadReservationsModule } from "./modules/reservations.module";
 
 /**
  * AI Services Module - Currently Disabled
@@ -95,11 +99,23 @@ function createContainer(): Container {
   // Bind Foundation dependencies (lifecycle, vendor, organization, location, person)
   bindFoundationDependencies(newContainer);
 
+  // Bind CMDB dependencies (CIs, relationships)
+  bindCMDBDependencies(newContainer);
+
   // Bind Asset dependencies (asset categories, asset models, assets, assignments)
   bindAssetDependencies(newContainer);
 
   // Bind Inventory dependencies (stock locations, stock movements)
   bindInventoryDependencies(newContainer);
+
+  // Bind Disposal dependencies (disposal workflow, approvals, documents)
+  loadDisposalModule(newContainer);
+
+  // Bind Asset Kits dependencies (kits, kit items, checkouts)
+  loadAssetKitsModule(newContainer);
+
+  // Bind Reservations dependencies (reservations, conflicts, availability)
+  loadReservationsModule(newContainer);
 
   /**
    * AI Services - Currently Disabled

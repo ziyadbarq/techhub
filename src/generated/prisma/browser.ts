@@ -193,6 +193,51 @@ export type MaintenanceSchedule = Prisma.MaintenanceScheduleModel
  */
 export type MaintenanceRecord = Prisma.MaintenanceRecordModel
 /**
+ * Model AssetDisposal
+ * 
+ */
+export type AssetDisposal = Prisma.AssetDisposalModel
+/**
+ * Model DisposalApproval
+ * 
+ */
+export type DisposalApproval = Prisma.DisposalApprovalModel
+/**
+ * Model DisposalDocument
+ * 
+ */
+export type DisposalDocument = Prisma.DisposalDocumentModel
+/**
+ * Model AssetKit
+ * 
+ */
+export type AssetKit = Prisma.AssetKitModel
+/**
+ * Model AssetKitItem
+ * 
+ */
+export type AssetKitItem = Prisma.AssetKitItemModel
+/**
+ * Model AssetKitCheckout
+ * 
+ */
+export type AssetKitCheckout = Prisma.AssetKitCheckoutModel
+/**
+ * Model AssetKitCheckoutItem
+ * 
+ */
+export type AssetKitCheckoutItem = Prisma.AssetKitCheckoutItemModel
+/**
+ * Model AssetReservation
+ * 
+ */
+export type AssetReservation = Prisma.AssetReservationModel
+/**
+ * Model AssetReservationConflict
+ * 
+ */
+export type AssetReservationConflict = Prisma.AssetReservationConflictModel
+/**
  * Model ContractType
  * 
  */

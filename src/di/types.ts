@@ -62,6 +62,30 @@ export const DI_TOKENS = {
   ),
   IFieldDefinitionRepository: Symbol.for("IFieldDefinitionRepository"),
 
+  // Disposal Repositories
+  IAssetDisposalRepository: Symbol.for("IAssetDisposalRepository"),
+  IDisposalApprovalRepository: Symbol.for("IDisposalApprovalRepository"),
+  IDisposalDocumentRepository: Symbol.for("IDisposalDocumentRepository"),
+
+  // Asset Kits Repositories
+  IAssetKitRepository: Symbol.for("IAssetKitRepository"),
+  IAssetKitItemRepository: Symbol.for("IAssetKitItemRepository"),
+  IAssetKitCheckoutRepository: Symbol.for("IAssetKitCheckoutRepository"),
+  IAssetKitCheckoutItemRepository: Symbol.for(
+    "IAssetKitCheckoutItemRepository",
+  ),
+
+  // Reservation Repositories
+  IAssetReservationRepository: Symbol.for("IAssetReservationRepository"),
+  IAssetReservationConflictRepository: Symbol.for(
+    "IAssetReservationConflictRepository",
+  ),
+
+  // CMDB Repositories
+  IConfigurationItemRepository: Symbol.for("IConfigurationItemRepository"),
+  ICIRelationshipRepository: Symbol.for("ICIRelationshipRepository"),
+  IRelationshipTypeRepository: Symbol.for("IRelationshipTypeRepository"),
+
   // ==========================================
   // Service Tokens
   // ==========================================
@@ -252,6 +276,92 @@ export const DI_TOKENS = {
   ListFieldDefinitionsUseCase: Symbol.for("ListFieldDefinitionsUseCase"),
   UpdateFieldDefinitionUseCase: Symbol.for("UpdateFieldDefinitionUseCase"),
   DeleteFieldDefinitionUseCase: Symbol.for("DeleteFieldDefinitionUseCase"),
+
+  // Disposal Workflow Use Cases
+  CreateAssetDisposalUseCase: Symbol.for("CreateAssetDisposalUseCase"),
+  GetAssetDisposalUseCase: Symbol.for("GetAssetDisposalUseCase"),
+  ListAssetDisposalsUseCase: Symbol.for("ListAssetDisposalsUseCase"),
+  ApproveDisposalUseCase: Symbol.for("ApproveDisposalUseCase"),
+  RejectDisposalUseCase: Symbol.for("RejectDisposalUseCase"),
+  StartDisposalUseCase: Symbol.for("StartDisposalUseCase"),
+  CompleteSanitizationUseCase: Symbol.for("CompleteSanitizationUseCase"),
+  CompleteDisposalUseCase: Symbol.for("CompleteDisposalUseCase"),
+  GenerateCertificateUseCase: Symbol.for("GenerateCertificateUseCase"),
+  CancelDisposalUseCase: Symbol.for("CancelDisposalUseCase"),
+  DeleteAssetDisposalUseCase: Symbol.for("DeleteAssetDisposalUseCase"),
+
+  // Asset Kits: Kit Management Use Cases
+  CreateAssetKitUseCase: Symbol.for("CreateAssetKitUseCase"),
+  GetAssetKitUseCase: Symbol.for("GetAssetKitUseCase"),
+  ListAssetKitsUseCase: Symbol.for("ListAssetKitsUseCase"),
+  UpdateAssetKitUseCase: Symbol.for("UpdateAssetKitUseCase"),
+  DeleteAssetKitUseCase: Symbol.for("DeleteAssetKitUseCase"),
+  AddKitItemUseCase: Symbol.for("AddKitItemUseCase"),
+  RemoveKitItemUseCase: Symbol.for("RemoveKitItemUseCase"),
+  UpdateKitItemUseCase: Symbol.for("UpdateKitItemUseCase"),
+
+  // Asset Kits: Kit Checkout Use Cases
+  CreateKitCheckoutUseCase: Symbol.for("CreateKitCheckoutUseCase"),
+  GetKitCheckoutUseCase: Symbol.for("GetKitCheckoutUseCase"),
+  ListKitCheckoutsUseCase: Symbol.for("ListKitCheckoutsUseCase"),
+  ReturnKitCheckoutUseCase: Symbol.for("ReturnKitCheckoutUseCase"),
+  ReturnKitItemUseCase: Symbol.for("ReturnKitItemUseCase"),
+  MarkItemDamagedUseCase: Symbol.for("MarkItemDamagedUseCase"),
+  MarkItemLostUseCase: Symbol.for("MarkItemLostUseCase"),
+  ExtendCheckoutUseCase: Symbol.for("ExtendCheckoutUseCase"),
+  ListOverdueCheckoutsUseCase: Symbol.for("ListOverdueCheckoutsUseCase"),
+  CheckKitAvailabilityUseCase: Symbol.for("CheckKitAvailabilityUseCase"),
+
+  // Asset Reservations: Reservation Management Use Cases
+  CreateReservationUseCase: Symbol.for("CreateReservationUseCase"),
+  GetReservationUseCase: Symbol.for("GetReservationUseCase"),
+  ListReservationsUseCase: Symbol.for("ListReservationsUseCase"),
+  UpdateReservationUseCase: Symbol.for("UpdateReservationUseCase"),
+  CancelReservationUseCase: Symbol.for("CancelReservationUseCase"),
+  ConfirmReservationUseCase: Symbol.for("ConfirmReservationUseCase"),
+  StartReservationUseCase: Symbol.for("StartReservationUseCase"),
+  CompleteReservationUseCase: Symbol.for("CompleteReservationUseCase"),
+
+  // Asset Reservations: Conflict Management Use Cases
+  DetectConflictsUseCase: Symbol.for("DetectConflictsUseCase"),
+  ResolveConflictUseCase: Symbol.for("ResolveConflictUseCase"),
+  ListConflictsUseCase: Symbol.for("ListConflictsUseCase"),
+
+  // Asset Reservations: Availability Use Cases
+  CheckAvailabilityUseCase: Symbol.for("CheckAvailabilityUseCase"),
+  ListAvailableAssetsUseCase: Symbol.for("ListAvailableAssetsUseCase"),
+
+  // Asset Reservations: Background Job Use Cases
+  ActivateReadyReservationsUseCase: Symbol.for(
+    "ActivateReadyReservationsUseCase",
+  ),
+  CompleteExpiredReservationsUseCase: Symbol.for(
+    "CompleteExpiredReservationsUseCase",
+  ),
+  SendReminderNotificationsUseCase: Symbol.for(
+    "SendReminderNotificationsUseCase",
+  ),
+
+  // CMDB: Configuration Item Use Cases
+  CreateConfigurationItemUseCase: Symbol.for("CreateConfigurationItemUseCase"),
+  GetConfigurationItemUseCase: Symbol.for("GetConfigurationItemUseCase"),
+  ListConfigurationItemsUseCase: Symbol.for("ListConfigurationItemsUseCase"),
+  UpdateConfigurationItemUseCase: Symbol.for("UpdateConfigurationItemUseCase"),
+  DeleteConfigurationItemUseCase: Symbol.for("DeleteConfigurationItemUseCase"),
+
+  // CMDB: CI Relationship Use Cases
+  CreateCIRelationshipUseCase: Symbol.for("CreateCIRelationshipUseCase"),
+  GetCIRelationshipUseCase: Symbol.for("GetCIRelationshipUseCase"),
+  ListCIRelationshipsUseCase: Symbol.for("ListCIRelationshipsUseCase"),
+  UpdateCIRelationshipUseCase: Symbol.for("UpdateCIRelationshipUseCase"),
+  DeleteCIRelationshipUseCase: Symbol.for("DeleteCIRelationshipUseCase"),
+
+  // CMDB: Relationship Type Use Cases
+  CreateRelationshipTypeUseCase: Symbol.for("CreateRelationshipTypeUseCase"),
+  GetRelationshipTypeUseCase: Symbol.for("GetRelationshipTypeUseCase"),
+  ListRelationshipTypesUseCase: Symbol.for("ListRelationshipTypesUseCase"),
+  UpdateRelationshipTypeUseCase: Symbol.for("UpdateRelationshipTypeUseCase"),
+  DeleteRelationshipTypeUseCase: Symbol.for("DeleteRelationshipTypeUseCase"),
 
   // Assets: Asset Category Repository
   IAssetCategoryRepository: Symbol.for("IAssetCategoryRepository"),

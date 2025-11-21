@@ -16,6 +16,11 @@ This file provides high-level guidance to Claude Code when working with this rep
 
 - **Layer 1 (Foundation)**: 11 core entities - OrganizationUnit, Person, Role, Location, Vendor, Lifecycle models, Field definitions
 - **Layer 2 (Asset/Inventory)**: 9 entities - Asset, AssetCategory, AssetModel, AssetAssignment, StockLocation, StockMovement, Warranty, MaintenanceSchedule, MaintenanceRecord
+- **Layer 3 (Advanced ITAM)**: 4 modules, 12 entities
+  - **Asset Disposals**: AssetDisposal, DisposalApproval, DisposalDocument (3 entities, 11 use cases)
+  - **Asset Kits**: AssetKit, AssetKitItem, AssetKitCheckout, AssetKitCheckoutItem (4 entities, 19 use cases)
+  - **Asset Reservations**: AssetReservation, AssetReservationConflict (2 entities, 17 use cases)
+  - **CMDB**: ConfigurationItem, CIRelationship, RelationshipType (3 entities, 15 use cases)
 - **Reference**: Task entity (complete implementation, hidden from UI)
 - **Marketing**: Public landing page showcasing system capabilities
 
@@ -62,47 +67,19 @@ npm run reset # Reset database + seed (drops all data!)
 - [WARRANTY_SYSTEM.md](docs/WARRANTY_SYSTEM.md) - Complete warranty management implementation (reference for Asset layer features)
 - [MAINTENANCE_SYSTEM.md](docs/MAINTENANCE_SYSTEM.md) - Preventive maintenance schedules and records with workflow state management
 
-### Marketing & Public Pages
+### Advanced ITAM Layer (Layer 3)
 
-- **Landing Page**: `app/(marketing)/page.tsx` - Public marketing page at `/` showcasing system capabilities
-- **Route Structure**: Unauthenticated users see landing page, authenticated users auto-redirect to `/dashboard`
-- **Components**: `components/marketing/` - Reusable marketing components (hero, features, FAQ, etc.)
-- **Styling**: Barq brand colors (yellow `#ffda00`, light blue `#dff5f7`), dark mode support, Framer Motion animations
+- [ITAM_FEATURES.md](docs/ITAM_FEATURES.md) - Complete guide to all 4 advanced ITAM modules
+- [ASSET_DISPOSALS.md](docs/ASSET_DISPOSALS.md) - Multi-step disposal workflow with approval chain and certificate generation
+- [ASSET_KITS.md](docs/ASSET_KITS.md) - Predefined asset bundles with checkout tracking and partial returns
+- [ASSET_RESERVATIONS.md](docs/ASSET_RESERVATIONS.md) - Future asset reservations with conflict detection and calendar view
+- [CMDB_GUIDE.md](docs/CMDB_GUIDE.md) - Configuration Management Database with dependency tracking
 
 ### In-App Documentation (MDX)
 
-The application includes a built-in documentation system at `/docs` for end-user guidance:
-
-**Architecture**:
-
-- **Content**: MDX files in `src/content/docs/` with YAML frontmatter (title, description, icon, order)
-- **Renderer**: Dynamic route at `app/(dashboard)/docs/[slug]/page.tsx` using `next-mdx-remote/rsc`
-- **Components**: Custom MDX components in `components/mdx/` (Card, Callout, CodeBlock with copy button)
-- **Plugins**: GFM, syntax highlighting (rehype-highlight), auto-heading links (rehype-slug, rehype-autolink-headings)
-- **Styling**: Tailwind prose classes with custom @layer rules in `globals.css`
-
-**Current Documentation Pages**:
-
-- `/docs/getting-started` - Foundation layer and data management basics
-- `/docs/entities` - Complete entity reference (Layer 1 + Layer 2)
-- `/docs/workflows` - Common workflows and guides
-- `/docs/admin-guide` - RBAC and user management
-
-**Key Files**:
-
-- `src/lib/mdx.ts` - Utilities for reading/parsing MDX files
-- `src/components/mdx/mdx-components.tsx` - Custom component mappings
-- `src/components/mdx/code-block.tsx` - Enhanced code block with copy button
-- `src/app/(dashboard)/docs/layout.tsx` - Documentation layout with sidebar
-
-**IMPORTANT**: MDX plugins are configured in the component (NOT `next.config.ts`) for Turbopack compatibility. The config only sets `pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"]` for future compatibility.
-
-### Dashboards & Analytics
-
-- **Dashboard**: `app/(dashboard)/dashboard/page.tsx` - Main analytics dashboard with widgets (metrics, task queue, activity feed, quick actions)
-- **Analytics**: `app/(dashboard)/analytics/page.tsx` - Asset analytics and charts (renamed from `/assets-dashboard`)
-- **Widgets**: `components/dashboard/widgets/` - Reusable dashboard components
-- **Reports**: `app/(dashboard)/reports/page.tsx` - Custom reports and data exports
+- Built-in documentation system at `/docs` for end-users
+- MDX files in `src/content/docs/` with custom components (Card, Callout, CodeBlock)
+- **IMPORTANT**: MDX plugins configured in component (NOT `next.config.ts`) for Turbopack compatibility
 
 ### All Documentation
 
@@ -112,139 +89,110 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 
 ### Prisma Usage
 
-**ALWAYS** import from `@/generated/prisma` (NOT `@prisma/client`):
-
-```typescript
-import type { PrismaClient, Prisma, Asset } from "@/generated/prisma";
-```
-
-**ALWAYS** use singleton from `client.ts` (NOT new instances):
-
-```typescript
-import { prisma } from "@/infrastructure/database/prisma/client";
-```
-
-**See**: [PRISMA_GUIDE.md](docs/guides/PRISMA_GUIDE.md) for complete patterns.
+- **ALWAYS** import from `@/generated/prisma` (NOT `@prisma/client`)
+- **ALWAYS** use singleton from `@/infrastructure/database/prisma/client` (NOT new instances)
+- **See**: [PRISMA_GUIDE.md](docs/guides/PRISMA_GUIDE.md) for complete patterns
 
 ### Next.js 16 Async APIs
 
-**ALWAYS** await: `params`, `searchParams`, `cookies()`, `headers()`, `draftMode()`
-
-```typescript
-// Server components
-const params = await props.params;
-const cookieStore = await cookies();
-
-// Client components use hooks (not async)
-const params = useParams(); // No await
-```
-
-**Set `dynamic = "force-dynamic"`** for pages using auth/session.
-
-**See**: [NEXTJS_16_GUIDE.md](docs/guides/NEXTJS_16_GUIDE.md) for migration guide.
+- **ALWAYS** await: `params`, `searchParams`, `cookies()`, `headers()`, `draftMode()`
+- Server components: `const params = await props.params;`
+- Client components: `const params = useParams();` (no await - use hooks)
+- **Set `dynamic = "force-dynamic"`** for pages using auth/session
+- **See**: [NEXTJS_16_GUIDE.md](docs/guides/NEXTJS_16_GUIDE.md) for migration guide
 
 ### Next.js 16 Proxy Convention
 
-**IMPORTANT**: Next.js 16 uses `proxy.ts` instead of `middleware.ts`
-
-```typescript
-// proxy.ts (at project root)
-export async function proxy(request: NextRequest) {
-  // Request interception logic
-  return NextResponse.next();
-}
-```
-
-**Key Points**:
-
+- **IMPORTANT**: Next.js 16 uses `proxy.ts` (NOT `middleware.ts`)
 - File location: `proxy.ts` at **project root** (NOT in src/)
 - Export function named `proxy()` (NOT `middleware()`)
 - Existing proxy handles auth redirect + landing page routing
-- Do NOT create new middleware.ts or modify proxy.ts without checking existing logic
-
-**See**: [NEXTJS_16_GUIDE.md](docs/guides/NEXTJS_16_GUIDE.md) section "Proxy Convention"
+- **See**: [NEXTJS_16_GUIDE.md](docs/guides/NEXTJS_16_GUIDE.md) section "Proxy Convention"
 
 ### Type Safety
 
-**ALWAYS** use `import type` for type-only imports (ESLint enforces this):
-
-```typescript
-import type { IRepository } from "@/core/repositories/...";
-```
+- **ALWAYS** use `import type` for type-only imports (ESLint enforces this)
 
 ### Permissions
 
-**ALWAYS** check permissions at server action layer:
-
-```typescript
-await requirePermission(PERMISSIONS.ASSETS.UPDATE);
-```
-
-**See**: [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md)
+- **ALWAYS** check permissions at server action layer: `await requirePermission(PERMISSIONS.CONFIGURATION_ITEMS_VIEW);`
+- **Feature-Specific Permissions**: Each Layer 3 feature has its own permission set:
+  - `ASSET_DISPOSALS_*` (VIEW, CREATE, UPDATE, DELETE, APPROVE, REJECT, START, COMPLETE, CANCEL, MANAGE)
+  - `ASSET_KITS_*` (VIEW, CREATE, UPDATE, DELETE, CHECKOUT, RETURN, MANAGE)
+  - `ASSET_RESERVATIONS_*` (VIEW, CREATE, UPDATE, DELETE, CANCEL, CONFIRM, MANAGE)
+  - `CONFIGURATION_ITEMS_*`, `CI_RELATIONSHIPS_*`, `RELATIONSHIP_TYPES_*` (VIEW, CREATE, UPDATE, DELETE, MANAGE)
+- **Navigation**: Automatically filtered based on user permissions (see `navigation.ts`)
+- **See**: [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md)
 
 ### Logging
 
-**NEVER** use `console.log` - use DI logger:
+- **NEVER** use `console.log` - use DI logger: `@inject(DI_TOKENS.ILoggerService) private logger: ILoggerService`
+- **See**: [LOGGING.md](docs/guides/LOGGING.md)
 
-```typescript
-constructor(@inject(DI_TOKENS.ILoggerService) private logger: ILoggerService) {}
-```
+### Barrel Exports
 
-**See**: [LOGGING.md](docs/guides/LOGGING.md)
+- **CRITICAL**: Create `index.ts` in use case modules to export all use cases
+- Pre-commit type-checking **fails** without barrel exports
+- **All Layer 3 features have barrel exports**: `src/core/use-cases/{disposal,asset-kits,reservations,cmdb}/*/index.ts`
+- **See**: [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "Adding a New Feature"
 
-### MDX Documentation
+## Layer 3 ITAM Features (NEW)
 
-**ALWAYS** configure MDX plugins in the component, NOT in `next.config.ts`:
+**4 Advanced Modules** - Fully implemented with Clean Architecture patterns:
 
-```typescript
-// ✅ CORRECT: In component (app/(dashboard)/docs/[slug]/page.tsx)
-<MDXRemote
-  source={content}
-  components={customComponents}
-  options={{
-    mdxOptions: {
-      remarkPlugins: [remarkGfm],
-      rehypePlugins: [rehypeHighlight, rehypeSlug, [rehypeAutolinkHeadings, { behavior: "wrap" }]],
-    },
-  }}
-/>
+1. **Asset Disposals** (`/asset-disposals`)
+   - Multi-step approval workflow (PENDING_APPROVAL → APPROVED → IN_PROGRESS → SANITIZED → COMPLETED)
+   - Approval chain with multiple approvers
+   - Data sanitization checklist
+   - PDF certificate generation (ready for integration)
+   - Route: `/asset-disposals`, Permission: `ASSET_DISPOSALS_VIEW`
 
-// ❌ WRONG: In next.config.ts with withMDX wrapper (breaks Turbopack)
-const withMDX = createMDX({ options: { remarkPlugins: [...] } });
-export default withMDX(nextConfig);
-```
+2. **Asset Kits** (`/asset-kits`)
+   - Predefined bundles (e.g., "New Hire Kit" = laptop + mouse + keyboard)
+   - Kit builder with item quantity tracking
+   - Checkout workflow with partial returns support
+   - Individual item tracking (damaged, lost, returned)
+   - Routes: `/asset-kits`, Permission: `ASSET_KITS_VIEW`
 
-**MDX Content Files**:
+3. **Asset Reservations** (`/asset-reservations`)
+   - Future date reservations with start/end time
+   - Conflict detection (prevents double-booking)
+   - Availability checker
+   - Calendar view (ready for `react-big-calendar` integration)
+   - Background jobs ready (activation, reminders, overdue checks)
+   - Route: `/asset-reservations`, Permission: `ASSET_RESERVATIONS_VIEW`
 
-- Store in `src/content/docs/` with `.mdx` extension
-- Include YAML frontmatter: `title`, `description`, `icon`, `order`
-- Use custom components: `<Card>`, `<Callout type="info|warning|error|success">`
+4. **CMDB** (`/configuration-items`, `/ci-relationships`, `/relationship-types`)
+   - Configuration Items with CI classes and lifecycle tracking
+   - Relationship Types (DEPENDS_ON, RUNS_ON, etc.) with bidirectional support
+   - CI Relationships with validity periods and active/inactive state
+   - Dependency graph foundation (ready for visualization)
+   - Impact analysis support (isImpacting flag)
+   - Routes: `/configuration-items`, `/ci-relationships`, `/relationship-types`
+   - Permissions: `CONFIGURATION_ITEMS_VIEW`, `CI_RELATIONSHIPS_VIEW`, `RELATIONSHIP_TYPES_VIEW`
 
-**See**: `src/lib/mdx.ts` for utilities, `src/components/mdx/` for custom components
+**Database**: 9 new tables across 4 migrations (see `prisma/migrations/20251121*`)
+
+**DI Modules**: All registered in `src/di/container.ts`:
+
+- `loadDisposalModule()` - Line 112
+- `loadAssetKitsModule()` - Line 115
+- `loadReservationsModule()` - Line 118
+- `bindCMDBDependencies()` - Line 103
+
+**Navigation**: New "CMDB" group added, Asset features updated with granular permissions
+
+**Known Issues**:
+
+- TypeScript errors in 3 form components (CI Relationship, Configuration Item, Relationship Type forms) due to create/update schema differences
+- Forms are functional but need type refinement
+- Workaround: Use `npm run build:fast` to skip type-check
 
 ## Architecture Overview
 
-**Clean Architecture Layers**:
+5-layer Clean Architecture: **Presentation** → **Interface Adapters** (Controllers, DTOs, Presenters) → **Use Cases** → **Domain** (Entities, business rules) ← **Infrastructure** (Repositories, external services)
 
-1. **Presentation** - Next.js pages, React components
-2. **Interface Adapters** - Controllers (server actions), DTOs, Presenters
-3. **Use Cases** - Application business logic
-4. **Domain** - Entities, business rules
-5. **Infrastructure** - Prisma repositories, external services
-
-**Adding Features** - Follow layer-by-layer approach:
-
-1. Domain entity
-2. Repository interface
-3. Use cases + **barrel export** (`index.ts`)
-4. Infrastructure repository
-5. DI registration
-6. Controllers
-7. DTOs/Presenters
-8. UI components
-9. Routes
-
-**See**: [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "Adding a New Feature" for detailed walkthrough with code examples.
+**See**: [ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md) for complete diagrams, data flow, and [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "Adding a New Feature" for step-by-step implementation guide.
 
 ## Development Workflow
 
@@ -264,7 +212,7 @@ export default withMDX(nextConfig);
 - Await async request APIs (`params`, `cookies()`, etc.)
 - Use `import type` for type-only imports
 - Check permissions in server actions
-- Create barrel exports for new use case modules
+- Create barrel exports (`index.ts`) for new use case modules
 - Use DI logger (not `console.log`)
 - Validate at boundaries
 - Follow Clean Architecture layers

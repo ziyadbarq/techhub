@@ -1,0 +1,97 @@
+import type {
+  ConfigurationItem,
+  CriticalityEnum,
+  EnvironmentEnum,
+} from "../domain/entities/configuration-item.entity";
+
+/**
+ * Configuration Item Repository Interface
+ *
+ * Defines the contract for persisting and retrieving configuration items.
+ */
+export interface IConfigurationItemRepository {
+  /**
+   * Create a new configuration item
+   */
+  create(ci: ConfigurationItem): Promise<ConfigurationItem>;
+
+  /**
+   * Find a CI by ID
+   */
+  findById(id: string): Promise<ConfigurationItem | null>;
+
+  /**
+   * Find all CIs
+   */
+  findAll(): Promise<ConfigurationItem[]>;
+
+  /**
+   * Find a CI by its unique business key
+   */
+  findByCiKey(ciKey: string): Promise<ConfigurationItem | null>;
+
+  /**
+   * Find CIs by CI class
+   */
+  findByCiClass(ciClassId: string): Promise<ConfigurationItem[]>;
+
+  /**
+   * Find CIs linked to a specific asset
+   */
+  findByLinkedAsset(assetId: string): Promise<ConfigurationItem[]>;
+
+  /**
+   * Find CIs by primary owner (person)
+   */
+  findByOwnerPerson(personId: string): Promise<ConfigurationItem[]>;
+
+  /**
+   * Find CIs by primary owner (organizational unit)
+   */
+  findByOwnerOrgUnit(orgUnitId: string): Promise<ConfigurationItem[]>;
+
+  /**
+   * Find CIs by location
+   */
+  findByLocation(locationId: string): Promise<ConfigurationItem[]>;
+
+  /**
+   * Find CIs by criticality
+   */
+  findByCriticality(criticality: CriticalityEnum): Promise<ConfigurationItem[]>;
+
+  /**
+   * Find CIs by environment
+   */
+  findByEnvironment(environment: EnvironmentEnum): Promise<ConfigurationItem[]>;
+
+  /**
+   * Find CIs by lifecycle state
+   */
+  findByLifecycleState(lifecycleStateId: string): Promise<ConfigurationItem[]>;
+
+  /**
+   * Find CIs without a linked asset
+   */
+  findUnlinked(): Promise<ConfigurationItem[]>;
+
+  /**
+   * Find CIs without an owner
+   */
+  findUnowned(): Promise<ConfigurationItem[]>;
+
+  /**
+   * Update an existing CI
+   */
+  update(ci: ConfigurationItem): Promise<ConfigurationItem>;
+
+  /**
+   * Delete a CI
+   */
+  delete(id: string): Promise<void>;
+
+  /**
+   * Check if a CI key already exists
+   */
+  existsByCiKey(ciKey: string): Promise<boolean>;
+}

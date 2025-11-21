@@ -42,7 +42,16 @@ import { logger } from "@/lib/logger";
  * ```
  */
 export function createRepositoryLogger(repositoryName: string) {
-  return logger.scope(repositoryName);
+  const scoped = logger.scope(repositoryName);
+
+  return {
+    ...scoped,
+    logOperation: async <T>(
+      operation: string,
+      fn: () => Promise<T>,
+      context?: Record<string, unknown>,
+    ): Promise<T> => logRepositoryOperation(scoped, operation, fn, context),
+  };
 }
 
 /**
@@ -67,7 +76,7 @@ export function createRepositoryLogger(repositoryName: string) {
  * ```
  */
 export async function logRepositoryOperation<T>(
-  repoLogger: ReturnType<typeof createRepositoryLogger>,
+  repoLogger: ReturnType<typeof logger.scope>,
   operation: string,
   fn: () => Promise<T>,
   context?: Record<string, unknown>,

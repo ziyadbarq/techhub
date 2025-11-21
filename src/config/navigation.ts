@@ -40,6 +40,9 @@ import {
   Database,
   Lightbulb,
   ShieldCheck,
+  Trash2,
+  Boxes,
+  CalendarClock,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -272,6 +275,27 @@ export const navGroups: NavGroup[] = [
         permission: PERMISSIONS.ASSET_ASSIGNMENTS_VIEW,
       },
       {
+        title: "Asset Kits",
+        href: "/asset-kits",
+        icon: Boxes,
+        description: "Predefined asset bundles and checkouts",
+        permission: PERMISSIONS.ASSET_KITS_VIEW,
+      },
+      {
+        title: "Reservations",
+        href: "/asset-reservations",
+        icon: CalendarClock,
+        description: "Asset reservations and availability",
+        permission: PERMISSIONS.ASSET_RESERVATIONS_VIEW,
+      },
+      {
+        title: "Disposals",
+        href: "/asset-disposals",
+        icon: Trash2,
+        description: "Asset disposal workflow",
+        permission: PERMISSIONS.ASSET_DISPOSALS_VIEW,
+      },
+      {
         title: "Warranties",
         href: "/warranties",
         icon: Shield,
@@ -327,6 +351,38 @@ export const navGroups: NavGroup[] = [
         icon: ClipboardList,
         description: "Maintenance history and work logs",
         permission: PERMISSIONS.MAINTENANCE_RECORDS_VIEW,
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: false,
+  },
+
+  // CMDB (Configuration Management Database)
+  {
+    id: "cmdb",
+    title: "CMDB",
+    items: [
+      {
+        title: "Configuration Items",
+        href: "/configuration-items",
+        icon: Database,
+        description: "Manage configuration items",
+        permission: PERMISSIONS.CONFIGURATION_ITEMS_VIEW,
+      },
+      {
+        title: "CI Relationships",
+        href: "/ci-relationships",
+        icon: GitBranch,
+        description: "Manage CI dependencies and relationships",
+        permission: PERMISSIONS.CI_RELATIONSHIPS_VIEW,
+      },
+      {
+        title: "Relationship Types",
+        href: "/relationship-types",
+        icon: ArrowRightLeft,
+        description: "Define relationship types",
+        permission: PERMISSIONS.RELATIONSHIP_TYPES_VIEW,
       },
     ],
     visible: true,

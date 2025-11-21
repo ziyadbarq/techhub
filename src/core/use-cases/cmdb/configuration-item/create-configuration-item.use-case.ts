@@ -1,0 +1,34 @@
+import { injectable, inject } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { IConfigurationItemRepository } from "../../../repositories/configuration-item.repository.interface";
+import {
+  ConfigurationItem,
+  type CreateConfigurationItemProps,
+} from "../../../domain/entities/configuration-item.entity";
+
+export type CreateConfigurationItemRequest = CreateConfigurationItemProps;
+
+@injectable()
+export class CreateConfigurationItemUseCase {
+  constructor(
+    @inject(DI_TOKENS.IConfigurationItemRepository)
+    private readonly ciRepository: IConfigurationItemRepository,
+  ) {}
+
+  async execute(
+    request: CreateConfigurationItemRequest,
+  ): Promise<ConfigurationItem> {
+    // Check if CI key already exists
+    if (request.ciKey) {
+      const exists = await this.ciRepository.existsByCiKey(request.ciKey);
+      if (exists) {
+        throw new Error(
+          `Configuration Item with CI key already exists: ${request.ciKey}`,
+        );
+      }
+    }
+
+    const ci = ConfigurationItem.create(request);
+    return await this.ciRepository.create(ci);
+  }
+}

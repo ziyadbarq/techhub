@@ -136,6 +136,7 @@ export const PERMISSIONS = {
   ASSETS_CREATE: "assets:create",
   ASSETS_UPDATE: "assets:update",
   ASSETS_DELETE: "assets:delete",
+  ASSETS_CHECKOUT: "assets:checkout",
   ASSETS_MANAGE: "assets:manage",
 
   // Assets: Asset Assignments
@@ -179,6 +180,57 @@ export const PERMISSIONS = {
   STOCK_MOVEMENTS_CREATE: "stock-movements:create",
   STOCK_MOVEMENTS_DELETE: "stock-movements:delete",
   STOCK_MOVEMENTS_MANAGE: "stock-movements:manage",
+
+  // Asset Disposals
+  ASSET_DISPOSALS_VIEW: "asset-disposals:view",
+  ASSET_DISPOSALS_CREATE: "asset-disposals:create",
+  ASSET_DISPOSALS_UPDATE: "asset-disposals:update",
+  ASSET_DISPOSALS_DELETE: "asset-disposals:delete",
+  ASSET_DISPOSALS_APPROVE: "asset-disposals:approve",
+  ASSET_DISPOSALS_REJECT: "asset-disposals:reject",
+  ASSET_DISPOSALS_START: "asset-disposals:start",
+  ASSET_DISPOSALS_COMPLETE: "asset-disposals:complete",
+  ASSET_DISPOSALS_CANCEL: "asset-disposals:cancel",
+  ASSET_DISPOSALS_MANAGE: "asset-disposals:manage",
+
+  // Asset Kits
+  ASSET_KITS_VIEW: "asset-kits:view",
+  ASSET_KITS_CREATE: "asset-kits:create",
+  ASSET_KITS_UPDATE: "asset-kits:update",
+  ASSET_KITS_DELETE: "asset-kits:delete",
+  ASSET_KITS_CHECKOUT: "asset-kits:checkout",
+  ASSET_KITS_RETURN: "asset-kits:return",
+  ASSET_KITS_MANAGE: "asset-kits:manage",
+
+  // Asset Reservations
+  ASSET_RESERVATIONS_VIEW: "asset-reservations:view",
+  ASSET_RESERVATIONS_CREATE: "asset-reservations:create",
+  ASSET_RESERVATIONS_UPDATE: "asset-reservations:update",
+  ASSET_RESERVATIONS_DELETE: "asset-reservations:delete",
+  ASSET_RESERVATIONS_CANCEL: "asset-reservations:cancel",
+  ASSET_RESERVATIONS_CONFIRM: "asset-reservations:confirm",
+  ASSET_RESERVATIONS_MANAGE: "asset-reservations:manage",
+
+  // CMDB: Configuration Items
+  CONFIGURATION_ITEMS_VIEW: "configuration-items:view",
+  CONFIGURATION_ITEMS_CREATE: "configuration-items:create",
+  CONFIGURATION_ITEMS_UPDATE: "configuration-items:update",
+  CONFIGURATION_ITEMS_DELETE: "configuration-items:delete",
+  CONFIGURATION_ITEMS_MANAGE: "configuration-items:manage",
+
+  // CMDB: CI Relationships
+  CI_RELATIONSHIPS_VIEW: "ci-relationships:view",
+  CI_RELATIONSHIPS_CREATE: "ci-relationships:create",
+  CI_RELATIONSHIPS_UPDATE: "ci-relationships:update",
+  CI_RELATIONSHIPS_DELETE: "ci-relationships:delete",
+  CI_RELATIONSHIPS_MANAGE: "ci-relationships:manage",
+
+  // CMDB: Relationship Types
+  RELATIONSHIP_TYPES_VIEW: "relationship-types:view",
+  RELATIONSHIP_TYPES_CREATE: "relationship-types:create",
+  RELATIONSHIP_TYPES_UPDATE: "relationship-types:update",
+  RELATIONSHIP_TYPES_DELETE: "relationship-types:delete",
+  RELATIONSHIP_TYPES_MANAGE: "relationship-types:manage",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

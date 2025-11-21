@@ -1,4 +1,4 @@
-This file provides high-level guidance when working with this repository.
+This file provides high-level guidance to Claude Code when working with this repository.
 
 ## Project Overview
 
@@ -13,7 +13,7 @@ This file provides high-level guidance when working with this repository.
 **Current Implementation**:
 
 - **Layer 1 (Foundation)**: 11 core entities - OrganizationUnit, Person, Role, Location, Vendor, Lifecycle models, Field definitions
-- **Layer 2 (Asset/Inventory)**: 7 entities - Asset, AssetCategory, AssetModel, AssetAssignment, StockLocation, StockMovement, Warranty
+- **Layer 2 (Asset/Inventory)**: 9 entities - Asset, AssetCategory, AssetModel, AssetAssignment, StockLocation, StockMovement, Warranty, MaintenanceSchedule, MaintenanceRecord
 - **Reference**: Task entity (complete implementation, hidden from UI)
 - **Marketing**: Public landing page showcasing system capabilities
 
@@ -58,13 +58,13 @@ npm run reset # Reset database + seed (drops all data!)
 ### Asset Layer (Layer 2)
 
 - [WARRANTY_SYSTEM.md](docs/WARRANTY_SYSTEM.md) - Complete warranty management implementation (reference for Asset layer features)
+- [MAINTENANCE_SYSTEM.md](docs/MAINTENANCE_SYSTEM.md) - Preventive maintenance schedules and records with workflow state management
 
-### Marketing & Public Pages
+### In-App Documentation (MDX)
 
-- **Landing Page**: `app/(marketing)/page.tsx` - Public marketing page at `/` showcasing system capabilities
-- **Route Structure**: Unauthenticated users see landing page, authenticated users auto-redirect to `/dashboard`
-- **Components**: `components/marketing/` - Reusable marketing components (hero, features, FAQ, etc.)
-- **Styling**: Barq brand colors (yellow `#ffda00`, light blue `#dff5f7`), dark mode support, Framer Motion animations
+- Built-in documentation system at `/docs` for end-users
+- MDX files in `src/content/docs/` with custom components (Card, Callout, CodeBlock)
+- **IMPORTANT**: MDX plugins configured in component (NOT `next.config.ts`) for Turbopack compatibility
 
 ### All Documentation
 
@@ -74,109 +74,51 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 
 ### Prisma Usage
 
-**ALWAYS** import from `@/generated/prisma` (NOT `@prisma/client`):
-
-```typescript
-import type { PrismaClient, Prisma, Asset } from "@/generated/prisma";
-```
-
-**ALWAYS** use singleton from `client.ts` (NOT new instances):
-
-```typescript
-import { prisma } from "@/infrastructure/database/prisma/client";
-```
-
-**See**: [PRISMA_GUIDE.md](docs/guides/PRISMA_GUIDE.md) for complete patterns.
+- **ALWAYS** import from `@/generated/prisma` (NOT `@prisma/client`)
+- **ALWAYS** use singleton from `@/infrastructure/database/prisma/client` (NOT new instances)
+- **See**: [PRISMA_GUIDE.md](docs/guides/PRISMA_GUIDE.md) for complete patterns
 
 ### Next.js 16 Async APIs
 
-**ALWAYS** await: `params`, `searchParams`, `cookies()`, `headers()`, `draftMode()`
-
-```typescript
-// Server components
-const params = await props.params;
-const cookieStore = await cookies();
-
-// Client components use hooks (not async)
-const params = useParams(); // No await
-```
-
-**Set `dynamic = "force-dynamic"`** for pages using auth/session.
-
-**See**: [NEXTJS_16_GUIDE.md](docs/guides/NEXTJS_16_GUIDE.md) for migration guide.
+- **ALWAYS** await: `params`, `searchParams`, `cookies()`, `headers()`, `draftMode()`
+- Server components: `const params = await props.params;`
+- Client components: `const params = useParams();` (no await - use hooks)
+- **Set `dynamic = "force-dynamic"`** for pages using auth/session
+- **See**: [NEXTJS_16_GUIDE.md](docs/guides/NEXTJS_16_GUIDE.md) for migration guide
 
 ### Next.js 16 Proxy Convention
 
-**IMPORTANT**: Next.js 16 uses `proxy.ts` instead of `middleware.ts`
-
-```typescript
-// proxy.ts (at project root)
-export async function proxy(request: NextRequest) {
-  // Request interception logic
-  return NextResponse.next();
-}
-```
-
-**Key Points**:
-
+- **IMPORTANT**: Next.js 16 uses `proxy.ts` (NOT `middleware.ts`)
 - File location: `proxy.ts` at **project root** (NOT in src/)
 - Export function named `proxy()` (NOT `middleware()`)
 - Existing proxy handles auth redirect + landing page routing
-- Do NOT create new middleware.ts or modify proxy.ts without checking existing logic
-
-**See**: [NEXTJS_16_GUIDE.md](docs/guides/NEXTJS_16_GUIDE.md) section "Proxy Convention"
+- **See**: [NEXTJS_16_GUIDE.md](docs/guides/NEXTJS_16_GUIDE.md) section "Proxy Convention"
 
 ### Type Safety
 
-**ALWAYS** use `import type` for type-only imports (ESLint enforces this):
-
-```typescript
-import type { IRepository } from "@/core/repositories/...";
-```
+- **ALWAYS** use `import type` for type-only imports (ESLint enforces this)
 
 ### Permissions
 
-**ALWAYS** check permissions at server action layer:
-
-```typescript
-await requirePermission(PERMISSIONS.ASSETS.UPDATE);
-```
-
-**See**: [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md)
+- **ALWAYS** check permissions at server action layer: `await requirePermission(PERMISSIONS.ASSETS.UPDATE);`
+- **See**: [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md)
 
 ### Logging
 
-**NEVER** use `console.log` - use DI logger:
+- **NEVER** use `console.log` - use DI logger: `@inject(DI_TOKENS.ILoggerService) private logger: ILoggerService`
+- **See**: [LOGGING.md](docs/guides/LOGGING.md)
 
-```typescript
-constructor(@inject(DI_TOKENS.ILoggerService) private logger: ILoggerService) {}
-```
+### Barrel Exports
 
-**See**: [LOGGING.md](docs/guides/LOGGING.md)
+- **CRITICAL**: Create `index.ts` in use case modules to export all use cases
+- Pre-commit type-checking **fails** without barrel exports
+- **See**: [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "Adding a New Feature"
 
 ## Architecture Overview
 
-**Clean Architecture Layers**:
+5-layer Clean Architecture: **Presentation** → **Interface Adapters** (Controllers, DTOs, Presenters) → **Use Cases** → **Domain** (Entities, business rules) ← **Infrastructure** (Repositories, external services)
 
-1. **Presentation** - Next.js pages, React components
-2. **Interface Adapters** - Controllers (server actions), DTOs, Presenters
-3. **Use Cases** - Application business logic
-4. **Domain** - Entities, business rules
-5. **Infrastructure** - Prisma repositories, external services
-
-**Adding Features** - Follow layer-by-layer approach:
-
-1. Domain entity
-2. Repository interface
-3. Use cases + **barrel export** (`index.ts`)
-4. Infrastructure repository
-5. DI registration
-6. Controllers
-7. DTOs/Presenters
-8. UI components
-9. Routes
-
-**See**: [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "Adding a New Feature" for detailed walkthrough with code examples.
+**See**: [ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md) for complete diagrams, data flow, and [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "Adding a New Feature" for step-by-step implementation guide.
 
 ## Development Workflow
 
@@ -196,10 +138,11 @@ constructor(@inject(DI_TOKENS.ILoggerService) private logger: ILoggerService) {}
 - Await async request APIs (`params`, `cookies()`, etc.)
 - Use `import type` for type-only imports
 - Check permissions in server actions
-- Create barrel exports for new use case modules
+- Create barrel exports (`index.ts`) for new use case modules
 - Use DI logger (not `console.log`)
 - Validate at boundaries
 - Follow Clean Architecture layers
+- Configure MDX plugins in components (runtime), not next.config.ts (build-time)
 
 ### ❌ DON'T
 
@@ -207,6 +150,7 @@ constructor(@inject(DI_TOKENS.ILoggerService) private logger: ILoggerService) {}
 - Create new `Pool()` or `PrismaClient()` instances (exhausts connections)
 - Access `params`/`searchParams` synchronously (runtime errors in Next.js 16)
 - Create `middleware.ts` (use existing `proxy.ts` instead - Next.js 16 convention)
+- Use `withMDX` wrapper in next.config.ts (breaks Turbopack serialization)
 - Skip permission checks
 - Forget barrel exports for use case modules (breaks pre-commit)
 - Use `console.log` in server code
@@ -231,5 +175,7 @@ constructor(@inject(DI_TOKENS.ILoggerService) private logger: ILoggerService) {}
 - Use Cases: `*.use-case.ts`
 - Repositories: `prisma-*.repository.ts`
 - Interfaces: `*.interface.ts`
+- MDX Content: `*.mdx` (in `src/content/docs/`)
+- MDX Components: `*.tsx` (in `src/components/mdx/`)
 
 **See**: [DATABASE_SCHEMA.md](docs/architecture/DATABASE_SCHEMA.md) for database naming conventions.

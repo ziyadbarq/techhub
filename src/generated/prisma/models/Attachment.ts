@@ -579,14 +579,6 @@ export type AttachmentUncheckedUpdateManyWithoutAttachmentTypeNestedInput = {
   deleteMany?: Prisma.AttachmentScalarWhereInput | Prisma.AttachmentScalarWhereInput[]
 }
 
-export type NullableBigIntFieldUpdateOperationsInput = {
-  set?: bigint | number | null
-  increment?: bigint | number
-  decrement?: bigint | number
-  multiply?: bigint | number
-  divide?: bigint | number
-}
-
 export type AttachmentCreateWithoutUploadedByInput = {
   id?: string
   targetType: $Enums.TargetObjectTypeEnum

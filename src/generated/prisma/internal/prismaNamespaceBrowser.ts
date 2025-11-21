@@ -86,6 +86,15 @@ export const ModelName = {
   Warranty: 'Warranty',
   MaintenanceSchedule: 'MaintenanceSchedule',
   MaintenanceRecord: 'MaintenanceRecord',
+  AssetDisposal: 'AssetDisposal',
+  DisposalApproval: 'DisposalApproval',
+  DisposalDocument: 'DisposalDocument',
+  AssetKit: 'AssetKit',
+  AssetKitItem: 'AssetKitItem',
+  AssetKitCheckout: 'AssetKitCheckout',
+  AssetKitCheckoutItem: 'AssetKitCheckoutItem',
+  AssetReservation: 'AssetReservation',
+  AssetReservationConflict: 'AssetReservationConflict',
   ContractType: 'ContractType',
   Contract: 'Contract',
   ContractLinkedObject: 'ContractLinkedObject',
@@ -751,6 +760,162 @@ export const MaintenanceRecordScalarFieldEnum = {
 } as const
 
 export type MaintenanceRecordScalarFieldEnum = (typeof MaintenanceRecordScalarFieldEnum)[keyof typeof MaintenanceRecordScalarFieldEnum]
+
+
+export const AssetDisposalScalarFieldEnum = {
+  id: 'id',
+  assetId: 'assetId',
+  disposalType: 'disposalType',
+  reason: 'reason',
+  initiatedById: 'initiatedById',
+  approvedById: 'approvedById',
+  approvedAt: 'approvedAt',
+  status: 'status',
+  estimatedValue: 'estimatedValue',
+  actualProceeds: 'actualProceeds',
+  currency: 'currency',
+  sanitizationChecklist: 'sanitizationChecklist',
+  disposalDate: 'disposalDate',
+  certificateNumber: 'certificateNumber',
+  certificateIssuedAt: 'certificateIssuedAt',
+  disposalVendorId: 'disposalVendorId',
+  recipientInfo: 'recipientInfo',
+  note: 'note',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AssetDisposalScalarFieldEnum = (typeof AssetDisposalScalarFieldEnum)[keyof typeof AssetDisposalScalarFieldEnum]
+
+
+export const DisposalApprovalScalarFieldEnum = {
+  id: 'id',
+  disposalId: 'disposalId',
+  approverId: 'approverId',
+  status: 'status',
+  decisionAt: 'decisionAt',
+  comment: 'comment',
+  createdAt: 'createdAt'
+} as const
+
+export type DisposalApprovalScalarFieldEnum = (typeof DisposalApprovalScalarFieldEnum)[keyof typeof DisposalApprovalScalarFieldEnum]
+
+
+export const DisposalDocumentScalarFieldEnum = {
+  id: 'id',
+  disposalId: 'disposalId',
+  documentType: 'documentType',
+  fileName: 'fileName',
+  filePath: 'filePath',
+  mimeType: 'mimeType',
+  sizeBytes: 'sizeBytes',
+  uploadedById: 'uploadedById',
+  uploadedAt: 'uploadedAt'
+} as const
+
+export type DisposalDocumentScalarFieldEnum = (typeof DisposalDocumentScalarFieldEnum)[keyof typeof DisposalDocumentScalarFieldEnum]
+
+
+export const AssetKitScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  code: 'code',
+  description: 'description',
+  kitType: 'kitType',
+  isActive: 'isActive',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AssetKitScalarFieldEnum = (typeof AssetKitScalarFieldEnum)[keyof typeof AssetKitScalarFieldEnum]
+
+
+export const AssetKitItemScalarFieldEnum = {
+  id: 'id',
+  assetKitId: 'assetKitId',
+  assetCategoryId: 'assetCategoryId',
+  assetModelId: 'assetModelId',
+  quantity: 'quantity',
+  isRequired: 'isRequired',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AssetKitItemScalarFieldEnum = (typeof AssetKitItemScalarFieldEnum)[keyof typeof AssetKitItemScalarFieldEnum]
+
+
+export const AssetKitCheckoutScalarFieldEnum = {
+  id: 'id',
+  assetKitId: 'assetKitId',
+  assigneeType: 'assigneeType',
+  assigneeId: 'assigneeId',
+  checkoutDate: 'checkoutDate',
+  expectedReturnDate: 'expectedReturnDate',
+  actualReturnDate: 'actualReturnDate',
+  status: 'status',
+  checkedOutById: 'checkedOutById',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AssetKitCheckoutScalarFieldEnum = (typeof AssetKitCheckoutScalarFieldEnum)[keyof typeof AssetKitCheckoutScalarFieldEnum]
+
+
+export const AssetKitCheckoutItemScalarFieldEnum = {
+  id: 'id',
+  kitCheckoutId: 'kitCheckoutId',
+  assetId: 'assetId',
+  kitItemId: 'kitItemId',
+  checkoutDate: 'checkoutDate',
+  returnDate: 'returnDate',
+  status: 'status',
+  conditionAtCheckout: 'conditionAtCheckout',
+  conditionAtReturn: 'conditionAtReturn',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AssetKitCheckoutItemScalarFieldEnum = (typeof AssetKitCheckoutItemScalarFieldEnum)[keyof typeof AssetKitCheckoutItemScalarFieldEnum]
+
+
+export const AssetReservationScalarFieldEnum = {
+  id: 'id',
+  assetId: 'assetId',
+  reservedForPersonId: 'reservedForPersonId',
+  reservedForOrgUnitId: 'reservedForOrgUnitId',
+  reservedById: 'reservedById',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  status: 'status',
+  purpose: 'purpose',
+  note: 'note',
+  confirmationDate: 'confirmationDate',
+  confirmedById: 'confirmedById',
+  cancellationReason: 'cancellationReason',
+  cancelledAt: 'cancelledAt',
+  cancelledById: 'cancelledById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AssetReservationScalarFieldEnum = (typeof AssetReservationScalarFieldEnum)[keyof typeof AssetReservationScalarFieldEnum]
+
+
+export const AssetReservationConflictScalarFieldEnum = {
+  id: 'id',
+  reservationId: 'reservationId',
+  conflictingReservationId: 'conflictingReservationId',
+  detectedAt: 'detectedAt',
+  resolvedAt: 'resolvedAt',
+  resolutionNote: 'resolutionNote'
+} as const
+
+export type AssetReservationConflictScalarFieldEnum = (typeof AssetReservationConflictScalarFieldEnum)[keyof typeof AssetReservationConflictScalarFieldEnum]
 
 
 export const ContractTypeScalarFieldEnum = {

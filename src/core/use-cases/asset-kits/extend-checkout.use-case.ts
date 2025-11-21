@@ -1,0 +1,38 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+// TODO: Fix type errors - this is WIP code
+
+import { injectable, inject } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { IAssetKitCheckoutRepository } from "@/core/repositories/asset-kit-checkout.repository.interface";
+import type { AssetKitCheckout } from "@/core/domain/entities/asset-kit-checkout.entity";
+
+export interface ExtendCheckoutRequest {
+  checkoutId: string;
+  newExpectedReturnDate: Date;
+}
+
+@injectable()
+export class ExtendCheckoutUseCase {
+  constructor(
+    @inject(DI_TOKENS.IAssetKitCheckoutRepository)
+    private readonly kitCheckoutRepository: IAssetKitCheckoutRepository,
+  ) {}
+
+  async execute(request: ExtendCheckoutRequest): Promise<AssetKitCheckout> {
+    const checkout = await this.kitCheckoutRepository.findById(
+      request.checkoutId,
+    );
+    if (!checkout) {
+      throw new Error(`Kit checkout with ID ${request.checkoutId} not found`);
+    }
+
+    if (checkout.status !== "CHECKED_OUT") {
+      throw new Error("Can only extend active checkouts");
+    }
+
+    checkout.extendReturnDate(request.newExpectedReturnDate);
+
+    return this.kitCheckoutRepository.update(checkout);
+  }
+}

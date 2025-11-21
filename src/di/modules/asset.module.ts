@@ -101,6 +101,21 @@ import {
   CancelMaintenanceUseCase,
 } from "@/core/use-cases/maintenance/record";
 
+// Disposal Repository
+import type { IAssetDisposalRepository } from "@/core/repositories/asset-disposal.repository.interface";
+import { PrismaAssetDisposalRepository } from "@/infrastructure/repositories/prisma-asset-disposal.repository";
+
+// Disposal Use Cases
+import { CreateAssetDisposalUseCase } from "@/core/use-cases/disposal/create-asset-disposal.use-case";
+import { GetAssetDisposalUseCase } from "@/core/use-cases/disposal/get-asset-disposal.use-case";
+import { ListAssetDisposalsUseCase } from "@/core/use-cases/disposal/list-asset-disposals.use-case";
+import { ApproveDisposalUseCase } from "@/core/use-cases/disposal/approve-disposal.use-case";
+import { RejectDisposalUseCase } from "@/core/use-cases/disposal/reject-disposal.use-case";
+import { StartDisposalUseCase } from "@/core/use-cases/disposal/start-disposal.use-case";
+import { CompleteDisposalUseCase } from "@/core/use-cases/disposal/complete-disposal.use-case";
+import { CompleteSanitizationUseCase } from "@/core/use-cases/disposal/complete-sanitization.use-case";
+import { GenerateCertificateUseCase } from "@/core/use-cases/disposal/generate-certificate.use-case";
+
 const diLogger = logger.scope("DI:AssetModule");
 
 /**
@@ -384,6 +399,12 @@ export function bindAssetDependencies(container: Container): void {
     .to(PrismaMaintenanceRecordRepository)
     .inSingletonScope();
 
+  // Disposal Repository
+  container
+    .bind<IAssetDisposalRepository>(DI_TOKENS.IAssetDisposalRepository)
+    .to(PrismaAssetDisposalRepository)
+    .inSingletonScope();
+
   // ==========================================
   // Maintenance Record Use Cases
   // ==========================================
@@ -434,6 +455,44 @@ export function bindAssetDependencies(container: Container): void {
   container
     .bind<CancelMaintenanceUseCase>(DI_TOKENS.CancelMaintenanceUseCase)
     .to(CancelMaintenanceUseCase)
+    .inTransientScope();
+
+  // Disposal Use Cases
+  container
+    .bind<CreateAssetDisposalUseCase>(DI_TOKENS.CreateAssetDisposalUseCase)
+    .to(CreateAssetDisposalUseCase)
+    .inTransientScope();
+  container
+    .bind<GetAssetDisposalUseCase>(DI_TOKENS.GetAssetDisposalUseCase)
+    .to(GetAssetDisposalUseCase)
+    .inTransientScope();
+  container
+    .bind<ListAssetDisposalsUseCase>(DI_TOKENS.ListAssetDisposalsUseCase)
+    .to(ListAssetDisposalsUseCase)
+    .inTransientScope();
+  container
+    .bind<ApproveDisposalUseCase>(DI_TOKENS.ApproveDisposalUseCase)
+    .to(ApproveDisposalUseCase)
+    .inTransientScope();
+  container
+    .bind<RejectDisposalUseCase>(DI_TOKENS.RejectDisposalUseCase)
+    .to(RejectDisposalUseCase)
+    .inTransientScope();
+  container
+    .bind<StartDisposalUseCase>(DI_TOKENS.StartDisposalUseCase)
+    .to(StartDisposalUseCase)
+    .inTransientScope();
+  container
+    .bind<CompleteDisposalUseCase>(DI_TOKENS.CompleteDisposalUseCase)
+    .to(CompleteDisposalUseCase)
+    .inTransientScope();
+  container
+    .bind<CompleteSanitizationUseCase>(DI_TOKENS.CompleteSanitizationUseCase)
+    .to(CompleteSanitizationUseCase)
+    .inTransientScope();
+  container
+    .bind<GenerateCertificateUseCase>(DI_TOKENS.GenerateCertificateUseCase)
+    .to(GenerateCertificateUseCase)
     .inTransientScope();
 
   diLogger.debug(
