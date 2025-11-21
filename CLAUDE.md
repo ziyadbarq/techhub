@@ -114,6 +114,12 @@ npm run reset # Reset database + seed (drops all data!)
 - API routes that need DI-resolved use cases should `const container = getContainer();` (it now lazily initializes) and avoid creating new services manually.
 - When exposing new auth endpoints, proxy through `/api/auth/[...all]/route.ts` which already wraps the Better Auth handler with verbose logging.
 
+## Rendering & Build Guardrails (Next.js 16)
+
+- If a page/layout/template touches `cookies()`, `getSession()`, `requireAuth()`, or any permission helpers, set `export const dynamic = "force-dynamic";` in that file. Do this by default for new dashboard/auth pages and the root app layout to avoid `Dynamic server usage` build failures.
+- Components using `useSearchParams()` must be wrapped in `Suspense` with a fallback to satisfy the CSR bailout rule.
+- In React Hook Form components audited by React Compiler, prefer `useWatch` over `form.watch` to avoid “incompatible library” skips.
+
 ## Testing & Validation
 
 - `npm run lint` – ESLint flat config (TypeScript + React Compiler rules).
@@ -142,7 +148,15 @@ npm run reset # Reset database + seed (drops all data!)
 `next.config.ts` includes `serverExternalPackages` to prevent server-only dependencies from being bundled in client:
 
 ```typescript
-["@prisma/client", "bullmq", "ioredis", "pino", "pino-pretty", "inversify", "reflect-metadata"]
+[
+  "@prisma/client",
+  "bullmq",
+  "ioredis",
+  "pino",
+  "pino-pretty",
+  "inversify",
+  "reflect-metadata",
+];
 ```
 
 **When to add**: New server-only dependencies (database drivers, job queues, etc.)
@@ -184,24 +198,89 @@ type ActionResponse<T> =
 
 ```typescript
 // ✅ Correct - Use singleton
-import { prisma, pool } from '@/infrastructure/database/prisma/client';
+import { prisma, pool } from "@/infrastructure/database/prisma/client";
 
 // ❌ NEVER create new instances
-import { Pool } from 'pg';
+import { Pool } from "pg";
 const pool = new Pool({ connectionString: process.env.DATABASE_URL }); // Creates duplicate pool!
 const prisma = new PrismaClient({ adapter: new PrismaPg(pool) }); // Creates duplicate client!
 ```
 
 **Why**: Multiple connection pools exhaust database connections and cause performance issues. The singleton in [client.ts](src/infrastructure/database/prisma/client.ts) is configured with:
+
 - Single `pg.Pool` instance (shared across app)
 - Single `PrismaPg` adapter (uses Prisma 7 Rust-free client)
 - `engineType = "client"` in schema (90% smaller bundle, 3x faster)
 - Global singleton pattern (prevents duplication in dev hot-reload)
 
 **Usage**:
+
 - DI Container: Imports singleton (see [database.module.ts](src/di/modules/database.module.ts))
 - Better Auth: Extends singleton with `$extends()` (see [better-auth.ts](src/lib/auth/better-auth.ts))
 - Seed Scripts: Can create own pools (standalone processes)
+
+### Prisma Imports (CRITICAL)
+
+**ALWAYS import Prisma types from `@/generated/prisma`, NEVER from `@prisma/client`**:
+
+```typescript
+// ✅ Correct - Import from generated barrel export
+import type {
+  PrismaClient,
+  Prisma,
+  Asset as PrismaAsset,
+  $Enums,
+} from "@/generated/prisma";
+
+// ❌ WRONG - Do NOT import from @prisma/client
+import type { PrismaClient } from "@prisma/client"; // Will cause "Property 'asset' does not exist" errors!
+```
+
+**Repository Implementation Pattern**:
+
+```typescript
+import { injectable, inject } from "inversify";
+import type {
+  PrismaClient,
+  Prisma,
+  Asset as PrismaAsset,
+} from "@/generated/prisma";
+import { DI_TOKENS } from "@/di/types";
+import { Asset } from "@/core/domain/entities/asset.entity";
+
+@injectable()
+export class PrismaAssetRepository implements IAssetRepository {
+  constructor(
+    @inject(DI_TOKENS.PrismaClient)
+    private readonly prisma: PrismaClient,
+  ) {}
+
+  // Use Prisma.ModelWhereInput for where clauses (NOT any!)
+  async search(options: SearchOptions): Promise<Asset[]> {
+    const where: Prisma.AssetWhereInput = {};
+    // ... build where clause
+    const assets = await this.prisma.asset.findMany({ where });
+    return assets.map((a) => this.toDomain(a));
+  }
+
+  // Use PrismaModel type for toDomain parameter
+  private toDomain(prismaAsset: PrismaAsset): Asset {
+    return Asset.reconstitute({
+      id: prismaAsset.id,
+      // ... map fields
+    });
+  }
+}
+```
+
+**Why**:
+
+- `@/generated/prisma` contains the complete Prisma client with all model delegates (`prisma.asset`, `prisma.assetAssignment`, etc.)
+- `@prisma/client` is the base package that doesn't include your schema-specific types
+- The barrel export at `src/generated/prisma/index.ts` re-exports all types: `PrismaClient`, `Prisma` namespace, `$Enums`, and all model types
+- Using `Prisma.ModelWhereInput` instead of `any` provides type safety for complex queries
+
+**Common Mistake**: When creating new repositories, developers often auto-import `PrismaClient` from `@prisma/client` because it's the first suggestion. This causes TypeScript errors like "Property 'asset' does not exist on type 'PrismaClient'". Always verify imports are from `@/generated/prisma`.
 
 ### AI Integration
 
@@ -232,6 +311,7 @@ Complete implementation of 11 core entities:
 5. **FieldDefinition** - Dynamic field meta-model for custom attributes
 
 **Documentation**:
+
 - [Foundation Layer Guide](docs/guides/FOUNDATION_LAYER.md) - Complete user guide
 - [Entity Reference](docs/guides/ENTITY_REFERENCE.md) - Quick reference
 - [Layer 1 Implementation](docs/architecture/LAYER_1_IMPLEMENTATION.md) - Technical details
@@ -296,14 +376,14 @@ export default async function Page({ params }: { params: { id: string } }) {
 
 ```typescript
 // ✅ Correct - Await cookies() and headers()
-import { cookies, headers } from 'next/headers';
+import { cookies, headers } from "next/headers";
 
 export async function MyServerComponent() {
   const cookieStore = await cookies();
   const headersList = await headers();
 
-  const token = cookieStore.get('token');
-  const userAgent = headersList.get('user-agent');
+  const token = cookieStore.get("token");
+  const userAgent = headersList.get("user-agent");
   // ...
 }
 
@@ -315,9 +395,9 @@ const cookieStore = cookies(); // Error in Next.js 16!
 
 ```typescript
 // ✅ Client components use hooks (not async)
-'use client';
+"use client";
 
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams, useSearchParams } from "next/navigation";
 
 export function MyClientComponent() {
   const params = useParams();
@@ -329,6 +409,7 @@ export function MyClientComponent() {
 ```
 
 **Migration**: Use codemod to automatically migrate:
+
 ```bash
 npx @next/codemod@latest next-async-request-api .
 ```
@@ -454,7 +535,9 @@ try { } catch (_error) { }
 - **Always check permissions at server action layer** (use `requirePermission()`)
 - **Use PermissionGuard components for client-side UI protection**
 - **Invalidate permission cache when modifying roles/permissions** (call `invalidatePermissionCache()`)
+- **Always import Prisma types from `@/generated/prisma`** (NOT `@prisma/client` - see Prisma Imports section)
 - **Always import Prisma singleton** (`import { prisma, pool } from '@/infrastructure/database/prisma/client'`)
+- **Use `Prisma.ModelWhereInput` for type-safe where clauses** (NOT `any` type)
 - **Await async request APIs** (`params`, `searchParams`, `cookies()`, `headers()`, `draftMode()`)
 - **Use hooks in client components** (`useParams()`, `useSearchParams()` - not async)
 
@@ -472,6 +555,8 @@ try { } catch (_error) { }
 - **Skip permission checks in server actions** (every action must check permissions)
 - **Rely only on client-side permission checks** (always enforce server-side)
 - **Use magic strings for permissions** (use PERMISSIONS constants from permission-key.ts)
+- **Import Prisma types from `@prisma/client`** (causes "Property does not exist" errors - ALWAYS use `@/generated/prisma`)
+- **Use `any` type for Prisma where clauses** (use `Prisma.ModelWhereInput` instead)
 - **Create new `Pool()` or `PrismaClient()` instances** (causes connection pool exhaustion - use singleton from client.ts)
 - **Access `params`/`searchParams` synchronously in server components** (causes runtime errors - must await)
 - **Call `cookies()`/`headers()` without await** (causes runtime errors in Next.js 16)
