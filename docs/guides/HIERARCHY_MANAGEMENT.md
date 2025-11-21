@@ -15,12 +15,14 @@ Both use self-referencing parent-child relationships, enabling flexible tree str
 **Structure**: Company → Business Unit → Department → Team
 
 **Use Cases**:
+
 - Define organizational structure
 - Assign assets and CIs to departments/teams
 - Track cost centers and budgets
 - Determine ownership and responsibility
 
 **Key Fields**:
+
 - `parentId` - References parent unit (null for top level)
 - `level` - Depth in hierarchy (1 = Company, 2 = BU, 3 = Dept, etc.)
 - `unitType` - Type enum (COMPANY, BUSINESS_UNIT, DEPARTMENT, TEAM)
@@ -30,12 +32,14 @@ Both use self-referencing parent-child relationships, enabling flexible tree str
 **Structure**: Country → City → Campus → Building → Floor → Room → Rack
 
 **Use Cases**:
+
 - Track physical location of assets and CIs
 - Support multi-site organizations
 - Enable location-based reporting
 - Manage data center racks and cloud regions
 
 **Key Fields**:
+
 - `parentId` - References parent location (null for top level)
 - `locationType` - Type enum (COUNTRY, CITY, BUILDING, ROOM, RACK, etc.)
 - `addressLine1/2`, `city`, `country` - Physical address
@@ -57,7 +61,7 @@ const company = await createOrganizationUnitAction({
   unitType: OrganizationUnitType.COMPANY,
   level: 1,
   parentId: null, // No parent
-  userId: currentUserId
+  userId: currentUserId,
 });
 
 // 2. Create child (Business Unit)
@@ -67,7 +71,7 @@ const engineering = await createOrganizationUnitAction({
   unitType: OrganizationUnitType.BUSINESS_UNIT,
   level: 2,
   parentId: company.data.id, // Link to parent
-  userId: currentUserId
+  userId: currentUserId,
 });
 
 // 3. Create grandchild (Department)
@@ -78,7 +82,7 @@ const itDept = await createOrganizationUnitAction({
   level: 3,
   parentId: engineering.data.id,
   costCenter: "CC-IT-001",
-  userId: currentUserId
+  userId: currentUserId,
 });
 
 // 4. Create great-grandchild (Team)
@@ -88,11 +92,12 @@ const devOpsTeam = await createOrganizationUnitAction({
   unitType: OrganizationUnitType.TEAM,
   level: 4,
   parentId: itDept.data.id,
-  userId: currentUserId
+  userId: currentUserId,
 });
 ```
 
 **Result**:
+
 ```
 Barq Technologies (Company)
 └── Engineering Division (BU)
@@ -125,7 +130,7 @@ async function createOrgHierarchy() {
             type: "DEPARTMENT",
             level: 3,
             costCenter: "CC-IT-001",
-            children: []
+            children: [],
           },
           {
             name: "R&D Department",
@@ -133,9 +138,9 @@ async function createOrgHierarchy() {
             type: "DEPARTMENT",
             level: 3,
             costCenter: "CC-RD-001",
-            children: []
-          }
-        ]
+            children: [],
+          },
+        ],
       },
       {
         name: "Sales",
@@ -148,17 +153,17 @@ async function createOrgHierarchy() {
             code: "BARQ-SALES-ENT",
             type: "DEPARTMENT",
             level: 3,
-            children: []
-          }
-        ]
-      }
-    ]
+            children: [],
+          },
+        ],
+      },
+    ],
   };
 
   // Recursive creation function
   async function createUnitsRecursively(
     unitData: any,
-    parentId: bigint | null = null
+    parentId: bigint | null = null,
   ) {
     const unit = await createOrganizationUnitAction({
       name: unitData.name,
@@ -167,7 +172,7 @@ async function createOrgHierarchy() {
       level: unitData.level,
       parentId: parentId,
       costCenter: unitData.costCenter,
-      userId: currentUserId
+      userId: currentUserId,
     });
 
     // Create children
@@ -196,7 +201,7 @@ async function createLocationHierarchy() {
     code: "SA",
     locationType: LocationType.COUNTRY,
     country: "Saudi Arabia",
-    userId: currentUserId
+    userId: currentUserId,
   });
 
   // City
@@ -210,7 +215,7 @@ async function createLocationHierarchy() {
     latitude: 24.7136,
     longitude: 46.6753,
     timeZone: "Asia/Riyadh",
-    userId: currentUserId
+    userId: currentUserId,
   });
 
   // Building
@@ -223,7 +228,7 @@ async function createLocationHierarchy() {
     addressLine2: "Al Olaya District",
     city: "Riyadh",
     country: "Saudi Arabia",
-    userId: currentUserId
+    userId: currentUserId,
   });
 
   // Floor
@@ -232,7 +237,7 @@ async function createLocationHierarchy() {
     code: "SA-RUH-HQ-F3",
     locationType: LocationType.FLOOR,
     parentId: hqBuilding.data.id,
-    userId: currentUserId
+    userId: currentUserId,
   });
 
   // Server Room
@@ -241,7 +246,7 @@ async function createLocationHierarchy() {
     code: "SA-RUH-HQ-F3-SR301",
     locationType: LocationType.ROOM,
     parentId: floor3.data.id,
-    userId: currentUserId
+    userId: currentUserId,
   });
 
   // Racks
@@ -250,7 +255,7 @@ async function createLocationHierarchy() {
     code: "SA-RUH-HQ-F3-SR301-A01",
     locationType: LocationType.RACK,
     parentId: serverRoom.data.id,
-    userId: currentUserId
+    userId: currentUserId,
   });
 
   const rack02 = await createLocationAction({
@@ -258,7 +263,7 @@ async function createLocationHierarchy() {
     code: "SA-RUH-HQ-F3-SR301-A02",
     locationType: LocationType.RACK,
     parentId: serverRoom.data.id,
-    userId: currentUserId
+    userId: currentUserId,
   });
 
   return {
@@ -267,7 +272,7 @@ async function createLocationHierarchy() {
     building: hqBuilding,
     floor: floor3,
     room: serverRoom,
-    racks: [rack01, rack02]
+    racks: [rack01, rack02],
   };
 }
 
@@ -275,6 +280,7 @@ await createLocationHierarchy();
 ```
 
 **Result**:
+
 ```
 Saudi Arabia (Country)
 └── Riyadh (City)
@@ -297,13 +303,19 @@ Retrieve all direct children of a node:
 // Get all direct children of an org unit
 const children = await orgUnitRepository.findChildren(engineeringId);
 
-console.log("Engineering has departments:", children.map(c => c.name));
+console.log(
+  "Engineering has departments:",
+  children.map((c) => c.name),
+);
 // ["IT Department", "R&D Department"]
 
 // Get all direct children of a location
 const floors = await locationRepository.findChildren(buildingId);
 
-console.log("Building has floors:", floors.map(f => f.name));
+console.log(
+  "Building has floors:",
+  floors.map((f) => f.name),
+);
 // ["Floor 1", "Floor 2", "Floor 3"]
 ```
 
@@ -347,7 +359,7 @@ Get all descendants (children, grandchildren, etc.):
 // Recursive function to get all descendants
 async function getAllDescendants(
   parentId: bigint,
-  repository: IOrganizationUnitRepository
+  repository: IOrganizationUnitRepository,
 ): Promise<OrganizationUnit[]> {
   const children = await repository.findChildren(parentId);
   const descendants: OrganizationUnit[] = [...children];
@@ -373,7 +385,7 @@ Get the complete hierarchical path from root to node:
 // Recursive function to build path
 async function getFullPath(
   id: bigint,
-  repository: ILocationRepository
+  repository: ILocationRepository,
 ): Promise<string> {
   const location = await repository.findById(id);
   if (!location) return "";
@@ -405,7 +417,7 @@ console.log(path);
 async function moveOrgUnit(
   unitId: bigint,
   newParentId: bigint,
-  userId: string
+  userId: string,
 ) {
   // 1. Get the unit to move
   const unit = await getOrganizationUnitAction({ id: unitId });
@@ -423,7 +435,7 @@ async function moveOrgUnit(
     id: unitId,
     parentId: newParentId,
     level: newLevel,
-    userId
+    userId,
   });
 
   // 5. Recursively update children levels
@@ -435,7 +447,7 @@ async function moveOrgUnit(
 async function updateChildrenLevels(
   parentId: bigint,
   parentLevel: number,
-  userId: string
+  userId: string,
 ) {
   const children = await orgUnitRepository.findChildren(parentId);
 
@@ -445,7 +457,7 @@ async function updateChildrenLevels(
     await updateOrganizationUnitAction({
       id: child.id!,
       level: newChildLevel,
-      userId
+      userId,
     });
 
     // Recursively update grandchildren
@@ -461,15 +473,11 @@ await moveOrgUnit(itDeptId, operationsBuId, currentUserId);
 
 ```typescript
 // Move rack from one room to another
-async function moveRack(
-  rackId: bigint,
-  newRoomId: bigint,
-  userId: string
-) {
+async function moveRack(rackId: bigint, newRoomId: bigint, userId: string) {
   const updated = await updateLocationAction({
     id: rackId,
     parentId: newRoomId,
-    userId
+    userId,
   });
 
   return updated;
@@ -493,14 +501,18 @@ async function deleteLeafNode(id: bigint, userId: string) {
   const hasChildren = await orgUnitRepository.hasChildren(id);
 
   if (hasChildren) {
-    throw new Error("Cannot delete - node has children. Delete children first.");
+    throw new Error(
+      "Cannot delete - node has children. Delete children first.",
+    );
   }
 
   // Check for dependencies (persons assigned, etc.)
   const hasPersons = await orgUnitRepository.hasPersons(id);
 
   if (hasPersons) {
-    throw new Error("Cannot delete - node has assigned persons. Reassign first.");
+    throw new Error(
+      "Cannot delete - node has assigned persons. Reassign first.",
+    );
   }
 
   // Safe to delete
@@ -516,7 +528,7 @@ Delete node and all descendants:
 async function cascadeDelete(
   id: bigint,
   userId: string,
-  repository: IOrganizationUnitRepository
+  repository: IOrganizationUnitRepository,
 ) {
   // 1. Get all descendants
   const descendants = await getAllDescendants(id, repository);
@@ -546,10 +558,7 @@ if (confirm(confirmMessage)) {
 Move children to parent before deleting:
 
 ```typescript
-async function deleteAndOrphanChildren(
-  id: bigint,
-  userId: string
-) {
+async function deleteAndOrphanChildren(id: bigint, userId: string) {
   // 1. Get node and its parent
   const unit = await orgUnitRepository.findById(id);
   if (!unit) throw new Error("Unit not found");
@@ -563,7 +572,7 @@ async function deleteAndOrphanChildren(
         id: child.id!,
         parentId: unit.parentId,
         level: unit.level, // Same level as deleted node
-        userId
+        userId,
       });
     }
   } else {
@@ -573,7 +582,7 @@ async function deleteAndOrphanChildren(
         id: child.id!,
         parentId: null,
         level: 1,
-        userId
+        userId,
       });
     }
   }
@@ -758,23 +767,23 @@ Use hierarchical codes for easy identification:
 
 ```typescript
 // Good: Hierarchical codes
-"BARQ"                  // Company
-"BARQ-ENG"              // Business Unit
-"BARQ-ENG-IT"           // Department
-"BARQ-ENG-IT-DEVOPS"    // Team
+"BARQ"; // Company
+"BARQ-ENG"; // Business Unit
+"BARQ-ENG-IT"; // Department
+"BARQ-ENG-IT-DEVOPS"; // Team
 
 // For locations
-"SA"                    // Country
-"SA-RUH"                // City
-"SA-RUH-HQ"             // Building
-"SA-RUH-HQ-F3"          // Floor
-"SA-RUH-HQ-F3-SR301"    // Room
-"SA-RUH-HQ-F3-SR301-A01" // Rack
+"SA"; // Country
+"SA-RUH"; // City
+"SA-RUH-HQ"; // Building
+"SA-RUH-HQ-F3"; // Floor
+"SA-RUH-HQ-F3-SR301"; // Room
+"SA-RUH-HQ-F3-SR301-A01"; // Rack
 
 // Bad: Non-hierarchical codes
-"ENG"    // Unclear which company
-"IT"     // Unclear which division
-"A01"    // Unclear which room/building
+"ENG"; // Unclear which company
+"IT"; // Unclear which division
+"A01"; // Unclear which room/building
 ```
 
 ### 2. Level Consistency
@@ -786,7 +795,7 @@ Always maintain level consistency:
 async function validateLevel(
   unitType: OrganizationUnitType,
   level: number,
-  parentId: bigint | null
+  parentId: bigint | null,
 ): Promise<void> {
   if (parentId === null) {
     // Root level must be 1
@@ -814,12 +823,12 @@ Ensure no cycles in hierarchy:
 ```typescript
 async function validateNoCircularReference(
   unitId: bigint,
-  newParentId: bigint
+  newParentId: bigint,
 ): Promise<void> {
   // Check if newParent is a descendant of unit
   const descendants = await getAllDescendants(unitId, orgUnitRepository);
 
-  const isDescendant = descendants.some(d => d.id === newParentId);
+  const isDescendant = descendants.some((d) => d.id === newParentId);
 
   if (isDescendant) {
     throw new Error("Cannot move unit - would create circular reference");
@@ -838,9 +847,7 @@ Prevent excessively deep hierarchies:
 ```typescript
 const MAX_HIERARCHY_DEPTH = 10;
 
-async function validateMaxDepth(
-  parentId: bigint | null
-): Promise<void> {
+async function validateMaxDepth(parentId: bigint | null): Promise<void> {
   if (parentId === null) return; // Root is OK
 
   let depth = 1;
@@ -855,7 +862,9 @@ async function validateMaxDepth(
   }
 
   if (depth > MAX_HIERARCHY_DEPTH) {
-    throw new Error(`Maximum hierarchy depth (${MAX_HIERARCHY_DEPTH}) exceeded`);
+    throw new Error(
+      `Maximum hierarchy depth (${MAX_HIERARCHY_DEPTH}) exceeded`,
+    );
   }
 }
 ```
@@ -869,11 +878,11 @@ Use transactions for bulk hierarchy operations:
 async function bulkMoveUnits(
   unitIds: bigint[],
   newParentId: bigint,
-  userId: string
+  userId: string,
 ) {
   await prisma.$transaction(async (tx) => {
     const newParent = await tx.organizationUnit.findUnique({
-      where: { id: newParentId }
+      where: { id: newParentId },
     });
 
     if (!newParent) {
@@ -885,8 +894,8 @@ async function bulkMoveUnits(
         where: { id: unitId },
         data: {
           parentId: newParentId,
-          level: newParent.level + 1
-        }
+          level: newParent.level + 1,
+        },
       });
     }
   });
@@ -903,7 +912,7 @@ const pathCache = new Map<string, string>();
 
 async function getCachedPath(
   id: bigint,
-  repository: ILocationRepository
+  repository: ILocationRepository,
 ): Promise<string> {
   const cacheKey = `location:path:${id}`;
 
@@ -924,7 +933,7 @@ async function getCachedPath(
 // Invalidate cache when hierarchy changes
 async function updateLocationAndInvalidateCache(
   id: bigint,
-  data: UpdateLocationDTO
+  data: UpdateLocationDTO,
 ) {
   await updateLocationAction({ id, ...data });
 
@@ -932,7 +941,7 @@ async function updateLocationAndInvalidateCache(
   const descendants = await getAllDescendants(id, locationRepository);
 
   pathCache.delete(`location:path:${id}`);
-  descendants.forEach(d => {
+  descendants.forEach((d) => {
     pathCache.delete(`location:path:${d.id}`);
   });
 }
@@ -953,7 +962,7 @@ const companyA = await createOrganizationUnitAction({
   code: "COMPANY-A",
   unitType: OrganizationUnitType.COMPANY,
   level: 1,
-  userId
+  userId,
 });
 
 // Company B
@@ -962,13 +971,19 @@ const companyB = await createOrganizationUnitAction({
   code: "COMPANY-B",
   unitType: OrganizationUnitType.COMPANY,
   level: 1,
-  userId
+  userId,
 });
 
 // Each company has its own hierarchy
 // Filter by company when querying
-const companyAUnits = await getAllDescendants(companyA.data.id, orgUnitRepository);
-const companyBUnits = await getAllDescendants(companyB.data.id, orgUnitRepository);
+const companyAUnits = await getAllDescendants(
+  companyA.data.id,
+  orgUnitRepository,
+);
+const companyBUnits = await getAllDescendants(
+  companyB.data.id,
+  orgUnitRepository,
+);
 ```
 
 ### Use Case 2: Multi-Region Locations
@@ -982,7 +997,7 @@ const me = await createLocationAction({
   code: "ME",
   locationType: LocationType.OTHER,
   level: 1,
-  userId
+  userId,
 });
 
 // Create Europe region
@@ -991,7 +1006,7 @@ const eu = await createLocationAction({
   code: "EU",
   locationType: LocationType.OTHER,
   level: 1,
-  userId
+  userId,
 });
 
 // Each region has its own country hierarchy
@@ -1000,7 +1015,7 @@ const saudiArabia = await createLocationAction({
   code: "ME-SA",
   locationType: LocationType.COUNTRY,
   parentId: me.data.id,
-  userId
+  userId,
 });
 
 const germany = await createLocationAction({
@@ -1008,7 +1023,7 @@ const germany = await createLocationAction({
   code: "EU-DE",
   locationType: LocationType.COUNTRY,
   parentId: eu.data.id,
-  userId
+  userId,
 });
 ```
 
@@ -1022,7 +1037,7 @@ const aws = await createLocationAction({
   name: "Amazon Web Services",
   code: "AWS",
   locationType: LocationType.CLOUD_REGION,
-  userId
+  userId,
 });
 
 // AWS regions
@@ -1031,7 +1046,7 @@ const usEast1 = await createLocationAction({
   code: "AWS-US-EAST-1",
   locationType: LocationType.CLOUD_REGION,
   parentId: aws.data.id,
-  userId
+  userId,
 });
 
 // Availability zones
@@ -1040,7 +1055,7 @@ const usEast1a = await createLocationAction({
   code: "AWS-US-EAST-1-AZ-A",
   locationType: LocationType.CLOUD_ZONE,
   parentId: usEast1.data.id,
-  userId
+  userId,
 });
 
 const usEast1b = await createLocationAction({
@@ -1048,7 +1063,7 @@ const usEast1b = await createLocationAction({
   code: "AWS-US-EAST-1-AZ-B",
   locationType: LocationType.CLOUD_ZONE,
   parentId: usEast1.data.id,
-  userId
+  userId,
 });
 ```
 
@@ -1061,6 +1076,7 @@ const usEast1b = await createLocationAction({
 **Problem**: Child level doesn't match parent level + 1
 
 **Solution**:
+
 ```typescript
 // Fix level inconsistencies
 async function fixLevelInconsistencies(parentId: bigint | null = null) {
@@ -1079,7 +1095,7 @@ async function fixLevelInconsistencies(parentId: bigint | null = null) {
       await updateOrganizationUnitAction({
         id: unit.id!,
         level: expectedLevel,
-        userId: "system"
+        userId: "system",
       });
     }
 
@@ -1096,6 +1112,7 @@ await fixLevelInconsistencies();
 **Problem**: Node has parentId that doesn't exist
 
 **Solution**:
+
 ```typescript
 // Find and fix orphaned nodes
 async function findOrphanedNodes() {
@@ -1125,7 +1142,7 @@ async function fixOrphanedNodes() {
       id: orphan.id!,
       parentId: null, // Make it a root
       level: 1,
-      userId: "system"
+      userId: "system",
     });
   }
 }
@@ -1136,11 +1153,12 @@ async function fixOrphanedNodes() {
 **Problem**: A→B→C→A creates infinite loop
 
 **Solution**:
+
 ```typescript
 // Detect circular references
 async function detectCircularReferences(
   id: bigint,
-  visited = new Set<bigint>()
+  visited = new Set<bigint>(),
 ): Promise<boolean> {
   if (visited.has(id)) {
     return true; // Circular reference found!

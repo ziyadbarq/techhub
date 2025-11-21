@@ -27,6 +27,8 @@ import { bindLoggerDependencies } from "./modules/logger.module";
 import { bindDatabaseDependencies } from "./modules/database.module";
 import { bindRBACDependencies } from "./modules/rbac.module";
 import { bindFoundationDependencies } from "./modules/foundation.module";
+import { bindAssetDependencies } from "./modules/asset.module";
+import { bindInventoryDependencies } from "./modules/inventory.module";
 
 /**
  * AI Services Module - Currently Disabled
@@ -92,6 +94,12 @@ function createContainer(): Container {
 
   // Bind Foundation dependencies (lifecycle, vendor, organization, location, person)
   bindFoundationDependencies(newContainer);
+
+  // Bind Asset dependencies (asset categories, asset models, assets, assignments)
+  bindAssetDependencies(newContainer);
+
+  // Bind Inventory dependencies (stock locations, stock movements)
+  bindInventoryDependencies(newContainer);
 
   /**
    * AI Services - Currently Disabled

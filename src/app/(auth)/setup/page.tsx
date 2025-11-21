@@ -9,6 +9,8 @@ import { getSession } from "@/lib/auth/session";
 import { SetupWizard } from "@/components/auth/SetupWizard";
 import { checkFirstAdminAction } from "@/interface-adapters/controllers/setup.controller";
 
+export const dynamic = "force-dynamic";
+
 export default async function SetupPage() {
   // Check if user is authenticated
   const { user } = await getSession();

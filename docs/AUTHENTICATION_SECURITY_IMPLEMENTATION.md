@@ -13,6 +13,7 @@
 **Objective**: Encrypt OAuth tokens (accessToken, refreshToken, idToken) before storing in database
 
 **Implementation**:
+
 - **Algorithm**: AES-256-GCM (authenticated encryption)
 - **Key Derivation**: PBKDF2 with 100,000 iterations
 - **Security Features**:
@@ -22,15 +23,18 @@
   - Base64 encoding for database storage
 
 **Files Modified**:
+
 - `/src/lib/auth/better-auth.ts` - Added Prisma Client Extension for automatic encryption/decryption
 - `/src/lib/auth/encryption.ts` - Encryption utilities (already existed, now activated)
 
 **How It Works**:
+
 1. When Better Auth stores OAuth tokens → Prisma extension intercepts → Encrypts before database write
 2. When Better Auth retrieves tokens → Prisma extension intercepts → Decrypts after database read
 3. Fully transparent to Better Auth (no code changes needed in auth logic)
 
 **Testing**:
+
 - Unit tests created: `/tests/unit/auth-encryption.test.ts`
 - 20+ test cases covering encryption, decryption, edge cases, security properties
 - Run with: `npm test tests/unit/auth-encryption.test.ts`
@@ -48,17 +52,20 @@
 **Purpose**: Lightweight cookie check at network boundary
 
 **How It Works**:
+
 - Runs on EVERY request (Node.js Runtime - Next.js 16 default)
 - Checks for `better-auth.session_token` cookie
 - If missing → Redirect to `/login?from=/intended-route`
 - If present → Pass through to server components
 
 **Edge Runtime Compatible**:
+
 - No Node.js modules (crypto, fs, etc.)
 - Fast cookie-based check only
 - Full session validation happens in Layer 2
 
 **Public Routes** (bypass middleware):
+
 - `/` (home)
 - `/login`
 - `/setup`
@@ -72,12 +79,14 @@
 **Purpose**: Full session validation with `requireAuth()`
 
 **How It Works**:
+
 - Runs in Node.js runtime (server component)
 - Calls `requireAuth()` which validates session in database
 - Throws error if session invalid/expired
 - Provides second layer even if middleware bypassed
 
 **Benefits**:
+
 - Access to full session data
 - Can pass session to child components
 - Enforces auth even if middleware disabled
@@ -89,12 +98,14 @@
 **Purpose**: Granular permission enforcement
 
 **How It Works**:
+
 - Each page checks specific permissions
 - Example: `await requirePermission(PERMISSIONS.TASKS_VIEW)`
 - Admin layout checks: `hasAnyPermission([PERMISSIONS.USERS_MANAGE, ...])`
 - Ownership-based: `requirePermission(PERMISSIONS.TASKS_UPDATE, { resourceOwnerId })`
 
 **Examples**:
+
 - Tasks page: Requires `TASKS_VIEW` permission
 - Admin section: Requires any admin permission
 - User profile: Can edit own profile (`USERS_UPDATE:own`)
@@ -108,6 +119,7 @@
 **File**: `/tests/unit/auth-encryption.test.ts`
 
 **Coverage**:
+
 - Encryption/decryption round-trip correctness
 - Random IV verification (different ciphertexts for same plaintext)
 - Null/undefined token handling
@@ -117,6 +129,7 @@
 - Real-world Microsoft OAuth token formats
 
 **Run Tests**:
+
 ```bash
 # All tests
 npm test
@@ -133,6 +146,7 @@ npm run test:ui
 **File**: `/docs/testing/AUTH_SECURITY_TESTING_GUIDE.md`
 
 **Sections**:
+
 1. Token Encryption Verification
 2. Route Protection Tests (Middleware)
 3. Component-Level Auth Tests
@@ -141,6 +155,7 @@ npm run test:ui
 6. Hybrid Defense Verification
 
 **How to Use**:
+
 - Follow step-by-step instructions
 - Verify expected results
 - Check off success criteria
@@ -157,6 +172,7 @@ npm run test:ui
 **Solution**: Use Prisma Client Extensions
 
 **Benefits**:
+
 - Modern Prisma v5+ compatible
 - Type-safe
 - Automatic encryption/decryption
@@ -169,6 +185,7 @@ npm run test:ui
 **Solution**: Lightweight cookie check in middleware
 
 **Benefits**:
+
 - Fast redirect at edge (minimal latency)
 - No Node.js dependencies needed
 - Full validation deferred to server components
@@ -181,6 +198,7 @@ npm run test:ui
 **Solution**: 3-layer defense-in-depth
 
 **Benefits**:
+
 - Middleware bypassed → Template catches it
 - Template disabled → Page-level catches it
 - No single point of failure
@@ -280,12 +298,14 @@ No migration needed - encryption active from first OAuth login.
 ### For Existing Projects (Pre-Production)
 
 **If no production users exist**:
+
 1. Clear database: `DELETE FROM accounts; DELETE FROM sessions;`
 2. Add `ENCRYPTION_KEY` to `.env.local`
 3. Restart server
 4. Users re-login (tokens encrypted automatically)
 
 **If production users exist**:
+
 1. **DO NOT clear database**
 2. Add `ENCRYPTION_KEY` to environment
 3. New logins → Encrypted tokens
@@ -337,6 +357,7 @@ Before deploying to production:
 ### "ENCRYPTION_KEY must be 64 hex characters"
 
 **Solution**:
+
 ```bash
 openssl rand -hex 32
 # Copy output to .env.local
@@ -346,11 +367,13 @@ ENCRYPTION_KEY=<generated-key>
 ### "Failed to decrypt data"
 
 **Causes**:
+
 1. ENCRYPTION_KEY changed (tokens encrypted with old key)
 2. Database corruption
 3. Manual tampering
 
 **Solution**:
+
 ```sql
 DELETE FROM sessions;
 DELETE FROM accounts;
@@ -360,6 +383,7 @@ DELETE FROM accounts;
 ### Middleware not redirecting
 
 **Check**:
+
 1. `proxy.ts` at project root (not `src/`)
 2. Matcher configuration correct
 3. Restart dev server: `npm run dev`
@@ -368,6 +392,7 @@ DELETE FROM accounts;
 ### Better Auth errors
 
 **Check**:
+
 1. `.env.local` has all required variables
 2. Database schema up to date: `npm run db:push`
 3. Better Auth version: `1.0.9` (check `package.json`)
@@ -444,12 +469,14 @@ DELETE FROM accounts;
 **Overall Grade**: **A-** (Production-Ready)
 
 **Strengths**:
+
 - Strong encryption (AES-256-GCM)
 - Defense-in-depth (3 layers)
 - Comprehensive testing
 - Well-documented
 
 **Areas for Future Improvement**:
+
 - Add rate limiting (medium priority)
 - Add security headers (medium priority)
 - Add MFA (low priority)
@@ -460,6 +487,7 @@ DELETE FROM accounts;
 ## Contact
 
 **Questions or Issues?**
+
 - Review: `docs/testing/AUTH_SECURITY_TESTING_GUIDE.md`
 - Check: `CLAUDE.md` Authentication section
 - Tests: `npm test tests/unit/auth-encryption.test.ts`

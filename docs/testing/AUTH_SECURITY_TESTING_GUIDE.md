@@ -13,8 +13,11 @@ This guide provides manual testing procedures to verify the OAuth token encrypti
 ## Test Suite Overview
 
 ### 1. Token Encryption Tests
+
 ### 2. Route Protection Tests (Middleware Layer)
+
 ### 3. Component-Level Auth Tests
+
 ### 4. Permission-Based Access Tests
 
 ---
@@ -28,6 +31,7 @@ This guide provides manual testing procedures to verify the OAuth token encrypti
 **Steps**:
 
 1. **Clear existing sessions and accounts** (optional - fresh start):
+
    ```sql
    -- In Prisma Studio or psql
    DELETE FROM "sessions";
@@ -43,6 +47,7 @@ This guide provides manual testing procedures to verify the OAuth token encrypti
    - You should be redirected to `/dashboard`
 
 3. **Inspect database to verify encryption**:
+
    ```bash
    npm run db:studio
    ```
@@ -53,12 +58,14 @@ This guide provides manual testing procedures to verify the OAuth token encrypti
    - Inspect `accessToken`, `refreshToken`, and `idToken` fields
 
 **Expected Results**:
+
 - ✅ All token fields should contain base64-encoded encrypted data (not plain JWT)
 - ✅ Encrypted values should be significantly longer than original tokens
 - ✅ Encrypted values should NOT start with `eyJ` (JWT prefix)
 - ✅ Each token should have different encrypted values even for same user
 
 **Example**:
+
 ```
 ❌ BAD (Plaintext):
 accessToken: "eyJhbGciOiJSUzI1NiIsImtpZCI..."
@@ -81,6 +88,7 @@ accessToken: "xK9mJ2vL8pN5qR3tY7wZ1..." (base64-encoded ciphertext)
    - Observe API requests
 
 **Expected Results**:
+
 - ✅ All authenticated API requests should succeed (200 OK)
 - ✅ No decryption errors in console
 - ✅ Session remains active (user stays logged in)
@@ -93,9 +101,11 @@ accessToken: "xK9mJ2vL8pN5qR3tY7wZ1..." (base64-encoded ciphertext)
 
 1. **Force a token refresh** (if your OAuth provider supports it)
 2. **Check database**:
+
    ```bash
    npm run db:studio
    ```
+
    - Inspect `accounts` table
    - Note the `accessToken` value
 
@@ -103,6 +113,7 @@ accessToken: "xK9mJ2vL8pN5qR3tY7wZ1..." (base64-encoded ciphertext)
 4. **Check database again**
 
 **Expected Results**:
+
 - ✅ New `accessToken` value should be different (new encryption with new IV/salt)
 - ✅ Still base64-encoded (encrypted)
 - ✅ No errors during refresh process
@@ -118,6 +129,7 @@ npm test tests/unit/auth-encryption.test.ts
 ```
 
 **Expected Results**:
+
 - ✅ All 20+ test cases should pass
 - ✅ No test failures or errors
 - ✅ Tests cover:
@@ -148,6 +160,7 @@ npm test tests/unit/auth-encryption.test.ts
    - Navigate to `http://localhost:3000/admin`
 
 **Expected Results**:
+
 - ✅ Immediately redirected to `/login?from=/dashboard` (or respective route)
 - ✅ No content from protected page is rendered
 - ✅ Redirect happens BEFORE page component loads
@@ -165,6 +178,7 @@ npm test tests/unit/auth-encryption.test.ts
    - Navigate to `http://localhost:3000/setup` (should redirect if admin exists)
 
 **Expected Results**:
+
 - ✅ All public routes load without redirect
 - ✅ No authentication errors
 - ✅ Login page displays correctly
@@ -181,6 +195,7 @@ npm test tests/unit/auth-encryption.test.ts
 4. **Complete Microsoft OAuth login**
 
 **Expected Results**:
+
 - ✅ After login, redirected to `/tasks` (the `from` parameter)
 - ✅ Not redirected to default `/dashboard`
 - ✅ Seamless UX - user lands where they intended
@@ -198,6 +213,7 @@ npm test tests/unit/auth-encryption.test.ts
 4. **Observe request timings**
 
 **Expected Results**:
+
 - ✅ Page loads remain fast (< 200ms server time)
 - ✅ No noticeable delay from middleware
 - ✅ Session check is efficient (cached in Better Auth)
@@ -225,6 +241,7 @@ npm test tests/unit/auth-encryption.test.ts
 3. **Sign out and try to access**: `http://localhost:3000/dashboard`
 
 **Expected Results**:
+
 - ✅ Still protected (template-level check catches it)
 - ✅ Error page or redirect occurs
 - ✅ No dashboard content rendered
@@ -240,6 +257,7 @@ npm test tests/unit/auth-encryption.test.ts
 **Steps**:
 
 1. **Sign in as non-admin user** (create test user without admin role):
+
    ```bash
    # Create a second user via login
    # Don't assign admin role
@@ -248,6 +266,7 @@ npm test tests/unit/auth-encryption.test.ts
 2. **Attempt to access**: `http://localhost:3000/admin`
 
 **Expected Results**:
+
 - ✅ Redirected to `/` (home/dashboard)
 - ✅ Not allowed to view admin panel
 - ✅ `hasAnyPermission()` check in layout works
@@ -256,6 +275,7 @@ npm test tests/unit/auth-encryption.test.ts
 4. **Access**: `http://localhost:3000/admin`
 
 **Expected Results**:
+
 - ✅ Admin panel loads successfully
 - ✅ All admin tabs visible
 - ✅ Full access granted
@@ -270,6 +290,7 @@ npm test tests/unit/auth-encryption.test.ts
 2. **Attempt to access**: `http://localhost:3000/tasks`
 
 **Expected Results**:
+
 - ✅ If viewer has `TASKS_VIEW` permission: Page loads
 - ✅ If viewer lacks permission: Error or redirect
 - ✅ `requirePermission()` enforced in server component
@@ -291,6 +312,7 @@ npm test tests/unit/auth-encryption.test.ts
    - Users → Roles → Permissions → Users (repeat)
 
 **Expected Results**:
+
 - ✅ Permission API called once on first load
 - ✅ Subsequent navigation uses cached permissions (no API call)
 - ✅ UI remains responsive
@@ -310,6 +332,7 @@ npm test tests/unit/auth-encryption.test.ts
 4. **In Window A, try to access a feature requiring that permission**
 
 **Expected Results**:
+
 - ✅ Initially can access (cached permissions)
 - ✅ After cache TTL (5 min), permission denied
 - ✅ Cache invalidation works as expected
@@ -330,6 +353,7 @@ npm test tests/unit/auth-encryption.test.ts
 5. **Attempt to edit User A's task**
 
 **Expected Results**:
+
 - ✅ User B cannot edit User A's task (`TASKS_UPDATE:own` enforced)
 - ✅ User B can only edit their own tasks
 - ✅ Ownership check in permission system works
@@ -353,9 +377,10 @@ npm test tests/unit/auth-encryption.test.ts
    ```
 
 **Expected Results**:
+
 - ✅ `expires` field is ~7 days from now
 - ✅ Session cookie has matching expiry
-- ✅ Expiry matches config (60 * 60 * 24 * 7)
+- ✅ Expiry matches config (60 _ 60 _ 24 \* 7)
 
 ### 5.2 Test CSRF Protection
 
@@ -367,13 +392,14 @@ npm test tests/unit/auth-encryption.test.ts
 2. **Open DevTools → Console**
 3. **Attempt manual POST request without CSRF token**:
    ```javascript
-   fetch('/api/auth/signout', {
-     method: 'POST',
-     credentials: 'include'
-   })
+   fetch("/api/auth/signout", {
+     method: "POST",
+     credentials: "include",
+   });
    ```
 
 **Expected Results**:
+
 - ✅ Request blocked or fails validation
 - ✅ Better Auth CSRF protection active
 - ✅ No unauthorized actions performed
@@ -386,6 +412,7 @@ npm test tests/unit/auth-encryption.test.ts
 
 1. **Sign in and get OAuth tokens**
 2. **In database, manually tamper with encrypted token**:
+
    ```sql
    UPDATE "accounts"
    SET "accessToken" = SUBSTRING("accessToken", 1, LENGTH("accessToken") - 5) || 'XXXXX'
@@ -395,6 +422,7 @@ npm test tests/unit/auth-encryption.test.ts
 3. **Make an authenticated API request**
 
 **Expected Results**:
+
 - ✅ Decryption fails (authentication tag mismatch)
 - ✅ Error thrown: "Failed to decrypt data"
 - ✅ Tampering detected and prevented
@@ -413,6 +441,7 @@ npm test tests/unit/auth-encryption.test.ts
 2. **Attempt to access protected route**: `/dashboard`
 
 **Verify Layer 1 (Middleware)**:
+
 - ✅ Redirected to `/login` immediately
 - ✅ No page render started
 
@@ -420,6 +449,7 @@ npm test tests/unit/auth-encryption.test.ts
 4. **Restart server and try again**
 
 **Verify Layer 2 (Template)**:
+
 - ✅ Template-level `requireAuth()` catches it
 - ✅ Error or redirect occurs
 - ✅ Still protected
@@ -428,10 +458,12 @@ npm test tests/unit/auth-encryption.test.ts
 6. **Try again**
 
 **Verify Layer 3 (Page)**:
+
 - ✅ Individual page permission checks catch it
 - ✅ Still protected at page level
 
 **Expected Results**:
+
 - ✅ All 3 layers provide protection
 - ✅ No single point of failure
 - ✅ Defense-in-depth strategy validated
@@ -454,6 +486,7 @@ npm run test:ui
 ```
 
 **Expected Results**:
+
 - ✅ All tests pass
 - ✅ 100% pass rate
 - ✅ No flaky tests
@@ -465,6 +498,7 @@ npm run test:ui
 ### Issue: "ENCRYPTION_KEY must be 64 hex characters"
 
 **Solution**:
+
 ```bash
 # Generate new encryption key
 openssl rand -hex 32
@@ -476,6 +510,7 @@ ENCRYPTION_KEY=<generated-key>
 ### Issue: "prisma.$use is not a function"
 
 **Solution**:
+
 - Already fixed in this implementation
 - Using Prisma Client Extensions instead
 - Ensure you've restarted dev server
@@ -483,11 +518,13 @@ ENCRYPTION_KEY=<generated-key>
 ### Issue: "Failed to decrypt data"
 
 **Possible Causes**:
+
 1. ENCRYPTION_KEY changed (tokens encrypted with old key)
 2. Database corruption
 3. Manual tampering
 
 **Solution**:
+
 ```sql
 -- Clear all accounts and sessions (forces re-login)
 DELETE FROM "sessions";
@@ -497,6 +534,7 @@ DELETE FROM "accounts";
 ### Issue: Middleware not working
 
 **Solution**:
+
 1. Verify `proxy.ts` is at project root (not in `src/`)
 2. Check matcher configuration
 3. Restart dev server
@@ -555,6 +593,7 @@ After successful testing:
 5. ✅ Deploy to production
 
 **Documentation**:
+
 - [ ] Update CLAUDE.md with encryption status
 - [ ] Document token encryption in architecture docs
 - [ ] Add troubleshooting guide to docs
@@ -562,7 +601,7 @@ After successful testing:
 
 ---
 
-**Test Date**: _____________
-**Tester**: _____________
+**Test Date**: **\*\***\_**\*\***
+**Tester**: **\*\***\_**\*\***
 **Environment**: Development / Staging / Production
 **Status**: ⬜ Pass / ⬜ Fail / ⬜ Needs Review

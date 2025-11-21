@@ -30,6 +30,9 @@ import {
   UserCog,
   Settings2,
   ArrowRightLeft,
+  Warehouse,
+  TrendingUp,
+  UserCheck,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -212,6 +215,70 @@ export const navGroups: NavGroup[] = [
     visible: true,
     collapsible: true,
     defaultCollapsed: true,
+  },
+
+  // Assets
+  {
+    id: "assets",
+    title: "Assets",
+    items: [
+      {
+        title: "Assets",
+        href: "/assets",
+        icon: Package,
+        description: "Manage assets",
+        permission: PERMISSIONS.ASSETS_VIEW,
+      },
+      {
+        title: "Asset Categories",
+        href: "/asset-categories",
+        icon: Package,
+        description: "Manage asset categories",
+        permission: PERMISSIONS.ASSET_CATEGORIES_VIEW,
+      },
+      {
+        title: "Asset Models",
+        href: "/asset-models",
+        icon: Package,
+        description: "Manage asset models",
+        permission: PERMISSIONS.ASSET_MODELS_VIEW,
+      },
+      {
+        title: "Asset Assignments",
+        href: "/asset-assignments",
+        icon: UserCheck,
+        description: "Manage asset assignments",
+        permission: PERMISSIONS.ASSET_ASSIGNMENTS_VIEW,
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: false,
+  },
+
+  // Inventory
+  {
+    id: "inventory",
+    title: "Inventory",
+    items: [
+      {
+        title: "Stock Locations",
+        href: "/stock-locations",
+        icon: Warehouse,
+        description: "Manage stock locations and warehouses",
+        permission: PERMISSIONS.STOCK_LOCATIONS_VIEW,
+      },
+      {
+        title: "Stock Movements",
+        href: "/stock-movements",
+        icon: TrendingUp,
+        description: "Track inventory movements",
+        permission: PERMISSIONS.STOCK_MOVEMENTS_VIEW,
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: false,
   },
 
   // Configuration

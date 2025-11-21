@@ -32,18 +32,26 @@ Core building blocks for the CMDB/ITAM system:
 
 ### Infrastructure & Systems
 
+#### Core Technical Guides
+
+- **[Prisma Guide](./guides/PRISMA_GUIDE.md)** - Complete Prisma 7 patterns, connection pool management, type-safe imports, and repository implementation
+- **[Next.js 16 Guide](./guides/NEXTJS_16_GUIDE.md)** - Next.js 16 async request APIs, rendering modes, Turbopack, and migration patterns
+- **[Stack Upgrades Reference](./guides/STACK_UPGRADES.md)** - Breaking changes in Prisma 7, Zod 4, Next.js 16, React 19, and InversifyJS 7
 - [Database Migrations & Deployment](./guides/DATABASE_MIGRATIONS.md) - Prisma migrations workflow, development vs production, and deployment best practices
 - [Build Optimization Guide](./guides/BUILD_OPTIMIZATION.md) - Build performance optimization and bundle analysis
+
+#### Authentication & Security
+
 - [RBAC Developer Guide](./guides/RBAC_DEVELOPER_GUIDE.md) - Implementing permissions and protecting routes/actions/UI
 - [RBAC Admin Guide](./guides/RBAC_ADMIN_GUIDE.md) - Managing roles, permissions, and user access
-- [First User Admin Assignment](./guides/FIRST_USER_ADMIN.md) - Automatic admin role assignment for the first user
 - [Logging Guide](./guides/LOGGING.md) - Production-grade structured logging system
+
+#### UI & Real-time Features
+
 - [UI Components Guide](./guides/UI_COMPONENTS.md) - Advanced UI patterns with TanStack Table, React Hook Form, and CSV
+- [Sidebar Features](./guides/SIDEBAR_FEATURES.md) - Advanced sidebar features including collapsible groups, nested navigation, permissions, animations, and real-time badges
 - [Real-time Features Guide](./guides/REALTIME.md) - Server-Sent Events (SSE) and Partykit WebSocket integration
 - [Background Jobs Guide](./guides/BACKGROUND_JOBS.md) - BullMQ job queue system for background processing
-- [Branding Guide](./guides/BRANDING.md) - Brand customization and asset management
-- [Sidebar Features](./guides/SIDEBAR_FEATURES.md) - Advanced sidebar features including collapsible groups, nested navigation, permissions, animations, and real-time badges
-- [Sidebar Examples](./guides/SIDEBAR_EXAMPLES.md) - Real-world usage examples for sidebar features across different application types
 
 ## 💻 Code Documentation
 
@@ -60,9 +68,9 @@ Development tools and utilities:
 
 ## 🔗 External Resources
 
-- [Next.js 15 Docs](https://nextjs.org/docs) - Next.js framework documentation
-- [Prisma Docs](https://www.prisma.io/docs) - Prisma ORM documentation
-- [InversifyJS](https://inversify.io/) - Dependency injection documentation
+- [Next.js 16 Docs](https://nextjs.org/docs) - Next.js framework documentation
+- [Prisma 7 Docs](https://www.prisma.io/docs) - Prisma ORM documentation
+- [InversifyJS 7](https://inversify.io/) - Dependency injection documentation
 - [shadcn/ui](https://ui.shadcn.com/) - UI component library
 - [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 

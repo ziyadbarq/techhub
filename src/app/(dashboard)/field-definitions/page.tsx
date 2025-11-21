@@ -7,6 +7,8 @@ import { listFieldDefinitionsAction } from "@/interface-adapters/controllers/fie
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
+export const dynamic = "force-dynamic";
+
 export default async function FieldDefinitionsPage() {
   await requirePermission(PERMISSIONS.FIELD_DEFINITIONS_VIEW);
 

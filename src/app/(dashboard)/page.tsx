@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/card";
 import { Logo } from "@/components/ui/logo";
 
+export const dynamic = "force-dynamic";
+
 const quickLinks = [
   { href: "/lifecycle-models", label: "Lifecycle Models" },
   { href: "/vendors", label: "Vendors" },

@@ -116,6 +116,47 @@ export const PERMISSIONS = {
   FIELD_DEFINITIONS_UPDATE: "field-definitions:update",
   FIELD_DEFINITIONS_DELETE: "field-definitions:delete",
   FIELD_DEFINITIONS_MANAGE: "field-definitions:manage",
+
+  // Assets: Asset Categories
+  ASSET_CATEGORIES_VIEW: "asset-categories:view",
+  ASSET_CATEGORIES_CREATE: "asset-categories:create",
+  ASSET_CATEGORIES_UPDATE: "asset-categories:update",
+  ASSET_CATEGORIES_DELETE: "asset-categories:delete",
+  ASSET_CATEGORIES_MANAGE: "asset-categories:manage",
+
+  // Assets: Asset Models
+  ASSET_MODELS_VIEW: "asset-models:view",
+  ASSET_MODELS_CREATE: "asset-models:create",
+  ASSET_MODELS_UPDATE: "asset-models:update",
+  ASSET_MODELS_DELETE: "asset-models:delete",
+  ASSET_MODELS_MANAGE: "asset-models:manage",
+
+  // Assets: Assets
+  ASSETS_VIEW: "assets:view",
+  ASSETS_CREATE: "assets:create",
+  ASSETS_UPDATE: "assets:update",
+  ASSETS_DELETE: "assets:delete",
+  ASSETS_MANAGE: "assets:manage",
+
+  // Assets: Asset Assignments
+  ASSET_ASSIGNMENTS_VIEW: "asset-assignments:view",
+  ASSET_ASSIGNMENTS_CREATE: "asset-assignments:create",
+  ASSET_ASSIGNMENTS_UPDATE: "asset-assignments:update",
+  ASSET_ASSIGNMENTS_DELETE: "asset-assignments:delete",
+  ASSET_ASSIGNMENTS_MANAGE: "asset-assignments:manage",
+
+  // Inventory: Stock Locations
+  STOCK_LOCATIONS_VIEW: "stock-locations:view",
+  STOCK_LOCATIONS_CREATE: "stock-locations:create",
+  STOCK_LOCATIONS_UPDATE: "stock-locations:update",
+  STOCK_LOCATIONS_DELETE: "stock-locations:delete",
+  STOCK_LOCATIONS_MANAGE: "stock-locations:manage",
+
+  // Inventory: Stock Movements
+  STOCK_MOVEMENTS_VIEW: "stock-movements:view",
+  STOCK_MOVEMENTS_CREATE: "stock-movements:create",
+  STOCK_MOVEMENTS_DELETE: "stock-movements:delete",
+  STOCK_MOVEMENTS_MANAGE: "stock-movements:manage",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

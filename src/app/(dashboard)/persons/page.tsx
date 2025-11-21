@@ -7,6 +7,8 @@ import { listPersonsAction } from "@/interface-adapters/controllers/person.contr
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
+export const dynamic = "force-dynamic";
+
 export default async function PersonsPage() {
   await requirePermission(PERMISSIONS.PERSONS_VIEW);
 

@@ -16,6 +16,8 @@ import { Button } from "@/components/ui/button";
 import { Mail, Calendar, Clock, Shield, Settings } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 const isDateLike = (value: unknown): value is Date | string =>
   typeof value === "string" || value instanceof Date;
 

@@ -7,6 +7,8 @@ import { listLifecycleStatesAction } from "@/interface-adapters/controllers/life
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
+export const dynamic = "force-dynamic";
+
 export default async function LifecycleStatesPage() {
   await requirePermission(PERMISSIONS.LIFECYCLE_STATES_VIEW);
 

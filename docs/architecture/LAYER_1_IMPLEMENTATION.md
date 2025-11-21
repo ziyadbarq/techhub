@@ -7,6 +7,7 @@ This document provides technical implementation details for the Foundation Layer
 **Audience**: Developers implementing or maintaining the Foundation layer.
 
 **Related Documents**:
+
 - [Foundation Layer Guide](../guides/FOUNDATION_LAYER.md) - User-facing guide
 - [Architecture Overview](./ARCHITECTURE.md) - Complete system architecture
 - [Data Model](./DATA_MODEL.md) - Complete data model documentation
@@ -152,6 +153,7 @@ model Location {
 ```
 
 **Migration Considerations**:
+
 - Self-referencing foreign keys require careful ordering in seed scripts
 - Deletion requires cascade handling or explicit child deletion
 - Circular references prevented at application level, not database level
@@ -196,6 +198,7 @@ model PersonRoleAssignment {
 ```
 
 **Key Points**:
+
 - Primary role vs. additional roles (one-to-many vs. many-to-many)
 - Temporal data (start/end dates) for historical tracking
 - Named relations prevent Prisma ambiguity errors
@@ -315,6 +318,7 @@ model FieldDefinition {
 ```
 
 **Rationale**:
+
 - Foreign keys indexed for join performance
 - Unique codes indexed for lookup queries
 - Boolean flags indexed for filtered lists
@@ -351,7 +355,7 @@ export class EntityName {
 
     return new EntityName({
       field1: props.field1,
-      field2: props.field2
+      field2: props.field2,
     });
   }
 
@@ -381,7 +385,7 @@ export class EntityName {
     return {
       id: this._id,
       field1: this._field1,
-      field2: this._field2
+      field2: this._field2,
     };
   }
 
@@ -468,7 +472,7 @@ export class OrganizationUnit {
       costCenter: props.costCenter,
       isActive: props.isActive ?? true,
       note: props.note,
-      metadata: props.metadata
+      metadata: props.metadata,
     });
   }
 
@@ -499,17 +503,39 @@ export class OrganizationUnit {
   }
 
   // Getters
-  get id(): bigint | undefined { return this._id; }
-  get name(): string { return this._name; }
-  get code(): string { return this._code; }
-  get parentId(): bigint | undefined { return this._parentId; }
-  get unitType(): OrganizationUnitType { return this._unitType; }
-  get level(): number { return this._level; }
-  get managerId(): bigint | undefined { return this._managerId; }
-  get costCenter(): string | undefined { return this._costCenter; }
-  get isActive(): boolean { return this._isActive; }
-  get note(): string | undefined { return this._note; }
-  get metadata(): Record<string, unknown> | undefined { return this._metadata; }
+  get id(): bigint | undefined {
+    return this._id;
+  }
+  get name(): string {
+    return this._name;
+  }
+  get code(): string {
+    return this._code;
+  }
+  get parentId(): bigint | undefined {
+    return this._parentId;
+  }
+  get unitType(): OrganizationUnitType {
+    return this._unitType;
+  }
+  get level(): number {
+    return this._level;
+  }
+  get managerId(): bigint | undefined {
+    return this._managerId;
+  }
+  get costCenter(): string | undefined {
+    return this._costCenter;
+  }
+  get isActive(): boolean {
+    return this._isActive;
+  }
+  get note(): string | undefined {
+    return this._note;
+  }
+  get metadata(): Record<string, unknown> | undefined {
+    return this._metadata;
+  }
 
   // Persistence
   toObject(): OrgUnitData {
@@ -524,7 +550,7 @@ export class OrganizationUnit {
       costCenter: this._costCenter,
       isActive: this._isActive,
       note: this._note,
-      metadata: this._metadata
+      metadata: this._metadata,
     };
   }
 
@@ -652,9 +678,7 @@ import { DI_TOKENS } from "@/di/types";
 export class PrismaEntityRepository implements IEntityRepository {
   private readonly logger;
 
-  constructor(
-    @inject(DI_TOKENS.ILoggerService) baseLogger: ILoggerService
-  ) {
+  constructor(@inject(DI_TOKENS.ILoggerService) baseLogger: ILoggerService) {
     this.logger = createRepositoryLogger(baseLogger, "PrismaEntityRepository");
   }
 
@@ -669,14 +693,14 @@ export class PrismaEntityRepository implements IEntityRepository {
           name: data.name,
           code: data.code,
           // ... map entity to Prisma model
-        }
+        },
       });
 
       entity.setId(created.id);
 
       this.logger.endTimer(timer, "create", {
         entityId: created.id,
-        code: data.code
+        code: data.code,
       });
 
       return entity;
@@ -694,7 +718,7 @@ export class PrismaEntityRepository implements IEntityRepository {
         where: { id },
         include: {
           // Include relations if needed
-        }
+        },
       });
 
       if (!found) {
@@ -743,7 +767,9 @@ export class PrismaEntityRepository implements IEntityRepository {
 
 ```typescript
 @injectable()
-export class PrismaOrganizationUnitRepository implements IOrganizationUnitRepository {
+export class PrismaOrganizationUnitRepository
+  implements IOrganizationUnitRepository
+{
   // ...
 
   async findChildren(parentId: bigint): Promise<OrganizationUnit[]> {
@@ -752,14 +778,14 @@ export class PrismaOrganizationUnitRepository implements IOrganizationUnitReposi
     try {
       const children = await prisma.organizationUnit.findMany({
         where: { parentId },
-        orderBy: { name: 'asc' }
+        orderBy: { name: "asc" },
       });
 
-      const entities = children.map(child => this.mapToEntity(child));
+      const entities = children.map((child) => this.mapToEntity(child));
 
       this.logger.endTimer(timer, "findChildren", {
         parentId,
-        count: entities.length
+        count: entities.length,
       });
 
       return entities;
@@ -775,7 +801,7 @@ export class PrismaOrganizationUnitRepository implements IOrganizationUnitReposi
     try {
       const unit = await prisma.organizationUnit.findUnique({
         where: { id },
-        include: { parent: true }
+        include: { parent: true },
       });
 
       if (!unit || !unit.parent) {
@@ -799,7 +825,7 @@ export class PrismaOrganizationUnitRepository implements IOrganizationUnitReposi
 
     try {
       const count = await prisma.organizationUnit.count({
-        where: { parentId: id }
+        where: { parentId: id },
       });
 
       const hasChildren = count > 0;
@@ -885,6 +911,7 @@ async create(fieldDef: FieldDefinition): Promise<FieldDefinition> {
 ```
 
 **JSON Handling Rules**:
+
 1. Use `Prisma.JsonValue` type for create/update
 2. Use `Prisma.JsonNull` for explicit null values
 3. Cast to appropriate TypeScript types when mapping to entity
@@ -924,26 +951,26 @@ export class ExecuteUseCase {
     private readonly checkPermission: CheckPermissionUseCase,
 
     @inject(DI_TOKENS.ILoggerService)
-    private readonly logger: ILoggerService
+    private readonly logger: ILoggerService,
   ) {}
 
   async execute(input: ExecuteInput): Promise<Entity> {
     this.logger.info("Executing use case", {
       context: "ExecuteUseCase",
-      userId: input.userId
+      userId: input.userId,
     });
 
     // 1. Permission check
     const hasPermission = await this.checkPermission.execute({
       userId: input.userId,
-      permission: PERMISSIONS.ENTITY_ACTION
+      permission: PERMISSIONS.ENTITY_ACTION,
     });
 
     if (!hasPermission) {
       this.logger.warn("Permission denied", {
         context: "ExecuteUseCase",
         userId: input.userId,
-        permission: PERMISSIONS.ENTITY_ACTION
+        permission: PERMISSIONS.ENTITY_ACTION,
       });
       throw new Error("Permission denied");
     }
@@ -961,7 +988,7 @@ export class ExecuteUseCase {
 
     this.logger.info("Use case executed successfully", {
       context: "ExecuteUseCase",
-      entityId: saved.id
+      entityId: saved.id,
     });
 
     return saved;
@@ -970,6 +997,7 @@ export class ExecuteUseCase {
 ```
 
 **Key Patterns**:
+
 1. **DI Constructor**: Inject repository, permission checker, logger
 2. **Permission Check First**: Before any business logic
 3. **Structured Logging**: Context and relevant data
@@ -990,7 +1018,7 @@ export class CreateOrganizationUnitUseCase {
     private readonly checkPermission: CheckPermissionUseCase,
 
     @inject(DI_TOKENS.ILoggerService)
-    private readonly logger: ILoggerService
+    private readonly logger: ILoggerService,
   ) {}
 
   async execute(input: CreateOrgUnitInput): Promise<OrganizationUnit> {
@@ -998,13 +1026,13 @@ export class CreateOrganizationUnitUseCase {
       context: "CreateOrganizationUnitUseCase",
       userId: input.userId,
       name: input.name,
-      code: input.code
+      code: input.code,
     });
 
     // Permission check
     const hasPermission = await this.checkPermission.execute({
       userId: input.userId,
-      permission: PERMISSIONS.ORGANIZATION_UNITS_CREATE
+      permission: PERMISSIONS.ORGANIZATION_UNITS_CREATE,
     });
 
     if (!hasPermission) {
@@ -1014,14 +1042,18 @@ export class CreateOrganizationUnitUseCase {
     // Duplicate code check
     const codeExists = await this.orgUnitRepository.existsByCode(input.code);
     if (codeExists) {
-      throw new Error(`Organization unit with code '${input.code}' already exists`);
+      throw new Error(
+        `Organization unit with code '${input.code}' already exists`,
+      );
     }
 
     // If has parent, validate parent exists
     if (input.parentId) {
       const parent = await this.orgUnitRepository.findById(input.parentId);
       if (!parent) {
-        throw new Error(`Parent organization unit with ID ${input.parentId} not found`);
+        throw new Error(
+          `Parent organization unit with ID ${input.parentId} not found`,
+        );
       }
 
       // Validate level consistency
@@ -1041,7 +1073,7 @@ export class CreateOrganizationUnitUseCase {
       costCenter: input.costCenter,
       isActive: input.isActive ?? true,
       note: input.note,
-      metadata: input.metadata
+      metadata: input.metadata,
     });
 
     // Persist
@@ -1050,7 +1082,7 @@ export class CreateOrganizationUnitUseCase {
     this.logger.info("Organization unit created successfully", {
       context: "CreateOrganizationUnitUseCase",
       orgUnitId: saved.id,
-      code: saved.code
+      code: saved.code,
     });
 
     return saved;
@@ -1074,7 +1106,9 @@ export const DI_TOKENS = {
   IOrganizationUnitRepository: Symbol.for("IOrganizationUnitRepository"),
   IPersonRepository: Symbol.for("IPersonRepository"),
   IRoleRepository: Symbol.for("IRoleRepository"),
-  IPersonRoleAssignmentRepository: Symbol.for("IPersonRoleAssignmentRepository"),
+  IPersonRoleAssignmentRepository: Symbol.for(
+    "IPersonRoleAssignmentRepository",
+  ),
   ILocationRepository: Symbol.for("ILocationRepository"),
   IVendorRepository: Symbol.for("IVendorRepository"),
   IVendorContactRepository: Symbol.for("IVendorContactRepository"),
@@ -1142,7 +1176,9 @@ export function bindFoundationDependencies(container: Container): void {
 
   // Bind Use Cases (Transient - new instance per request)
   container
-    .bind<CreateOrganizationUnitUseCase>(DI_TOKENS.CreateOrganizationUnitUseCase)
+    .bind<CreateOrganizationUnitUseCase>(
+      DI_TOKENS.CreateOrganizationUnitUseCase,
+    )
     .to(CreateOrganizationUnitUseCase)
     .inTransientScope();
 
@@ -1156,6 +1192,7 @@ export function bindFoundationDependencies(container: Container): void {
 ```
 
 **Scope Rules**:
+
 - **Repositories**: `inSingletonScope()` - one instance shared across app
 - **Use Cases**: `inTransientScope()` - new instance per request (default)
 - **Services**: `inSingletonScope()` - shared instance (e.g., logger)
@@ -1193,6 +1230,7 @@ export function resetContainer(): void {
 ```
 
 **Initialization Order**:
+
 1. Logger (required by all)
 2. Database (Prisma client)
 3. Foundation (depends on database)
@@ -1215,12 +1253,15 @@ import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { handleControllerError } from "./errors";
 import type { CreateEntityUseCase } from "@/core/use-cases/...";
-import { CreateEntityDTO, type EntityDTO } from "@/interface-adapters/dtos/entity.dto";
+import {
+  CreateEntityDTO,
+  type EntityDTO,
+} from "@/interface-adapters/dtos/entity.dto";
 import { toEntityDTO } from "@/interface-adapters/dtos/entity.dto";
 import type { ActionResponse } from "./types";
 
 export async function createEntityAction(
-  data: unknown
+  data: unknown,
 ): Promise<ActionResponse<EntityDTO>> {
   try {
     // 1. Validate input with Zod
@@ -1229,7 +1270,7 @@ export async function createEntityAction(
     // 2. Resolve use case from DI container
     const container = getContainer();
     const useCase = container.get<CreateEntityUseCase>(
-      DI_TOKENS.CreateEntityUseCase
+      DI_TOKENS.CreateEntityUseCase,
     );
 
     // 3. Execute use case
@@ -1248,6 +1289,7 @@ export async function createEntityAction(
 ```
 
 **Key Patterns**:
+
 1. **"use server" Directive**: Mark as server action
 2. **Zod Validation**: Input validation with runtime type safety
 3. **DI Container**: Resolve use case, never instantiate directly
@@ -1269,12 +1311,12 @@ import {
   UpdateOrganizationUnitDTO,
   ListOrganizationUnitsDTO,
   type OrganizationUnitDTO,
-  toOrganizationUnitDTO
+  toOrganizationUnitDTO,
 } from "@/interface-adapters/dtos/generated/organization-unit.dto";
 import type { ActionResponse, PaginatedResponse } from "./types";
 
 export async function createOrganizationUnitAction(
-  data: unknown
+  data: unknown,
 ): Promise<ActionResponse<OrganizationUnitDTO>> {
   try {
     const validated = CreateOrganizationUnitDTO.parse(data);
@@ -1291,7 +1333,7 @@ export async function createOrganizationUnitAction(
 }
 
 export async function getOrganizationUnitAction(
-  id: bigint
+  id: bigint,
 ): Promise<ActionResponse<OrganizationUnitDTO>> {
   try {
     const container = getContainer();
@@ -1302,7 +1344,7 @@ export async function getOrganizationUnitAction(
     if (!orgUnit) {
       return {
         success: false,
-        error: `Organization unit with ID ${id} not found`
+        error: `Organization unit with ID ${id} not found`,
       };
     }
 
@@ -1313,7 +1355,7 @@ export async function getOrganizationUnitAction(
 }
 
 export async function listOrganizationUnitsAction(
-  filters: unknown
+  filters: unknown,
 ): Promise<ActionResponse<PaginatedResponse<OrganizationUnitDTO>>> {
   try {
     const validated = ListOrganizationUnitsDTO.parse(filters);
@@ -1330,8 +1372,8 @@ export async function listOrganizationUnitsAction(
         total: result.total,
         page: result.page,
         limit: result.limit,
-        totalPages: result.totalPages
-      }
+        totalPages: result.totalPages,
+      },
     };
   } catch (error) {
     return handleControllerError(error, "listOrganizationUnitsAction");
@@ -1340,7 +1382,7 @@ export async function listOrganizationUnitsAction(
 
 export async function updateOrganizationUnitAction(
   id: bigint,
-  data: unknown
+  data: unknown,
 ): Promise<ActionResponse<OrganizationUnitDTO>> {
   try {
     const validated = UpdateOrganizationUnitDTO.parse(data);
@@ -1357,7 +1399,7 @@ export async function updateOrganizationUnitAction(
 }
 
 export async function deleteOrganizationUnitAction(
-  id: bigint
+  id: bigint,
 ): Promise<ActionResponse<void>> {
   try {
     const container = getContainer();
@@ -1392,13 +1434,13 @@ export const CreateEntityDTO = z.object({
   name: z.string().min(1).max(255),
   code: z.string().regex(/^[A-Z0-9-]+$/),
   isActive: z.boolean().optional(),
-  userId: z.string() // Required for permission check
+  userId: z.string(), // Required for permission check
 });
 
 export const UpdateEntityDTO = z.object({
   name: z.string().min(1).max(255).optional(),
   isActive: z.boolean().optional(),
-  userId: z.string()
+  userId: z.string(),
 });
 
 export const ListEntityDTO = z.object({
@@ -1406,7 +1448,7 @@ export const ListEntityDTO = z.object({
   includeInactive: z.boolean().optional(),
   page: z.number().int().min(1).default(1),
   limit: z.number().int().min(1).max(100).default(20),
-  userId: z.string()
+  userId: z.string(),
 });
 
 // ========================================
@@ -1441,12 +1483,13 @@ export function toEntityDTO(entity: Entity): EntityDTO {
     code: entity.code,
     isActive: entity.isActive,
     createdAt: entity.createdAt?.toISOString() ?? "",
-    updatedAt: entity.updatedAt?.toISOString() ?? ""
+    updatedAt: entity.updatedAt?.toISOString() ?? "",
   };
 }
 ```
 
 **Key Patterns**:
+
 1. **Zod Schemas**: Runtime validation + TypeScript type inference
 2. **Separate Input/Output**: Create/Update DTOs vs. Output DTO
 3. **Date Serialization**: Convert `Date` to ISO string
@@ -1463,102 +1506,102 @@ export function toEntityDTO(entity: Entity): EntityDTO {
 **Location**: [`src/core/domain/entities/__tests__/`](../../src/core/domain/entities/__tests__/)
 
 ```typescript
-import { describe, it, expect } from 'vitest';
-import { OrganizationUnit } from '../organization-unit.entity';
-import { OrganizationUnitType } from '@/core/domain/value-objects/foundation-enums';
+import { describe, it, expect } from "vitest";
+import { OrganizationUnit } from "../organization-unit.entity";
+import { OrganizationUnitType } from "@/core/domain/value-objects/foundation-enums";
 
-describe('OrganizationUnit Entity', () => {
-  describe('create', () => {
-    it('should create valid organization unit', () => {
+describe("OrganizationUnit Entity", () => {
+  describe("create", () => {
+    it("should create valid organization unit", () => {
       const orgUnit = OrganizationUnit.create({
-        name: 'IT Department',
-        code: 'IT',
+        name: "IT Department",
+        code: "IT",
         unitType: OrganizationUnitType.DEPARTMENT,
         level: 2,
-        isActive: true
+        isActive: true,
       });
 
-      expect(orgUnit.name).toBe('IT Department');
-      expect(orgUnit.code).toBe('IT');
+      expect(orgUnit.name).toBe("IT Department");
+      expect(orgUnit.code).toBe("IT");
       expect(orgUnit.isActive).toBe(true);
     });
 
-    it('should trim name', () => {
+    it("should trim name", () => {
       const orgUnit = OrganizationUnit.create({
-        name: '  IT Department  ',
-        code: 'IT',
+        name: "  IT Department  ",
+        code: "IT",
         unitType: OrganizationUnitType.DEPARTMENT,
-        level: 2
+        level: 2,
       });
 
-      expect(orgUnit.name).toBe('IT Department');
+      expect(orgUnit.name).toBe("IT Department");
     });
 
-    it('should uppercase code', () => {
+    it("should uppercase code", () => {
       const orgUnit = OrganizationUnit.create({
-        name: 'IT Department',
-        code: 'it-dept',
+        name: "IT Department",
+        code: "it-dept",
         unitType: OrganizationUnitType.DEPARTMENT,
-        level: 2
+        level: 2,
       });
 
-      expect(orgUnit.code).toBe('IT-DEPT');
+      expect(orgUnit.code).toBe("IT-DEPT");
     });
 
-    it('should reject empty name', () => {
+    it("should reject empty name", () => {
       expect(() => {
         OrganizationUnit.create({
-          name: '',
-          code: 'IT',
+          name: "",
+          code: "IT",
           unitType: OrganizationUnitType.DEPARTMENT,
-          level: 2
+          level: 2,
         });
-      }).toThrow('Organization unit name is required');
+      }).toThrow("Organization unit name is required");
     });
 
-    it('should reject invalid code format', () => {
+    it("should reject invalid code format", () => {
       expect(() => {
         OrganizationUnit.create({
-          name: 'IT Department',
-          code: 'invalid code!',
+          name: "IT Department",
+          code: "invalid code!",
           unitType: OrganizationUnitType.DEPARTMENT,
-          level: 2
+          level: 2,
         });
-      }).toThrow('Code must be uppercase alphanumeric with hyphens');
+      }).toThrow("Code must be uppercase alphanumeric with hyphens");
     });
 
-    it('should reject level < 1', () => {
+    it("should reject level < 1", () => {
       expect(() => {
         OrganizationUnit.create({
-          name: 'IT Department',
-          code: 'IT',
+          name: "IT Department",
+          code: "IT",
           unitType: OrganizationUnitType.DEPARTMENT,
-          level: 0
+          level: 0,
         });
-      }).toThrow('Level must be between 1 and 10');
+      }).toThrow("Level must be between 1 and 10");
     });
 
-    it('should reject parent for level 1 unit', () => {
+    it("should reject parent for level 1 unit", () => {
       expect(() => {
         OrganizationUnit.create({
-          name: 'Company',
-          code: 'COMPANY',
+          name: "Company",
+          code: "COMPANY",
           unitType: OrganizationUnitType.COMPANY,
           level: 1,
-          parentId: 'parent-unit-id'
+          parentId: "parent-unit-id",
         });
-      }).toThrow('Top-level unit (level 1) cannot have a parent');
+      }).toThrow("Top-level unit (level 1) cannot have a parent");
     });
   });
 
-  describe('business methods', () => {
-    it('should activate unit', () => {
+  describe("business methods", () => {
+    it("should activate unit", () => {
       const orgUnit = OrganizationUnit.create({
-        name: 'IT Department',
-        code: 'IT',
+        name: "IT Department",
+        code: "IT",
         unitType: OrganizationUnitType.DEPARTMENT,
         level: 2,
-        isActive: false
+        isActive: false,
       });
 
       orgUnit.activate();
@@ -1566,13 +1609,13 @@ describe('OrganizationUnit Entity', () => {
       expect(orgUnit.isActive).toBe(true);
     });
 
-    it('should deactivate unit', () => {
+    it("should deactivate unit", () => {
       const orgUnit = OrganizationUnit.create({
-        name: 'IT Department',
-        code: 'IT',
+        name: "IT Department",
+        code: "IT",
         unitType: OrganizationUnitType.DEPARTMENT,
         level: 2,
-        isActive: true
+        isActive: true,
       });
 
       orgUnit.deactivate();
@@ -1580,94 +1623,94 @@ describe('OrganizationUnit Entity', () => {
       expect(orgUnit.isActive).toBe(false);
     });
 
-    it('should update name with validation', () => {
+    it("should update name with validation", () => {
       const orgUnit = OrganizationUnit.create({
-        name: 'IT Department',
-        code: 'IT',
+        name: "IT Department",
+        code: "IT",
         unitType: OrganizationUnitType.DEPARTMENT,
-        level: 2
+        level: 2,
       });
 
-      orgUnit.updateName('Engineering Department');
+      orgUnit.updateName("Engineering Department");
 
-      expect(orgUnit.name).toBe('Engineering Department');
+      expect(orgUnit.name).toBe("Engineering Department");
     });
 
-    it('should reject empty name update', () => {
+    it("should reject empty name update", () => {
       const orgUnit = OrganizationUnit.create({
-        name: 'IT Department',
-        code: 'IT',
+        name: "IT Department",
+        code: "IT",
         unitType: OrganizationUnitType.DEPARTMENT,
-        level: 2
+        level: 2,
       });
 
       expect(() => {
-        orgUnit.updateName('');
-      }).toThrow('Name cannot be empty');
+        orgUnit.updateName("");
+      }).toThrow("Name cannot be empty");
     });
   });
 
-  describe('persistence', () => {
-    it('should convert to object', () => {
+  describe("persistence", () => {
+    it("should convert to object", () => {
       const orgUnit = OrganizationUnit.create({
-        name: 'IT Department',
-        code: 'IT',
+        name: "IT Department",
+        code: "IT",
         unitType: OrganizationUnitType.DEPARTMENT,
         level: 2,
-        costCenter: 'CC-IT-001'
+        costCenter: "CC-IT-001",
       });
 
-      orgUnit.setId('test-org-unit-123');
+      orgUnit.setId("test-org-unit-123");
 
       const obj = orgUnit.toObject();
 
       expect(obj).toEqual({
-        id: 'test-org-unit-123',
-        name: 'IT Department',
-        code: 'IT',
+        id: "test-org-unit-123",
+        name: "IT Department",
+        code: "IT",
         parentId: undefined,
         unitType: OrganizationUnitType.DEPARTMENT,
         level: 2,
         managerId: undefined,
-        costCenter: 'CC-IT-001',
+        costCenter: "CC-IT-001",
         isActive: true,
         note: undefined,
-        metadata: undefined
+        metadata: undefined,
       });
     });
 
-    it('should set ID only once', () => {
+    it("should set ID only once", () => {
       const orgUnit = OrganizationUnit.create({
-        name: 'IT Department',
-        code: 'IT',
+        name: "IT Department",
+        code: "IT",
         unitType: OrganizationUnitType.DEPARTMENT,
-        level: 2
+        level: 2,
       });
 
-      orgUnit.setId('test-org-unit-123');
+      orgUnit.setId("test-org-unit-123");
 
       expect(() => {
-        orgUnit.setId('test-org-unit-456');
-      }).toThrow('Cannot change organization unit ID');
+        orgUnit.setId("test-org-unit-456");
+      }).toThrow("Cannot change organization unit ID");
     });
 
-    it('should compare entities by ID', () => {
+    it("should compare entities by ID", () => {
       const orgUnit1 = OrganizationUnit.create({
-        name: 'IT Department',
-        code: 'IT',
+        name: "IT Department",
+        code: "IT",
         unitType: OrganizationUnitType.DEPARTMENT,
-        level: 2
+        level: 2,
       });
 
       const orgUnit2 = OrganizationUnit.create({
-        name: 'HR Department',
-        code: 'HR',
+        name: "HR Department",
+        code: "HR",
         unitType: OrganizationUnitType.DEPARTMENT,
-        level: 2
+        level: 2,
       });
 
-      orgUnit1.setId('test-org-unit-123');
-      orgUnit2.setId('test-org-unit-123');
+      orgUnit1.setId("test-org-unit-123");
+      orgUnit2.setId("test-org-unit-123");
 
       expect(orgUnit1.equals(orgUnit2)).toBe(true);
     });
@@ -1680,14 +1723,14 @@ describe('OrganizationUnit Entity', () => {
 **Location**: [`src/core/use-cases/foundation/__tests__/`](../../src/core/use-cases/foundation/__tests__/)
 
 ```typescript
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { getContainer, resetContainer } from '@/di/container';
-import { DI_TOKENS } from '@/di/types';
-import type { CreateOrganizationUnitUseCase } from '../organization/create-organization-unit.use-case';
-import type { IOrganizationUnitRepository } from '@/core/repositories/organization-unit.repository.interface';
-import { OrganizationUnitType } from '@/core/domain/value-objects/foundation-enums';
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { getContainer, resetContainer } from "@/di/container";
+import { DI_TOKENS } from "@/di/types";
+import type { CreateOrganizationUnitUseCase } from "../organization/create-organization-unit.use-case";
+import type { IOrganizationUnitRepository } from "@/core/repositories/organization-unit.repository.interface";
+import { OrganizationUnitType } from "@/core/domain/value-objects/foundation-enums";
 
-describe('CreateOrganizationUnitUseCase Integration', () => {
+describe("CreateOrganizationUnitUseCase Integration", () => {
   let useCase: CreateOrganizationUnitUseCase;
   let repository: IOrganizationUnitRepository;
   let testUserId: string;
@@ -1704,88 +1747,88 @@ describe('CreateOrganizationUnitUseCase Integration', () => {
     resetContainer();
   });
 
-  it('should create organization unit successfully', async () => {
+  it("should create organization unit successfully", async () => {
     const result = await useCase.execute({
-      name: 'Engineering',
-      code: 'ENG',
+      name: "Engineering",
+      code: "ENG",
       unitType: OrganizationUnitType.DEPARTMENT,
       level: 2,
-      userId: testUserId
+      userId: testUserId,
     });
 
     expect(result).toBeDefined();
-    expect(result.name).toBe('Engineering');
-    expect(result.code).toBe('ENG');
+    expect(result.name).toBe("Engineering");
+    expect(result.code).toBe("ENG");
     expect(result.id).toBeDefined();
   });
 
-  it('should prevent duplicate codes', async () => {
+  it("should prevent duplicate codes", async () => {
     await useCase.execute({
-      name: 'Engineering',
-      code: 'ENG',
+      name: "Engineering",
+      code: "ENG",
       unitType: OrganizationUnitType.DEPARTMENT,
       level: 2,
-      userId: testUserId
+      userId: testUserId,
     });
 
     await expect(
       useCase.execute({
-        name: 'Engineering 2',
-        code: 'ENG', // Duplicate
+        name: "Engineering 2",
+        code: "ENG", // Duplicate
         unitType: OrganizationUnitType.DEPARTMENT,
         level: 2,
-        userId: testUserId
-      })
+        userId: testUserId,
+      }),
     ).rejects.toThrow(/already exists/);
   });
 
-  it('should enforce permission check', async () => {
+  it("should enforce permission check", async () => {
     const unauthorizedUserId = "test-user-no-permissions";
 
     await expect(
       useCase.execute({
-        name: 'Engineering',
-        code: 'ENG',
+        name: "Engineering",
+        code: "ENG",
         unitType: OrganizationUnitType.DEPARTMENT,
         level: 2,
-        userId: unauthorizedUserId
-      })
+        userId: unauthorizedUserId,
+      }),
     ).rejects.toThrow(/Permission denied/);
   });
 
-  it('should validate parent exists when creating child', async () => {
-    const nonExistentParentId = 'non-existent-parent-id';
+  it("should validate parent exists when creating child", async () => {
+    const nonExistentParentId = "non-existent-parent-id";
 
     await expect(
       useCase.execute({
-        name: 'IT Team',
-        code: 'IT-TEAM',
+        name: "IT Team",
+        code: "IT-TEAM",
         unitType: OrganizationUnitType.TEAM,
         level: 3,
         parentId: nonExistentParentId,
-        userId: testUserId
-      })
+        userId: testUserId,
+      }),
     ).rejects.toThrow(/Parent organization unit.*not found/);
   });
 
-  it('should validate level consistency with parent', async () => {
+  it("should validate level consistency with parent", async () => {
     const parent = await useCase.execute({
-      name: 'Engineering',
-      code: 'ENG',
+      name: "Engineering",
+      code: "ENG",
       unitType: OrganizationUnitType.DEPARTMENT,
       level: 2,
-      userId: testUserId
+      userId: testUserId,
     });
 
     await expect(
       useCase.execute({
-        name: 'IT Team',
-        code: 'IT-TEAM',
+        name: "IT Team",
+        code: "IT-TEAM",
         unitType: OrganizationUnitType.TEAM,
         level: 5, // Wrong level (should be 3)
         parentId: parent.id!,
-        userId: testUserId
-      })
+        userId: testUserId,
+      }),
     ).rejects.toThrow(/Level must be/);
   });
 });
@@ -1794,17 +1837,17 @@ describe('CreateOrganizationUnitUseCase Integration', () => {
 ### Testing with Mock Repositories
 
 ```typescript
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { Container } from 'inversify';
-import { DI_TOKENS } from '@/di/types';
-import { CreateOrganizationUnitUseCase } from '../organization/create-organization-unit.use-case';
-import type { IOrganizationUnitRepository } from '@/core/repositories/organization-unit.repository.interface';
-import type { CheckPermissionUseCase } from '@/core/use-cases/rbac/check-permission.use-case';
-import type { ILoggerService } from '@/core/services/logger.service.interface';
-import { OrganizationUnit } from '@/core/domain/entities/organization-unit.entity';
-import { OrganizationUnitType } from '@/core/domain/value-objects/foundation-enums';
+import { describe, it, expect, beforeEach, vi } from "vitest";
+import { Container } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import { CreateOrganizationUnitUseCase } from "../organization/create-organization-unit.use-case";
+import type { IOrganizationUnitRepository } from "@/core/repositories/organization-unit.repository.interface";
+import type { CheckPermissionUseCase } from "@/core/use-cases/rbac/check-permission.use-case";
+import type { ILoggerService } from "@/core/services/logger.service.interface";
+import { OrganizationUnit } from "@/core/domain/entities/organization-unit.entity";
+import { OrganizationUnitType } from "@/core/domain/value-objects/foundation-enums";
 
-describe('CreateOrganizationUnitUseCase Unit (with mocks)', () => {
+describe("CreateOrganizationUnitUseCase Unit (with mocks)", () => {
   let useCase: CreateOrganizationUnitUseCase;
   let mockRepository: IOrganizationUnitRepository;
   let mockCheckPermission: CheckPermissionUseCase;
@@ -1820,71 +1863,71 @@ describe('CreateOrganizationUnitUseCase Unit (with mocks)', () => {
     } as unknown as IOrganizationUnitRepository;
 
     mockCheckPermission = {
-      execute: vi.fn()
+      execute: vi.fn(),
     } as unknown as CheckPermissionUseCase;
 
     mockLogger = {
       info: vi.fn(),
       warn: vi.fn(),
       error: vi.fn(),
-      debug: vi.fn()
+      debug: vi.fn(),
     } as unknown as ILoggerService;
 
     // Create use case with mocks
     useCase = new CreateOrganizationUnitUseCase(
       mockRepository,
       mockCheckPermission,
-      mockLogger
+      mockLogger,
     );
   });
 
-  it('should create organization unit when permission granted', async () => {
+  it("should create organization unit when permission granted", async () => {
     // Arrange
     vi.mocked(mockCheckPermission.execute).mockResolvedValue(true);
     vi.mocked(mockRepository.existsByCode).mockResolvedValue(false);
     vi.mocked(mockRepository.create).mockImplementation(async (orgUnit) => {
-      orgUnit.setId('test-org-unit-123');
+      orgUnit.setId("test-org-unit-123");
       return orgUnit;
     });
 
     // Act
     const result = await useCase.execute({
-      name: 'Engineering',
-      code: 'ENG',
+      name: "Engineering",
+      code: "ENG",
       unitType: OrganizationUnitType.DEPARTMENT,
       level: 2,
-      userId: 'test-user'
+      userId: "test-user",
     });
 
     // Assert
-    expect(result.id).toBe('test-org-unit-123');
+    expect(result.id).toBe("test-org-unit-123");
     expect(mockCheckPermission.execute).toHaveBeenCalledWith({
-      userId: 'test-user',
-      permission: expect.any(String)
+      userId: "test-user",
+      permission: expect.any(String),
     });
-    expect(mockRepository.existsByCode).toHaveBeenCalledWith('ENG');
+    expect(mockRepository.existsByCode).toHaveBeenCalledWith("ENG");
     expect(mockRepository.create).toHaveBeenCalled();
   });
 
-  it('should reject when permission denied', async () => {
+  it("should reject when permission denied", async () => {
     // Arrange
     vi.mocked(mockCheckPermission.execute).mockResolvedValue(false);
 
     // Act & Assert
     await expect(
       useCase.execute({
-        name: 'Engineering',
-        code: 'ENG',
+        name: "Engineering",
+        code: "ENG",
         unitType: OrganizationUnitType.DEPARTMENT,
         level: 2,
-        userId: 'test-user'
-      })
+        userId: "test-user",
+      }),
     ).rejects.toThrow(/Permission denied/);
 
     expect(mockRepository.create).not.toHaveBeenCalled();
   });
 
-  it('should reject duplicate code', async () => {
+  it("should reject duplicate code", async () => {
     // Arrange
     vi.mocked(mockCheckPermission.execute).mockResolvedValue(true);
     vi.mocked(mockRepository.existsByCode).mockResolvedValue(true); // Code exists
@@ -1892,12 +1935,12 @@ describe('CreateOrganizationUnitUseCase Unit (with mocks)', () => {
     // Act & Assert
     await expect(
       useCase.execute({
-        name: 'Engineering',
-        code: 'ENG',
+        name: "Engineering",
+        code: "ENG",
         unitType: OrganizationUnitType.DEPARTMENT,
         level: 2,
-        userId: 'test-user'
-      })
+        userId: "test-user",
+      }),
     ).rejects.toThrow(/already exists/);
 
     expect(mockRepository.create).not.toHaveBeenCalled();
@@ -1924,8 +1967,8 @@ const orgUnit = await prisma.organizationUnit.findUnique({
     parent: true,
     children: true,
     persons: true,
-    manager: true
-  }
+    manager: true,
+  },
 });
 
 // ✅ Good: Select only needed fields
@@ -1935,16 +1978,16 @@ const orgUnit = await prisma.organizationUnit.findUnique({
     id: true,
     name: true,
     code: true,
-    isActive: true
-  }
+    isActive: true,
+  },
 });
 
 // ✅ Good: Include only when needed
 const orgUnit = await prisma.organizationUnit.findUnique({
   where: { id },
   include: {
-    parent: true // Only include parent if needed
-  }
+    parent: true, // Only include parent if needed
+  },
 });
 ```
 
@@ -2031,6 +2074,7 @@ async findById(id: bigint): Promise<OrganizationUnit | null> {
 
 **Issue**: `Cannot find module '@/...'`
 **Solution**: Ensure TypeScript path aliases configured in `tsconfig.json`:
+
 ```json
 {
   "compilerOptions": {
@@ -2046,6 +2090,7 @@ async findById(id: bigint): Promise<OrganizationUnit | null> {
 
 **Issue**: `Prisma relation ambiguity error`
 **Solution**: Use named relations in schema:
+
 ```prisma
 parent OrganizationUnit? @relation("OrgUnitHierarchy", fields: [parentId], references: [id])
 children OrganizationUnit[] @relation("OrgUnitHierarchy")
@@ -2053,6 +2098,7 @@ children OrganizationUnit[] @relation("OrgUnitHierarchy")
 
 **Issue**: `Permission denied despite admin role`
 **Solution**: Check permission cache is up-to-date. Invalidate cache after role/permission changes:
+
 ```typescript
 await invalidatePermissionCache(userId);
 ```
@@ -2068,6 +2114,7 @@ With Layer 1 complete, proceed to implement Layer 2 (CMDB & Asset):
 3. **Asset Implementation**: Financial asset records referencing vendors, contracts
 
 **See Also**:
+
 - [Layer 2 Implementation Guide](./LAYER_2_IMPLEMENTATION.md) (Coming Soon)
 - [Foundation Layer Guide](../guides/FOUNDATION_LAYER.md) - User-facing guide
 - [Data Model](./DATA_MODEL.md) - Complete data model documentation

@@ -17,6 +17,7 @@ import {
 import { Shield, Lock, Key } from "lucide-react";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { Separator } from "@/components/ui/separator";
+import { Suspense } from "react";
 
 export default function LoginPage() {
   const handleMicrosoftLogin = async () => {
@@ -41,7 +42,15 @@ export default function LoginPage() {
 
         <CardContent className="space-y-6">
           {/* Email/Password Login Form */}
-          <LoginForm />
+          <Suspense
+            fallback={
+              <div className="text-muted-foreground text-center text-sm">
+                Loading login form...
+              </div>
+            }
+          >
+            <LoginForm />
+          </Suspense>
 
           {/* Divider */}
           <div className="relative">

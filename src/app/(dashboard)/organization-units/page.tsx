@@ -7,6 +7,8 @@ import { listOrganizationUnitsAction } from "@/interface-adapters/controllers/or
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
+export const dynamic = "force-dynamic";
+
 export default async function OrganizationUnitsPage() {
   await requirePermission(PERMISSIONS.ORGANIZATION_UNITS_VIEW);
 

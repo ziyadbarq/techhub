@@ -229,6 +229,7 @@ logger.audit({
 **Current Status:** Request tracking (request IDs, correlation IDs, AsyncLocalStorage context) is not currently implemented in this application.
 
 **If you need request tracking**, you can implement it by:
+
 1. Creating request context utilities with AsyncLocalStorage
 2. Integrating into `proxy.ts` to generate/extract request IDs
 3. Adding correlation ID support for distributed tracing

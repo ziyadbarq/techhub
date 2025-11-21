@@ -1,0 +1,425 @@
+/**
+ * Asset Domain Entity
+ * Represents physical or digital assets tracked in the system
+ * Supports dynamic attributes based on AssetCategory field definitions
+ */
+
+export interface AssetProps {
+  id: string;
+  assetTag: string;
+  assetCategoryId: string;
+  assetModelId: string | null;
+  vendorId: string | null;
+  contractId: string | null;
+  lifecycleStateId: string | null;
+  serialNumber: string | null;
+  purchaseDate: Date | null;
+  purchaseCost: number | null;
+  currency: string | null;
+  depreciationModel: string | null;
+  depreciationStart: Date | null;
+  depreciationEnd: Date | null;
+  warrantyEndDate: Date | null;
+  currentStockLocationId: string | null;
+  attributes: Record<string, unknown> | null;
+  note: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateAssetProps {
+  assetTag: string;
+  assetCategoryId: string;
+  assetModelId?: string | null;
+  vendorId?: string | null;
+  contractId?: string | null;
+  lifecycleStateId?: string | null;
+  serialNumber?: string | null;
+  purchaseDate?: Date | null;
+  purchaseCost?: number | null;
+  currency?: string | null;
+  depreciationModel?: string | null;
+  depreciationStart?: Date | null;
+  depreciationEnd?: Date | null;
+  warrantyEndDate?: Date | null;
+  currentStockLocationId?: string | null;
+  attributes?: Record<string, unknown> | null;
+  note?: string | null;
+}
+
+export class Asset {
+  private constructor(private props: AssetProps) {}
+
+  /**
+   * Factory method: Create a new asset
+   */
+  static create(props: CreateAssetProps): Asset {
+    // Validation
+    Asset.validateAssetTag(props.assetTag);
+
+    if (props.serialNumber !== undefined && props.serialNumber !== null) {
+      Asset.validateSerialNumber(props.serialNumber);
+    }
+
+    if (props.purchaseCost !== undefined && props.purchaseCost !== null) {
+      Asset.validatePurchaseCost(props.purchaseCost);
+    }
+
+    if (props.currency !== undefined && props.currency !== null) {
+      Asset.validateCurrency(props.currency);
+    }
+
+    const now = new Date();
+
+    return new Asset({
+      id: "", // Will be set by repository
+      assetTag: props.assetTag.trim().toUpperCase(),
+      assetCategoryId: props.assetCategoryId,
+      assetModelId: props.assetModelId || null,
+      vendorId: props.vendorId || null,
+      contractId: props.contractId || null,
+      lifecycleStateId: props.lifecycleStateId || null,
+      serialNumber: props.serialNumber?.trim() || null,
+      purchaseDate: props.purchaseDate || null,
+      purchaseCost: props.purchaseCost || null,
+      currency: props.currency?.toUpperCase() || null,
+      depreciationModel: props.depreciationModel || null,
+      depreciationStart: props.depreciationStart || null,
+      depreciationEnd: props.depreciationEnd || null,
+      warrantyEndDate: props.warrantyEndDate || null,
+      currentStockLocationId: props.currentStockLocationId || null,
+      attributes: props.attributes || null,
+      note: props.note?.trim() || null,
+      createdAt: now,
+      updatedAt: now,
+    });
+  }
+
+  /**
+   * Factory method: Reconstitute from persistence
+   */
+  static reconstitute(props: AssetProps): Asset {
+    return new Asset(props);
+  }
+
+  /**
+   * Update asset details
+   */
+  update(props: {
+    assetTag?: string;
+    assetModelId?: string | null;
+    vendorId?: string | null;
+    contractId?: string | null;
+    lifecycleStateId?: string | null;
+    serialNumber?: string | null;
+    purchaseDate?: Date | null;
+    purchaseCost?: number | null;
+    currency?: string | null;
+    depreciationModel?: string | null;
+    depreciationStart?: Date | null;
+    depreciationEnd?: Date | null;
+    warrantyEndDate?: Date | null;
+    currentStockLocationId?: string | null;
+    attributes?: Record<string, unknown> | null;
+    note?: string | null;
+  }): void {
+    if (props.assetTag !== undefined) {
+      Asset.validateAssetTag(props.assetTag);
+      this.props.assetTag = props.assetTag.trim().toUpperCase();
+    }
+
+    if (props.serialNumber !== undefined) {
+      if (props.serialNumber !== null) {
+        Asset.validateSerialNumber(props.serialNumber);
+      }
+      this.props.serialNumber = props.serialNumber?.trim() || null;
+    }
+
+    if (props.purchaseCost !== undefined) {
+      if (props.purchaseCost !== null) {
+        Asset.validatePurchaseCost(props.purchaseCost);
+      }
+      this.props.purchaseCost = props.purchaseCost;
+    }
+
+    if (props.currency !== undefined) {
+      if (props.currency !== null) {
+        Asset.validateCurrency(props.currency);
+      }
+      this.props.currency = props.currency?.toUpperCase() || null;
+    }
+
+    if (props.assetModelId !== undefined) {
+      this.props.assetModelId = props.assetModelId;
+    }
+
+    if (props.vendorId !== undefined) {
+      this.props.vendorId = props.vendorId;
+    }
+
+    if (props.contractId !== undefined) {
+      this.props.contractId = props.contractId;
+    }
+
+    if (props.lifecycleStateId !== undefined) {
+      this.props.lifecycleStateId = props.lifecycleStateId;
+    }
+
+    if (props.purchaseDate !== undefined) {
+      this.props.purchaseDate = props.purchaseDate;
+    }
+
+    if (props.depreciationModel !== undefined) {
+      this.props.depreciationModel = props.depreciationModel;
+    }
+
+    if (props.depreciationStart !== undefined) {
+      this.props.depreciationStart = props.depreciationStart;
+    }
+
+    if (props.depreciationEnd !== undefined) {
+      this.props.depreciationEnd = props.depreciationEnd;
+    }
+
+    if (props.warrantyEndDate !== undefined) {
+      this.props.warrantyEndDate = props.warrantyEndDate;
+    }
+
+    if (props.currentStockLocationId !== undefined) {
+      this.props.currentStockLocationId = props.currentStockLocationId;
+    }
+
+    if (props.attributes !== undefined) {
+      this.props.attributes = props.attributes;
+    }
+
+    if (props.note !== undefined) {
+      this.props.note = props.note?.trim() || null;
+    }
+
+    this.props.updatedAt = new Date();
+  }
+
+  /**
+   * Update dynamic attributes (merged with existing)
+   */
+  updateAttributes(attributes: Record<string, unknown>): void {
+    this.props.attributes = {
+      ...(this.props.attributes || {}),
+      ...attributes,
+    };
+    this.props.updatedAt = new Date();
+  }
+
+  /**
+   * Set lifecycle state
+   * Business rule: Track state transitions for compliance
+   */
+  setLifecycleState(lifecycleStateId: string | null): void {
+    this.props.lifecycleStateId = lifecycleStateId;
+    this.props.updatedAt = new Date();
+  }
+
+  /**
+   * Set current stock location
+   * Business rule: Used for inventory tracking
+   */
+  setStockLocation(stockLocationId: string | null): void {
+    this.props.currentStockLocationId = stockLocationId;
+    this.props.updatedAt = new Date();
+  }
+
+  /**
+   * Calculate warranty status
+   * Business rule: Based on warranty end date
+   */
+  isUnderWarranty(): boolean {
+    if (!this.props.warrantyEndDate) {
+      return false;
+    }
+    return new Date() < this.props.warrantyEndDate;
+  }
+
+  /**
+   * Check if asset is being depreciated
+   */
+  isDepreciated(): boolean {
+    return (
+      this.props.depreciationModel !== null &&
+      this.props.depreciationStart !== null
+    );
+  }
+
+  /**
+   * Check if depreciation is complete
+   */
+  isFullyDepreciated(): boolean {
+    if (!this.isDepreciated() || !this.props.depreciationEnd) {
+      return false;
+    }
+    return new Date() >= this.props.depreciationEnd;
+  }
+
+  // Business Rules & Validation
+
+  private static validateAssetTag(assetTag: string): void {
+    if (!assetTag || assetTag.trim().length === 0) {
+      throw new Error("Asset tag cannot be empty");
+    }
+
+    if (assetTag.trim().length < 2) {
+      throw new Error("Asset tag must be at least 2 characters");
+    }
+
+    if (assetTag.trim().length > 100) {
+      throw new Error("Asset tag cannot exceed 100 characters");
+    }
+
+    // Must be alphanumeric, hyphens, underscores
+    if (!/^[A-Z0-9\-_]+$/i.test(assetTag.trim())) {
+      throw new Error(
+        "Asset tag can only contain letters, numbers, hyphens, and underscores",
+      );
+    }
+  }
+
+  private static validateSerialNumber(serialNumber: string): void {
+    if (serialNumber.trim().length === 0) {
+      throw new Error("Serial number cannot be empty if provided");
+    }
+
+    if (serialNumber.trim().length > 200) {
+      throw new Error("Serial number cannot exceed 200 characters");
+    }
+  }
+
+  private static validatePurchaseCost(cost: number): void {
+    if (cost < 0) {
+      throw new Error("Purchase cost cannot be negative");
+    }
+
+    // Max 9999999999.99 (12 digits total, 2 decimal places)
+    if (cost > 9999999999.99) {
+      throw new Error("Purchase cost cannot exceed 9999999999.99");
+    }
+  }
+
+  private static validateCurrency(currency: string): void {
+    if (currency.trim().length !== 3) {
+      throw new Error("Currency must be a 3-letter ISO code (e.g., USD, EUR)");
+    }
+
+    if (!/^[A-Z]{3}$/i.test(currency.trim())) {
+      throw new Error("Currency must be 3 uppercase letters");
+    }
+  }
+
+  // Getters
+
+  get id(): string {
+    return this.props.id;
+  }
+
+  get assetTag(): string {
+    return this.props.assetTag;
+  }
+
+  get assetCategoryId(): string {
+    return this.props.assetCategoryId;
+  }
+
+  get assetModelId(): string | null {
+    return this.props.assetModelId;
+  }
+
+  get vendorId(): string | null {
+    return this.props.vendorId;
+  }
+
+  get contractId(): string | null {
+    return this.props.contractId;
+  }
+
+  get lifecycleStateId(): string | null {
+    return this.props.lifecycleStateId;
+  }
+
+  get serialNumber(): string | null {
+    return this.props.serialNumber;
+  }
+
+  get purchaseDate(): Date | null {
+    return this.props.purchaseDate;
+  }
+
+  get purchaseCost(): number | null {
+    return this.props.purchaseCost;
+  }
+
+  get currency(): string | null {
+    return this.props.currency;
+  }
+
+  get depreciationModel(): string | null {
+    return this.props.depreciationModel;
+  }
+
+  get depreciationStart(): Date | null {
+    return this.props.depreciationStart;
+  }
+
+  get depreciationEnd(): Date | null {
+    return this.props.depreciationEnd;
+  }
+
+  get warrantyEndDate(): Date | null {
+    return this.props.warrantyEndDate;
+  }
+
+  get currentStockLocationId(): string | null {
+    return this.props.currentStockLocationId;
+  }
+
+  get attributes(): Record<string, unknown> | null {
+    return this.props.attributes;
+  }
+
+  get note(): string | null {
+    return this.props.note;
+  }
+
+  get createdAt(): Date {
+    return this.props.createdAt;
+  }
+
+  get updatedAt(): Date {
+    return this.props.updatedAt;
+  }
+
+  // Internal setters (for repository use)
+
+  setId(id: string): void {
+    if (this.props.id) {
+      throw new Error("Cannot change asset ID after it has been set");
+    }
+    this.props.id = id;
+  }
+
+  setUpdatedAt(date: Date): void {
+    this.props.updatedAt = date;
+  }
+
+  /**
+   * Convert to plain object for persistence
+   */
+  toObject(): AssetProps {
+    return { ...this.props };
+  }
+
+  /**
+   * Compare with another asset
+   */
+  equals(other: Asset): boolean {
+    return this.props.id === other.id;
+  }
+}

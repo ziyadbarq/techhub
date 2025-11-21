@@ -16,20 +16,22 @@ Complete guide to managing database schema changes with Prisma migrations in dev
 
 This project uses **Prisma 7** with PostgreSQL for database management. Prisma provides two approaches for managing schema changes:
 
-| Approach | Use Case | Creates SQL Files | Tracks History |
-|----------|----------|-------------------|----------------|
-| `prisma db push` | Development, rapid prototyping | ❌ No | ❌ No |
-| `prisma migrate dev` | Production-ready changes | ✅ Yes | ✅ Yes |
+| Approach             | Use Case                       | Creates SQL Files | Tracks History |
+| -------------------- | ------------------------------ | ----------------- | -------------- |
+| `prisma db push`     | Development, rapid prototyping | ❌ No             | ❌ No          |
+| `prisma migrate dev` | Production-ready changes       | ✅ Yes            | ✅ Yes         |
 
 ### Key Differences
 
 **`prisma db push`**:
+
 - Directly syncs schema with database
 - Fast for rapid iteration and experimentation
 - No migration history or rollback capability
 - Used by default in `npm run setup`
 
 **`prisma migrate dev`**:
+
 - Creates timestamped SQL migration files
 - Maintains migration history in `_prisma_migrations` table
 - Enables code review of database changes
@@ -61,12 +63,12 @@ export default defineConfig({
 **Always use the singleton Prisma client from [src/infrastructure/database/prisma/client.ts](../../src/infrastructure/database/prisma/client.ts)**:
 
 ```typescript
-import { prisma, pool } from '@/infrastructure/database/prisma/client';
+import { prisma, pool } from "@/infrastructure/database/prisma/client";
 ```
 
 ❌ **NEVER** create new `Pool()` or `PrismaClient()` instances - causes connection pool exhaustion.
 
-See [CLAUDE.md - Prisma Connection Pool](../../CLAUDE.md#prisma-connection-pool-critical) for details.
+**See**: [PRISMA_GUIDE.md - Connection Pool Management](PRISMA_GUIDE.md#connection-pool-management) for complete patterns and antipatterns.
 
 ## Development Workflow
 
@@ -266,7 +268,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Install dependencies
         run: npm ci
@@ -356,6 +358,7 @@ npm run db:assign-admin
 ### Development Best Practices
 
 ✅ **DO**:
+
 - Use `db:push` for rapid prototyping and experimentation
 - Create migrations when features are complete and tested
 - Name migrations descriptively: `add_user_roles`, `create_tasks_table`
@@ -364,6 +367,7 @@ npm run db:assign-admin
 - Run `prisma migrate status` before creating new migrations
 
 ❌ **DON'T**:
+
 - Use `db:push` in production - always use `migrate deploy`
 - Edit migration files after they're applied
 - Delete or rename applied migrations
@@ -373,6 +377,7 @@ npm run db:assign-admin
 ### Production Best Practices
 
 ✅ **DO**:
+
 - Always test migrations on staging first
 - Backup database before applying migrations
 - Use `prisma migrate deploy` exclusively in production
@@ -382,6 +387,7 @@ npm run db:assign-admin
 - Use transactions for multi-step data migrations
 
 ❌ **DON'T**:
+
 - Use `migrate dev` or `db:push` in production
 - Apply untested migrations directly to production
 - Skip backups before migrations
@@ -446,10 +452,10 @@ psql barq_assets_prod < backup_YYYYMMDD_HHMMSS.sql
 
 ```typescript
 // ✅ Correct
-import { prisma } from '@/infrastructure/database/prisma/client';
+import { prisma } from "@/infrastructure/database/prisma/client";
 
 // ❌ Wrong - creates duplicate pool
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 ```
 
@@ -493,6 +499,7 @@ npm run db:generate
 **Problem**: Migrations taking too long
 
 **Solutions**:
+
 - Split large data migrations into smaller batches
 - Create indexes in separate migrations
 - Use `CONCURRENTLY` for index creation (custom SQL)
@@ -555,11 +562,12 @@ npm run db:generate
 
 ## Additional Resources
 
+- [Prisma Guide](./PRISMA_GUIDE.md) - **Complete Prisma 7 patterns, connection pool, and imports** (recommended)
 - [Prisma Migrate Documentation](https://www.prisma.io/docs/concepts/components/prisma-migrate)
 - [Prisma Schema Reference](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference)
+- [Stack Upgrades](./STACK_UPGRADES.md) - Prisma 7 breaking changes reference
 - [Developer Guide](./DEVELOPER_GUIDE.md) - General development workflows
 - [Architecture Guide](../architecture/ARCHITECTURE.md) - System architecture overview
-- [CLAUDE.md](../../CLAUDE.md) - Project instructions and patterns
 
 ---
 

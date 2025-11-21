@@ -7,6 +7,8 @@ import { listPersonRoleAssignmentsAction } from "@/interface-adapters/controller
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
+export const dynamic = "force-dynamic";
+
 export default async function PersonRoleAssignmentsPage() {
   await requirePermission(PERMISSIONS.PERSON_ROLE_ASSIGNMENTS_VIEW);
 

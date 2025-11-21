@@ -7,6 +7,8 @@ import { listLocationsAction } from "@/interface-adapters/controllers/location.c
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
+export const dynamic = "force-dynamic";
+
 export default async function LocationsPage() {
   await requirePermission(PERMISSIONS.LOCATIONS_VIEW);
 

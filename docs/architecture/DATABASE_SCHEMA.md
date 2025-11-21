@@ -34,6 +34,7 @@ model Example {
 ### Why CUID?
 
 **Benefits**:
+
 - ✅ **Distributed-safe**: No coordination needed between instances (unlike autoincrement sequences)
 - ✅ **URL-safe**: Can be used directly in URLs without encoding
 - ✅ **Time-sortable**: CUIDs are roughly time-ordered (prefix encodes timestamp)
@@ -42,6 +43,7 @@ model Example {
 - ✅ **Framework-agnostic**: Works across any database (PostgreSQL, MySQL, SQLite, etc.)
 
 **Tradeoffs**:
+
 - ❌ Larger index size compared to BigInt (25 bytes vs 8 bytes)
 - ❌ Not sequential (can fragment B-tree indexes slightly)
 - ❌ Less human-readable than integers
@@ -49,6 +51,7 @@ model Example {
 ### When to Use BigInt Autoincrement
 
 **Not currently used in this project**, but consider for:
+
 - High-volume transactional tables where index size matters
 - Legacy integrations requiring integer IDs
 - Tables requiring guaranteed sequential ordering
@@ -86,6 +89,7 @@ model Person {
 ```
 
 **Rules**:
+
 - ✅ Always use plural form (e.g., `users`, `roles`, `contracts`)
 - ✅ Multi-word models: separate with underscores (e.g., `organization_units`, `license_allocations`)
 - ✅ Join tables: combine both entity names (e.g., `person_role_assignments`, `role_permissions`)
@@ -107,6 +111,7 @@ model Person {
 ```
 
 **Rules**:
+
 - ✅ Field names remain camelCase in PostgreSQL (no `@map` needed)
 - ✅ Foreign key fields always end with `Id` (e.g., `userId`, `licenseEntitlementId`)
 - ✅ Boolean fields use `is`/`has` prefix (e.g., `isActive`, `isSystem`, `hasAccess`)
@@ -153,6 +158,7 @@ model StandardEntity {
 ```
 
 **Rules**:
+
 - ✅ `createdAt`: Automatically set on insert via `@default(now())`
 - ✅ `updatedAt`: Automatically updated on every modification via `@updatedAt`
 - ✅ Always place timestamps at the end of field definitions (before relations)
@@ -232,12 +238,14 @@ model SoftDeletableEntity {
 ### When to Use `isActive`
 
 **✅ Use for**:
+
 - Core business entities (Person, OrganizationUnit, Vendor, Location)
 - Configuration entities (Role, Permission, FieldDefinition)
 - Master data (CIClass, AssetCategory, LifecycleState)
 - Reference data with UI visibility (ContractType, AttachmentType, DataDomain)
 
 **❌ Don't use for**:
+
 - Pure join tables (RolePermission, UserRole)
 - Immutable event logs (AuditLogEntry, StockMovement)
 - System-generated data (Session, Account, Verification)
@@ -249,11 +257,11 @@ When querying soft-deletable entities:
 ```typescript
 // ✅ Always filter by isActive in business logic
 const activePersons = await prisma.person.findMany({
-  where: { isActive: true }
+  where: { isActive: true },
 });
 
 // ❌ Don't forget the filter!
-const allPersons = await prisma.person.findMany();  // Includes inactive!
+const allPersons = await prisma.person.findMany(); // Includes inactive!
 ```
 
 ### Indexing
@@ -311,10 +319,12 @@ model AuditLogEntry {
 ### Why Dual-Link?
 
 **Person vs User**:
+
 - **Person**: Organizational entity (employee, contractor, contact) - always present in audit
 - **User**: Authentication entity (system login) - may or may not be linked to Person
 
 **Use Cases**:
+
 1. **Authenticated UI change**: Both `changedById` (Person) and `changedByUserId` (User) populated
 2. **API change with auth**: Both populated (API token → User → Person)
 3. **System import/discovery**: Only `changedById` (system Person created for "System Importer")
@@ -348,6 +358,7 @@ model AuditLogEntry {
 ### When to Add Indexes
 
 Always index:
+
 - ✅ Primary keys (automatic via `@id`)
 - ✅ Foreign keys (for join performance)
 - ✅ Unique constraints (automatic via `@unique`)
@@ -420,11 +431,13 @@ model LicenseAllocation {
 ### Index Size Tradeoffs
 
 **Benefits**:
+
 - ✅ Faster queries (can avoid full table scans)
 - ✅ Faster joins (indexed foreign keys)
 - ✅ Faster sorts (indexed timestamp fields)
 
 **Costs**:
+
 - ❌ Slower inserts/updates (index must be updated)
 - ❌ Disk space (indexes can be 30-50% of table size)
 - ❌ Maintenance overhead (VACUUM, REINDEX)
@@ -499,18 +512,19 @@ model OrganizationUnit {
 ```
 
 **Key details**:
+
 - Named relation (`"OrgUnitHierarchy"`) required for self-references
 - `onDelete: Restrict` prevents accidental deletion of parents with children
 - Always index `parentId` for hierarchy traversal
 
 ### Deletion Behaviors
 
-| Behavior | Use Case | Example |
-|----------|----------|---------|
-| `Cascade` | Child is meaningless without parent | `Contract` → `Vendor` deleted = delete all contracts |
-| `Restrict` | Prevent deletion if children exist | `Person` → Prevent delete if audit logs exist |
-| `SetNull` | Child can exist without parent | `Person.managerId` → Manager deleted = set to null |
-| `NoAction` | Database handles it (rare) | Legacy systems |
+| Behavior   | Use Case                            | Example                                              |
+| ---------- | ----------------------------------- | ---------------------------------------------------- |
+| `Cascade`  | Child is meaningless without parent | `Contract` → `Vendor` deleted = delete all contracts |
+| `Restrict` | Prevent deletion if children exist  | `Person` → Prevent delete if audit logs exist        |
+| `SetNull`  | Child can exist without parent      | `Person.managerId` → Manager deleted = set to null   |
+| `NoAction` | Database handles it (rare)          | Legacy systems                                       |
 
 **Rule**: Use `Cascade` for owned relationships, `Restrict` for audit/history.
 
@@ -521,12 +535,14 @@ model OrganizationUnit {
 ### When to Use JSON
 
 **✅ Good use cases**:
+
 - Semi-structured metadata (varies by entity type)
 - API responses stored as-is
 - Configuration objects (UI preferences, settings)
 - Polymorphic data (different structures per type)
 
 **❌ Avoid for**:
+
 - Queryable/filterable data (use real columns)
 - Highly structured data (use relations)
 - Data requiring integrity constraints
@@ -550,20 +566,23 @@ model FieldDefinition {
 Use Prisma helpers for type-safe JSON access:
 
 ```typescript
-import { serializeJsonField, deserializeJsonField } from '@/infrastructure/database/prisma/prisma-helpers';
+import {
+  serializeJsonField,
+  deserializeJsonField,
+} from "@/infrastructure/database/prisma/prisma-helpers";
 
 // Write
 const config = { defaultValue: "foo", required: true };
 await prisma.fieldDefinition.create({
   data: {
     name: "ExampleField",
-    config: serializeJsonField(config),  // Type-safe serialization
-  }
+    config: serializeJsonField(config), // Type-safe serialization
+  },
 });
 
 // Read
 const field = await prisma.fieldDefinition.findUnique({ where: { id } });
-const config = deserializeJsonField<FieldConfig>(field.config);  // Type-safe with Zod
+const config = deserializeJsonField<FieldConfig>(field.config); // Type-safe with Zod
 ```
 
 **See**: [prisma-helpers.ts](../../src/infrastructure/database/prisma/prisma-helpers.ts) for implementation.
@@ -575,12 +594,14 @@ const config = deserializeJsonField<FieldConfig>(field.config);  // Type-safe wi
 ### Safe Migrations
 
 **Always safe** (can roll forward without data loss):
+
 - ✅ Adding nullable columns
 - ✅ Adding columns with defaults
 - ✅ Adding indexes
 - ✅ Creating new tables
 
 **Potentially unsafe** (may lose data or fail):
+
 - ⚠️ Dropping columns (data loss!)
 - ⚠️ Changing column types (may fail if incompatible)
 - ⚠️ Adding non-nullable columns without defaults (fails if table not empty)
@@ -620,6 +641,7 @@ new_fields
 ### Backward Compatibility
 
 **Adding fields**:
+
 ```prisma
 // ✅ Nullable or with default
 newField  String?           // Safe: nullable
@@ -630,6 +652,7 @@ newField  String  // FAILS if table not empty!
 ```
 
 **Removing fields**: Use two-step process:
+
 1. Mark as deprecated, make nullable
 2. Wait for code deployment
 3. Remove field in separate migration

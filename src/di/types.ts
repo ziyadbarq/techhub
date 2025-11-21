@@ -253,6 +253,65 @@ export const DI_TOKENS = {
   UpdateFieldDefinitionUseCase: Symbol.for("UpdateFieldDefinitionUseCase"),
   DeleteFieldDefinitionUseCase: Symbol.for("DeleteFieldDefinitionUseCase"),
 
+  // Assets: Asset Category Repository
+  IAssetCategoryRepository: Symbol.for("IAssetCategoryRepository"),
+
+  // Assets: Asset Category Use Cases
+  CreateAssetCategoryUseCase: Symbol.for("CreateAssetCategoryUseCase"),
+  GetAssetCategoryUseCase: Symbol.for("GetAssetCategoryUseCase"),
+  ListAssetCategoriesUseCase: Symbol.for("ListAssetCategoriesUseCase"),
+  UpdateAssetCategoryUseCase: Symbol.for("UpdateAssetCategoryUseCase"),
+  DeleteAssetCategoryUseCase: Symbol.for("DeleteAssetCategoryUseCase"),
+
+  // Assets: Asset Model Repository
+  IAssetModelRepository: Symbol.for("IAssetModelRepository"),
+
+  // Assets: Asset Model Use Cases
+  CreateAssetModelUseCase: Symbol.for("CreateAssetModelUseCase"),
+  GetAssetModelUseCase: Symbol.for("GetAssetModelUseCase"),
+  ListAssetModelsUseCase: Symbol.for("ListAssetModelsUseCase"),
+  UpdateAssetModelUseCase: Symbol.for("UpdateAssetModelUseCase"),
+  DeleteAssetModelUseCase: Symbol.for("DeleteAssetModelUseCase"),
+
+  // Assets: Asset Repository
+  IAssetRepository: Symbol.for("IAssetRepository"),
+
+  // Assets: Asset Use Cases
+  CreateAssetUseCase: Symbol.for("CreateAssetUseCase"),
+  GetAssetUseCase: Symbol.for("GetAssetUseCase"),
+  ListAssetsUseCase: Symbol.for("ListAssetsUseCase"),
+  UpdateAssetUseCase: Symbol.for("UpdateAssetUseCase"),
+  DeleteAssetUseCase: Symbol.for("DeleteAssetUseCase"),
+
+  // Assets: Asset Assignment Repository
+  IAssetAssignmentRepository: Symbol.for("IAssetAssignmentRepository"),
+
+  // Assets: Asset Assignment Use Cases
+  CreateAssetAssignmentUseCase: Symbol.for("CreateAssetAssignmentUseCase"),
+  GetAssetAssignmentUseCase: Symbol.for("GetAssetAssignmentUseCase"),
+  ListAssetAssignmentsUseCase: Symbol.for("ListAssetAssignmentsUseCase"),
+  UpdateAssetAssignmentUseCase: Symbol.for("UpdateAssetAssignmentUseCase"),
+  DeleteAssetAssignmentUseCase: Symbol.for("DeleteAssetAssignmentUseCase"),
+
+  // Inventory: Stock Location Repository
+  IStockLocationRepository: Symbol.for("IStockLocationRepository"),
+
+  // Inventory: Stock Location Use Cases
+  CreateStockLocationUseCase: Symbol.for("CreateStockLocationUseCase"),
+  GetStockLocationUseCase: Symbol.for("GetStockLocationUseCase"),
+  ListStockLocationsUseCase: Symbol.for("ListStockLocationsUseCase"),
+  UpdateStockLocationUseCase: Symbol.for("UpdateStockLocationUseCase"),
+  DeleteStockLocationUseCase: Symbol.for("DeleteStockLocationUseCase"),
+
+  // Inventory: Stock Movement Repository
+  IStockMovementRepository: Symbol.for("IStockMovementRepository"),
+
+  // Inventory: Stock Movement Use Cases
+  CreateStockMovementUseCase: Symbol.for("CreateStockMovementUseCase"),
+  GetStockMovementUseCase: Symbol.for("GetStockMovementUseCase"),
+  ListStockMovementsUseCase: Symbol.for("ListStockMovementsUseCase"),
+  DeleteStockMovementUseCase: Symbol.for("DeleteStockMovementUseCase"),
+
   // ==========================================
   // Infrastructure Tokens
   // ==========================================

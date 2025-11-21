@@ -84,6 +84,93 @@ This assets app follows the **Dependency Inversion Principle** - high-level busi
 
 ---
 
+## 2.5. Everyday Workflow
+
+Before coding, follow these core practices to maintain consistency and quality:
+
+### 1. Understand the Slice
+
+Trace the complete path: **Presentation → Controllers → Use Cases → Repositories**. Most refactors touch all layers - don't short-circuit the architecture.
+
+### 2. Reuse the DI Container
+
+Resolve dependencies via `getContainer()`/`resolve()` and bindings in `src/di/modules/*`. **Never** instantiate repositories or services with `new` directly.
+
+```typescript
+// ✅ Correct - Use DI container
+const container = getContainer();
+const repository = container.get<ITaskRepository>(DI_TOKENS.TaskRepository);
+
+// ❌ Wrong - Direct instantiation
+const repository = new PrismaTaskRepository(prisma, logger);
+```
+
+### 3. Access Sessions via getSession()
+
+Server routes/layouts must call `src/lib/auth/session.ts`. **Do not** import Better Auth "server" helpers directly; the session utility wraps `/api/auth/get-session` + cookie handling.
+
+```typescript
+// ✅ Correct
+import { getSession } from "@/lib/auth/session";
+const session = await getSession();
+
+// ❌ Wrong
+import { auth } from "@/lib/auth/better-auth";
+const session = await auth.api.getSession();
+```
+
+### 4. Permission Checks
+
+Use `hasAnyPermission`/`checkPermissionUseCase` plus `permissionCache`. Ownership logic lives in `CheckPermissionUseCase` - keep new checks consistent.
+
+```typescript
+// ✅ Correct - Check permissions in server actions
+import { requirePermission } from "@/lib/auth/permissions";
+
+export async function updateTaskAction(data: UpdateTaskDTO) {
+  await requirePermission(PERMISSIONS.TASKS.UPDATE);
+  // ... update logic
+}
+```
+
+### 5. Logging
+
+Prefer `ILoggerService` injection; structured logs already redact sensitive info. Use `logger.startTimer/endTimer` for DB + cache instrumentation.
+
+```typescript
+// ✅ Correct - DI logger
+@injectable()
+export class MyService {
+  constructor(
+    @inject(DI_TOKENS.LoggerService)
+    private readonly logger: ILoggerService,
+  ) {}
+
+  async doSomething() {
+    this.logger.info("Operation started", { context: "data" });
+  }
+}
+
+// ❌ Wrong - Console logging
+console.log("Operation started");
+```
+
+### 6. Before Sending Changes
+
+Run the validation suite:
+
+```bash
+npm run lint        # ESLint + React Compiler rules
+npm run type-check  # TypeScript validation
+npm run test        # Unit + integration tests
+```
+
+**Note**: The test suite includes RBAC integration tests; expect console output from repository logging.
+
+**See**: [Testing Strategy](#17-testing-strategy) for complete testing guide.
+
+---
+
 ## 3. Quick Start
 
 ### Installation
@@ -965,6 +1052,168 @@ export function TaskList() {
 
 **Rule**: Keep components server-side by default, only add `"use client"` when you need interactivity.
 
+### React 19 Patterns
+
+React 19 introduces new hooks for forms and optimistic updates. This project uses React 19.2 integrated with Next.js 16.
+
+#### useActionState Hook
+
+Handle form actions with error states and loading indicators:
+
+```typescript
+import { useActionState } from 'react';
+
+function MyForm() {
+  const [error, submitAction, isPending] = useActionState(
+    async (previousState, formData) => {
+      const error = await updateData(formData);
+      if (error) return error;
+      redirect("/success");
+      return null;
+    },
+    null
+  );
+
+  return (
+    <form action={submitAction}>
+      <input name="field" />
+      <button disabled={isPending}>
+        {isPending ? "Submitting..." : "Submit"}
+      </button>
+      {error && <p className="text-red-500">{error}</p>}
+    </form>
+  );
+}
+```
+
+**Use cases**:
+
+- Form submission with error handling
+- Loading states during async operations
+- Progressive enhancement (works without JavaScript)
+
+#### useFormStatus Hook
+
+Access parent form status in child components:
+
+```typescript
+import { useFormStatus } from 'react-dom';
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <button type="submit" disabled={pending}>
+      {pending ? "Saving..." : "Save"}
+    </button>
+  );
+}
+
+// Use in form
+function MyForm() {
+  return (
+    <form action={submitAction}>
+      <input name="field" />
+      <SubmitButton />
+    </form>
+  );
+}
+```
+
+**Use cases**:
+
+- Reusable submit buttons
+- Form-wide loading indicators
+- Coordinated state across form components
+
+#### useOptimistic Hook
+
+Implement optimistic UI updates for better perceived performance:
+
+```typescript
+import { useOptimistic } from 'react';
+
+function TaskList({ tasks, onUpdate }) {
+  const [optimisticTasks, setOptimisticTasks] = useOptimistic(
+    tasks,
+    (state, newTask) => [...state, newTask]
+  );
+
+  const handleAdd = async (formData) => {
+    const newTask = { id: crypto.randomUUID(), ...formData };
+
+    // Optimistically add task (instant UI update)
+    setOptimisticTasks(newTask);
+
+    // Actually create task (may fail)
+    await onUpdate(newTask);
+  };
+
+  return (
+    <div>
+      {optimisticTasks.map((task) => (
+        <TaskItem key={task.id} task={task} />
+      ))}
+      <button onClick={handleAdd}>Add Task</button>
+    </div>
+  );
+}
+```
+
+**Use cases**:
+
+- Instant UI feedback for async operations
+- Better perceived performance
+- Automatic rollback on failure
+
+#### React Compiler
+
+The project includes `eslint-plugin-react-compiler` for automatic memoization and performance optimization:
+
+```javascript
+// eslint.config.mjs
+import reactCompiler from "eslint-plugin-react-compiler";
+
+export default [
+  {
+    plugins: {
+      "react-compiler": reactCompiler,
+    },
+    rules: {
+      "react-compiler/react-compiler": "error",
+    },
+  },
+];
+```
+
+**Benefits**:
+
+- Automatic memoization suggestions
+- Performance optimization recommendations
+- React Rules enforcement
+
+**Best Practice**: In React Hook Form components audited by React Compiler, prefer `useWatch` over `form.watch` to avoid "incompatible library" warnings.
+
+#### JSX Namespace Augmentation
+
+React 19 requires JSX namespace augmentation to be wrapped in module declarations:
+
+```typescript
+// global.d.ts
+declare module "react" {
+  namespace JSX {
+    interface IntrinsicElements {
+      "custom-element": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      >;
+    }
+  }
+}
+```
+
+**See**: [global.d.ts](../../global.d.ts) for implementation.
+
 ---
 
 ## 11. Dependency Injection
@@ -1803,6 +2052,29 @@ import "reflect-metadata";
 - ❌ Avoid `any` type
 - ❌ Don't use `@ts-ignore`
 
+#### Type-Only Imports (CRITICAL)
+
+**ALWAYS use `import type` for type-only imports** (interfaces, types, type aliases):
+
+```typescript
+// ✅ Correct - Type-only import
+import type { ITaskRepository } from "@/core/repositories/task.repository.interface";
+import type { Task } from "@/core/domain/entities/task.entity";
+
+// ❌ Incorrect - Value import for types
+import { ITaskRepository } from "@/core/repositories/task.repository.interface";
+```
+
+**Why**: Turbopack (Next.js 16) strictly enforces type-only imports. Using value imports for interfaces causes "module has no exports" errors.
+
+**ESLint Rule**: `@typescript-eslint/consistent-type-imports` enforces this pattern automatically.
+
+**Rule of Thumb**:
+
+- `import type { ... }` for interfaces, types, and type aliases
+- `import { ... }` for classes, functions, and values
+- VSCode/IDE auto-imports often suggest value imports - always verify!
+
 ### React
 
 - ✅ Server components by default
@@ -1823,6 +2095,46 @@ import "reflect-metadata";
 - ✅ Use `handleControllerError` in controllers
 - ✅ Log errors with context
 - ❌ Don't swallow errors silently
+
+### Code Quality & Linting
+
+#### Unused Variables
+
+Prefix intentionally unused variables/parameters with underscore to pass linting:
+
+```typescript
+// Interface contract parameter not used yet
+private async writePrompts(_presentationId: string): Promise<void> {
+  // Implementation coming later
+}
+
+// Callback parameter not needed
+array.map((_item, index) => index);
+
+// Error in catch block not used
+try {
+  await riskyOperation();
+} catch (_error) {
+  // Error logged elsewhere, just need to catch
+}
+```
+
+**ESLint Rule**: `@typescript-eslint/no-unused-vars` with:
+
+- `argsIgnorePattern: "^_"`
+- `varsIgnorePattern: "^_"`
+- `caughtErrorsIgnorePattern: "^_"`
+
+**When to use**:
+
+- Interface methods not yet implemented
+- Callback parameters required by signature but not used
+- Error variables when error details aren't needed
+
+**When NOT to use**:
+
+- Production code that will never use the parameter (remove it instead)
+- Hiding legitimate unused variable warnings
 
 ---
 

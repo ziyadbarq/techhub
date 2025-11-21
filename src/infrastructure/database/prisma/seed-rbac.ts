@@ -661,6 +661,221 @@ const SYSTEM_PERMISSIONS = [
     resource: "field-definitions",
     action: "manage",
   },
+
+  // Assets: Asset Categories
+  {
+    name: PERMISSIONS.ASSET_CATEGORIES_VIEW,
+    displayName: "View Asset Categories",
+    description: "View asset category list and details",
+    resource: "asset-categories",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.ASSET_CATEGORIES_CREATE,
+    displayName: "Create Asset Categories",
+    description: "Create new asset categories",
+    resource: "asset-categories",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.ASSET_CATEGORIES_UPDATE,
+    displayName: "Update Asset Categories",
+    description: "Edit asset category information",
+    resource: "asset-categories",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.ASSET_CATEGORIES_DELETE,
+    displayName: "Delete Asset Categories",
+    description: "Remove asset categories",
+    resource: "asset-categories",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.ASSET_CATEGORIES_MANAGE,
+    displayName: "Manage Asset Categories",
+    description: "Full asset category management access",
+    resource: "asset-categories",
+    action: "manage",
+  },
+
+  // Assets: Asset Models
+  {
+    name: PERMISSIONS.ASSET_MODELS_VIEW,
+    displayName: "View Asset Models",
+    description: "View asset model list and details",
+    resource: "asset-models",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.ASSET_MODELS_CREATE,
+    displayName: "Create Asset Models",
+    description: "Create new asset models",
+    resource: "asset-models",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.ASSET_MODELS_UPDATE,
+    displayName: "Update Asset Models",
+    description: "Edit asset model information",
+    resource: "asset-models",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.ASSET_MODELS_DELETE,
+    displayName: "Delete Asset Models",
+    description: "Remove asset models",
+    resource: "asset-models",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.ASSET_MODELS_MANAGE,
+    displayName: "Manage Asset Models",
+    description: "Full asset model management access",
+    resource: "asset-models",
+    action: "manage",
+  },
+
+  // Assets: Assets
+  {
+    name: PERMISSIONS.ASSETS_VIEW,
+    displayName: "View Assets",
+    description: "View asset list and details",
+    resource: "assets",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.ASSETS_CREATE,
+    displayName: "Create Assets",
+    description: "Create new assets",
+    resource: "assets",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.ASSETS_UPDATE,
+    displayName: "Update Assets",
+    description: "Edit asset information",
+    resource: "assets",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.ASSETS_DELETE,
+    displayName: "Delete Assets",
+    description: "Remove assets",
+    resource: "assets",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.ASSETS_MANAGE,
+    displayName: "Manage Assets",
+    description: "Full asset management access",
+    resource: "assets",
+    action: "manage",
+  },
+
+  // Assets: Asset Assignments
+  {
+    name: PERMISSIONS.ASSET_ASSIGNMENTS_VIEW,
+    displayName: "View Asset Assignments",
+    description: "View asset assignment list and details",
+    resource: "asset-assignments",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.ASSET_ASSIGNMENTS_CREATE,
+    displayName: "Create Asset Assignments",
+    description: "Create new asset assignments",
+    resource: "asset-assignments",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.ASSET_ASSIGNMENTS_UPDATE,
+    displayName: "Update Asset Assignments",
+    description: "Edit asset assignment information",
+    resource: "asset-assignments",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.ASSET_ASSIGNMENTS_DELETE,
+    displayName: "Delete Asset Assignments",
+    description: "Remove asset assignments",
+    resource: "asset-assignments",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.ASSET_ASSIGNMENTS_MANAGE,
+    displayName: "Manage Asset Assignments",
+    description: "Full asset assignment management access",
+    resource: "asset-assignments",
+    action: "manage",
+  },
+
+  // Inventory: Stock Locations
+  {
+    name: PERMISSIONS.STOCK_LOCATIONS_VIEW,
+    displayName: "View Stock Locations",
+    description: "View stock location list and details",
+    resource: "stock-locations",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.STOCK_LOCATIONS_CREATE,
+    displayName: "Create Stock Locations",
+    description: "Create new stock locations",
+    resource: "stock-locations",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.STOCK_LOCATIONS_UPDATE,
+    displayName: "Update Stock Locations",
+    description: "Edit stock location information",
+    resource: "stock-locations",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.STOCK_LOCATIONS_DELETE,
+    displayName: "Delete Stock Locations",
+    description: "Remove stock locations",
+    resource: "stock-locations",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.STOCK_LOCATIONS_MANAGE,
+    displayName: "Manage Stock Locations",
+    description: "Full stock location management access",
+    resource: "stock-locations",
+    action: "manage",
+  },
+
+  // Inventory: Stock Movements
+  {
+    name: PERMISSIONS.STOCK_MOVEMENTS_VIEW,
+    displayName: "View Stock Movements",
+    description: "View stock movement list and details",
+    resource: "stock-movements",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.STOCK_MOVEMENTS_CREATE,
+    displayName: "Create Stock Movements",
+    description: "Record new stock movements",
+    resource: "stock-movements",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.STOCK_MOVEMENTS_DELETE,
+    displayName: "Delete Stock Movements",
+    description: "Remove stock movements (corrections only)",
+    resource: "stock-movements",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.STOCK_MOVEMENTS_MANAGE,
+    displayName: "Manage Stock Movements",
+    description: "Full stock movement management access",
+    resource: "stock-movements",
+    action: "manage",
+  },
 ];
 
 /**

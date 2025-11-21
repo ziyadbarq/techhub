@@ -7,6 +7,8 @@ import { listVendorsAction } from "@/interface-adapters/controllers/vendor.contr
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
+export const dynamic = "force-dynamic";
+
 export default async function VendorsPage() {
   await requirePermission(PERMISSIONS.VENDORS_VIEW);
 
