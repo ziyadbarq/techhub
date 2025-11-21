@@ -321,6 +321,8 @@ export type PersonWhereInput = {
   auditLogsChanged?: Prisma.AuditLogEntryListRelationFilter
   attachments?: Prisma.AttachmentListRelationFilter
   dataOwnerships?: Prisma.DataOwnershipListRelationFilter
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleListRelationFilter
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordListRelationFilter
 }
 
 export type PersonOrderByWithRelationInput = {
@@ -360,6 +362,8 @@ export type PersonOrderByWithRelationInput = {
   auditLogsChanged?: Prisma.AuditLogEntryOrderByRelationAggregateInput
   attachments?: Prisma.AttachmentOrderByRelationAggregateInput
   dataOwnerships?: Prisma.DataOwnershipOrderByRelationAggregateInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleOrderByRelationAggregateInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordOrderByRelationAggregateInput
 }
 
 export type PersonWhereUniqueInput = Prisma.AtLeast<{
@@ -402,6 +406,8 @@ export type PersonWhereUniqueInput = Prisma.AtLeast<{
   auditLogsChanged?: Prisma.AuditLogEntryListRelationFilter
   attachments?: Prisma.AttachmentListRelationFilter
   dataOwnerships?: Prisma.DataOwnershipListRelationFilter
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleListRelationFilter
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordListRelationFilter
 }, "id" | "userId" | "email" | "employeeId">
 
 export type PersonOrderByWithAggregationInput = {
@@ -490,6 +496,8 @@ export type PersonCreateInput = {
   auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonUncheckedCreateInput = {
@@ -524,6 +532,8 @@ export type PersonUncheckedCreateInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonUpdateInput = {
@@ -558,6 +568,8 @@ export type PersonUpdateInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateInput = {
@@ -592,6 +604,8 @@ export type PersonUncheckedUpdateInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonCreateManyInput = {
@@ -1027,6 +1041,38 @@ export type PersonUpdateOneRequiredWithoutStockMovementsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutStockMovementsInput, Prisma.PersonUpdateWithoutStockMovementsInput>, Prisma.PersonUncheckedUpdateWithoutStockMovementsInput>
 }
 
+export type PersonCreateNestedOneWithoutAssignedMaintenanceSchedulesInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutAssignedMaintenanceSchedulesInput, Prisma.PersonUncheckedCreateWithoutAssignedMaintenanceSchedulesInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutAssignedMaintenanceSchedulesInput
+  connect?: Prisma.PersonWhereUniqueInput
+}
+
+export type PersonUpdateOneWithoutAssignedMaintenanceSchedulesNestedInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutAssignedMaintenanceSchedulesInput, Prisma.PersonUncheckedCreateWithoutAssignedMaintenanceSchedulesInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutAssignedMaintenanceSchedulesInput
+  upsert?: Prisma.PersonUpsertWithoutAssignedMaintenanceSchedulesInput
+  disconnect?: Prisma.PersonWhereInput | boolean
+  delete?: Prisma.PersonWhereInput | boolean
+  connect?: Prisma.PersonWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutAssignedMaintenanceSchedulesInput, Prisma.PersonUpdateWithoutAssignedMaintenanceSchedulesInput>, Prisma.PersonUncheckedUpdateWithoutAssignedMaintenanceSchedulesInput>
+}
+
+export type PersonCreateNestedOneWithoutPerformedMaintenanceRecordsInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutPerformedMaintenanceRecordsInput, Prisma.PersonUncheckedCreateWithoutPerformedMaintenanceRecordsInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutPerformedMaintenanceRecordsInput
+  connect?: Prisma.PersonWhereUniqueInput
+}
+
+export type PersonUpdateOneWithoutPerformedMaintenanceRecordsNestedInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutPerformedMaintenanceRecordsInput, Prisma.PersonUncheckedCreateWithoutPerformedMaintenanceRecordsInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutPerformedMaintenanceRecordsInput
+  upsert?: Prisma.PersonUpsertWithoutPerformedMaintenanceRecordsInput
+  disconnect?: Prisma.PersonWhereInput | boolean
+  delete?: Prisma.PersonWhereInput | boolean
+  connect?: Prisma.PersonWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutPerformedMaintenanceRecordsInput, Prisma.PersonUpdateWithoutPerformedMaintenanceRecordsInput>, Prisma.PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput>
+}
+
 export type PersonCreateNestedOneWithoutDataOwnershipsInput = {
   create?: Prisma.XOR<Prisma.PersonCreateWithoutDataOwnershipsInput, Prisma.PersonUncheckedCreateWithoutDataOwnershipsInput>
   connectOrCreate?: Prisma.PersonCreateOrConnectWithoutDataOwnershipsInput
@@ -1132,6 +1178,8 @@ export type PersonCreateWithoutUserInput = {
   auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonUncheckedCreateWithoutUserInput = {
@@ -1165,6 +1213,8 @@ export type PersonUncheckedCreateWithoutUserInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonCreateOrConnectWithoutUserInput = {
@@ -1214,6 +1264,8 @@ export type PersonUpdateWithoutUserInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutUserInput = {
@@ -1247,6 +1299,8 @@ export type PersonUncheckedUpdateWithoutUserInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonCreateWithoutPrimaryRoleInput = {
@@ -1280,6 +1334,8 @@ export type PersonCreateWithoutPrimaryRoleInput = {
   auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonUncheckedCreateWithoutPrimaryRoleInput = {
@@ -1313,6 +1369,8 @@ export type PersonUncheckedCreateWithoutPrimaryRoleInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonCreateOrConnectWithoutPrimaryRoleInput = {
@@ -1399,6 +1457,8 @@ export type PersonCreateWithoutManagedOrgUnitsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonUncheckedCreateWithoutManagedOrgUnitsInput = {
@@ -1432,6 +1492,8 @@ export type PersonUncheckedCreateWithoutManagedOrgUnitsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonCreateOrConnectWithoutManagedOrgUnitsInput = {
@@ -1470,6 +1532,8 @@ export type PersonCreateWithoutOrgUnitInput = {
   auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonUncheckedCreateWithoutOrgUnitInput = {
@@ -1503,6 +1567,8 @@ export type PersonUncheckedCreateWithoutOrgUnitInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonCreateOrConnectWithoutOrgUnitInput = {
@@ -1557,6 +1623,8 @@ export type PersonUpdateWithoutManagedOrgUnitsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutManagedOrgUnitsInput = {
@@ -1590,6 +1658,8 @@ export type PersonUncheckedUpdateWithoutManagedOrgUnitsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUpsertWithWhereUniqueWithoutOrgUnitInput = {
@@ -1639,6 +1709,8 @@ export type PersonCreateWithoutDirectReportsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonUncheckedCreateWithoutDirectReportsInput = {
@@ -1672,6 +1744,8 @@ export type PersonUncheckedCreateWithoutDirectReportsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonCreateOrConnectWithoutDirectReportsInput = {
@@ -1710,6 +1784,8 @@ export type PersonCreateWithoutManagerInput = {
   auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonUncheckedCreateWithoutManagerInput = {
@@ -1743,6 +1819,8 @@ export type PersonUncheckedCreateWithoutManagerInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonCreateOrConnectWithoutManagerInput = {
@@ -1797,6 +1875,8 @@ export type PersonUpdateWithoutDirectReportsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDirectReportsInput = {
@@ -1830,6 +1910,8 @@ export type PersonUncheckedUpdateWithoutDirectReportsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUpsertWithWhereUniqueWithoutManagerInput = {
@@ -1879,6 +1961,8 @@ export type PersonCreateWithoutRoleAssignmentsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonUncheckedCreateWithoutRoleAssignmentsInput = {
@@ -1912,6 +1996,8 @@ export type PersonUncheckedCreateWithoutRoleAssignmentsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonCreateOrConnectWithoutRoleAssignmentsInput = {
@@ -1961,6 +2047,8 @@ export type PersonUpdateWithoutRoleAssignmentsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutRoleAssignmentsInput = {
@@ -1994,6 +2082,8 @@ export type PersonUncheckedUpdateWithoutRoleAssignmentsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonCreateWithoutLocationInput = {
@@ -2027,6 +2117,8 @@ export type PersonCreateWithoutLocationInput = {
   auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonUncheckedCreateWithoutLocationInput = {
@@ -2060,6 +2152,8 @@ export type PersonUncheckedCreateWithoutLocationInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonCreateOrConnectWithoutLocationInput = {
@@ -2119,6 +2213,8 @@ export type PersonCreateWithoutConfigurationItemsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonUncheckedCreateWithoutConfigurationItemsInput = {
@@ -2152,6 +2248,8 @@ export type PersonUncheckedCreateWithoutConfigurationItemsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonCreateOrConnectWithoutConfigurationItemsInput = {
@@ -2201,6 +2299,8 @@ export type PersonUpdateWithoutConfigurationItemsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutConfigurationItemsInput = {
@@ -2234,6 +2334,8 @@ export type PersonUncheckedUpdateWithoutConfigurationItemsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonCreateWithoutStockMovementsInput = {
@@ -2267,6 +2369,8 @@ export type PersonCreateWithoutStockMovementsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonUncheckedCreateWithoutStockMovementsInput = {
@@ -2300,6 +2404,8 @@ export type PersonUncheckedCreateWithoutStockMovementsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonCreateOrConnectWithoutStockMovementsInput = {
@@ -2349,6 +2455,8 @@ export type PersonUpdateWithoutStockMovementsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutStockMovementsInput = {
@@ -2382,6 +2490,320 @@ export type PersonUncheckedUpdateWithoutStockMovementsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+}
+
+export type PersonCreateWithoutAssignedMaintenanceSchedulesInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  title?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutPersonInput
+  orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
+  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
+  manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
+  directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
+  location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
+  managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+}
+
+export type PersonUncheckedCreateWithoutAssignedMaintenanceSchedulesInput = {
+  id?: string
+  userId?: string | null
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  orgUnitId: string
+  primaryRoleId: string
+  managerId?: string | null
+  title?: string | null
+  locationId?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemUncheckedCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+}
+
+export type PersonCreateOrConnectWithoutAssignedMaintenanceSchedulesInput = {
+  where: Prisma.PersonWhereUniqueInput
+  create: Prisma.XOR<Prisma.PersonCreateWithoutAssignedMaintenanceSchedulesInput, Prisma.PersonUncheckedCreateWithoutAssignedMaintenanceSchedulesInput>
+}
+
+export type PersonUpsertWithoutAssignedMaintenanceSchedulesInput = {
+  update: Prisma.XOR<Prisma.PersonUpdateWithoutAssignedMaintenanceSchedulesInput, Prisma.PersonUncheckedUpdateWithoutAssignedMaintenanceSchedulesInput>
+  create: Prisma.XOR<Prisma.PersonCreateWithoutAssignedMaintenanceSchedulesInput, Prisma.PersonUncheckedCreateWithoutAssignedMaintenanceSchedulesInput>
+  where?: Prisma.PersonWhereInput
+}
+
+export type PersonUpdateToOneWithWhereWithoutAssignedMaintenanceSchedulesInput = {
+  where?: Prisma.PersonWhereInput
+  data: Prisma.XOR<Prisma.PersonUpdateWithoutAssignedMaintenanceSchedulesInput, Prisma.PersonUncheckedUpdateWithoutAssignedMaintenanceSchedulesInput>
+}
+
+export type PersonUpdateWithoutAssignedMaintenanceSchedulesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutPersonNestedInput
+  orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
+  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
+  manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
+  directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
+  location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+}
+
+export type PersonUncheckedUpdateWithoutAssignedMaintenanceSchedulesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
+  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUncheckedUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+}
+
+export type PersonCreateWithoutPerformedMaintenanceRecordsInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  title?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutPersonInput
+  orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
+  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
+  manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
+  directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
+  location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
+  managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+}
+
+export type PersonUncheckedCreateWithoutPerformedMaintenanceRecordsInput = {
+  id?: string
+  userId?: string | null
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  orgUnitId: string
+  primaryRoleId: string
+  managerId?: string | null
+  title?: string | null
+  locationId?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemUncheckedCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+}
+
+export type PersonCreateOrConnectWithoutPerformedMaintenanceRecordsInput = {
+  where: Prisma.PersonWhereUniqueInput
+  create: Prisma.XOR<Prisma.PersonCreateWithoutPerformedMaintenanceRecordsInput, Prisma.PersonUncheckedCreateWithoutPerformedMaintenanceRecordsInput>
+}
+
+export type PersonUpsertWithoutPerformedMaintenanceRecordsInput = {
+  update: Prisma.XOR<Prisma.PersonUpdateWithoutPerformedMaintenanceRecordsInput, Prisma.PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput>
+  create: Prisma.XOR<Prisma.PersonCreateWithoutPerformedMaintenanceRecordsInput, Prisma.PersonUncheckedCreateWithoutPerformedMaintenanceRecordsInput>
+  where?: Prisma.PersonWhereInput
+}
+
+export type PersonUpdateToOneWithWhereWithoutPerformedMaintenanceRecordsInput = {
+  where?: Prisma.PersonWhereInput
+  data: Prisma.XOR<Prisma.PersonUpdateWithoutPerformedMaintenanceRecordsInput, Prisma.PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput>
+}
+
+export type PersonUpdateWithoutPerformedMaintenanceRecordsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutPersonNestedInput
+  orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
+  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
+  manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
+  directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
+  location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+}
+
+export type PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
+  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUncheckedUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
 }
 
 export type PersonCreateWithoutDataOwnershipsInput = {
@@ -2415,6 +2837,8 @@ export type PersonCreateWithoutDataOwnershipsInput = {
   verificationItems?: Prisma.VerificationItemCreateNestedManyWithoutVerifierPersonInput
   auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonUncheckedCreateWithoutDataOwnershipsInput = {
@@ -2448,6 +2872,8 @@ export type PersonUncheckedCreateWithoutDataOwnershipsInput = {
   verificationItems?: Prisma.VerificationItemUncheckedCreateNestedManyWithoutVerifierPersonInput
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonCreateOrConnectWithoutDataOwnershipsInput = {
@@ -2497,6 +2923,8 @@ export type PersonUpdateWithoutDataOwnershipsInput = {
   verificationItems?: Prisma.VerificationItemUpdateManyWithoutVerifierPersonNestedInput
   auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDataOwnershipsInput = {
@@ -2530,6 +2958,8 @@ export type PersonUncheckedUpdateWithoutDataOwnershipsInput = {
   verificationItems?: Prisma.VerificationItemUncheckedUpdateManyWithoutVerifierPersonNestedInput
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonCreateWithoutVerificationCampaignsInput = {
@@ -2563,6 +2993,8 @@ export type PersonCreateWithoutVerificationCampaignsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonUncheckedCreateWithoutVerificationCampaignsInput = {
@@ -2596,6 +3028,8 @@ export type PersonUncheckedCreateWithoutVerificationCampaignsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonCreateOrConnectWithoutVerificationCampaignsInput = {
@@ -2645,6 +3079,8 @@ export type PersonUpdateWithoutVerificationCampaignsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutVerificationCampaignsInput = {
@@ -2678,6 +3114,8 @@ export type PersonUncheckedUpdateWithoutVerificationCampaignsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonCreateWithoutVerificationItemsInput = {
@@ -2711,6 +3149,8 @@ export type PersonCreateWithoutVerificationItemsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonUncheckedCreateWithoutVerificationItemsInput = {
@@ -2744,6 +3184,8 @@ export type PersonUncheckedCreateWithoutVerificationItemsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonCreateOrConnectWithoutVerificationItemsInput = {
@@ -2793,6 +3235,8 @@ export type PersonUpdateWithoutVerificationItemsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutVerificationItemsInput = {
@@ -2826,6 +3270,8 @@ export type PersonUncheckedUpdateWithoutVerificationItemsInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonCreateWithoutAuditLogsChangedInput = {
@@ -2859,6 +3305,8 @@ export type PersonCreateWithoutAuditLogsChangedInput = {
   verificationItems?: Prisma.VerificationItemCreateNestedManyWithoutVerifierPersonInput
   attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonUncheckedCreateWithoutAuditLogsChangedInput = {
@@ -2892,6 +3340,8 @@ export type PersonUncheckedCreateWithoutAuditLogsChangedInput = {
   verificationItems?: Prisma.VerificationItemUncheckedCreateNestedManyWithoutVerifierPersonInput
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonCreateOrConnectWithoutAuditLogsChangedInput = {
@@ -2941,6 +3391,8 @@ export type PersonUpdateWithoutAuditLogsChangedInput = {
   verificationItems?: Prisma.VerificationItemUpdateManyWithoutVerifierPersonNestedInput
   attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutAuditLogsChangedInput = {
@@ -2974,6 +3426,8 @@ export type PersonUncheckedUpdateWithoutAuditLogsChangedInput = {
   verificationItems?: Prisma.VerificationItemUncheckedUpdateManyWithoutVerifierPersonNestedInput
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonCreateWithoutAttachmentsInput = {
@@ -3007,6 +3461,8 @@ export type PersonCreateWithoutAttachmentsInput = {
   verificationItems?: Prisma.VerificationItemCreateNestedManyWithoutVerifierPersonInput
   auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonUncheckedCreateWithoutAttachmentsInput = {
@@ -3040,6 +3496,8 @@ export type PersonUncheckedCreateWithoutAttachmentsInput = {
   verificationItems?: Prisma.VerificationItemUncheckedCreateNestedManyWithoutVerifierPersonInput
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
 }
 
 export type PersonCreateOrConnectWithoutAttachmentsInput = {
@@ -3089,6 +3547,8 @@ export type PersonUpdateWithoutAttachmentsInput = {
   verificationItems?: Prisma.VerificationItemUpdateManyWithoutVerifierPersonNestedInput
   auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutAttachmentsInput = {
@@ -3122,6 +3582,8 @@ export type PersonUncheckedUpdateWithoutAttachmentsInput = {
   verificationItems?: Prisma.VerificationItemUncheckedUpdateManyWithoutVerifierPersonNestedInput
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonCreateManyPrimaryRoleInput = {
@@ -3178,6 +3640,8 @@ export type PersonUpdateWithoutPrimaryRoleInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutPrimaryRoleInput = {
@@ -3211,6 +3675,8 @@ export type PersonUncheckedUpdateWithoutPrimaryRoleInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateManyWithoutPrimaryRoleInput = {
@@ -3290,6 +3756,8 @@ export type PersonUpdateWithoutOrgUnitInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutOrgUnitInput = {
@@ -3323,6 +3791,8 @@ export type PersonUncheckedUpdateWithoutOrgUnitInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateManyWithoutOrgUnitInput = {
@@ -3402,6 +3872,8 @@ export type PersonUpdateWithoutManagerInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutManagerInput = {
@@ -3435,6 +3907,8 @@ export type PersonUncheckedUpdateWithoutManagerInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateManyWithoutManagerInput = {
@@ -3514,6 +3988,8 @@ export type PersonUpdateWithoutLocationInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutLocationInput = {
@@ -3547,6 +4023,8 @@ export type PersonUncheckedUpdateWithoutLocationInput = {
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
 }
 
 export type PersonUncheckedUpdateManyWithoutLocationInput = {
@@ -3588,6 +4066,8 @@ export type PersonCountOutputType = {
   auditLogsChanged: number
   attachments: number
   dataOwnerships: number
+  assignedMaintenanceSchedules: number
+  performedMaintenanceRecords: number
 }
 
 export type PersonCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3601,6 +4081,8 @@ export type PersonCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   auditLogsChanged?: boolean | PersonCountOutputTypeCountAuditLogsChangedArgs
   attachments?: boolean | PersonCountOutputTypeCountAttachmentsArgs
   dataOwnerships?: boolean | PersonCountOutputTypeCountDataOwnershipsArgs
+  assignedMaintenanceSchedules?: boolean | PersonCountOutputTypeCountAssignedMaintenanceSchedulesArgs
+  performedMaintenanceRecords?: boolean | PersonCountOutputTypeCountPerformedMaintenanceRecordsArgs
 }
 
 /**
@@ -3683,6 +4165,20 @@ export type PersonCountOutputTypeCountDataOwnershipsArgs<ExtArgs extends runtime
   where?: Prisma.DataOwnershipWhereInput
 }
 
+/**
+ * PersonCountOutputType without action
+ */
+export type PersonCountOutputTypeCountAssignedMaintenanceSchedulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MaintenanceScheduleWhereInput
+}
+
+/**
+ * PersonCountOutputType without action
+ */
+export type PersonCountOutputTypeCountPerformedMaintenanceRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MaintenanceRecordWhereInput
+}
+
 
 export type PersonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3721,6 +4217,8 @@ export type PersonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   auditLogsChanged?: boolean | Prisma.Person$auditLogsChangedArgs<ExtArgs>
   attachments?: boolean | Prisma.Person$attachmentsArgs<ExtArgs>
   dataOwnerships?: boolean | Prisma.Person$dataOwnershipsArgs<ExtArgs>
+  assignedMaintenanceSchedules?: boolean | Prisma.Person$assignedMaintenanceSchedulesArgs<ExtArgs>
+  performedMaintenanceRecords?: boolean | Prisma.Person$performedMaintenanceRecordsArgs<ExtArgs>
   _count?: boolean | Prisma.PersonCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["person"]>
 
@@ -3823,6 +4321,8 @@ export type PersonInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   auditLogsChanged?: boolean | Prisma.Person$auditLogsChangedArgs<ExtArgs>
   attachments?: boolean | Prisma.Person$attachmentsArgs<ExtArgs>
   dataOwnerships?: boolean | Prisma.Person$dataOwnershipsArgs<ExtArgs>
+  assignedMaintenanceSchedules?: boolean | Prisma.Person$assignedMaintenanceSchedulesArgs<ExtArgs>
+  performedMaintenanceRecords?: boolean | Prisma.Person$performedMaintenanceRecordsArgs<ExtArgs>
   _count?: boolean | Prisma.PersonCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PersonIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3858,6 +4358,8 @@ export type $PersonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     auditLogsChanged: Prisma.$AuditLogEntryPayload<ExtArgs>[]
     attachments: Prisma.$AttachmentPayload<ExtArgs>[]
     dataOwnerships: Prisma.$DataOwnershipPayload<ExtArgs>[]
+    assignedMaintenanceSchedules: Prisma.$MaintenanceSchedulePayload<ExtArgs>[]
+    performedMaintenanceRecords: Prisma.$MaintenanceRecordPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -4290,6 +4792,8 @@ export interface Prisma__PersonClient<T, Null = never, ExtArgs extends runtime.T
   auditLogsChanged<T extends Prisma.Person$auditLogsChangedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$auditLogsChangedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   attachments<T extends Prisma.Person$attachmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$attachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   dataOwnerships<T extends Prisma.Person$dataOwnershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$dataOwnershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DataOwnershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  assignedMaintenanceSchedules<T extends Prisma.Person$assignedMaintenanceSchedulesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$assignedMaintenanceSchedulesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MaintenanceSchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  performedMaintenanceRecords<T extends Prisma.Person$performedMaintenanceRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$performedMaintenanceRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MaintenanceRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5030,6 +5534,54 @@ export type Person$dataOwnershipsArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.DataOwnershipScalarFieldEnum | Prisma.DataOwnershipScalarFieldEnum[]
+}
+
+/**
+ * Person.assignedMaintenanceSchedules
+ */
+export type Person$assignedMaintenanceSchedulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MaintenanceSchedule
+   */
+  select?: Prisma.MaintenanceScheduleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MaintenanceSchedule
+   */
+  omit?: Prisma.MaintenanceScheduleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MaintenanceScheduleInclude<ExtArgs> | null
+  where?: Prisma.MaintenanceScheduleWhereInput
+  orderBy?: Prisma.MaintenanceScheduleOrderByWithRelationInput | Prisma.MaintenanceScheduleOrderByWithRelationInput[]
+  cursor?: Prisma.MaintenanceScheduleWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MaintenanceScheduleScalarFieldEnum | Prisma.MaintenanceScheduleScalarFieldEnum[]
+}
+
+/**
+ * Person.performedMaintenanceRecords
+ */
+export type Person$performedMaintenanceRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MaintenanceRecord
+   */
+  select?: Prisma.MaintenanceRecordSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MaintenanceRecord
+   */
+  omit?: Prisma.MaintenanceRecordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MaintenanceRecordInclude<ExtArgs> | null
+  where?: Prisma.MaintenanceRecordWhereInput
+  orderBy?: Prisma.MaintenanceRecordOrderByWithRelationInput | Prisma.MaintenanceRecordOrderByWithRelationInput[]
+  cursor?: Prisma.MaintenanceRecordWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MaintenanceRecordScalarFieldEnum | Prisma.MaintenanceRecordScalarFieldEnum[]
 }
 
 /**

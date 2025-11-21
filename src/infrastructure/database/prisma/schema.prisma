@@ -2,9 +2,10 @@
 // Database: PostgreSQL
 
 generator client {
-  provider   = "prisma-client"
-  output     = "../../../generated/prisma"
-  engineType = "client" // Prisma 7: Rust-free engine for 90% smaller bundle, 3x faster queries
+  provider      = "prisma-client"
+  output        = "../../../generated/prisma"
+  engineType    = "client" // Prisma 7: Rust-free engine for 90% smaller bundle, 3x faster queries
+  postgenerate = "node scripts/recreate-prisma-index.js" // Auto-regenerate barrel export index.ts
 }
 
 datasource db {
@@ -272,6 +273,8 @@ model Person {
   auditLogsChanged          AuditLogEntry[]          @relation("AuditLogChangedBy")
   attachments               Attachment[]
   dataOwnerships            DataOwnership[]          @relation("DataOwnershipPerson")
+  assignedMaintenanceSchedules MaintenanceSchedule[]
+  performedMaintenanceRecords  MaintenanceRecord[]
 
   // Indexes
   @@index([userId])
@@ -865,6 +868,7 @@ model Asset {
   depreciationStart       DateTime?
   depreciationEnd         DateTime?
   warrantyEndDate         DateTime?
+  condition               String? // Asset condition: NEW, GOOD, FAIR, POOR
   currentStockLocationId  String?
   attributes              Json? // dynamic fields per AssetCategoryField
   note                    String?   @db.Text
@@ -882,6 +886,8 @@ model Asset {
   configurationItems   ConfigurationItem[]
   stockMovements       StockMovement[]
   assetAssignments     AssetAssignment[]
+  maintenanceSchedules MaintenanceSchedule[]
+  maintenanceRecords   MaintenanceRecord[]
 
   // Indexes
   @@index([assetTag])
@@ -901,12 +907,14 @@ model AssetAssignment {
   assetId      String
   assigneeType AssigneeTypeEnum
   assigneeId   String // points to Person/OrgUnit/Location/CI depending on type
-  startDate    DateTime          @default(now())
-  endDate      DateTime?
-  isPrimary    Boolean           @default(false)
-  note         String?           @db.Text
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
+  startDate              DateTime @default(now())
+  endDate                DateTime?
+  isPrimary              Boolean  @default(false)
+  conditionOnAssignment  String? // Condition when asset was assigned
+  conditionOnReturn      String? // Condition when asset was returned
+  note                   String?  @db.Text
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 
   // Relations
   asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
@@ -948,6 +956,78 @@ model Warranty {
   @@index([endDate]) // For expiration queries
   @@index([coverageType])
   @@map("warranties")
+}
+
+// ============================================
+// MAINTENANCE SYSTEM
+// ============================================
+
+// MaintenanceSchedule model
+// Defines recurring preventive maintenance schedules for assets
+model MaintenanceSchedule {
+  id                       String    @id @default(cuid())
+  assetId                  String
+  title                    String
+  description              String?   @db.Text
+  scheduleType             String    // ScheduleType enum: WEEKLY, MONTHLY, QUARTERLY, YEARLY, CUSTOM
+  intervalValue            Int       @default(1)
+  startDate                DateTime  @default(now())
+  nextDueDate              DateTime
+  isActive                 Boolean   @default(true)
+  assignedToId             String?
+  estimatedDurationMinutes Int?
+  priority                 String    @default("MEDIUM") // MaintenancePriority enum: LOW, MEDIUM, HIGH, CRITICAL
+  instructions             String?   @db.Text
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+
+  // Relations
+  asset              Asset                @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  assignedTo         Person?              @relation(fields: [assignedToId], references: [id], onDelete: SetNull)
+  maintenanceRecords MaintenanceRecord[]
+
+  // Indexes
+  @@index([assetId])
+  @@index([assignedToId])
+  @@index([nextDueDate])
+  @@index([isActive])
+  @@index([scheduleType])
+  @@index([priority])
+  @@map("maintenance_schedules")
+}
+
+// MaintenanceRecord model
+// Tracks actual maintenance work performed or scheduled on assets
+model MaintenanceRecord {
+  id                    String    @id @default(cuid())
+  assetId               String
+  maintenanceScheduleId String?
+  title                 String
+  description           String?   @db.Text
+  scheduledDate         DateTime
+  completedDate         DateTime?
+  performedById         String?
+  status                String    @default("SCHEDULED") // MaintenanceStatus enum: SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED, OVERDUE
+  notes                 String?   @db.Text
+  cost                  Decimal?  @db.Decimal(12, 2)
+  partsUsed             Json?     // Array of strings
+  nextMaintenanceDate   DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  // Relations
+  asset               Asset                 @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  maintenanceSchedule MaintenanceSchedule?  @relation(fields: [maintenanceScheduleId], references: [id], onDelete: SetNull)
+  performedBy         Person?               @relation(fields: [performedById], references: [id], onDelete: SetNull)
+
+  // Indexes
+  @@index([assetId])
+  @@index([maintenanceScheduleId])
+  @@index([performedById])
+  @@index([scheduledDate])
+  @@index([completedDate])
+  @@index([status])
+  @@map("maintenance_records")
 }
 
 // ============================================

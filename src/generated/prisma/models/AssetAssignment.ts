@@ -32,6 +32,8 @@ export type AssetAssignmentMinAggregateOutputType = {
   startDate: Date | null
   endDate: Date | null
   isPrimary: boolean | null
+  conditionOnAssignment: string | null
+  conditionOnReturn: string | null
   note: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -45,6 +47,8 @@ export type AssetAssignmentMaxAggregateOutputType = {
   startDate: Date | null
   endDate: Date | null
   isPrimary: boolean | null
+  conditionOnAssignment: string | null
+  conditionOnReturn: string | null
   note: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -58,6 +62,8 @@ export type AssetAssignmentCountAggregateOutputType = {
   startDate: number
   endDate: number
   isPrimary: number
+  conditionOnAssignment: number
+  conditionOnReturn: number
   note: number
   createdAt: number
   updatedAt: number
@@ -73,6 +79,8 @@ export type AssetAssignmentMinAggregateInputType = {
   startDate?: true
   endDate?: true
   isPrimary?: true
+  conditionOnAssignment?: true
+  conditionOnReturn?: true
   note?: true
   createdAt?: true
   updatedAt?: true
@@ -86,6 +94,8 @@ export type AssetAssignmentMaxAggregateInputType = {
   startDate?: true
   endDate?: true
   isPrimary?: true
+  conditionOnAssignment?: true
+  conditionOnReturn?: true
   note?: true
   createdAt?: true
   updatedAt?: true
@@ -99,6 +109,8 @@ export type AssetAssignmentCountAggregateInputType = {
   startDate?: true
   endDate?: true
   isPrimary?: true
+  conditionOnAssignment?: true
+  conditionOnReturn?: true
   note?: true
   createdAt?: true
   updatedAt?: true
@@ -185,6 +197,8 @@ export type AssetAssignmentGroupByOutputType = {
   startDate: Date
   endDate: Date | null
   isPrimary: boolean
+  conditionOnAssignment: string | null
+  conditionOnReturn: string | null
   note: string | null
   createdAt: Date
   updatedAt: Date
@@ -219,6 +233,8 @@ export type AssetAssignmentWhereInput = {
   startDate?: Prisma.DateTimeFilter<"AssetAssignment"> | Date | string
   endDate?: Prisma.DateTimeNullableFilter<"AssetAssignment"> | Date | string | null
   isPrimary?: Prisma.BoolFilter<"AssetAssignment"> | boolean
+  conditionOnAssignment?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
+  conditionOnReturn?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
   note?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AssetAssignment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AssetAssignment"> | Date | string
@@ -233,6 +249,8 @@ export type AssetAssignmentOrderByWithRelationInput = {
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrderInput | Prisma.SortOrder
   isPrimary?: Prisma.SortOrder
+  conditionOnAssignment?: Prisma.SortOrderInput | Prisma.SortOrder
+  conditionOnReturn?: Prisma.SortOrderInput | Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -250,6 +268,8 @@ export type AssetAssignmentWhereUniqueInput = Prisma.AtLeast<{
   startDate?: Prisma.DateTimeFilter<"AssetAssignment"> | Date | string
   endDate?: Prisma.DateTimeNullableFilter<"AssetAssignment"> | Date | string | null
   isPrimary?: Prisma.BoolFilter<"AssetAssignment"> | boolean
+  conditionOnAssignment?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
+  conditionOnReturn?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
   note?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AssetAssignment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AssetAssignment"> | Date | string
@@ -264,6 +284,8 @@ export type AssetAssignmentOrderByWithAggregationInput = {
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrderInput | Prisma.SortOrder
   isPrimary?: Prisma.SortOrder
+  conditionOnAssignment?: Prisma.SortOrderInput | Prisma.SortOrder
+  conditionOnReturn?: Prisma.SortOrderInput | Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -283,6 +305,8 @@ export type AssetAssignmentScalarWhereWithAggregatesInput = {
   startDate?: Prisma.DateTimeWithAggregatesFilter<"AssetAssignment"> | Date | string
   endDate?: Prisma.DateTimeNullableWithAggregatesFilter<"AssetAssignment"> | Date | string | null
   isPrimary?: Prisma.BoolWithAggregatesFilter<"AssetAssignment"> | boolean
+  conditionOnAssignment?: Prisma.StringNullableWithAggregatesFilter<"AssetAssignment"> | string | null
+  conditionOnReturn?: Prisma.StringNullableWithAggregatesFilter<"AssetAssignment"> | string | null
   note?: Prisma.StringNullableWithAggregatesFilter<"AssetAssignment"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AssetAssignment"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"AssetAssignment"> | Date | string
@@ -295,6 +319,8 @@ export type AssetAssignmentCreateInput = {
   startDate?: Date | string
   endDate?: Date | string | null
   isPrimary?: boolean
+  conditionOnAssignment?: string | null
+  conditionOnReturn?: string | null
   note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -309,6 +335,8 @@ export type AssetAssignmentUncheckedCreateInput = {
   startDate?: Date | string
   endDate?: Date | string | null
   isPrimary?: boolean
+  conditionOnAssignment?: string | null
+  conditionOnReturn?: string | null
   note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -321,6 +349,8 @@ export type AssetAssignmentUpdateInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  conditionOnAssignment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conditionOnReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -335,6 +365,8 @@ export type AssetAssignmentUncheckedUpdateInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  conditionOnAssignment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conditionOnReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -348,6 +380,8 @@ export type AssetAssignmentCreateManyInput = {
   startDate?: Date | string
   endDate?: Date | string | null
   isPrimary?: boolean
+  conditionOnAssignment?: string | null
+  conditionOnReturn?: string | null
   note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -360,6 +394,8 @@ export type AssetAssignmentUpdateManyMutationInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  conditionOnAssignment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conditionOnReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -373,6 +409,8 @@ export type AssetAssignmentUncheckedUpdateManyInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  conditionOnAssignment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conditionOnReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -396,6 +434,8 @@ export type AssetAssignmentCountOrderByAggregateInput = {
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   isPrimary?: Prisma.SortOrder
+  conditionOnAssignment?: Prisma.SortOrder
+  conditionOnReturn?: Prisma.SortOrder
   note?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -409,6 +449,8 @@ export type AssetAssignmentMaxOrderByAggregateInput = {
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   isPrimary?: Prisma.SortOrder
+  conditionOnAssignment?: Prisma.SortOrder
+  conditionOnReturn?: Prisma.SortOrder
   note?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -422,6 +464,8 @@ export type AssetAssignmentMinOrderByAggregateInput = {
   startDate?: Prisma.SortOrder
   endDate?: Prisma.SortOrder
   isPrimary?: Prisma.SortOrder
+  conditionOnAssignment?: Prisma.SortOrder
+  conditionOnReturn?: Prisma.SortOrder
   note?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -480,6 +524,8 @@ export type AssetAssignmentCreateWithoutAssetInput = {
   startDate?: Date | string
   endDate?: Date | string | null
   isPrimary?: boolean
+  conditionOnAssignment?: string | null
+  conditionOnReturn?: string | null
   note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -492,6 +538,8 @@ export type AssetAssignmentUncheckedCreateWithoutAssetInput = {
   startDate?: Date | string
   endDate?: Date | string | null
   isPrimary?: boolean
+  conditionOnAssignment?: string | null
+  conditionOnReturn?: string | null
   note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -534,6 +582,8 @@ export type AssetAssignmentScalarWhereInput = {
   startDate?: Prisma.DateTimeFilter<"AssetAssignment"> | Date | string
   endDate?: Prisma.DateTimeNullableFilter<"AssetAssignment"> | Date | string | null
   isPrimary?: Prisma.BoolFilter<"AssetAssignment"> | boolean
+  conditionOnAssignment?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
+  conditionOnReturn?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
   note?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AssetAssignment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AssetAssignment"> | Date | string
@@ -546,6 +596,8 @@ export type AssetAssignmentCreateManyAssetInput = {
   startDate?: Date | string
   endDate?: Date | string | null
   isPrimary?: boolean
+  conditionOnAssignment?: string | null
+  conditionOnReturn?: string | null
   note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -558,6 +610,8 @@ export type AssetAssignmentUpdateWithoutAssetInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  conditionOnAssignment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conditionOnReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -570,6 +624,8 @@ export type AssetAssignmentUncheckedUpdateWithoutAssetInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  conditionOnAssignment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conditionOnReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -582,6 +638,8 @@ export type AssetAssignmentUncheckedUpdateManyWithoutAssetInput = {
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  conditionOnAssignment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  conditionOnReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -597,6 +655,8 @@ export type AssetAssignmentSelect<ExtArgs extends runtime.Types.Extensions.Inter
   startDate?: boolean
   endDate?: boolean
   isPrimary?: boolean
+  conditionOnAssignment?: boolean
+  conditionOnReturn?: boolean
   note?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -611,6 +671,8 @@ export type AssetAssignmentSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   startDate?: boolean
   endDate?: boolean
   isPrimary?: boolean
+  conditionOnAssignment?: boolean
+  conditionOnReturn?: boolean
   note?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -625,6 +687,8 @@ export type AssetAssignmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   startDate?: boolean
   endDate?: boolean
   isPrimary?: boolean
+  conditionOnAssignment?: boolean
+  conditionOnReturn?: boolean
   note?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -639,12 +703,14 @@ export type AssetAssignmentSelectScalar = {
   startDate?: boolean
   endDate?: boolean
   isPrimary?: boolean
+  conditionOnAssignment?: boolean
+  conditionOnReturn?: boolean
   note?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type AssetAssignmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "assetId" | "assigneeType" | "assigneeId" | "startDate" | "endDate" | "isPrimary" | "note" | "createdAt" | "updatedAt", ExtArgs["result"]["assetAssignment"]>
+export type AssetAssignmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "assetId" | "assigneeType" | "assigneeId" | "startDate" | "endDate" | "isPrimary" | "conditionOnAssignment" | "conditionOnReturn" | "note" | "createdAt" | "updatedAt", ExtArgs["result"]["assetAssignment"]>
 export type AssetAssignmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
 }
@@ -668,6 +734,8 @@ export type $AssetAssignmentPayload<ExtArgs extends runtime.Types.Extensions.Int
     startDate: Date
     endDate: Date | null
     isPrimary: boolean
+    conditionOnAssignment: string | null
+    conditionOnReturn: string | null
     note: string | null
     createdAt: Date
     updatedAt: Date
@@ -1102,6 +1170,8 @@ export interface AssetAssignmentFieldRefs {
   readonly startDate: Prisma.FieldRef<"AssetAssignment", 'DateTime'>
   readonly endDate: Prisma.FieldRef<"AssetAssignment", 'DateTime'>
   readonly isPrimary: Prisma.FieldRef<"AssetAssignment", 'Boolean'>
+  readonly conditionOnAssignment: Prisma.FieldRef<"AssetAssignment", 'String'>
+  readonly conditionOnReturn: Prisma.FieldRef<"AssetAssignment", 'String'>
   readonly note: Prisma.FieldRef<"AssetAssignment", 'String'>
   readonly createdAt: Prisma.FieldRef<"AssetAssignment", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"AssetAssignment", 'DateTime'>

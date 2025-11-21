@@ -454,6 +454,7 @@ export class PrismaAssetRepository implements IAssetRepository {
       depreciationStart: prismaAsset.depreciationStart,
       depreciationEnd: prismaAsset.depreciationEnd,
       warrantyEndDate: prismaAsset.warrantyEndDate,
+      condition: prismaAsset.condition,
       currentStockLocationId: prismaAsset.currentStockLocationId,
       attributes: fromJsonValue(prismaAsset.attributes),
       note: prismaAsset.note,

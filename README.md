@@ -60,6 +60,18 @@ Complete implementation of core building blocks for CMDB/ITAM:
 - **55 Use Cases** - Complete CRUD operations with business logic and permission checks
 - **Full UI** - TanStack Table, React Hook Form, collapsible navigation
 
+### Asset & Inventory Layer (Layer 2)
+
+Complete IT asset management and inventory tracking:
+
+- **9 Asset Entities** - Asset, AssetCategory, AssetModel, AssetAssignment, Warranty, MaintenanceSchedule, MaintenanceRecord, StockLocation, StockMovement
+- **Asset Lifecycle** - Track assets from acquisition through disposal with condition tracking
+- **Assignment Workflows** - Wizards for asset assignment and returns with session integration
+- **Warranty Management** - Automatic expiration tracking and alerts
+- **Preventive Maintenance** - Recurring schedules (weekly/monthly/quarterly/yearly) with work order tracking
+- **Inventory Control** - Stock locations, movements (IN/OUT/TRANSFER), and enriched reporting
+- **Comprehensive UI** - Dashboard with metrics, CSV import/export, workflow wizards
+
 ### RBAC & Security
 
 Complete role-based access control system:

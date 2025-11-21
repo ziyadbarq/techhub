@@ -152,6 +152,21 @@ export const PERMISSIONS = {
   WARRANTIES_DELETE: "warranties:delete",
   WARRANTIES_MANAGE: "warranties:manage",
 
+  // Maintenance: Schedules
+  MAINTENANCE_SCHEDULES_VIEW: "maintenance-schedules:view",
+  MAINTENANCE_SCHEDULES_CREATE: "maintenance-schedules:create",
+  MAINTENANCE_SCHEDULES_UPDATE: "maintenance-schedules:update",
+  MAINTENANCE_SCHEDULES_DELETE: "maintenance-schedules:delete",
+  MAINTENANCE_SCHEDULES_MANAGE: "maintenance-schedules:manage",
+
+  // Maintenance: Records
+  MAINTENANCE_RECORDS_VIEW: "maintenance-records:view",
+  MAINTENANCE_RECORDS_CREATE: "maintenance-records:create",
+  MAINTENANCE_RECORDS_UPDATE: "maintenance-records:update",
+  MAINTENANCE_RECORDS_DELETE: "maintenance-records:delete",
+  MAINTENANCE_RECORDS_PERFORM: "maintenance-records:perform",
+  MAINTENANCE_RECORDS_MANAGE: "maintenance-records:manage",
+
   // Inventory: Stock Locations
   STOCK_LOCATIONS_VIEW: "stock-locations:view",
   STOCK_LOCATIONS_CREATE: "stock-locations:create",

@@ -102,6 +102,43 @@ export async function listAssetAssignmentsAction(
   }
 }
 
+/**
+ * Get active assignment for an asset (if any)
+ * Used by Return Asset Wizard to auto-populate assignmentId
+ */
+export async function getActiveAssignmentAction(
+  assetId: string,
+): Promise<ActionResponse<AssetAssignmentDTO | null>> {
+  try {
+    await requirePermission(PERMISSIONS.ASSET_ASSIGNMENTS_VIEW);
+
+    const container = getContainer();
+    const useCase = container.get<ListAssetAssignmentsUseCase>(
+      DI_TOKENS.ListAssetAssignmentsUseCase,
+    );
+
+    // Get active assignments for this asset
+    const assignments = await useCase.execute({
+      assetId,
+      activeOnly: true,
+    });
+
+    // Return the first active assignment (there should only be one primary)
+    const activeAssignment = assignments.length > 0 ? assignments[0] : null;
+
+    return {
+      success: true,
+      data: activeAssignment ? presentAssetAssignment(activeAssignment) : null,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getActiveAssignmentAction", assetId },
+      "Failed to get active assignment",
+    );
+  }
+}
+
 export async function getAssetAssignmentAction(
   id: string,
 ): Promise<ActionResponse<AssetAssignmentDTO>> {

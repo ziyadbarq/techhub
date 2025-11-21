@@ -35,6 +35,8 @@ import {
   UserCheck,
   LayoutDashboard,
   FileText,
+  Wrench,
+  ClipboardList,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -297,6 +299,31 @@ export const navGroups: NavGroup[] = [
         icon: TrendingUp,
         description: "Track inventory movements",
         permission: PERMISSIONS.STOCK_MOVEMENTS_VIEW,
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: false,
+  },
+
+  // Maintenance
+  {
+    id: "maintenance",
+    title: "Maintenance",
+    items: [
+      {
+        title: "Schedules",
+        href: "/maintenance/schedules",
+        icon: Wrench,
+        description: "Preventive maintenance schedules",
+        permission: PERMISSIONS.MAINTENANCE_SCHEDULES_VIEW,
+      },
+      {
+        title: "Records",
+        href: "/maintenance/records",
+        icon: ClipboardList,
+        description: "Maintenance history and work logs",
+        permission: PERMISSIONS.MAINTENANCE_RECORDS_VIEW,
       },
     ],
     visible: true,

@@ -20,6 +20,7 @@ export interface AssetProps {
   depreciationStart: Date | null;
   depreciationEnd: Date | null;
   warrantyEndDate: Date | null;
+  condition: string | null;
   currentStockLocationId: string | null;
   attributes: Record<string, unknown> | null;
   note: string | null;
@@ -42,6 +43,7 @@ export interface CreateAssetProps {
   depreciationStart?: Date | null;
   depreciationEnd?: Date | null;
   warrantyEndDate?: Date | null;
+  condition?: string | null;
   currentStockLocationId?: string | null;
   attributes?: Record<string, unknown> | null;
   note?: string | null;
@@ -87,6 +89,7 @@ export class Asset {
       depreciationStart: props.depreciationStart || null,
       depreciationEnd: props.depreciationEnd || null,
       warrantyEndDate: props.warrantyEndDate || null,
+      condition: props.condition || null,
       currentStockLocationId: props.currentStockLocationId || null,
       attributes: props.attributes || null,
       note: props.note?.trim() || null,
@@ -119,6 +122,7 @@ export class Asset {
     depreciationStart?: Date | null;
     depreciationEnd?: Date | null;
     warrantyEndDate?: Date | null;
+    condition?: string | null;
     currentStockLocationId?: string | null;
     attributes?: Record<string, unknown> | null;
     note?: string | null;
@@ -183,6 +187,10 @@ export class Asset {
 
     if (props.warrantyEndDate !== undefined) {
       this.props.warrantyEndDate = props.warrantyEndDate;
+    }
+
+    if (props.condition !== undefined) {
+      this.props.condition = props.condition;
     }
 
     if (props.currentStockLocationId !== undefined) {
@@ -374,6 +382,10 @@ export class Asset {
 
   get warrantyEndDate(): Date | null {
     return this.props.warrantyEndDate;
+  }
+
+  get condition(): string | null {
+    return this.props.condition;
   }
 
   get currentStockLocationId(): string | null {

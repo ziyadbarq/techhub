@@ -14,6 +14,8 @@ export interface AssetAssignmentProps {
   startDate: Date;
   endDate: Date | null;
   isPrimary: boolean;
+  conditionOnAssignment: string | null;
+  conditionOnReturn: string | null;
   note: string | null;
   createdAt: Date;
   updatedAt: Date;
@@ -26,6 +28,8 @@ export interface CreateAssetAssignmentProps {
   startDate?: Date;
   endDate?: Date | null;
   isPrimary?: boolean;
+  conditionOnAssignment?: string | null;
+  conditionOnReturn?: string | null;
   note?: string | null;
 }
 
@@ -55,6 +59,8 @@ export class AssetAssignment {
       startDate: props.startDate || now,
       endDate: props.endDate || null,
       isPrimary: props.isPrimary || false,
+      conditionOnAssignment: props.conditionOnAssignment || null,
+      conditionOnReturn: props.conditionOnReturn || null,
       note: props.note?.trim() || null,
       createdAt: now,
       updatedAt: now,
@@ -77,6 +83,8 @@ export class AssetAssignment {
     startDate?: Date;
     endDate?: Date | null;
     isPrimary?: boolean;
+    conditionOnAssignment?: string | null;
+    conditionOnReturn?: string | null;
     note?: string | null;
   }): void {
     if (props.assigneeType !== undefined) {
@@ -106,6 +114,14 @@ export class AssetAssignment {
 
     if (props.isPrimary !== undefined) {
       this.props.isPrimary = props.isPrimary;
+    }
+
+    if (props.conditionOnAssignment !== undefined) {
+      this.props.conditionOnAssignment = props.conditionOnAssignment;
+    }
+
+    if (props.conditionOnReturn !== undefined) {
+      this.props.conditionOnReturn = props.conditionOnReturn;
     }
 
     if (props.note !== undefined) {
@@ -232,6 +248,14 @@ export class AssetAssignment {
 
   get isPrimary(): boolean {
     return this.props.isPrimary;
+  }
+
+  get conditionOnAssignment(): string | null {
+    return this.props.conditionOnAssignment;
+  }
+
+  get conditionOnReturn(): string | null {
+    return this.props.conditionOnReturn;
   }
 
   get note(): string | null {

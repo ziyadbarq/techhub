@@ -84,6 +84,8 @@ export const ModelName = {
   Asset: 'Asset',
   AssetAssignment: 'AssetAssignment',
   Warranty: 'Warranty',
+  MaintenanceSchedule: 'MaintenanceSchedule',
+  MaintenanceRecord: 'MaintenanceRecord',
   ContractType: 'ContractType',
   Contract: 'Contract',
   ContractLinkedObject: 'ContractLinkedObject',
@@ -659,6 +661,7 @@ export const AssetScalarFieldEnum = {
   depreciationStart: 'depreciationStart',
   depreciationEnd: 'depreciationEnd',
   warrantyEndDate: 'warrantyEndDate',
+  condition: 'condition',
   currentStockLocationId: 'currentStockLocationId',
   attributes: 'attributes',
   note: 'note',
@@ -677,6 +680,8 @@ export const AssetAssignmentScalarFieldEnum = {
   startDate: 'startDate',
   endDate: 'endDate',
   isPrimary: 'isPrimary',
+  conditionOnAssignment: 'conditionOnAssignment',
+  conditionOnReturn: 'conditionOnReturn',
   note: 'note',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -704,6 +709,48 @@ export const WarrantyScalarFieldEnum = {
 } as const
 
 export type WarrantyScalarFieldEnum = (typeof WarrantyScalarFieldEnum)[keyof typeof WarrantyScalarFieldEnum]
+
+
+export const MaintenanceScheduleScalarFieldEnum = {
+  id: 'id',
+  assetId: 'assetId',
+  title: 'title',
+  description: 'description',
+  scheduleType: 'scheduleType',
+  intervalValue: 'intervalValue',
+  startDate: 'startDate',
+  nextDueDate: 'nextDueDate',
+  isActive: 'isActive',
+  assignedToId: 'assignedToId',
+  estimatedDurationMinutes: 'estimatedDurationMinutes',
+  priority: 'priority',
+  instructions: 'instructions',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MaintenanceScheduleScalarFieldEnum = (typeof MaintenanceScheduleScalarFieldEnum)[keyof typeof MaintenanceScheduleScalarFieldEnum]
+
+
+export const MaintenanceRecordScalarFieldEnum = {
+  id: 'id',
+  assetId: 'assetId',
+  maintenanceScheduleId: 'maintenanceScheduleId',
+  title: 'title',
+  description: 'description',
+  scheduledDate: 'scheduledDate',
+  completedDate: 'completedDate',
+  performedById: 'performedById',
+  status: 'status',
+  notes: 'notes',
+  cost: 'cost',
+  partsUsed: 'partsUsed',
+  nextMaintenanceDate: 'nextMaintenanceDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MaintenanceRecordScalarFieldEnum = (typeof MaintenanceRecordScalarFieldEnum)[keyof typeof MaintenanceRecordScalarFieldEnum]
 
 
 export const ContractTypeScalarFieldEnum = {

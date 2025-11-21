@@ -205,6 +205,16 @@ export type AssetAssignment = Prisma.AssetAssignmentModel
  */
 export type Warranty = Prisma.WarrantyModel
 /**
+ * Model MaintenanceSchedule
+ * 
+ */
+export type MaintenanceSchedule = Prisma.MaintenanceScheduleModel
+/**
+ * Model MaintenanceRecord
+ * 
+ */
+export type MaintenanceRecord = Prisma.MaintenanceRecordModel
+/**
  * Model ContractType
  * 
  */

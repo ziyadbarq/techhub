@@ -10,6 +10,7 @@ import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
+import { getCurrentUserId } from "@/lib/auth/session";
 import type {
   CreateAssetAssignmentUseCase,
   UpdateAssetAssignmentUseCase,
@@ -45,6 +46,15 @@ export async function assignAssetToEmployeeAction(data: {
     await requirePermission(PERMISSIONS.ASSET_ASSIGNMENTS_CREATE);
     await requirePermission(PERMISSIONS.STOCK_MOVEMENTS_CREATE);
 
+    // Get current user from session for performedById
+    const currentUserId = await getCurrentUserId();
+    if (!currentUserId) {
+      return {
+        success: false,
+        error: "Not authenticated",
+      };
+    }
+
     const container = getContainer();
     const now = new Date();
 
@@ -71,7 +81,7 @@ export async function assignAssetToEmployeeAction(data: {
       assetId: data.assetId,
       quantity: 1,
       reason: `Assigned to employee`,
-      performedById: data.personId,
+      performedById: currentUserId, // Use current user from session
       occurredAt: now,
     });
 
@@ -114,12 +124,20 @@ export async function returnAssetAction(data: {
   assetId: string;
   assignmentId: string;
   stockLocationToId: string;
-  performedById: string;
   note?: string;
 }): Promise<ActionResponse<{ movement: StockMovementDTO }>> {
   try {
     await requirePermission(PERMISSIONS.ASSET_ASSIGNMENTS_UPDATE);
     await requirePermission(PERMISSIONS.STOCK_MOVEMENTS_CREATE);
+
+    // Get current user from session for performedById
+    const currentUserId = await getCurrentUserId();
+    if (!currentUserId) {
+      return {
+        success: false,
+        error: "Not authenticated",
+      };
+    }
 
     const container = getContainer();
     const now = new Date();
@@ -143,7 +161,7 @@ export async function returnAssetAction(data: {
       assetId: data.assetId,
       quantity: 1,
       reason: data.note || "Returned to inventory",
-      performedById: data.performedById,
+      performedById: currentUserId, // Use current user from session
       occurredAt: now,
     });
 

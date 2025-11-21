@@ -72,6 +72,35 @@ import { GetActiveWarrantyForAssetUseCase } from "@/core/use-cases/asset/warrant
 import { ListExpiringWarrantiesUseCase } from "@/core/use-cases/asset/warranty/list-expiring-warranties.use-case";
 import { CheckWarrantyExpirationUseCase } from "@/core/use-cases/asset/warranty/check-warranty-expiration.use-case";
 
+// Maintenance Schedule Repository
+import type { IMaintenanceScheduleRepository } from "@/core/repositories/maintenance-schedule.repository.interface";
+import { PrismaMaintenanceScheduleRepository } from "@/infrastructure/repositories/prisma-maintenance-schedule.repository";
+
+// Maintenance Schedule Use Cases
+import {
+  CreateMaintenanceScheduleUseCase,
+  GetMaintenanceScheduleUseCase,
+  ListMaintenanceSchedulesUseCase,
+  UpdateMaintenanceScheduleUseCase,
+  DeleteMaintenanceScheduleUseCase,
+} from "@/core/use-cases/maintenance/schedule";
+
+// Maintenance Record Repository
+import type { IMaintenanceRecordRepository } from "@/core/repositories/maintenance-record.repository.interface";
+import { PrismaMaintenanceRecordRepository } from "@/infrastructure/repositories/prisma-maintenance-record.repository";
+
+// Maintenance Record Use Cases
+import {
+  CreateMaintenanceRecordUseCase,
+  GetMaintenanceRecordUseCase,
+  ListMaintenanceRecordsUseCase,
+  UpdateMaintenanceRecordUseCase,
+  DeleteMaintenanceRecordUseCase,
+  StartMaintenanceUseCase,
+  CompleteMaintenanceUseCase,
+  CancelMaintenanceUseCase,
+} from "@/core/use-cases/maintenance/record";
+
 const diLogger = logger.scope("DI:AssetModule");
 
 /**
@@ -296,8 +325,119 @@ export function bindAssetDependencies(container: Container): void {
     .to(CheckWarrantyExpirationUseCase)
     .inTransientScope();
 
+  // ==========================================
+  // Maintenance Schedule Repository
+  // ==========================================
+
+  container
+    .bind<IMaintenanceScheduleRepository>(
+      DI_TOKENS.IMaintenanceScheduleRepository,
+    )
+    .to(PrismaMaintenanceScheduleRepository)
+    .inSingletonScope();
+
+  // ==========================================
+  // Maintenance Schedule Use Cases
+  // ==========================================
+
+  container
+    .bind<CreateMaintenanceScheduleUseCase>(
+      DI_TOKENS.CreateMaintenanceScheduleUseCase,
+    )
+    .to(CreateMaintenanceScheduleUseCase)
+    .inTransientScope();
+
+  container
+    .bind<GetMaintenanceScheduleUseCase>(
+      DI_TOKENS.GetMaintenanceScheduleUseCase,
+    )
+    .to(GetMaintenanceScheduleUseCase)
+    .inTransientScope();
+
+  container
+    .bind<ListMaintenanceSchedulesUseCase>(
+      DI_TOKENS.ListMaintenanceSchedulesUseCase,
+    )
+    .to(ListMaintenanceSchedulesUseCase)
+    .inTransientScope();
+
+  container
+    .bind<UpdateMaintenanceScheduleUseCase>(
+      DI_TOKENS.UpdateMaintenanceScheduleUseCase,
+    )
+    .to(UpdateMaintenanceScheduleUseCase)
+    .inTransientScope();
+
+  container
+    .bind<DeleteMaintenanceScheduleUseCase>(
+      DI_TOKENS.DeleteMaintenanceScheduleUseCase,
+    )
+    .to(DeleteMaintenanceScheduleUseCase)
+    .inTransientScope();
+
+  // ==========================================
+  // Maintenance Record Repository
+  // ==========================================
+
+  container
+    .bind<IMaintenanceRecordRepository>(DI_TOKENS.IMaintenanceRecordRepository)
+    .to(PrismaMaintenanceRecordRepository)
+    .inSingletonScope();
+
+  // ==========================================
+  // Maintenance Record Use Cases
+  // ==========================================
+
+  container
+    .bind<CreateMaintenanceRecordUseCase>(
+      DI_TOKENS.CreateMaintenanceRecordUseCase,
+    )
+    .to(CreateMaintenanceRecordUseCase)
+    .inTransientScope();
+
+  container
+    .bind<GetMaintenanceRecordUseCase>(DI_TOKENS.GetMaintenanceRecordUseCase)
+    .to(GetMaintenanceRecordUseCase)
+    .inTransientScope();
+
+  container
+    .bind<ListMaintenanceRecordsUseCase>(
+      DI_TOKENS.ListMaintenanceRecordsUseCase,
+    )
+    .to(ListMaintenanceRecordsUseCase)
+    .inTransientScope();
+
+  container
+    .bind<UpdateMaintenanceRecordUseCase>(
+      DI_TOKENS.UpdateMaintenanceRecordUseCase,
+    )
+    .to(UpdateMaintenanceRecordUseCase)
+    .inTransientScope();
+
+  container
+    .bind<DeleteMaintenanceRecordUseCase>(
+      DI_TOKENS.DeleteMaintenanceRecordUseCase,
+    )
+    .to(DeleteMaintenanceRecordUseCase)
+    .inTransientScope();
+
+  container
+    .bind<StartMaintenanceUseCase>(DI_TOKENS.StartMaintenanceUseCase)
+    .to(StartMaintenanceUseCase)
+    .inTransientScope();
+
+  container
+    .bind<CompleteMaintenanceUseCase>(DI_TOKENS.CompleteMaintenanceUseCase)
+    .to(CompleteMaintenanceUseCase)
+    .inTransientScope();
+
+  container
+    .bind<CancelMaintenanceUseCase>(DI_TOKENS.CancelMaintenanceUseCase)
+    .to(CancelMaintenanceUseCase)
+    .inTransientScope();
+
   diLogger.debug(
     "bindAssetDependencies",
-    "Asset dependencies bound successfully (including warranties)",
+    "Asset dependencies bound successfully (including warranties and maintenance)",
   );
 }

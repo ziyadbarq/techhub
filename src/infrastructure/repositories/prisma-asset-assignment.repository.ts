@@ -352,6 +352,8 @@ export class PrismaAssetAssignmentRepository
       startDate: prismaAssignment.startDate,
       endDate: prismaAssignment.endDate,
       isPrimary: prismaAssignment.isPrimary,
+      conditionOnAssignment: prismaAssignment.conditionOnAssignment,
+      conditionOnReturn: prismaAssignment.conditionOnReturn,
       note: prismaAssignment.note,
       createdAt: prismaAssignment.createdAt,
       updatedAt: prismaAssignment.updatedAt,

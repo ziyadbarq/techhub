@@ -21,6 +21,7 @@ export interface AssetDTO {
   depreciationStart: string | null;
   depreciationEnd: string | null;
   warrantyEndDate: string | null;
+  condition: string | null;
   currentStockLocationId: string | null;
   attributes: Record<string, unknown> | null;
   note: string | null;
@@ -67,6 +68,7 @@ export function presentAsset(
     depreciationStart: asset.depreciationStart?.toISOString() || null,
     depreciationEnd: asset.depreciationEnd?.toISOString() || null,
     warrantyEndDate: asset.warrantyEndDate?.toISOString() || null,
+    condition: asset.condition,
     currentStockLocationId: asset.currentStockLocationId,
     attributes: asset.attributes,
     note: asset.note,

@@ -21,10 +21,21 @@ export interface StockMovementDTO {
   isIssuing: boolean;
   isTransfer: boolean;
   isAdjustment: boolean;
+  // Display fields (enriched from relations)
+  stockLocationFromName?: string | null;
+  stockLocationToName?: string | null;
+  assetTag?: string | null;
+  performedByName?: string | null;
 }
 
 export function presentStockMovement(
   movement: StockMovement,
+  enrichment?: {
+    stockLocationFromName?: string | null;
+    stockLocationToName?: string | null;
+    assetTag?: string | null;
+    performedByName?: string | null;
+  },
 ): StockMovementDTO {
   return {
     id: movement.id,
@@ -42,11 +53,16 @@ export function presentStockMovement(
     isIssuing: movement.isIssuing(),
     isTransfer: movement.isTransfer(),
     isAdjustment: movement.isAdjustment(),
+    // Display fields
+    stockLocationFromName: enrichment?.stockLocationFromName,
+    stockLocationToName: enrichment?.stockLocationToName,
+    assetTag: enrichment?.assetTag,
+    performedByName: enrichment?.performedByName,
   };
 }
 
 export function presentStockMovements(
   movements: StockMovement[],
 ): StockMovementDTO[] {
-  return movements.map(presentStockMovement);
+  return movements.map((movement) => presentStockMovement(movement));
 }

@@ -15,7 +15,7 @@ This file provides high-level guidance to Claude Code when working with this rep
 **Current Implementation**:
 
 - **Layer 1 (Foundation)**: 11 core entities - OrganizationUnit, Person, Role, Location, Vendor, Lifecycle models, Field definitions
-- **Layer 2 (Asset/Inventory)**: 7 entities - Asset, AssetCategory, AssetModel, AssetAssignment, StockLocation, StockMovement, Warranty
+- **Layer 2 (Asset/Inventory)**: 9 entities - Asset, AssetCategory, AssetModel, AssetAssignment, StockLocation, StockMovement, Warranty, MaintenanceSchedule, MaintenanceRecord
 - **Reference**: Task entity (complete implementation, hidden from UI)
 - **Marketing**: Public landing page showcasing system capabilities
 
@@ -60,6 +60,7 @@ npm run reset # Reset database + seed (drops all data!)
 ### Asset Layer (Layer 2)
 
 - [WARRANTY_SYSTEM.md](docs/WARRANTY_SYSTEM.md) - Complete warranty management implementation (reference for Asset layer features)
+- [MAINTENANCE_SYSTEM.md](docs/MAINTENANCE_SYSTEM.md) - Preventive maintenance schedules and records with workflow state management
 
 ### Marketing & Public Pages
 

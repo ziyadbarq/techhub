@@ -13,6 +13,8 @@ export interface AssetAssignmentDTO {
   startDate: string;
   endDate: string | null;
   isPrimary: boolean;
+  conditionOnAssignment: string | null;
+  conditionOnReturn: string | null;
   note: string | null;
   createdAt: string;
   updatedAt: string;
@@ -35,6 +37,8 @@ export function presentAssetAssignment(
     startDate: assignment.startDate.toISOString(),
     endDate: assignment.endDate?.toISOString() || null,
     isPrimary: assignment.isPrimary,
+    conditionOnAssignment: assignment.conditionOnAssignment,
+    conditionOnReturn: assignment.conditionOnReturn,
     note: assignment.note,
     createdAt: assignment.createdAt.toISOString(),
     updatedAt: assignment.updatedAt.toISOString(),

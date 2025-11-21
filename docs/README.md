@@ -30,6 +30,13 @@ Core building blocks for the CMDB/ITAM system:
 - [Foundation Layer Guide](./guides/FOUNDATION_LAYER.md) - Complete user guide for all 11 Foundation entities
 - [Entity Reference](./guides/ENTITY_REFERENCE.md) - Quick reference for OrganizationUnit, Person, Role, Location, Vendor, Lifecycle, and FieldDefinition entities
 
+### Asset & Inventory Layer (Layer 2)
+
+Asset management, inventory tracking, warranties, and maintenance:
+
+- [Warranty System](./WARRANTY_SYSTEM.md) - Complete warranty management implementation with expiration tracking
+- [Maintenance System](./MAINTENANCE_SYSTEM.md) - Preventive maintenance schedules and records with recurring schedules and workflow state management
+
 ### Infrastructure & Systems
 
 #### Core Technical Guides

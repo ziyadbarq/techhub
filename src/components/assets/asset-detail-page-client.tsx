@@ -3,7 +3,7 @@
  */
 
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -33,7 +33,9 @@ import {
 } from "@/components/ui/alert-dialog";
 
 import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
+import type { AssetAssignmentDTO } from "@/interface-adapters/presenters/asset-assignment.presenter";
 import { deleteAssetAction } from "@/interface-adapters/controllers/asset.controller";
+import { getActiveAssignmentAction } from "@/interface-adapters/controllers/asset-assignment.controller";
 import { AssetForm } from "./asset-form";
 import { AssetOverviewTab } from "./asset-overview-tab";
 import { AssetWarrantiesTab } from "./asset-warranties-tab";
@@ -58,6 +60,20 @@ export function AssetDetailPageClient({
   const [isDeleting, setIsDeleting] = useState(false);
   const [isAssignWizardOpen, setIsAssignWizardOpen] = useState(false);
   const [isReturnWizardOpen, setIsReturnWizardOpen] = useState(false);
+  const [activeAssignment, setActiveAssignment] =
+    useState<AssetAssignmentDTO | null>(null);
+
+  // Fetch active assignment for Return Wizard
+  useEffect(() => {
+    const fetchActiveAssignment = async () => {
+      const result = await getActiveAssignmentAction(asset.id);
+      if (result.success) {
+        setActiveAssignment(result.data);
+      }
+    };
+
+    fetchActiveAssignment();
+  }, [asset.id]);
 
   const handleEdit = () => {
     setIsFormOpen(true);
@@ -230,7 +246,12 @@ export function AssetDetailPageClient({
       <ReturnAssetWizard
         assetId={asset.id}
         assetTag={asset.assetTag}
-        assignmentId="" // TODO: Get from current assignment
+        assignmentId={activeAssignment?.id || ""}
+        assignedToName={
+          activeAssignment
+            ? `${activeAssignment.assigneeType}: ${activeAssignment.assigneeId.slice(0, 8)}...`
+            : undefined
+        }
         open={isReturnWizardOpen}
         onOpenChange={setIsReturnWizardOpen}
         onSuccess={handleSuccess}

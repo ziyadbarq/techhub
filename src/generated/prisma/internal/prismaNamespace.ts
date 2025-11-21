@@ -417,6 +417,8 @@ export const ModelName = {
   Asset: 'Asset',
   AssetAssignment: 'AssetAssignment',
   Warranty: 'Warranty',
+  MaintenanceSchedule: 'MaintenanceSchedule',
+  MaintenanceRecord: 'MaintenanceRecord',
   ContractType: 'ContractType',
   Contract: 'Contract',
   ContractLinkedObject: 'ContractLinkedObject',
@@ -450,7 +452,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verification" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "organizationUnit" | "person" | "personRoleAssignment" | "location" | "vendor" | "vendorContact" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "contractType" | "contract" | "contractLinkedObject" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "attachmentType" | "attachment" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock"
+    modelProps: "user" | "account" | "session" | "verification" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "organizationUnit" | "person" | "personRoleAssignment" | "location" | "vendor" | "vendorContact" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "maintenanceSchedule" | "maintenanceRecord" | "contractType" | "contract" | "contractLinkedObject" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "attachmentType" | "attachment" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2896,6 +2898,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    MaintenanceSchedule: {
+      payload: Prisma.$MaintenanceSchedulePayload<ExtArgs>
+      fields: Prisma.MaintenanceScheduleFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MaintenanceScheduleFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceSchedulePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MaintenanceScheduleFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceSchedulePayload>
+        }
+        findFirst: {
+          args: Prisma.MaintenanceScheduleFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceSchedulePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MaintenanceScheduleFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceSchedulePayload>
+        }
+        findMany: {
+          args: Prisma.MaintenanceScheduleFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceSchedulePayload>[]
+        }
+        create: {
+          args: Prisma.MaintenanceScheduleCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceSchedulePayload>
+        }
+        createMany: {
+          args: Prisma.MaintenanceScheduleCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MaintenanceScheduleCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceSchedulePayload>[]
+        }
+        delete: {
+          args: Prisma.MaintenanceScheduleDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceSchedulePayload>
+        }
+        update: {
+          args: Prisma.MaintenanceScheduleUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceSchedulePayload>
+        }
+        deleteMany: {
+          args: Prisma.MaintenanceScheduleDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MaintenanceScheduleUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MaintenanceScheduleUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceSchedulePayload>[]
+        }
+        upsert: {
+          args: Prisma.MaintenanceScheduleUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceSchedulePayload>
+        }
+        aggregate: {
+          args: Prisma.MaintenanceScheduleAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMaintenanceSchedule>
+        }
+        groupBy: {
+          args: Prisma.MaintenanceScheduleGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MaintenanceScheduleGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MaintenanceScheduleCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MaintenanceScheduleCountAggregateOutputType> | number
+        }
+      }
+    }
+    MaintenanceRecord: {
+      payload: Prisma.$MaintenanceRecordPayload<ExtArgs>
+      fields: Prisma.MaintenanceRecordFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MaintenanceRecordFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceRecordPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MaintenanceRecordFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceRecordPayload>
+        }
+        findFirst: {
+          args: Prisma.MaintenanceRecordFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceRecordPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MaintenanceRecordFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceRecordPayload>
+        }
+        findMany: {
+          args: Prisma.MaintenanceRecordFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceRecordPayload>[]
+        }
+        create: {
+          args: Prisma.MaintenanceRecordCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceRecordPayload>
+        }
+        createMany: {
+          args: Prisma.MaintenanceRecordCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MaintenanceRecordCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceRecordPayload>[]
+        }
+        delete: {
+          args: Prisma.MaintenanceRecordDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceRecordPayload>
+        }
+        update: {
+          args: Prisma.MaintenanceRecordUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceRecordPayload>
+        }
+        deleteMany: {
+          args: Prisma.MaintenanceRecordDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MaintenanceRecordUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MaintenanceRecordUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceRecordPayload>[]
+        }
+        upsert: {
+          args: Prisma.MaintenanceRecordUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MaintenanceRecordPayload>
+        }
+        aggregate: {
+          args: Prisma.MaintenanceRecordAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMaintenanceRecord>
+        }
+        groupBy: {
+          args: Prisma.MaintenanceRecordGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MaintenanceRecordGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MaintenanceRecordCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MaintenanceRecordCountAggregateOutputType> | number
+        }
+      }
+    }
     ContractType: {
       payload: Prisma.$ContractTypePayload<ExtArgs>
       fields: Prisma.ContractTypeFieldRefs
@@ -4806,6 +4956,7 @@ export const AssetScalarFieldEnum = {
   depreciationStart: 'depreciationStart',
   depreciationEnd: 'depreciationEnd',
   warrantyEndDate: 'warrantyEndDate',
+  condition: 'condition',
   currentStockLocationId: 'currentStockLocationId',
   attributes: 'attributes',
   note: 'note',
@@ -4824,6 +4975,8 @@ export const AssetAssignmentScalarFieldEnum = {
   startDate: 'startDate',
   endDate: 'endDate',
   isPrimary: 'isPrimary',
+  conditionOnAssignment: 'conditionOnAssignment',
+  conditionOnReturn: 'conditionOnReturn',
   note: 'note',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -4851,6 +5004,48 @@ export const WarrantyScalarFieldEnum = {
 } as const
 
 export type WarrantyScalarFieldEnum = (typeof WarrantyScalarFieldEnum)[keyof typeof WarrantyScalarFieldEnum]
+
+
+export const MaintenanceScheduleScalarFieldEnum = {
+  id: 'id',
+  assetId: 'assetId',
+  title: 'title',
+  description: 'description',
+  scheduleType: 'scheduleType',
+  intervalValue: 'intervalValue',
+  startDate: 'startDate',
+  nextDueDate: 'nextDueDate',
+  isActive: 'isActive',
+  assignedToId: 'assignedToId',
+  estimatedDurationMinutes: 'estimatedDurationMinutes',
+  priority: 'priority',
+  instructions: 'instructions',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MaintenanceScheduleScalarFieldEnum = (typeof MaintenanceScheduleScalarFieldEnum)[keyof typeof MaintenanceScheduleScalarFieldEnum]
+
+
+export const MaintenanceRecordScalarFieldEnum = {
+  id: 'id',
+  assetId: 'assetId',
+  maintenanceScheduleId: 'maintenanceScheduleId',
+  title: 'title',
+  description: 'description',
+  scheduledDate: 'scheduledDate',
+  completedDate: 'completedDate',
+  performedById: 'performedById',
+  status: 'status',
+  notes: 'notes',
+  cost: 'cost',
+  partsUsed: 'partsUsed',
+  nextMaintenanceDate: 'nextMaintenanceDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MaintenanceRecordScalarFieldEnum = (typeof MaintenanceRecordScalarFieldEnum)[keyof typeof MaintenanceRecordScalarFieldEnum]
 
 
 export const ContractTypeScalarFieldEnum = {
@@ -5625,6 +5820,8 @@ export type GlobalOmitConfig = {
   asset?: Prisma.AssetOmit
   assetAssignment?: Prisma.AssetAssignmentOmit
   warranty?: Prisma.WarrantyOmit
+  maintenanceSchedule?: Prisma.MaintenanceScheduleOmit
+  maintenanceRecord?: Prisma.MaintenanceRecordOmit
   contractType?: Prisma.ContractTypeOmit
   contract?: Prisma.ContractOmit
   contractLinkedObject?: Prisma.ContractLinkedObjectOmit

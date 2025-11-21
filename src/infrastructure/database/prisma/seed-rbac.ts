@@ -847,6 +847,87 @@ const SYSTEM_PERMISSIONS = [
     action: "manage",
   },
 
+  // Maintenance: Schedules
+  {
+    name: PERMISSIONS.MAINTENANCE_SCHEDULES_VIEW,
+    displayName: "View Maintenance Schedules",
+    description: "View maintenance schedule list and details",
+    resource: "maintenance-schedules",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.MAINTENANCE_SCHEDULES_CREATE,
+    displayName: "Create Maintenance Schedules",
+    description: "Create new maintenance schedules",
+    resource: "maintenance-schedules",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.MAINTENANCE_SCHEDULES_UPDATE,
+    displayName: "Update Maintenance Schedules",
+    description: "Update existing maintenance schedules",
+    resource: "maintenance-schedules",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.MAINTENANCE_SCHEDULES_DELETE,
+    displayName: "Delete Maintenance Schedules",
+    description: "Delete maintenance schedules",
+    resource: "maintenance-schedules",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.MAINTENANCE_SCHEDULES_MANAGE,
+    displayName: "Manage Maintenance Schedules",
+    description: "Full maintenance schedule management access",
+    resource: "maintenance-schedules",
+    action: "manage",
+  },
+
+  // Maintenance: Records
+  {
+    name: PERMISSIONS.MAINTENANCE_RECORDS_VIEW,
+    displayName: "View Maintenance Records",
+    description: "View maintenance record list and details",
+    resource: "maintenance-records",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.MAINTENANCE_RECORDS_CREATE,
+    displayName: "Create Maintenance Records",
+    description: "Create new maintenance records",
+    resource: "maintenance-records",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.MAINTENANCE_RECORDS_UPDATE,
+    displayName: "Update Maintenance Records",
+    description: "Update existing maintenance records",
+    resource: "maintenance-records",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.MAINTENANCE_RECORDS_DELETE,
+    displayName: "Delete Maintenance Records",
+    description: "Delete maintenance records",
+    resource: "maintenance-records",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.MAINTENANCE_RECORDS_PERFORM,
+    displayName: "Perform Maintenance",
+    description: "Start, complete, and cancel maintenance work",
+    resource: "maintenance-records",
+    action: "perform",
+  },
+  {
+    name: PERMISSIONS.MAINTENANCE_RECORDS_MANAGE,
+    displayName: "Manage Maintenance Records",
+    description: "Full maintenance record management access",
+    resource: "maintenance-records",
+    action: "manage",
+  },
+
   // Inventory: Stock Locations
   {
     name: PERMISSIONS.STOCK_LOCATIONS_VIEW,

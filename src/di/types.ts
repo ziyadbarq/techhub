@@ -328,6 +328,37 @@ export const DI_TOKENS = {
   ListStockMovementsUseCase: Symbol.for("ListStockMovementsUseCase"),
   DeleteStockMovementUseCase: Symbol.for("DeleteStockMovementUseCase"),
 
+  // Maintenance: Schedule Repository
+  IMaintenanceScheduleRepository: Symbol.for("IMaintenanceScheduleRepository"),
+
+  // Maintenance: Schedule Use Cases
+  CreateMaintenanceScheduleUseCase: Symbol.for(
+    "CreateMaintenanceScheduleUseCase",
+  ),
+  GetMaintenanceScheduleUseCase: Symbol.for("GetMaintenanceScheduleUseCase"),
+  ListMaintenanceSchedulesUseCase: Symbol.for(
+    "ListMaintenanceSchedulesUseCase",
+  ),
+  UpdateMaintenanceScheduleUseCase: Symbol.for(
+    "UpdateMaintenanceScheduleUseCase",
+  ),
+  DeleteMaintenanceScheduleUseCase: Symbol.for(
+    "DeleteMaintenanceScheduleUseCase",
+  ),
+
+  // Maintenance: Record Repository
+  IMaintenanceRecordRepository: Symbol.for("IMaintenanceRecordRepository"),
+
+  // Maintenance: Record Use Cases
+  CreateMaintenanceRecordUseCase: Symbol.for("CreateMaintenanceRecordUseCase"),
+  GetMaintenanceRecordUseCase: Symbol.for("GetMaintenanceRecordUseCase"),
+  ListMaintenanceRecordsUseCase: Symbol.for("ListMaintenanceRecordsUseCase"),
+  UpdateMaintenanceRecordUseCase: Symbol.for("UpdateMaintenanceRecordUseCase"),
+  DeleteMaintenanceRecordUseCase: Symbol.for("DeleteMaintenanceRecordUseCase"),
+  StartMaintenanceUseCase: Symbol.for("StartMaintenanceUseCase"),
+  CompleteMaintenanceUseCase: Symbol.for("CompleteMaintenanceUseCase"),
+  CancelMaintenanceUseCase: Symbol.for("CancelMaintenanceUseCase"),
+
   // ==========================================
   // Infrastructure Tokens
   // ==========================================

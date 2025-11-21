@@ -52,7 +52,6 @@ interface ReturnAssetWizardProps {
 
 const ReturnAssetSchema = z.object({
   stockLocationToId: z.string().min(1, "Please select a return location"),
-  performedById: z.string().min(1, "Performer ID is required"),
   note: z.string().optional(),
 });
 
@@ -74,7 +73,6 @@ export function ReturnAssetWizard({
     resolver: zodResolver(ReturnAssetSchema),
     defaultValues: {
       stockLocationToId: "",
-      performedById: "", // TODO: Get from session
       note: "",
     },
   });
@@ -100,9 +98,6 @@ export function ReturnAssetWizard({
 
     if (open) {
       loadData();
-      // TODO: Get current user from session and set performedById
-      // For now, we'll use a placeholder - this should be replaced with actual session logic
-      form.setValue("performedById", "current-user-id-placeholder");
     }
   }, [open, form]);
 
@@ -111,7 +106,6 @@ export function ReturnAssetWizard({
     if (!open) {
       form.reset({
         stockLocationToId: "",
-        performedById: "",
         note: "",
       });
     }
@@ -123,7 +117,6 @@ export function ReturnAssetWizard({
         assetId,
         assignmentId,
         stockLocationToId: data.stockLocationToId,
-        performedById: data.performedById,
         note: data.note,
       });
 

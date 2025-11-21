@@ -48,7 +48,7 @@ export function RegisterForm() {
         email: data.email,
         password: data.password,
         name: data.name || "",
-        callbackURL: "/",
+        callbackURL: "/dashboard",
       });
 
       if (response.error) {
@@ -59,8 +59,22 @@ export function RegisterForm() {
         return;
       }
 
-      // Successful registration - redirect to dashboard
-      router.push("/");
+      // Immediately sign the user in so they land in the dashboard after registration
+      const signInResponse = await authClient.signIn.email({
+        email: data.email,
+        password: data.password,
+        callbackURL: "/dashboard",
+      });
+
+      if (signInResponse.error) {
+        setError(
+          signInResponse.error.message ||
+            "Account created, but we could not sign you in. Please try logging in.",
+        );
+        return;
+      }
+
+      router.push("/dashboard");
       router.refresh();
     } catch (err) {
       setError(

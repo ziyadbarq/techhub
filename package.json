@@ -18,7 +18,7 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,md}\" \"!node_modules/**\" \"!.next/**\" \"!.turbo/**\" \"!dist/**\" \"!out/**\"",
     "setup": "npm install && npm run db:push && npm run db:seed",
     "validate": "npm run type-check && npm run lint && npm run test",
-    "db:generate": "dotenv -e .env.local -- prisma generate",
+    "db:generate": "dotenv -e .env.local -- prisma generate && node scripts/recreate-prisma-index.js",
     "db:push": "dotenv -e .env.local -- prisma db push",
     "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
     "db:seed": "dotenv -e .env.local -- tsx src/infrastructure/database/prisma/seed.ts",
