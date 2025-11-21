@@ -57,7 +57,7 @@ export async function createPersonAction(
       primaryRoleId: validated.primaryRoleId,
       locationId: validated.locationId ?? undefined,
       managerId: validated.managerId ?? undefined,
-      title: validated.jobTitle ?? undefined,
+      title: validated.title ?? undefined,
       department: validated.department ?? undefined,
       hireDate: validated.hireDate ?? undefined,
     });
@@ -162,7 +162,7 @@ export async function updatePersonAction(
       primaryRoleId: validated.primaryRoleId ?? undefined,
       locationId: validated.locationId,
       managerId: validated.managerId,
-      title: validated.jobTitle,
+      title: validated.title,
       department: validated.department,
       hireDate: validated.hireDate,
       terminationDate: validated.terminationDate,

@@ -61,6 +61,7 @@ model Account {
 
   @@unique([provider, providerAccountId])
   @@index([userId])
+  @@index([expiresAt]) // Medium-priority: Cleanup expired sessions
   @@map("accounts")
 }
 
@@ -89,6 +90,7 @@ model Verification {
   updatedAt  DateTime @updatedAt
 
   @@unique([identifier])
+  @@index([expiresAt]) // Medium-priority: Cleanup expired tokens
   @@map("verification")
 }
 
@@ -171,6 +173,7 @@ model UserRole {
   @@unique([userId, roleId])
   @@index([userId])
   @@index([roleId])
+  @@index([expiresAt]) // High-priority: Expired role cleanup
   @@map("user_roles")
 }
 
@@ -221,6 +224,7 @@ model OrganizationUnit {
   people             Person[]            @relation("PersonOrgUnit")
   configurationItems ConfigurationItem[]
   dataOwnerships     DataOwnership[]     @relation("DataOwnershipOrgUnit")
+  reservations       AssetReservation[]  @relation("ReservationForOrgUnit")
 
   // Indexes
   @@index([parentId])
@@ -254,6 +258,7 @@ model Person {
   terminationDate DateTime?
   isActive        Boolean   @default(true)
   metadata        Json?
+  deletedAt       DateTime? // Soft delete timestamp
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -272,9 +277,18 @@ model Person {
   verificationItems            VerificationItem[]
   auditLogsChanged             AuditLogEntry[]        @relation("AuditLogChangedBy")
   attachments                  Attachment[]
-  dataOwnerships               DataOwnership[]        @relation("DataOwnershipPerson")
-  assignedMaintenanceSchedules MaintenanceSchedule[]
-  performedMaintenanceRecords  MaintenanceRecord[]
+  dataOwnerships                DataOwnership[]        @relation("DataOwnershipPerson")
+  assignedMaintenanceSchedules  MaintenanceSchedule[]
+  performedMaintenanceRecords   MaintenanceRecord[]
+  initiatedDisposals            AssetDisposal[]        @relation("DisposalInitiatedBy")
+  approvedDisposals             AssetDisposal[]        @relation("DisposalApprovedBy")
+  disposalApprovals             DisposalApproval[]     @relation("DisposalApprover")
+  uploadedDisposalDocuments     DisposalDocument[]     @relation("DisposalDocumentUploader")
+  kitCheckouts                  AssetKitCheckout[]     @relation("KitCheckoutBy")
+  reservationsFor               AssetReservation[]     @relation("ReservationForPerson")
+  reservationsCreated           AssetReservation[]     @relation("ReservationBy")
+  reservationsConfirmed         AssetReservation[]     @relation("ReservationConfirmedBy")
+  reservationsCancelled         AssetReservation[]     @relation("ReservationCancelledBy")
 
   // Indexes
   @@index([userId])
@@ -305,7 +319,7 @@ model PersonRoleAssignment {
   updatedAt DateTime  @updatedAt
 
   // Relations
-  person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+  person Person @relation(fields: [personId], references: [id], onDelete: Restrict)
   role   Role   @relation("PersonRoleAssignments", fields: [roleId], references: [id], onDelete: Cascade)
 
   // Indexes
@@ -390,6 +404,7 @@ model Vendor {
   warranties      Warranty[]
   contracts       Contract[]
   licenseProducts LicenseProduct[]
+  disposals       AssetDisposal[]
 
   // Indexes
   @@index([name])
@@ -467,7 +482,7 @@ model LifecycleState {
   updatedAt        DateTime  @updatedAt
 
   // Relations
-  lifecycleModel     LifecycleModel        @relation(fields: [lifecycleModelId], references: [id], onDelete: Cascade)
+  lifecycleModel     LifecycleModel        @relation(fields: [lifecycleModelId], references: [id], onDelete: Restrict)
   transitionsFrom    LifecycleTransition[] @relation("TransitionFrom")
   transitionsTo      LifecycleTransition[] @relation("TransitionTo")
   configurationItems ConfigurationItem[]
@@ -501,9 +516,9 @@ model LifecycleTransition {
   updatedAt        DateTime @updatedAt
 
   // Relations
-  lifecycleModel LifecycleModel @relation(fields: [lifecycleModelId], references: [id], onDelete: Cascade)
-  fromState      LifecycleState @relation("TransitionFrom", fields: [fromStateId], references: [id], onDelete: Cascade)
-  toState        LifecycleState @relation("TransitionTo", fields: [toStateId], references: [id], onDelete: Cascade)
+  lifecycleModel LifecycleModel @relation(fields: [lifecycleModelId], references: [id], onDelete: Restrict)
+  fromState      LifecycleState @relation("TransitionFrom", fields: [fromStateId], references: [id], onDelete: Restrict)
+  toState        LifecycleState @relation("TransitionTo", fields: [toStateId], references: [id], onDelete: Restrict)
   requiredRole   Role?          @relation("TransitionRequiredRole", fields: [requiredRoleId], references: [id], onDelete: SetNull)
 
   // Indexes
@@ -710,8 +725,8 @@ model CIRelationship {
   updatedAt          DateTime  @updatedAt
 
   // Relations
-  fromCi           ConfigurationItem @relation("CIRelationshipFrom", fields: [fromCiId], references: [id], onDelete: Cascade)
-  toCi             ConfigurationItem @relation("CIRelationshipTo", fields: [toCiId], references: [id], onDelete: Cascade)
+  fromCi           ConfigurationItem @relation("CIRelationshipFrom", fields: [fromCiId], references: [id], onDelete: Restrict)
+  toCi             ConfigurationItem @relation("CIRelationshipTo", fields: [toCiId], references: [id], onDelete: Restrict)
   relationshipType RelationshipType  @relation(fields: [relationshipTypeId], references: [id], onDelete: Restrict)
 
   // Indexes
@@ -720,6 +735,8 @@ model CIRelationship {
   @@index([toCiId])
   @@index([relationshipTypeId])
   @@index([isActive])
+  @@index([isActive, relationshipTypeId]) // High-priority: Topology queries
+  @@index([validFrom, validTo]) // High-priority: Temporal queries
   @@map("ci_relationships")
 }
 
@@ -744,6 +761,7 @@ model AssetCategory {
   assetModels    AssetModel[]
   assets         Asset[]
   dataOwnerships DataOwnership[]
+  kitItems       AssetKitItem[]
 
   // Indexes
   @@index([code])
@@ -792,6 +810,7 @@ model AssetModel {
   assetCategory AssetCategory @relation(fields: [assetCategoryId], references: [id], onDelete: Restrict)
   vendor        Vendor        @relation(fields: [vendorId], references: [id], onDelete: Restrict)
   assets        Asset[]
+  kitItems      AssetKitItem[]
 
   // Indexes
   @@index([code])
@@ -872,6 +891,7 @@ model Asset {
   currentStockLocationId String?
   attributes             Json? // dynamic fields per AssetCategoryField
   note                   String?   @db.Text
+  deletedAt              DateTime? // Soft delete timestamp
   createdAt              DateTime  @default(now())
   updatedAt              DateTime  @updatedAt
 
@@ -888,6 +908,9 @@ model Asset {
   assetAssignments     AssetAssignment[]
   maintenanceSchedules MaintenanceSchedule[]
   maintenanceRecords   MaintenanceRecord[]
+  disposals            AssetDisposal[]        @relation("AssetDisposals")
+  reservations         AssetReservation[]
+  kitCheckoutItems     AssetKitCheckoutItem[]
 
   // Indexes
   @@index([assetTag])
@@ -898,6 +921,12 @@ model Asset {
   @@index([lifecycleStateId])
   @@index([serialNumber])
   @@index([currentStockLocationId])
+  @@index([condition]) // High-priority: Filter by condition
+  @@index([warrantyEndDate]) // High-priority: Expiring warranties
+  @@index([assetCategoryId, lifecycleStateId]) // High-priority: Dashboard queries
+  @@index([condition, lifecycleStateId]) // High-priority: Filter by condition + state
+  @@index([purchaseDate]) // Medium-priority: Age-based queries
+  @@index([depreciationStart, depreciationEnd]) // Medium-priority: Depreciation queries
   @@map("assets")
 }
 
@@ -917,7 +946,7 @@ model AssetAssignment {
   updatedAt             DateTime         @updatedAt
 
   // Relations
-  asset Asset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Restrict)
 
   // Indexes
   @@index([assetId])
@@ -946,7 +975,7 @@ model Warranty {
   updatedAt       DateTime             @updatedAt
 
   // Relations
-  asset  Asset   @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  asset  Asset   @relation(fields: [assetId], references: [id], onDelete: Restrict)
   vendor Vendor? @relation(fields: [vendorId], references: [id], onDelete: SetNull)
 
   // Indexes
@@ -982,7 +1011,7 @@ model MaintenanceSchedule {
   updatedAt                DateTime @updatedAt
 
   // Relations
-  asset              Asset               @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  asset              Asset               @relation(fields: [assetId], references: [id], onDelete: Restrict)
   assignedTo         Person?             @relation(fields: [assignedToId], references: [id], onDelete: SetNull)
   maintenanceRecords MaintenanceRecord[]
 
@@ -993,6 +1022,7 @@ model MaintenanceSchedule {
   @@index([isActive])
   @@index([scheduleType])
   @@index([priority])
+  @@index([startDate]) // Medium-priority: Schedule activation
   @@map("maintenance_schedules")
 }
 
@@ -1016,7 +1046,7 @@ model MaintenanceRecord {
   updatedAt             DateTime  @updatedAt
 
   // Relations
-  asset               Asset                @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  asset               Asset                @relation(fields: [assetId], references: [id], onDelete: Restrict)
   maintenanceSchedule MaintenanceSchedule? @relation(fields: [maintenanceScheduleId], references: [id], onDelete: SetNull)
   performedBy         Person?              @relation(fields: [performedById], references: [id], onDelete: SetNull)
 
@@ -1027,6 +1057,7 @@ model MaintenanceRecord {
   @@index([scheduledDate])
   @@index([completedDate])
   @@index([status])
+  @@index([status, assetId]) // High-priority: Asset maintenance history
   @@map("maintenance_records")
 }
 
@@ -1037,7 +1068,7 @@ model MaintenanceRecord {
 // AssetDisposal model
 // Tracks asset disposal with approval workflow, sanitization, and certificates
 model AssetDisposal {
-  id                    String    @id @default(uuid())
+  id                    String    @id @default(cuid())
   assetId               String    @map("asset_id")
   disposalType          String    @map("disposal_type") // DONATION, SALE, RECYCLING, DESTRUCTION, OTHER
   reason                String?
@@ -1060,8 +1091,12 @@ model AssetDisposal {
   updatedAt             DateTime  @updatedAt @map("updated_at")
 
   // Relations
-  approvals DisposalApproval[]
-  documents DisposalDocument[]
+  asset          Asset              @relation("AssetDisposals", fields: [assetId], references: [id], onDelete: Restrict)
+  initiatedBy    Person             @relation("DisposalInitiatedBy", fields: [initiatedById], references: [id], onDelete: Restrict)
+  approvedBy     Person?            @relation("DisposalApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
+  disposalVendor Vendor?            @relation(fields: [disposalVendorId], references: [id], onDelete: SetNull)
+  approvals      DisposalApproval[]
+  documents      DisposalDocument[]
 
   // Indexes
   @@index([assetId])
@@ -1071,13 +1106,16 @@ model AssetDisposal {
   @@index([approvedById])
   @@index([disposalDate])
   @@index([certificateNumber])
+  @@index([status, disposalType]) // High-priority: Dashboard queries
+  @@index([approvedAt]) // Medium-priority: Approval timeline
+  @@index([certificateIssuedAt]) // Medium-priority: Certificate tracking
   @@map("asset_disposals")
 }
 
 // DisposalApproval model
 // Multi-level approval tracking for disposal requests
 model DisposalApproval {
-  id         String    @id @default(uuid())
+  id         String    @id @default(cuid())
   disposalId String    @map("disposal_id")
   approverId String    @map("approver_id")
   status     String    @default("PENDING") // PENDING, APPROVED, REJECTED
@@ -1087,18 +1125,20 @@ model DisposalApproval {
 
   // Relations
   disposal AssetDisposal @relation(fields: [disposalId], references: [id], onDelete: Cascade)
+  approver Person        @relation("DisposalApprover", fields: [approverId], references: [id], onDelete: Restrict)
 
   // Indexes
   @@index([disposalId])
   @@index([approverId])
   @@index([status])
+  @@index([decisionAt]) // Medium-priority: Decision timeline
   @@map("disposal_approvals")
 }
 
 // DisposalDocument model
 // Tracks documents attached to disposals (certificates, receipts, photos)
 model DisposalDocument {
-  id           String   @id @default(uuid())
+  id           String   @id @default(cuid())
   disposalId   String   @map("disposal_id")
   documentType String   @map("document_type") // CERTIFICATE, RECEIPT, INVOICE, PHOTO, OTHER
   fileName     String   @map("file_name")
@@ -1109,7 +1149,8 @@ model DisposalDocument {
   uploadedAt   DateTime @default(now()) @map("uploaded_at")
 
   // Relations
-  disposal AssetDisposal @relation(fields: [disposalId], references: [id], onDelete: Cascade)
+  disposal   AssetDisposal @relation(fields: [disposalId], references: [id], onDelete: Cascade)
+  uploadedBy Person        @relation("DisposalDocumentUploader", fields: [uploadedById], references: [id], onDelete: Restrict)
 
   // Indexes
   @@index([disposalId])
@@ -1125,7 +1166,7 @@ model DisposalDocument {
 // AssetKit model
 // Reusable kit templates (e.g., "New Hire Kit", "Executive Package")
 model AssetKit {
-  id          String   @id @default(uuid())
+  id          String   @id @default(cuid())
   name        String
   code        String   @unique
   description String?  @db.Text
@@ -1149,7 +1190,7 @@ model AssetKit {
 // AssetKitItem model
 // Items included in a kit template (category or specific model)
 model AssetKitItem {
-  id              String   @id @default(uuid())
+  id              String   @id @default(cuid())
   assetKitId      String   @map("asset_kit_id")
   assetCategoryId String?  @map("asset_category_id")
   assetModelId    String?  @map("asset_model_id")
@@ -1160,7 +1201,10 @@ model AssetKitItem {
   updatedAt       DateTime @updatedAt @map("updated_at")
 
   // Relations
-  assetKit AssetKit @relation(fields: [assetKitId], references: [id], onDelete: Cascade)
+  assetKit      AssetKit               @relation(fields: [assetKitId], references: [id], onDelete: Cascade)
+  assetCategory AssetCategory?         @relation(fields: [assetCategoryId], references: [id], onDelete: Restrict)
+  assetModel    AssetModel?            @relation(fields: [assetModelId], references: [id], onDelete: SetNull)
+  checkoutItems AssetKitCheckoutItem[]
 
   // Indexes
   @@index([assetKitId])
@@ -1172,7 +1216,7 @@ model AssetKitItem {
 // AssetKitCheckout model
 // Actual kit checkout instance tracking
 model AssetKitCheckout {
-  id                 String    @id @default(uuid())
+  id                 String    @id @default(cuid())
   assetKitId         String    @map("asset_kit_id")
   assigneeType       String    @map("assignee_type") // PERSON, ORG_UNIT, LOCATION
   assigneeId         String    @map("assignee_id")
@@ -1186,8 +1230,9 @@ model AssetKitCheckout {
   updatedAt          DateTime  @updatedAt @map("updated_at")
 
   // Relations
-  assetKit AssetKit               @relation(fields: [assetKitId], references: [id], onDelete: Restrict)
-  items    AssetKitCheckoutItem[]
+  assetKit     AssetKit               @relation(fields: [assetKitId], references: [id], onDelete: Restrict)
+  checkedOutBy Person                 @relation("KitCheckoutBy", fields: [checkedOutById], references: [id], onDelete: Restrict)
+  items        AssetKitCheckoutItem[]
 
   // Indexes
   @@index([assetKitId])
@@ -1195,13 +1240,15 @@ model AssetKitCheckout {
   @@index([status])
   @@index([checkedOutById])
   @@index([expectedReturnDate])
+  @@index([checkoutDate]) // Medium-priority: Checkout history
+  @@index([actualReturnDate]) // Medium-priority: Return tracking
   @@map("asset_kit_checkouts")
 }
 
 // AssetKitCheckoutItem model
 // Individual assets tracked within a kit checkout
 model AssetKitCheckoutItem {
-  id                  String    @id @default(uuid())
+  id                  String    @id @default(cuid())
   kitCheckoutId       String    @map("kit_checkout_id")
   assetId             String    @map("asset_id")
   kitItemId           String    @map("kit_item_id")
@@ -1216,6 +1263,8 @@ model AssetKitCheckoutItem {
 
   // Relations
   kitCheckout AssetKitCheckout @relation(fields: [kitCheckoutId], references: [id], onDelete: Cascade)
+  asset       Asset            @relation(fields: [assetId], references: [id], onDelete: Restrict)
+  kitItem     AssetKitItem     @relation(fields: [kitItemId], references: [id], onDelete: Restrict)
 
   // Indexes
   @@index([kitCheckoutId])
@@ -1251,6 +1300,12 @@ model AssetReservation {
   updatedAt            DateTime  @updatedAt @map("updated_at")
 
   // Relations
+  asset                   Asset                      @relation(fields: [assetId], references: [id], onDelete: Restrict)
+  reservedForPerson       Person?                    @relation("ReservationForPerson", fields: [reservedForPersonId], references: [id], onDelete: SetNull)
+  reservedForOrgUnit      OrganizationUnit?          @relation("ReservationForOrgUnit", fields: [reservedForOrgUnitId], references: [id], onDelete: SetNull)
+  reservedBy              Person                     @relation("ReservationBy", fields: [reservedById], references: [id], onDelete: Restrict)
+  confirmedBy             Person?                    @relation("ReservationConfirmedBy", fields: [confirmedById], references: [id], onDelete: SetNull)
+  cancelledBy             Person?                    @relation("ReservationCancelledBy", fields: [cancelledById], references: [id], onDelete: SetNull)
   conflicts               AssetReservationConflict[] @relation("ReservationConflicts")
   conflictingReservations AssetReservationConflict[] @relation("ConflictingReservations")
 
@@ -1261,13 +1316,14 @@ model AssetReservation {
   @@index([reservedById])
   @@index([status])
   @@index([startDate, endDate])
+  @@index([status, assetId]) // CRITICAL: Asset availability checks
   @@map("asset_reservations")
 }
 
 // AssetReservationConflict model
 // Tracks conflicts between overlapping reservations
 model AssetReservationConflict {
-  id                       String    @id @default(uuid())
+  id                       String    @id @default(cuid())
   reservationId            String    @map("reservation_id")
   conflictingReservationId String    @map("conflicting_reservation_id")
   detectedAt               DateTime  @default(now()) @map("detected_at")
@@ -1454,6 +1510,7 @@ model LicenseAllocation {
   @@index([licenseEntitlementId])
   @@index([targetType, targetId])
   @@index([allocatedAt])
+  @@index([deallocatedAt]) // Medium-priority: Deallocation tracking
   @@map("license_allocations")
 }
 
@@ -1554,6 +1611,7 @@ model VerificationItem {
   @@index([targetType, targetId])
   @@index([verifierPersonId])
   @@index([status])
+  @@index([verifiedAt]) // Medium-priority: Verification timeline
   @@map("verification_items")
 }
 
@@ -1666,10 +1724,46 @@ enum AllocationTargetTypeEnum {
 }
 
 enum TargetObjectTypeEnum {
+  // Foundation Layer
+  ORGANIZATION_UNIT
+  PERSON
+  LOCATION
+  VENDOR
+  LIFECYCLE_STATE
+  LIFECYCLE_TRANSITION
+
+  // CMDB
   CI
+  CI_RELATIONSHIP
+  RELATIONSHIP_TYPE
+
+  // Asset Layer
   ASSET
-  LICENSE_ENTITLEMENT
+  ASSET_ASSIGNMENT
+  WARRANTY
+  MAINTENANCE_SCHEDULE
+  MAINTENANCE_RECORD
+  STOCK_MOVEMENT
+
+  // Asset Disposals
+  ASSET_DISPOSAL
+  DISPOSAL_APPROVAL
+  DISPOSAL_DOCUMENT
+
+  // Asset Kits
+  ASSET_KIT
+  ASSET_KIT_ITEM
+  ASSET_KIT_CHECKOUT
+  ASSET_KIT_CHECKOUT_ITEM
+
+  // Asset Reservations
+  ASSET_RESERVATION
+  ASSET_RESERVATION_CONFLICT
+
+  // Contracts & Licenses
   CONTRACT
+  LICENSE_ENTITLEMENT
+  LICENSE_ALLOCATION
 }
 
 enum StockMovementTypeEnum {

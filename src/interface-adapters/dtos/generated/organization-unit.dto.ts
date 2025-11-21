@@ -35,6 +35,11 @@ export const CreateOrganizationUnitSchema = z.object({
     .nullable(),
   isActive: z.boolean().optional().default(true),
   metadata: z.record(z.string(), z.unknown()).optional().nullable(),
+  note: z
+    .string()
+    .max(5000, "Note must be 5000 characters or less")
+    .optional()
+    .nullable(),
 });
 
 export type CreateOrganizationUnitDTO = z.infer<
@@ -72,6 +77,11 @@ export const UpdateOrganizationUnitSchema = z.object({
     .nullable(),
   isActive: z.boolean().optional(),
   metadata: z.record(z.string(), z.unknown()).optional().nullable(),
+  note: z
+    .string()
+    .max(5000, "Note must be 5000 characters or less")
+    .optional()
+    .nullable(),
 });
 
 export type UpdateOrganizationUnitDTO = z.infer<

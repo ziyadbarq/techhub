@@ -5263,6 +5263,7 @@ export const PersonScalarFieldEnum = {
   terminationDate: 'terminationDate',
   isActive: 'isActive',
   metadata: 'metadata',
+  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -5635,6 +5636,7 @@ export const AssetScalarFieldEnum = {
   currentStockLocationId: 'currentStockLocationId',
   attributes: 'attributes',
   note: 'note',
+  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

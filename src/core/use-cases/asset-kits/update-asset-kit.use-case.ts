@@ -5,13 +5,17 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitRepository } from "@/core/repositories/asset-kit.repository.interface";
-import type { AssetKit } from "@/core/domain/entities/asset-kit.entity";
+import type {
+  AssetKit,
+  KitType,
+} from "@/core/domain/entities/asset-kit.entity";
 
 export interface UpdateAssetKitRequest {
   kitId: string;
   name?: string;
   code?: string;
   description?: string;
+  kitType?: KitType;
   isActive?: boolean;
 }
 
@@ -36,25 +40,13 @@ export class UpdateAssetKitUseCase {
       }
     }
 
-    if (request.name !== undefined) {
-      kit.updateName(request.name);
-    }
-
-    if (request.code !== undefined) {
-      kit.updateCode(request.code);
-    }
-
-    if (request.description !== undefined) {
-      kit.updateDescription(request.description);
-    }
-
-    if (request.isActive !== undefined) {
-      if (request.isActive) {
-        kit.activate();
-      } else {
-        kit.deactivate();
-      }
-    }
+    kit.update({
+      name: request.name,
+      code: request.code,
+      description: request.description,
+      kitType: request.kitType,
+      isActive: request.isActive,
+    });
 
     return this.assetKitRepository.update(kit);
   }

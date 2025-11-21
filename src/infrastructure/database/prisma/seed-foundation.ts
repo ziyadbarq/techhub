@@ -10,25 +10,26 @@
  * - Field Definitions
  */
 
-import type { PrismaClient } from "../../../generated/prisma/client.js";
-import {
+import type {
+  PrismaClient,
   VendorType,
+} from "../../../generated/prisma/client.js";
+import {
   FieldDataTypeEnum,
   LocationType,
 } from "../../../generated/prisma/client.js";
+import { SEED_CONFIG } from "./seed-config.js";
+import { logStep, logSuccess } from "./seed-utils.js";
 
 export async function seedFoundation(prisma: PrismaClient) {
   console.log("🏗️  Seeding Foundation layer...");
 
-  // Clean up people first to avoid FK issues when resetting org units/locations
-  await prisma.personRoleAssignment.deleteMany({});
-  await prisma.person.deleteMany({});
+  // Note: Cleanup is handled by main seed.ts orchestrator
 
   // ==============================================
   // 1. LIFECYCLE MODELS
   // ==============================================
-  console.log("   📊 Seeding lifecycle models...");
-  await prisma.lifecycleModel.deleteMany({});
+  logStep("📊", "Seeding lifecycle models...");
 
   const itAssetLifecycle = await prisma.lifecycleModel.create({
     data: {
@@ -54,11 +55,12 @@ export async function seedFoundation(prisma: PrismaClient) {
 
   console.log("   ✓ Created 3 lifecycle models");
 
+  logSuccess(`Created ${await prisma.lifecycleModel.count()} lifecycle models`);
+
   // ==============================================
   // 2. LIFECYCLE STATES
   // ==============================================
-  console.log("   🔄 Seeding lifecycle states...");
-  await prisma.lifecycleState.deleteMany({});
+  logStep("🔄", "Seeding lifecycle states...");
 
   // IT Asset States
   const stateNew = await prisma.lifecycleState.create({
@@ -184,11 +186,12 @@ export async function seedFoundation(prisma: PrismaClient) {
 
   console.log("   ✓ Created 9 lifecycle states");
 
+  logSuccess(`Created ${await prisma.lifecycleState.count()} lifecycle states`);
+
   // ==============================================
   // 3. LIFECYCLE TRANSITIONS
   // ==============================================
-  console.log("   ➡️  Seeding lifecycle transitions...");
-  await prisma.lifecycleTransition.deleteMany({});
+  logStep("➡️", "Seeding lifecycle transitions...");
 
   const transitions = [
     {
@@ -238,119 +241,75 @@ export async function seedFoundation(prisma: PrismaClient) {
   await prisma.lifecycleTransition.createMany({ data: transitions });
   console.log(`   ✓ Created ${transitions.length} lifecycle transitions`);
 
+  logSuccess(
+    `Created ${await prisma.lifecycleTransition.count()} lifecycle transitions`,
+  );
+
   // ==============================================
   // 4. VENDORS
   // ==============================================
-  console.log("   📦 Seeding vendors...");
-  await prisma.vendor.deleteMany({});
+  logStep("📦", "Seeding vendors...");
 
-  const vendorDell = await prisma.vendor.create({
-    data: {
-      name: "Dell Technologies",
-      code: "DELL",
-      description: "IT hardware and infrastructure solutions provider",
-      vendorType: VendorType.MANUFACTURER,
-      website: "https://www.dell.com",
-      email: "business@dell.com",
-      phone: "+1-800-289-3355",
-      taxId: "13-2603702",
-      paymentTerms: "Net 30",
-      isActive: true,
-    },
-  });
+  // Create vendors from configuration
+  const vendorMap = new Map<
+    string,
+    { id: string; code: string; name: string }
+  >();
 
-  const vendorHP = await prisma.vendor.create({
-    data: {
-      name: "HP Inc.",
-      code: "HP",
-      description: "Personal computing and printing solutions",
-      vendorType: VendorType.MANUFACTURER,
-      website: "https://www.hp.com",
-      email: "business@hp.com",
-      phone: "+1-800-752-0900",
-      taxId: "47-0952120",
-      paymentTerms: "Net 30",
-      isActive: true,
-    },
-  });
+  for (const vendorData of SEED_CONFIG.VENDORS) {
+    const vendor = await prisma.vendor.create({
+      data: {
+        name: vendorData.name,
+        code: vendorData.code,
+        vendorType: vendorData.type as VendorType,
+        isActive: true,
+        paymentTerms: "Net 30",
+      },
+    });
+    vendorMap.set(vendor.code, vendor);
+  }
 
-  const vendorMicrosoft = await prisma.vendor.create({
-    data: {
-      name: "Microsoft Corporation",
-      code: "MSFT",
-      description: "Software, cloud services, and productivity tools",
-      vendorType: VendorType.MANUFACTURER,
-      website: "https://www.microsoft.com",
-      email: "licensing@microsoft.com",
-      phone: "+1-800-642-7676",
-      taxId: "91-1144442",
-      paymentTerms: "Net 45",
-      isActive: true,
-    },
-  });
-
-  const vendorOracle = await prisma.vendor.create({
-    data: {
-      name: "Oracle Corporation",
-      code: "ORCL",
-      description: "Enterprise software and cloud solutions",
-      vendorType: VendorType.MANUFACTURER,
-      website: "https://www.oracle.com",
-      email: "sales@oracle.com",
-      phone: "+1-800-633-0738",
-      taxId: "94-3251621",
-      paymentTerms: "Net 45",
-      isActive: true,
-    },
-  });
-
-  const vendorServiceProvider = await prisma.vendor.create({
-    data: {
-      name: "TechSupport Solutions",
-      code: "TECHSUPPORT",
-      description: "IT support and maintenance services",
-      vendorType: VendorType.SERVICE_PROVIDER,
-      website: "https://www.techsupport-example.com",
-      email: "support@techsupport.com",
-      phone: "+1-555-0123",
-      paymentTerms: "Net 15",
-      isActive: true,
-    },
-  });
-
-  console.log("   ✓ Created 5 vendors");
+  logSuccess(`Created ${vendorMap.size} vendors`);
 
   // ==============================================
-  // 5. VENDOR CONTACTS
+  // 5. VENDOR CONTACTS (Sample data for first vendor)
   // ==============================================
-  console.log("   👥 Seeding vendor contacts...");
-  await prisma.vendorContact.deleteMany({});
+  logStep("👥", "Seeding vendor contacts...");
 
-  const contacts = [
-    // Dell contacts
-    {
-      vendorId: vendorDell.id,
-      firstName: "Sarah",
-      lastName: "Johnson",
-      title: "Enterprise Account Manager",
-      email: "sarah.johnson@dell.com",
-      phone: "+1-512-555-0101",
-      isPrimary: true,
-      isActive: true,
-    },
-    {
-      vendorId: vendorDell.id,
-      firstName: "Michael",
-      lastName: "Chen",
-      title: "Technical Sales Specialist",
-      email: "michael.chen@dell.com",
-      phone: "+1-512-555-0102",
-      isPrimary: false,
-      isActive: true,
-    },
-    // HP contacts
-    {
-      vendorId: vendorHP.id,
+  // Get first two vendors for sample contacts
+  const firstVendor = vendorMap.get("DELL");
+  const secondVendor = vendorMap.get("HP");
+
+  const contacts = [];
+
+  if (firstVendor) {
+    contacts.push(
+      {
+        vendorId: firstVendor.id,
+        firstName: "Sarah",
+        lastName: "Johnson",
+        title: "Enterprise Account Manager",
+        email: "sarah.johnson@dell.com",
+        phone: "+1-512-555-0101",
+        isPrimary: true,
+        isActive: true,
+      },
+      {
+        vendorId: firstVendor.id,
+        firstName: "Michael",
+        lastName: "Chen",
+        title: "Technical Sales Specialist",
+        email: "michael.chen@dell.com",
+        phone: "+1-512-555-0102",
+        isPrimary: false,
+        isActive: true,
+      },
+    );
+  }
+
+  if (secondVendor) {
+    contacts.push({
+      vendorId: secondVendor.id,
       firstName: "Jennifer",
       lastName: "Martinez",
       title: "Business Development Manager",
@@ -358,61 +317,19 @@ export async function seedFoundation(prisma: PrismaClient) {
       phone: "+1-650-555-0201",
       isPrimary: true,
       isActive: true,
-    },
-    {
-      vendorId: vendorHP.id,
-      firstName: "David",
-      lastName: "Kim",
-      title: "Solutions Architect",
-      email: "david.kim@hp.com",
-      phone: "+1-650-555-0202",
-      isPrimary: false,
-      isActive: true,
-    },
-    // Microsoft contacts
-    {
-      vendorId: vendorMicrosoft.id,
-      firstName: "Emily",
-      lastName: "Williams",
-      title: "Licensing Specialist",
-      email: "emily.williams@microsoft.com",
-      phone: "+1-425-555-0301",
-      isPrimary: true,
-      isActive: true,
-    },
-    // Oracle contacts
-    {
-      vendorId: vendorOracle.id,
-      firstName: "Robert",
-      lastName: "Anderson",
-      title: "Senior Account Executive",
-      email: "robert.anderson@oracle.com",
-      phone: "+1-650-555-0401",
-      isPrimary: true,
-      isActive: true,
-    },
-    // Service Provider contacts
-    {
-      vendorId: vendorServiceProvider.id,
-      firstName: "Lisa",
-      lastName: "Thompson",
-      title: "Service Manager",
-      email: "lisa.thompson@techsupport.com",
-      phone: "+1-555-0123",
-      isPrimary: true,
-      isActive: true,
-      note: "24/7 support hotline available",
-    },
-  ];
+    });
+  }
 
-  await prisma.vendorContact.createMany({ data: contacts });
-  console.log(`   ✓ Created ${contacts.length} vendor contacts`);
+  if (contacts.length > 0) {
+    await prisma.vendorContact.createMany({ data: contacts });
+  }
+
+  logSuccess(`Created ${contacts.length} vendor contacts`);
 
   // ==============================================
   // 6. ORGANIZATION UNITS
   // ==============================================
-  console.log("   🏢 Seeding organization units...");
-  await prisma.organizationUnit.deleteMany({});
+  logStep("🏢", "Seeding organization units...");
 
   const orgRoot = await prisma.organizationUnit.create({
     data: {
@@ -498,13 +415,14 @@ export async function seedFoundation(prisma: PrismaClient) {
     ],
   });
 
-  console.log("   ✓ Created 8 organization units");
+  logSuccess(
+    `Created ${await prisma.organizationUnit.count()} organization units`,
+  );
 
   // ==============================================
   // 7. LOCATIONS
   // ==============================================
-  console.log("   📍 Seeding locations...");
-  await prisma.location.deleteMany({});
+  logStep("📍", "Seeding locations...");
 
   const locations = [
     {
@@ -572,13 +490,12 @@ export async function seedFoundation(prisma: PrismaClient) {
   ];
 
   await prisma.location.createMany({ data: locations });
-  console.log(`   ✓ Created ${locations.length} locations`);
+  logSuccess(`Created ${locations.length} locations`);
 
   // ==============================================
   // 8. PERSONS
   // ==============================================
-  console.log("   👤 Seeding persons...");
-  await prisma.person.deleteMany({});
+  logStep("👤", "Seeding persons...");
 
   // Get roles first (needed for Person.primaryRoleId)
   const adminRole = await prisma.role.findUnique({ where: { name: "admin" } });
@@ -687,12 +604,12 @@ export async function seedFoundation(prisma: PrismaClient) {
       persons.map((person) => prisma.person.create({ data: person })),
     );
 
-    console.log(`   ✓ Created ${createdPersons.length} persons`);
+    logSuccess(`Created ${createdPersons.length} persons`);
 
     // ==============================================
     // 9. PERSON ROLE ASSIGNMENTS
     // ==============================================
-    console.log("   🎭 Seeding person role assignments...");
+    logStep("🎭", "Seeding person role assignments...");
 
     const roleAssignments = [
       {
@@ -754,16 +671,13 @@ export async function seedFoundation(prisma: PrismaClient) {
     ];
 
     await prisma.personRoleAssignment.createMany({ data: roleAssignments });
-    console.log(
-      `   ✓ Created ${roleAssignments.length} person role assignments`,
-    );
+    logSuccess(`Created ${roleAssignments.length} person role assignments`);
   }
 
   // ==============================================
   // 10. FIELD DEFINITIONS
   // ==============================================
-  console.log("   🔧 Seeding field definitions...");
-  await prisma.fieldDefinition.deleteMany({});
+  logStep("🔧", "Seeding field definitions...");
 
   const fieldDefinitions = [
     // IT Asset fields
@@ -934,7 +848,7 @@ export async function seedFoundation(prisma: PrismaClient) {
   ];
 
   await prisma.fieldDefinition.createMany({ data: fieldDefinitions });
-  console.log(`   ✓ Created ${fieldDefinitions.length} field definitions`);
+  logSuccess(`Created ${fieldDefinitions.length} field definitions`);
 
-  console.log("✅ Foundation layer seeded successfully!");
+  logSuccess("Foundation layer seeding completed");
 }

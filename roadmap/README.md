@@ -25,6 +25,7 @@ This folder contains detailed specifications for planned features that are not y
 ### Layer 2 (Asset Management)
 
 - [Service Management System](SERVICE_MANAGEMENT.md) - **Status: Planned** - Comprehensive IT service catalog with ownership, infrastructure, and asset relationships (~80 services)
+- [Security Patch Workflow](SECURITY_PATCH_WORKFLOW.md) - **Status: Planned** - Monthly security patching with owner approval workflow and compliance tracking
 - [Multi-Currency Support](MULTI_CURRENCY_SUPPORT.md) - **Status: Planned** - Display all costs in SAR with original currency, FX rates management
 
 ### Layer 3 (Advanced ITAM)

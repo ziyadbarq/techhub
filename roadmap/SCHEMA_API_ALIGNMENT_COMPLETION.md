@@ -9,6 +9,7 @@
 ## Overview
 
 Complete the schema-API alignment project by implementing the remaining 4 phases:
+
 - **Phase 5**: Governance Features (4 entities) - Data domains, ownership, and verification campaigns
 - **Phase 6**: Attachments System (3 entities) - File attachments for all entities
 - **Phase 7**: Standalone APIs (optional) - Sub-entity CRUD endpoints
@@ -21,6 +22,7 @@ Complete the schema-API alignment project by implementing the remaining 4 phases
 ### Phase 5: Governance Features
 
 **Why This Matters for Barq (Financial Services)**:
+
 - **SAMA Compliance**: Saudi Central Bank requires strong data governance and accountability
 - **Regulatory Audits**: Prove data ownership and regular verification for compliance
 - **Risk Management**: Track which assets/CIs handle regulated data (PII, financial data, payment card data)
@@ -51,6 +53,7 @@ Complete the schema-API alignment project by implementing the remaining 4 phases
 ### Phase 6: Attachments System
 
 **Why This Matters**:
+
 - **Compliance Documentation**: Attach certificates, audit reports, licenses to assets/CIs
 - **Purchase Records**: Store invoices, receipts, quotes with assets
 - **Warranty/Contract Documents**: Link PDFs directly to warranty or contract records
@@ -78,11 +81,13 @@ Complete the schema-API alignment project by implementing the remaining 4 phases
 ### Phase 7: Standalone APIs (Optional)
 
 **Why This Matters**:
+
 - **API Completeness**: Currently sub-entities are managed through parent entities
 - **Frontend Flexibility**: Enable direct CRUD on sub-entities when needed
 - **Developer Experience**: Consistent API patterns across all entities
 
 **Examples**:
+
 - Direct CRUD for `LicenseProductField` (currently only via `LicenseProduct`)
 - Direct CRUD for `AssetCategoryField` (currently only via `AssetCategory`)
 - Direct CRUD for `CIClassField` (currently only via `CIClass`)
@@ -90,11 +95,13 @@ Complete the schema-API alignment project by implementing the remaining 4 phases
 ### Phase 8: Testing & Documentation
 
 **Why This Matters**:
+
 - **Reliability**: Ensure new entities work correctly under all conditions
 - **Maintainability**: Tests catch regressions when refactoring
 - **Onboarding**: New developers understand patterns and usage
 
 **Deliverables**:
+
 - Unit tests for all use cases (target: 80%+ coverage)
 - Integration tests for repository layer
 - API endpoint tests for controllers
@@ -107,6 +114,7 @@ Complete the schema-API alignment project by implementing the remaining 4 phases
 #### Database Schema
 
 **Already in schema.prisma**:
+
 ```prisma
 model DataDomain {
   id          String   @id @default(cuid())
@@ -228,48 +236,57 @@ Follow the same pattern used for License entities (Phases 4.1-4.4):
 #### Key Business Logic
 
 **DataDomain Entity**:
+
 ```typescript
 class DataDomain {
-  activate(): void
-  deactivate(): void
-  updateCode(code: string): void  // Validates format (uppercase, alphanumeric + underscores)
+  activate(): void;
+  deactivate(): void;
+  updateCode(code: string): void; // Validates format (uppercase, alphanumeric + underscores)
 }
 ```
 
 **DataOwnership Entity**:
+
 ```typescript
 class DataOwnership {
-  hasOwner(): boolean              // Check if owner is assigned
-  isOwnedByPerson(): boolean
-  isOwnedByOrgUnit(): boolean
-  appliesToCIClass(): boolean
-  appliesToAssetCategory(): boolean
-  assignOwner(type: 'person' | 'orgunit', id: string): void
+  hasOwner(): boolean; // Check if owner is assigned
+  isOwnedByPerson(): boolean;
+  isOwnedByOrgUnit(): boolean;
+  appliesToCIClass(): boolean;
+  appliesToAssetCategory(): boolean;
+  assignOwner(type: "person" | "orgunit", id: string): void;
 }
 ```
 
 **VerificationCampaign Entity**:
+
 ```typescript
 class VerificationCampaign {
-  isActive(asOfDate?: Date): boolean
-  isCompleted(): boolean
-  hasStarted(): boolean
-  start(): void                    // Mark campaign as started
-  complete(): void                 // Finalize campaign
-  calculateProgress(): { total: number; verified: number; exceptions: number; pending: number }
+  isActive(asOfDate?: Date): boolean;
+  isCompleted(): boolean;
+  hasStarted(): boolean;
+  start(): void; // Mark campaign as started
+  complete(): void; // Finalize campaign
+  calculateProgress(): {
+    total: number;
+    verified: number;
+    exceptions: number;
+    pending: number;
+  };
 }
 ```
 
 **VerificationItem Entity**:
+
 ```typescript
 class VerificationItem {
-  isPending(): boolean
-  isInProgress(): boolean
-  isVerified(): boolean
-  isException(): boolean
-  startVerification(): void        // PENDING → IN_PROGRESS
-  verify(comment?: string): void   // → VERIFIED
-  flagException(comment: string): void  // → EXCEPTION
+  isPending(): boolean;
+  isInProgress(): boolean;
+  isVerified(): boolean;
+  isException(): boolean;
+  startVerification(): void; // PENDING → IN_PROGRESS
+  verify(comment?: string): void; // → VERIFIED
+  flagException(comment: string): void; // → EXCEPTION
 }
 ```
 
@@ -278,6 +295,7 @@ class VerificationItem {
 #### Database Schema
 
 **Already in schema.prisma**:
+
 ```prisma
 model AttachmentType {
   id                String   @id @default(cuid())
@@ -312,14 +330,15 @@ model Attachment {
 #### File Storage Strategy
 
 **Local Filesystem** (Phase 6 initial implementation):
+
 ```typescript
 // Store files in: /public/uploads/{year}/{month}/{cuid}.{ext}
 // Example: /public/uploads/2025/01/clq1234567890abcdef.pdf
 
 interface FileStorageService {
-  uploadFile(file: File, type: AttachmentType): Promise<string>;  // Returns storagePath
+  uploadFile(file: File, type: AttachmentType): Promise<string>; // Returns storagePath
   deleteFile(storagePath: string): Promise<void>;
-  getFileUrl(storagePath: string): string;  // Returns public URL
+  getFileUrl(storagePath: string): string; // Returns public URL
 }
 ```
 
@@ -328,6 +347,7 @@ interface FileStorageService {
 #### Entity-Attachment Relationships
 
 **Polymorphic Pattern**:
+
 ```typescript
 // Attachments can be linked to ANY entity via targetType + targetId
 // No foreign keys needed - application-level relationship
@@ -341,12 +361,14 @@ interface AttachmentTarget {
 #### Implementation Files (25 files)
 
 **Phase 6.1: AttachmentType Entity** (13 files):
+
 - Entity, repository interface/implementation
 - 5 use cases (CRUD + list)
 - DTO, presenter, controller
 - DI bindings, permissions
 
 **Phase 6.2: Attachment Entity** (13 files):
+
 - Entity with file validation logic
 - Repository interface/implementation
 - 6 use cases (CRUD + upload, download)
@@ -354,6 +376,7 @@ interface AttachmentTarget {
 - DI bindings, permissions
 
 **Phase 6.3: Integration** (varies):
+
 - Add `getAttachmentCount()` helper to repositories
 - Create reusable attachment components:
   - `<AttachmentUploader>`
@@ -368,15 +391,17 @@ interface AttachmentTarget {
 **Example: LicenseProductField**
 
 Currently (nested):
+
 ```typescript
 // Only accessible via parent
-POST   /api/license-products/{id}/fields
-GET    /api/license-products/{id}/fields
-PUT    /api/license-products/{id}/fields/{fieldId}
-DELETE /api/license-products/{id}/fields/{fieldId}
+POST / api / license - products / { id } / fields;
+GET / api / license - products / { id } / fields;
+PUT / api / license - products / { id } / fields / { fieldId };
+DELETE / api / license - products / { id } / fields / { fieldId };
 ```
 
 After Phase 7 (standalone):
+
 ```typescript
 // Direct access
 POST   /api/license-product-fields
@@ -387,6 +412,7 @@ DELETE /api/license-product-fields/{id}
 ```
 
 **Entities to Convert** (8 entities):
+
 - LicenseProductField
 - AssetCategoryField
 - CIClassField
@@ -403,56 +429,59 @@ DELETE /api/license-product-fields/{id}
 #### Testing Strategy
 
 **Unit Tests** (`__tests__/unit/`):
+
 ```typescript
-describe('DataDomain Entity', () => {
-  describe('create', () => {
-    it('should create valid data domain');
-    it('should reject invalid code format');
-    it('should uppercase code automatically');
+describe("DataDomain Entity", () => {
+  describe("create", () => {
+    it("should create valid data domain");
+    it("should reject invalid code format");
+    it("should uppercase code automatically");
   });
 
-  describe('activate/deactivate', () => {
-    it('should toggle isActive status');
+  describe("activate/deactivate", () => {
+    it("should toggle isActive status");
   });
 });
 
-describe('CreateDataDomainUseCase', () => {
-  it('should create data domain');
-  it('should reject duplicate name');
-  it('should reject duplicate code');
+describe("CreateDataDomainUseCase", () => {
+  it("should create data domain");
+  it("should reject duplicate name");
+  it("should reject duplicate code");
 });
 ```
 
 **Integration Tests** (`__tests__/integration/`):
+
 ```typescript
-describe('DataDomain Repository', () => {
+describe("DataDomain Repository", () => {
   beforeEach(async () => {
     await cleanDatabase();
   });
 
-  it('should persist and retrieve data domain');
-  it('should enforce unique constraints');
-  it('should cascade delete to data ownerships');
+  it("should persist and retrieve data domain");
+  it("should enforce unique constraints");
+  it("should cascade delete to data ownerships");
 });
 ```
 
 **API Tests** (`__tests__/api/`):
+
 ```typescript
-describe('POST /api/data-domains', () => {
-  it('should create data domain with valid data', async () => {
+describe("POST /api/data-domains", () => {
+  it("should create data domain with valid data", async () => {
     const response = await request(app)
-      .post('/api/data-domains')
-      .send({ name: 'Test Domain', code: 'TEST' })
+      .post("/api/data-domains")
+      .send({ name: "Test Domain", code: "TEST" })
       .expect(201);
 
-    expect(response.body).toHaveProperty('id');
+    expect(response.body).toHaveProperty("id");
   });
 
-  it('should require permissions', async () => {
+  it("should require permissions", async () => {
     // Test without auth
     await request(app)
-      .post('/api/data-domains')
-      .send({ name: 'Test', code: 'TEST' })
+      .post("/api/data-domains")
+      .send({ name: "Test", code: "TEST" })
       .expect(403);
   });
 });
@@ -463,15 +492,18 @@ describe('POST /api/data-domains', () => {
 #### Documentation Deliverables
 
 **Developer Guides** (`docs/guides/`):
+
 - `GOVERNANCE_SYSTEM.md` - Complete guide to Phase 5 entities
 - `ATTACHMENTS_SYSTEM.md` - File upload/storage patterns
 - `API_REFERENCE.md` - Complete API documentation with examples
 
 **Architecture Updates** (`docs/architecture/`):
+
 - Update `ARCHITECTURE.md` with new modules
 - Update `DATABASE_SCHEMA.md` with new tables
 
 **User Guides** (MDX in `src/content/docs/`):
+
 - Data Domains & Ownership setup
 - Verification Campaigns workflow
 - Attachment management
@@ -481,6 +513,7 @@ describe('POST /api/data-domains', () => {
 ### Phase 5: Governance Features
 
 #### Phase 5.1: DataDomain Entity
+
 - [ ] Create entity with business logic (activate, deactivate, code validation)
 - [ ] Create repository interface (10 methods)
 - [ ] Create Prisma repository implementation
@@ -495,6 +528,7 @@ describe('POST /api/data-domains', () => {
 - [ ] Add 5 permissions to permission-key.ts
 
 #### Phase 5.2: DataOwnership Entity
+
 - [ ] Create entity with polymorphic ownership logic
 - [ ] Create repository interface (12 methods including findByDataDomain, findByOwner, findByTarget)
 - [ ] Create Prisma repository implementation
@@ -508,6 +542,7 @@ describe('POST /api/data-domains', () => {
 - [ ] Add 5 permissions
 
 #### Phase 5.3: VerificationCampaign Entity
+
 - [ ] Create entity with campaign lifecycle logic
 - [ ] Create repository interface (10 methods including findActive, findByCreator)
 - [ ] Create Prisma repository implementation
@@ -521,6 +556,7 @@ describe('POST /api/data-domains', () => {
 - [ ] Add 7 permissions (add START, COMPLETE)
 
 #### Phase 5.4: VerificationItem Entity
+
 - [ ] Create entity with status transition logic (PENDING→IN_PROGRESS→VERIFIED/EXCEPTION)
 - [ ] Create repository interface (12 methods including findByCampaign, countByStatus)
 - [ ] Create Prisma repository implementation
@@ -534,6 +570,7 @@ describe('POST /api/data-domains', () => {
 - [ ] Add 6 permissions (add VERIFY, FLAG_EXCEPTION)
 
 #### Phase 5 Integration
+
 - [ ] Create `src/di/modules/governance.module.ts`
 - [ ] Register governance module in container.ts
 - [ ] Test all 4 entities with sample data
@@ -542,6 +579,7 @@ describe('POST /api/data-domains', () => {
 ### Phase 6: Attachments System
 
 #### Phase 6.1: AttachmentType Entity
+
 - [ ] Create entity with file validation logic
 - [ ] Create repository interface
 - [ ] Create Prisma repository
@@ -555,6 +593,7 @@ describe('POST /api/data-domains', () => {
 - [ ] Add permissions
 
 #### Phase 6.2: Attachment Entity with File Storage
+
 - [ ] Create entity with file metadata
 - [ ] Create FileStorageService interface
 - [ ] Create LocalFileStorageService implementation
@@ -572,6 +611,7 @@ describe('POST /api/data-domains', () => {
 - [ ] Add file cleanup on delete
 
 #### Phase 6.3: Integration with Existing Entities
+
 - [ ] Add attachment count to entity DTOs (Asset, CI, Contract, etc.)
 - [ ] Create `<AttachmentUploader>` component
 - [ ] Create `<AttachmentList>` component
@@ -581,6 +621,7 @@ describe('POST /api/data-domains', () => {
 - [ ] Test file validation (type, size)
 
 #### Phase 6 Integration
+
 - [ ] Create `src/di/modules/attachments.module.ts`
 - [ ] Register attachments module in container.ts
 - [ ] Test attachment workflows end-to-end
@@ -597,6 +638,7 @@ describe('POST /api/data-domains', () => {
 ### Phase 8: Testing & Documentation
 
 #### Testing
+
 - [ ] Write unit tests for Phase 5 entities (4 entities × 10 tests = 40 tests)
 - [ ] Write unit tests for Phase 5 use cases (23 use cases × 5 tests = 115 tests)
 - [ ] Write integration tests for Phase 5 repositories (4 repos × 8 tests = 32 tests)
@@ -609,6 +651,7 @@ describe('POST /api/data-domains', () => {
 - [ ] Set up CI to run tests automatically
 
 #### Documentation
+
 - [ ] Write `GOVERNANCE_SYSTEM.md` developer guide
 - [ ] Write `ATTACHMENTS_SYSTEM.md` developer guide
 - [ ] Update `ARCHITECTURE.md` with Governance and Attachments modules
@@ -631,19 +674,21 @@ describe('POST /api/data-domains', () => {
 ### Test Utilities
 
 **Test Factories**:
+
 ```typescript
 // __tests__/factories/
 export const createTestDataDomain = (overrides?: Partial<DataDomainProps>) => {
   return DataDomain.create({
-    name: 'Test Domain',
-    code: 'TEST',
-    description: 'Test description',
-    ...overrides
+    name: "Test Domain",
+    code: "TEST",
+    description: "Test description",
+    ...overrides,
   });
 };
 ```
 
 **Database Cleanup**:
+
 ```typescript
 // __tests__/helpers/
 export async function cleanDatabase() {
@@ -693,12 +738,14 @@ export async function cleanDatabase() {
 ## Success Criteria
 
 ### Phase 5 Complete When:
+
 - [ ] All 4 entities implemented with full CRUD
 - [ ] All business logic working (activate, ownership assignment, campaign lifecycle, item verification)
 - [ ] Permissions enforced correctly
 - [ ] Sample data demonstrates end-to-end workflow (domain → ownership → campaign → item verification)
 
 ### Phase 6 Complete When:
+
 - [ ] Files can be uploaded/downloaded successfully
 - [ ] Attachments are linked to entities correctly
 - [ ] File validation works (type, size, extensions)
@@ -706,11 +753,13 @@ export async function cleanDatabase() {
 - [ ] Old attachments are cleaned up on deletion
 
 ### Phase 7 Complete When:
+
 - [ ] All sub-entity controllers have standalone API routes
 - [ ] API documentation is updated
 - [ ] Frontend can use standalone APIs where beneficial
 
 ### Phase 8 Complete When:
+
 - [ ] Test coverage ≥ 80% for critical paths
 - [ ] All tests pass in CI
 - [ ] Developer guides are complete and accurate
@@ -730,12 +779,15 @@ After implementation:
 ## Dependencies
 
 **Must Complete Before Starting**:
+
 - ✅ Phase 1-4 (Foundation, CMDB, Contracts, Licenses) - COMPLETED
 
 **External Dependencies**:
+
 - None - all entities use existing schema and patterns
 
 **Nice to Have** (not blocking):
+
 - Background job system for campaign automation (future enhancement)
 - Email notifications for verification assignments (future enhancement)
 - S3-compatible storage integration (future enhancement)

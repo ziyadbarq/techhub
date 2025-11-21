@@ -66,7 +66,7 @@ export function PersonForm({
       primaryRoleId: person?.primaryRoleId ?? "",
       locationId: person?.locationId ?? "",
       employeeId: person?.employeeId ?? "",
-      jobTitle: person?.jobTitle ?? "",
+      title: person?.title ?? "",
       department: person?.department ?? "",
       isActive: person?.isActive ?? true,
     },
@@ -83,7 +83,7 @@ export function PersonForm({
       primaryRoleId: person?.primaryRoleId ?? "",
       locationId: person?.locationId ?? "",
       employeeId: person?.employeeId ?? "",
-      jobTitle: person?.jobTitle ?? "",
+      title: person?.title ?? "",
       department: person?.department ?? "",
       isActive: person?.isActive ?? true,
     });
@@ -260,7 +260,7 @@ export function PersonForm({
               />
               <FormField
                 control={form.control}
-                name="jobTitle"
+                name="title"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Job Title</FormLabel>

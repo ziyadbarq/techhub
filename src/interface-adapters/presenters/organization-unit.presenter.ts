@@ -16,6 +16,7 @@ export interface OrganizationUnitDTO {
   managerId: string | null;
   costCenter: string | null;
   isActive: boolean;
+  note: string | null;
   metadata: Record<string, unknown> | null;
   createdAt: string;
   updatedAt: string;
@@ -34,6 +35,7 @@ export function presentOrganizationUnit(
     managerId: unit.managerId,
     costCenter: unit.costCenter,
     isActive: unit.isActive,
+    note: unit.note,
     metadata: unit.metadata,
     createdAt: unit.createdAt.toISOString(),
     updatedAt: unit.updatedAt.toISOString(),

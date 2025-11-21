@@ -4,6 +4,7 @@
 
 import { z } from "zod";
 import { WarrantyCoverageType } from "@/generated/prisma/enums";
+import { currencyField, currencyCode } from "../validation-helpers";
 
 // Helper schema for date coercion
 const dateSchema = z.coerce.date();
@@ -29,21 +30,8 @@ export const CreateWarrantySchema = z
     slaDetails: z.record(z.string(), z.unknown()).optional().nullable(),
     startDate: dateSchema,
     endDate: dateSchema,
-    cost: z
-      .number()
-      .min(0, "Warranty cost cannot be negative")
-      .max(9999999999.99, "Warranty cost cannot exceed 9999999999.99")
-      .optional()
-      .nullable(),
-    currency: z
-      .string()
-      .length(3, "Currency must be a 3-letter ISO code")
-      .regex(
-        /^[A-Z]{3}$/,
-        "Currency must be 3 uppercase letters (e.g., USD, EUR)",
-      )
-      .optional()
-      .nullable(),
+    cost: currencyField("Warranty cost"),
+    currency: currencyCode,
     note: z
       .string()
       .max(5000, "Note must be 5000 characters or less")

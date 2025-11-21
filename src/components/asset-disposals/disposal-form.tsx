@@ -40,8 +40,10 @@ import { createAssetDisposalAction } from "@/interface-adapters/controllers/asse
 import { CreateAssetDisposalDTO } from "@/interface-adapters/dtos/generated/asset-disposal.dto";
 import { listAssetsAction } from "@/interface-adapters/controllers/asset.controller";
 import { listPersonsAction } from "@/interface-adapters/controllers/person.controller";
+import { listVendorsAction } from "@/interface-adapters/controllers/vendor.controller";
 import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
 import type { PersonDTO } from "@/interface-adapters/presenters/person.presenter";
+import type { VendorDTO } from "@/interface-adapters/presenters/vendor.presenter";
 import { Checkbox } from "@/components/ui/checkbox";
 
 interface DisposalFormProps {
@@ -60,6 +62,7 @@ export function DisposalForm({
 }: DisposalFormProps) {
   const [assets, setAssets] = useState<AssetDTO[]>([]);
   const [persons, setPersons] = useState<PersonDTO[]>([]);
+  const [vendors, setVendors] = useState<VendorDTO[]>([]);
   const [selectedApprovers, setSelectedApprovers] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -67,12 +70,15 @@ export function DisposalForm({
     resolver: zodResolver(CreateAssetDisposalDTO),
     defaultValues: {
       assetId: "",
-      disposalType: "DESTROY",
-      disposalMethod: "",
+      disposalType: "DESTRUCTION",
       reason: "",
       estimatedValue: undefined,
+      currency: undefined,
+      disposalVendorId: undefined,
+      recipientInfo: undefined,
+      note: "",
+      metadata: undefined,
       approverIds: [],
-      notes: "",
     },
   });
 
@@ -85,9 +91,10 @@ export function DisposalForm({
   const loadData = async () => {
     setLoading(true);
     try {
-      const [assetsResult, personsResult] = await Promise.all([
+      const [assetsResult, personsResult, vendorsResult] = await Promise.all([
         listAssetsAction(),
         listPersonsAction(),
+        listVendorsAction(),
       ]);
 
       if (assetsResult.success) {
@@ -96,6 +103,10 @@ export function DisposalForm({
 
       if (personsResult.success) {
         setPersons(personsResult.data);
+      }
+
+      if (vendorsResult.success) {
+        setVendors(vendorsResult.data);
       }
     } catch (_error) {
       toast.error("Failed to load form data");
@@ -189,39 +200,15 @@ export function DisposalForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="SELL">Sell</SelectItem>
-                      <SelectItem value="DONATE">Donate</SelectItem>
-                      <SelectItem value="RECYCLE">Recycle</SelectItem>
-                      <SelectItem value="DESTROY">Destroy</SelectItem>
-                      <SelectItem value="RETURN_TO_VENDOR">
-                        Return to Vendor
-                      </SelectItem>
+                      <SelectItem value="DONATION">Donation</SelectItem>
+                      <SelectItem value="SALE">Sale</SelectItem>
+                      <SelectItem value="RECYCLING">Recycling</SelectItem>
+                      <SelectItem value="DESTRUCTION">Destruction</SelectItem>
                       <SelectItem value="OTHER">Other</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormDescription>
                     How the asset will be disposed
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Disposal Method */}
-            <FormField
-              control={form.control}
-              name="disposalMethod"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Disposal Method</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="e.g., Certified e-waste recycler, Auction, etc."
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Specific method or vendor for disposal
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -280,6 +267,84 @@ export function DisposalForm({
               )}
             />
 
+            {/* Currency */}
+            <FormField
+              control={form.control}
+              name="currency"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Currency (Optional)</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="e.g., USD, SAR, EUR"
+                      maxLength={3}
+                      {...field}
+                      onChange={(e) => {
+                        field.onChange(e.target.value.toUpperCase());
+                      }}
+                      value={field.value ?? ""}
+                    />
+                  </FormControl>
+                  <FormDescription>3-letter ISO currency code</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Disposal Vendor */}
+            <FormField
+              control={form.control}
+              name="disposalVendorId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Disposal Vendor (Optional)</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value ?? undefined}
+                    disabled={loading}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a vendor" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {vendors.map((vendor) => (
+                        <SelectItem key={vendor.id} value={vendor.id}>
+                          {vendor.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Vendor handling the disposal
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Recipient Info */}
+            <FormField
+              control={form.control}
+              name="recipientInfo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Recipient Info (Optional)</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Details about the recipient (for donations/sales)..."
+                      className="resize-none"
+                      {...field}
+                      value={field.value ?? ""}
+                    />
+                  </FormControl>
+                  <FormDescription>Who will receive this asset</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             {/* Approvers */}
             <FormField
               control={form.control}
@@ -317,18 +382,19 @@ export function DisposalForm({
               )}
             />
 
-            {/* Notes */}
+            {/* Note */}
             <FormField
               control={form.control}
-              name="notes"
+              name="note"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Notes (Optional)</FormLabel>
+                  <FormLabel>Note (Optional)</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Additional notes..."
                       className="resize-none"
                       {...field}
+                      value={field.value ?? ""}
                     />
                   </FormControl>
                   <FormDescription>Any additional information</FormDescription>

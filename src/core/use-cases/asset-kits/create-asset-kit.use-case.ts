@@ -5,12 +5,16 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitRepository } from "@/core/repositories/asset-kit.repository.interface";
-import type { AssetKit } from "@/core/domain/entities/asset-kit.entity";
+import type {
+  AssetKit,
+  KitType,
+} from "@/core/domain/entities/asset-kit.entity";
 
 export interface CreateAssetKitRequest {
   name: string;
   code: string;
   description?: string;
+  kitType?: KitType;
   isActive?: boolean;
 }
 
@@ -32,6 +36,7 @@ export class CreateAssetKitUseCase {
       name: request.name,
       code: request.code,
       description: request.description,
+      kitType: request.kitType,
       isActive: request.isActive ?? true,
     });
 

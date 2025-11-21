@@ -7,3 +7,4 @@ export { GetAssetUseCase } from "./get-asset.use-case";
 export { ListAssetsUseCase } from "./list-assets.use-case";
 export { UpdateAssetUseCase } from "./update-asset.use-case";
 export { DeleteAssetUseCase } from "./delete-asset.use-case";
+export { DeleteAssetWithConfirmationUseCase } from "./delete-asset-with-confirmation.use-case";

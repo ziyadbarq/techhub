@@ -37,6 +37,7 @@ Implement comprehensive IT Service Management (ITSM) as a Layer 2 entity to trac
 ### Initial Data
 
 Seed system with ~80 existing services including:
+
 - Authentication services (Auth, Active Directory, Keycloak)
 - Core banking (Core Wallet, Core Payments, Core Accounting)
 - Channels (Mobile iOS/Android, Business Portal, Customer Portal)
@@ -343,7 +344,10 @@ export interface IServiceRepository {
   findByStatus(status: ServiceStatus): Promise<Service[]>;
   findByCriticality(criticality: CriticalityLevel): Promise<Service[]>;
   findEssentialServices(): Promise<Service[]>;
-  findByOwner(personId: string, ownershipType?: OwnershipType): Promise<Service[]>;
+  findByOwner(
+    personId: string,
+    ownershipType?: OwnershipType,
+  ): Promise<Service[]>;
   findByVendor(vendorId: string): Promise<Service[]>;
   findByBusinessProcess(processId: string): Promise<Service[]>;
   findRetiringSoon(daysAhead: number): Promise<Service[]>;
@@ -366,6 +370,7 @@ export interface IServiceRepository {
 **Location**: `src/core/use-cases/service/`
 
 **Service Use Cases** (9 core + specialized):
+
 - `create-service.use-case.ts` - Create new service (validates unique name)
 - `get-service.use-case.ts` - Get service by ID with relations
 - `list-services.use-case.ts` - List all services with filtering
@@ -377,20 +382,24 @@ export interface IServiceRepository {
 - `retire-service.use-case.ts` - Mark service as retired (business logic)
 
 **ServiceOwnership Use Cases**:
+
 - `add-service-owner.use-case.ts` - Add owner to service
 - `remove-service-owner.use-case.ts` - Remove owner
 - `set-primary-owner.use-case.ts` - Set primary owner for type
 - `get-service-owners.use-case.ts` - Get all owners grouped by type
 
 **BusinessProcess Use Cases**:
+
 - Standard CRUD (create, get, list, update, delete)
 
 **ServiceInfrastructure Use Cases**:
+
 - `create-service-infrastructure.use-case.ts`
 - `update-service-infrastructure.use-case.ts`
 - `get-service-infrastructure.use-case.ts`
 
 **ServiceAsset Use Cases**:
+
 - `link-service-to-asset.use-case.ts`
 - `unlink-service-from-asset.use-case.ts`
 - `get-service-assets.use-case.ts`
@@ -407,6 +416,7 @@ export interface IServiceRepository {
 - `prisma-service-infrastructure.repository.ts`
 
 Key patterns:
+
 - Use Prisma singleton from `@/infrastructure/database/prisma/client`
 - Import types from `@/generated/prisma`
 - Structured logging with `createRepositoryLogger()`
@@ -417,20 +427,27 @@ Key patterns:
 ```typescript
 export function bindServiceDependencies(container: Container): void {
   // Repositories (Singleton)
-  container.bind<IServiceRepository>(DI_TOKENS.IServiceRepository)
-    .to(PrismaServiceRepository).inSingletonScope();
+  container
+    .bind<IServiceRepository>(DI_TOKENS.IServiceRepository)
+    .to(PrismaServiceRepository)
+    .inSingletonScope();
 
-  container.bind<IBusinessProcessRepository>(DI_TOKENS.IBusinessProcessRepository)
-    .to(PrismaBusinessProcessRepository).inSingletonScope();
+  container
+    .bind<IBusinessProcessRepository>(DI_TOKENS.IBusinessProcessRepository)
+    .to(PrismaBusinessProcessRepository)
+    .inSingletonScope();
 
   // Use Cases (Transient)
-  container.bind<CreateServiceUseCase>(DI_TOKENS.CreateServiceUseCase)
-    .to(CreateServiceUseCase).inTransientScope();
+  container
+    .bind<CreateServiceUseCase>(DI_TOKENS.CreateServiceUseCase)
+    .to(CreateServiceUseCase)
+    .inTransientScope();
   // ... all use cases
 }
 ```
 
 **Add to `src/di/types.ts`**:
+
 ```typescript
 // Service
 IServiceRepository: Symbol.for("IServiceRepository"),
@@ -443,6 +460,7 @@ GetServiceUseCase: Symbol.for("GetServiceUseCase"),
 ```
 
 **Register in `src/di/container.ts`**:
+
 ```typescript
 import { bindServiceDependencies } from "./modules/service.module";
 
@@ -467,7 +485,7 @@ import {
   CriticalityLevel,
   OwnershipType,
   ServiceLocation,
-  AssetRelationship
+  AssetRelationship,
 } from "@/generated/prisma";
 
 export const CreateServiceSchema = z.object({
@@ -531,7 +549,9 @@ export const LinkServiceToAssetSchema = z.object({
 export type CreateServiceDTO = z.infer<typeof CreateServiceSchema>;
 export type UpdateServiceDTO = z.infer<typeof UpdateServiceSchema>;
 export type AddServiceOwnerDTO = z.infer<typeof AddServiceOwnerSchema>;
-export type CreateServiceInfrastructureDTO = z.infer<typeof CreateServiceInfrastructureSchema>;
+export type CreateServiceInfrastructureDTO = z.infer<
+  typeof CreateServiceInfrastructureSchema
+>;
 export type LinkServiceToAssetDTO = z.infer<typeof LinkServiceToAssetSchema>;
 ```
 
@@ -598,10 +618,13 @@ export function presentService(
     owners?: ServiceOwnerDTO[];
     infrastructure?: ServiceInfrastructureDTO[];
     assets?: ServiceAssetDTO[];
-  }
+  },
 ): ServiceDTO {
   const daysUntilDecommission = service.plannedDecommissionDate
-    ? Math.ceil((service.plannedDecommissionDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
+    ? Math.ceil(
+        (service.plannedDecommissionDate.getTime() - Date.now()) /
+          (1000 * 60 * 60 * 24),
+      )
     : null;
 
   return {
@@ -633,14 +656,23 @@ import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
-import { CreateServiceSchema, type CreateServiceDTO } from "../dtos/generated/service.dto";
-import { presentService, type ServiceDTO } from "../presenters/service.presenter";
-import type { CreateServiceUseCase, GetServiceUseCase } from "@/core/use-cases/service";
+import {
+  CreateServiceSchema,
+  type CreateServiceDTO,
+} from "../dtos/generated/service.dto";
+import {
+  presentService,
+  type ServiceDTO,
+} from "../presenters/service.presenter";
+import type {
+  CreateServiceUseCase,
+  GetServiceUseCase,
+} from "@/core/use-cases/service";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 export async function createServiceAction(
-  data: CreateServiceDTO
+  data: CreateServiceDTO,
 ): Promise<ActionResponse<ServiceDTO>> {
   try {
     await requirePermission(PERMISSIONS.SERVICES_CREATE);
@@ -648,7 +680,9 @@ export async function createServiceAction(
     const validated = CreateServiceSchema.parse(data);
 
     const container = getContainer();
-    const useCase = container.get<CreateServiceUseCase>(DI_TOKENS.CreateServiceUseCase);
+    const useCase = container.get<CreateServiceUseCase>(
+      DI_TOKENS.CreateServiceUseCase,
+    );
 
     const service = await useCase.execute({
       name: validated.name,
@@ -663,16 +697,24 @@ export async function createServiceAction(
       data: presentService(service),
     };
   } catch (error) {
-    return handleControllerError(error, { function: "createServiceAction" }, "Failed to create service");
+    return handleControllerError(
+      error,
+      { function: "createServiceAction" },
+      "Failed to create service",
+    );
   }
 }
 
-export async function getServiceAction(id: string): Promise<ActionResponse<ServiceDTO>> {
+export async function getServiceAction(
+  id: string,
+): Promise<ActionResponse<ServiceDTO>> {
   try {
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
 
     const container = getContainer();
-    const useCase = container.get<GetServiceUseCase>(DI_TOKENS.GetServiceUseCase);
+    const useCase = container.get<GetServiceUseCase>(
+      DI_TOKENS.GetServiceUseCase,
+    );
 
     const service = await useCase.execute(id);
 
@@ -753,6 +795,7 @@ export async function getServiceAction(id: string): Promise<ActionResponse<Servi
 **Pages**: `src/app/(dashboard)/services/`
 
 1. **page.tsx** - Services list page
+
    ```typescript
    export const dynamic = "force-dynamic";
 
@@ -783,6 +826,7 @@ export async function getServiceAction(id: string): Promise<ActionResponse<Servi
    ```
 
 2. **[id]/page.tsx** - Service detail page
+
    ```typescript
    export default async function ServiceDetailPage({
      params,
@@ -876,6 +920,7 @@ const servicePermissions = [
 ```
 
 **Assign to Roles**:
+
 - System Administrator: Full access (all permissions)
 - IT Manager: View, Create, Update, Manage
 - IT Staff: View, Create
@@ -914,10 +959,10 @@ interface ServiceSeedData {
   criticality: CriticalityLevel;
   isEssentialService: boolean;
   currentStatus: ServiceStatus;
-  vendorCode?: string;  // Lookup vendor by code
+  vendorCode?: string; // Lookup vendor by code
   owners: {
     type: OwnershipType;
-    personName: string;  // Lookup person by name
+    personName: string; // Lookup person by name
     isPrimary: boolean;
   }[];
   infrastructure?: {
@@ -926,14 +971,15 @@ interface ServiceSeedData {
     region?: string;
     ipAddress?: string;
   };
-  businessProcessCode?: string;  // Lookup by code
+  businessProcessCode?: string; // Lookup by code
 }
 
 const SERVICES: ServiceSeedData[] = [
   {
     name: "Active Directory",
     serviceType: "APPLICATION",
-    description: "Microsoft directory service for managing permissions and access to networked resources",
+    description:
+      "Microsoft directory service for managing permissions and access to networked resources",
     businessPurpose: "Enterprise authentication and authorization",
     dataConfidentiality: "CONFIDENTIAL",
     businessImpactLevel: "HIGH",
@@ -955,7 +1001,8 @@ const SERVICES: ServiceSeedData[] = [
   {
     name: "Core Wallet Service",
     serviceType: "APPLICATION",
-    description: "Primary digital wallet service enabling users to store, manage, and use digital assets",
+    description:
+      "Primary digital wallet service enabling users to store, manage, and use digital assets",
     businessPurpose: "Core digital wallet functionality for customers",
     gitlabRepoUrl: "https://gitlab.barq.com/backend/core-wallet-service",
     dataConfidentiality: "RESTRICTED",
@@ -964,9 +1011,21 @@ const SERVICES: ServiceSeedData[] = [
     isEssentialService: true,
     currentStatus: "PRODUCTION",
     owners: [
-      { type: "TECHNICAL", personName: "Lead Backend Engineer", isPrimary: true },
-      { type: "PRODUCT", personName: "Product Manager - Wallet", isPrimary: true },
-      { type: "BUSINESS", personName: "Head of Digital Banking", isPrimary: true },
+      {
+        type: "TECHNICAL",
+        personName: "Lead Backend Engineer",
+        isPrimary: true,
+      },
+      {
+        type: "PRODUCT",
+        personName: "Product Manager - Wallet",
+        isPrimary: true,
+      },
+      {
+        type: "BUSINESS",
+        personName: "Head of Digital Banking",
+        isPrimary: true,
+      },
     ],
     infrastructure: {
       location: "OCI_CLOUD",
@@ -984,9 +1043,21 @@ export async function seedServices(prisma: PrismaClient): Promise<void> {
 
   // Create business processes first
   const businessProcesses = [
-    { code: "IDENTITY_MGMT", name: "Identity Management", category: "Infrastructure" },
-    { code: "DIGITAL_WALLET", name: "Digital Wallet", category: "Core Banking" },
-    { code: "DIGITAL_PAYMENTS", name: "Digital Payments", category: "Core Banking" },
+    {
+      code: "IDENTITY_MGMT",
+      name: "Identity Management",
+      category: "Infrastructure",
+    },
+    {
+      code: "DIGITAL_WALLET",
+      name: "Digital Wallet",
+      category: "Core Banking",
+    },
+    {
+      code: "DIGITAL_PAYMENTS",
+      name: "Digital Payments",
+      category: "Core Banking",
+    },
     // ... more processes
   ];
 
@@ -1000,13 +1071,15 @@ export async function seedServices(prisma: PrismaClient): Promise<void> {
 
   // Create lookup maps
   const persons = await prisma.person.findMany();
-  const personMap = new Map(persons.map(p => [p.firstName + " " + p.lastName, p.id]));
+  const personMap = new Map(
+    persons.map((p) => [p.firstName + " " + p.lastName, p.id]),
+  );
 
   const vendors = await prisma.vendor.findMany();
-  const vendorMap = new Map(vendors.map(v => [v.code, v.id]));
+  const vendorMap = new Map(vendors.map((v) => [v.code, v.id]));
 
   const processes = await prisma.businessProcess.findMany();
-  const processMap = new Map(processes.map(p => [p.code, p.id]));
+  const processMap = new Map(processes.map((p) => [p.code, p.id]));
 
   // Create services
   let created = 0;
@@ -1023,25 +1096,29 @@ export async function seedServices(prisma: PrismaClient): Promise<void> {
         criticality: serviceData.criticality,
         isEssentialService: serviceData.isEssentialService,
         currentStatus: serviceData.currentStatus,
-        vendorId: serviceData.vendorCode ? vendorMap.get(serviceData.vendorCode) : null,
+        vendorId: serviceData.vendorCode
+          ? vendorMap.get(serviceData.vendorCode)
+          : null,
         businessProcessId: serviceData.businessProcessCode
           ? processMap.get(serviceData.businessProcessCode)
           : null,
         owners: {
-          create: serviceData.owners.map(owner => ({
+          create: serviceData.owners.map((owner) => ({
             personId: personMap.get(owner.personName)!,
             ownershipType: owner.type,
             isPrimary: owner.isPrimary,
           })),
         },
-        infrastructure: serviceData.infrastructure ? {
-          create: {
-            location: serviceData.infrastructure.location,
-            cloudProvider: serviceData.infrastructure.cloudProvider,
-            region: serviceData.infrastructure.region,
-            ipAddress: serviceData.infrastructure.ipAddress,
-          },
-        } : undefined,
+        infrastructure: serviceData.infrastructure
+          ? {
+              create: {
+                location: serviceData.infrastructure.location,
+                cloudProvider: serviceData.infrastructure.cloudProvider,
+                region: serviceData.infrastructure.region,
+                ipAddress: serviceData.infrastructure.ipAddress,
+              },
+            }
+          : undefined,
       },
     });
 
@@ -1069,6 +1146,7 @@ async function main() {
 ## Implementation Checklist
 
 ### Phase 1: Database & Schema (1 day)
+
 - [ ] Add Service model to schema.prisma
 - [ ] Add ServiceOwnership model
 - [ ] Add BusinessProcess model
@@ -1080,6 +1158,7 @@ async function main() {
 - [ ] Verify Prisma client regeneration
 
 ### Phase 2: Domain Layer (1 day)
+
 - [ ] Create service.entity.ts with business rules
 - [ ] Create business-process.entity.ts
 - [ ] Create service-infrastructure.entity.ts
@@ -1088,6 +1167,7 @@ async function main() {
 - [ ] Create service-infrastructure.repository.interface.ts
 
 ### Phase 3: Infrastructure Layer (1 day)
+
 - [ ] Create prisma-service.repository.ts (all methods)
 - [ ] Create prisma-business-process.repository.ts
 - [ ] Create prisma-service-infrastructure.repository.ts
@@ -1097,6 +1177,7 @@ async function main() {
 - [ ] Register module in container.ts
 
 ### Phase 4: Use Cases Layer (1.5 days)
+
 - [ ] Create Service CRUD use cases (5)
 - [ ] Create Service specialized use cases (4)
 - [ ] Create ServiceOwnership use cases (4)
@@ -1107,6 +1188,7 @@ async function main() {
 - [ ] Run pre-commit hook test: `npm run lint`
 
 ### Phase 5: Interface Adapters (1 day)
+
 - [ ] Create service.dto.ts with Zod schemas (5 schemas)
 - [ ] Create service.presenter.ts
 - [ ] Create business-process.dto.ts and presenter
@@ -1114,6 +1196,7 @@ async function main() {
 - [ ] Create service.controller.ts with server actions (10 actions)
 
 ### Phase 6: UI Components (1.5 days)
+
 - [ ] Create ServiceForm.tsx (multi-step wizard)
 - [ ] Create ServicesTable.tsx (with filters, sorting)
 - [ ] Create ServiceDetailView.tsx (tabs layout)
@@ -1123,6 +1206,7 @@ async function main() {
 - [ ] Create supporting components (filters, badges, status indicators)
 
 ### Phase 7: Pages & Routes (0.5 days)
+
 - [ ] Create app/(dashboard)/services/page.tsx
 - [ ] Create app/(dashboard)/services/[id]/page.tsx
 - [ ] Create app/(dashboard)/services/new/page.tsx
@@ -1130,12 +1214,14 @@ async function main() {
 - [ ] Test routing and permissions
 
 ### Phase 8: RBAC & Permissions (0.5 days)
+
 - [ ] Add permissions to permission-key.ts
 - [ ] Seed permissions in seed-rbac.ts
 - [ ] Assign permissions to roles (Admin, IT Manager, etc.)
 - [ ] Test permission checks in controllers
 
 ### Phase 9: Database Seeding (1 day)
+
 - [ ] Create business processes seed data
 - [ ] Map ~80 services to seed data structure
 - [ ] Create seed-services.ts with lookup logic
@@ -1144,6 +1230,7 @@ async function main() {
 - [ ] Verify data in UI
 
 ### Phase 10: Testing & Documentation (0.5 days)
+
 - [ ] Test service CRUD operations
 - [ ] Test multi-owner assignment
 - [ ] Test asset linking
@@ -1157,16 +1244,19 @@ async function main() {
 ## Testing Strategy
 
 ### Unit Tests (Optional)
+
 - Service entity business rules (canBeRetired, essential service validation)
 - Use case logic (unique name validation, dependency checks)
 - DTO validation schemas
 
 ### Integration Tests
+
 - Repository queries (findByOwner, findEssentialServices)
 - Service creation with multiple owners
 - Asset linking relationships
 
 ### Manual Testing Checklist
+
 - [ ] Create service with all fields populated
 - [ ] Add multiple owners of different types
 - [ ] Set primary owner for each type
@@ -1186,9 +1276,11 @@ async function main() {
 After implementation, create comprehensive documentation:
 
 ### 1. Technical Documentation
+
 **File**: `docs/SERVICE_MANAGEMENT.md`
 
 Contents:
+
 - System overview and business value
 - Entity relationship diagrams
 - Field descriptions and validation rules
@@ -1197,9 +1289,11 @@ Contents:
 - Database schema details
 
 ### 2. User Guide (MDX)
+
 **File**: `src/content/docs/service-management.mdx`
 
 Contents:
+
 - Introduction to Service Management
 - Creating and managing services
 - Adding owners and infrastructure details
@@ -1209,6 +1303,7 @@ Contents:
 - Best practices
 
 ### 3. Update Project Documentation
+
 - [ ] Update `CLAUDE.md`:
   - Add Service entity to Layer 2 entities list
   - Add ServiceOwnership, BusinessProcess to entity list
@@ -1223,17 +1318,17 @@ Contents:
 
 ## Key Design Decisions
 
-| Decision | Rationale |
-|----------|-----------|
-| Multiple owners via join table | Flexible ownership model supporting multiple Technical/Product/Business owners |
-| Closed ServiceType enum | Type-safe, predictable service categorization (can extend later) |
-| BusinessProcess entity | Future-proof for process management, better than free-text field |
-| ServiceInfrastructure separate entity | Normalized schema, supports history tracking, handles cloud vs on-prem differences |
-| ServiceAsset many-to-many with nullable asset | Supports third-party services without physical assets |
-| JSON fields for SLA/metadata | Flexible schema for varying vendor SLA structures |
-| Essential Service flag | Quick identification of critical services (Core Banking/Payments) |
-| Criticality + Business Impact + Confidentiality | Comprehensive NDMO framework compliance |
-| Seed script vs CSV import | Seed script for initial 80 services (controlled, repeatable) |
+| Decision                                        | Rationale                                                                          |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Multiple owners via join table                  | Flexible ownership model supporting multiple Technical/Product/Business owners     |
+| Closed ServiceType enum                         | Type-safe, predictable service categorization (can extend later)                   |
+| BusinessProcess entity                          | Future-proof for process management, better than free-text field                   |
+| ServiceInfrastructure separate entity           | Normalized schema, supports history tracking, handles cloud vs on-prem differences |
+| ServiceAsset many-to-many with nullable asset   | Supports third-party services without physical assets                              |
+| JSON fields for SLA/metadata                    | Flexible schema for varying vendor SLA structures                                  |
+| Essential Service flag                          | Quick identification of critical services (Core Banking/Payments)                  |
+| Criticality + Business Impact + Confidentiality | Comprehensive NDMO framework compliance                                            |
+| Seed script vs CSV import                       | Seed script for initial 80 services (controlled, repeatable)                       |
 
 ## Risk & Considerations
 
@@ -1291,6 +1386,7 @@ Contents:
 **Last Updated**: 2025-11-21
 **Author**: Planning Session with Claude
 **Related Docs**:
+
 - `docs/guides/DEVELOPER_GUIDE.md` - Feature implementation guide
 - `docs/guides/ENTITY_REFERENCE.md` - Entity patterns
 - `docs/architecture/DATABASE_SCHEMA.md` - Schema conventions

@@ -75,6 +75,7 @@ export function OrganizationUnitForm({
       description: unit?.description ?? "",
       unitType: unit?.unitType ?? OrganizationUnitType.DEPARTMENT,
       costCenter: unit?.costCenter ?? "",
+      note: unit?.note ?? "",
       isActive: unit?.isActive ?? true,
     },
   });
@@ -86,6 +87,7 @@ export function OrganizationUnitForm({
       description: unit?.description ?? "",
       unitType: unit?.unitType ?? OrganizationUnitType.DEPARTMENT,
       costCenter: unit?.costCenter ?? "",
+      note: unit?.note ?? "",
       isActive: unit?.isActive ?? true,
     });
   }, [unit, form]);
@@ -217,6 +219,27 @@ export function OrganizationUnitForm({
                   <FormControl>
                     <Input
                       placeholder="CC-001"
+                      {...field}
+                      value={field.value || ""}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="note"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Note (Optional)</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Additional notes about this organization unit..."
+                      className="resize-none"
+                      maxLength={5000}
+                      rows={3}
                       {...field}
                       value={field.value || ""}
                     />

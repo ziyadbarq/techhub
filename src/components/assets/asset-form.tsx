@@ -55,6 +55,7 @@ import type { AssetModelDTO } from "@/interface-adapters/presenters/asset-model.
 import type { VendorDTO } from "@/interface-adapters/presenters/vendor.presenter";
 import type { StockLocationDTO } from "@/interface-adapters/presenters/stock-location.presenter";
 import type { LifecycleStateDTO } from "@/interface-adapters/presenters/lifecycle-state.presenter";
+import { isValidAssetCondition } from "@/core/domain/value-objects/asset-condition";
 
 interface AssetFormProps {
   open: boolean;
@@ -73,6 +74,15 @@ export function AssetForm({
   onSuccess,
   asset,
 }: AssetFormProps) {
+  const normalizeCondition = (
+    value: AssetDTO["condition"] | undefined,
+  ): AssetFormValues["condition"] => {
+    if (value && isValidAssetCondition(value)) {
+      return value;
+    }
+    return null;
+  };
+
   const isEditing = !!asset;
   const [categories, setCategories] = useState<AssetCategoryDTO[]>([]);
   const [models, setModels] = useState<AssetModelDTO[]>([]);
@@ -93,6 +103,7 @@ export function AssetForm({
       currentStockLocationId: asset?.currentStockLocationId ?? null,
       lifecycleStateId: asset?.lifecycleStateId ?? null,
       serialNumber: asset?.serialNumber ?? "",
+      condition: normalizeCondition(asset?.condition),
       purchaseDate: asset?.purchaseDate
         ? new Date(asset.purchaseDate)
         : undefined,
@@ -164,6 +175,7 @@ export function AssetForm({
       currentStockLocationId: asset?.currentStockLocationId ?? null,
       lifecycleStateId: asset?.lifecycleStateId ?? null,
       serialNumber: asset?.serialNumber ?? "",
+      condition: normalizeCondition(asset?.condition),
       purchaseDate: asset?.purchaseDate
         ? new Date(asset.purchaseDate)
         : undefined,
@@ -428,6 +440,40 @@ export function AssetForm({
                   </FormControl>
                   <FormDescription>
                     Manufacturer's serial number
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Condition */}
+            <FormField
+              control={form.control}
+              name="condition"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Condition (Optional)</FormLabel>
+                  <Select
+                    onValueChange={(value) =>
+                      field.onChange(value === NONE_OPTION_VALUE ? null : value)
+                    }
+                    value={field.value ?? undefined}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select condition" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
+                      <SelectItem value="NEW">New</SelectItem>
+                      <SelectItem value="GOOD">Good</SelectItem>
+                      <SelectItem value="FAIR">Fair</SelectItem>
+                      <SelectItem value="POOR">Poor</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Physical condition of the asset
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

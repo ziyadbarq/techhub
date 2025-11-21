@@ -199,6 +199,7 @@ export type DisposalApprovalWhereInput = {
   comment?: Prisma.StringNullableFilter<"DisposalApproval"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DisposalApproval"> | Date | string
   disposal?: Prisma.XOR<Prisma.AssetDisposalScalarRelationFilter, Prisma.AssetDisposalWhereInput>
+  approver?: Prisma.XOR<Prisma.PersonScalarRelationFilter, Prisma.PersonWhereInput>
 }
 
 export type DisposalApprovalOrderByWithRelationInput = {
@@ -210,6 +211,7 @@ export type DisposalApprovalOrderByWithRelationInput = {
   comment?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   disposal?: Prisma.AssetDisposalOrderByWithRelationInput
+  approver?: Prisma.PersonOrderByWithRelationInput
 }
 
 export type DisposalApprovalWhereUniqueInput = Prisma.AtLeast<{
@@ -224,6 +226,7 @@ export type DisposalApprovalWhereUniqueInput = Prisma.AtLeast<{
   comment?: Prisma.StringNullableFilter<"DisposalApproval"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DisposalApproval"> | Date | string
   disposal?: Prisma.XOR<Prisma.AssetDisposalScalarRelationFilter, Prisma.AssetDisposalWhereInput>
+  approver?: Prisma.XOR<Prisma.PersonScalarRelationFilter, Prisma.PersonWhereInput>
 }, "id">
 
 export type DisposalApprovalOrderByWithAggregationInput = {
@@ -254,12 +257,12 @@ export type DisposalApprovalScalarWhereWithAggregatesInput = {
 
 export type DisposalApprovalCreateInput = {
   id?: string
-  approverId: string
   status?: string
   decisionAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
   disposal: Prisma.AssetDisposalCreateNestedOneWithoutApprovalsInput
+  approver: Prisma.PersonCreateNestedOneWithoutDisposalApprovalsInput
 }
 
 export type DisposalApprovalUncheckedCreateInput = {
@@ -274,12 +277,12 @@ export type DisposalApprovalUncheckedCreateInput = {
 
 export type DisposalApprovalUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  approverId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   decisionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   disposal?: Prisma.AssetDisposalUpdateOneRequiredWithoutApprovalsNestedInput
+  approver?: Prisma.PersonUpdateOneRequiredWithoutDisposalApprovalsNestedInput
 }
 
 export type DisposalApprovalUncheckedUpdateInput = {
@@ -304,7 +307,6 @@ export type DisposalApprovalCreateManyInput = {
 
 export type DisposalApprovalUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  approverId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   decisionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -361,6 +363,48 @@ export type DisposalApprovalMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
 }
 
+export type DisposalApprovalCreateNestedManyWithoutApproverInput = {
+  create?: Prisma.XOR<Prisma.DisposalApprovalCreateWithoutApproverInput, Prisma.DisposalApprovalUncheckedCreateWithoutApproverInput> | Prisma.DisposalApprovalCreateWithoutApproverInput[] | Prisma.DisposalApprovalUncheckedCreateWithoutApproverInput[]
+  connectOrCreate?: Prisma.DisposalApprovalCreateOrConnectWithoutApproverInput | Prisma.DisposalApprovalCreateOrConnectWithoutApproverInput[]
+  createMany?: Prisma.DisposalApprovalCreateManyApproverInputEnvelope
+  connect?: Prisma.DisposalApprovalWhereUniqueInput | Prisma.DisposalApprovalWhereUniqueInput[]
+}
+
+export type DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput = {
+  create?: Prisma.XOR<Prisma.DisposalApprovalCreateWithoutApproverInput, Prisma.DisposalApprovalUncheckedCreateWithoutApproverInput> | Prisma.DisposalApprovalCreateWithoutApproverInput[] | Prisma.DisposalApprovalUncheckedCreateWithoutApproverInput[]
+  connectOrCreate?: Prisma.DisposalApprovalCreateOrConnectWithoutApproverInput | Prisma.DisposalApprovalCreateOrConnectWithoutApproverInput[]
+  createMany?: Prisma.DisposalApprovalCreateManyApproverInputEnvelope
+  connect?: Prisma.DisposalApprovalWhereUniqueInput | Prisma.DisposalApprovalWhereUniqueInput[]
+}
+
+export type DisposalApprovalUpdateManyWithoutApproverNestedInput = {
+  create?: Prisma.XOR<Prisma.DisposalApprovalCreateWithoutApproverInput, Prisma.DisposalApprovalUncheckedCreateWithoutApproverInput> | Prisma.DisposalApprovalCreateWithoutApproverInput[] | Prisma.DisposalApprovalUncheckedCreateWithoutApproverInput[]
+  connectOrCreate?: Prisma.DisposalApprovalCreateOrConnectWithoutApproverInput | Prisma.DisposalApprovalCreateOrConnectWithoutApproverInput[]
+  upsert?: Prisma.DisposalApprovalUpsertWithWhereUniqueWithoutApproverInput | Prisma.DisposalApprovalUpsertWithWhereUniqueWithoutApproverInput[]
+  createMany?: Prisma.DisposalApprovalCreateManyApproverInputEnvelope
+  set?: Prisma.DisposalApprovalWhereUniqueInput | Prisma.DisposalApprovalWhereUniqueInput[]
+  disconnect?: Prisma.DisposalApprovalWhereUniqueInput | Prisma.DisposalApprovalWhereUniqueInput[]
+  delete?: Prisma.DisposalApprovalWhereUniqueInput | Prisma.DisposalApprovalWhereUniqueInput[]
+  connect?: Prisma.DisposalApprovalWhereUniqueInput | Prisma.DisposalApprovalWhereUniqueInput[]
+  update?: Prisma.DisposalApprovalUpdateWithWhereUniqueWithoutApproverInput | Prisma.DisposalApprovalUpdateWithWhereUniqueWithoutApproverInput[]
+  updateMany?: Prisma.DisposalApprovalUpdateManyWithWhereWithoutApproverInput | Prisma.DisposalApprovalUpdateManyWithWhereWithoutApproverInput[]
+  deleteMany?: Prisma.DisposalApprovalScalarWhereInput | Prisma.DisposalApprovalScalarWhereInput[]
+}
+
+export type DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput = {
+  create?: Prisma.XOR<Prisma.DisposalApprovalCreateWithoutApproverInput, Prisma.DisposalApprovalUncheckedCreateWithoutApproverInput> | Prisma.DisposalApprovalCreateWithoutApproverInput[] | Prisma.DisposalApprovalUncheckedCreateWithoutApproverInput[]
+  connectOrCreate?: Prisma.DisposalApprovalCreateOrConnectWithoutApproverInput | Prisma.DisposalApprovalCreateOrConnectWithoutApproverInput[]
+  upsert?: Prisma.DisposalApprovalUpsertWithWhereUniqueWithoutApproverInput | Prisma.DisposalApprovalUpsertWithWhereUniqueWithoutApproverInput[]
+  createMany?: Prisma.DisposalApprovalCreateManyApproverInputEnvelope
+  set?: Prisma.DisposalApprovalWhereUniqueInput | Prisma.DisposalApprovalWhereUniqueInput[]
+  disconnect?: Prisma.DisposalApprovalWhereUniqueInput | Prisma.DisposalApprovalWhereUniqueInput[]
+  delete?: Prisma.DisposalApprovalWhereUniqueInput | Prisma.DisposalApprovalWhereUniqueInput[]
+  connect?: Prisma.DisposalApprovalWhereUniqueInput | Prisma.DisposalApprovalWhereUniqueInput[]
+  update?: Prisma.DisposalApprovalUpdateWithWhereUniqueWithoutApproverInput | Prisma.DisposalApprovalUpdateWithWhereUniqueWithoutApproverInput[]
+  updateMany?: Prisma.DisposalApprovalUpdateManyWithWhereWithoutApproverInput | Prisma.DisposalApprovalUpdateManyWithWhereWithoutApproverInput[]
+  deleteMany?: Prisma.DisposalApprovalScalarWhereInput | Prisma.DisposalApprovalScalarWhereInput[]
+}
+
 export type DisposalApprovalCreateNestedManyWithoutDisposalInput = {
   create?: Prisma.XOR<Prisma.DisposalApprovalCreateWithoutDisposalInput, Prisma.DisposalApprovalUncheckedCreateWithoutDisposalInput> | Prisma.DisposalApprovalCreateWithoutDisposalInput[] | Prisma.DisposalApprovalUncheckedCreateWithoutDisposalInput[]
   connectOrCreate?: Prisma.DisposalApprovalCreateOrConnectWithoutDisposalInput | Prisma.DisposalApprovalCreateOrConnectWithoutDisposalInput[]
@@ -403,13 +447,70 @@ export type DisposalApprovalUncheckedUpdateManyWithoutDisposalNestedInput = {
   deleteMany?: Prisma.DisposalApprovalScalarWhereInput | Prisma.DisposalApprovalScalarWhereInput[]
 }
 
-export type DisposalApprovalCreateWithoutDisposalInput = {
+export type DisposalApprovalCreateWithoutApproverInput = {
   id?: string
-  approverId: string
   status?: string
   decisionAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
+  disposal: Prisma.AssetDisposalCreateNestedOneWithoutApprovalsInput
+}
+
+export type DisposalApprovalUncheckedCreateWithoutApproverInput = {
+  id?: string
+  disposalId: string
+  status?: string
+  decisionAt?: Date | string | null
+  comment?: string | null
+  createdAt?: Date | string
+}
+
+export type DisposalApprovalCreateOrConnectWithoutApproverInput = {
+  where: Prisma.DisposalApprovalWhereUniqueInput
+  create: Prisma.XOR<Prisma.DisposalApprovalCreateWithoutApproverInput, Prisma.DisposalApprovalUncheckedCreateWithoutApproverInput>
+}
+
+export type DisposalApprovalCreateManyApproverInputEnvelope = {
+  data: Prisma.DisposalApprovalCreateManyApproverInput | Prisma.DisposalApprovalCreateManyApproverInput[]
+  skipDuplicates?: boolean
+}
+
+export type DisposalApprovalUpsertWithWhereUniqueWithoutApproverInput = {
+  where: Prisma.DisposalApprovalWhereUniqueInput
+  update: Prisma.XOR<Prisma.DisposalApprovalUpdateWithoutApproverInput, Prisma.DisposalApprovalUncheckedUpdateWithoutApproverInput>
+  create: Prisma.XOR<Prisma.DisposalApprovalCreateWithoutApproverInput, Prisma.DisposalApprovalUncheckedCreateWithoutApproverInput>
+}
+
+export type DisposalApprovalUpdateWithWhereUniqueWithoutApproverInput = {
+  where: Prisma.DisposalApprovalWhereUniqueInput
+  data: Prisma.XOR<Prisma.DisposalApprovalUpdateWithoutApproverInput, Prisma.DisposalApprovalUncheckedUpdateWithoutApproverInput>
+}
+
+export type DisposalApprovalUpdateManyWithWhereWithoutApproverInput = {
+  where: Prisma.DisposalApprovalScalarWhereInput
+  data: Prisma.XOR<Prisma.DisposalApprovalUpdateManyMutationInput, Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverInput>
+}
+
+export type DisposalApprovalScalarWhereInput = {
+  AND?: Prisma.DisposalApprovalScalarWhereInput | Prisma.DisposalApprovalScalarWhereInput[]
+  OR?: Prisma.DisposalApprovalScalarWhereInput[]
+  NOT?: Prisma.DisposalApprovalScalarWhereInput | Prisma.DisposalApprovalScalarWhereInput[]
+  id?: Prisma.StringFilter<"DisposalApproval"> | string
+  disposalId?: Prisma.StringFilter<"DisposalApproval"> | string
+  approverId?: Prisma.StringFilter<"DisposalApproval"> | string
+  status?: Prisma.StringFilter<"DisposalApproval"> | string
+  decisionAt?: Prisma.DateTimeNullableFilter<"DisposalApproval"> | Date | string | null
+  comment?: Prisma.StringNullableFilter<"DisposalApproval"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"DisposalApproval"> | Date | string
+}
+
+export type DisposalApprovalCreateWithoutDisposalInput = {
+  id?: string
+  status?: string
+  decisionAt?: Date | string | null
+  comment?: string | null
+  createdAt?: Date | string
+  approver: Prisma.PersonCreateNestedOneWithoutDisposalApprovalsInput
 }
 
 export type DisposalApprovalUncheckedCreateWithoutDisposalInput = {
@@ -447,17 +548,40 @@ export type DisposalApprovalUpdateManyWithWhereWithoutDisposalInput = {
   data: Prisma.XOR<Prisma.DisposalApprovalUpdateManyMutationInput, Prisma.DisposalApprovalUncheckedUpdateManyWithoutDisposalInput>
 }
 
-export type DisposalApprovalScalarWhereInput = {
-  AND?: Prisma.DisposalApprovalScalarWhereInput | Prisma.DisposalApprovalScalarWhereInput[]
-  OR?: Prisma.DisposalApprovalScalarWhereInput[]
-  NOT?: Prisma.DisposalApprovalScalarWhereInput | Prisma.DisposalApprovalScalarWhereInput[]
-  id?: Prisma.StringFilter<"DisposalApproval"> | string
-  disposalId?: Prisma.StringFilter<"DisposalApproval"> | string
-  approverId?: Prisma.StringFilter<"DisposalApproval"> | string
-  status?: Prisma.StringFilter<"DisposalApproval"> | string
-  decisionAt?: Prisma.DateTimeNullableFilter<"DisposalApproval"> | Date | string | null
-  comment?: Prisma.StringNullableFilter<"DisposalApproval"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"DisposalApproval"> | Date | string
+export type DisposalApprovalCreateManyApproverInput = {
+  id?: string
+  disposalId: string
+  status?: string
+  decisionAt?: Date | string | null
+  comment?: string | null
+  createdAt?: Date | string
+}
+
+export type DisposalApprovalUpdateWithoutApproverInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  decisionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  disposal?: Prisma.AssetDisposalUpdateOneRequiredWithoutApprovalsNestedInput
+}
+
+export type DisposalApprovalUncheckedUpdateWithoutApproverInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  decisionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type DisposalApprovalUncheckedUpdateManyWithoutApproverInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  decisionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type DisposalApprovalCreateManyDisposalInput = {
@@ -471,11 +595,11 @@ export type DisposalApprovalCreateManyDisposalInput = {
 
 export type DisposalApprovalUpdateWithoutDisposalInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  approverId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.StringFieldUpdateOperationsInput | string
   decisionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  approver?: Prisma.PersonUpdateOneRequiredWithoutDisposalApprovalsNestedInput
 }
 
 export type DisposalApprovalUncheckedUpdateWithoutDisposalInput = {
@@ -507,6 +631,7 @@ export type DisposalApprovalSelect<ExtArgs extends runtime.Types.Extensions.Inte
   comment?: boolean
   createdAt?: boolean
   disposal?: boolean | Prisma.AssetDisposalDefaultArgs<ExtArgs>
+  approver?: boolean | Prisma.PersonDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["disposalApproval"]>
 
 export type DisposalApprovalSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -518,6 +643,7 @@ export type DisposalApprovalSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   comment?: boolean
   createdAt?: boolean
   disposal?: boolean | Prisma.AssetDisposalDefaultArgs<ExtArgs>
+  approver?: boolean | Prisma.PersonDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["disposalApproval"]>
 
 export type DisposalApprovalSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -529,6 +655,7 @@ export type DisposalApprovalSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   comment?: boolean
   createdAt?: boolean
   disposal?: boolean | Prisma.AssetDisposalDefaultArgs<ExtArgs>
+  approver?: boolean | Prisma.PersonDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["disposalApproval"]>
 
 export type DisposalApprovalSelectScalar = {
@@ -544,18 +671,22 @@ export type DisposalApprovalSelectScalar = {
 export type DisposalApprovalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "disposalId" | "approverId" | "status" | "decisionAt" | "comment" | "createdAt", ExtArgs["result"]["disposalApproval"]>
 export type DisposalApprovalInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   disposal?: boolean | Prisma.AssetDisposalDefaultArgs<ExtArgs>
+  approver?: boolean | Prisma.PersonDefaultArgs<ExtArgs>
 }
 export type DisposalApprovalIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   disposal?: boolean | Prisma.AssetDisposalDefaultArgs<ExtArgs>
+  approver?: boolean | Prisma.PersonDefaultArgs<ExtArgs>
 }
 export type DisposalApprovalIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   disposal?: boolean | Prisma.AssetDisposalDefaultArgs<ExtArgs>
+  approver?: boolean | Prisma.PersonDefaultArgs<ExtArgs>
 }
 
 export type $DisposalApprovalPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "DisposalApproval"
   objects: {
     disposal: Prisma.$AssetDisposalPayload<ExtArgs>
+    approver: Prisma.$PersonPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -960,6 +1091,7 @@ readonly fields: DisposalApprovalFieldRefs;
 export interface Prisma__DisposalApprovalClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   disposal<T extends Prisma.AssetDisposalDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AssetDisposalDefaultArgs<ExtArgs>>): Prisma.Prisma__AssetDisposalClient<runtime.Types.Result.GetResult<Prisma.$AssetDisposalPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  approver<T extends Prisma.PersonDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PersonDefaultArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

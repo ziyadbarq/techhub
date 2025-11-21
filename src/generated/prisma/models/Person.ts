@@ -43,6 +43,7 @@ export type PersonMinAggregateOutputType = {
   hireDate: Date | null
   terminationDate: Date | null
   isActive: boolean | null
+  deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -66,6 +67,7 @@ export type PersonMaxAggregateOutputType = {
   hireDate: Date | null
   terminationDate: Date | null
   isActive: boolean | null
+  deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -90,6 +92,7 @@ export type PersonCountAggregateOutputType = {
   terminationDate: number
   isActive: number
   metadata: number
+  deletedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -115,6 +118,7 @@ export type PersonMinAggregateInputType = {
   hireDate?: true
   terminationDate?: true
   isActive?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -138,6 +142,7 @@ export type PersonMaxAggregateInputType = {
   hireDate?: true
   terminationDate?: true
   isActive?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -162,6 +167,7 @@ export type PersonCountAggregateInputType = {
   terminationDate?: true
   isActive?: true
   metadata?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -259,6 +265,7 @@ export type PersonGroupByOutputType = {
   terminationDate: Date | null
   isActive: boolean
   metadata: runtime.JsonValue | null
+  deletedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: PersonCountAggregateOutputType | null
@@ -304,6 +311,7 @@ export type PersonWhereInput = {
   terminationDate?: Prisma.DateTimeNullableFilter<"Person"> | Date | string | null
   isActive?: Prisma.BoolFilter<"Person"> | boolean
   metadata?: Prisma.JsonNullableFilter<"Person">
+  deletedAt?: Prisma.DateTimeNullableFilter<"Person"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Person"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Person"> | Date | string
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
@@ -323,6 +331,15 @@ export type PersonWhereInput = {
   dataOwnerships?: Prisma.DataOwnershipListRelationFilter
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleListRelationFilter
   performedMaintenanceRecords?: Prisma.MaintenanceRecordListRelationFilter
+  initiatedDisposals?: Prisma.AssetDisposalListRelationFilter
+  approvedDisposals?: Prisma.AssetDisposalListRelationFilter
+  disposalApprovals?: Prisma.DisposalApprovalListRelationFilter
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentListRelationFilter
+  kitCheckouts?: Prisma.AssetKitCheckoutListRelationFilter
+  reservationsFor?: Prisma.AssetReservationListRelationFilter
+  reservationsCreated?: Prisma.AssetReservationListRelationFilter
+  reservationsConfirmed?: Prisma.AssetReservationListRelationFilter
+  reservationsCancelled?: Prisma.AssetReservationListRelationFilter
 }
 
 export type PersonOrderByWithRelationInput = {
@@ -345,6 +362,7 @@ export type PersonOrderByWithRelationInput = {
   terminationDate?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -364,6 +382,15 @@ export type PersonOrderByWithRelationInput = {
   dataOwnerships?: Prisma.DataOwnershipOrderByRelationAggregateInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleOrderByRelationAggregateInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordOrderByRelationAggregateInput
+  initiatedDisposals?: Prisma.AssetDisposalOrderByRelationAggregateInput
+  approvedDisposals?: Prisma.AssetDisposalOrderByRelationAggregateInput
+  disposalApprovals?: Prisma.DisposalApprovalOrderByRelationAggregateInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentOrderByRelationAggregateInput
+  kitCheckouts?: Prisma.AssetKitCheckoutOrderByRelationAggregateInput
+  reservationsFor?: Prisma.AssetReservationOrderByRelationAggregateInput
+  reservationsCreated?: Prisma.AssetReservationOrderByRelationAggregateInput
+  reservationsConfirmed?: Prisma.AssetReservationOrderByRelationAggregateInput
+  reservationsCancelled?: Prisma.AssetReservationOrderByRelationAggregateInput
 }
 
 export type PersonWhereUniqueInput = Prisma.AtLeast<{
@@ -389,6 +416,7 @@ export type PersonWhereUniqueInput = Prisma.AtLeast<{
   terminationDate?: Prisma.DateTimeNullableFilter<"Person"> | Date | string | null
   isActive?: Prisma.BoolFilter<"Person"> | boolean
   metadata?: Prisma.JsonNullableFilter<"Person">
+  deletedAt?: Prisma.DateTimeNullableFilter<"Person"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Person"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Person"> | Date | string
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
@@ -408,6 +436,15 @@ export type PersonWhereUniqueInput = Prisma.AtLeast<{
   dataOwnerships?: Prisma.DataOwnershipListRelationFilter
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleListRelationFilter
   performedMaintenanceRecords?: Prisma.MaintenanceRecordListRelationFilter
+  initiatedDisposals?: Prisma.AssetDisposalListRelationFilter
+  approvedDisposals?: Prisma.AssetDisposalListRelationFilter
+  disposalApprovals?: Prisma.DisposalApprovalListRelationFilter
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentListRelationFilter
+  kitCheckouts?: Prisma.AssetKitCheckoutListRelationFilter
+  reservationsFor?: Prisma.AssetReservationListRelationFilter
+  reservationsCreated?: Prisma.AssetReservationListRelationFilter
+  reservationsConfirmed?: Prisma.AssetReservationListRelationFilter
+  reservationsCancelled?: Prisma.AssetReservationListRelationFilter
 }, "id" | "userId" | "email" | "employeeId">
 
 export type PersonOrderByWithAggregationInput = {
@@ -430,6 +467,7 @@ export type PersonOrderByWithAggregationInput = {
   terminationDate?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.PersonCountOrderByAggregateInput
@@ -460,6 +498,7 @@ export type PersonScalarWhereWithAggregatesInput = {
   terminationDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Person"> | Date | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"Person"> | boolean
   metadata?: Prisma.JsonNullableWithAggregatesFilter<"Person">
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Person"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Person"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Person"> | Date | string
 }
@@ -479,6 +518,7 @@ export type PersonCreateInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
@@ -498,6 +538,15 @@ export type PersonCreateInput = {
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonUncheckedCreateInput = {
@@ -520,6 +569,7 @@ export type PersonUncheckedCreateInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
@@ -534,6 +584,15 @@ export type PersonUncheckedCreateInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonUpdateInput = {
@@ -551,6 +610,7 @@ export type PersonUpdateInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
@@ -570,6 +630,15 @@ export type PersonUpdateInput = {
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateInput = {
@@ -592,6 +661,7 @@ export type PersonUncheckedUpdateInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
@@ -606,6 +676,15 @@ export type PersonUncheckedUpdateInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonCreateManyInput = {
@@ -628,6 +707,7 @@ export type PersonCreateManyInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -647,6 +727,7 @@ export type PersonUpdateManyMutationInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -671,6 +752,7 @@ export type PersonUncheckedUpdateManyInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -710,6 +792,7 @@ export type PersonCountOrderByAggregateInput = {
   terminationDate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -733,6 +816,7 @@ export type PersonMaxOrderByAggregateInput = {
   hireDate?: Prisma.SortOrder
   terminationDate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -756,6 +840,7 @@ export type PersonMinOrderByAggregateInput = {
   hireDate?: Prisma.SortOrder
   terminationDate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -1073,6 +1158,140 @@ export type PersonUpdateOneWithoutPerformedMaintenanceRecordsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutPerformedMaintenanceRecordsInput, Prisma.PersonUpdateWithoutPerformedMaintenanceRecordsInput>, Prisma.PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput>
 }
 
+export type PersonCreateNestedOneWithoutInitiatedDisposalsInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutInitiatedDisposalsInput, Prisma.PersonUncheckedCreateWithoutInitiatedDisposalsInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutInitiatedDisposalsInput
+  connect?: Prisma.PersonWhereUniqueInput
+}
+
+export type PersonCreateNestedOneWithoutApprovedDisposalsInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutApprovedDisposalsInput, Prisma.PersonUncheckedCreateWithoutApprovedDisposalsInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutApprovedDisposalsInput
+  connect?: Prisma.PersonWhereUniqueInput
+}
+
+export type PersonUpdateOneRequiredWithoutInitiatedDisposalsNestedInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutInitiatedDisposalsInput, Prisma.PersonUncheckedCreateWithoutInitiatedDisposalsInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutInitiatedDisposalsInput
+  upsert?: Prisma.PersonUpsertWithoutInitiatedDisposalsInput
+  connect?: Prisma.PersonWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutInitiatedDisposalsInput, Prisma.PersonUpdateWithoutInitiatedDisposalsInput>, Prisma.PersonUncheckedUpdateWithoutInitiatedDisposalsInput>
+}
+
+export type PersonUpdateOneWithoutApprovedDisposalsNestedInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutApprovedDisposalsInput, Prisma.PersonUncheckedCreateWithoutApprovedDisposalsInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutApprovedDisposalsInput
+  upsert?: Prisma.PersonUpsertWithoutApprovedDisposalsInput
+  disconnect?: Prisma.PersonWhereInput | boolean
+  delete?: Prisma.PersonWhereInput | boolean
+  connect?: Prisma.PersonWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutApprovedDisposalsInput, Prisma.PersonUpdateWithoutApprovedDisposalsInput>, Prisma.PersonUncheckedUpdateWithoutApprovedDisposalsInput>
+}
+
+export type PersonCreateNestedOneWithoutDisposalApprovalsInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutDisposalApprovalsInput, Prisma.PersonUncheckedCreateWithoutDisposalApprovalsInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutDisposalApprovalsInput
+  connect?: Prisma.PersonWhereUniqueInput
+}
+
+export type PersonUpdateOneRequiredWithoutDisposalApprovalsNestedInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutDisposalApprovalsInput, Prisma.PersonUncheckedCreateWithoutDisposalApprovalsInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutDisposalApprovalsInput
+  upsert?: Prisma.PersonUpsertWithoutDisposalApprovalsInput
+  connect?: Prisma.PersonWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutDisposalApprovalsInput, Prisma.PersonUpdateWithoutDisposalApprovalsInput>, Prisma.PersonUncheckedUpdateWithoutDisposalApprovalsInput>
+}
+
+export type PersonCreateNestedOneWithoutUploadedDisposalDocumentsInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutUploadedDisposalDocumentsInput, Prisma.PersonUncheckedCreateWithoutUploadedDisposalDocumentsInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutUploadedDisposalDocumentsInput
+  connect?: Prisma.PersonWhereUniqueInput
+}
+
+export type PersonUpdateOneRequiredWithoutUploadedDisposalDocumentsNestedInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutUploadedDisposalDocumentsInput, Prisma.PersonUncheckedCreateWithoutUploadedDisposalDocumentsInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutUploadedDisposalDocumentsInput
+  upsert?: Prisma.PersonUpsertWithoutUploadedDisposalDocumentsInput
+  connect?: Prisma.PersonWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutUploadedDisposalDocumentsInput, Prisma.PersonUpdateWithoutUploadedDisposalDocumentsInput>, Prisma.PersonUncheckedUpdateWithoutUploadedDisposalDocumentsInput>
+}
+
+export type PersonCreateNestedOneWithoutKitCheckoutsInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutKitCheckoutsInput, Prisma.PersonUncheckedCreateWithoutKitCheckoutsInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutKitCheckoutsInput
+  connect?: Prisma.PersonWhereUniqueInput
+}
+
+export type PersonUpdateOneRequiredWithoutKitCheckoutsNestedInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutKitCheckoutsInput, Prisma.PersonUncheckedCreateWithoutKitCheckoutsInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutKitCheckoutsInput
+  upsert?: Prisma.PersonUpsertWithoutKitCheckoutsInput
+  connect?: Prisma.PersonWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutKitCheckoutsInput, Prisma.PersonUpdateWithoutKitCheckoutsInput>, Prisma.PersonUncheckedUpdateWithoutKitCheckoutsInput>
+}
+
+export type PersonCreateNestedOneWithoutReservationsForInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutReservationsForInput, Prisma.PersonUncheckedCreateWithoutReservationsForInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutReservationsForInput
+  connect?: Prisma.PersonWhereUniqueInput
+}
+
+export type PersonCreateNestedOneWithoutReservationsCreatedInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutReservationsCreatedInput, Prisma.PersonUncheckedCreateWithoutReservationsCreatedInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutReservationsCreatedInput
+  connect?: Prisma.PersonWhereUniqueInput
+}
+
+export type PersonCreateNestedOneWithoutReservationsConfirmedInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutReservationsConfirmedInput, Prisma.PersonUncheckedCreateWithoutReservationsConfirmedInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutReservationsConfirmedInput
+  connect?: Prisma.PersonWhereUniqueInput
+}
+
+export type PersonCreateNestedOneWithoutReservationsCancelledInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutReservationsCancelledInput, Prisma.PersonUncheckedCreateWithoutReservationsCancelledInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutReservationsCancelledInput
+  connect?: Prisma.PersonWhereUniqueInput
+}
+
+export type PersonUpdateOneWithoutReservationsForNestedInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutReservationsForInput, Prisma.PersonUncheckedCreateWithoutReservationsForInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutReservationsForInput
+  upsert?: Prisma.PersonUpsertWithoutReservationsForInput
+  disconnect?: Prisma.PersonWhereInput | boolean
+  delete?: Prisma.PersonWhereInput | boolean
+  connect?: Prisma.PersonWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutReservationsForInput, Prisma.PersonUpdateWithoutReservationsForInput>, Prisma.PersonUncheckedUpdateWithoutReservationsForInput>
+}
+
+export type PersonUpdateOneRequiredWithoutReservationsCreatedNestedInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutReservationsCreatedInput, Prisma.PersonUncheckedCreateWithoutReservationsCreatedInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutReservationsCreatedInput
+  upsert?: Prisma.PersonUpsertWithoutReservationsCreatedInput
+  connect?: Prisma.PersonWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutReservationsCreatedInput, Prisma.PersonUpdateWithoutReservationsCreatedInput>, Prisma.PersonUncheckedUpdateWithoutReservationsCreatedInput>
+}
+
+export type PersonUpdateOneWithoutReservationsConfirmedNestedInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutReservationsConfirmedInput, Prisma.PersonUncheckedCreateWithoutReservationsConfirmedInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutReservationsConfirmedInput
+  upsert?: Prisma.PersonUpsertWithoutReservationsConfirmedInput
+  disconnect?: Prisma.PersonWhereInput | boolean
+  delete?: Prisma.PersonWhereInput | boolean
+  connect?: Prisma.PersonWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutReservationsConfirmedInput, Prisma.PersonUpdateWithoutReservationsConfirmedInput>, Prisma.PersonUncheckedUpdateWithoutReservationsConfirmedInput>
+}
+
+export type PersonUpdateOneWithoutReservationsCancelledNestedInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutReservationsCancelledInput, Prisma.PersonUncheckedCreateWithoutReservationsCancelledInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutReservationsCancelledInput
+  upsert?: Prisma.PersonUpsertWithoutReservationsCancelledInput
+  disconnect?: Prisma.PersonWhereInput | boolean
+  delete?: Prisma.PersonWhereInput | boolean
+  connect?: Prisma.PersonWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutReservationsCancelledInput, Prisma.PersonUpdateWithoutReservationsCancelledInput>, Prisma.PersonUncheckedUpdateWithoutReservationsCancelledInput>
+}
+
 export type PersonCreateNestedOneWithoutDataOwnershipsInput = {
   create?: Prisma.XOR<Prisma.PersonCreateWithoutDataOwnershipsInput, Prisma.PersonUncheckedCreateWithoutDataOwnershipsInput>
   connectOrCreate?: Prisma.PersonCreateOrConnectWithoutDataOwnershipsInput
@@ -1162,6 +1381,7 @@ export type PersonCreateWithoutUserInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
@@ -1180,6 +1400,15 @@ export type PersonCreateWithoutUserInput = {
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonUncheckedCreateWithoutUserInput = {
@@ -1201,6 +1430,7 @@ export type PersonUncheckedCreateWithoutUserInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
@@ -1215,6 +1445,15 @@ export type PersonUncheckedCreateWithoutUserInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonCreateOrConnectWithoutUserInput = {
@@ -1248,6 +1487,7 @@ export type PersonUpdateWithoutUserInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
@@ -1266,6 +1506,15 @@ export type PersonUpdateWithoutUserInput = {
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutUserInput = {
@@ -1287,6 +1536,7 @@ export type PersonUncheckedUpdateWithoutUserInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
@@ -1301,6 +1551,15 @@ export type PersonUncheckedUpdateWithoutUserInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonCreateWithoutPrimaryRoleInput = {
@@ -1318,6 +1577,7 @@ export type PersonCreateWithoutPrimaryRoleInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
@@ -1336,6 +1596,15 @@ export type PersonCreateWithoutPrimaryRoleInput = {
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonUncheckedCreateWithoutPrimaryRoleInput = {
@@ -1357,6 +1626,7 @@ export type PersonUncheckedCreateWithoutPrimaryRoleInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
@@ -1371,6 +1641,15 @@ export type PersonUncheckedCreateWithoutPrimaryRoleInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonCreateOrConnectWithoutPrimaryRoleInput = {
@@ -1422,6 +1701,7 @@ export type PersonScalarWhereInput = {
   terminationDate?: Prisma.DateTimeNullableFilter<"Person"> | Date | string | null
   isActive?: Prisma.BoolFilter<"Person"> | boolean
   metadata?: Prisma.JsonNullableFilter<"Person">
+  deletedAt?: Prisma.DateTimeNullableFilter<"Person"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Person"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Person"> | Date | string
 }
@@ -1441,6 +1721,7 @@ export type PersonCreateWithoutManagedOrgUnitsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
@@ -1459,6 +1740,15 @@ export type PersonCreateWithoutManagedOrgUnitsInput = {
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonUncheckedCreateWithoutManagedOrgUnitsInput = {
@@ -1481,6 +1771,7 @@ export type PersonUncheckedCreateWithoutManagedOrgUnitsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
@@ -1494,6 +1785,15 @@ export type PersonUncheckedCreateWithoutManagedOrgUnitsInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonCreateOrConnectWithoutManagedOrgUnitsInput = {
@@ -1516,6 +1816,7 @@ export type PersonCreateWithoutOrgUnitInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
@@ -1534,6 +1835,15 @@ export type PersonCreateWithoutOrgUnitInput = {
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonUncheckedCreateWithoutOrgUnitInput = {
@@ -1555,6 +1865,7 @@ export type PersonUncheckedCreateWithoutOrgUnitInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
@@ -1569,6 +1880,15 @@ export type PersonUncheckedCreateWithoutOrgUnitInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonCreateOrConnectWithoutOrgUnitInput = {
@@ -1607,6 +1927,7 @@ export type PersonUpdateWithoutManagedOrgUnitsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
@@ -1625,6 +1946,15 @@ export type PersonUpdateWithoutManagedOrgUnitsInput = {
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutManagedOrgUnitsInput = {
@@ -1647,6 +1977,7 @@ export type PersonUncheckedUpdateWithoutManagedOrgUnitsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
@@ -1660,6 +1991,15 @@ export type PersonUncheckedUpdateWithoutManagedOrgUnitsInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUpsertWithWhereUniqueWithoutOrgUnitInput = {
@@ -1693,6 +2033,7 @@ export type PersonCreateWithoutDirectReportsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
@@ -1711,6 +2052,15 @@ export type PersonCreateWithoutDirectReportsInput = {
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonUncheckedCreateWithoutDirectReportsInput = {
@@ -1733,6 +2083,7 @@ export type PersonUncheckedCreateWithoutDirectReportsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
@@ -1746,6 +2097,15 @@ export type PersonUncheckedCreateWithoutDirectReportsInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonCreateOrConnectWithoutDirectReportsInput = {
@@ -1768,6 +2128,7 @@ export type PersonCreateWithoutManagerInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
@@ -1786,6 +2147,15 @@ export type PersonCreateWithoutManagerInput = {
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonUncheckedCreateWithoutManagerInput = {
@@ -1807,6 +2177,7 @@ export type PersonUncheckedCreateWithoutManagerInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
@@ -1821,6 +2192,15 @@ export type PersonUncheckedCreateWithoutManagerInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonCreateOrConnectWithoutManagerInput = {
@@ -1859,6 +2239,7 @@ export type PersonUpdateWithoutDirectReportsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
@@ -1877,6 +2258,15 @@ export type PersonUpdateWithoutDirectReportsInput = {
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDirectReportsInput = {
@@ -1899,6 +2289,7 @@ export type PersonUncheckedUpdateWithoutDirectReportsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
@@ -1912,6 +2303,15 @@ export type PersonUncheckedUpdateWithoutDirectReportsInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUpsertWithWhereUniqueWithoutManagerInput = {
@@ -1945,6 +2345,7 @@ export type PersonCreateWithoutRoleAssignmentsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
@@ -1963,6 +2364,15 @@ export type PersonCreateWithoutRoleAssignmentsInput = {
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonUncheckedCreateWithoutRoleAssignmentsInput = {
@@ -1985,6 +2395,7 @@ export type PersonUncheckedCreateWithoutRoleAssignmentsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
@@ -1998,6 +2409,15 @@ export type PersonUncheckedCreateWithoutRoleAssignmentsInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonCreateOrConnectWithoutRoleAssignmentsInput = {
@@ -2031,6 +2451,7 @@ export type PersonUpdateWithoutRoleAssignmentsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
@@ -2049,6 +2470,15 @@ export type PersonUpdateWithoutRoleAssignmentsInput = {
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutRoleAssignmentsInput = {
@@ -2071,6 +2501,7 @@ export type PersonUncheckedUpdateWithoutRoleAssignmentsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
@@ -2084,6 +2515,15 @@ export type PersonUncheckedUpdateWithoutRoleAssignmentsInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonCreateWithoutLocationInput = {
@@ -2101,6 +2541,7 @@ export type PersonCreateWithoutLocationInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
@@ -2119,6 +2560,15 @@ export type PersonCreateWithoutLocationInput = {
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonUncheckedCreateWithoutLocationInput = {
@@ -2140,6 +2590,7 @@ export type PersonUncheckedCreateWithoutLocationInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
@@ -2154,6 +2605,15 @@ export type PersonUncheckedCreateWithoutLocationInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonCreateOrConnectWithoutLocationInput = {
@@ -2197,6 +2657,7 @@ export type PersonCreateWithoutConfigurationItemsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
@@ -2215,6 +2676,15 @@ export type PersonCreateWithoutConfigurationItemsInput = {
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonUncheckedCreateWithoutConfigurationItemsInput = {
@@ -2237,6 +2707,7 @@ export type PersonUncheckedCreateWithoutConfigurationItemsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
@@ -2250,6 +2721,15 @@ export type PersonUncheckedCreateWithoutConfigurationItemsInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonCreateOrConnectWithoutConfigurationItemsInput = {
@@ -2283,6 +2763,7 @@ export type PersonUpdateWithoutConfigurationItemsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
@@ -2301,6 +2782,15 @@ export type PersonUpdateWithoutConfigurationItemsInput = {
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutConfigurationItemsInput = {
@@ -2323,6 +2813,7 @@ export type PersonUncheckedUpdateWithoutConfigurationItemsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
@@ -2336,6 +2827,15 @@ export type PersonUncheckedUpdateWithoutConfigurationItemsInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonCreateWithoutStockMovementsInput = {
@@ -2353,6 +2853,7 @@ export type PersonCreateWithoutStockMovementsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
@@ -2371,6 +2872,15 @@ export type PersonCreateWithoutStockMovementsInput = {
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonUncheckedCreateWithoutStockMovementsInput = {
@@ -2393,6 +2903,7 @@ export type PersonUncheckedCreateWithoutStockMovementsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
@@ -2406,6 +2917,15 @@ export type PersonUncheckedCreateWithoutStockMovementsInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonCreateOrConnectWithoutStockMovementsInput = {
@@ -2439,6 +2959,7 @@ export type PersonUpdateWithoutStockMovementsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
@@ -2457,6 +2978,15 @@ export type PersonUpdateWithoutStockMovementsInput = {
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutStockMovementsInput = {
@@ -2479,6 +3009,7 @@ export type PersonUncheckedUpdateWithoutStockMovementsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
@@ -2492,6 +3023,15 @@ export type PersonUncheckedUpdateWithoutStockMovementsInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonCreateWithoutAssignedMaintenanceSchedulesInput = {
@@ -2509,6 +3049,7 @@ export type PersonCreateWithoutAssignedMaintenanceSchedulesInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
@@ -2527,6 +3068,15 @@ export type PersonCreateWithoutAssignedMaintenanceSchedulesInput = {
   attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonUncheckedCreateWithoutAssignedMaintenanceSchedulesInput = {
@@ -2549,6 +3099,7 @@ export type PersonUncheckedCreateWithoutAssignedMaintenanceSchedulesInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
@@ -2562,6 +3113,15 @@ export type PersonUncheckedCreateWithoutAssignedMaintenanceSchedulesInput = {
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonCreateOrConnectWithoutAssignedMaintenanceSchedulesInput = {
@@ -2595,6 +3155,7 @@ export type PersonUpdateWithoutAssignedMaintenanceSchedulesInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
@@ -2613,6 +3174,15 @@ export type PersonUpdateWithoutAssignedMaintenanceSchedulesInput = {
   attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutAssignedMaintenanceSchedulesInput = {
@@ -2635,6 +3205,7 @@ export type PersonUncheckedUpdateWithoutAssignedMaintenanceSchedulesInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
@@ -2648,6 +3219,15 @@ export type PersonUncheckedUpdateWithoutAssignedMaintenanceSchedulesInput = {
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonCreateWithoutPerformedMaintenanceRecordsInput = {
@@ -2665,6 +3245,7 @@ export type PersonCreateWithoutPerformedMaintenanceRecordsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
@@ -2683,6 +3264,15 @@ export type PersonCreateWithoutPerformedMaintenanceRecordsInput = {
   attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonUncheckedCreateWithoutPerformedMaintenanceRecordsInput = {
@@ -2705,6 +3295,7 @@ export type PersonUncheckedCreateWithoutPerformedMaintenanceRecordsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
@@ -2718,6 +3309,15 @@ export type PersonUncheckedCreateWithoutPerformedMaintenanceRecordsInput = {
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonCreateOrConnectWithoutPerformedMaintenanceRecordsInput = {
@@ -2751,6 +3351,7 @@ export type PersonUpdateWithoutPerformedMaintenanceRecordsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
@@ -2769,6 +3370,15 @@ export type PersonUpdateWithoutPerformedMaintenanceRecordsInput = {
   attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput = {
@@ -2791,6 +3401,7 @@ export type PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
@@ -2804,6 +3415,1779 @@ export type PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput = {
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
+}
+
+export type PersonCreateWithoutInitiatedDisposalsInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  title?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutPersonInput
+  orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
+  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
+  manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
+  directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
+  location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
+  managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
+}
+
+export type PersonUncheckedCreateWithoutInitiatedDisposalsInput = {
+  id?: string
+  userId?: string | null
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  orgUnitId: string
+  primaryRoleId: string
+  managerId?: string | null
+  title?: string | null
+  locationId?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemUncheckedCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
+}
+
+export type PersonCreateOrConnectWithoutInitiatedDisposalsInput = {
+  where: Prisma.PersonWhereUniqueInput
+  create: Prisma.XOR<Prisma.PersonCreateWithoutInitiatedDisposalsInput, Prisma.PersonUncheckedCreateWithoutInitiatedDisposalsInput>
+}
+
+export type PersonCreateWithoutApprovedDisposalsInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  title?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutPersonInput
+  orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
+  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
+  manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
+  directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
+  location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
+  managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
+}
+
+export type PersonUncheckedCreateWithoutApprovedDisposalsInput = {
+  id?: string
+  userId?: string | null
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  orgUnitId: string
+  primaryRoleId: string
+  managerId?: string | null
+  title?: string | null
+  locationId?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemUncheckedCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
+}
+
+export type PersonCreateOrConnectWithoutApprovedDisposalsInput = {
+  where: Prisma.PersonWhereUniqueInput
+  create: Prisma.XOR<Prisma.PersonCreateWithoutApprovedDisposalsInput, Prisma.PersonUncheckedCreateWithoutApprovedDisposalsInput>
+}
+
+export type PersonUpsertWithoutInitiatedDisposalsInput = {
+  update: Prisma.XOR<Prisma.PersonUpdateWithoutInitiatedDisposalsInput, Prisma.PersonUncheckedUpdateWithoutInitiatedDisposalsInput>
+  create: Prisma.XOR<Prisma.PersonCreateWithoutInitiatedDisposalsInput, Prisma.PersonUncheckedCreateWithoutInitiatedDisposalsInput>
+  where?: Prisma.PersonWhereInput
+}
+
+export type PersonUpdateToOneWithWhereWithoutInitiatedDisposalsInput = {
+  where?: Prisma.PersonWhereInput
+  data: Prisma.XOR<Prisma.PersonUpdateWithoutInitiatedDisposalsInput, Prisma.PersonUncheckedUpdateWithoutInitiatedDisposalsInput>
+}
+
+export type PersonUpdateWithoutInitiatedDisposalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutPersonNestedInput
+  orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
+  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
+  manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
+  directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
+  location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
+}
+
+export type PersonUncheckedUpdateWithoutInitiatedDisposalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
+  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUncheckedUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
+}
+
+export type PersonUpsertWithoutApprovedDisposalsInput = {
+  update: Prisma.XOR<Prisma.PersonUpdateWithoutApprovedDisposalsInput, Prisma.PersonUncheckedUpdateWithoutApprovedDisposalsInput>
+  create: Prisma.XOR<Prisma.PersonCreateWithoutApprovedDisposalsInput, Prisma.PersonUncheckedCreateWithoutApprovedDisposalsInput>
+  where?: Prisma.PersonWhereInput
+}
+
+export type PersonUpdateToOneWithWhereWithoutApprovedDisposalsInput = {
+  where?: Prisma.PersonWhereInput
+  data: Prisma.XOR<Prisma.PersonUpdateWithoutApprovedDisposalsInput, Prisma.PersonUncheckedUpdateWithoutApprovedDisposalsInput>
+}
+
+export type PersonUpdateWithoutApprovedDisposalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutPersonNestedInput
+  orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
+  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
+  manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
+  directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
+  location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
+}
+
+export type PersonUncheckedUpdateWithoutApprovedDisposalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
+  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUncheckedUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
+}
+
+export type PersonCreateWithoutDisposalApprovalsInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  title?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutPersonInput
+  orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
+  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
+  manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
+  directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
+  location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
+  managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
+}
+
+export type PersonUncheckedCreateWithoutDisposalApprovalsInput = {
+  id?: string
+  userId?: string | null
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  orgUnitId: string
+  primaryRoleId: string
+  managerId?: string | null
+  title?: string | null
+  locationId?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemUncheckedCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
+}
+
+export type PersonCreateOrConnectWithoutDisposalApprovalsInput = {
+  where: Prisma.PersonWhereUniqueInput
+  create: Prisma.XOR<Prisma.PersonCreateWithoutDisposalApprovalsInput, Prisma.PersonUncheckedCreateWithoutDisposalApprovalsInput>
+}
+
+export type PersonUpsertWithoutDisposalApprovalsInput = {
+  update: Prisma.XOR<Prisma.PersonUpdateWithoutDisposalApprovalsInput, Prisma.PersonUncheckedUpdateWithoutDisposalApprovalsInput>
+  create: Prisma.XOR<Prisma.PersonCreateWithoutDisposalApprovalsInput, Prisma.PersonUncheckedCreateWithoutDisposalApprovalsInput>
+  where?: Prisma.PersonWhereInput
+}
+
+export type PersonUpdateToOneWithWhereWithoutDisposalApprovalsInput = {
+  where?: Prisma.PersonWhereInput
+  data: Prisma.XOR<Prisma.PersonUpdateWithoutDisposalApprovalsInput, Prisma.PersonUncheckedUpdateWithoutDisposalApprovalsInput>
+}
+
+export type PersonUpdateWithoutDisposalApprovalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutPersonNestedInput
+  orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
+  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
+  manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
+  directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
+  location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
+}
+
+export type PersonUncheckedUpdateWithoutDisposalApprovalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
+  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUncheckedUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
+}
+
+export type PersonCreateWithoutUploadedDisposalDocumentsInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  title?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutPersonInput
+  orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
+  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
+  manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
+  directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
+  location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
+  managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
+}
+
+export type PersonUncheckedCreateWithoutUploadedDisposalDocumentsInput = {
+  id?: string
+  userId?: string | null
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  orgUnitId: string
+  primaryRoleId: string
+  managerId?: string | null
+  title?: string | null
+  locationId?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemUncheckedCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
+}
+
+export type PersonCreateOrConnectWithoutUploadedDisposalDocumentsInput = {
+  where: Prisma.PersonWhereUniqueInput
+  create: Prisma.XOR<Prisma.PersonCreateWithoutUploadedDisposalDocumentsInput, Prisma.PersonUncheckedCreateWithoutUploadedDisposalDocumentsInput>
+}
+
+export type PersonUpsertWithoutUploadedDisposalDocumentsInput = {
+  update: Prisma.XOR<Prisma.PersonUpdateWithoutUploadedDisposalDocumentsInput, Prisma.PersonUncheckedUpdateWithoutUploadedDisposalDocumentsInput>
+  create: Prisma.XOR<Prisma.PersonCreateWithoutUploadedDisposalDocumentsInput, Prisma.PersonUncheckedCreateWithoutUploadedDisposalDocumentsInput>
+  where?: Prisma.PersonWhereInput
+}
+
+export type PersonUpdateToOneWithWhereWithoutUploadedDisposalDocumentsInput = {
+  where?: Prisma.PersonWhereInput
+  data: Prisma.XOR<Prisma.PersonUpdateWithoutUploadedDisposalDocumentsInput, Prisma.PersonUncheckedUpdateWithoutUploadedDisposalDocumentsInput>
+}
+
+export type PersonUpdateWithoutUploadedDisposalDocumentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutPersonNestedInput
+  orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
+  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
+  manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
+  directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
+  location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
+}
+
+export type PersonUncheckedUpdateWithoutUploadedDisposalDocumentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
+  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUncheckedUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
+}
+
+export type PersonCreateWithoutKitCheckoutsInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  title?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutPersonInput
+  orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
+  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
+  manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
+  directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
+  location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
+  managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
+}
+
+export type PersonUncheckedCreateWithoutKitCheckoutsInput = {
+  id?: string
+  userId?: string | null
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  orgUnitId: string
+  primaryRoleId: string
+  managerId?: string | null
+  title?: string | null
+  locationId?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemUncheckedCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
+}
+
+export type PersonCreateOrConnectWithoutKitCheckoutsInput = {
+  where: Prisma.PersonWhereUniqueInput
+  create: Prisma.XOR<Prisma.PersonCreateWithoutKitCheckoutsInput, Prisma.PersonUncheckedCreateWithoutKitCheckoutsInput>
+}
+
+export type PersonUpsertWithoutKitCheckoutsInput = {
+  update: Prisma.XOR<Prisma.PersonUpdateWithoutKitCheckoutsInput, Prisma.PersonUncheckedUpdateWithoutKitCheckoutsInput>
+  create: Prisma.XOR<Prisma.PersonCreateWithoutKitCheckoutsInput, Prisma.PersonUncheckedCreateWithoutKitCheckoutsInput>
+  where?: Prisma.PersonWhereInput
+}
+
+export type PersonUpdateToOneWithWhereWithoutKitCheckoutsInput = {
+  where?: Prisma.PersonWhereInput
+  data: Prisma.XOR<Prisma.PersonUpdateWithoutKitCheckoutsInput, Prisma.PersonUncheckedUpdateWithoutKitCheckoutsInput>
+}
+
+export type PersonUpdateWithoutKitCheckoutsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutPersonNestedInput
+  orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
+  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
+  manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
+  directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
+  location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
+}
+
+export type PersonUncheckedUpdateWithoutKitCheckoutsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
+  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUncheckedUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
+}
+
+export type PersonCreateWithoutReservationsForInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  title?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutPersonInput
+  orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
+  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
+  manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
+  directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
+  location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
+  managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
+}
+
+export type PersonUncheckedCreateWithoutReservationsForInput = {
+  id?: string
+  userId?: string | null
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  orgUnitId: string
+  primaryRoleId: string
+  managerId?: string | null
+  title?: string | null
+  locationId?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemUncheckedCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
+}
+
+export type PersonCreateOrConnectWithoutReservationsForInput = {
+  where: Prisma.PersonWhereUniqueInput
+  create: Prisma.XOR<Prisma.PersonCreateWithoutReservationsForInput, Prisma.PersonUncheckedCreateWithoutReservationsForInput>
+}
+
+export type PersonCreateWithoutReservationsCreatedInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  title?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutPersonInput
+  orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
+  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
+  manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
+  directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
+  location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
+  managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
+}
+
+export type PersonUncheckedCreateWithoutReservationsCreatedInput = {
+  id?: string
+  userId?: string | null
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  orgUnitId: string
+  primaryRoleId: string
+  managerId?: string | null
+  title?: string | null
+  locationId?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemUncheckedCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
+}
+
+export type PersonCreateOrConnectWithoutReservationsCreatedInput = {
+  where: Prisma.PersonWhereUniqueInput
+  create: Prisma.XOR<Prisma.PersonCreateWithoutReservationsCreatedInput, Prisma.PersonUncheckedCreateWithoutReservationsCreatedInput>
+}
+
+export type PersonCreateWithoutReservationsConfirmedInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  title?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutPersonInput
+  orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
+  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
+  manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
+  directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
+  location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
+  managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
+}
+
+export type PersonUncheckedCreateWithoutReservationsConfirmedInput = {
+  id?: string
+  userId?: string | null
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  orgUnitId: string
+  primaryRoleId: string
+  managerId?: string | null
+  title?: string | null
+  locationId?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemUncheckedCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
+}
+
+export type PersonCreateOrConnectWithoutReservationsConfirmedInput = {
+  where: Prisma.PersonWhereUniqueInput
+  create: Prisma.XOR<Prisma.PersonCreateWithoutReservationsConfirmedInput, Prisma.PersonUncheckedCreateWithoutReservationsConfirmedInput>
+}
+
+export type PersonCreateWithoutReservationsCancelledInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  title?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutPersonInput
+  orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
+  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
+  manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
+  directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
+  location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
+  managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+}
+
+export type PersonUncheckedCreateWithoutReservationsCancelledInput = {
+  id?: string
+  userId?: string | null
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  orgUnitId: string
+  primaryRoleId: string
+  managerId?: string | null
+  title?: string | null
+  locationId?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemUncheckedCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+}
+
+export type PersonCreateOrConnectWithoutReservationsCancelledInput = {
+  where: Prisma.PersonWhereUniqueInput
+  create: Prisma.XOR<Prisma.PersonCreateWithoutReservationsCancelledInput, Prisma.PersonUncheckedCreateWithoutReservationsCancelledInput>
+}
+
+export type PersonUpsertWithoutReservationsForInput = {
+  update: Prisma.XOR<Prisma.PersonUpdateWithoutReservationsForInput, Prisma.PersonUncheckedUpdateWithoutReservationsForInput>
+  create: Prisma.XOR<Prisma.PersonCreateWithoutReservationsForInput, Prisma.PersonUncheckedCreateWithoutReservationsForInput>
+  where?: Prisma.PersonWhereInput
+}
+
+export type PersonUpdateToOneWithWhereWithoutReservationsForInput = {
+  where?: Prisma.PersonWhereInput
+  data: Prisma.XOR<Prisma.PersonUpdateWithoutReservationsForInput, Prisma.PersonUncheckedUpdateWithoutReservationsForInput>
+}
+
+export type PersonUpdateWithoutReservationsForInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutPersonNestedInput
+  orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
+  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
+  manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
+  directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
+  location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
+}
+
+export type PersonUncheckedUpdateWithoutReservationsForInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
+  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUncheckedUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
+}
+
+export type PersonUpsertWithoutReservationsCreatedInput = {
+  update: Prisma.XOR<Prisma.PersonUpdateWithoutReservationsCreatedInput, Prisma.PersonUncheckedUpdateWithoutReservationsCreatedInput>
+  create: Prisma.XOR<Prisma.PersonCreateWithoutReservationsCreatedInput, Prisma.PersonUncheckedCreateWithoutReservationsCreatedInput>
+  where?: Prisma.PersonWhereInput
+}
+
+export type PersonUpdateToOneWithWhereWithoutReservationsCreatedInput = {
+  where?: Prisma.PersonWhereInput
+  data: Prisma.XOR<Prisma.PersonUpdateWithoutReservationsCreatedInput, Prisma.PersonUncheckedUpdateWithoutReservationsCreatedInput>
+}
+
+export type PersonUpdateWithoutReservationsCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutPersonNestedInput
+  orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
+  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
+  manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
+  directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
+  location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
+}
+
+export type PersonUncheckedUpdateWithoutReservationsCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
+  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUncheckedUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
+}
+
+export type PersonUpsertWithoutReservationsConfirmedInput = {
+  update: Prisma.XOR<Prisma.PersonUpdateWithoutReservationsConfirmedInput, Prisma.PersonUncheckedUpdateWithoutReservationsConfirmedInput>
+  create: Prisma.XOR<Prisma.PersonCreateWithoutReservationsConfirmedInput, Prisma.PersonUncheckedCreateWithoutReservationsConfirmedInput>
+  where?: Prisma.PersonWhereInput
+}
+
+export type PersonUpdateToOneWithWhereWithoutReservationsConfirmedInput = {
+  where?: Prisma.PersonWhereInput
+  data: Prisma.XOR<Prisma.PersonUpdateWithoutReservationsConfirmedInput, Prisma.PersonUncheckedUpdateWithoutReservationsConfirmedInput>
+}
+
+export type PersonUpdateWithoutReservationsConfirmedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutPersonNestedInput
+  orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
+  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
+  manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
+  directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
+  location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
+}
+
+export type PersonUncheckedUpdateWithoutReservationsConfirmedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
+  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUncheckedUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
+}
+
+export type PersonUpsertWithoutReservationsCancelledInput = {
+  update: Prisma.XOR<Prisma.PersonUpdateWithoutReservationsCancelledInput, Prisma.PersonUncheckedUpdateWithoutReservationsCancelledInput>
+  create: Prisma.XOR<Prisma.PersonCreateWithoutReservationsCancelledInput, Prisma.PersonUncheckedCreateWithoutReservationsCancelledInput>
+  where?: Prisma.PersonWhereInput
+}
+
+export type PersonUpdateToOneWithWhereWithoutReservationsCancelledInput = {
+  where?: Prisma.PersonWhereInput
+  data: Prisma.XOR<Prisma.PersonUpdateWithoutReservationsCancelledInput, Prisma.PersonUncheckedUpdateWithoutReservationsCancelledInput>
+}
+
+export type PersonUpdateWithoutReservationsCancelledInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutPersonNestedInput
+  orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
+  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
+  manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
+  directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
+  location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+}
+
+export type PersonUncheckedUpdateWithoutReservationsCancelledInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
+  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUncheckedUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
 }
 
 export type PersonCreateWithoutDataOwnershipsInput = {
@@ -2821,6 +5205,7 @@ export type PersonCreateWithoutDataOwnershipsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
@@ -2839,6 +5224,15 @@ export type PersonCreateWithoutDataOwnershipsInput = {
   attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonUncheckedCreateWithoutDataOwnershipsInput = {
@@ -2861,6 +5255,7 @@ export type PersonUncheckedCreateWithoutDataOwnershipsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
@@ -2874,6 +5269,15 @@ export type PersonUncheckedCreateWithoutDataOwnershipsInput = {
   attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonCreateOrConnectWithoutDataOwnershipsInput = {
@@ -2907,6 +5311,7 @@ export type PersonUpdateWithoutDataOwnershipsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
@@ -2925,6 +5330,15 @@ export type PersonUpdateWithoutDataOwnershipsInput = {
   attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDataOwnershipsInput = {
@@ -2947,6 +5361,7 @@ export type PersonUncheckedUpdateWithoutDataOwnershipsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
@@ -2960,6 +5375,15 @@ export type PersonUncheckedUpdateWithoutDataOwnershipsInput = {
   attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonCreateWithoutVerificationCampaignsInput = {
@@ -2977,6 +5401,7 @@ export type PersonCreateWithoutVerificationCampaignsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
@@ -2995,6 +5420,15 @@ export type PersonCreateWithoutVerificationCampaignsInput = {
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonUncheckedCreateWithoutVerificationCampaignsInput = {
@@ -3017,6 +5451,7 @@ export type PersonUncheckedCreateWithoutVerificationCampaignsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
@@ -3030,6 +5465,15 @@ export type PersonUncheckedCreateWithoutVerificationCampaignsInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonCreateOrConnectWithoutVerificationCampaignsInput = {
@@ -3063,6 +5507,7 @@ export type PersonUpdateWithoutVerificationCampaignsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
@@ -3081,6 +5526,15 @@ export type PersonUpdateWithoutVerificationCampaignsInput = {
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutVerificationCampaignsInput = {
@@ -3103,6 +5557,7 @@ export type PersonUncheckedUpdateWithoutVerificationCampaignsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
@@ -3116,6 +5571,15 @@ export type PersonUncheckedUpdateWithoutVerificationCampaignsInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonCreateWithoutVerificationItemsInput = {
@@ -3133,6 +5597,7 @@ export type PersonCreateWithoutVerificationItemsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
@@ -3151,6 +5616,15 @@ export type PersonCreateWithoutVerificationItemsInput = {
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonUncheckedCreateWithoutVerificationItemsInput = {
@@ -3173,6 +5647,7 @@ export type PersonUncheckedCreateWithoutVerificationItemsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
@@ -3186,6 +5661,15 @@ export type PersonUncheckedCreateWithoutVerificationItemsInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonCreateOrConnectWithoutVerificationItemsInput = {
@@ -3219,6 +5703,7 @@ export type PersonUpdateWithoutVerificationItemsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
@@ -3237,6 +5722,15 @@ export type PersonUpdateWithoutVerificationItemsInput = {
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutVerificationItemsInput = {
@@ -3259,6 +5753,7 @@ export type PersonUncheckedUpdateWithoutVerificationItemsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
@@ -3272,6 +5767,15 @@ export type PersonUncheckedUpdateWithoutVerificationItemsInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonCreateWithoutAuditLogsChangedInput = {
@@ -3289,6 +5793,7 @@ export type PersonCreateWithoutAuditLogsChangedInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
@@ -3307,6 +5812,15 @@ export type PersonCreateWithoutAuditLogsChangedInput = {
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonUncheckedCreateWithoutAuditLogsChangedInput = {
@@ -3329,6 +5843,7 @@ export type PersonUncheckedCreateWithoutAuditLogsChangedInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
@@ -3342,6 +5857,15 @@ export type PersonUncheckedCreateWithoutAuditLogsChangedInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonCreateOrConnectWithoutAuditLogsChangedInput = {
@@ -3375,6 +5899,7 @@ export type PersonUpdateWithoutAuditLogsChangedInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
@@ -3393,6 +5918,15 @@ export type PersonUpdateWithoutAuditLogsChangedInput = {
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutAuditLogsChangedInput = {
@@ -3415,6 +5949,7 @@ export type PersonUncheckedUpdateWithoutAuditLogsChangedInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
@@ -3428,6 +5963,15 @@ export type PersonUncheckedUpdateWithoutAuditLogsChangedInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonCreateWithoutAttachmentsInput = {
@@ -3445,6 +5989,7 @@ export type PersonCreateWithoutAttachmentsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
@@ -3463,6 +6008,15 @@ export type PersonCreateWithoutAttachmentsInput = {
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonUncheckedCreateWithoutAttachmentsInput = {
@@ -3485,6 +6039,7 @@ export type PersonUncheckedCreateWithoutAttachmentsInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
@@ -3498,6 +6053,15 @@ export type PersonUncheckedCreateWithoutAttachmentsInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
 }
 
 export type PersonCreateOrConnectWithoutAttachmentsInput = {
@@ -3531,6 +6095,7 @@ export type PersonUpdateWithoutAttachmentsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
@@ -3549,6 +6114,15 @@ export type PersonUpdateWithoutAttachmentsInput = {
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutAttachmentsInput = {
@@ -3571,6 +6145,7 @@ export type PersonUncheckedUpdateWithoutAttachmentsInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
@@ -3584,6 +6159,15 @@ export type PersonUncheckedUpdateWithoutAttachmentsInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonCreateManyPrimaryRoleInput = {
@@ -3605,6 +6189,7 @@ export type PersonCreateManyPrimaryRoleInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -3624,6 +6209,7 @@ export type PersonUpdateWithoutPrimaryRoleInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
@@ -3642,6 +6228,15 @@ export type PersonUpdateWithoutPrimaryRoleInput = {
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutPrimaryRoleInput = {
@@ -3663,6 +6258,7 @@ export type PersonUncheckedUpdateWithoutPrimaryRoleInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
@@ -3677,6 +6273,15 @@ export type PersonUncheckedUpdateWithoutPrimaryRoleInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateManyWithoutPrimaryRoleInput = {
@@ -3698,6 +6303,7 @@ export type PersonUncheckedUpdateManyWithoutPrimaryRoleInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -3721,6 +6327,7 @@ export type PersonCreateManyOrgUnitInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -3740,6 +6347,7 @@ export type PersonUpdateWithoutOrgUnitInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
@@ -3758,6 +6366,15 @@ export type PersonUpdateWithoutOrgUnitInput = {
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutOrgUnitInput = {
@@ -3779,6 +6396,7 @@ export type PersonUncheckedUpdateWithoutOrgUnitInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
@@ -3793,6 +6411,15 @@ export type PersonUncheckedUpdateWithoutOrgUnitInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateManyWithoutOrgUnitInput = {
@@ -3814,6 +6441,7 @@ export type PersonUncheckedUpdateManyWithoutOrgUnitInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -3837,6 +6465,7 @@ export type PersonCreateManyManagerInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -3856,6 +6485,7 @@ export type PersonUpdateWithoutManagerInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
@@ -3874,6 +6504,15 @@ export type PersonUpdateWithoutManagerInput = {
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutManagerInput = {
@@ -3895,6 +6534,7 @@ export type PersonUncheckedUpdateWithoutManagerInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
@@ -3909,6 +6549,15 @@ export type PersonUncheckedUpdateWithoutManagerInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateManyWithoutManagerInput = {
@@ -3930,6 +6579,7 @@ export type PersonUncheckedUpdateManyWithoutManagerInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -3953,6 +6603,7 @@ export type PersonCreateManyLocationInput = {
   terminationDate?: Date | string | null
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -3972,6 +6623,7 @@ export type PersonUpdateWithoutLocationInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
@@ -3990,6 +6642,15 @@ export type PersonUpdateWithoutLocationInput = {
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutLocationInput = {
@@ -4011,6 +6672,7 @@ export type PersonUncheckedUpdateWithoutLocationInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
@@ -4025,6 +6687,15 @@ export type PersonUncheckedUpdateWithoutLocationInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
 }
 
 export type PersonUncheckedUpdateManyWithoutLocationInput = {
@@ -4046,6 +6717,7 @@ export type PersonUncheckedUpdateManyWithoutLocationInput = {
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -4068,6 +6740,15 @@ export type PersonCountOutputType = {
   dataOwnerships: number
   assignedMaintenanceSchedules: number
   performedMaintenanceRecords: number
+  initiatedDisposals: number
+  approvedDisposals: number
+  disposalApprovals: number
+  uploadedDisposalDocuments: number
+  kitCheckouts: number
+  reservationsFor: number
+  reservationsCreated: number
+  reservationsConfirmed: number
+  reservationsCancelled: number
 }
 
 export type PersonCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4083,6 +6764,15 @@ export type PersonCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   dataOwnerships?: boolean | PersonCountOutputTypeCountDataOwnershipsArgs
   assignedMaintenanceSchedules?: boolean | PersonCountOutputTypeCountAssignedMaintenanceSchedulesArgs
   performedMaintenanceRecords?: boolean | PersonCountOutputTypeCountPerformedMaintenanceRecordsArgs
+  initiatedDisposals?: boolean | PersonCountOutputTypeCountInitiatedDisposalsArgs
+  approvedDisposals?: boolean | PersonCountOutputTypeCountApprovedDisposalsArgs
+  disposalApprovals?: boolean | PersonCountOutputTypeCountDisposalApprovalsArgs
+  uploadedDisposalDocuments?: boolean | PersonCountOutputTypeCountUploadedDisposalDocumentsArgs
+  kitCheckouts?: boolean | PersonCountOutputTypeCountKitCheckoutsArgs
+  reservationsFor?: boolean | PersonCountOutputTypeCountReservationsForArgs
+  reservationsCreated?: boolean | PersonCountOutputTypeCountReservationsCreatedArgs
+  reservationsConfirmed?: boolean | PersonCountOutputTypeCountReservationsConfirmedArgs
+  reservationsCancelled?: boolean | PersonCountOutputTypeCountReservationsCancelledArgs
 }
 
 /**
@@ -4179,6 +6869,69 @@ export type PersonCountOutputTypeCountPerformedMaintenanceRecordsArgs<ExtArgs ex
   where?: Prisma.MaintenanceRecordWhereInput
 }
 
+/**
+ * PersonCountOutputType without action
+ */
+export type PersonCountOutputTypeCountInitiatedDisposalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AssetDisposalWhereInput
+}
+
+/**
+ * PersonCountOutputType without action
+ */
+export type PersonCountOutputTypeCountApprovedDisposalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AssetDisposalWhereInput
+}
+
+/**
+ * PersonCountOutputType without action
+ */
+export type PersonCountOutputTypeCountDisposalApprovalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DisposalApprovalWhereInput
+}
+
+/**
+ * PersonCountOutputType without action
+ */
+export type PersonCountOutputTypeCountUploadedDisposalDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DisposalDocumentWhereInput
+}
+
+/**
+ * PersonCountOutputType without action
+ */
+export type PersonCountOutputTypeCountKitCheckoutsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AssetKitCheckoutWhereInput
+}
+
+/**
+ * PersonCountOutputType without action
+ */
+export type PersonCountOutputTypeCountReservationsForArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AssetReservationWhereInput
+}
+
+/**
+ * PersonCountOutputType without action
+ */
+export type PersonCountOutputTypeCountReservationsCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AssetReservationWhereInput
+}
+
+/**
+ * PersonCountOutputType without action
+ */
+export type PersonCountOutputTypeCountReservationsConfirmedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AssetReservationWhereInput
+}
+
+/**
+ * PersonCountOutputType without action
+ */
+export type PersonCountOutputTypeCountReservationsCancelledArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AssetReservationWhereInput
+}
+
 
 export type PersonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -4200,6 +6953,7 @@ export type PersonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   terminationDate?: boolean
   isActive?: boolean
   metadata?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.Person$userArgs<ExtArgs>
@@ -4219,6 +6973,15 @@ export type PersonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   dataOwnerships?: boolean | Prisma.Person$dataOwnershipsArgs<ExtArgs>
   assignedMaintenanceSchedules?: boolean | Prisma.Person$assignedMaintenanceSchedulesArgs<ExtArgs>
   performedMaintenanceRecords?: boolean | Prisma.Person$performedMaintenanceRecordsArgs<ExtArgs>
+  initiatedDisposals?: boolean | Prisma.Person$initiatedDisposalsArgs<ExtArgs>
+  approvedDisposals?: boolean | Prisma.Person$approvedDisposalsArgs<ExtArgs>
+  disposalApprovals?: boolean | Prisma.Person$disposalApprovalsArgs<ExtArgs>
+  uploadedDisposalDocuments?: boolean | Prisma.Person$uploadedDisposalDocumentsArgs<ExtArgs>
+  kitCheckouts?: boolean | Prisma.Person$kitCheckoutsArgs<ExtArgs>
+  reservationsFor?: boolean | Prisma.Person$reservationsForArgs<ExtArgs>
+  reservationsCreated?: boolean | Prisma.Person$reservationsCreatedArgs<ExtArgs>
+  reservationsConfirmed?: boolean | Prisma.Person$reservationsConfirmedArgs<ExtArgs>
+  reservationsCancelled?: boolean | Prisma.Person$reservationsCancelledArgs<ExtArgs>
   _count?: boolean | Prisma.PersonCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["person"]>
 
@@ -4242,6 +7005,7 @@ export type PersonSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   terminationDate?: boolean
   isActive?: boolean
   metadata?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.Person$userArgs<ExtArgs>
@@ -4271,6 +7035,7 @@ export type PersonSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   terminationDate?: boolean
   isActive?: boolean
   metadata?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.Person$userArgs<ExtArgs>
@@ -4300,11 +7065,12 @@ export type PersonSelectScalar = {
   terminationDate?: boolean
   isActive?: boolean
   metadata?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type PersonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "firstName" | "lastName" | "middleName" | "email" | "phone" | "mobile" | "employeeId" | "orgUnitId" | "primaryRoleId" | "managerId" | "title" | "locationId" | "department" | "hireDate" | "terminationDate" | "isActive" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["person"]>
+export type PersonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "firstName" | "lastName" | "middleName" | "email" | "phone" | "mobile" | "employeeId" | "orgUnitId" | "primaryRoleId" | "managerId" | "title" | "locationId" | "department" | "hireDate" | "terminationDate" | "isActive" | "metadata" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["person"]>
 export type PersonInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Person$userArgs<ExtArgs>
   orgUnit?: boolean | Prisma.OrganizationUnitDefaultArgs<ExtArgs>
@@ -4323,6 +7089,15 @@ export type PersonInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   dataOwnerships?: boolean | Prisma.Person$dataOwnershipsArgs<ExtArgs>
   assignedMaintenanceSchedules?: boolean | Prisma.Person$assignedMaintenanceSchedulesArgs<ExtArgs>
   performedMaintenanceRecords?: boolean | Prisma.Person$performedMaintenanceRecordsArgs<ExtArgs>
+  initiatedDisposals?: boolean | Prisma.Person$initiatedDisposalsArgs<ExtArgs>
+  approvedDisposals?: boolean | Prisma.Person$approvedDisposalsArgs<ExtArgs>
+  disposalApprovals?: boolean | Prisma.Person$disposalApprovalsArgs<ExtArgs>
+  uploadedDisposalDocuments?: boolean | Prisma.Person$uploadedDisposalDocumentsArgs<ExtArgs>
+  kitCheckouts?: boolean | Prisma.Person$kitCheckoutsArgs<ExtArgs>
+  reservationsFor?: boolean | Prisma.Person$reservationsForArgs<ExtArgs>
+  reservationsCreated?: boolean | Prisma.Person$reservationsCreatedArgs<ExtArgs>
+  reservationsConfirmed?: boolean | Prisma.Person$reservationsConfirmedArgs<ExtArgs>
+  reservationsCancelled?: boolean | Prisma.Person$reservationsCancelledArgs<ExtArgs>
   _count?: boolean | Prisma.PersonCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PersonIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4360,6 +7135,15 @@ export type $PersonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     dataOwnerships: Prisma.$DataOwnershipPayload<ExtArgs>[]
     assignedMaintenanceSchedules: Prisma.$MaintenanceSchedulePayload<ExtArgs>[]
     performedMaintenanceRecords: Prisma.$MaintenanceRecordPayload<ExtArgs>[]
+    initiatedDisposals: Prisma.$AssetDisposalPayload<ExtArgs>[]
+    approvedDisposals: Prisma.$AssetDisposalPayload<ExtArgs>[]
+    disposalApprovals: Prisma.$DisposalApprovalPayload<ExtArgs>[]
+    uploadedDisposalDocuments: Prisma.$DisposalDocumentPayload<ExtArgs>[]
+    kitCheckouts: Prisma.$AssetKitCheckoutPayload<ExtArgs>[]
+    reservationsFor: Prisma.$AssetReservationPayload<ExtArgs>[]
+    reservationsCreated: Prisma.$AssetReservationPayload<ExtArgs>[]
+    reservationsConfirmed: Prisma.$AssetReservationPayload<ExtArgs>[]
+    reservationsCancelled: Prisma.$AssetReservationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -4381,6 +7165,7 @@ export type $PersonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     terminationDate: Date | null
     isActive: boolean
     metadata: runtime.JsonValue | null
+    deletedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["person"]>
@@ -4794,6 +7579,15 @@ export interface Prisma__PersonClient<T, Null = never, ExtArgs extends runtime.T
   dataOwnerships<T extends Prisma.Person$dataOwnershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$dataOwnershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DataOwnershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assignedMaintenanceSchedules<T extends Prisma.Person$assignedMaintenanceSchedulesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$assignedMaintenanceSchedulesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MaintenanceSchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   performedMaintenanceRecords<T extends Prisma.Person$performedMaintenanceRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$performedMaintenanceRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MaintenanceRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  initiatedDisposals<T extends Prisma.Person$initiatedDisposalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$initiatedDisposalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetDisposalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  approvedDisposals<T extends Prisma.Person$approvedDisposalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$approvedDisposalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetDisposalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  disposalApprovals<T extends Prisma.Person$disposalApprovalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$disposalApprovalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DisposalApprovalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  uploadedDisposalDocuments<T extends Prisma.Person$uploadedDisposalDocumentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$uploadedDisposalDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DisposalDocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  kitCheckouts<T extends Prisma.Person$kitCheckoutsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$kitCheckoutsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetKitCheckoutPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reservationsFor<T extends Prisma.Person$reservationsForArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$reservationsForArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reservationsCreated<T extends Prisma.Person$reservationsCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$reservationsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reservationsConfirmed<T extends Prisma.Person$reservationsConfirmedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$reservationsConfirmedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reservationsCancelled<T extends Prisma.Person$reservationsCancelledArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$reservationsCancelledArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4842,6 +7636,7 @@ export interface PersonFieldRefs {
   readonly terminationDate: Prisma.FieldRef<"Person", 'DateTime'>
   readonly isActive: Prisma.FieldRef<"Person", 'Boolean'>
   readonly metadata: Prisma.FieldRef<"Person", 'Json'>
+  readonly deletedAt: Prisma.FieldRef<"Person", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Person", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Person", 'DateTime'>
 }
@@ -5582,6 +8377,222 @@ export type Person$performedMaintenanceRecordsArgs<ExtArgs extends runtime.Types
   take?: number
   skip?: number
   distinct?: Prisma.MaintenanceRecordScalarFieldEnum | Prisma.MaintenanceRecordScalarFieldEnum[]
+}
+
+/**
+ * Person.initiatedDisposals
+ */
+export type Person$initiatedDisposalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AssetDisposal
+   */
+  select?: Prisma.AssetDisposalSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AssetDisposal
+   */
+  omit?: Prisma.AssetDisposalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssetDisposalInclude<ExtArgs> | null
+  where?: Prisma.AssetDisposalWhereInput
+  orderBy?: Prisma.AssetDisposalOrderByWithRelationInput | Prisma.AssetDisposalOrderByWithRelationInput[]
+  cursor?: Prisma.AssetDisposalWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AssetDisposalScalarFieldEnum | Prisma.AssetDisposalScalarFieldEnum[]
+}
+
+/**
+ * Person.approvedDisposals
+ */
+export type Person$approvedDisposalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AssetDisposal
+   */
+  select?: Prisma.AssetDisposalSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AssetDisposal
+   */
+  omit?: Prisma.AssetDisposalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssetDisposalInclude<ExtArgs> | null
+  where?: Prisma.AssetDisposalWhereInput
+  orderBy?: Prisma.AssetDisposalOrderByWithRelationInput | Prisma.AssetDisposalOrderByWithRelationInput[]
+  cursor?: Prisma.AssetDisposalWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AssetDisposalScalarFieldEnum | Prisma.AssetDisposalScalarFieldEnum[]
+}
+
+/**
+ * Person.disposalApprovals
+ */
+export type Person$disposalApprovalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DisposalApproval
+   */
+  select?: Prisma.DisposalApprovalSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DisposalApproval
+   */
+  omit?: Prisma.DisposalApprovalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DisposalApprovalInclude<ExtArgs> | null
+  where?: Prisma.DisposalApprovalWhereInput
+  orderBy?: Prisma.DisposalApprovalOrderByWithRelationInput | Prisma.DisposalApprovalOrderByWithRelationInput[]
+  cursor?: Prisma.DisposalApprovalWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DisposalApprovalScalarFieldEnum | Prisma.DisposalApprovalScalarFieldEnum[]
+}
+
+/**
+ * Person.uploadedDisposalDocuments
+ */
+export type Person$uploadedDisposalDocumentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DisposalDocument
+   */
+  select?: Prisma.DisposalDocumentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DisposalDocument
+   */
+  omit?: Prisma.DisposalDocumentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DisposalDocumentInclude<ExtArgs> | null
+  where?: Prisma.DisposalDocumentWhereInput
+  orderBy?: Prisma.DisposalDocumentOrderByWithRelationInput | Prisma.DisposalDocumentOrderByWithRelationInput[]
+  cursor?: Prisma.DisposalDocumentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DisposalDocumentScalarFieldEnum | Prisma.DisposalDocumentScalarFieldEnum[]
+}
+
+/**
+ * Person.kitCheckouts
+ */
+export type Person$kitCheckoutsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AssetKitCheckout
+   */
+  select?: Prisma.AssetKitCheckoutSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AssetKitCheckout
+   */
+  omit?: Prisma.AssetKitCheckoutOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssetKitCheckoutInclude<ExtArgs> | null
+  where?: Prisma.AssetKitCheckoutWhereInput
+  orderBy?: Prisma.AssetKitCheckoutOrderByWithRelationInput | Prisma.AssetKitCheckoutOrderByWithRelationInput[]
+  cursor?: Prisma.AssetKitCheckoutWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AssetKitCheckoutScalarFieldEnum | Prisma.AssetKitCheckoutScalarFieldEnum[]
+}
+
+/**
+ * Person.reservationsFor
+ */
+export type Person$reservationsForArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AssetReservation
+   */
+  select?: Prisma.AssetReservationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AssetReservation
+   */
+  omit?: Prisma.AssetReservationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssetReservationInclude<ExtArgs> | null
+  where?: Prisma.AssetReservationWhereInput
+  orderBy?: Prisma.AssetReservationOrderByWithRelationInput | Prisma.AssetReservationOrderByWithRelationInput[]
+  cursor?: Prisma.AssetReservationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AssetReservationScalarFieldEnum | Prisma.AssetReservationScalarFieldEnum[]
+}
+
+/**
+ * Person.reservationsCreated
+ */
+export type Person$reservationsCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AssetReservation
+   */
+  select?: Prisma.AssetReservationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AssetReservation
+   */
+  omit?: Prisma.AssetReservationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssetReservationInclude<ExtArgs> | null
+  where?: Prisma.AssetReservationWhereInput
+  orderBy?: Prisma.AssetReservationOrderByWithRelationInput | Prisma.AssetReservationOrderByWithRelationInput[]
+  cursor?: Prisma.AssetReservationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AssetReservationScalarFieldEnum | Prisma.AssetReservationScalarFieldEnum[]
+}
+
+/**
+ * Person.reservationsConfirmed
+ */
+export type Person$reservationsConfirmedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AssetReservation
+   */
+  select?: Prisma.AssetReservationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AssetReservation
+   */
+  omit?: Prisma.AssetReservationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssetReservationInclude<ExtArgs> | null
+  where?: Prisma.AssetReservationWhereInput
+  orderBy?: Prisma.AssetReservationOrderByWithRelationInput | Prisma.AssetReservationOrderByWithRelationInput[]
+  cursor?: Prisma.AssetReservationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AssetReservationScalarFieldEnum | Prisma.AssetReservationScalarFieldEnum[]
+}
+
+/**
+ * Person.reservationsCancelled
+ */
+export type Person$reservationsCancelledArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AssetReservation
+   */
+  select?: Prisma.AssetReservationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AssetReservation
+   */
+  omit?: Prisma.AssetReservationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssetReservationInclude<ExtArgs> | null
+  where?: Prisma.AssetReservationWhereInput
+  orderBy?: Prisma.AssetReservationOrderByWithRelationInput | Prisma.AssetReservationOrderByWithRelationInput[]
+  cursor?: Prisma.AssetReservationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AssetReservationScalarFieldEnum | Prisma.AssetReservationScalarFieldEnum[]
 }
 
 /**

@@ -5,6 +5,7 @@
 
 import { z } from "zod";
 import { LocationType } from "@/core/domain/value-objects/foundation-enums";
+import { coordinateField } from "../validation-helpers";
 
 export const CreateLocationSchema = z.object({
   name: z
@@ -51,18 +52,8 @@ export const CreateLocationSchema = z.object({
     .max(20, "Postal code must be 20 characters or less")
     .optional()
     .nullable(),
-  latitude: z
-    .number()
-    .min(-90, "Latitude must be between -90 and 90")
-    .max(90, "Latitude must be between -90 and 90")
-    .optional()
-    .nullable(),
-  longitude: z
-    .number()
-    .min(-180, "Longitude must be between -180 and 180")
-    .max(180, "Longitude must be between -180 and 180")
-    .optional()
-    .nullable(),
+  latitude: coordinateField("Latitude", -90, 90),
+  longitude: coordinateField("Longitude", -180, 180),
   isActive: z.boolean().default(true),
   metadata: z.record(z.string(), z.unknown()).optional().nullable(),
 });
@@ -117,18 +108,8 @@ export const UpdateLocationSchema = z.object({
     .max(20, "Postal code must be 20 characters or less")
     .optional()
     .nullable(),
-  latitude: z
-    .number()
-    .min(-90, "Latitude must be between -90 and 90")
-    .max(90, "Latitude must be between -90 and 90")
-    .optional()
-    .nullable(),
-  longitude: z
-    .number()
-    .min(-180, "Longitude must be between -180 and 180")
-    .max(180, "Longitude must be between -180 and 180")
-    .optional()
-    .nullable(),
+  latitude: coordinateField("Latitude", -90, 90),
+  longitude: coordinateField("Longitude", -180, 180),
   isActive: z.boolean().optional(),
   metadata: z.record(z.string(), z.unknown()).optional().nullable(),
 });

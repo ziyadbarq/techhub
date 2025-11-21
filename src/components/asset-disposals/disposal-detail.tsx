@@ -85,6 +85,7 @@ export function DisposalDetail({
       const result = await completeDisposalAction({
         disposalId: disposal.id,
         disposalDate: new Date(),
+        actualProceeds: null,
       });
       if (result.success) {
         toast.success("Disposal completed! Certificate generated.");
@@ -164,10 +165,6 @@ export function DisposalDetail({
                   <span className="col-span-2">{disposal.disposalType}</span>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
-                  <span className="text-muted-foreground">Method:</span>
-                  <span className="col-span-2">{disposal.disposalMethod}</span>
-                </div>
-                <div className="grid grid-cols-3 gap-2">
                   <span className="text-muted-foreground">Reason:</span>
                   <span className="col-span-2">{disposal.reason}</span>
                 </div>
@@ -181,10 +178,10 @@ export function DisposalDetail({
                     </span>
                   </div>
                 )}
-                {disposal.notes && (
+                {disposal.note && (
                   <div className="grid grid-cols-3 gap-2">
-                    <span className="text-muted-foreground">Notes:</span>
-                    <span className="col-span-2">{disposal.notes}</span>
+                    <span className="text-muted-foreground">Note:</span>
+                    <span className="col-span-2">{disposal.note}</span>
                   </div>
                 )}
               </div>
@@ -212,9 +209,9 @@ export function DisposalDetail({
                       </p>
                       <p className="text-muted-foreground text-sm">
                         Generated on{" "}
-                        {disposal.certificateGeneratedAt
+                        {disposal.certificateIssuedAt
                           ? new Date(
-                              disposal.certificateGeneratedAt,
+                              disposal.certificateIssuedAt,
                             ).toLocaleDateString()
                           : "N/A"}
                       </p>

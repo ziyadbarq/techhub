@@ -54,11 +54,10 @@ const statusColors: Record<string, string> = {
 };
 
 const disposalTypeLabels: Record<string, string> = {
-  SELL: "Sell",
-  DONATE: "Donate",
-  RECYCLE: "Recycle",
-  DESTROY: "Destroy",
-  RETURN_TO_VENDOR: "Return to Vendor",
+  DONATION: "Donation",
+  SALE: "Sale",
+  RECYCLING: "Recycling",
+  DESTRUCTION: "Destruction",
   OTHER: "Other",
 };
 
@@ -107,15 +106,6 @@ export function AssetDisposalsTable({
       filterFn: (row, id, value) => {
         return value === "all" || row.getValue(id) === value;
       },
-    },
-    {
-      accessorKey: "disposalMethod",
-      header: "Method",
-      cell: ({ row }) => (
-        <div className="max-w-[200px] truncate">
-          {row.getValue<string>("disposalMethod")}
-        </div>
-      ),
     },
     {
       accessorKey: "reason",
@@ -214,11 +204,10 @@ export function AssetDisposalsTable({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Types</SelectItem>
-            <SelectItem value="SELL">Sell</SelectItem>
-            <SelectItem value="DONATE">Donate</SelectItem>
-            <SelectItem value="RECYCLE">Recycle</SelectItem>
-            <SelectItem value="DESTROY">Destroy</SelectItem>
-            <SelectItem value="RETURN_TO_VENDOR">Return to Vendor</SelectItem>
+            <SelectItem value="DONATION">Donation</SelectItem>
+            <SelectItem value="SALE">Sale</SelectItem>
+            <SelectItem value="RECYCLING">Recycling</SelectItem>
+            <SelectItem value="DESTRUCTION">Destruction</SelectItem>
             <SelectItem value="OTHER">Other</SelectItem>
           </SelectContent>
         </Select>

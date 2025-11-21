@@ -4,6 +4,7 @@
 
 import { z } from "zod";
 import { MAINTENANCE_STATUS_VALUES } from "@/core/domain/value-objects/maintenance-status";
+import { currencyField } from "../validation-helpers";
 
 // Helper schema for date coercion
 const dateSchema = z.coerce.date();
@@ -32,12 +33,7 @@ export const CreateMaintenanceRecordSchema = z.object({
     .max(10000, "Notes must be 10000 characters or less")
     .optional()
     .nullable(),
-  cost: z
-    .number()
-    .min(0, "Cost cannot be negative")
-    .max(9999999999.99, "Cost cannot exceed 9999999999.99")
-    .optional()
-    .nullable(),
+  cost: currencyField("Maintenance cost"),
   partsUsed: z.array(z.string()).optional().nullable(),
   nextMaintenanceDate: dateSchema.optional().nullable(),
 });
@@ -62,12 +58,7 @@ export const UpdateMaintenanceRecordSchema = z.object({
     .max(10000, "Notes must be 10000 characters or less")
     .optional()
     .nullable(),
-  cost: z
-    .number()
-    .min(0, "Cost cannot be negative")
-    .max(9999999999.99, "Cost cannot exceed 9999999999.99")
-    .optional()
-    .nullable(),
+  cost: currencyField("Maintenance cost"),
   partsUsed: z.array(z.string()).optional().nullable(),
   nextMaintenanceDate: dateSchema.optional().nullable(),
 });
@@ -97,12 +88,7 @@ export const CompleteMaintenanceSchema = z.object({
     .max(10000, "Notes must be 10000 characters or less")
     .optional()
     .nullable(),
-  cost: z
-    .number()
-    .min(0, "Cost cannot be negative")
-    .max(9999999999.99, "Cost cannot exceed 9999999999.99")
-    .optional()
-    .nullable(),
+  cost: currencyField("Maintenance cost"),
   partsUsed: z.array(z.string()).optional().nullable(),
   nextMaintenanceDate: dateSchema.optional().nullable(),
 });

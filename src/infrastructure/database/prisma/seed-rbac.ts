@@ -1,17 +1,14 @@
 /**
  * RBAC Seed Data
  * Seeds roles, permissions, and role-permission assignments
+ *
+ * Can accept a Prisma client instance or use the singleton for standalone execution
  */
 
-import { PrismaClient } from "../../../generated/prisma/client.js";
-import { PrismaPg } from "@prisma/adapter-pg";
-import { Pool } from "pg";
+import type { PrismaClient } from "../../../generated/prisma/client.js";
+import { prisma as prismaSingleton } from "./client.js";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-
-// Prisma v7: Use PostgreSQL adapter
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
+import { logSection, logStep, logSuccess, logWarning } from "./seed-utils.js";
 
 /**
  * System roles with their permissions
@@ -26,38 +23,213 @@ const SYSTEM_ROLES = {
   manager: {
     name: "manager",
     displayName: "Manager",
-    description: "Team management and content oversight",
+    description:
+      "ITAM operations manager - full asset management, approval workflows, team oversight",
     permissions: [
       // Users (read-only)
       PERMISSIONS.USERS_VIEW,
-      // Tasks (full access)
-      PERMISSIONS.TASKS_VIEW,
-      PERMISSIONS.TASKS_CREATE,
-      PERMISSIONS.TASKS_UPDATE,
-      PERMISSIONS.TASKS_DELETE,
-      // Roles (read-only)
-      PERMISSIONS.ROLES_VIEW,
-      // Permissions (read-only)
-      PERMISSIONS.PERMISSIONS_VIEW,
-      // Dashboard
+
+      // Foundation - Full access
+      PERMISSIONS.ORGANIZATION_UNITS_VIEW,
+      PERMISSIONS.ORGANIZATION_UNITS_CREATE,
+      PERMISSIONS.ORGANIZATION_UNITS_UPDATE,
+      PERMISSIONS.PERSONS_VIEW,
+      PERMISSIONS.PERSONS_CREATE,
+      PERMISSIONS.PERSONS_UPDATE,
+      PERMISSIONS.PERSON_ROLE_ASSIGNMENTS_VIEW,
+      PERMISSIONS.PERSON_ROLE_ASSIGNMENTS_CREATE,
+      PERMISSIONS.PERSON_ROLE_ASSIGNMENTS_UPDATE,
+      PERMISSIONS.LOCATIONS_VIEW,
+      PERMISSIONS.LOCATIONS_CREATE,
+      PERMISSIONS.LOCATIONS_UPDATE,
+      PERMISSIONS.VENDORS_VIEW,
+      PERMISSIONS.VENDORS_CREATE,
+      PERMISSIONS.VENDORS_UPDATE,
+      PERMISSIONS.VENDOR_CONTACTS_VIEW,
+      PERMISSIONS.VENDOR_CONTACTS_CREATE,
+      PERMISSIONS.VENDOR_CONTACTS_UPDATE,
+      PERMISSIONS.LIFECYCLE_MODELS_VIEW,
+      PERMISSIONS.LIFECYCLE_STATES_VIEW,
+      PERMISSIONS.LIFECYCLE_TRANSITIONS_VIEW,
+      PERMISSIONS.FIELD_DEFINITIONS_VIEW,
+      PERMISSIONS.FIELD_DEFINITIONS_CREATE,
+      PERMISSIONS.FIELD_DEFINITIONS_UPDATE,
+
+      // Assets - Full access
+      PERMISSIONS.ASSET_CATEGORIES_VIEW,
+      PERMISSIONS.ASSET_CATEGORIES_CREATE,
+      PERMISSIONS.ASSET_CATEGORIES_UPDATE,
+      PERMISSIONS.ASSET_MODELS_VIEW,
+      PERMISSIONS.ASSET_MODELS_CREATE,
+      PERMISSIONS.ASSET_MODELS_UPDATE,
+      PERMISSIONS.ASSETS_VIEW,
+      PERMISSIONS.ASSETS_CREATE,
+      PERMISSIONS.ASSETS_UPDATE,
+      PERMISSIONS.ASSETS_DELETE,
+      PERMISSIONS.ASSETS_CHECKOUT,
+      PERMISSIONS.ASSET_ASSIGNMENTS_VIEW,
+      PERMISSIONS.ASSET_ASSIGNMENTS_CREATE,
+      PERMISSIONS.ASSET_ASSIGNMENTS_UPDATE,
+      PERMISSIONS.ASSET_ASSIGNMENTS_DELETE,
+
+      // Warranties - Full access
+      PERMISSIONS.WARRANTIES_VIEW,
+      PERMISSIONS.WARRANTIES_CREATE,
+      PERMISSIONS.WARRANTIES_UPDATE,
+      PERMISSIONS.WARRANTIES_DELETE,
+
+      // Maintenance - Full access
+      PERMISSIONS.MAINTENANCE_SCHEDULES_VIEW,
+      PERMISSIONS.MAINTENANCE_SCHEDULES_CREATE,
+      PERMISSIONS.MAINTENANCE_SCHEDULES_UPDATE,
+      PERMISSIONS.MAINTENANCE_SCHEDULES_DELETE,
+      PERMISSIONS.MAINTENANCE_RECORDS_VIEW,
+      PERMISSIONS.MAINTENANCE_RECORDS_CREATE,
+      PERMISSIONS.MAINTENANCE_RECORDS_UPDATE,
+      PERMISSIONS.MAINTENANCE_RECORDS_DELETE,
+      PERMISSIONS.MAINTENANCE_RECORDS_PERFORM,
+
+      // Inventory - Full access
+      PERMISSIONS.STOCK_LOCATIONS_VIEW,
+      PERMISSIONS.STOCK_LOCATIONS_CREATE,
+      PERMISSIONS.STOCK_LOCATIONS_UPDATE,
+      PERMISSIONS.STOCK_MOVEMENTS_VIEW,
+      PERMISSIONS.STOCK_MOVEMENTS_CREATE,
+      PERMISSIONS.STOCK_MOVEMENTS_DELETE,
+
+      // Asset Disposals - Approval workflow
+      PERMISSIONS.ASSET_DISPOSALS_VIEW,
+      PERMISSIONS.ASSET_DISPOSALS_CREATE,
+      PERMISSIONS.ASSET_DISPOSALS_UPDATE,
+      PERMISSIONS.ASSET_DISPOSALS_DELETE,
+      PERMISSIONS.ASSET_DISPOSALS_APPROVE,
+      PERMISSIONS.ASSET_DISPOSALS_REJECT,
+      PERMISSIONS.ASSET_DISPOSALS_START,
+      PERMISSIONS.ASSET_DISPOSALS_COMPLETE,
+      PERMISSIONS.ASSET_DISPOSALS_CANCEL,
+      PERMISSIONS.ASSET_DISPOSALS_MANAGE,
+
+      // Asset Kits - Full access
+      PERMISSIONS.ASSET_KITS_VIEW,
+      PERMISSIONS.ASSET_KITS_CREATE,
+      PERMISSIONS.ASSET_KITS_UPDATE,
+      PERMISSIONS.ASSET_KITS_DELETE,
+      PERMISSIONS.ASSET_KITS_CHECKOUT,
+      PERMISSIONS.ASSET_KITS_RETURN,
+      PERMISSIONS.ASSET_KITS_MANAGE,
+
+      // Reservations - Confirmation workflow
+      PERMISSIONS.ASSET_RESERVATIONS_VIEW,
+      PERMISSIONS.ASSET_RESERVATIONS_CREATE,
+      PERMISSIONS.ASSET_RESERVATIONS_UPDATE,
+      PERMISSIONS.ASSET_RESERVATIONS_DELETE,
+      PERMISSIONS.ASSET_RESERVATIONS_CANCEL,
+      PERMISSIONS.ASSET_RESERVATIONS_CONFIRM,
+      PERMISSIONS.ASSET_RESERVATIONS_MANAGE,
+
+      // CMDB - Full access
+      PERMISSIONS.CONFIGURATION_ITEMS_VIEW,
+      PERMISSIONS.CONFIGURATION_ITEMS_CREATE,
+      PERMISSIONS.CONFIGURATION_ITEMS_UPDATE,
+      PERMISSIONS.CONFIGURATION_ITEMS_DELETE,
+      PERMISSIONS.CI_RELATIONSHIPS_VIEW,
+      PERMISSIONS.CI_RELATIONSHIPS_CREATE,
+      PERMISSIONS.CI_RELATIONSHIPS_UPDATE,
+      PERMISSIONS.CI_RELATIONSHIPS_DELETE,
+      PERMISSIONS.RELATIONSHIP_TYPES_VIEW,
+      PERMISSIONS.RELATIONSHIP_TYPES_CREATE,
+      PERMISSIONS.RELATIONSHIP_TYPES_UPDATE,
+
+      // Dashboard & Analytics
       PERMISSIONS.DASHBOARD_VIEW,
       PERMISSIONS.DASHBOARD_ANALYTICS,
+
+      // Roles & Permissions (view-only for reference)
+      PERMISSIONS.ROLES_VIEW,
+      PERMISSIONS.PERMISSIONS_VIEW,
+
       // Settings (view only)
       PERMISSIONS.SETTINGS_VIEW,
+
+      // Audit Logs
+      PERMISSIONS.AUDIT_LOGS_VIEW,
+      PERMISSIONS.AUDIT_LOGS_EXPORT,
     ],
   },
   editor: {
     name: "editor",
     displayName: "Editor",
-    description: "Content editing and task management",
+    description:
+      "ITAM operational staff - day-to-day asset operations, maintenance, checkouts, reservations",
     permissions: [
-      // Tasks (full access)
-      PERMISSIONS.TASKS_VIEW,
-      PERMISSIONS.TASKS_CREATE,
-      PERMISSIONS.TASKS_UPDATE,
-      PERMISSIONS.TASKS_DELETE,
-      // Dashboard (view only)
+      // Foundation - Read + Create/Update (no delete)
+      PERMISSIONS.ORGANIZATION_UNITS_VIEW,
+      PERMISSIONS.PERSONS_VIEW,
+      PERMISSIONS.PERSONS_CREATE,
+      PERMISSIONS.PERSONS_UPDATE,
+      PERMISSIONS.LOCATIONS_VIEW,
+      PERMISSIONS.VENDORS_VIEW,
+      PERMISSIONS.VENDOR_CONTACTS_VIEW,
+      PERMISSIONS.LIFECYCLE_MODELS_VIEW,
+      PERMISSIONS.LIFECYCLE_STATES_VIEW,
+      PERMISSIONS.LIFECYCLE_TRANSITIONS_VIEW,
+      PERMISSIONS.FIELD_DEFINITIONS_VIEW,
+
+      // Assets - Full CRUD
+      PERMISSIONS.ASSET_CATEGORIES_VIEW,
+      PERMISSIONS.ASSET_MODELS_VIEW,
+      PERMISSIONS.ASSETS_VIEW,
+      PERMISSIONS.ASSETS_CREATE,
+      PERMISSIONS.ASSETS_UPDATE,
+      PERMISSIONS.ASSETS_CHECKOUT,
+      PERMISSIONS.ASSET_ASSIGNMENTS_VIEW,
+      PERMISSIONS.ASSET_ASSIGNMENTS_CREATE,
+      PERMISSIONS.ASSET_ASSIGNMENTS_UPDATE,
+
+      // Warranties - Create and update
+      PERMISSIONS.WARRANTIES_VIEW,
+      PERMISSIONS.WARRANTIES_CREATE,
+      PERMISSIONS.WARRANTIES_UPDATE,
+
+      // Maintenance - Full operational access
+      PERMISSIONS.MAINTENANCE_SCHEDULES_VIEW,
+      PERMISSIONS.MAINTENANCE_RECORDS_VIEW,
+      PERMISSIONS.MAINTENANCE_RECORDS_CREATE,
+      PERMISSIONS.MAINTENANCE_RECORDS_UPDATE,
+      PERMISSIONS.MAINTENANCE_RECORDS_PERFORM,
+
+      // Inventory - Create movements
+      PERMISSIONS.STOCK_LOCATIONS_VIEW,
+      PERMISSIONS.STOCK_MOVEMENTS_VIEW,
+      PERMISSIONS.STOCK_MOVEMENTS_CREATE,
+
+      // Asset Disposals - Create and update (no approval)
+      PERMISSIONS.ASSET_DISPOSALS_VIEW,
+      PERMISSIONS.ASSET_DISPOSALS_CREATE,
+      PERMISSIONS.ASSET_DISPOSALS_UPDATE,
+
+      // Asset Kits - Checkout operations
+      PERMISSIONS.ASSET_KITS_VIEW,
+      PERMISSIONS.ASSET_KITS_CHECKOUT,
+      PERMISSIONS.ASSET_KITS_RETURN,
+
+      // Reservations - Create and manage own
+      PERMISSIONS.ASSET_RESERVATIONS_VIEW,
+      PERMISSIONS.ASSET_RESERVATIONS_CREATE,
+      PERMISSIONS.ASSET_RESERVATIONS_UPDATE,
+      PERMISSIONS.ASSET_RESERVATIONS_CANCEL,
+
+      // CMDB - Read + Create/Update
+      PERMISSIONS.CONFIGURATION_ITEMS_VIEW,
+      PERMISSIONS.CONFIGURATION_ITEMS_CREATE,
+      PERMISSIONS.CONFIGURATION_ITEMS_UPDATE,
+      PERMISSIONS.CI_RELATIONSHIPS_VIEW,
+      PERMISSIONS.CI_RELATIONSHIPS_CREATE,
+      PERMISSIONS.RELATIONSHIP_TYPES_VIEW,
+
+      // Dashboard
       PERMISSIONS.DASHBOARD_VIEW,
+
       // Settings (view only)
       PERMISSIONS.SETTINGS_VIEW,
     ],
@@ -65,13 +237,54 @@ const SYSTEM_ROLES = {
   viewer: {
     name: "viewer",
     displayName: "Viewer",
-    description: "Read-only access to content",
+    description: "Read-only ITAM access with self-service reservations",
     permissions: [
-      // Tasks (read-only + own updates)
-      PERMISSIONS.TASKS_VIEW,
-      PERMISSIONS.TASKS_UPDATE_OWN,
-      // Dashboard (view only)
+      // Foundation - Read-only
+      PERMISSIONS.ORGANIZATION_UNITS_VIEW,
+      PERMISSIONS.PERSONS_VIEW,
+      PERMISSIONS.LOCATIONS_VIEW,
+      PERMISSIONS.VENDORS_VIEW,
+      PERMISSIONS.LIFECYCLE_MODELS_VIEW,
+      PERMISSIONS.LIFECYCLE_STATES_VIEW,
+      PERMISSIONS.FIELD_DEFINITIONS_VIEW,
+
+      // Assets - Read-only
+      PERMISSIONS.ASSET_CATEGORIES_VIEW,
+      PERMISSIONS.ASSET_MODELS_VIEW,
+      PERMISSIONS.ASSETS_VIEW,
+      PERMISSIONS.ASSET_ASSIGNMENTS_VIEW,
+
+      // Warranties - Read-only
+      PERMISSIONS.WARRANTIES_VIEW,
+
+      // Maintenance - Read-only
+      PERMISSIONS.MAINTENANCE_SCHEDULES_VIEW,
+      PERMISSIONS.MAINTENANCE_RECORDS_VIEW,
+
+      // Inventory - Read-only
+      PERMISSIONS.STOCK_LOCATIONS_VIEW,
+      PERMISSIONS.STOCK_MOVEMENTS_VIEW,
+
+      // Asset Disposals - Read-only
+      PERMISSIONS.ASSET_DISPOSALS_VIEW,
+
+      // Asset Kits - Read-only
+      PERMISSIONS.ASSET_KITS_VIEW,
+
+      // Reservations - Read-only + self-service create
+      PERMISSIONS.ASSET_RESERVATIONS_VIEW,
+      PERMISSIONS.ASSET_RESERVATIONS_CREATE, // Self-service booking
+
+      // CMDB - Read-only
+      PERMISSIONS.CONFIGURATION_ITEMS_VIEW,
+      PERMISSIONS.CI_RELATIONSHIPS_VIEW,
+      PERMISSIONS.RELATIONSHIP_TYPES_VIEW,
+
+      // Dashboard
       PERMISSIONS.DASHBOARD_VIEW,
+
+      // Settings (view only)
+      PERMISSIONS.SETTINGS_VIEW,
     ],
   },
 };
@@ -699,6 +912,43 @@ const SYSTEM_PERMISSIONS = [
     action: "manage",
   },
 
+  // Assets: Asset Category Fields
+  {
+    name: PERMISSIONS.ASSET_CATEGORY_FIELDS_VIEW,
+    displayName: "View Asset Category Fields",
+    description: "View custom fields for asset categories",
+    resource: "asset-category-fields",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.ASSET_CATEGORY_FIELDS_CREATE,
+    displayName: "Create Asset Category Fields",
+    description: "Add new custom fields to asset categories",
+    resource: "asset-category-fields",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.ASSET_CATEGORY_FIELDS_UPDATE,
+    displayName: "Update Asset Category Fields",
+    description: "Edit asset category custom fields",
+    resource: "asset-category-fields",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.ASSET_CATEGORY_FIELDS_DELETE,
+    displayName: "Delete Asset Category Fields",
+    description: "Remove asset category custom fields",
+    resource: "asset-category-fields",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.ASSET_CATEGORY_FIELDS_MANAGE,
+    displayName: "Manage Asset Category Fields",
+    description: "Full management of asset category fields",
+    resource: "asset-category-fields",
+    action: "manage",
+  },
+
   // Assets: Asset Models
   {
     name: PERMISSIONS.ASSET_MODELS_VIEW,
@@ -764,6 +1014,13 @@ const SYSTEM_PERMISSIONS = [
     description: "Remove assets",
     resource: "assets",
     action: "delete",
+  },
+  {
+    name: PERMISSIONS.ASSETS_CHECKOUT,
+    displayName: "Checkout Assets",
+    description: "Check out and return assets",
+    resource: "assets",
+    action: "checkout",
   },
   {
     name: PERMISSIONS.ASSETS_MANAGE,
@@ -994,17 +1251,671 @@ const SYSTEM_PERMISSIONS = [
     resource: "stock-movements",
     action: "manage",
   },
-];
+
+  // Layer 3 ITAM: Asset Disposals
+  {
+    name: PERMISSIONS.ASSET_DISPOSALS_VIEW,
+    displayName: "View Asset Disposals",
+    description: "View disposal requests and workflow",
+    resource: "asset-disposals",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.ASSET_DISPOSALS_CREATE,
+    displayName: "Create Asset Disposals",
+    description: "Create new disposal requests",
+    resource: "asset-disposals",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.ASSET_DISPOSALS_UPDATE,
+    displayName: "Update Asset Disposals",
+    description: "Edit disposal request details",
+    resource: "asset-disposals",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.ASSET_DISPOSALS_DELETE,
+    displayName: "Delete Asset Disposals",
+    description: "Remove disposal requests",
+    resource: "asset-disposals",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.ASSET_DISPOSALS_APPROVE,
+    displayName: "Approve Asset Disposals",
+    description: "Approve disposal requests",
+    resource: "asset-disposals",
+    action: "approve",
+  },
+  {
+    name: PERMISSIONS.ASSET_DISPOSALS_REJECT,
+    displayName: "Reject Asset Disposals",
+    description: "Reject disposal requests",
+    resource: "asset-disposals",
+    action: "reject",
+  },
+  {
+    name: PERMISSIONS.ASSET_DISPOSALS_START,
+    displayName: "Start Asset Disposal Process",
+    description: "Begin disposal process execution",
+    resource: "asset-disposals",
+    action: "start",
+  },
+  {
+    name: PERMISSIONS.ASSET_DISPOSALS_COMPLETE,
+    displayName: "Complete Asset Disposals",
+    description: "Mark disposal as completed",
+    resource: "asset-disposals",
+    action: "complete",
+  },
+  {
+    name: PERMISSIONS.ASSET_DISPOSALS_CANCEL,
+    displayName: "Cancel Asset Disposals",
+    description: "Cancel disposal requests",
+    resource: "asset-disposals",
+    action: "cancel",
+  },
+  {
+    name: PERMISSIONS.ASSET_DISPOSALS_MANAGE,
+    displayName: "Manage Asset Disposals",
+    description: "Full disposal workflow management access",
+    resource: "asset-disposals",
+    action: "manage",
+  },
+
+  // Layer 3 ITAM: Asset Kits
+  {
+    name: PERMISSIONS.ASSET_KITS_VIEW,
+    displayName: "View Asset Kits",
+    description: "View asset kits and checkouts",
+    resource: "asset-kits",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.ASSET_KITS_CREATE,
+    displayName: "Create Asset Kits",
+    description: "Create new asset kit definitions",
+    resource: "asset-kits",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.ASSET_KITS_UPDATE,
+    displayName: "Update Asset Kits",
+    description: "Edit asset kit details",
+    resource: "asset-kits",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.ASSET_KITS_DELETE,
+    displayName: "Delete Asset Kits",
+    description: "Remove asset kits",
+    resource: "asset-kits",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.ASSET_KITS_CHECKOUT,
+    displayName: "Checkout Asset Kits",
+    description: "Check out kits to persons",
+    resource: "asset-kits",
+    action: "checkout",
+  },
+  {
+    name: PERMISSIONS.ASSET_KITS_RETURN,
+    displayName: "Return Asset Kit Items",
+    description: "Process kit returns (full or partial)",
+    resource: "asset-kits",
+    action: "return",
+  },
+  {
+    name: PERMISSIONS.ASSET_KITS_MANAGE,
+    displayName: "Manage Asset Kits",
+    description: "Full asset kit management access",
+    resource: "asset-kits",
+    action: "manage",
+  },
+
+  // Layer 3 ITAM: Asset Reservations
+  {
+    name: PERMISSIONS.ASSET_RESERVATIONS_VIEW,
+    displayName: "View Asset Reservations",
+    description: "View asset reservation calendar",
+    resource: "asset-reservations",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.ASSET_RESERVATIONS_CREATE,
+    displayName: "Create Asset Reservations",
+    description: "Book assets for future use",
+    resource: "asset-reservations",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.ASSET_RESERVATIONS_UPDATE,
+    displayName: "Update Asset Reservations",
+    description: "Edit reservation details",
+    resource: "asset-reservations",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.ASSET_RESERVATIONS_DELETE,
+    displayName: "Delete Asset Reservations",
+    description: "Remove reservations",
+    resource: "asset-reservations",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.ASSET_RESERVATIONS_CANCEL,
+    displayName: "Cancel Asset Reservations",
+    description: "Cancel confirmed reservations",
+    resource: "asset-reservations",
+    action: "cancel",
+  },
+  {
+    name: PERMISSIONS.ASSET_RESERVATIONS_CONFIRM,
+    displayName: "Confirm Asset Reservations",
+    description: "Approve and confirm reservations",
+    resource: "asset-reservations",
+    action: "confirm",
+  },
+  {
+    name: PERMISSIONS.ASSET_RESERVATIONS_MANAGE,
+    displayName: "Manage Asset Reservations",
+    description: "Full reservation management access",
+    resource: "asset-reservations",
+    action: "manage",
+  },
+
+  // Layer 3 ITAM: CMDB - Configuration Items
+  {
+    name: PERMISSIONS.CI_CLASSES_VIEW,
+    displayName: "View CI Classes",
+    description: "View CI class taxonomy",
+    resource: "ci-classes",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.CI_CLASSES_CREATE,
+    displayName: "Create CI Classes",
+    description: "Create new CI classes",
+    resource: "ci-classes",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.CI_CLASSES_UPDATE,
+    displayName: "Update CI Classes",
+    description: "Edit CI class definitions",
+    resource: "ci-classes",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.CI_CLASSES_DELETE,
+    displayName: "Delete CI Classes",
+    description: "Remove CI classes",
+    resource: "ci-classes",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.CI_CLASSES_MANAGE,
+    displayName: "Manage CI Classes",
+    description: "Full CI class management access",
+    resource: "ci-classes",
+    action: "manage",
+  },
+  {
+    name: PERMISSIONS.CI_CLASS_FIELDS_VIEW,
+    displayName: "View CI Class Fields",
+    description: "View CI class field definitions",
+    resource: "ci-class-fields",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.CI_CLASS_FIELDS_CREATE,
+    displayName: "Create CI Class Fields",
+    description: "Add new CI class fields",
+    resource: "ci-class-fields",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.CI_CLASS_FIELDS_UPDATE,
+    displayName: "Update CI Class Fields",
+    description: "Edit CI class fields",
+    resource: "ci-class-fields",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.CI_CLASS_FIELDS_DELETE,
+    displayName: "Delete CI Class Fields",
+    description: "Remove CI class fields",
+    resource: "ci-class-fields",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.CI_CLASS_FIELDS_MANAGE,
+    displayName: "Manage CI Class Fields",
+    description: "Full CI class field management access",
+    resource: "ci-class-fields",
+    action: "manage",
+  },
+  {
+    name: PERMISSIONS.CONFIGURATION_ITEMS_VIEW,
+    displayName: "View Configuration Items",
+    description: "View CI list and details",
+    resource: "configuration-items",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.CONFIGURATION_ITEMS_CREATE,
+    displayName: "Create Configuration Items",
+    description: "Create new configuration items",
+    resource: "configuration-items",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.CONFIGURATION_ITEMS_UPDATE,
+    displayName: "Update Configuration Items",
+    description: "Edit CI information",
+    resource: "configuration-items",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.CONFIGURATION_ITEMS_DELETE,
+    displayName: "Delete Configuration Items",
+    description: "Remove configuration items",
+    resource: "configuration-items",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.CONFIGURATION_ITEMS_MANAGE,
+    displayName: "Manage Configuration Items",
+    description: "Full CI management access",
+    resource: "configuration-items",
+    action: "manage",
+  },
+
+  // Layer 3 ITAM: CMDB - CI Relationships
+  {
+    name: PERMISSIONS.CI_RELATIONSHIPS_VIEW,
+    displayName: "View CI Relationships",
+    description: "View CI dependencies and relationships",
+    resource: "ci-relationships",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.CI_RELATIONSHIPS_CREATE,
+    displayName: "Create CI Relationships",
+    description: "Create new CI relationships",
+    resource: "ci-relationships",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.CI_RELATIONSHIPS_UPDATE,
+    displayName: "Update CI Relationships",
+    description: "Edit relationship details",
+    resource: "ci-relationships",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.CI_RELATIONSHIPS_DELETE,
+    displayName: "Delete CI Relationships",
+    description: "Remove CI relationships",
+    resource: "ci-relationships",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.CI_RELATIONSHIPS_MANAGE,
+    displayName: "Manage CI Relationships",
+    description: "Full CI relationship management access",
+    resource: "ci-relationships",
+    action: "manage",
+  },
+  {
+    name: PERMISSIONS.RELATIONSHIP_TYPE_SCOPES_VIEW,
+    displayName: "View Relationship Type Scopes",
+    description: "View relationship type scope rules",
+    resource: "relationship-type-scopes",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.RELATIONSHIP_TYPE_SCOPES_CREATE,
+    displayName: "Create Relationship Type Scopes",
+    description: "Create new relationship type scopes",
+    resource: "relationship-type-scopes",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.RELATIONSHIP_TYPE_SCOPES_UPDATE,
+    displayName: "Update Relationship Type Scopes",
+    description: "Edit relationship type scopes",
+    resource: "relationship-type-scopes",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.RELATIONSHIP_TYPE_SCOPES_DELETE,
+    displayName: "Delete Relationship Type Scopes",
+    description: "Remove relationship type scopes",
+    resource: "relationship-type-scopes",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.RELATIONSHIP_TYPE_SCOPES_MANAGE,
+    displayName: "Manage Relationship Type Scopes",
+    description: "Full management of relationship type scopes",
+    resource: "relationship-type-scopes",
+    action: "manage",
+  },
+
+  // Layer 3 ITAM: CMDB - Relationship Types
+  {
+    name: PERMISSIONS.RELATIONSHIP_TYPES_VIEW,
+    displayName: "View Relationship Types",
+    description: "View relationship type definitions",
+    resource: "relationship-types",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.RELATIONSHIP_TYPES_CREATE,
+    displayName: "Create Relationship Types",
+    description: "Create new relationship types",
+    resource: "relationship-types",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.RELATIONSHIP_TYPES_UPDATE,
+    displayName: "Update Relationship Types",
+    description: "Edit relationship type details",
+    resource: "relationship-types",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.RELATIONSHIP_TYPES_DELETE,
+    displayName: "Delete Relationship Types",
+    description: "Remove relationship types",
+    resource: "relationship-types",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.RELATIONSHIP_TYPES_MANAGE,
+    displayName: "Manage Relationship Types",
+    description: "Full relationship type management access",
+    resource: "relationship-types",
+    action: "manage",
+  },
+
+  // Contracts
+  {
+    name: PERMISSIONS.CONTRACT_TYPES_VIEW,
+    displayName: "View Contract Types",
+    description: "View contract type catalog",
+    resource: "contract-types",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.CONTRACT_TYPES_CREATE,
+    displayName: "Create Contract Types",
+    description: "Create new contract types",
+    resource: "contract-types",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.CONTRACT_TYPES_UPDATE,
+    displayName: "Update Contract Types",
+    description: "Edit contract types",
+    resource: "contract-types",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.CONTRACT_TYPES_DELETE,
+    displayName: "Delete Contract Types",
+    description: "Remove contract types",
+    resource: "contract-types",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.CONTRACT_TYPES_MANAGE,
+    displayName: "Manage Contract Types",
+    description: "Full contract type management access",
+    resource: "contract-types",
+    action: "manage",
+  },
+  {
+    name: PERMISSIONS.CONTRACTS_VIEW,
+    displayName: "View Contracts",
+    description: "View contracts list and details",
+    resource: "contracts",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.CONTRACTS_CREATE,
+    displayName: "Create Contracts",
+    description: "Create new contracts",
+    resource: "contracts",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.CONTRACTS_UPDATE,
+    displayName: "Update Contracts",
+    description: "Edit contracts",
+    resource: "contracts",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.CONTRACTS_DELETE,
+    displayName: "Delete Contracts",
+    description: "Remove contracts",
+    resource: "contracts",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.CONTRACTS_MANAGE,
+    displayName: "Manage Contracts",
+    description: "Full contract management access",
+    resource: "contracts",
+    action: "manage",
+  },
+  {
+    name: PERMISSIONS.CONTRACT_LINKED_OBJECTS_VIEW,
+    displayName: "View Contract Linked Objects",
+    description: "View objects linked to contracts",
+    resource: "contract-linked-objects",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.CONTRACT_LINKED_OBJECTS_CREATE,
+    displayName: "Create Contract Linked Objects",
+    description: "Link objects to contracts",
+    resource: "contract-linked-objects",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.CONTRACT_LINKED_OBJECTS_UPDATE,
+    displayName: "Update Contract Linked Objects",
+    description: "Edit linked objects",
+    resource: "contract-linked-objects",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.CONTRACT_LINKED_OBJECTS_DELETE,
+    displayName: "Delete Contract Linked Objects",
+    description: "Remove linked objects from contracts",
+    resource: "contract-linked-objects",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.CONTRACT_LINKED_OBJECTS_MANAGE,
+    displayName: "Manage Contract Linked Objects",
+    description: "Full management of contract linked objects",
+    resource: "contract-linked-objects",
+    action: "manage",
+  },
+
+  // Licenses
+  {
+    name: PERMISSIONS.LICENSE_PRODUCTS_VIEW,
+    displayName: "View License Products",
+    description: "View software license products",
+    resource: "license-products",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.LICENSE_PRODUCTS_CREATE,
+    displayName: "Create License Products",
+    description: "Create new license products",
+    resource: "license-products",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.LICENSE_PRODUCTS_UPDATE,
+    displayName: "Update License Products",
+    description: "Edit license products",
+    resource: "license-products",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.LICENSE_PRODUCTS_DELETE,
+    displayName: "Delete License Products",
+    description: "Remove license products",
+    resource: "license-products",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.LICENSE_PRODUCTS_MANAGE,
+    displayName: "Manage License Products",
+    description: "Full management of license products",
+    resource: "license-products",
+    action: "manage",
+  },
+  {
+    name: PERMISSIONS.LICENSE_PRODUCT_FIELDS_VIEW,
+    displayName: "View License Product Fields",
+    description: "View custom fields for license products",
+    resource: "license-product-fields",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.LICENSE_PRODUCT_FIELDS_CREATE,
+    displayName: "Create License Product Fields",
+    description: "Add custom fields to license products",
+    resource: "license-product-fields",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.LICENSE_PRODUCT_FIELDS_UPDATE,
+    displayName: "Update License Product Fields",
+    description: "Edit license product custom fields",
+    resource: "license-product-fields",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.LICENSE_PRODUCT_FIELDS_DELETE,
+    displayName: "Delete License Product Fields",
+    description: "Remove license product custom fields",
+    resource: "license-product-fields",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.LICENSE_PRODUCT_FIELDS_MANAGE,
+    displayName: "Manage License Product Fields",
+    description: "Full management of license product fields",
+    resource: "license-product-fields",
+    action: "manage",
+  },
+  {
+    name: PERMISSIONS.LICENSE_ENTITLEMENTS_VIEW,
+    displayName: "View License Entitlements",
+    description: "View license entitlements",
+    resource: "license-entitlements",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.LICENSE_ENTITLEMENTS_CREATE,
+    displayName: "Create License Entitlements",
+    description: "Create new license entitlements",
+    resource: "license-entitlements",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.LICENSE_ENTITLEMENTS_UPDATE,
+    displayName: "Update License Entitlements",
+    description: "Edit license entitlements",
+    resource: "license-entitlements",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.LICENSE_ENTITLEMENTS_DELETE,
+    displayName: "Delete License Entitlements",
+    description: "Remove license entitlements",
+    resource: "license-entitlements",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.LICENSE_ENTITLEMENTS_MANAGE,
+    displayName: "Manage License Entitlements",
+    description: "Full management of license entitlements",
+    resource: "license-entitlements",
+    action: "manage",
+  },
+  {
+    name: PERMISSIONS.LICENSE_ALLOCATIONS_VIEW,
+    displayName: "View License Allocations",
+    description: "View license allocation records",
+    resource: "license-allocations",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.LICENSE_ALLOCATIONS_CREATE,
+    displayName: "Create License Allocations",
+    description: "Allocate new licenses",
+    resource: "license-allocations",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.LICENSE_ALLOCATIONS_UPDATE,
+    displayName: "Update License Allocations",
+    description: "Edit license allocations",
+    resource: "license-allocations",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.LICENSE_ALLOCATIONS_DELETE,
+    displayName: "Delete License Allocations",
+    description: "Remove license allocations",
+    resource: "license-allocations",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.LICENSE_ALLOCATIONS_DEALLOCATE,
+    displayName: "Deallocate Licenses",
+    description: "Deallocate assigned licenses",
+    resource: "license-allocations",
+    action: "deallocate",
+  },
+  {
+    name: PERMISSIONS.LICENSE_ALLOCATIONS_REACTIVATE,
+    displayName: "Reactivate License Allocations",
+    description: "Reactivate previously deallocated licenses",
+    resource: "license-allocations",
+    action: "reactivate",
+  },
+  {
+    name: PERMISSIONS.LICENSE_ALLOCATIONS_MANAGE,
+    displayName: "Manage License Allocations",
+    description: "Full management of license allocations",
+    resource: "license-allocations",
+    action: "manage",
+  },
+] as const;
 
 /**
  * Main seed function
  */
-async function seedRBAC() {
-  console.log("🌱 Starting RBAC seed...");
+async function seedRBAC(prismaClient?: PrismaClient) {
+  const prisma = prismaClient ?? prismaSingleton;
+  logSection("RBAC System");
 
   try {
     // 1. Create all permissions
-    console.log("📋 Creating permissions...");
+    logStep("📋", "Creating permissions...");
     const createdPermissions = new Map<string, string>();
 
     for (const permData of SYSTEM_PERMISSIONS) {
@@ -1032,10 +1943,10 @@ async function seedRBAC() {
       createdPermissions.set(permission.name, permission.id);
     }
 
-    console.log(`   ✅ Created ${createdPermissions.size} permissions`);
+    logSuccess(`Created ${createdPermissions.size} permissions`);
 
     // 2. Create roles and assign permissions
-    console.log("👥 Creating roles...");
+    logStep("👥", "Creating roles and assigning permissions...");
 
     for (const [_roleName, roleData] of Object.entries(SYSTEM_ROLES)) {
       // Create role
@@ -1066,7 +1977,7 @@ async function seedRBAC() {
         .map((permName) => {
           const permId = createdPermissions.get(permName);
           if (!permId) {
-            console.warn(`   ⚠️  Permission not found: ${permName}`);
+            logWarning(`Permission not found: ${permName}`);
             return null;
           }
           return {
@@ -1085,12 +1996,12 @@ async function seedRBAC() {
         });
       }
 
-      console.log(
-        `   ✅ Role "${roleData.displayName}" with ${permissionAssignments.length} permissions`,
+      logSuccess(
+        `Role "${roleData.displayName}" created with ${permissionAssignments.length} permissions`,
       );
     }
 
-    console.log("\n✅ RBAC seed completed successfully!");
+    logSuccess("RBAC seed completed successfully!");
     console.log("\nSummary:");
     console.log(`   - ${SYSTEM_PERMISSIONS.length} permissions created`);
     console.log(`   - ${Object.keys(SYSTEM_ROLES).length} roles created`);
@@ -1126,7 +2037,7 @@ if (isMainModule) {
       process.exit(1);
     })
     .finally(async () => {
-      await prisma.$disconnect();
+      await prismaSingleton.$disconnect();
     });
 }
 

@@ -155,14 +155,14 @@ export function PersonsTable({
       ),
     },
     {
-      accessorKey: "jobTitle",
-      header: "Job Title",
+      accessorKey: "title",
+      header: "Title",
       cell: ({ row }) => {
-        const jobTitle = row.getValue("jobTitle") as string | null;
-        return jobTitle ? (
+        const title = row.getValue("title") as string | null;
+        return title ? (
           <div className="flex items-center gap-2">
             <Briefcase className="text-muted-foreground h-4 w-4" />
-            <span className="text-sm">{jobTitle}</span>
+            <span className="text-sm">{title}</span>
           </div>
         ) : null;
       },

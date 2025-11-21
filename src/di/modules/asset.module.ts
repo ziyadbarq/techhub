@@ -15,7 +15,9 @@ import { logger } from "@/lib/logger";
 
 // Asset Category Repository
 import type { IAssetCategoryRepository } from "@/core/repositories/asset-category.repository.interface";
+import type { IAssetCategoryFieldRepository } from "@/core/repositories/asset-category-field.repository.interface";
 import { PrismaAssetCategoryRepository } from "@/infrastructure/repositories/prisma-asset-category.repository";
+import { PrismaAssetCategoryFieldRepository } from "@/infrastructure/repositories/prisma-asset-category-field.repository";
 
 // Asset Category Use Cases
 import { CreateAssetCategoryUseCase } from "@/core/use-cases/asset/asset-category/create-asset-category.use-case";
@@ -23,6 +25,13 @@ import { GetAssetCategoryUseCase } from "@/core/use-cases/asset/asset-category/g
 import { ListAssetCategoriesUseCase } from "@/core/use-cases/asset/asset-category/list-asset-categories.use-case";
 import { UpdateAssetCategoryUseCase } from "@/core/use-cases/asset/asset-category/update-asset-category.use-case";
 import { DeleteAssetCategoryUseCase } from "@/core/use-cases/asset/asset-category/delete-asset-category.use-case";
+
+// Asset Category Field Use Cases
+import { CreateAssetCategoryFieldUseCase } from "@/core/use-cases/asset-category-field/create-asset-category-field.use-case";
+import { GetAssetCategoryFieldUseCase } from "@/core/use-cases/asset-category-field/get-asset-category-field.use-case";
+import { ListAssetCategoryFieldsUseCase } from "@/core/use-cases/asset-category-field/list-asset-category-fields.use-case";
+import { UpdateAssetCategoryFieldUseCase } from "@/core/use-cases/asset-category-field/update-asset-category-field.use-case";
+import { DeleteAssetCategoryFieldUseCase } from "@/core/use-cases/asset-category-field/delete-asset-category-field.use-case";
 
 // Asset Model Repository
 import type { IAssetModelRepository } from "@/core/repositories/asset-model.repository.interface";
@@ -45,6 +54,7 @@ import { GetAssetUseCase } from "@/core/use-cases/asset/asset/get-asset.use-case
 import { ListAssetsUseCase } from "@/core/use-cases/asset/asset/list-assets.use-case";
 import { UpdateAssetUseCase } from "@/core/use-cases/asset/asset/update-asset.use-case";
 import { DeleteAssetUseCase } from "@/core/use-cases/asset/asset/delete-asset.use-case";
+import { DeleteAssetWithConfirmationUseCase } from "@/core/use-cases/asset/asset/delete-asset-with-confirmation.use-case";
 
 // Asset Assignment Repository
 import type { IAssetAssignmentRepository } from "@/core/repositories/asset-assignment.repository.interface";
@@ -163,6 +173,54 @@ export function bindAssetDependencies(container: Container): void {
     .inTransientScope();
 
   // ==========================================
+  // Asset Category Field Repository
+  // ==========================================
+
+  container
+    .bind<IAssetCategoryFieldRepository>(
+      DI_TOKENS.IAssetCategoryFieldRepository,
+    )
+    .to(PrismaAssetCategoryFieldRepository)
+    .inSingletonScope();
+
+  // ==========================================
+  // Asset Category Field Use Cases
+  // ==========================================
+
+  container
+    .bind<CreateAssetCategoryFieldUseCase>(
+      DI_TOKENS.CreateAssetCategoryFieldUseCase,
+    )
+    .to(CreateAssetCategoryFieldUseCase)
+    .inTransientScope();
+
+  container
+    .bind<GetAssetCategoryFieldUseCase>(DI_TOKENS.GetAssetCategoryFieldUseCase)
+    .to(GetAssetCategoryFieldUseCase)
+    .inTransientScope();
+
+  container
+    .bind<ListAssetCategoryFieldsUseCase>(
+      DI_TOKENS.ListAssetCategoryFieldsUseCase,
+    )
+    .to(ListAssetCategoryFieldsUseCase)
+    .inTransientScope();
+
+  container
+    .bind<UpdateAssetCategoryFieldUseCase>(
+      DI_TOKENS.UpdateAssetCategoryFieldUseCase,
+    )
+    .to(UpdateAssetCategoryFieldUseCase)
+    .inTransientScope();
+
+  container
+    .bind<DeleteAssetCategoryFieldUseCase>(
+      DI_TOKENS.DeleteAssetCategoryFieldUseCase,
+    )
+    .to(DeleteAssetCategoryFieldUseCase)
+    .inTransientScope();
+
+  // ==========================================
   // Asset Model Repository
   // ==========================================
 
@@ -236,6 +294,13 @@ export function bindAssetDependencies(container: Container): void {
   container
     .bind<DeleteAssetUseCase>(DI_TOKENS.DeleteAssetUseCase)
     .to(DeleteAssetUseCase)
+    .inTransientScope();
+
+  container
+    .bind<DeleteAssetWithConfirmationUseCase>(
+      DI_TOKENS.DeleteAssetWithConfirmationUseCase,
+    )
+    .to(DeleteAssetWithConfirmationUseCase)
     .inTransientScope();
 
   // ==========================================

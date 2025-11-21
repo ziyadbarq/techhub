@@ -249,6 +249,9 @@ export type AssetKitItemWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"AssetKitItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AssetKitItem"> | Date | string
   assetKit?: Prisma.XOR<Prisma.AssetKitScalarRelationFilter, Prisma.AssetKitWhereInput>
+  assetCategory?: Prisma.XOR<Prisma.AssetCategoryNullableScalarRelationFilter, Prisma.AssetCategoryWhereInput> | null
+  assetModel?: Prisma.XOR<Prisma.AssetModelNullableScalarRelationFilter, Prisma.AssetModelWhereInput> | null
+  checkoutItems?: Prisma.AssetKitCheckoutItemListRelationFilter
 }
 
 export type AssetKitItemOrderByWithRelationInput = {
@@ -262,6 +265,9 @@ export type AssetKitItemOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   assetKit?: Prisma.AssetKitOrderByWithRelationInput
+  assetCategory?: Prisma.AssetCategoryOrderByWithRelationInput
+  assetModel?: Prisma.AssetModelOrderByWithRelationInput
+  checkoutItems?: Prisma.AssetKitCheckoutItemOrderByRelationAggregateInput
 }
 
 export type AssetKitItemWhereUniqueInput = Prisma.AtLeast<{
@@ -278,6 +284,9 @@ export type AssetKitItemWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"AssetKitItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AssetKitItem"> | Date | string
   assetKit?: Prisma.XOR<Prisma.AssetKitScalarRelationFilter, Prisma.AssetKitWhereInput>
+  assetCategory?: Prisma.XOR<Prisma.AssetCategoryNullableScalarRelationFilter, Prisma.AssetCategoryWhereInput> | null
+  assetModel?: Prisma.XOR<Prisma.AssetModelNullableScalarRelationFilter, Prisma.AssetModelWhereInput> | null
+  checkoutItems?: Prisma.AssetKitCheckoutItemListRelationFilter
 }, "id">
 
 export type AssetKitItemOrderByWithAggregationInput = {
@@ -314,14 +323,15 @@ export type AssetKitItemScalarWhereWithAggregatesInput = {
 
 export type AssetKitItemCreateInput = {
   id?: string
-  assetCategoryId?: string | null
-  assetModelId?: string | null
   quantity?: number
   isRequired?: boolean
   note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   assetKit: Prisma.AssetKitCreateNestedOneWithoutItemsInput
+  assetCategory?: Prisma.AssetCategoryCreateNestedOneWithoutKitItemsInput
+  assetModel?: Prisma.AssetModelCreateNestedOneWithoutKitItemsInput
+  checkoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutKitItemInput
 }
 
 export type AssetKitItemUncheckedCreateInput = {
@@ -334,18 +344,20 @@ export type AssetKitItemUncheckedCreateInput = {
   note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  checkoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutKitItemInput
 }
 
 export type AssetKitItemUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assetKit?: Prisma.AssetKitUpdateOneRequiredWithoutItemsNestedInput
+  assetCategory?: Prisma.AssetCategoryUpdateOneWithoutKitItemsNestedInput
+  assetModel?: Prisma.AssetModelUpdateOneWithoutKitItemsNestedInput
+  checkoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutKitItemNestedInput
 }
 
 export type AssetKitItemUncheckedUpdateInput = {
@@ -358,6 +370,7 @@ export type AssetKitItemUncheckedUpdateInput = {
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  checkoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutKitItemNestedInput
 }
 
 export type AssetKitItemCreateManyInput = {
@@ -374,8 +387,6 @@ export type AssetKitItemCreateManyInput = {
 
 export type AssetKitItemUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -449,6 +460,95 @@ export type AssetKitItemSumOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
 }
 
+export type AssetKitItemScalarRelationFilter = {
+  is?: Prisma.AssetKitItemWhereInput
+  isNot?: Prisma.AssetKitItemWhereInput
+}
+
+export type AssetKitItemCreateNestedManyWithoutAssetCategoryInput = {
+  create?: Prisma.XOR<Prisma.AssetKitItemCreateWithoutAssetCategoryInput, Prisma.AssetKitItemUncheckedCreateWithoutAssetCategoryInput> | Prisma.AssetKitItemCreateWithoutAssetCategoryInput[] | Prisma.AssetKitItemUncheckedCreateWithoutAssetCategoryInput[]
+  connectOrCreate?: Prisma.AssetKitItemCreateOrConnectWithoutAssetCategoryInput | Prisma.AssetKitItemCreateOrConnectWithoutAssetCategoryInput[]
+  createMany?: Prisma.AssetKitItemCreateManyAssetCategoryInputEnvelope
+  connect?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+}
+
+export type AssetKitItemUncheckedCreateNestedManyWithoutAssetCategoryInput = {
+  create?: Prisma.XOR<Prisma.AssetKitItemCreateWithoutAssetCategoryInput, Prisma.AssetKitItemUncheckedCreateWithoutAssetCategoryInput> | Prisma.AssetKitItemCreateWithoutAssetCategoryInput[] | Prisma.AssetKitItemUncheckedCreateWithoutAssetCategoryInput[]
+  connectOrCreate?: Prisma.AssetKitItemCreateOrConnectWithoutAssetCategoryInput | Prisma.AssetKitItemCreateOrConnectWithoutAssetCategoryInput[]
+  createMany?: Prisma.AssetKitItemCreateManyAssetCategoryInputEnvelope
+  connect?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+}
+
+export type AssetKitItemUpdateManyWithoutAssetCategoryNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetKitItemCreateWithoutAssetCategoryInput, Prisma.AssetKitItemUncheckedCreateWithoutAssetCategoryInput> | Prisma.AssetKitItemCreateWithoutAssetCategoryInput[] | Prisma.AssetKitItemUncheckedCreateWithoutAssetCategoryInput[]
+  connectOrCreate?: Prisma.AssetKitItemCreateOrConnectWithoutAssetCategoryInput | Prisma.AssetKitItemCreateOrConnectWithoutAssetCategoryInput[]
+  upsert?: Prisma.AssetKitItemUpsertWithWhereUniqueWithoutAssetCategoryInput | Prisma.AssetKitItemUpsertWithWhereUniqueWithoutAssetCategoryInput[]
+  createMany?: Prisma.AssetKitItemCreateManyAssetCategoryInputEnvelope
+  set?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+  disconnect?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+  delete?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+  connect?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+  update?: Prisma.AssetKitItemUpdateWithWhereUniqueWithoutAssetCategoryInput | Prisma.AssetKitItemUpdateWithWhereUniqueWithoutAssetCategoryInput[]
+  updateMany?: Prisma.AssetKitItemUpdateManyWithWhereWithoutAssetCategoryInput | Prisma.AssetKitItemUpdateManyWithWhereWithoutAssetCategoryInput[]
+  deleteMany?: Prisma.AssetKitItemScalarWhereInput | Prisma.AssetKitItemScalarWhereInput[]
+}
+
+export type AssetKitItemUncheckedUpdateManyWithoutAssetCategoryNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetKitItemCreateWithoutAssetCategoryInput, Prisma.AssetKitItemUncheckedCreateWithoutAssetCategoryInput> | Prisma.AssetKitItemCreateWithoutAssetCategoryInput[] | Prisma.AssetKitItemUncheckedCreateWithoutAssetCategoryInput[]
+  connectOrCreate?: Prisma.AssetKitItemCreateOrConnectWithoutAssetCategoryInput | Prisma.AssetKitItemCreateOrConnectWithoutAssetCategoryInput[]
+  upsert?: Prisma.AssetKitItemUpsertWithWhereUniqueWithoutAssetCategoryInput | Prisma.AssetKitItemUpsertWithWhereUniqueWithoutAssetCategoryInput[]
+  createMany?: Prisma.AssetKitItemCreateManyAssetCategoryInputEnvelope
+  set?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+  disconnect?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+  delete?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+  connect?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+  update?: Prisma.AssetKitItemUpdateWithWhereUniqueWithoutAssetCategoryInput | Prisma.AssetKitItemUpdateWithWhereUniqueWithoutAssetCategoryInput[]
+  updateMany?: Prisma.AssetKitItemUpdateManyWithWhereWithoutAssetCategoryInput | Prisma.AssetKitItemUpdateManyWithWhereWithoutAssetCategoryInput[]
+  deleteMany?: Prisma.AssetKitItemScalarWhereInput | Prisma.AssetKitItemScalarWhereInput[]
+}
+
+export type AssetKitItemCreateNestedManyWithoutAssetModelInput = {
+  create?: Prisma.XOR<Prisma.AssetKitItemCreateWithoutAssetModelInput, Prisma.AssetKitItemUncheckedCreateWithoutAssetModelInput> | Prisma.AssetKitItemCreateWithoutAssetModelInput[] | Prisma.AssetKitItemUncheckedCreateWithoutAssetModelInput[]
+  connectOrCreate?: Prisma.AssetKitItemCreateOrConnectWithoutAssetModelInput | Prisma.AssetKitItemCreateOrConnectWithoutAssetModelInput[]
+  createMany?: Prisma.AssetKitItemCreateManyAssetModelInputEnvelope
+  connect?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+}
+
+export type AssetKitItemUncheckedCreateNestedManyWithoutAssetModelInput = {
+  create?: Prisma.XOR<Prisma.AssetKitItemCreateWithoutAssetModelInput, Prisma.AssetKitItemUncheckedCreateWithoutAssetModelInput> | Prisma.AssetKitItemCreateWithoutAssetModelInput[] | Prisma.AssetKitItemUncheckedCreateWithoutAssetModelInput[]
+  connectOrCreate?: Prisma.AssetKitItemCreateOrConnectWithoutAssetModelInput | Prisma.AssetKitItemCreateOrConnectWithoutAssetModelInput[]
+  createMany?: Prisma.AssetKitItemCreateManyAssetModelInputEnvelope
+  connect?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+}
+
+export type AssetKitItemUpdateManyWithoutAssetModelNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetKitItemCreateWithoutAssetModelInput, Prisma.AssetKitItemUncheckedCreateWithoutAssetModelInput> | Prisma.AssetKitItemCreateWithoutAssetModelInput[] | Prisma.AssetKitItemUncheckedCreateWithoutAssetModelInput[]
+  connectOrCreate?: Prisma.AssetKitItemCreateOrConnectWithoutAssetModelInput | Prisma.AssetKitItemCreateOrConnectWithoutAssetModelInput[]
+  upsert?: Prisma.AssetKitItemUpsertWithWhereUniqueWithoutAssetModelInput | Prisma.AssetKitItemUpsertWithWhereUniqueWithoutAssetModelInput[]
+  createMany?: Prisma.AssetKitItemCreateManyAssetModelInputEnvelope
+  set?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+  disconnect?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+  delete?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+  connect?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+  update?: Prisma.AssetKitItemUpdateWithWhereUniqueWithoutAssetModelInput | Prisma.AssetKitItemUpdateWithWhereUniqueWithoutAssetModelInput[]
+  updateMany?: Prisma.AssetKitItemUpdateManyWithWhereWithoutAssetModelInput | Prisma.AssetKitItemUpdateManyWithWhereWithoutAssetModelInput[]
+  deleteMany?: Prisma.AssetKitItemScalarWhereInput | Prisma.AssetKitItemScalarWhereInput[]
+}
+
+export type AssetKitItemUncheckedUpdateManyWithoutAssetModelNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetKitItemCreateWithoutAssetModelInput, Prisma.AssetKitItemUncheckedCreateWithoutAssetModelInput> | Prisma.AssetKitItemCreateWithoutAssetModelInput[] | Prisma.AssetKitItemUncheckedCreateWithoutAssetModelInput[]
+  connectOrCreate?: Prisma.AssetKitItemCreateOrConnectWithoutAssetModelInput | Prisma.AssetKitItemCreateOrConnectWithoutAssetModelInput[]
+  upsert?: Prisma.AssetKitItemUpsertWithWhereUniqueWithoutAssetModelInput | Prisma.AssetKitItemUpsertWithWhereUniqueWithoutAssetModelInput[]
+  createMany?: Prisma.AssetKitItemCreateManyAssetModelInputEnvelope
+  set?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+  disconnect?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+  delete?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+  connect?: Prisma.AssetKitItemWhereUniqueInput | Prisma.AssetKitItemWhereUniqueInput[]
+  update?: Prisma.AssetKitItemUpdateWithWhereUniqueWithoutAssetModelInput | Prisma.AssetKitItemUpdateWithWhereUniqueWithoutAssetModelInput[]
+  updateMany?: Prisma.AssetKitItemUpdateManyWithWhereWithoutAssetModelInput | Prisma.AssetKitItemUpdateManyWithWhereWithoutAssetModelInput[]
+  deleteMany?: Prisma.AssetKitItemScalarWhereInput | Prisma.AssetKitItemScalarWhereInput[]
+}
+
 export type AssetKitItemCreateNestedManyWithoutAssetKitInput = {
   create?: Prisma.XOR<Prisma.AssetKitItemCreateWithoutAssetKitInput, Prisma.AssetKitItemUncheckedCreateWithoutAssetKitInput> | Prisma.AssetKitItemCreateWithoutAssetKitInput[] | Prisma.AssetKitItemUncheckedCreateWithoutAssetKitInput[]
   connectOrCreate?: Prisma.AssetKitItemCreateOrConnectWithoutAssetKitInput | Prisma.AssetKitItemCreateOrConnectWithoutAssetKitInput[]
@@ -491,15 +591,145 @@ export type AssetKitItemUncheckedUpdateManyWithoutAssetKitNestedInput = {
   deleteMany?: Prisma.AssetKitItemScalarWhereInput | Prisma.AssetKitItemScalarWhereInput[]
 }
 
-export type AssetKitItemCreateWithoutAssetKitInput = {
+export type AssetKitItemCreateNestedOneWithoutCheckoutItemsInput = {
+  create?: Prisma.XOR<Prisma.AssetKitItemCreateWithoutCheckoutItemsInput, Prisma.AssetKitItemUncheckedCreateWithoutCheckoutItemsInput>
+  connectOrCreate?: Prisma.AssetKitItemCreateOrConnectWithoutCheckoutItemsInput
+  connect?: Prisma.AssetKitItemWhereUniqueInput
+}
+
+export type AssetKitItemUpdateOneRequiredWithoutCheckoutItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetKitItemCreateWithoutCheckoutItemsInput, Prisma.AssetKitItemUncheckedCreateWithoutCheckoutItemsInput>
+  connectOrCreate?: Prisma.AssetKitItemCreateOrConnectWithoutCheckoutItemsInput
+  upsert?: Prisma.AssetKitItemUpsertWithoutCheckoutItemsInput
+  connect?: Prisma.AssetKitItemWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetKitItemUpdateToOneWithWhereWithoutCheckoutItemsInput, Prisma.AssetKitItemUpdateWithoutCheckoutItemsInput>, Prisma.AssetKitItemUncheckedUpdateWithoutCheckoutItemsInput>
+}
+
+export type AssetKitItemCreateWithoutAssetCategoryInput = {
   id?: string
-  assetCategoryId?: string | null
+  quantity?: number
+  isRequired?: boolean
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assetKit: Prisma.AssetKitCreateNestedOneWithoutItemsInput
+  assetModel?: Prisma.AssetModelCreateNestedOneWithoutKitItemsInput
+  checkoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutKitItemInput
+}
+
+export type AssetKitItemUncheckedCreateWithoutAssetCategoryInput = {
+  id?: string
+  assetKitId: string
   assetModelId?: string | null
   quantity?: number
   isRequired?: boolean
   note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  checkoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutKitItemInput
+}
+
+export type AssetKitItemCreateOrConnectWithoutAssetCategoryInput = {
+  where: Prisma.AssetKitItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetKitItemCreateWithoutAssetCategoryInput, Prisma.AssetKitItemUncheckedCreateWithoutAssetCategoryInput>
+}
+
+export type AssetKitItemCreateManyAssetCategoryInputEnvelope = {
+  data: Prisma.AssetKitItemCreateManyAssetCategoryInput | Prisma.AssetKitItemCreateManyAssetCategoryInput[]
+  skipDuplicates?: boolean
+}
+
+export type AssetKitItemUpsertWithWhereUniqueWithoutAssetCategoryInput = {
+  where: Prisma.AssetKitItemWhereUniqueInput
+  update: Prisma.XOR<Prisma.AssetKitItemUpdateWithoutAssetCategoryInput, Prisma.AssetKitItemUncheckedUpdateWithoutAssetCategoryInput>
+  create: Prisma.XOR<Prisma.AssetKitItemCreateWithoutAssetCategoryInput, Prisma.AssetKitItemUncheckedCreateWithoutAssetCategoryInput>
+}
+
+export type AssetKitItemUpdateWithWhereUniqueWithoutAssetCategoryInput = {
+  where: Prisma.AssetKitItemWhereUniqueInput
+  data: Prisma.XOR<Prisma.AssetKitItemUpdateWithoutAssetCategoryInput, Prisma.AssetKitItemUncheckedUpdateWithoutAssetCategoryInput>
+}
+
+export type AssetKitItemUpdateManyWithWhereWithoutAssetCategoryInput = {
+  where: Prisma.AssetKitItemScalarWhereInput
+  data: Prisma.XOR<Prisma.AssetKitItemUpdateManyMutationInput, Prisma.AssetKitItemUncheckedUpdateManyWithoutAssetCategoryInput>
+}
+
+export type AssetKitItemScalarWhereInput = {
+  AND?: Prisma.AssetKitItemScalarWhereInput | Prisma.AssetKitItemScalarWhereInput[]
+  OR?: Prisma.AssetKitItemScalarWhereInput[]
+  NOT?: Prisma.AssetKitItemScalarWhereInput | Prisma.AssetKitItemScalarWhereInput[]
+  id?: Prisma.StringFilter<"AssetKitItem"> | string
+  assetKitId?: Prisma.StringFilter<"AssetKitItem"> | string
+  assetCategoryId?: Prisma.StringNullableFilter<"AssetKitItem"> | string | null
+  assetModelId?: Prisma.StringNullableFilter<"AssetKitItem"> | string | null
+  quantity?: Prisma.IntFilter<"AssetKitItem"> | number
+  isRequired?: Prisma.BoolFilter<"AssetKitItem"> | boolean
+  note?: Prisma.StringNullableFilter<"AssetKitItem"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"AssetKitItem"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"AssetKitItem"> | Date | string
+}
+
+export type AssetKitItemCreateWithoutAssetModelInput = {
+  id?: string
+  quantity?: number
+  isRequired?: boolean
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assetKit: Prisma.AssetKitCreateNestedOneWithoutItemsInput
+  assetCategory?: Prisma.AssetCategoryCreateNestedOneWithoutKitItemsInput
+  checkoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutKitItemInput
+}
+
+export type AssetKitItemUncheckedCreateWithoutAssetModelInput = {
+  id?: string
+  assetKitId: string
+  assetCategoryId?: string | null
+  quantity?: number
+  isRequired?: boolean
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  checkoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutKitItemInput
+}
+
+export type AssetKitItemCreateOrConnectWithoutAssetModelInput = {
+  where: Prisma.AssetKitItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetKitItemCreateWithoutAssetModelInput, Prisma.AssetKitItemUncheckedCreateWithoutAssetModelInput>
+}
+
+export type AssetKitItemCreateManyAssetModelInputEnvelope = {
+  data: Prisma.AssetKitItemCreateManyAssetModelInput | Prisma.AssetKitItemCreateManyAssetModelInput[]
+  skipDuplicates?: boolean
+}
+
+export type AssetKitItemUpsertWithWhereUniqueWithoutAssetModelInput = {
+  where: Prisma.AssetKitItemWhereUniqueInput
+  update: Prisma.XOR<Prisma.AssetKitItemUpdateWithoutAssetModelInput, Prisma.AssetKitItemUncheckedUpdateWithoutAssetModelInput>
+  create: Prisma.XOR<Prisma.AssetKitItemCreateWithoutAssetModelInput, Prisma.AssetKitItemUncheckedCreateWithoutAssetModelInput>
+}
+
+export type AssetKitItemUpdateWithWhereUniqueWithoutAssetModelInput = {
+  where: Prisma.AssetKitItemWhereUniqueInput
+  data: Prisma.XOR<Prisma.AssetKitItemUpdateWithoutAssetModelInput, Prisma.AssetKitItemUncheckedUpdateWithoutAssetModelInput>
+}
+
+export type AssetKitItemUpdateManyWithWhereWithoutAssetModelInput = {
+  where: Prisma.AssetKitItemScalarWhereInput
+  data: Prisma.XOR<Prisma.AssetKitItemUpdateManyMutationInput, Prisma.AssetKitItemUncheckedUpdateManyWithoutAssetModelInput>
+}
+
+export type AssetKitItemCreateWithoutAssetKitInput = {
+  id?: string
+  quantity?: number
+  isRequired?: boolean
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assetCategory?: Prisma.AssetCategoryCreateNestedOneWithoutKitItemsInput
+  assetModel?: Prisma.AssetModelCreateNestedOneWithoutKitItemsInput
+  checkoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutKitItemInput
 }
 
 export type AssetKitItemUncheckedCreateWithoutAssetKitInput = {
@@ -511,6 +741,7 @@ export type AssetKitItemUncheckedCreateWithoutAssetKitInput = {
   note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  checkoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutKitItemInput
 }
 
 export type AssetKitItemCreateOrConnectWithoutAssetKitInput = {
@@ -539,19 +770,160 @@ export type AssetKitItemUpdateManyWithWhereWithoutAssetKitInput = {
   data: Prisma.XOR<Prisma.AssetKitItemUpdateManyMutationInput, Prisma.AssetKitItemUncheckedUpdateManyWithoutAssetKitInput>
 }
 
-export type AssetKitItemScalarWhereInput = {
-  AND?: Prisma.AssetKitItemScalarWhereInput | Prisma.AssetKitItemScalarWhereInput[]
-  OR?: Prisma.AssetKitItemScalarWhereInput[]
-  NOT?: Prisma.AssetKitItemScalarWhereInput | Prisma.AssetKitItemScalarWhereInput[]
-  id?: Prisma.StringFilter<"AssetKitItem"> | string
-  assetKitId?: Prisma.StringFilter<"AssetKitItem"> | string
-  assetCategoryId?: Prisma.StringNullableFilter<"AssetKitItem"> | string | null
-  assetModelId?: Prisma.StringNullableFilter<"AssetKitItem"> | string | null
-  quantity?: Prisma.IntFilter<"AssetKitItem"> | number
-  isRequired?: Prisma.BoolFilter<"AssetKitItem"> | boolean
-  note?: Prisma.StringNullableFilter<"AssetKitItem"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"AssetKitItem"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"AssetKitItem"> | Date | string
+export type AssetKitItemCreateWithoutCheckoutItemsInput = {
+  id?: string
+  quantity?: number
+  isRequired?: boolean
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assetKit: Prisma.AssetKitCreateNestedOneWithoutItemsInput
+  assetCategory?: Prisma.AssetCategoryCreateNestedOneWithoutKitItemsInput
+  assetModel?: Prisma.AssetModelCreateNestedOneWithoutKitItemsInput
+}
+
+export type AssetKitItemUncheckedCreateWithoutCheckoutItemsInput = {
+  id?: string
+  assetKitId: string
+  assetCategoryId?: string | null
+  assetModelId?: string | null
+  quantity?: number
+  isRequired?: boolean
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type AssetKitItemCreateOrConnectWithoutCheckoutItemsInput = {
+  where: Prisma.AssetKitItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetKitItemCreateWithoutCheckoutItemsInput, Prisma.AssetKitItemUncheckedCreateWithoutCheckoutItemsInput>
+}
+
+export type AssetKitItemUpsertWithoutCheckoutItemsInput = {
+  update: Prisma.XOR<Prisma.AssetKitItemUpdateWithoutCheckoutItemsInput, Prisma.AssetKitItemUncheckedUpdateWithoutCheckoutItemsInput>
+  create: Prisma.XOR<Prisma.AssetKitItemCreateWithoutCheckoutItemsInput, Prisma.AssetKitItemUncheckedCreateWithoutCheckoutItemsInput>
+  where?: Prisma.AssetKitItemWhereInput
+}
+
+export type AssetKitItemUpdateToOneWithWhereWithoutCheckoutItemsInput = {
+  where?: Prisma.AssetKitItemWhereInput
+  data: Prisma.XOR<Prisma.AssetKitItemUpdateWithoutCheckoutItemsInput, Prisma.AssetKitItemUncheckedUpdateWithoutCheckoutItemsInput>
+}
+
+export type AssetKitItemUpdateWithoutCheckoutItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assetKit?: Prisma.AssetKitUpdateOneRequiredWithoutItemsNestedInput
+  assetCategory?: Prisma.AssetCategoryUpdateOneWithoutKitItemsNestedInput
+  assetModel?: Prisma.AssetModelUpdateOneWithoutKitItemsNestedInput
+}
+
+export type AssetKitItemUncheckedUpdateWithoutCheckoutItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetKitId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type AssetKitItemCreateManyAssetCategoryInput = {
+  id?: string
+  assetKitId: string
+  assetModelId?: string | null
+  quantity?: number
+  isRequired?: boolean
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type AssetKitItemUpdateWithoutAssetCategoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assetKit?: Prisma.AssetKitUpdateOneRequiredWithoutItemsNestedInput
+  assetModel?: Prisma.AssetModelUpdateOneWithoutKitItemsNestedInput
+  checkoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutKitItemNestedInput
+}
+
+export type AssetKitItemUncheckedUpdateWithoutAssetCategoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetKitId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  checkoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutKitItemNestedInput
+}
+
+export type AssetKitItemUncheckedUpdateManyWithoutAssetCategoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetKitId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type AssetKitItemCreateManyAssetModelInput = {
+  id?: string
+  assetKitId: string
+  assetCategoryId?: string | null
+  quantity?: number
+  isRequired?: boolean
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type AssetKitItemUpdateWithoutAssetModelInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assetKit?: Prisma.AssetKitUpdateOneRequiredWithoutItemsNestedInput
+  assetCategory?: Prisma.AssetCategoryUpdateOneWithoutKitItemsNestedInput
+  checkoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutKitItemNestedInput
+}
+
+export type AssetKitItemUncheckedUpdateWithoutAssetModelInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetKitId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  checkoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutKitItemNestedInput
+}
+
+export type AssetKitItemUncheckedUpdateManyWithoutAssetModelInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetKitId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type AssetKitItemCreateManyAssetKitInput = {
@@ -567,13 +939,14 @@ export type AssetKitItemCreateManyAssetKitInput = {
 
 export type AssetKitItemUpdateWithoutAssetKitInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assetCategory?: Prisma.AssetCategoryUpdateOneWithoutKitItemsNestedInput
+  assetModel?: Prisma.AssetModelUpdateOneWithoutKitItemsNestedInput
+  checkoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutKitItemNestedInput
 }
 
 export type AssetKitItemUncheckedUpdateWithoutAssetKitInput = {
@@ -585,6 +958,7 @@ export type AssetKitItemUncheckedUpdateWithoutAssetKitInput = {
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  checkoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutKitItemNestedInput
 }
 
 export type AssetKitItemUncheckedUpdateManyWithoutAssetKitInput = {
@@ -599,6 +973,35 @@ export type AssetKitItemUncheckedUpdateManyWithoutAssetKitInput = {
 }
 
 
+/**
+ * Count Type AssetKitItemCountOutputType
+ */
+
+export type AssetKitItemCountOutputType = {
+  checkoutItems: number
+}
+
+export type AssetKitItemCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  checkoutItems?: boolean | AssetKitItemCountOutputTypeCountCheckoutItemsArgs
+}
+
+/**
+ * AssetKitItemCountOutputType without action
+ */
+export type AssetKitItemCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AssetKitItemCountOutputType
+   */
+  select?: Prisma.AssetKitItemCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * AssetKitItemCountOutputType without action
+ */
+export type AssetKitItemCountOutputTypeCountCheckoutItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AssetKitCheckoutItemWhereInput
+}
+
 
 export type AssetKitItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -611,6 +1014,10 @@ export type AssetKitItemSelect<ExtArgs extends runtime.Types.Extensions.Internal
   createdAt?: boolean
   updatedAt?: boolean
   assetKit?: boolean | Prisma.AssetKitDefaultArgs<ExtArgs>
+  assetCategory?: boolean | Prisma.AssetKitItem$assetCategoryArgs<ExtArgs>
+  assetModel?: boolean | Prisma.AssetKitItem$assetModelArgs<ExtArgs>
+  checkoutItems?: boolean | Prisma.AssetKitItem$checkoutItemsArgs<ExtArgs>
+  _count?: boolean | Prisma.AssetKitItemCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["assetKitItem"]>
 
 export type AssetKitItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -624,6 +1031,8 @@ export type AssetKitItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   createdAt?: boolean
   updatedAt?: boolean
   assetKit?: boolean | Prisma.AssetKitDefaultArgs<ExtArgs>
+  assetCategory?: boolean | Prisma.AssetKitItem$assetCategoryArgs<ExtArgs>
+  assetModel?: boolean | Prisma.AssetKitItem$assetModelArgs<ExtArgs>
 }, ExtArgs["result"]["assetKitItem"]>
 
 export type AssetKitItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -637,6 +1046,8 @@ export type AssetKitItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   createdAt?: boolean
   updatedAt?: boolean
   assetKit?: boolean | Prisma.AssetKitDefaultArgs<ExtArgs>
+  assetCategory?: boolean | Prisma.AssetKitItem$assetCategoryArgs<ExtArgs>
+  assetModel?: boolean | Prisma.AssetKitItem$assetModelArgs<ExtArgs>
 }, ExtArgs["result"]["assetKitItem"]>
 
 export type AssetKitItemSelectScalar = {
@@ -654,18 +1065,29 @@ export type AssetKitItemSelectScalar = {
 export type AssetKitItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "assetKitId" | "assetCategoryId" | "assetModelId" | "quantity" | "isRequired" | "note" | "createdAt" | "updatedAt", ExtArgs["result"]["assetKitItem"]>
 export type AssetKitItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   assetKit?: boolean | Prisma.AssetKitDefaultArgs<ExtArgs>
+  assetCategory?: boolean | Prisma.AssetKitItem$assetCategoryArgs<ExtArgs>
+  assetModel?: boolean | Prisma.AssetKitItem$assetModelArgs<ExtArgs>
+  checkoutItems?: boolean | Prisma.AssetKitItem$checkoutItemsArgs<ExtArgs>
+  _count?: boolean | Prisma.AssetKitItemCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AssetKitItemIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   assetKit?: boolean | Prisma.AssetKitDefaultArgs<ExtArgs>
+  assetCategory?: boolean | Prisma.AssetKitItem$assetCategoryArgs<ExtArgs>
+  assetModel?: boolean | Prisma.AssetKitItem$assetModelArgs<ExtArgs>
 }
 export type AssetKitItemIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   assetKit?: boolean | Prisma.AssetKitDefaultArgs<ExtArgs>
+  assetCategory?: boolean | Prisma.AssetKitItem$assetCategoryArgs<ExtArgs>
+  assetModel?: boolean | Prisma.AssetKitItem$assetModelArgs<ExtArgs>
 }
 
 export type $AssetKitItemPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "AssetKitItem"
   objects: {
     assetKit: Prisma.$AssetKitPayload<ExtArgs>
+    assetCategory: Prisma.$AssetCategoryPayload<ExtArgs> | null
+    assetModel: Prisma.$AssetModelPayload<ExtArgs> | null
+    checkoutItems: Prisma.$AssetKitCheckoutItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1072,6 +1494,9 @@ readonly fields: AssetKitItemFieldRefs;
 export interface Prisma__AssetKitItemClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   assetKit<T extends Prisma.AssetKitDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AssetKitDefaultArgs<ExtArgs>>): Prisma.Prisma__AssetKitClient<runtime.Types.Result.GetResult<Prisma.$AssetKitPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  assetCategory<T extends Prisma.AssetKitItem$assetCategoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AssetKitItem$assetCategoryArgs<ExtArgs>>): Prisma.Prisma__AssetCategoryClient<runtime.Types.Result.GetResult<Prisma.$AssetCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  assetModel<T extends Prisma.AssetKitItem$assetModelArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AssetKitItem$assetModelArgs<ExtArgs>>): Prisma.Prisma__AssetModelClient<runtime.Types.Result.GetResult<Prisma.$AssetModelPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  checkoutItems<T extends Prisma.AssetKitItem$checkoutItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AssetKitItem$checkoutItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetKitCheckoutItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1503,6 +1928,68 @@ export type AssetKitItemDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Limit how many AssetKitItems to delete.
    */
   limit?: number
+}
+
+/**
+ * AssetKitItem.assetCategory
+ */
+export type AssetKitItem$assetCategoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AssetCategory
+   */
+  select?: Prisma.AssetCategorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AssetCategory
+   */
+  omit?: Prisma.AssetCategoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssetCategoryInclude<ExtArgs> | null
+  where?: Prisma.AssetCategoryWhereInput
+}
+
+/**
+ * AssetKitItem.assetModel
+ */
+export type AssetKitItem$assetModelArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AssetModel
+   */
+  select?: Prisma.AssetModelSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AssetModel
+   */
+  omit?: Prisma.AssetModelOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssetModelInclude<ExtArgs> | null
+  where?: Prisma.AssetModelWhereInput
+}
+
+/**
+ * AssetKitItem.checkoutItems
+ */
+export type AssetKitItem$checkoutItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AssetKitCheckoutItem
+   */
+  select?: Prisma.AssetKitCheckoutItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AssetKitCheckoutItem
+   */
+  omit?: Prisma.AssetKitCheckoutItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssetKitCheckoutItemInclude<ExtArgs> | null
+  where?: Prisma.AssetKitCheckoutItemWhereInput
+  orderBy?: Prisma.AssetKitCheckoutItemOrderByWithRelationInput | Prisma.AssetKitCheckoutItemOrderByWithRelationInput[]
+  cursor?: Prisma.AssetKitCheckoutItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AssetKitCheckoutItemScalarFieldEnum | Prisma.AssetKitCheckoutItemScalarFieldEnum[]
 }
 
 /**

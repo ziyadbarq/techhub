@@ -30,6 +30,7 @@ export interface CreateAssetKitProps {
   code: string;
   description?: string | null;
   kitType?: KitType;
+  isActive?: boolean;
 }
 
 export class AssetKit {
@@ -49,7 +50,7 @@ export class AssetKit {
       code: props.code.trim().toUpperCase(),
       description: props.description?.trim() || null,
       kitType: props.kitType || "OTHER",
-      isActive: true,
+      isActive: props.isActive ?? true,
       metadata: null,
       createdAt: now,
       updatedAt: now,
@@ -62,12 +63,19 @@ export class AssetKit {
 
   update(updates: {
     name?: string;
+    code?: string;
     description?: string | null;
     kitType?: KitType;
+    isActive?: boolean;
   }): void {
     if (updates.name !== undefined) {
       AssetKit.validateName(updates.name);
       this.props.name = updates.name.trim();
+    }
+
+    if (updates.code !== undefined) {
+      AssetKit.validateCode(updates.code);
+      this.props.code = updates.code.trim().toUpperCase();
     }
 
     if (updates.description !== undefined) {
@@ -76,6 +84,10 @@ export class AssetKit {
 
     if (updates.kitType !== undefined) {
       this.props.kitType = updates.kitType;
+    }
+
+    if (updates.isActive !== undefined) {
+      this.props.isActive = updates.isActive;
     }
 
     this.props.updatedAt = new Date();

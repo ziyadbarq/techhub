@@ -290,6 +290,7 @@ export type OrganizationUnitWhereInput = {
   people?: Prisma.PersonListRelationFilter
   configurationItems?: Prisma.ConfigurationItemListRelationFilter
   dataOwnerships?: Prisma.DataOwnershipListRelationFilter
+  reservations?: Prisma.AssetReservationListRelationFilter
 }
 
 export type OrganizationUnitOrderByWithRelationInput = {
@@ -313,6 +314,7 @@ export type OrganizationUnitOrderByWithRelationInput = {
   people?: Prisma.PersonOrderByRelationAggregateInput
   configurationItems?: Prisma.ConfigurationItemOrderByRelationAggregateInput
   dataOwnerships?: Prisma.DataOwnershipOrderByRelationAggregateInput
+  reservations?: Prisma.AssetReservationOrderByRelationAggregateInput
 }
 
 export type OrganizationUnitWhereUniqueInput = Prisma.AtLeast<{
@@ -339,6 +341,7 @@ export type OrganizationUnitWhereUniqueInput = Prisma.AtLeast<{
   people?: Prisma.PersonListRelationFilter
   configurationItems?: Prisma.ConfigurationItemListRelationFilter
   dataOwnerships?: Prisma.DataOwnershipListRelationFilter
+  reservations?: Prisma.AssetReservationListRelationFilter
 }, "id" | "code">
 
 export type OrganizationUnitOrderByWithAggregationInput = {
@@ -402,6 +405,7 @@ export type OrganizationUnitCreateInput = {
   people?: Prisma.PersonCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerOrgUnitInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutReservedForOrgUnitInput
 }
 
 export type OrganizationUnitUncheckedCreateInput = {
@@ -423,6 +427,7 @@ export type OrganizationUnitUncheckedCreateInput = {
   people?: Prisma.PersonUncheckedCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerOrgUnitInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForOrgUnitInput
 }
 
 export type OrganizationUnitUpdateInput = {
@@ -444,6 +449,7 @@ export type OrganizationUnitUpdateInput = {
   people?: Prisma.PersonUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerOrgUnitNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutReservedForOrgUnitNestedInput
 }
 
 export type OrganizationUnitUncheckedUpdateInput = {
@@ -465,6 +471,7 @@ export type OrganizationUnitUncheckedUpdateInput = {
   people?: Prisma.PersonUncheckedUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerOrgUnitNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForOrgUnitNestedInput
 }
 
 export type OrganizationUnitCreateManyInput = {
@@ -735,6 +742,22 @@ export type OrganizationUnitUpdateOneWithoutConfigurationItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUnitUpdateToOneWithWhereWithoutConfigurationItemsInput, Prisma.OrganizationUnitUpdateWithoutConfigurationItemsInput>, Prisma.OrganizationUnitUncheckedUpdateWithoutConfigurationItemsInput>
 }
 
+export type OrganizationUnitCreateNestedOneWithoutReservationsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutReservationsInput, Prisma.OrganizationUnitUncheckedCreateWithoutReservationsInput>
+  connectOrCreate?: Prisma.OrganizationUnitCreateOrConnectWithoutReservationsInput
+  connect?: Prisma.OrganizationUnitWhereUniqueInput
+}
+
+export type OrganizationUnitUpdateOneWithoutReservationsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutReservationsInput, Prisma.OrganizationUnitUncheckedCreateWithoutReservationsInput>
+  connectOrCreate?: Prisma.OrganizationUnitCreateOrConnectWithoutReservationsInput
+  upsert?: Prisma.OrganizationUnitUpsertWithoutReservationsInput
+  disconnect?: Prisma.OrganizationUnitWhereInput | boolean
+  delete?: Prisma.OrganizationUnitWhereInput | boolean
+  connect?: Prisma.OrganizationUnitWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUnitUpdateToOneWithWhereWithoutReservationsInput, Prisma.OrganizationUnitUpdateWithoutReservationsInput>, Prisma.OrganizationUnitUncheckedUpdateWithoutReservationsInput>
+}
+
 export type OrganizationUnitCreateNestedOneWithoutDataOwnershipsInput = {
   create?: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutDataOwnershipsInput, Prisma.OrganizationUnitUncheckedCreateWithoutDataOwnershipsInput>
   connectOrCreate?: Prisma.OrganizationUnitCreateOrConnectWithoutDataOwnershipsInput
@@ -769,6 +792,7 @@ export type OrganizationUnitCreateWithoutChildrenInput = {
   people?: Prisma.PersonCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerOrgUnitInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutReservedForOrgUnitInput
 }
 
 export type OrganizationUnitUncheckedCreateWithoutChildrenInput = {
@@ -789,6 +813,7 @@ export type OrganizationUnitUncheckedCreateWithoutChildrenInput = {
   people?: Prisma.PersonUncheckedCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerOrgUnitInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForOrgUnitInput
 }
 
 export type OrganizationUnitCreateOrConnectWithoutChildrenInput = {
@@ -814,6 +839,7 @@ export type OrganizationUnitCreateWithoutParentInput = {
   people?: Prisma.PersonCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerOrgUnitInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutReservedForOrgUnitInput
 }
 
 export type OrganizationUnitUncheckedCreateWithoutParentInput = {
@@ -834,6 +860,7 @@ export type OrganizationUnitUncheckedCreateWithoutParentInput = {
   people?: Prisma.PersonUncheckedCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerOrgUnitInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForOrgUnitInput
 }
 
 export type OrganizationUnitCreateOrConnectWithoutParentInput = {
@@ -875,6 +902,7 @@ export type OrganizationUnitUpdateWithoutChildrenInput = {
   people?: Prisma.PersonUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerOrgUnitNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutReservedForOrgUnitNestedInput
 }
 
 export type OrganizationUnitUncheckedUpdateWithoutChildrenInput = {
@@ -895,6 +923,7 @@ export type OrganizationUnitUncheckedUpdateWithoutChildrenInput = {
   people?: Prisma.PersonUncheckedUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerOrgUnitNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForOrgUnitNestedInput
 }
 
 export type OrganizationUnitUpsertWithWhereUniqueWithoutParentInput = {
@@ -951,6 +980,7 @@ export type OrganizationUnitCreateWithoutPeopleInput = {
   manager?: Prisma.PersonCreateNestedOneWithoutManagedOrgUnitsInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerOrgUnitInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutReservedForOrgUnitInput
 }
 
 export type OrganizationUnitUncheckedCreateWithoutPeopleInput = {
@@ -971,6 +1001,7 @@ export type OrganizationUnitUncheckedCreateWithoutPeopleInput = {
   children?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutParentInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerOrgUnitInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForOrgUnitInput
 }
 
 export type OrganizationUnitCreateOrConnectWithoutPeopleInput = {
@@ -996,6 +1027,7 @@ export type OrganizationUnitCreateWithoutManagerInput = {
   people?: Prisma.PersonCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerOrgUnitInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutReservedForOrgUnitInput
 }
 
 export type OrganizationUnitUncheckedCreateWithoutManagerInput = {
@@ -1016,6 +1048,7 @@ export type OrganizationUnitUncheckedCreateWithoutManagerInput = {
   people?: Prisma.PersonUncheckedCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerOrgUnitInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForOrgUnitInput
 }
 
 export type OrganizationUnitCreateOrConnectWithoutManagerInput = {
@@ -1057,6 +1090,7 @@ export type OrganizationUnitUpdateWithoutPeopleInput = {
   manager?: Prisma.PersonUpdateOneWithoutManagedOrgUnitsNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerOrgUnitNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutReservedForOrgUnitNestedInput
 }
 
 export type OrganizationUnitUncheckedUpdateWithoutPeopleInput = {
@@ -1077,6 +1111,7 @@ export type OrganizationUnitUncheckedUpdateWithoutPeopleInput = {
   children?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutParentNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerOrgUnitNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForOrgUnitNestedInput
 }
 
 export type OrganizationUnitUpsertWithWhereUniqueWithoutManagerInput = {
@@ -1113,6 +1148,7 @@ export type OrganizationUnitCreateWithoutConfigurationItemsInput = {
   manager?: Prisma.PersonCreateNestedOneWithoutManagedOrgUnitsInput
   people?: Prisma.PersonCreateNestedManyWithoutOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerOrgUnitInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutReservedForOrgUnitInput
 }
 
 export type OrganizationUnitUncheckedCreateWithoutConfigurationItemsInput = {
@@ -1133,6 +1169,7 @@ export type OrganizationUnitUncheckedCreateWithoutConfigurationItemsInput = {
   children?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutParentInput
   people?: Prisma.PersonUncheckedCreateNestedManyWithoutOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerOrgUnitInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForOrgUnitInput
 }
 
 export type OrganizationUnitCreateOrConnectWithoutConfigurationItemsInput = {
@@ -1169,6 +1206,7 @@ export type OrganizationUnitUpdateWithoutConfigurationItemsInput = {
   manager?: Prisma.PersonUpdateOneWithoutManagedOrgUnitsNestedInput
   people?: Prisma.PersonUpdateManyWithoutOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerOrgUnitNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutReservedForOrgUnitNestedInput
 }
 
 export type OrganizationUnitUncheckedUpdateWithoutConfigurationItemsInput = {
@@ -1188,6 +1226,107 @@ export type OrganizationUnitUncheckedUpdateWithoutConfigurationItemsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   children?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutParentNestedInput
   people?: Prisma.PersonUncheckedUpdateManyWithoutOrgUnitNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerOrgUnitNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForOrgUnitNestedInput
+}
+
+export type OrganizationUnitCreateWithoutReservationsInput = {
+  id?: string
+  name: string
+  code: string
+  description?: string | null
+  unitType?: $Enums.OrganizationUnitType
+  costCenter?: string | null
+  level: number
+  isActive?: boolean
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  parent?: Prisma.OrganizationUnitCreateNestedOneWithoutChildrenInput
+  children?: Prisma.OrganizationUnitCreateNestedManyWithoutParentInput
+  manager?: Prisma.PersonCreateNestedOneWithoutManagedOrgUnitsInput
+  people?: Prisma.PersonCreateNestedManyWithoutOrgUnitInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerOrgUnitInput
+}
+
+export type OrganizationUnitUncheckedCreateWithoutReservationsInput = {
+  id?: string
+  parentId?: string | null
+  name: string
+  code: string
+  description?: string | null
+  unitType?: $Enums.OrganizationUnitType
+  managerId?: string | null
+  costCenter?: string | null
+  level: number
+  isActive?: boolean
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  children?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutParentInput
+  people?: Prisma.PersonUncheckedCreateNestedManyWithoutOrgUnitInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerOrgUnitInput
+}
+
+export type OrganizationUnitCreateOrConnectWithoutReservationsInput = {
+  where: Prisma.OrganizationUnitWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutReservationsInput, Prisma.OrganizationUnitUncheckedCreateWithoutReservationsInput>
+}
+
+export type OrganizationUnitUpsertWithoutReservationsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUnitUpdateWithoutReservationsInput, Prisma.OrganizationUnitUncheckedUpdateWithoutReservationsInput>
+  create: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutReservationsInput, Prisma.OrganizationUnitUncheckedCreateWithoutReservationsInput>
+  where?: Prisma.OrganizationUnitWhereInput
+}
+
+export type OrganizationUnitUpdateToOneWithWhereWithoutReservationsInput = {
+  where?: Prisma.OrganizationUnitWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUnitUpdateWithoutReservationsInput, Prisma.OrganizationUnitUncheckedUpdateWithoutReservationsInput>
+}
+
+export type OrganizationUnitUpdateWithoutReservationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitType?: Prisma.EnumOrganizationUnitTypeFieldUpdateOperationsInput | $Enums.OrganizationUnitType
+  costCenter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  parent?: Prisma.OrganizationUnitUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.OrganizationUnitUpdateManyWithoutParentNestedInput
+  manager?: Prisma.PersonUpdateOneWithoutManagedOrgUnitsNestedInput
+  people?: Prisma.PersonUpdateManyWithoutOrgUnitNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerOrgUnitNestedInput
+}
+
+export type OrganizationUnitUncheckedUpdateWithoutReservationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitType?: Prisma.EnumOrganizationUnitTypeFieldUpdateOperationsInput | $Enums.OrganizationUnitType
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  costCenter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  children?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutParentNestedInput
+  people?: Prisma.PersonUncheckedUpdateManyWithoutOrgUnitNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerOrgUnitNestedInput
 }
 
@@ -1209,6 +1348,7 @@ export type OrganizationUnitCreateWithoutDataOwnershipsInput = {
   manager?: Prisma.PersonCreateNestedOneWithoutManagedOrgUnitsInput
   people?: Prisma.PersonCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutReservedForOrgUnitInput
 }
 
 export type OrganizationUnitUncheckedCreateWithoutDataOwnershipsInput = {
@@ -1229,6 +1369,7 @@ export type OrganizationUnitUncheckedCreateWithoutDataOwnershipsInput = {
   children?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutParentInput
   people?: Prisma.PersonUncheckedCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForOrgUnitInput
 }
 
 export type OrganizationUnitCreateOrConnectWithoutDataOwnershipsInput = {
@@ -1265,6 +1406,7 @@ export type OrganizationUnitUpdateWithoutDataOwnershipsInput = {
   manager?: Prisma.PersonUpdateOneWithoutManagedOrgUnitsNestedInput
   people?: Prisma.PersonUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutReservedForOrgUnitNestedInput
 }
 
 export type OrganizationUnitUncheckedUpdateWithoutDataOwnershipsInput = {
@@ -1285,6 +1427,7 @@ export type OrganizationUnitUncheckedUpdateWithoutDataOwnershipsInput = {
   children?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutParentNestedInput
   people?: Prisma.PersonUncheckedUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForOrgUnitNestedInput
 }
 
 export type OrganizationUnitCreateManyParentInput = {
@@ -1321,6 +1464,7 @@ export type OrganizationUnitUpdateWithoutParentInput = {
   people?: Prisma.PersonUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerOrgUnitNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutReservedForOrgUnitNestedInput
 }
 
 export type OrganizationUnitUncheckedUpdateWithoutParentInput = {
@@ -1341,6 +1485,7 @@ export type OrganizationUnitUncheckedUpdateWithoutParentInput = {
   people?: Prisma.PersonUncheckedUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerOrgUnitNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForOrgUnitNestedInput
 }
 
 export type OrganizationUnitUncheckedUpdateManyWithoutParentInput = {
@@ -1393,6 +1538,7 @@ export type OrganizationUnitUpdateWithoutManagerInput = {
   people?: Prisma.PersonUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerOrgUnitNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutReservedForOrgUnitNestedInput
 }
 
 export type OrganizationUnitUncheckedUpdateWithoutManagerInput = {
@@ -1413,6 +1559,7 @@ export type OrganizationUnitUncheckedUpdateWithoutManagerInput = {
   people?: Prisma.PersonUncheckedUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerOrgUnitNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForOrgUnitNestedInput
 }
 
 export type OrganizationUnitUncheckedUpdateManyWithoutManagerInput = {
@@ -1441,6 +1588,7 @@ export type OrganizationUnitCountOutputType = {
   people: number
   configurationItems: number
   dataOwnerships: number
+  reservations: number
 }
 
 export type OrganizationUnitCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1448,6 +1596,7 @@ export type OrganizationUnitCountOutputTypeSelect<ExtArgs extends runtime.Types.
   people?: boolean | OrganizationUnitCountOutputTypeCountPeopleArgs
   configurationItems?: boolean | OrganizationUnitCountOutputTypeCountConfigurationItemsArgs
   dataOwnerships?: boolean | OrganizationUnitCountOutputTypeCountDataOwnershipsArgs
+  reservations?: boolean | OrganizationUnitCountOutputTypeCountReservationsArgs
 }
 
 /**
@@ -1488,6 +1637,13 @@ export type OrganizationUnitCountOutputTypeCountDataOwnershipsArgs<ExtArgs exten
   where?: Prisma.DataOwnershipWhereInput
 }
 
+/**
+ * OrganizationUnitCountOutputType without action
+ */
+export type OrganizationUnitCountOutputTypeCountReservationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AssetReservationWhereInput
+}
+
 
 export type OrganizationUnitSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1510,6 +1666,7 @@ export type OrganizationUnitSelect<ExtArgs extends runtime.Types.Extensions.Inte
   people?: boolean | Prisma.OrganizationUnit$peopleArgs<ExtArgs>
   configurationItems?: boolean | Prisma.OrganizationUnit$configurationItemsArgs<ExtArgs>
   dataOwnerships?: boolean | Prisma.OrganizationUnit$dataOwnershipsArgs<ExtArgs>
+  reservations?: boolean | Prisma.OrganizationUnit$reservationsArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationUnitCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["organizationUnit"]>
 
@@ -1576,6 +1733,7 @@ export type OrganizationUnitInclude<ExtArgs extends runtime.Types.Extensions.Int
   people?: boolean | Prisma.OrganizationUnit$peopleArgs<ExtArgs>
   configurationItems?: boolean | Prisma.OrganizationUnit$configurationItemsArgs<ExtArgs>
   dataOwnerships?: boolean | Prisma.OrganizationUnit$dataOwnershipsArgs<ExtArgs>
+  reservations?: boolean | Prisma.OrganizationUnit$reservationsArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationUnitCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrganizationUnitIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1596,6 +1754,7 @@ export type $OrganizationUnitPayload<ExtArgs extends runtime.Types.Extensions.In
     people: Prisma.$PersonPayload<ExtArgs>[]
     configurationItems: Prisma.$ConfigurationItemPayload<ExtArgs>[]
     dataOwnerships: Prisma.$DataOwnershipPayload<ExtArgs>[]
+    reservations: Prisma.$AssetReservationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2012,6 +2171,7 @@ export interface Prisma__OrganizationUnitClient<T, Null = never, ExtArgs extends
   people<T extends Prisma.OrganizationUnit$peopleArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationUnit$peopleArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   configurationItems<T extends Prisma.OrganizationUnit$configurationItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationUnit$configurationItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConfigurationItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   dataOwnerships<T extends Prisma.OrganizationUnit$dataOwnershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationUnit$dataOwnershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DataOwnershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reservations<T extends Prisma.OrganizationUnit$reservationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationUnit$reservationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2582,6 +2742,30 @@ export type OrganizationUnit$dataOwnershipsArgs<ExtArgs extends runtime.Types.Ex
   take?: number
   skip?: number
   distinct?: Prisma.DataOwnershipScalarFieldEnum | Prisma.DataOwnershipScalarFieldEnum[]
+}
+
+/**
+ * OrganizationUnit.reservations
+ */
+export type OrganizationUnit$reservationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AssetReservation
+   */
+  select?: Prisma.AssetReservationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AssetReservation
+   */
+  omit?: Prisma.AssetReservationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssetReservationInclude<ExtArgs> | null
+  where?: Prisma.AssetReservationWhereInput
+  orderBy?: Prisma.AssetReservationOrderByWithRelationInput | Prisma.AssetReservationOrderByWithRelationInput[]
+  cursor?: Prisma.AssetReservationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AssetReservationScalarFieldEnum | Prisma.AssetReservationScalarFieldEnum[]
 }
 
 /**

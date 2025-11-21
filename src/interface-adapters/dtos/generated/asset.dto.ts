@@ -3,9 +3,14 @@
  */
 
 import { z } from "zod";
+import {
+  currencyField,
+  currencyCode,
+  optionalDate,
+} from "../validation-helpers";
 
-// Helper schema for date coercion
-const dateSchema = z.coerce.date().optional().nullable();
+// Helper schema for date coercion (for backward compatibility)
+const dateSchema = optionalDate;
 
 export const CreateAssetSchema = z.object({
   assetTag: z
@@ -27,22 +32,15 @@ export const CreateAssetSchema = z.object({
     .max(200, "Serial number must be 200 characters or less")
     .optional()
     .nullable(),
+  condition: z
+    .enum(["NEW", "GOOD", "FAIR", "POOR"], {
+      message: "Condition must be NEW, GOOD, FAIR, or POOR",
+    })
+    .optional()
+    .nullable(),
   purchaseDate: dateSchema,
-  purchaseCost: z
-    .number()
-    .min(0, "Purchase cost cannot be negative")
-    .max(9999999999.99, "Purchase cost cannot exceed 9999999999.99")
-    .optional()
-    .nullable(),
-  currency: z
-    .string()
-    .length(3, "Currency must be a 3-letter ISO code")
-    .regex(
-      /^[A-Z]{3}$/,
-      "Currency must be 3 uppercase letters (e.g., USD, EUR)",
-    )
-    .optional()
-    .nullable(),
+  purchaseCost: currencyField("Purchase cost"),
+  currency: currencyCode,
   depreciationModel: z
     .string()
     .max(100, "Depreciation model must be 100 characters or less")
@@ -79,22 +77,15 @@ export const UpdateAssetSchema = z.object({
     .max(200, "Serial number must be 200 characters or less")
     .optional()
     .nullable(),
+  condition: z
+    .enum(["NEW", "GOOD", "FAIR", "POOR"], {
+      message: "Condition must be NEW, GOOD, FAIR, or POOR",
+    })
+    .optional()
+    .nullable(),
   purchaseDate: dateSchema,
-  purchaseCost: z
-    .number()
-    .min(0, "Purchase cost cannot be negative")
-    .max(9999999999.99, "Purchase cost cannot exceed 9999999999.99")
-    .optional()
-    .nullable(),
-  currency: z
-    .string()
-    .length(3, "Currency must be a 3-letter ISO code")
-    .regex(
-      /^[A-Z]{3}$/,
-      "Currency must be 3 uppercase letters (e.g., USD, EUR)",
-    )
-    .optional()
-    .nullable(),
+  purchaseCost: currencyField("Purchase cost"),
+  currency: currencyCode,
   depreciationModel: z
     .string()
     .max(100, "Depreciation model must be 100 characters or less")

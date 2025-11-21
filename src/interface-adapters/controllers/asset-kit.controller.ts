@@ -74,6 +74,7 @@ export async function createAssetKitAction(
       name: validated.name,
       code: validated.code,
       description: validated.description,
+      kitType: validated.kitType,
       isActive: validated.isActive,
     });
 
@@ -163,6 +164,7 @@ export async function updateAssetKitAction(
       name: validated.name,
       code: validated.code,
       description: validated.description,
+      kitType: validated.kitType,
       isActive: validated.isActive,
     });
 

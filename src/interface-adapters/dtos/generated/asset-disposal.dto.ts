@@ -1,33 +1,39 @@
 import { z } from "zod";
+import { currencyField, currencyCode } from "../validation-helpers";
 
 // Asset Disposal DTOs
 export const CreateAssetDisposalDTO = z.object({
   assetId: z.string().uuid(),
   disposalType: z.enum([
-    "SELL",
-    "DONATE",
-    "RECYCLE",
-    "DESTROY",
-    "RETURN_TO_VENDOR",
+    "DONATION",
+    "SALE",
+    "RECYCLING",
+    "DESTRUCTION",
     "OTHER",
   ]),
-  disposalMethod: z.string().min(1, "Disposal method is required"),
-  reason: z.string().min(1, "Reason is required"),
-  estimatedValue: z.number().nonnegative().optional(),
+  reason: z.string().optional(),
+  estimatedValue: currencyField("Estimated value"),
+  currency: currencyCode,
+  disposalVendorId: z.string().uuid().optional(),
+  recipientInfo: z.string().optional(),
+  note: z.string().optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
   approverIds: z
     .array(z.string().uuid())
     .min(1, "At least one approver is required"),
-  notes: z.string().optional(),
 });
 
 export const UpdateAssetDisposalDTO = z.object({
   disposalType: z
-    .enum(["SELL", "DONATE", "RECYCLE", "DESTROY", "RETURN_TO_VENDOR", "OTHER"])
+    .enum(["DONATION", "SALE", "RECYCLING", "DESTRUCTION", "OTHER"])
     .optional(),
-  disposalMethod: z.string().min(1).optional(),
-  reason: z.string().min(1).optional(),
-  estimatedValue: z.number().nonnegative().optional(),
-  notes: z.string().optional(),
+  reason: z.string().optional(),
+  estimatedValue: currencyField("Estimated value"),
+  currency: currencyCode,
+  disposalVendorId: z.string().uuid().optional(),
+  recipientInfo: z.string().optional(),
+  note: z.string().optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const StartDisposalDTO = z.object({
@@ -43,7 +49,7 @@ export const CompleteSanitizationDTO = z.object({
 export const CompleteDisposalDTO = z.object({
   disposalId: z.string().uuid(),
   disposalDate: z.coerce.date(),
-  actualProceeds: z.number().nonnegative().optional(),
+  actualProceeds: currencyField("Actual proceeds"),
 });
 
 export const GenerateCertificateDTO = z.object({
@@ -59,25 +65,22 @@ export const AssetDisposalDTO = z.object({
   id: z.string().uuid(),
   assetId: z.string().uuid(),
   disposalType: z.string(),
-  disposalMethod: z.string(),
-  reason: z.string(),
+  reason: z.string().nullable(),
+  initiatedById: z.string(),
+  approvedById: z.string().nullable(),
+  approvedAt: z.date().nullable(),
   status: z.string(),
-  requestedDate: z.date(),
-  approvalDate: z.date().nullable(),
-  startDate: z.date().nullable(),
-  completionDate: z.date().nullable(),
   estimatedValue: z.number().nullable(),
   actualProceeds: z.number().nullable(),
+  currency: z.string().nullable(),
+  sanitizationChecklist: z.record(z.string(), z.unknown()).nullable(),
+  disposalDate: z.date().nullable(),
   certificateNumber: z.string().nullable(),
-  certificateGeneratedAt: z.date().nullable(),
-  sanitizationChecklist: z
-    .object({
-      items: z.array(z.string()),
-      completedAt: z.date().nullable(),
-      performedById: z.string().nullable(),
-    })
-    .nullable(),
-  notes: z.string().nullable(),
+  certificateIssuedAt: z.date().nullable(),
+  disposalVendorId: z.string().nullable(),
+  recipientInfo: z.string().nullable(),
+  note: z.string().nullable(),
+  metadata: z.record(z.string(), z.unknown()).nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });

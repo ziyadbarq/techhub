@@ -364,6 +364,13 @@ export const navGroups: NavGroup[] = [
     title: "CMDB",
     items: [
       {
+        title: "CI Classes",
+        href: "/ci-classes",
+        icon: Database,
+        description: "Configuration item class definitions",
+        permission: PERMISSIONS.CI_CLASSES_VIEW,
+      },
+      {
         title: "Configuration Items",
         href: "/configuration-items",
         icon: Database,

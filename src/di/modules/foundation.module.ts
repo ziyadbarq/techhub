@@ -91,6 +91,7 @@ import { GetPersonUseCase } from "@/core/use-cases/foundation/person/get-person.
 import { ListPeopleUseCase } from "@/core/use-cases/foundation/person/list-people.use-case";
 import { UpdatePersonUseCase } from "@/core/use-cases/foundation/person/update-person.use-case";
 import { DeletePersonUseCase } from "@/core/use-cases/foundation/person/delete-person.use-case";
+import { DeletePersonWithConfirmationUseCase } from "@/core/use-cases/foundation/person/delete-person-with-confirmation.use-case";
 
 // Person Role Assignment Use Cases
 import { CreatePersonRoleAssignmentUseCase } from "@/core/use-cases/foundation/person-role-assignment/create-person-role-assignment.use-case";
@@ -416,6 +417,13 @@ export function bindFoundationDependencies(container: Container): void {
   container
     .bind<DeletePersonUseCase>(DI_TOKENS.DeletePersonUseCase)
     .to(DeletePersonUseCase)
+    .inTransientScope();
+
+  container
+    .bind<DeletePersonWithConfirmationUseCase>(
+      DI_TOKENS.DeletePersonWithConfirmationUseCase,
+    )
+    .to(DeletePersonWithConfirmationUseCase)
     .inTransientScope();
 
   // ==========================================

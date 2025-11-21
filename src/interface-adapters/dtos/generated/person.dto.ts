@@ -42,9 +42,9 @@ export const CreatePersonSchema = z.object({
   primaryRoleId: z.string().min(1, "Primary role is required"),
   locationId: z.string().optional().nullable(),
   managerId: z.string().optional().nullable(),
-  jobTitle: z
+  title: z
     .string()
-    .max(100, "Job title must be 100 characters or less")
+    .max(100, "Title must be 100 characters or less")
     .optional()
     .nullable(),
   department: z
@@ -101,9 +101,9 @@ export const UpdatePersonSchema = z.object({
   primaryRoleId: z.string().optional(),
   locationId: z.string().optional().nullable(),
   managerId: z.string().optional().nullable(),
-  jobTitle: z
+  title: z
     .string()
-    .max(100, "Job title must be 100 characters or less")
+    .max(100, "Title must be 100 characters or less")
     .optional()
     .nullable(),
   department: z

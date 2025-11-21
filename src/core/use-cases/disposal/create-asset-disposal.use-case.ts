@@ -20,6 +20,8 @@ export interface CreateAssetDisposalRequest {
   disposalVendorId?: string | null;
   recipientInfo?: string | null;
   note?: string | null;
+  metadata?: Record<string, unknown> | null;
+  approverIds?: string[]; // TODO: Implement DisposalApproval creation
 }
 
 @injectable()
@@ -42,6 +44,9 @@ export class CreateAssetDisposalUseCase {
       recipientInfo: request.recipientInfo,
       note: request.note,
     });
+
+    // TODO: Handle metadata if needed (entity.create doesn't support it yet)
+    // TODO: Create DisposalApproval records for each approverId
 
     // Persist to database
     return this.assetDisposalRepository.create(disposal);

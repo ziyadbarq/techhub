@@ -324,6 +324,7 @@ export type VendorWhereInput = {
   warranties?: Prisma.WarrantyListRelationFilter
   contracts?: Prisma.ContractListRelationFilter
   licenseProducts?: Prisma.LicenseProductListRelationFilter
+  disposals?: Prisma.AssetDisposalListRelationFilter
 }
 
 export type VendorOrderByWithRelationInput = {
@@ -356,6 +357,7 @@ export type VendorOrderByWithRelationInput = {
   warranties?: Prisma.WarrantyOrderByRelationAggregateInput
   contracts?: Prisma.ContractOrderByRelationAggregateInput
   licenseProducts?: Prisma.LicenseProductOrderByRelationAggregateInput
+  disposals?: Prisma.AssetDisposalOrderByRelationAggregateInput
 }
 
 export type VendorWhereUniqueInput = Prisma.AtLeast<{
@@ -391,6 +393,7 @@ export type VendorWhereUniqueInput = Prisma.AtLeast<{
   warranties?: Prisma.WarrantyListRelationFilter
   contracts?: Prisma.ContractListRelationFilter
   licenseProducts?: Prisma.LicenseProductListRelationFilter
+  disposals?: Prisma.AssetDisposalListRelationFilter
 }, "id" | "code">
 
 export type VendorOrderByWithAggregationInput = {
@@ -481,6 +484,7 @@ export type VendorCreateInput = {
   warranties?: Prisma.WarrantyCreateNestedManyWithoutVendorInput
   contracts?: Prisma.ContractCreateNestedManyWithoutVendorInput
   licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutVendorInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutDisposalVendorInput
 }
 
 export type VendorUncheckedCreateInput = {
@@ -513,6 +517,7 @@ export type VendorUncheckedCreateInput = {
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutVendorInput
   contracts?: Prisma.ContractUncheckedCreateNestedManyWithoutVendorInput
   licenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutVendorInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutDisposalVendorInput
 }
 
 export type VendorUpdateInput = {
@@ -545,6 +550,7 @@ export type VendorUpdateInput = {
   warranties?: Prisma.WarrantyUpdateManyWithoutVendorNestedInput
   contracts?: Prisma.ContractUpdateManyWithoutVendorNestedInput
   licenseProducts?: Prisma.LicenseProductUpdateManyWithoutVendorNestedInput
+  disposals?: Prisma.AssetDisposalUpdateManyWithoutDisposalVendorNestedInput
 }
 
 export type VendorUncheckedUpdateInput = {
@@ -577,6 +583,7 @@ export type VendorUncheckedUpdateInput = {
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutVendorNestedInput
   contracts?: Prisma.ContractUncheckedUpdateManyWithoutVendorNestedInput
   licenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutVendorNestedInput
+  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutDisposalVendorNestedInput
 }
 
 export type VendorCreateManyInput = {
@@ -822,6 +829,22 @@ export type VendorUpdateOneWithoutWarrantiesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.VendorUpdateToOneWithWhereWithoutWarrantiesInput, Prisma.VendorUpdateWithoutWarrantiesInput>, Prisma.VendorUncheckedUpdateWithoutWarrantiesInput>
 }
 
+export type VendorCreateNestedOneWithoutDisposalsInput = {
+  create?: Prisma.XOR<Prisma.VendorCreateWithoutDisposalsInput, Prisma.VendorUncheckedCreateWithoutDisposalsInput>
+  connectOrCreate?: Prisma.VendorCreateOrConnectWithoutDisposalsInput
+  connect?: Prisma.VendorWhereUniqueInput
+}
+
+export type VendorUpdateOneWithoutDisposalsNestedInput = {
+  create?: Prisma.XOR<Prisma.VendorCreateWithoutDisposalsInput, Prisma.VendorUncheckedCreateWithoutDisposalsInput>
+  connectOrCreate?: Prisma.VendorCreateOrConnectWithoutDisposalsInput
+  upsert?: Prisma.VendorUpsertWithoutDisposalsInput
+  disconnect?: Prisma.VendorWhereInput | boolean
+  delete?: Prisma.VendorWhereInput | boolean
+  connect?: Prisma.VendorWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.VendorUpdateToOneWithWhereWithoutDisposalsInput, Prisma.VendorUpdateWithoutDisposalsInput>, Prisma.VendorUncheckedUpdateWithoutDisposalsInput>
+}
+
 export type VendorCreateNestedOneWithoutContractsInput = {
   create?: Prisma.XOR<Prisma.VendorCreateWithoutContractsInput, Prisma.VendorUncheckedCreateWithoutContractsInput>
   connectOrCreate?: Prisma.VendorCreateOrConnectWithoutContractsInput
@@ -879,6 +902,7 @@ export type VendorCreateWithoutContactsInput = {
   warranties?: Prisma.WarrantyCreateNestedManyWithoutVendorInput
   contracts?: Prisma.ContractCreateNestedManyWithoutVendorInput
   licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutVendorInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutDisposalVendorInput
 }
 
 export type VendorUncheckedCreateWithoutContactsInput = {
@@ -910,6 +934,7 @@ export type VendorUncheckedCreateWithoutContactsInput = {
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutVendorInput
   contracts?: Prisma.ContractUncheckedCreateNestedManyWithoutVendorInput
   licenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutVendorInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutDisposalVendorInput
 }
 
 export type VendorCreateOrConnectWithoutContactsInput = {
@@ -957,6 +982,7 @@ export type VendorUpdateWithoutContactsInput = {
   warranties?: Prisma.WarrantyUpdateManyWithoutVendorNestedInput
   contracts?: Prisma.ContractUpdateManyWithoutVendorNestedInput
   licenseProducts?: Prisma.LicenseProductUpdateManyWithoutVendorNestedInput
+  disposals?: Prisma.AssetDisposalUpdateManyWithoutDisposalVendorNestedInput
 }
 
 export type VendorUncheckedUpdateWithoutContactsInput = {
@@ -988,6 +1014,7 @@ export type VendorUncheckedUpdateWithoutContactsInput = {
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutVendorNestedInput
   contracts?: Prisma.ContractUncheckedUpdateManyWithoutVendorNestedInput
   licenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutVendorNestedInput
+  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutDisposalVendorNestedInput
 }
 
 export type VendorCreateWithoutAssetModelsInput = {
@@ -1019,6 +1046,7 @@ export type VendorCreateWithoutAssetModelsInput = {
   warranties?: Prisma.WarrantyCreateNestedManyWithoutVendorInput
   contracts?: Prisma.ContractCreateNestedManyWithoutVendorInput
   licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutVendorInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutDisposalVendorInput
 }
 
 export type VendorUncheckedCreateWithoutAssetModelsInput = {
@@ -1050,6 +1078,7 @@ export type VendorUncheckedCreateWithoutAssetModelsInput = {
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutVendorInput
   contracts?: Prisma.ContractUncheckedCreateNestedManyWithoutVendorInput
   licenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutVendorInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutDisposalVendorInput
 }
 
 export type VendorCreateOrConnectWithoutAssetModelsInput = {
@@ -1097,6 +1126,7 @@ export type VendorUpdateWithoutAssetModelsInput = {
   warranties?: Prisma.WarrantyUpdateManyWithoutVendorNestedInput
   contracts?: Prisma.ContractUpdateManyWithoutVendorNestedInput
   licenseProducts?: Prisma.LicenseProductUpdateManyWithoutVendorNestedInput
+  disposals?: Prisma.AssetDisposalUpdateManyWithoutDisposalVendorNestedInput
 }
 
 export type VendorUncheckedUpdateWithoutAssetModelsInput = {
@@ -1128,6 +1158,7 @@ export type VendorUncheckedUpdateWithoutAssetModelsInput = {
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutVendorNestedInput
   contracts?: Prisma.ContractUncheckedUpdateManyWithoutVendorNestedInput
   licenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutVendorNestedInput
+  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutDisposalVendorNestedInput
 }
 
 export type VendorCreateWithoutAssetsInput = {
@@ -1159,6 +1190,7 @@ export type VendorCreateWithoutAssetsInput = {
   warranties?: Prisma.WarrantyCreateNestedManyWithoutVendorInput
   contracts?: Prisma.ContractCreateNestedManyWithoutVendorInput
   licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutVendorInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutDisposalVendorInput
 }
 
 export type VendorUncheckedCreateWithoutAssetsInput = {
@@ -1190,6 +1222,7 @@ export type VendorUncheckedCreateWithoutAssetsInput = {
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutVendorInput
   contracts?: Prisma.ContractUncheckedCreateNestedManyWithoutVendorInput
   licenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutVendorInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutDisposalVendorInput
 }
 
 export type VendorCreateOrConnectWithoutAssetsInput = {
@@ -1237,6 +1270,7 @@ export type VendorUpdateWithoutAssetsInput = {
   warranties?: Prisma.WarrantyUpdateManyWithoutVendorNestedInput
   contracts?: Prisma.ContractUpdateManyWithoutVendorNestedInput
   licenseProducts?: Prisma.LicenseProductUpdateManyWithoutVendorNestedInput
+  disposals?: Prisma.AssetDisposalUpdateManyWithoutDisposalVendorNestedInput
 }
 
 export type VendorUncheckedUpdateWithoutAssetsInput = {
@@ -1268,6 +1302,7 @@ export type VendorUncheckedUpdateWithoutAssetsInput = {
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutVendorNestedInput
   contracts?: Prisma.ContractUncheckedUpdateManyWithoutVendorNestedInput
   licenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutVendorNestedInput
+  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutDisposalVendorNestedInput
 }
 
 export type VendorCreateWithoutWarrantiesInput = {
@@ -1299,6 +1334,7 @@ export type VendorCreateWithoutWarrantiesInput = {
   assets?: Prisma.AssetCreateNestedManyWithoutVendorInput
   contracts?: Prisma.ContractCreateNestedManyWithoutVendorInput
   licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutVendorInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutDisposalVendorInput
 }
 
 export type VendorUncheckedCreateWithoutWarrantiesInput = {
@@ -1330,6 +1366,7 @@ export type VendorUncheckedCreateWithoutWarrantiesInput = {
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutVendorInput
   contracts?: Prisma.ContractUncheckedCreateNestedManyWithoutVendorInput
   licenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutVendorInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutDisposalVendorInput
 }
 
 export type VendorCreateOrConnectWithoutWarrantiesInput = {
@@ -1377,6 +1414,7 @@ export type VendorUpdateWithoutWarrantiesInput = {
   assets?: Prisma.AssetUpdateManyWithoutVendorNestedInput
   contracts?: Prisma.ContractUpdateManyWithoutVendorNestedInput
   licenseProducts?: Prisma.LicenseProductUpdateManyWithoutVendorNestedInput
+  disposals?: Prisma.AssetDisposalUpdateManyWithoutDisposalVendorNestedInput
 }
 
 export type VendorUncheckedUpdateWithoutWarrantiesInput = {
@@ -1406,6 +1444,151 @@ export type VendorUncheckedUpdateWithoutWarrantiesInput = {
   contacts?: Prisma.VendorContactUncheckedUpdateManyWithoutVendorNestedInput
   assetModels?: Prisma.AssetModelUncheckedUpdateManyWithoutVendorNestedInput
   assets?: Prisma.AssetUncheckedUpdateManyWithoutVendorNestedInput
+  contracts?: Prisma.ContractUncheckedUpdateManyWithoutVendorNestedInput
+  licenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutVendorNestedInput
+  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutDisposalVendorNestedInput
+}
+
+export type VendorCreateWithoutDisposalsInput = {
+  id?: string
+  name: string
+  code: string
+  legalName?: string | null
+  description?: string | null
+  vendorType?: $Enums.VendorType
+  taxId?: string | null
+  website?: string | null
+  email?: string | null
+  phone?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  country?: string | null
+  postalCode?: string | null
+  paymentTerms?: string | null
+  isPreferred?: boolean
+  isActive?: boolean
+  tags?: Prisma.VendorCreatetagsInput | string[]
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  contacts?: Prisma.VendorContactCreateNestedManyWithoutVendorInput
+  assetModels?: Prisma.AssetModelCreateNestedManyWithoutVendorInput
+  assets?: Prisma.AssetCreateNestedManyWithoutVendorInput
+  warranties?: Prisma.WarrantyCreateNestedManyWithoutVendorInput
+  contracts?: Prisma.ContractCreateNestedManyWithoutVendorInput
+  licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutVendorInput
+}
+
+export type VendorUncheckedCreateWithoutDisposalsInput = {
+  id?: string
+  name: string
+  code: string
+  legalName?: string | null
+  description?: string | null
+  vendorType?: $Enums.VendorType
+  taxId?: string | null
+  website?: string | null
+  email?: string | null
+  phone?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  country?: string | null
+  postalCode?: string | null
+  paymentTerms?: string | null
+  isPreferred?: boolean
+  isActive?: boolean
+  tags?: Prisma.VendorCreatetagsInput | string[]
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  contacts?: Prisma.VendorContactUncheckedCreateNestedManyWithoutVendorInput
+  assetModels?: Prisma.AssetModelUncheckedCreateNestedManyWithoutVendorInput
+  assets?: Prisma.AssetUncheckedCreateNestedManyWithoutVendorInput
+  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutVendorInput
+  contracts?: Prisma.ContractUncheckedCreateNestedManyWithoutVendorInput
+  licenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutVendorInput
+}
+
+export type VendorCreateOrConnectWithoutDisposalsInput = {
+  where: Prisma.VendorWhereUniqueInput
+  create: Prisma.XOR<Prisma.VendorCreateWithoutDisposalsInput, Prisma.VendorUncheckedCreateWithoutDisposalsInput>
+}
+
+export type VendorUpsertWithoutDisposalsInput = {
+  update: Prisma.XOR<Prisma.VendorUpdateWithoutDisposalsInput, Prisma.VendorUncheckedUpdateWithoutDisposalsInput>
+  create: Prisma.XOR<Prisma.VendorCreateWithoutDisposalsInput, Prisma.VendorUncheckedCreateWithoutDisposalsInput>
+  where?: Prisma.VendorWhereInput
+}
+
+export type VendorUpdateToOneWithWhereWithoutDisposalsInput = {
+  where?: Prisma.VendorWhereInput
+  data: Prisma.XOR<Prisma.VendorUpdateWithoutDisposalsInput, Prisma.VendorUncheckedUpdateWithoutDisposalsInput>
+}
+
+export type VendorUpdateWithoutDisposalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  legalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorType?: Prisma.EnumVendorTypeFieldUpdateOperationsInput | $Enums.VendorType
+  taxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPreferred?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tags?: Prisma.VendorUpdatetagsInput | string[]
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacts?: Prisma.VendorContactUpdateManyWithoutVendorNestedInput
+  assetModels?: Prisma.AssetModelUpdateManyWithoutVendorNestedInput
+  assets?: Prisma.AssetUpdateManyWithoutVendorNestedInput
+  warranties?: Prisma.WarrantyUpdateManyWithoutVendorNestedInput
+  contracts?: Prisma.ContractUpdateManyWithoutVendorNestedInput
+  licenseProducts?: Prisma.LicenseProductUpdateManyWithoutVendorNestedInput
+}
+
+export type VendorUncheckedUpdateWithoutDisposalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  legalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorType?: Prisma.EnumVendorTypeFieldUpdateOperationsInput | $Enums.VendorType
+  taxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPreferred?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tags?: Prisma.VendorUpdatetagsInput | string[]
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacts?: Prisma.VendorContactUncheckedUpdateManyWithoutVendorNestedInput
+  assetModels?: Prisma.AssetModelUncheckedUpdateManyWithoutVendorNestedInput
+  assets?: Prisma.AssetUncheckedUpdateManyWithoutVendorNestedInput
+  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutVendorNestedInput
   contracts?: Prisma.ContractUncheckedUpdateManyWithoutVendorNestedInput
   licenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutVendorNestedInput
 }
@@ -1439,6 +1622,7 @@ export type VendorCreateWithoutContractsInput = {
   assets?: Prisma.AssetCreateNestedManyWithoutVendorInput
   warranties?: Prisma.WarrantyCreateNestedManyWithoutVendorInput
   licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutVendorInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutDisposalVendorInput
 }
 
 export type VendorUncheckedCreateWithoutContractsInput = {
@@ -1470,6 +1654,7 @@ export type VendorUncheckedCreateWithoutContractsInput = {
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutVendorInput
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutVendorInput
   licenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutVendorInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutDisposalVendorInput
 }
 
 export type VendorCreateOrConnectWithoutContractsInput = {
@@ -1517,6 +1702,7 @@ export type VendorUpdateWithoutContractsInput = {
   assets?: Prisma.AssetUpdateManyWithoutVendorNestedInput
   warranties?: Prisma.WarrantyUpdateManyWithoutVendorNestedInput
   licenseProducts?: Prisma.LicenseProductUpdateManyWithoutVendorNestedInput
+  disposals?: Prisma.AssetDisposalUpdateManyWithoutDisposalVendorNestedInput
 }
 
 export type VendorUncheckedUpdateWithoutContractsInput = {
@@ -1548,6 +1734,7 @@ export type VendorUncheckedUpdateWithoutContractsInput = {
   assets?: Prisma.AssetUncheckedUpdateManyWithoutVendorNestedInput
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutVendorNestedInput
   licenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutVendorNestedInput
+  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutDisposalVendorNestedInput
 }
 
 export type VendorCreateWithoutLicenseProductsInput = {
@@ -1579,6 +1766,7 @@ export type VendorCreateWithoutLicenseProductsInput = {
   assets?: Prisma.AssetCreateNestedManyWithoutVendorInput
   warranties?: Prisma.WarrantyCreateNestedManyWithoutVendorInput
   contracts?: Prisma.ContractCreateNestedManyWithoutVendorInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutDisposalVendorInput
 }
 
 export type VendorUncheckedCreateWithoutLicenseProductsInput = {
@@ -1610,6 +1798,7 @@ export type VendorUncheckedCreateWithoutLicenseProductsInput = {
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutVendorInput
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutVendorInput
   contracts?: Prisma.ContractUncheckedCreateNestedManyWithoutVendorInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutDisposalVendorInput
 }
 
 export type VendorCreateOrConnectWithoutLicenseProductsInput = {
@@ -1657,6 +1846,7 @@ export type VendorUpdateWithoutLicenseProductsInput = {
   assets?: Prisma.AssetUpdateManyWithoutVendorNestedInput
   warranties?: Prisma.WarrantyUpdateManyWithoutVendorNestedInput
   contracts?: Prisma.ContractUpdateManyWithoutVendorNestedInput
+  disposals?: Prisma.AssetDisposalUpdateManyWithoutDisposalVendorNestedInput
 }
 
 export type VendorUncheckedUpdateWithoutLicenseProductsInput = {
@@ -1688,6 +1878,7 @@ export type VendorUncheckedUpdateWithoutLicenseProductsInput = {
   assets?: Prisma.AssetUncheckedUpdateManyWithoutVendorNestedInput
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutVendorNestedInput
   contracts?: Prisma.ContractUncheckedUpdateManyWithoutVendorNestedInput
+  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutDisposalVendorNestedInput
 }
 
 
@@ -1702,6 +1893,7 @@ export type VendorCountOutputType = {
   warranties: number
   contracts: number
   licenseProducts: number
+  disposals: number
 }
 
 export type VendorCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1711,6 +1903,7 @@ export type VendorCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   warranties?: boolean | VendorCountOutputTypeCountWarrantiesArgs
   contracts?: boolean | VendorCountOutputTypeCountContractsArgs
   licenseProducts?: boolean | VendorCountOutputTypeCountLicenseProductsArgs
+  disposals?: boolean | VendorCountOutputTypeCountDisposalsArgs
 }
 
 /**
@@ -1765,6 +1958,13 @@ export type VendorCountOutputTypeCountLicenseProductsArgs<ExtArgs extends runtim
   where?: Prisma.LicenseProductWhereInput
 }
 
+/**
+ * VendorCountOutputType without action
+ */
+export type VendorCountOutputTypeCountDisposalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AssetDisposalWhereInput
+}
+
 
 export type VendorSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1796,6 +1996,7 @@ export type VendorSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   warranties?: boolean | Prisma.Vendor$warrantiesArgs<ExtArgs>
   contracts?: boolean | Prisma.Vendor$contractsArgs<ExtArgs>
   licenseProducts?: boolean | Prisma.Vendor$licenseProductsArgs<ExtArgs>
+  disposals?: boolean | Prisma.Vendor$disposalsArgs<ExtArgs>
   _count?: boolean | Prisma.VendorCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["vendor"]>
 
@@ -1885,6 +2086,7 @@ export type VendorInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   warranties?: boolean | Prisma.Vendor$warrantiesArgs<ExtArgs>
   contracts?: boolean | Prisma.Vendor$contractsArgs<ExtArgs>
   licenseProducts?: boolean | Prisma.Vendor$licenseProductsArgs<ExtArgs>
+  disposals?: boolean | Prisma.Vendor$disposalsArgs<ExtArgs>
   _count?: boolean | Prisma.VendorCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type VendorIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1899,6 +2101,7 @@ export type $VendorPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     warranties: Prisma.$WarrantyPayload<ExtArgs>[]
     contracts: Prisma.$ContractPayload<ExtArgs>[]
     licenseProducts: Prisma.$LicenseProductPayload<ExtArgs>[]
+    disposals: Prisma.$AssetDisposalPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2324,6 +2527,7 @@ export interface Prisma__VendorClient<T, Null = never, ExtArgs extends runtime.T
   warranties<T extends Prisma.Vendor$warrantiesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vendor$warrantiesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WarrantyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   contracts<T extends Prisma.Vendor$contractsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vendor$contractsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContractPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   licenseProducts<T extends Prisma.Vendor$licenseProductsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vendor$licenseProductsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LicenseProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  disposals<T extends Prisma.Vendor$disposalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vendor$disposalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetDisposalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2905,6 +3109,30 @@ export type Vendor$licenseProductsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.LicenseProductScalarFieldEnum | Prisma.LicenseProductScalarFieldEnum[]
+}
+
+/**
+ * Vendor.disposals
+ */
+export type Vendor$disposalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AssetDisposal
+   */
+  select?: Prisma.AssetDisposalSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AssetDisposal
+   */
+  omit?: Prisma.AssetDisposalOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssetDisposalInclude<ExtArgs> | null
+  where?: Prisma.AssetDisposalWhereInput
+  orderBy?: Prisma.AssetDisposalOrderByWithRelationInput | Prisma.AssetDisposalOrderByWithRelationInput[]
+  cursor?: Prisma.AssetDisposalWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AssetDisposalScalarFieldEnum | Prisma.AssetDisposalScalarFieldEnum[]
 }
 
 /**

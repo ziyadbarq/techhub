@@ -6,11 +6,8 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseProductRepository } from "@/core/repositories/license-product.repository.interface";
 import type { IVendorRepository } from "@/core/repositories/vendor.repository.interface";
-import type {
-  LicenseMetricType} from "@/core/domain/entities/license-product.entity";
-import {
-  LicenseProduct
-} from "@/core/domain/entities/license-product.entity";
+import type { LicenseMetricType } from "@/core/domain/entities/license-product.entity";
+import { LicenseProduct } from "@/core/domain/entities/license-product.entity";
 
 export interface CreateLicenseProductRequest {
   name: string;

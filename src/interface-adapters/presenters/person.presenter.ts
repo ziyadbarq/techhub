@@ -17,7 +17,7 @@ export interface PersonDTO {
   primaryRoleId: string;
   locationId: string | null;
   managerId: string | null;
-  jobTitle: string | null;
+  title: string | null;
   department: string | null;
   hireDate: string | null;
   terminationDate: string | null;
@@ -40,7 +40,7 @@ export function presentPerson(person: Person): PersonDTO {
     primaryRoleId: person.primaryRoleId,
     locationId: person.locationId,
     managerId: person.managerId,
-    jobTitle: person.title,
+    title: person.title,
     department: person.department,
     hireDate: person.hireDate ? person.hireDate.toISOString() : null,
     terminationDate: person.terminationDate

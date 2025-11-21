@@ -211,6 +211,7 @@ export type AssetCategoryWhereInput = {
   assetModels?: Prisma.AssetModelListRelationFilter
   assets?: Prisma.AssetListRelationFilter
   dataOwnerships?: Prisma.DataOwnershipListRelationFilter
+  kitItems?: Prisma.AssetKitItemListRelationFilter
 }
 
 export type AssetCategoryOrderByWithRelationInput = {
@@ -227,6 +228,7 @@ export type AssetCategoryOrderByWithRelationInput = {
   assetModels?: Prisma.AssetModelOrderByRelationAggregateInput
   assets?: Prisma.AssetOrderByRelationAggregateInput
   dataOwnerships?: Prisma.DataOwnershipOrderByRelationAggregateInput
+  kitItems?: Prisma.AssetKitItemOrderByRelationAggregateInput
 }
 
 export type AssetCategoryWhereUniqueInput = Prisma.AtLeast<{
@@ -246,6 +248,7 @@ export type AssetCategoryWhereUniqueInput = Prisma.AtLeast<{
   assetModels?: Prisma.AssetModelListRelationFilter
   assets?: Prisma.AssetListRelationFilter
   dataOwnerships?: Prisma.DataOwnershipListRelationFilter
+  kitItems?: Prisma.AssetKitItemListRelationFilter
 }, "id" | "name" | "code">
 
 export type AssetCategoryOrderByWithAggregationInput = {
@@ -289,6 +292,7 @@ export type AssetCategoryCreateInput = {
   assetModels?: Prisma.AssetModelCreateNestedManyWithoutAssetCategoryInput
   assets?: Prisma.AssetCreateNestedManyWithoutAssetCategoryInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutAssetCategoryInput
+  kitItems?: Prisma.AssetKitItemCreateNestedManyWithoutAssetCategoryInput
 }
 
 export type AssetCategoryUncheckedCreateInput = {
@@ -304,6 +308,7 @@ export type AssetCategoryUncheckedCreateInput = {
   assetModels?: Prisma.AssetModelUncheckedCreateNestedManyWithoutAssetCategoryInput
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutAssetCategoryInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutAssetCategoryInput
+  kitItems?: Prisma.AssetKitItemUncheckedCreateNestedManyWithoutAssetCategoryInput
 }
 
 export type AssetCategoryUpdateInput = {
@@ -319,6 +324,7 @@ export type AssetCategoryUpdateInput = {
   assetModels?: Prisma.AssetModelUpdateManyWithoutAssetCategoryNestedInput
   assets?: Prisma.AssetUpdateManyWithoutAssetCategoryNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutAssetCategoryNestedInput
+  kitItems?: Prisma.AssetKitItemUpdateManyWithoutAssetCategoryNestedInput
 }
 
 export type AssetCategoryUncheckedUpdateInput = {
@@ -334,6 +340,7 @@ export type AssetCategoryUncheckedUpdateInput = {
   assetModels?: Prisma.AssetModelUncheckedUpdateManyWithoutAssetCategoryNestedInput
   assets?: Prisma.AssetUncheckedUpdateManyWithoutAssetCategoryNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutAssetCategoryNestedInput
+  kitItems?: Prisma.AssetKitItemUncheckedUpdateManyWithoutAssetCategoryNestedInput
 }
 
 export type AssetCategoryCreateManyInput = {
@@ -505,6 +512,22 @@ export type AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AssetCategoryUpdateToOneWithWhereWithoutAssetsInput, Prisma.AssetCategoryUpdateWithoutAssetsInput>, Prisma.AssetCategoryUncheckedUpdateWithoutAssetsInput>
 }
 
+export type AssetCategoryCreateNestedOneWithoutKitItemsInput = {
+  create?: Prisma.XOR<Prisma.AssetCategoryCreateWithoutKitItemsInput, Prisma.AssetCategoryUncheckedCreateWithoutKitItemsInput>
+  connectOrCreate?: Prisma.AssetCategoryCreateOrConnectWithoutKitItemsInput
+  connect?: Prisma.AssetCategoryWhereUniqueInput
+}
+
+export type AssetCategoryUpdateOneWithoutKitItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCategoryCreateWithoutKitItemsInput, Prisma.AssetCategoryUncheckedCreateWithoutKitItemsInput>
+  connectOrCreate?: Prisma.AssetCategoryCreateOrConnectWithoutKitItemsInput
+  upsert?: Prisma.AssetCategoryUpsertWithoutKitItemsInput
+  disconnect?: Prisma.AssetCategoryWhereInput | boolean
+  delete?: Prisma.AssetCategoryWhereInput | boolean
+  connect?: Prisma.AssetCategoryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetCategoryUpdateToOneWithWhereWithoutKitItemsInput, Prisma.AssetCategoryUpdateWithoutKitItemsInput>, Prisma.AssetCategoryUncheckedUpdateWithoutKitItemsInput>
+}
+
 export type AssetCategoryCreateNestedOneWithoutDataOwnershipsInput = {
   create?: Prisma.XOR<Prisma.AssetCategoryCreateWithoutDataOwnershipsInput, Prisma.AssetCategoryUncheckedCreateWithoutDataOwnershipsInput>
   connectOrCreate?: Prisma.AssetCategoryCreateOrConnectWithoutDataOwnershipsInput
@@ -533,6 +556,7 @@ export type AssetCategoryCreateWithoutLifecycleModelInput = {
   assetModels?: Prisma.AssetModelCreateNestedManyWithoutAssetCategoryInput
   assets?: Prisma.AssetCreateNestedManyWithoutAssetCategoryInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutAssetCategoryInput
+  kitItems?: Prisma.AssetKitItemCreateNestedManyWithoutAssetCategoryInput
 }
 
 export type AssetCategoryUncheckedCreateWithoutLifecycleModelInput = {
@@ -547,6 +571,7 @@ export type AssetCategoryUncheckedCreateWithoutLifecycleModelInput = {
   assetModels?: Prisma.AssetModelUncheckedCreateNestedManyWithoutAssetCategoryInput
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutAssetCategoryInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutAssetCategoryInput
+  kitItems?: Prisma.AssetKitItemUncheckedCreateNestedManyWithoutAssetCategoryInput
 }
 
 export type AssetCategoryCreateOrConnectWithoutLifecycleModelInput = {
@@ -601,6 +626,7 @@ export type AssetCategoryCreateWithoutFieldsInput = {
   assetModels?: Prisma.AssetModelCreateNestedManyWithoutAssetCategoryInput
   assets?: Prisma.AssetCreateNestedManyWithoutAssetCategoryInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutAssetCategoryInput
+  kitItems?: Prisma.AssetKitItemCreateNestedManyWithoutAssetCategoryInput
 }
 
 export type AssetCategoryUncheckedCreateWithoutFieldsInput = {
@@ -615,6 +641,7 @@ export type AssetCategoryUncheckedCreateWithoutFieldsInput = {
   assetModels?: Prisma.AssetModelUncheckedCreateNestedManyWithoutAssetCategoryInput
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutAssetCategoryInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutAssetCategoryInput
+  kitItems?: Prisma.AssetKitItemUncheckedCreateNestedManyWithoutAssetCategoryInput
 }
 
 export type AssetCategoryCreateOrConnectWithoutFieldsInput = {
@@ -645,6 +672,7 @@ export type AssetCategoryUpdateWithoutFieldsInput = {
   assetModels?: Prisma.AssetModelUpdateManyWithoutAssetCategoryNestedInput
   assets?: Prisma.AssetUpdateManyWithoutAssetCategoryNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutAssetCategoryNestedInput
+  kitItems?: Prisma.AssetKitItemUpdateManyWithoutAssetCategoryNestedInput
 }
 
 export type AssetCategoryUncheckedUpdateWithoutFieldsInput = {
@@ -659,6 +687,7 @@ export type AssetCategoryUncheckedUpdateWithoutFieldsInput = {
   assetModels?: Prisma.AssetModelUncheckedUpdateManyWithoutAssetCategoryNestedInput
   assets?: Prisma.AssetUncheckedUpdateManyWithoutAssetCategoryNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutAssetCategoryNestedInput
+  kitItems?: Prisma.AssetKitItemUncheckedUpdateManyWithoutAssetCategoryNestedInput
 }
 
 export type AssetCategoryCreateWithoutAssetModelsInput = {
@@ -673,6 +702,7 @@ export type AssetCategoryCreateWithoutAssetModelsInput = {
   fields?: Prisma.AssetCategoryFieldCreateNestedManyWithoutAssetCategoryInput
   assets?: Prisma.AssetCreateNestedManyWithoutAssetCategoryInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutAssetCategoryInput
+  kitItems?: Prisma.AssetKitItemCreateNestedManyWithoutAssetCategoryInput
 }
 
 export type AssetCategoryUncheckedCreateWithoutAssetModelsInput = {
@@ -687,6 +717,7 @@ export type AssetCategoryUncheckedCreateWithoutAssetModelsInput = {
   fields?: Prisma.AssetCategoryFieldUncheckedCreateNestedManyWithoutAssetCategoryInput
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutAssetCategoryInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutAssetCategoryInput
+  kitItems?: Prisma.AssetKitItemUncheckedCreateNestedManyWithoutAssetCategoryInput
 }
 
 export type AssetCategoryCreateOrConnectWithoutAssetModelsInput = {
@@ -717,6 +748,7 @@ export type AssetCategoryUpdateWithoutAssetModelsInput = {
   fields?: Prisma.AssetCategoryFieldUpdateManyWithoutAssetCategoryNestedInput
   assets?: Prisma.AssetUpdateManyWithoutAssetCategoryNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutAssetCategoryNestedInput
+  kitItems?: Prisma.AssetKitItemUpdateManyWithoutAssetCategoryNestedInput
 }
 
 export type AssetCategoryUncheckedUpdateWithoutAssetModelsInput = {
@@ -731,6 +763,7 @@ export type AssetCategoryUncheckedUpdateWithoutAssetModelsInput = {
   fields?: Prisma.AssetCategoryFieldUncheckedUpdateManyWithoutAssetCategoryNestedInput
   assets?: Prisma.AssetUncheckedUpdateManyWithoutAssetCategoryNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutAssetCategoryNestedInput
+  kitItems?: Prisma.AssetKitItemUncheckedUpdateManyWithoutAssetCategoryNestedInput
 }
 
 export type AssetCategoryCreateWithoutAssetsInput = {
@@ -745,6 +778,7 @@ export type AssetCategoryCreateWithoutAssetsInput = {
   fields?: Prisma.AssetCategoryFieldCreateNestedManyWithoutAssetCategoryInput
   assetModels?: Prisma.AssetModelCreateNestedManyWithoutAssetCategoryInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutAssetCategoryInput
+  kitItems?: Prisma.AssetKitItemCreateNestedManyWithoutAssetCategoryInput
 }
 
 export type AssetCategoryUncheckedCreateWithoutAssetsInput = {
@@ -759,6 +793,7 @@ export type AssetCategoryUncheckedCreateWithoutAssetsInput = {
   fields?: Prisma.AssetCategoryFieldUncheckedCreateNestedManyWithoutAssetCategoryInput
   assetModels?: Prisma.AssetModelUncheckedCreateNestedManyWithoutAssetCategoryInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutAssetCategoryInput
+  kitItems?: Prisma.AssetKitItemUncheckedCreateNestedManyWithoutAssetCategoryInput
 }
 
 export type AssetCategoryCreateOrConnectWithoutAssetsInput = {
@@ -789,6 +824,7 @@ export type AssetCategoryUpdateWithoutAssetsInput = {
   fields?: Prisma.AssetCategoryFieldUpdateManyWithoutAssetCategoryNestedInput
   assetModels?: Prisma.AssetModelUpdateManyWithoutAssetCategoryNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutAssetCategoryNestedInput
+  kitItems?: Prisma.AssetKitItemUpdateManyWithoutAssetCategoryNestedInput
 }
 
 export type AssetCategoryUncheckedUpdateWithoutAssetsInput = {
@@ -802,6 +838,83 @@ export type AssetCategoryUncheckedUpdateWithoutAssetsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fields?: Prisma.AssetCategoryFieldUncheckedUpdateManyWithoutAssetCategoryNestedInput
   assetModels?: Prisma.AssetModelUncheckedUpdateManyWithoutAssetCategoryNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutAssetCategoryNestedInput
+  kitItems?: Prisma.AssetKitItemUncheckedUpdateManyWithoutAssetCategoryNestedInput
+}
+
+export type AssetCategoryCreateWithoutKitItemsInput = {
+  id?: string
+  name: string
+  code: string
+  description?: string | null
+  isConsumable?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lifecycleModel?: Prisma.LifecycleModelCreateNestedOneWithoutAssetCategoriesInput
+  fields?: Prisma.AssetCategoryFieldCreateNestedManyWithoutAssetCategoryInput
+  assetModels?: Prisma.AssetModelCreateNestedManyWithoutAssetCategoryInput
+  assets?: Prisma.AssetCreateNestedManyWithoutAssetCategoryInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutAssetCategoryInput
+}
+
+export type AssetCategoryUncheckedCreateWithoutKitItemsInput = {
+  id?: string
+  name: string
+  code: string
+  description?: string | null
+  lifecycleModelId?: string | null
+  isConsumable?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  fields?: Prisma.AssetCategoryFieldUncheckedCreateNestedManyWithoutAssetCategoryInput
+  assetModels?: Prisma.AssetModelUncheckedCreateNestedManyWithoutAssetCategoryInput
+  assets?: Prisma.AssetUncheckedCreateNestedManyWithoutAssetCategoryInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutAssetCategoryInput
+}
+
+export type AssetCategoryCreateOrConnectWithoutKitItemsInput = {
+  where: Prisma.AssetCategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCategoryCreateWithoutKitItemsInput, Prisma.AssetCategoryUncheckedCreateWithoutKitItemsInput>
+}
+
+export type AssetCategoryUpsertWithoutKitItemsInput = {
+  update: Prisma.XOR<Prisma.AssetCategoryUpdateWithoutKitItemsInput, Prisma.AssetCategoryUncheckedUpdateWithoutKitItemsInput>
+  create: Prisma.XOR<Prisma.AssetCategoryCreateWithoutKitItemsInput, Prisma.AssetCategoryUncheckedCreateWithoutKitItemsInput>
+  where?: Prisma.AssetCategoryWhereInput
+}
+
+export type AssetCategoryUpdateToOneWithWhereWithoutKitItemsInput = {
+  where?: Prisma.AssetCategoryWhereInput
+  data: Prisma.XOR<Prisma.AssetCategoryUpdateWithoutKitItemsInput, Prisma.AssetCategoryUncheckedUpdateWithoutKitItemsInput>
+}
+
+export type AssetCategoryUpdateWithoutKitItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isConsumable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lifecycleModel?: Prisma.LifecycleModelUpdateOneWithoutAssetCategoriesNestedInput
+  fields?: Prisma.AssetCategoryFieldUpdateManyWithoutAssetCategoryNestedInput
+  assetModels?: Prisma.AssetModelUpdateManyWithoutAssetCategoryNestedInput
+  assets?: Prisma.AssetUpdateManyWithoutAssetCategoryNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutAssetCategoryNestedInput
+}
+
+export type AssetCategoryUncheckedUpdateWithoutKitItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lifecycleModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isConsumable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fields?: Prisma.AssetCategoryFieldUncheckedUpdateManyWithoutAssetCategoryNestedInput
+  assetModels?: Prisma.AssetModelUncheckedUpdateManyWithoutAssetCategoryNestedInput
+  assets?: Prisma.AssetUncheckedUpdateManyWithoutAssetCategoryNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutAssetCategoryNestedInput
 }
 
@@ -817,6 +930,7 @@ export type AssetCategoryCreateWithoutDataOwnershipsInput = {
   fields?: Prisma.AssetCategoryFieldCreateNestedManyWithoutAssetCategoryInput
   assetModels?: Prisma.AssetModelCreateNestedManyWithoutAssetCategoryInput
   assets?: Prisma.AssetCreateNestedManyWithoutAssetCategoryInput
+  kitItems?: Prisma.AssetKitItemCreateNestedManyWithoutAssetCategoryInput
 }
 
 export type AssetCategoryUncheckedCreateWithoutDataOwnershipsInput = {
@@ -831,6 +945,7 @@ export type AssetCategoryUncheckedCreateWithoutDataOwnershipsInput = {
   fields?: Prisma.AssetCategoryFieldUncheckedCreateNestedManyWithoutAssetCategoryInput
   assetModels?: Prisma.AssetModelUncheckedCreateNestedManyWithoutAssetCategoryInput
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutAssetCategoryInput
+  kitItems?: Prisma.AssetKitItemUncheckedCreateNestedManyWithoutAssetCategoryInput
 }
 
 export type AssetCategoryCreateOrConnectWithoutDataOwnershipsInput = {
@@ -861,6 +976,7 @@ export type AssetCategoryUpdateWithoutDataOwnershipsInput = {
   fields?: Prisma.AssetCategoryFieldUpdateManyWithoutAssetCategoryNestedInput
   assetModels?: Prisma.AssetModelUpdateManyWithoutAssetCategoryNestedInput
   assets?: Prisma.AssetUpdateManyWithoutAssetCategoryNestedInput
+  kitItems?: Prisma.AssetKitItemUpdateManyWithoutAssetCategoryNestedInput
 }
 
 export type AssetCategoryUncheckedUpdateWithoutDataOwnershipsInput = {
@@ -875,6 +991,7 @@ export type AssetCategoryUncheckedUpdateWithoutDataOwnershipsInput = {
   fields?: Prisma.AssetCategoryFieldUncheckedUpdateManyWithoutAssetCategoryNestedInput
   assetModels?: Prisma.AssetModelUncheckedUpdateManyWithoutAssetCategoryNestedInput
   assets?: Prisma.AssetUncheckedUpdateManyWithoutAssetCategoryNestedInput
+  kitItems?: Prisma.AssetKitItemUncheckedUpdateManyWithoutAssetCategoryNestedInput
 }
 
 export type AssetCategoryCreateManyLifecycleModelInput = {
@@ -899,6 +1016,7 @@ export type AssetCategoryUpdateWithoutLifecycleModelInput = {
   assetModels?: Prisma.AssetModelUpdateManyWithoutAssetCategoryNestedInput
   assets?: Prisma.AssetUpdateManyWithoutAssetCategoryNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutAssetCategoryNestedInput
+  kitItems?: Prisma.AssetKitItemUpdateManyWithoutAssetCategoryNestedInput
 }
 
 export type AssetCategoryUncheckedUpdateWithoutLifecycleModelInput = {
@@ -913,6 +1031,7 @@ export type AssetCategoryUncheckedUpdateWithoutLifecycleModelInput = {
   assetModels?: Prisma.AssetModelUncheckedUpdateManyWithoutAssetCategoryNestedInput
   assets?: Prisma.AssetUncheckedUpdateManyWithoutAssetCategoryNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutAssetCategoryNestedInput
+  kitItems?: Prisma.AssetKitItemUncheckedUpdateManyWithoutAssetCategoryNestedInput
 }
 
 export type AssetCategoryUncheckedUpdateManyWithoutLifecycleModelInput = {
@@ -935,6 +1054,7 @@ export type AssetCategoryCountOutputType = {
   assetModels: number
   assets: number
   dataOwnerships: number
+  kitItems: number
 }
 
 export type AssetCategoryCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -942,6 +1062,7 @@ export type AssetCategoryCountOutputTypeSelect<ExtArgs extends runtime.Types.Ext
   assetModels?: boolean | AssetCategoryCountOutputTypeCountAssetModelsArgs
   assets?: boolean | AssetCategoryCountOutputTypeCountAssetsArgs
   dataOwnerships?: boolean | AssetCategoryCountOutputTypeCountDataOwnershipsArgs
+  kitItems?: boolean | AssetCategoryCountOutputTypeCountKitItemsArgs
 }
 
 /**
@@ -982,6 +1103,13 @@ export type AssetCategoryCountOutputTypeCountDataOwnershipsArgs<ExtArgs extends 
   where?: Prisma.DataOwnershipWhereInput
 }
 
+/**
+ * AssetCategoryCountOutputType without action
+ */
+export type AssetCategoryCountOutputTypeCountKitItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AssetKitItemWhereInput
+}
+
 
 export type AssetCategorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -997,6 +1125,7 @@ export type AssetCategorySelect<ExtArgs extends runtime.Types.Extensions.Interna
   assetModels?: boolean | Prisma.AssetCategory$assetModelsArgs<ExtArgs>
   assets?: boolean | Prisma.AssetCategory$assetsArgs<ExtArgs>
   dataOwnerships?: boolean | Prisma.AssetCategory$dataOwnershipsArgs<ExtArgs>
+  kitItems?: boolean | Prisma.AssetCategory$kitItemsArgs<ExtArgs>
   _count?: boolean | Prisma.AssetCategoryCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["assetCategory"]>
 
@@ -1042,6 +1171,7 @@ export type AssetCategoryInclude<ExtArgs extends runtime.Types.Extensions.Intern
   assetModels?: boolean | Prisma.AssetCategory$assetModelsArgs<ExtArgs>
   assets?: boolean | Prisma.AssetCategory$assetsArgs<ExtArgs>
   dataOwnerships?: boolean | Prisma.AssetCategory$dataOwnershipsArgs<ExtArgs>
+  kitItems?: boolean | Prisma.AssetCategory$kitItemsArgs<ExtArgs>
   _count?: boolean | Prisma.AssetCategoryCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AssetCategoryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1059,6 +1189,7 @@ export type $AssetCategoryPayload<ExtArgs extends runtime.Types.Extensions.Inter
     assetModels: Prisma.$AssetModelPayload<ExtArgs>[]
     assets: Prisma.$AssetPayload<ExtArgs>[]
     dataOwnerships: Prisma.$DataOwnershipPayload<ExtArgs>[]
+    kitItems: Prisma.$AssetKitItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1468,6 +1599,7 @@ export interface Prisma__AssetCategoryClient<T, Null = never, ExtArgs extends ru
   assetModels<T extends Prisma.AssetCategory$assetModelsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AssetCategory$assetModelsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetModelPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assets<T extends Prisma.AssetCategory$assetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AssetCategory$assetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   dataOwnerships<T extends Prisma.AssetCategory$dataOwnershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AssetCategory$dataOwnershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DataOwnershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  kitItems<T extends Prisma.AssetCategory$kitItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AssetCategory$kitItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetKitItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2013,6 +2145,30 @@ export type AssetCategory$dataOwnershipsArgs<ExtArgs extends runtime.Types.Exten
   take?: number
   skip?: number
   distinct?: Prisma.DataOwnershipScalarFieldEnum | Prisma.DataOwnershipScalarFieldEnum[]
+}
+
+/**
+ * AssetCategory.kitItems
+ */
+export type AssetCategory$kitItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AssetKitItem
+   */
+  select?: Prisma.AssetKitItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AssetKitItem
+   */
+  omit?: Prisma.AssetKitItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AssetKitItemInclude<ExtArgs> | null
+  where?: Prisma.AssetKitItemWhereInput
+  orderBy?: Prisma.AssetKitItemOrderByWithRelationInput | Prisma.AssetKitItemOrderByWithRelationInput[]
+  cursor?: Prisma.AssetKitItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AssetKitItemScalarFieldEnum | Prisma.AssetKitItemScalarFieldEnum[]
 }
 
 /**

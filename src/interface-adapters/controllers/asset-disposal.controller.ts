@@ -18,6 +18,7 @@ import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
+import { getCurrentUserId } from "@/lib/auth/session";
 import {
   CreateAssetDisposalDTO,
   StartDisposalDTO,
@@ -55,6 +56,7 @@ export async function createAssetDisposalAction(
     await requirePermission(PERMISSIONS.ASSETS_DELETE);
 
     const validated = CreateAssetDisposalDTO.parse(data);
+    const currentUserId = await getCurrentUserId();
 
     const container = getContainer();
     const useCase = container.get<CreateAssetDisposalUseCase>(
@@ -64,11 +66,15 @@ export async function createAssetDisposalAction(
     const disposal = await useCase.execute({
       assetId: validated.assetId,
       disposalType: validated.disposalType,
-      disposalMethod: validated.disposalMethod,
       reason: validated.reason,
+      initiatedById: currentUserId,
       estimatedValue: validated.estimatedValue,
+      currency: validated.currency,
+      disposalVendorId: validated.disposalVendorId,
+      recipientInfo: validated.recipientInfo,
+      note: validated.note,
+      metadata: validated.metadata,
       approverIds: validated.approverIds,
-      notes: validated.notes,
     });
 
     revalidatePath("/asset-disposals");

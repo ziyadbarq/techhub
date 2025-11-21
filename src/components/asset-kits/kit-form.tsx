@@ -19,6 +19,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Form,
   FormControl,
   FormDescription,
@@ -56,6 +63,7 @@ export function KitForm({ open, onOpenChange, onSuccess, kit }: KitFormProps) {
       name: kit?.name ?? "",
       code: kit?.code ?? "",
       description: kit?.description ?? "",
+      kitType: kit?.kitType ?? "NEW_HIRE",
       isActive: kit?.isActive ?? true,
     },
   });
@@ -65,6 +73,7 @@ export function KitForm({ open, onOpenChange, onSuccess, kit }: KitFormProps) {
       name: kit?.name ?? "",
       code: kit?.code ?? "",
       description: kit?.description ?? "",
+      kitType: kit?.kitType ?? "NEW_HIRE",
       isActive: kit?.isActive ?? true,
     });
   }, [kit, form]);
@@ -138,6 +147,36 @@ export function KitForm({ open, onOpenChange, onSuccess, kit }: KitFormProps) {
                   </FormControl>
                   <FormDescription>
                     Unique identifier for this kit
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Kit Type */}
+            <FormField
+              control={form.control}
+              name="kitType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Kit Type</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select kit type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="NEW_HIRE">New Hire</SelectItem>
+                      <SelectItem value="CONTRACTOR">Contractor</SelectItem>
+                      <SelectItem value="EXECUTIVE">Executive</SelectItem>
+                      <SelectItem value="PROJECT">Project</SelectItem>
+                      <SelectItem value="TEMPORARY">Temporary</SelectItem>
+                      <SelectItem value="OTHER">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Purpose or use case for this kit
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

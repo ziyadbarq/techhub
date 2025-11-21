@@ -6,11 +6,8 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseAllocationRepository } from "@/core/repositories/license-allocation.repository.interface";
 import type { ILicenseEntitlementRepository } from "@/core/repositories/license-entitlement.repository.interface";
-import type {
-  AllocationTargetType} from "@/core/domain/entities/license-allocation.entity";
-import {
-  LicenseAllocation
-} from "@/core/domain/entities/license-allocation.entity";
+import type { AllocationTargetType } from "@/core/domain/entities/license-allocation.entity";
+import { LicenseAllocation } from "@/core/domain/entities/license-allocation.entity";
 
 export interface CreateLicenseAllocationRequest {
   licenseEntitlementId: string;
