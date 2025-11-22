@@ -68,10 +68,44 @@ const mockListPermissionsUseCase = {
   execute: vi.fn(),
 };
 
+const mockRoleRepository = {
+  findById: vi.fn(),
+  findByName: vi.fn(),
+};
+
 // Mock requirePermission
 vi.mock("@/lib/permissions/server", () => ({
   requirePermission: vi.fn(),
 }));
+
+// Sample role data
+const createMockRole = (overrides?: Partial<Role>): Role =>
+  ({
+    id: "role-1",
+    name: "editor",
+    displayName: "Editor",
+    description: "Can edit content",
+    isSystem: false,
+    isActive: true,
+    createdAt: new Date("2024-01-01T00:00:00Z"),
+    updatedAt: new Date("2024-01-01T00:00:00Z"),
+    ...overrides,
+  }) as Role;
+
+const createMockPermission = (overrides?: Partial<Permission>): Permission =>
+  ({
+    id: "perm-1",
+    name: "tasks:view",
+    resource: "tasks",
+    action: "view",
+    displayName: "View Tasks",
+    description: "View tasks",
+    isSystem: false,
+    isActive: true,
+    createdAt: new Date("2024-01-01T00:00:00Z"),
+    updatedAt: new Date("2024-01-01T00:00:00Z"),
+    ...overrides,
+  }) as Permission;
 
 // Mock getCurrentUserId
 vi.mock("@/lib/auth/session", () => ({
@@ -124,6 +158,9 @@ vi.mock("@/di/container", () => ({
       if (tokenKey === Symbol.for("ListPermissionsUseCase").toString()) {
         return mockListPermissionsUseCase;
       }
+      if (tokenKey === Symbol.for("IRoleRepository").toString()) {
+        return mockRoleRepository;
+      }
       if (tokenKey === Symbol.for("ILoggerService").toString()) {
         return mockLogger;
       }
@@ -135,36 +172,10 @@ vi.mock("@/di/container", () => ({
 describe("Role Controller", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    const defaultRole = createMockRole({ id: "role-1", name: "role-1" });
+    mockRoleRepository.findById.mockResolvedValue(defaultRole);
+    mockRoleRepository.findByName.mockResolvedValue(defaultRole);
   });
-
-  // Sample role data
-  const createMockRole = (overrides?: Partial<Role>): Role =>
-    ({
-      id: "role-1",
-      name: "editor",
-      displayName: "Editor",
-      description: "Can edit content",
-      isSystem: false,
-      isActive: true,
-      createdAt: new Date("2024-01-01T00:00:00Z"),
-      updatedAt: new Date("2024-01-01T00:00:00Z"),
-      ...overrides,
-    }) as Role;
-
-  const createMockPermission = (overrides?: Partial<Permission>): Permission =>
-    ({
-      id: "perm-1",
-      name: "tasks:view",
-      resource: "tasks",
-      action: "view",
-      displayName: "View Tasks",
-      description: "View tasks",
-      isSystem: false,
-      isActive: true,
-      createdAt: new Date("2024-01-01T00:00:00Z"),
-      updatedAt: new Date("2024-01-01T00:00:00Z"),
-      ...overrides,
-    }) as Permission;
 
   describe("createRoleAction", () => {
     it("should create a new role successfully", async () => {
@@ -485,8 +496,8 @@ describe("Role Controller", () => {
   describe("getRoleAction", () => {
     it("should get role by id", async () => {
       // Arrange
-      const mockRole = createMockRole();
-      mockGetRoleUseCase.execute.mockResolvedValue({ role: mockRole });
+      const mockRole = createMockRole({ name: "role-1" });
+      mockRoleRepository.findByName.mockResolvedValue(mockRole);
 
       // Act
       const result = await getRoleAction("role-1");
@@ -498,21 +509,21 @@ describe("Role Controller", () => {
       }
     });
 
-    it("should call use case with validated id", async () => {
+    it("should call repository with validated name", async () => {
       // Arrange
-      const mockRole = createMockRole();
-      mockGetRoleUseCase.execute.mockResolvedValue({ role: mockRole });
+      const mockRole = createMockRole({ name: "role-1" });
+      mockRoleRepository.findByName.mockResolvedValue(mockRole);
 
       // Act
       await getRoleAction("role-1");
 
       // Assert
-      expect(mockGetRoleUseCase.execute).toHaveBeenCalledWith("role-1");
+      expect(mockRoleRepository.findByName).toHaveBeenCalledWith("role-1");
     });
 
     it("should return error when role not found", async () => {
       // Arrange
-      mockGetRoleUseCase.execute.mockResolvedValue(null);
+      mockRoleRepository.findByName.mockResolvedValue(null);
 
       // Act
       const result = await getRoleAction("nonexistent");
@@ -526,7 +537,9 @@ describe("Role Controller", () => {
 
     it("should return error response on exception", async () => {
       // Arrange
-      mockGetRoleUseCase.execute.mockRejectedValue(new Error("Database error"));
+      mockRoleRepository.findByName.mockRejectedValue(
+        new Error("Database error"),
+      );
 
       // Act
       const result = await getRoleAction("role-1");

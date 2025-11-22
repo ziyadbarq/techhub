@@ -137,19 +137,14 @@ Control visibility of navigation items based on user roles and permissions.
 
 - Items hidden if user lacks permission
 - Groups hidden if all items are hidden
-- Seamless integration with future RBAC system
+- Integrated with backend RBAC service
 - Type-safe permission checking
 
-**Current Implementation:**
+**How it works:**
 
-The permission system is a mock/TODO ready for future RBAC integration. Currently uses a mock role (default: "admin") defined in `src/lib/permissions.ts`.
-
-**Supported Roles:**
-
-- `admin` - Full access to all features
-- `moderator` - Moderation and content management
-- `user` - Basic user features
-- `guest` - Public/limited access
+- Permissions come from the RBAC use case via `/api/rbac/my-permissions`
+- `usePermissions()` caches permissions client-side and exposes guards
+- Navigation filtering uses the permission constants in `src/core/domain/value-objects/permission-key.ts`
 
 **Configuration:**
 
@@ -174,8 +169,8 @@ The permission system is a mock/TODO ready for future RBAC integration. Currentl
 **Permission Checking:**
 
 ```typescript
-// src/lib/permissions.ts
-import { hasPermission } from "@/lib/permissions";
+// src/hooks/use-permissions.ts
+const { hasPermission, hasAnyPermission, hasAllPermissions } = usePermissions();
 
 // Check single permission
 if (hasPermission("view:tasks")) {
@@ -190,20 +185,6 @@ if (hasAnyPermission(["create:tasks", "edit:tasks"])) {
 // Check multiple permissions (all)
 if (hasAllPermissions(["view:admin", "manage:users"])) {
   // Show admin features
-}
-```
-
-**Future Integration:**
-
-When implementing full RBAC, update `getUserRole()` in `src/lib/permissions.ts` to fetch from your auth system:
-
-```typescript
-export function getUserRole(): UserRole {
-  // TODO: Replace with actual auth integration
-  // Example:
-  // const session = await getServerSession();
-  // return session.user.role;
-  return "admin"; // Current mock
 }
 ```
 
@@ -1054,7 +1035,7 @@ npm install framer-motion
 Copy the following files to your project:
 
 - `src/hooks/use-badge-updates.ts`
-- `src/lib/permissions.ts`
+- `src/hooks/use-permissions.ts` (client permission hook backed by `/api/rbac/my-permissions`)
 
 Update `src/hooks/index.ts` to export new hooks.
 
@@ -1068,7 +1049,7 @@ Replace your existing Sidebar component with the enhanced version, or merge the 
 2. Test collapsible groups
 3. Test nested navigation
 4. Test badge updates
-5. Test permissions (change mock role)
+5. Test permissions (log in with roles that grant/deny items)
 6. Test animations
 7. Test mobile responsive
 

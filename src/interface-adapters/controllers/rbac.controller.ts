@@ -21,17 +21,19 @@ import type {
   GetUserPermissionsUseCase,
 } from "@/core/use-cases/rbac";
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
+import { getSession } from "@/lib/auth/session";
 
 /**
  * Helper to get current user session
- * TODO: Replace with actual auth implementation
  */
 async function requireAuth() {
-  // TODO: Implement actual session/auth check
-  // For now, return mock user ID
-  return {
-    userId: "system",
-  };
+  const { user } = await getSession();
+
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+
+  return { userId: user.id };
 }
 
 /**

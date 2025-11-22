@@ -5,6 +5,8 @@
 import type { LicenseAllocation } from "@/core/domain/entities/license-allocation.entity";
 import type { LicenseAllocationDTO } from "../dtos/generated/license-allocation.dto";
 
+export type { LicenseAllocationDTO };
+
 export class LicenseAllocationPresenter {
   static toDTO(allocation: LicenseAllocation): LicenseAllocationDTO {
     return {

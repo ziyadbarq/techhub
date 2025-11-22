@@ -8,6 +8,10 @@ import { getSession } from "@/lib/auth/session";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { GetUserRolesUseCase } from "@/core/use-cases/rbac/get-user-roles.use-case";
+import type { ILoggerService } from "@/core/services";
+
+const container = getContainer();
+const logger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
 
 export async function GET() {
   try {
@@ -19,7 +23,6 @@ export async function GET() {
     }
 
     // Get use case from DI container
-    const container = getContainer();
     const getUserRoles = container.get<GetUserRolesUseCase>(
       DI_TOKENS.GetUserRolesUseCase,
     );
@@ -37,7 +40,8 @@ export async function GET() {
       })),
     });
   } catch (error) {
-    console.error("Failed to fetch user roles:", error);
+    const err = error instanceof Error ? error : new Error(String(error));
+    logger.error("Failed to fetch user roles", err);
     return NextResponse.json(
       { error: "Failed to fetch roles" },
       { status: 500 },

@@ -34,6 +34,15 @@ export const MAINTENANCE_JOBS = {
 } as const;
 
 /**
+ * Reservation queue job names
+ */
+export const RESERVATION_JOBS = {
+  ACTIVATE_READY: "activate-ready-reservations",
+  COMPLETE_EXPIRED: "complete-expired-reservations",
+  SEND_REMINDERS: "send-reservation-reminders",
+} as const;
+
+/**
  * Queue names
  */
 export const QUEUE_NAMES = {
@@ -49,4 +58,6 @@ export type EmailJobName = (typeof EMAIL_JOBS)[keyof typeof EMAIL_JOBS];
 export type TaskJobName = (typeof TASK_JOBS)[keyof typeof TASK_JOBS];
 export type MaintenanceJobName =
   (typeof MAINTENANCE_JOBS)[keyof typeof MAINTENANCE_JOBS];
+export type ReservationJobName =
+  (typeof RESERVATION_JOBS)[keyof typeof RESERVATION_JOBS];
 export type QueueName = (typeof QUEUE_NAMES)[keyof typeof QUEUE_NAMES];

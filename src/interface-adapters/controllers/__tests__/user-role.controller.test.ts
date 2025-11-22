@@ -348,11 +348,11 @@ describe("User Role Controller", () => {
       prisma.user.findUnique.mockResolvedValue(createMockUser());
 
       // Act
-      await getUserWithRolesAction("user-1");
+      await getUserWithRolesAction("user-1@example.com");
 
       // Assert
       expect(prisma.user.findUnique).toHaveBeenCalledWith({
-        where: { id: "user-1" },
+        where: { email: "user-1@example.com" },
         include: {
           roles: {
             include: {

@@ -36,6 +36,7 @@ import {
   CompleteSanitizationUseCase,
   CompleteDisposalUseCase,
   GenerateCertificateUseCase,
+  GenerateDisposalCertificatePDFUseCase,
   CancelDisposalUseCase,
   DeleteAssetDisposalUseCase,
 } from "@/core/use-cases/disposal";
@@ -115,6 +116,13 @@ export function loadDisposalModule(container: Container): void {
   container
     .bind<GenerateCertificateUseCase>(DI_TOKENS.GenerateCertificateUseCase)
     .to(GenerateCertificateUseCase)
+    .inSingletonScope();
+
+  container
+    .bind<GenerateDisposalCertificatePDFUseCase>(
+      DI_TOKENS.GenerateDisposalCertificatePDFUseCase,
+    )
+    .to(GenerateDisposalCertificatePDFUseCase)
     .inSingletonScope();
 
   container

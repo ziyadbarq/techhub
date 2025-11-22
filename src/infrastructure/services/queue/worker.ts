@@ -20,12 +20,16 @@ import {
   QUEUE_NAMES,
   TASK_JOBS,
   MAINTENANCE_JOBS,
+  RESERVATION_JOBS,
 } from "@/core/domain/jobs/job-names";
 import {
   handleTaskCompletedNotification,
   handleCleanupOldTasks,
   handleSendTaskReminder,
   handleWarrantyExpirationCheck,
+  handleActivateReadyReservations,
+  handleCompleteExpiredReservations,
+  handleSendReservationReminders,
 } from "./handlers";
 
 /**
@@ -114,6 +118,20 @@ function createMaintenanceWorker(): BaseWorker {
   worker.registerHandler(
     MAINTENANCE_JOBS.WARRANTY_EXPIRATION_CHECK,
     handleWarrantyExpirationCheck,
+  );
+
+  // Register reservation background job handlers
+  worker.registerHandler(
+    RESERVATION_JOBS.ACTIVATE_READY,
+    handleActivateReadyReservations,
+  );
+  worker.registerHandler(
+    RESERVATION_JOBS.COMPLETE_EXPIRED,
+    handleCompleteExpiredReservations,
+  );
+  worker.registerHandler(
+    RESERVATION_JOBS.SEND_REMINDERS,
+    handleSendReservationReminders,
   );
 
   /**

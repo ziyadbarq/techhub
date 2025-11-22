@@ -16,6 +16,16 @@ import {
 } from "../rbac.controller";
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
 
+// Mock auth session
+vi.mock("@/lib/auth/session", () => ({
+  getSession: vi.fn(() =>
+    Promise.resolve({
+      user: { id: "system" },
+      session: { id: "session-123" },
+    }),
+  ),
+}));
+
 // Mock logger service
 const mockLogger = {
   debug: vi.fn(),

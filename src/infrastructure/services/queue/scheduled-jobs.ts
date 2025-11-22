@@ -6,7 +6,11 @@
  */
 
 import type { IJobQueueService } from "@/core/services/job-queue.service.interface";
-import { QUEUE_NAMES, TASK_JOBS } from "@/core/domain/jobs/job-names";
+import {
+  QUEUE_NAMES,
+  TASK_JOBS,
+  RESERVATION_JOBS,
+} from "@/core/domain/jobs/job-names";
 import type { CleanupOldTasksJobData } from "@/core/domain/jobs/job-data.types";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
@@ -56,16 +60,66 @@ export async function setupScheduledJobs(
   });
 
   // ==========================================
-  // Add more scheduled jobs here
+  // Reservation Background Jobs
   // ==========================================
 
-  // Example: Hourly notification check
-  // await jobQueueService.scheduleJob(
-  //   QUEUE_NAMES.TASKS,
-  //   TASK_JOBS.TASK_REMINDER,
-  //   { reminderType: 'due-soon' },
-  //   { pattern: '0 * * * *' } // Every hour
-  // );
+  // Activate ready reservations (CONFIRMED → ACTIVE when start date reached)
+  // Runs every 15 minutes
+  await jobQueueService.scheduleJob(
+    QUEUE_NAMES.MAINTENANCE,
+    RESERVATION_JOBS.ACTIVATE_READY,
+    {},
+    {
+      pattern: "*/15 * * * *", // Every 15 minutes
+      tz: "UTC",
+    },
+  );
+
+  logger.info("Activate ready reservations job scheduled", {
+    pattern: "*/15 * * * *",
+    timezone: "UTC",
+    jobName: RESERVATION_JOBS.ACTIVATE_READY,
+  });
+
+  // Complete expired reservations (ACTIVE → COMPLETED when end date passed)
+  // Runs every hour
+  await jobQueueService.scheduleJob(
+    QUEUE_NAMES.MAINTENANCE,
+    RESERVATION_JOBS.COMPLETE_EXPIRED,
+    {},
+    {
+      pattern: "0 * * * *", // Every hour at minute 0
+      tz: "UTC",
+    },
+  );
+
+  logger.info("Complete expired reservations job scheduled", {
+    pattern: "0 * * * *",
+    timezone: "UTC",
+    jobName: RESERVATION_JOBS.COMPLETE_EXPIRED,
+  });
+
+  // Send reminder notifications for upcoming reservations
+  // Runs every 30 minutes
+  await jobQueueService.scheduleJob(
+    QUEUE_NAMES.MAINTENANCE,
+    RESERVATION_JOBS.SEND_REMINDERS,
+    {},
+    {
+      pattern: "*/30 * * * *", // Every 30 minutes
+      tz: "UTC",
+    },
+  );
+
+  logger.info("Send reservation reminders job scheduled", {
+    pattern: "*/30 * * * *",
+    timezone: "UTC",
+    jobName: RESERVATION_JOBS.SEND_REMINDERS,
+  });
+
+  // ==========================================
+  // Add more scheduled jobs here
+  // ==========================================
 
   logger.info("All scheduled jobs configured successfully");
 }

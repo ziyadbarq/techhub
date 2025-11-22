@@ -2,9 +2,15 @@
 
 Welcome to the comprehensive documentation for Barq Assets. This index provides quick access to all documentation resources organized by category.
 
-## 📚 Quick Start
+## 🚀 Start Here
 
+**Current System State:**
+- [CURRENT_STATUS.md](./CURRENT_STATUS.md) - What's working now, navigation structure, type safety status
+- [TODO.md](./TODO.md) - Implementation priorities and next steps
+
+**Project Overview:**
 - [Main README](../README.md) - Project overview, features, and quick start guide
+- [STATUS.md](../STATUS.md) - Quick status at a glance (root level)
 - [CLAUDE.md](../CLAUDE.md) - Architecture guide and development workflows for AI assistants
 
 ## 🏗️ Architecture & Technical Design
@@ -36,6 +42,16 @@ Asset management, inventory tracking, warranties, and maintenance:
 
 - [Warranty System](./WARRANTY_SYSTEM.md) - Complete warranty management implementation with expiration tracking
 - [Maintenance System](./MAINTENANCE_SYSTEM.md) - Preventive maintenance schedules and records with recurring schedules and workflow state management
+
+### Advanced ITAM Layer (Layer 3)
+
+Advanced IT Asset Management features:
+
+- [ITAM Features Overview](./ITAM_FEATURES.md) - Complete guide to all advanced ITAM modules
+- [Asset Disposals](./ASSET_DISPOSALS.md) - Multi-step disposal workflow with approval chain and PDF certificate generation
+- [Asset Kits](./ASSET_KITS.md) - Predefined asset bundles with checkout tracking
+- [Asset Reservations](./ASSET_RESERVATIONS.md) - Future asset reservations with conflict detection and automated background jobs
+- [CMDB Guide](./CMDB_GUIDE.md) - Configuration Management Database with dependency tracking
 
 ### Infrastructure & Systems
 

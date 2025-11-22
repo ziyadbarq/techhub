@@ -306,6 +306,9 @@ export const DI_TOKENS = {
   CompleteSanitizationUseCase: Symbol.for("CompleteSanitizationUseCase"),
   CompleteDisposalUseCase: Symbol.for("CompleteDisposalUseCase"),
   GenerateCertificateUseCase: Symbol.for("GenerateCertificateUseCase"),
+  GenerateDisposalCertificatePDFUseCase: Symbol.for(
+    "GenerateDisposalCertificatePDFUseCase",
+  ),
   CancelDisposalUseCase: Symbol.for("CancelDisposalUseCase"),
   DeleteAssetDisposalUseCase: Symbol.for("DeleteAssetDisposalUseCase"),
 

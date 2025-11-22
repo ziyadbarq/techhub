@@ -54,6 +54,11 @@ const mockDeletePermissionUseCase = {
   execute: vi.fn(),
 };
 
+const mockPermissionRepository = {
+  findByName: vi.fn(),
+  findById: vi.fn(),
+};
+
 // Mock requirePermission
 const mockRequirePermission = vi.fn();
 vi.mock("@/lib/permissions/server", () => ({
@@ -85,6 +90,9 @@ vi.mock("@/di/container", () => ({
       if (tokenKey === Symbol.for("DeletePermissionUseCase").toString()) {
         return mockDeletePermissionUseCase;
       }
+      if (tokenKey === Symbol.for("IPermissionRepository").toString()) {
+        return mockPermissionRepository;
+      }
       if (tokenKey === Symbol.for("ILoggerService").toString()) {
         return mockLogger;
       }
@@ -97,6 +105,9 @@ describe("Permission Controller", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockRequirePermission.mockResolvedValue(undefined);
+    const defaultPermission = createMockPermission();
+    mockPermissionRepository.findByName.mockResolvedValue(defaultPermission);
+    mockPermissionRepository.findById.mockResolvedValue(defaultPermission);
   });
 
   // Sample permission data
@@ -330,45 +341,41 @@ describe("Permission Controller", () => {
   });
 
   describe("getPermissionAction", () => {
-    it("should get permission by id", async () => {
+    it("should get permission by name", async () => {
       // Arrange
-      const mockPermission = createMockPermission();
-      mockGetPermissionUseCase.execute.mockResolvedValue(mockPermission);
+      const mockPermission = createMockPermission({ name: "tasks:view" });
+      mockPermissionRepository.findByName.mockResolvedValue(mockPermission);
 
       // Act
-      const result = await getPermissionAction(
-        "550e8400-e29b-41d4-a716-446655440000",
-      );
+      const result = await getPermissionAction("tasks:view");
 
       // Assert
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.id).toBe("550e8400-e29b-41d4-a716-446655440000");
+        expect(result.data.name).toBe("tasks:view");
       }
     });
 
-    it("should call use case with validated id", async () => {
+    it("should call repository with validated name", async () => {
       // Arrange
-      const mockPermission = createMockPermission();
-      mockGetPermissionUseCase.execute.mockResolvedValue(mockPermission);
+      const mockPermission = createMockPermission({ name: "tasks:view" });
+      mockPermissionRepository.findByName.mockResolvedValue(mockPermission);
 
       // Act
-      await getPermissionAction("550e8400-e29b-41d4-a716-446655440000");
+      await getPermissionAction("tasks:view");
 
       // Assert
-      expect(mockGetPermissionUseCase.execute).toHaveBeenCalledWith({
-        id: "550e8400-e29b-41d4-a716-446655440000",
-      });
+      expect(mockPermissionRepository.findByName).toHaveBeenCalledWith(
+        "tasks:view",
+      );
     });
 
     it("should return error when permission not found", async () => {
       // Arrange
-      mockGetPermissionUseCase.execute.mockResolvedValue(null);
+      mockPermissionRepository.findByName.mockResolvedValue(null);
 
       // Act
-      const result = await getPermissionAction(
-        "770e8400-e29b-41d4-a716-446655440002",
-      ); // Valid UUID but not found
+      const result = await getPermissionAction("tasks:view");
 
       // Assert
       expect(result.success).toBe(false);
@@ -379,14 +386,12 @@ describe("Permission Controller", () => {
 
     it("should return error response on exception", async () => {
       // Arrange
-      mockGetPermissionUseCase.execute.mockRejectedValue(
+      mockPermissionRepository.findByName.mockRejectedValue(
         new Error("Database error"),
       );
 
       // Act
-      const result = await getPermissionAction(
-        "550e8400-e29b-41d4-a716-446655440000",
-      );
+      const result = await getPermissionAction("tasks:view");
 
       // Assert
       expect(result.success).toBe(false);

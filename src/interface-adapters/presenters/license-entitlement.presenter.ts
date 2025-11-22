@@ -5,6 +5,8 @@
 import type { LicenseEntitlement } from "@/core/domain/entities/license-entitlement.entity";
 import type { LicenseEntitlementDTO } from "../dtos/generated/license-entitlement.dto";
 
+export type { LicenseEntitlementDTO };
+
 export class LicenseEntitlementPresenter {
   static toDTO(entitlement: LicenseEntitlement): LicenseEntitlementDTO {
     return {
