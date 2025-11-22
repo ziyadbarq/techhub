@@ -22,6 +22,7 @@ export interface MaintenanceRecordProps {
   status: MaintenanceStatus;
   notes: string | null;
   cost: number | null;
+  currency: string | null;
   partsUsed: string[] | null;
   nextMaintenanceDate: Date | null;
   createdAt: Date;
@@ -39,6 +40,7 @@ export interface CreateMaintenanceRecordProps {
   status?: MaintenanceStatus;
   notes?: string | null;
   cost?: number | null;
+  currency?: string | null;
   partsUsed?: string[] | null;
   nextMaintenanceDate?: Date | null;
 }
@@ -93,6 +95,7 @@ export class MaintenanceRecord {
       status,
       notes: props.notes?.trim() || null,
       cost: props.cost ?? null,
+      currency: props.currency ?? null,
       partsUsed: props.partsUsed ?? null,
       nextMaintenanceDate: props.nextMaintenanceDate ?? null,
       createdAt: now,
@@ -119,6 +122,7 @@ export class MaintenanceRecord {
     status?: MaintenanceStatus;
     notes?: string | null;
     cost?: number | null;
+    currency?: string | null;
     partsUsed?: string[] | null;
     nextMaintenanceDate?: Date | null;
   }): void {
@@ -169,6 +173,10 @@ export class MaintenanceRecord {
       this.props.cost = props.cost;
     }
 
+    if (props.currency !== undefined) {
+      this.props.currency = props.currency;
+    }
+
     if (props.partsUsed !== undefined) {
       this.props.partsUsed = props.partsUsed;
     }
@@ -205,6 +213,7 @@ export class MaintenanceRecord {
     completedDate?: Date;
     notes?: string | null;
     cost?: number | null;
+    currency?: string | null;
     partsUsed?: string[] | null;
     nextMaintenanceDate?: Date | null;
   }): void {
@@ -223,6 +232,7 @@ export class MaintenanceRecord {
     this.props.completedDate = props.completedDate ?? new Date();
     this.props.notes = props.notes?.trim() || null;
     this.props.cost = props.cost ?? null;
+    this.props.currency = props.currency ?? null;
     this.props.partsUsed = props.partsUsed ?? null;
     this.props.nextMaintenanceDate = props.nextMaintenanceDate ?? null;
     this.props.updatedAt = new Date();
@@ -338,6 +348,10 @@ export class MaintenanceRecord {
 
   get cost(): number | null {
     return this.props.cost;
+  }
+
+  get currency(): string | null {
+    return this.props.currency;
   }
 
   get partsUsed(): string[] | null {
