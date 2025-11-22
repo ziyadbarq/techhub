@@ -465,6 +465,13 @@ export const navGroups: NavGroup[] = [
         description: "Manage custom field definitions",
         permission: PERMISSIONS.FIELD_DEFINITIONS_VIEW,
       },
+      {
+        title: "FX Rates",
+        href: "/fx-rates",
+        icon: TrendingUp,
+        description: "Manage exchange rates for multi-currency support",
+        permission: PERMISSIONS.FX_RATES_VIEW,
+      },
     ],
     visible: true,
     collapsible: true,

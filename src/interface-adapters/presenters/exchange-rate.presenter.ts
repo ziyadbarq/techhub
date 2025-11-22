@@ -5,6 +5,10 @@
 
 import type { ExchangeRate } from "@/core/domain/entities/exchange-rate.entity";
 import type { ConvertCurrencyResult } from "@/core/use-cases/foundation/exchange-rate/convert-currency.use-case";
+import type {
+  ExchangeRateResponseDTO,
+  ConvertCurrencyResponseDTO,
+} from "@/interface-adapters/dtos/generated/exchange-rate.dto";
 
 // Re-export types for controller usage
 export type {
