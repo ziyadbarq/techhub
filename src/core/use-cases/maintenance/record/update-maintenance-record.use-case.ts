@@ -19,6 +19,7 @@ export interface UpdateMaintenanceRecordProps {
   status?: MaintenanceStatus;
   notes?: string | null;
   cost?: number | null;
+  currency?: string | null;
   partsUsed?: string[] | null;
   nextMaintenanceDate?: Date | null;
 }
