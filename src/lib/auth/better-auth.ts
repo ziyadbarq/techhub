@@ -66,6 +66,16 @@ type AdminAssignmentResult =
   | { assigned: true; reason: "assigned" }
   | { assigned: false; reason: "has-role" | "not-first" | "missing-role" };
 
+type PersonLinkResult =
+  | { status: "already-linked"; personId: string }
+  | { status: "linked-existing"; personId: string }
+  | { status: "created"; personId: string }
+  | {
+      status: "blocked";
+      reason: "missing-org-unit" | "missing-viewer-role" | "conflict";
+      message: string;
+    };
+
 const assignAdminRoleToFirstUser = async (
   userId: string,
 ): Promise<AdminAssignmentResult> => {
@@ -128,6 +138,138 @@ const assignAdminRoleToFirstUser = async (
       error instanceof Error ? error : new Error(String(error)),
     );
     return { assigned: false, reason: "missing-role" };
+  }
+};
+
+const parseName = (name?: string | null) => {
+  if (!name) return { firstName: "New", lastName: "User" };
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) {
+    return { firstName: parts[0] || "New", lastName: "User" };
+  }
+  const [first, ...rest] = parts;
+  return { firstName: first || "New", lastName: rest.join(" ") || "User" };
+};
+
+const ensurePersonLinkedToUser = async (user: {
+  id: string;
+  email?: string | null;
+  name?: string | null;
+}): Promise<PersonLinkResult> => {
+  try {
+    return await prismaWithEncryption.$transaction(async (tx) => {
+      // Already linked
+      const existingPerson = await tx.person.findFirst({
+        where: { userId: user.id },
+      });
+      if (existingPerson) {
+        return { status: "already-linked", personId: existingPerson.id };
+      }
+
+      const normalizedEmail = user.email?.toLowerCase() ?? null;
+
+      // Try to link by email if a person exists without a userId
+      if (normalizedEmail) {
+        const personByEmail = await tx.person.findFirst({
+          where: {
+            email: { equals: normalizedEmail, mode: "insensitive" },
+          },
+        });
+
+        if (personByEmail) {
+          if (personByEmail.userId && personByEmail.userId !== user.id) {
+            return {
+              status: "blocked",
+              reason: "conflict",
+              message:
+                "Person record already linked to a different user. Manual cleanup required.",
+            };
+          }
+
+          const updated = await tx.person.update({
+            where: { id: personByEmail.id },
+            data: { userId: user.id },
+          });
+
+          return { status: "linked-existing", personId: updated.id };
+        }
+      }
+
+      // Create a new person using defaults
+      const orgUnit = await tx.organizationUnit.findFirst({
+        orderBy: { createdAt: "asc" },
+      });
+      if (!orgUnit) {
+        return {
+          status: "blocked",
+          reason: "missing-org-unit",
+          message: "No organization units found – seed foundation data first.",
+        };
+      }
+
+      const viewerRole = await tx.role.findUnique({
+        where: { name: "viewer" },
+      });
+      if (!viewerRole) {
+        return {
+          status: "blocked",
+          reason: "missing-viewer-role",
+          message: "Viewer role not found – seed RBAC data first.",
+        };
+      }
+
+      const { firstName, lastName } = parseName(user.name ?? user.email);
+      const email =
+        normalizedEmail ??
+        // Fallback email for environments without identity provider email
+        `${user.id}@local.barq`;
+
+      const createdPerson = await tx.person.create({
+        data: {
+          id: createId(),
+          userId: user.id,
+          firstName,
+          lastName,
+          email,
+          orgUnitId: orgUnit.id,
+          primaryRoleId: viewerRole.id,
+          isActive: true,
+        },
+      });
+
+      // Ensure the user has at least the viewer role for permissions
+      const existingViewerRole = await tx.userRole.findUnique({
+        where: {
+          userId_roleId: {
+            userId: user.id,
+            roleId: viewerRole.id,
+          },
+        },
+      });
+
+      if (!existingViewerRole) {
+        await tx.userRole.create({
+          data: {
+            id: createId(),
+            userId: user.id,
+            roleId: viewerRole.id,
+            createdAt: new Date(),
+          },
+        });
+      }
+
+      return { status: "created", personId: createdPerson.id };
+    });
+  } catch (error) {
+    console.error(
+      "[Auth Debug] Failed to ensure person linkage",
+      error instanceof Error ? error.message : String(error),
+    );
+    return {
+      status: "blocked",
+      reason: "conflict",
+      message: "Unexpected error linking user to person.",
+    };
   }
 };
 
@@ -475,15 +617,37 @@ export const auth = betterAuth({
       }
 
       // Get user from context
-      const userId = ctx.context.newSession?.user?.id;
-      if (!userId) return;
+      const user = ctx.context.newSession?.user;
+      if (!user?.id) return;
+
+      const linkResult = await ensurePersonLinkedToUser(user);
+      if (linkResult.status === "blocked") {
+        console.error(
+          "⚠️ Failed to auto-link user to person",
+          linkResult.message,
+          linkResult.reason,
+        );
+        return;
+      }
+
+      if (linkResult.status === "created") {
+        authDebugLog("info", "Person created and linked for user", {
+          userId: user.id,
+          personId: linkResult.personId,
+        });
+      } else if (linkResult.status === "linked-existing") {
+        authDebugLog("info", "Person linked for user", {
+          userId: user.id,
+          personId: linkResult.personId,
+        });
+      }
 
       // Check if user already has roles
-      const result = await assignAdminRoleToFirstUser(userId);
+      const result = await assignAdminRoleToFirstUser(user.id);
 
       if (result.assigned) {
         console.log(
-          `✅ First user ${userId} automatically assigned admin role`,
+          `✅ First user ${user.id} automatically assigned admin role`,
         );
         return;
       }

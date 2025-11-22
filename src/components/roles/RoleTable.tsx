@@ -113,6 +113,9 @@ export function RoleTable({
           </div>
         );
       },
+      meta: {
+        label: "Role",
+      },
     },
     {
       accessorKey: "description",
@@ -125,6 +128,9 @@ export function RoleTable({
           </span>
         );
       },
+      meta: {
+        label: "Description",
+      },
     },
     {
       accessorKey: "isSystem",
@@ -135,6 +141,9 @@ export function RoleTable({
         getStatusBadge(row.original.isActive, row.getValue("isSystem")),
       filterFn: (row, id, value) => {
         return value.includes(row.getValue(id));
+      },
+      meta: {
+        label: "Status",
       },
     },
     {
@@ -149,6 +158,9 @@ export function RoleTable({
             {format(date, "MMM d, yyyy")}
           </span>
         );
+      },
+      meta: {
+        label: "Created",
       },
     },
     {

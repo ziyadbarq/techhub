@@ -29,7 +29,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Shield, Key, Users, FileText, Settings } from "lucide-react";
+import {
+  Shield,
+  Key,
+  Users,
+  FileText,
+  Settings,
+  SlidersHorizontal,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePermissions } from "@/hooks/use-permissions";
 import {
@@ -83,6 +90,13 @@ const adminNavItems: AdminNavItem[] = [
     icon: FileText,
     description: "View audit logs",
     permission: PERMISSIONS.AUDIT_LOGS_VIEW,
+  },
+  {
+    title: "System Settings",
+    href: "/admin/settings",
+    icon: SlidersHorizontal,
+    description: "Configure platform and infrastructure settings",
+    permission: PERMISSIONS.SETTINGS_MANAGE,
   },
 ];
 

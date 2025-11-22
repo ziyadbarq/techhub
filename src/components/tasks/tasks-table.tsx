@@ -256,6 +256,9 @@ export function TasksTable({
           </div>
         );
       },
+      meta: {
+        label: "Title",
+      },
     },
     {
       accessorKey: "status",
@@ -265,6 +268,9 @@ export function TasksTable({
       cell: ({ row }) => getStatusBadge(row.getValue("status")),
       filterFn: (row, id, value) => {
         return value.includes(row.getValue(id));
+      },
+      meta: {
+        label: "Status",
       },
     },
     {
@@ -280,6 +286,9 @@ export function TasksTable({
           </span>
         );
       },
+      meta: {
+        label: "Created",
+      },
     },
     {
       accessorKey: "updatedAt",
@@ -293,6 +302,9 @@ export function TasksTable({
             {format(date, "MMM d, yyyy")}
           </span>
         );
+      },
+      meta: {
+        label: "Updated",
       },
     },
     {

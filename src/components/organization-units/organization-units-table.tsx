@@ -141,6 +141,9 @@ export function OrganizationUnitsTable({
           </span>
         </div>
       ),
+      meta: {
+        label: "Name",
+      },
     },
     {
       accessorKey: "unitType",
@@ -150,6 +153,9 @@ export function OrganizationUnitsTable({
       cell: ({ row }) => (
         <Badge variant="outline">{row.getValue("unitType")}</Badge>
       ),
+      meta: {
+        label: "Type",
+      },
     },
     {
       accessorKey: "costCenter",
@@ -161,6 +167,9 @@ export function OrganizationUnitsTable({
         ) : (
           <span className="text-muted-foreground text-sm">—</span>
         );
+      },
+      meta: {
+        label: "Cost Center",
       },
     },
     {
@@ -179,6 +188,9 @@ export function OrganizationUnitsTable({
           </Badge>
         );
       },
+      meta: {
+        label: "Status",
+      },
     },
     {
       accessorKey: "createdAt",
@@ -192,6 +204,9 @@ export function OrganizationUnitsTable({
             {format(date, "MMM d, yyyy")}
           </span>
         );
+      },
+      meta: {
+        label: "Created",
       },
     },
     {

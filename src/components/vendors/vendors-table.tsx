@@ -144,6 +144,9 @@ export function VendorsTable({
           </div>
         );
       },
+      meta: {
+        label: "Name",
+      },
     },
     {
       accessorKey: "vendorType",
@@ -153,6 +156,9 @@ export function VendorsTable({
       cell: ({ row }) => {
         const vendorType = row.getValue("vendorType") as string;
         return <Badge variant="outline">{vendorType}</Badge>;
+      },
+      meta: {
+        label: "Type",
       },
     },
     {
@@ -172,6 +178,9 @@ export function VendorsTable({
             )}
           </div>
         );
+      },
+      meta: {
+        label: "Contact",
       },
     },
     {
@@ -208,6 +217,9 @@ export function VendorsTable({
           </Badge>
         );
       },
+      meta: {
+        label: "Status",
+      },
     },
     {
       accessorKey: "createdAt",
@@ -221,6 +233,9 @@ export function VendorsTable({
             {format(date, "MMM d, yyyy")}
           </span>
         );
+      },
+      meta: {
+        label: "Created",
       },
     },
     {

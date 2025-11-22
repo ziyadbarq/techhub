@@ -40,11 +40,11 @@ import type {
   CreateRoleUseCase,
   UpdateRoleUseCase,
   DeleteRoleUseCase,
-  GetRoleUseCase,
   ListRolesUseCase,
   AssignPermissionsToRoleUseCase,
 } from "@/core/use-cases/rbac";
 import type { ListPermissionsUseCase } from "@/core/use-cases/rbac/list-permissions.use-case";
+import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { getCurrentUserId } from "@/lib/auth/session";
@@ -156,7 +156,7 @@ export async function updateRoleAction(
 
     // Revalidate roles list and detail page
     revalidatePath("/admin/roles");
-    revalidatePath(`/admin/roles/${validated.id}`);
+    revalidatePath(`/admin/roles/${encodeURIComponent(role.name)}`);
 
     // Transform to DTO
     return {
@@ -192,8 +192,16 @@ export async function deleteRoleAction(
     // Validate input
     const validated = RoleIdSchema.parse({ id });
 
-    // Get use case from DI container
+    // Get use case and repository from DI container
     const container = getContainer();
+    const roleRepository = container.get<IRoleRepository>(
+      DI_TOKENS.IRoleRepository,
+    );
+
+    // Get role first to know its name for revalidation
+    const role = await roleRepository.findById(validated.id);
+    const roleName = role?.name;
+
     const deleteRole = container.get<DeleteRoleUseCase>(
       DI_TOKENS.DeleteRoleUseCase,
     );
@@ -208,7 +216,9 @@ export async function deleteRoleAction(
 
     // Revalidate roles list and detail page
     revalidatePath("/admin/roles");
-    revalidatePath(`/admin/roles/${validated.id}`);
+    if (roleName) {
+      revalidatePath(`/admin/roles/${encodeURIComponent(roleName)}`);
+    }
 
     return {
       success: true,
@@ -227,23 +237,22 @@ export async function deleteRoleAction(
  * Get a single role by ID
  */
 export async function getRoleAction(
-  id: string,
+  name: string,
 ): Promise<ActionResponse<RoleDTO>> {
   try {
     // Check permission
     await requirePermission(PERMISSIONS.ROLES_VIEW);
 
-    // Validate input
-    const validated = RoleIdSchema.parse({ id });
-
-    // Get use case from DI container
+    // Get repository from DI container
     const container = getContainer();
-    const getRole = container.get<GetRoleUseCase>(DI_TOKENS.GetRoleUseCase);
+    const roleRepository = container.get<IRoleRepository>(
+      DI_TOKENS.IRoleRepository,
+    );
 
-    // Execute use case
-    const result = await getRole.execute(validated.id);
+    // Find role by name
+    const role = await roleRepository.findByName(name);
 
-    if (!result) {
+    if (!role) {
       return {
         success: false,
         error: "Role not found",
@@ -253,12 +262,12 @@ export async function getRoleAction(
     // Transform to DTO
     return {
       success: true,
-      data: presentRole(result.role),
+      data: presentRole(role),
     };
   } catch (error) {
     return handleControllerError(
       error,
-      { function: "getRoleAction" },
+      { function: "getRoleAction", name },
       "Failed to get role",
     );
   }
@@ -315,8 +324,15 @@ export async function assignPermissionsToRoleAction(
     // Validate input
     const validated = AssignPermissionsToRoleSchema.parse(data);
 
-    // Get use case from DI container
+    // Get use case and repository from DI container
     const container = getContainer();
+    const roleRepository = container.get<IRoleRepository>(
+      DI_TOKENS.IRoleRepository,
+    );
+
+    // Get role first to know its name for revalidation
+    const role = await roleRepository.findById(validated.roleId);
+
     const assignPermissions = container.get<AssignPermissionsToRoleUseCase>(
       DI_TOKENS.AssignPermissionsToRoleUseCase,
     );
@@ -332,7 +348,11 @@ export async function assignPermissionsToRoleAction(
 
     // Revalidate roles list and permissions page
     revalidatePath("/admin/roles");
-    revalidatePath(`/admin/roles/${validated.roleId}/permissions`);
+    if (role) {
+      revalidatePath(
+        `/admin/roles/${encodeURIComponent(role.name)}/permissions`,
+      );
+    }
 
     return {
       success: true,

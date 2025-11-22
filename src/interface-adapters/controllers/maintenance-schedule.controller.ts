@@ -30,6 +30,7 @@ import type { ListMaintenanceSchedulesUseCase } from "@/core/use-cases/maintenan
 import type { MaintenanceSchedule } from "@/core/domain/entities/maintenance-schedule.entity";
 import type { ListAssetsUseCase } from "@/core/use-cases/asset/asset/list-assets.use-case";
 import type { ListPeopleUseCase } from "@/core/use-cases/foundation/person/list-people.use-case";
+import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { ScheduleType } from "@/core/domain/value-objects/schedule-type";
@@ -135,8 +136,16 @@ export async function createMaintenanceScheduleAction(
       instructions: validated.instructions ?? undefined,
     });
 
+    // Get asset tag for revalidation
+    const assetRepo = container.get<IAssetRepository>(
+      DI_TOKENS.IAssetRepository,
+    );
+    const asset = await assetRepo.findById(validated.assetId);
+
     revalidatePath("/maintenance/schedules");
-    revalidatePath(`/assets/${validated.assetId}`);
+    if (asset) {
+      revalidatePath(`/assets/${asset.assetTag}`);
+    }
 
     return {
       success: true,
@@ -187,9 +196,17 @@ export async function updateMaintenanceScheduleAction(
       instructions: validated.instructions,
     });
 
+    // Get asset tag for revalidation
+    const assetRepo = container.get<IAssetRepository>(
+      DI_TOKENS.IAssetRepository,
+    );
+    const asset = await assetRepo.findById(schedule.assetId);
+
     revalidatePath("/maintenance/schedules");
     revalidatePath(`/maintenance/schedules/${id}`);
-    revalidatePath(`/assets/${schedule.assetId}`);
+    if (asset) {
+      revalidatePath(`/assets/${asset.assetTag}`);
+    }
 
     return {
       success: true,
@@ -224,13 +241,21 @@ export async function deleteMaintenanceScheduleAction(
     );
     const schedule = await getUseCase.execute(id);
 
+    // Get asset tag for revalidation
+    const assetRepo = container.get<IAssetRepository>(
+      DI_TOKENS.IAssetRepository,
+    );
+    const asset = await assetRepo.findById(schedule.assetId);
+
     const deleteUseCase = container.get<DeleteMaintenanceScheduleUseCase>(
       DI_TOKENS.DeleteMaintenanceScheduleUseCase,
     );
     await deleteUseCase.execute(id);
 
     revalidatePath("/maintenance/schedules");
-    revalidatePath(`/assets/${schedule.assetId}`);
+    if (asset) {
+      revalidatePath(`/assets/${asset.assetTag}`);
+    }
 
     return {
       success: true,

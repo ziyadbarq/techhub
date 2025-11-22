@@ -19,7 +19,7 @@ import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 interface EditRolePageProps {
   params: Promise<{
-    id: string;
+    name: string;
   }>;
 }
 
@@ -27,8 +27,11 @@ export default async function EditRolePage(props: EditRolePageProps) {
   // Resolve params (Next.js 16 async request API)
   const params = await props.params;
 
+  // Decode URL-encoded role name
+  const roleName = decodeURIComponent(params.name);
+
   // Fetch role data on the server
-  const result = await getRoleAction(params.id);
+  const result = await getRoleAction(roleName);
 
   // Handle not found
   if (!result.success || !result.data) {
@@ -82,7 +85,9 @@ export default async function EditRolePage(props: EditRolePageProps) {
 
           {/* Additional Actions */}
           <div className="mt-6">
-            <Link href={`/admin/roles/${role.id}/permissions`}>
+            <Link
+              href={`/admin/roles/${encodeURIComponent(role.name)}/permissions`}
+            >
               <Button variant="outline" className="w-full">
                 Manage Permissions
               </Button>

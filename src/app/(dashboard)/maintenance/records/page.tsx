@@ -144,7 +144,7 @@ export default async function MaintenanceRecordsPage() {
                   <TableCell>
                     {record.assetTag ? (
                       <Link
-                        href={`/assets/${record.assetId}`}
+                        href={`/assets/${record.assetTag}`}
                         className="text-blue-600 hover:underline dark:text-blue-400"
                       >
                         {record.assetTag}

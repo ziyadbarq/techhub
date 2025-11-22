@@ -116,6 +116,9 @@ export function AssetCategoriesTable({
           </div>
         );
       },
+      meta: {
+        label: "Name",
+      },
     },
     {
       accessorKey: "description",
@@ -129,6 +132,9 @@ export function AssetCategoriesTable({
             {description || "—"}
           </span>
         );
+      },
+      meta: {
+        label: "Description",
       },
     },
     {
@@ -144,6 +150,9 @@ export function AssetCategoriesTable({
           </Badge>
         );
       },
+      meta: {
+        label: "Type",
+      },
     },
     {
       accessorKey: "createdAt",
@@ -157,6 +166,9 @@ export function AssetCategoriesTable({
             {format(new Date(createdAt), "MMM d, yyyy")}
           </span>
         );
+      },
+      meta: {
+        label: "Created",
       },
     },
     {

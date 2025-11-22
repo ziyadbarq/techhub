@@ -41,6 +41,7 @@ import type { MaintenanceStatus } from "@/core/domain/value-objects/maintenance-
 import type { ListAssetsUseCase } from "@/core/use-cases/asset/asset/list-assets.use-case";
 import type { ListPeopleUseCase } from "@/core/use-cases/foundation/person/list-people.use-case";
 import type { ListMaintenanceSchedulesUseCase } from "@/core/use-cases/maintenance/schedule/list-maintenance-schedules.use-case";
+import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
@@ -170,8 +171,16 @@ export async function createMaintenanceRecordAction(
       nextMaintenanceDate: validated.nextMaintenanceDate ?? undefined,
     });
 
+    // Get asset tag for revalidation
+    const assetRepo = container.get<IAssetRepository>(
+      DI_TOKENS.IAssetRepository,
+    );
+    const asset = await assetRepo.findById(validated.assetId);
+
     revalidatePath("/maintenance/records");
-    revalidatePath(`/assets/${validated.assetId}`);
+    if (asset) {
+      revalidatePath(`/assets/${asset.assetTag}`);
+    }
     if (validated.maintenanceScheduleId) {
       revalidatePath(
         `/maintenance/schedules/${validated.maintenanceScheduleId}`,
@@ -226,9 +235,17 @@ export async function updateMaintenanceRecordAction(
       nextMaintenanceDate: validated.nextMaintenanceDate,
     });
 
+    // Get asset tag for revalidation
+    const assetRepo = container.get<IAssetRepository>(
+      DI_TOKENS.IAssetRepository,
+    );
+    const asset = await assetRepo.findById(record.assetId);
+
     revalidatePath("/maintenance/records");
     revalidatePath(`/maintenance/records/${id}`);
-    revalidatePath(`/assets/${record.assetId}`);
+    if (asset) {
+      revalidatePath(`/assets/${asset.assetTag}`);
+    }
     if (record.maintenanceScheduleId) {
       revalidatePath(`/maintenance/schedules/${record.maintenanceScheduleId}`);
     }
@@ -266,13 +283,21 @@ export async function deleteMaintenanceRecordAction(
     );
     const record = await getUseCase.execute(id);
 
+    // Get asset tag for revalidation
+    const assetRepo = container.get<IAssetRepository>(
+      DI_TOKENS.IAssetRepository,
+    );
+    const asset = await assetRepo.findById(record.assetId);
+
     const deleteUseCase = container.get<DeleteMaintenanceRecordUseCase>(
       DI_TOKENS.DeleteMaintenanceRecordUseCase,
     );
     await deleteUseCase.execute(id);
 
     revalidatePath("/maintenance/records");
-    revalidatePath(`/assets/${record.assetId}`);
+    if (asset) {
+      revalidatePath(`/assets/${asset.assetTag}`);
+    }
     if (record.maintenanceScheduleId) {
       revalidatePath(`/maintenance/schedules/${record.maintenanceScheduleId}`);
     }
@@ -383,9 +408,17 @@ export async function startMaintenanceAction(
       performedById: validated.performedById,
     });
 
+    // Get asset tag for revalidation
+    const assetRepo = container.get<IAssetRepository>(
+      DI_TOKENS.IAssetRepository,
+    );
+    const asset = await assetRepo.findById(record.assetId);
+
     revalidatePath("/maintenance/records");
     revalidatePath(`/maintenance/records/${validated.id}`);
-    revalidatePath(`/assets/${record.assetId}`);
+    if (asset) {
+      revalidatePath(`/assets/${asset.assetTag}`);
+    }
     if (record.maintenanceScheduleId) {
       revalidatePath(`/maintenance/schedules/${record.maintenanceScheduleId}`);
     }
@@ -432,9 +465,17 @@ export async function completeMaintenanceAction(
       nextMaintenanceDate: validated.nextMaintenanceDate,
     });
 
+    // Get asset tag for revalidation
+    const assetRepo = container.get<IAssetRepository>(
+      DI_TOKENS.IAssetRepository,
+    );
+    const asset = await assetRepo.findById(record.assetId);
+
     revalidatePath("/maintenance/records");
     revalidatePath(`/maintenance/records/${validated.id}`);
-    revalidatePath(`/assets/${record.assetId}`);
+    if (asset) {
+      revalidatePath(`/assets/${asset.assetTag}`);
+    }
     if (record.maintenanceScheduleId) {
       revalidatePath(`/maintenance/schedules/${record.maintenanceScheduleId}`);
     }
@@ -476,9 +517,17 @@ export async function cancelMaintenanceAction(
       notes: validated.notes,
     });
 
+    // Get asset tag for revalidation
+    const assetRepo = container.get<IAssetRepository>(
+      DI_TOKENS.IAssetRepository,
+    );
+    const asset = await assetRepo.findById(record.assetId);
+
     revalidatePath("/maintenance/records");
     revalidatePath(`/maintenance/records/${validated.id}`);
-    revalidatePath(`/assets/${record.assetId}`);
+    if (asset) {
+      revalidatePath(`/assets/${asset.assetTag}`);
+    }
     if (record.maintenanceScheduleId) {
       revalidatePath(`/maintenance/schedules/${record.maintenanceScheduleId}`);
     }

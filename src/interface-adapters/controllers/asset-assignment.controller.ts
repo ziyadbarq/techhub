@@ -30,6 +30,7 @@ import type {
   UpdateAssetAssignmentUseCase,
   DeleteAssetAssignmentUseCase,
 } from "@/core/use-cases/asset/asset-assignment";
+import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
@@ -56,8 +57,16 @@ export async function createAssetAssignmentAction(
       note: validated.note ?? undefined,
     });
 
+    // Get asset tag for revalidation
+    const assetRepo = container.get<IAssetRepository>(
+      DI_TOKENS.IAssetRepository,
+    );
+    const asset = await assetRepo.findById(validated.assetId);
+
     revalidatePath("/asset-assignments");
-    revalidatePath(`/assets/${validated.assetId}`);
+    if (asset) {
+      revalidatePath(`/assets/${asset.assetTag}`);
+    }
 
     return {
       success: true,
@@ -199,9 +208,17 @@ export async function updateAssetAssignmentAction(
       note: validated.note,
     });
 
+    // Get asset tag for revalidation
+    const assetRepo = container.get<IAssetRepository>(
+      DI_TOKENS.IAssetRepository,
+    );
+    const asset = await assetRepo.findById(assignment.assetId);
+
     revalidatePath("/asset-assignments");
     revalidatePath(`/asset-assignments/${id}`);
-    revalidatePath(`/assets/${assignment.assetId}`);
+    if (asset) {
+      revalidatePath(`/assets/${asset.assetTag}`);
+    }
 
     return {
       success: true,

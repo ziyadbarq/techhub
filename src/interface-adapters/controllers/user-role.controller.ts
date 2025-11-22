@@ -142,7 +142,7 @@ export async function listUsersWithRolesAction(): Promise<
  * Get a single user with roles
  */
 export async function getUserWithRolesAction(
-  userId: string,
+  email: string,
 ): Promise<ActionResponse<UserWithRolesDTO>> {
   try {
     // Check permission
@@ -167,7 +167,7 @@ export async function getUserWithRolesAction(
 
     // Fetch user with roles
     const userData = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { email: email },
       include: {
         roles: {
           include: {
@@ -264,9 +264,19 @@ export async function assignRoleToUserAction(
       userAgent,
     });
 
+    // Get user email for revalidation
+    const targetUser = await prisma.user.findUnique({
+      where: { id: data.userId },
+      select: { email: true },
+    });
+
     // Revalidate users list and detail page
     revalidatePath("/admin/users");
-    revalidatePath(`/admin/users/${data.userId}`);
+    if (targetUser) {
+      revalidatePath(
+        `/admin/users/${encodeURIComponent(targetUser.email)}/roles`,
+      );
+    }
 
     return {
       success: true,
@@ -327,9 +337,19 @@ export async function revokeRoleFromUserAction(
       userAgent,
     });
 
+    // Get user email for revalidation
+    const targetUser = await prisma.user.findUnique({
+      where: { id: data.userId },
+      select: { email: true },
+    });
+
     // Revalidate users list and detail page
     revalidatePath("/admin/users");
-    revalidatePath(`/admin/users/${data.userId}`);
+    if (targetUser) {
+      revalidatePath(
+        `/admin/users/${encodeURIComponent(targetUser.email)}/roles`,
+      );
+    }
 
     return {
       success: true,

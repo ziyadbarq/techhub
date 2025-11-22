@@ -12,7 +12,6 @@ import { handleControllerError } from "./error-handler";
 import {
   CreateAssetSchema,
   UpdateAssetSchema,
-  AssetIdSchema,
   AssetSearchSchema,
   type CreateAssetDTO,
   type UpdateAssetDTO,
@@ -22,10 +21,10 @@ import { presentAsset, type AssetDTO } from "../presenters/asset.presenter";
 import type {
   CreateAssetUseCase,
   ListAssetsUseCase,
-  GetAssetUseCase,
   UpdateAssetUseCase,
   DeleteAssetUseCase,
 } from "@/core/use-cases/asset/asset";
+import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import type { Asset } from "@/core/domain/entities/asset.entity";
 import type { ListAssetCategoriesUseCase } from "@/core/use-cases/asset/asset-category";
 import type { ListAssetModelsUseCase } from "@/core/use-cases/asset/asset-model";
@@ -260,17 +259,17 @@ export async function listAssetsAction(
 }
 
 export async function getAssetAction(
-  id: string,
+  assetTag: string,
 ): Promise<ActionResponse<AssetDTO>> {
   try {
     await requirePermission(PERMISSIONS.ASSETS_VIEW);
 
-    const validated = AssetIdSchema.parse({ id });
-
     const container = getContainer();
-    const useCase = container.get<GetAssetUseCase>(DI_TOKENS.GetAssetUseCase);
+    const repository = container.get<IAssetRepository>(
+      DI_TOKENS.IAssetRepository,
+    );
 
-    const asset = await useCase.execute(validated.id);
+    const asset = await repository.findByAssetTag(assetTag);
 
     if (!asset) {
       return {
@@ -289,29 +288,41 @@ export async function getAssetAction(
   } catch (error) {
     return handleControllerError(
       error,
-      { function: "getAssetAction", id },
+      { function: "getAssetAction", assetTag },
       "Failed to get asset",
     );
   }
 }
 
 export async function updateAssetAction(
-  id: string,
+  assetTag: string,
   data: UpdateAssetDTO,
 ): Promise<ActionResponse<AssetDTO>> {
   try {
     await requirePermission(PERMISSIONS.ASSETS_UPDATE);
 
-    const validatedId = AssetIdSchema.parse({ id });
     const validated = UpdateAssetSchema.parse(data);
 
     const container = getContainer();
+    const repository = container.get<IAssetRepository>(
+      DI_TOKENS.IAssetRepository,
+    );
+
+    // Find asset by assetTag to get the ID
+    const existingAsset = await repository.findByAssetTag(assetTag);
+    if (!existingAsset) {
+      return {
+        success: false,
+        error: "Asset not found",
+      };
+    }
+
     const useCase = container.get<UpdateAssetUseCase>(
       DI_TOKENS.UpdateAssetUseCase,
     );
 
     const asset = await useCase.execute({
-      id: validatedId.id,
+      id: existingAsset.id,
       assetTag: validated.assetTag,
       assetModelId: validated.assetModelId,
       vendorId: validated.vendorId,
@@ -331,7 +342,11 @@ export async function updateAssetAction(
     });
 
     revalidatePath("/assets");
-    revalidatePath(`/assets/${id}`);
+    revalidatePath(`/assets/${assetTag}`);
+    // Also revalidate the new asset tag if it changed
+    if (asset.assetTag !== assetTag) {
+      revalidatePath(`/assets/${asset.assetTag}`);
+    }
 
     return {
       success: true,
@@ -340,26 +355,37 @@ export async function updateAssetAction(
   } catch (error) {
     return handleControllerError(
       error,
-      { function: "updateAssetAction", id },
+      { function: "updateAssetAction", assetTag },
       "Failed to update asset",
     );
   }
 }
 
 export async function deleteAssetAction(
-  id: string,
+  assetTag: string,
 ): Promise<ActionResponse<void>> {
   try {
     await requirePermission(PERMISSIONS.ASSETS_DELETE);
 
-    const validated = AssetIdSchema.parse({ id });
-
     const container = getContainer();
+    const repository = container.get<IAssetRepository>(
+      DI_TOKENS.IAssetRepository,
+    );
+
+    // Find asset by assetTag to get the ID
+    const existingAsset = await repository.findByAssetTag(assetTag);
+    if (!existingAsset) {
+      return {
+        success: false,
+        error: "Asset not found",
+      };
+    }
+
     const useCase = container.get<DeleteAssetUseCase>(
       DI_TOKENS.DeleteAssetUseCase,
     );
 
-    await useCase.execute(validated.id);
+    await useCase.execute(existingAsset.id);
 
     revalidatePath("/assets");
 
@@ -370,7 +396,7 @@ export async function deleteAssetAction(
   } catch (error) {
     return handleControllerError(
       error,
-      { function: "deleteAssetAction", id },
+      { function: "deleteAssetAction", assetTag },
       "Failed to delete asset",
     );
   }

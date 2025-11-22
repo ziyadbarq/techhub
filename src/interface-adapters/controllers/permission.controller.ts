@@ -35,10 +35,10 @@ import {
 import type {
   CreatePermissionUseCase,
   ListPermissionsUseCase,
-  GetPermissionUseCase,
   UpdatePermissionUseCase,
   DeletePermissionUseCase,
 } from "@/core/use-cases/rbac";
+import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
@@ -132,23 +132,20 @@ export async function listPermissionsAction(
  * Get a single permission by ID
  */
 export async function getPermissionAction(
-  id: string,
+  name: string,
 ): Promise<ActionResponse<PermissionDTO>> {
   try {
     // Check permission
     await requirePermission(PERMISSIONS.PERMISSIONS_VIEW);
 
-    // Validate input
-    const validated = PermissionIdSchema.parse({ id });
-
-    // Get use case from DI container
+    // Get repository from DI container
     const container = getContainer();
-    const getPermission = container.get<GetPermissionUseCase>(
-      DI_TOKENS.GetPermissionUseCase,
+    const permissionRepository = container.get<IPermissionRepository>(
+      DI_TOKENS.IPermissionRepository,
     );
 
-    // Execute use case
-    const permission = await getPermission.execute({ id: validated.id });
+    // Find permission by name
+    const permission = await permissionRepository.findByName(name);
 
     if (!permission) {
       return {
@@ -165,7 +162,7 @@ export async function getPermissionAction(
   } catch (error) {
     return handleControllerError(
       error,
-      { function: "getPermissionAction" },
+      { function: "getPermissionAction", name },
       "Failed to get permission",
     );
   }
@@ -200,7 +197,7 @@ export async function updatePermissionAction(
 
     // Revalidate permissions list and detail page
     revalidatePath("/admin/permissions");
-    revalidatePath(`/admin/permissions/${validated.id}`);
+    revalidatePath(`/admin/permissions/${encodeURIComponent(permission.name)}`);
 
     // Transform to DTO
     return {
@@ -229,8 +226,16 @@ export async function deletePermissionAction(
     // Validate input
     const validated = PermissionIdSchema.parse({ id });
 
-    // Get use case from DI container
+    // Get use case and repository from DI container
     const container = getContainer();
+    const permissionRepository = container.get<IPermissionRepository>(
+      DI_TOKENS.IPermissionRepository,
+    );
+
+    // Get permission first to know its name for revalidation
+    const permission = await permissionRepository.findById(validated.id);
+    const permissionName = permission?.name;
+
     const deletePermission = container.get<DeletePermissionUseCase>(
       DI_TOKENS.DeletePermissionUseCase,
     );
@@ -240,7 +245,11 @@ export async function deletePermissionAction(
 
     // Revalidate permissions list and detail page
     revalidatePath("/admin/permissions");
-    revalidatePath(`/admin/permissions/${validated.id}`);
+    if (permissionName) {
+      revalidatePath(
+        `/admin/permissions/${encodeURIComponent(permissionName)}`,
+      );
+    }
 
     return {
       success: true,

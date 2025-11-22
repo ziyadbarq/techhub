@@ -123,7 +123,7 @@ export default async function MaintenanceSchedulesPage() {
                   <TableCell>
                     {schedule.assetTag ? (
                       <Link
-                        href={`/assets/${schedule.assetId}`}
+                        href={`/assets/${schedule.assetTag}`}
                         className="text-blue-600 hover:underline dark:text-blue-400"
                       >
                         {schedule.assetTag}

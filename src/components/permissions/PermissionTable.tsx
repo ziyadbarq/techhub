@@ -130,6 +130,9 @@ export function PermissionTable({
       filterFn: (row, id, value) => {
         return value.includes(row.getValue(id));
       },
+      meta: {
+        label: "Resource",
+      },
     },
     {
       accessorKey: "action",
@@ -143,6 +146,9 @@ export function PermissionTable({
             {action.replace(/:/g, " ")}
           </span>
         );
+      },
+      meta: {
+        label: "Action",
       },
     },
     {
@@ -164,6 +170,9 @@ export function PermissionTable({
           </div>
         );
       },
+      meta: {
+        label: "Display Name",
+      },
     },
     {
       accessorKey: "name",
@@ -178,6 +187,9 @@ export function PermissionTable({
           </code>
         );
       },
+      meta: {
+        label: "Permission Key",
+      },
     },
     {
       id: "status",
@@ -190,6 +202,9 @@ export function PermissionTable({
           return permission.isActive && !permission.isSystem;
         if (value.includes("inactive")) return !permission.isActive;
         return false;
+      },
+      meta: {
+        label: "Status",
       },
     },
     {
@@ -204,6 +219,9 @@ export function PermissionTable({
             {format(date, "MMM d, yyyy")}
           </span>
         );
+      },
+      meta: {
+        label: "Created",
       },
     },
     {

@@ -146,6 +146,9 @@ export function VendorContactsTable({
           )}
         </div>
       ),
+      meta: {
+        label: "Name",
+      },
     },
     {
       accessorKey: "email",
@@ -158,6 +161,9 @@ export function VendorContactsTable({
           <span className="text-sm">{row.getValue("email")}</span>
         </div>
       ),
+      meta: {
+        label: "Email",
+      },
     },
     {
       accessorKey: "phone",
@@ -196,6 +202,9 @@ export function VendorContactsTable({
           </Badge>
         );
       },
+      meta: {
+        label: "Status",
+      },
     },
     {
       accessorKey: "createdAt",
@@ -209,6 +218,9 @@ export function VendorContactsTable({
             {format(date, "MMM d, yyyy")}
           </span>
         );
+      },
+      meta: {
+        label: "Created",
       },
     },
     {

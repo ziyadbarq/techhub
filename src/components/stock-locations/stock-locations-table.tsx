@@ -143,6 +143,9 @@ export function StockLocationsTable({
           </div>
         );
       },
+      meta: {
+        label: "Code",
+      },
     },
     {
       accessorKey: "name",
@@ -152,6 +155,9 @@ export function StockLocationsTable({
       cell: ({ row }) => {
         const name = row.getValue("name") as string;
         return <span className="font-medium">{name}</span>;
+      },
+      meta: {
+        label: "Name",
       },
     },
     {
@@ -170,6 +176,9 @@ export function StockLocationsTable({
           <span className="text-muted-foreground text-sm">Not linked</span>
         );
       },
+      meta: {
+        label: "Physical Location",
+      },
     },
     {
       accessorKey: "description",
@@ -185,6 +194,9 @@ export function StockLocationsTable({
         ) : (
           <span className="text-muted-foreground text-sm">—</span>
         );
+      },
+      meta: {
+        label: "Description",
       },
     },
     {

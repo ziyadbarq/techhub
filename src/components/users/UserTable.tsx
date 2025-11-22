@@ -108,6 +108,9 @@ export function UserTable({ data, loading = false }: UserTableProps) {
           </div>
         );
       },
+      meta: {
+        label: "User",
+      },
     },
     {
       accessorKey: "roles",
@@ -116,6 +119,9 @@ export function UserTable({ data, loading = false }: UserTableProps) {
       ),
       cell: ({ row }) => getRoleBadges(row.original.roles),
       enableSorting: false,
+      meta: {
+        label: "Roles",
+      },
     },
     {
       accessorKey: "emailVerified",
@@ -134,6 +140,9 @@ export function UserTable({ data, loading = false }: UserTableProps) {
           </Badge>
         );
       },
+      meta: {
+        label: "Verified",
+      },
     },
     {
       accessorKey: "createdAt",
@@ -147,6 +156,9 @@ export function UserTable({ data, loading = false }: UserTableProps) {
             {format(date, "MMM d, yyyy")}
           </span>
         );
+      },
+      meta: {
+        label: "Created",
       },
     },
     {
@@ -165,7 +177,9 @@ export function UserTable({ data, loading = false }: UserTableProps) {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem asChild>
-                <Link href={`/admin/users/${user.id}/roles`}>
+                <Link
+                  href={`/admin/users/${encodeURIComponent(user.email)}/roles`}
+                >
                   <Shield className="mr-2 h-4 w-4" />
                   Manage Roles
                 </Link>

@@ -147,6 +147,9 @@ export function LifecycleStatesTable({
           </div>
         );
       },
+      meta: {
+        label: "Name",
+      },
     },
     {
       accessorKey: "stateType",
@@ -156,6 +159,9 @@ export function LifecycleStatesTable({
       cell: ({ row }) => {
         const stateType = row.getValue("stateType") as string;
         return <Badge variant="outline">{stateType}</Badge>;
+      },
+      meta: {
+        label: "Type",
       },
     },
     {
@@ -174,6 +180,9 @@ export function LifecycleStatesTable({
           </Badge>
         );
       },
+      meta: {
+        label: "Status",
+      },
     },
     {
       accessorKey: "createdAt",
@@ -187,6 +196,9 @@ export function LifecycleStatesTable({
             {format(date, "MMM d, yyyy")}
           </span>
         );
+      },
+      meta: {
+        label: "Created",
       },
     },
     {

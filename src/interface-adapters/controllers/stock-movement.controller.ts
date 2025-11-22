@@ -27,6 +27,7 @@ import type {
   GetStockMovementUseCase,
   DeleteStockMovementUseCase,
 } from "@/core/use-cases/inventory/stock-movement";
+import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
@@ -54,10 +55,19 @@ export async function createStockMovementAction(
       occurredAt: validated.occurredAt,
     });
 
-    revalidatePath("/stock-movements");
+    // Get asset tag for revalidation if asset is associated
     if (validated.assetId) {
-      revalidatePath(`/assets/${validated.assetId}`);
+      const container = getContainer();
+      const assetRepo = container.get<IAssetRepository>(
+        DI_TOKENS.IAssetRepository,
+      );
+      const asset = await assetRepo.findById(validated.assetId);
+      if (asset) {
+        revalidatePath(`/assets/${asset.assetTag}`);
+      }
     }
+
+    revalidatePath("/stock-movements");
 
     return {
       success: true,

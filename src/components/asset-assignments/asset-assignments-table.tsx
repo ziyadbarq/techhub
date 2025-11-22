@@ -117,6 +117,9 @@ export function AssetAssignmentsTable({
           </div>
         );
       },
+      meta: {
+        label: "Asset",
+      },
     },
     {
       accessorKey: "assigneeType",
@@ -130,6 +133,9 @@ export function AssetAssignmentsTable({
             {type}
           </Badge>
         );
+      },
+      meta: {
+        label: "Assignee Type",
       },
     },
     {
@@ -145,6 +151,9 @@ export function AssetAssignmentsTable({
           </span>
         );
       },
+      meta: {
+        label: "Assignee",
+      },
     },
     {
       accessorKey: "startDate",
@@ -158,6 +167,9 @@ export function AssetAssignmentsTable({
             {format(new Date(startDate), "MMM d, yyyy")}
           </span>
         );
+      },
+      meta: {
+        label: "Start Date",
       },
     },
     {
@@ -173,6 +185,9 @@ export function AssetAssignmentsTable({
           </span>
         );
       },
+      meta: {
+        label: "End Date",
+      },
     },
     {
       accessorKey: "isActive",
@@ -187,6 +202,9 @@ export function AssetAssignmentsTable({
           </Badge>
         );
       },
+      meta: {
+        label: "Status",
+      },
     },
     {
       accessorKey: "durationInDays",
@@ -200,6 +218,9 @@ export function AssetAssignmentsTable({
             {days > 0 ? `${days}d` : "—"}
           </span>
         );
+      },
+      meta: {
+        label: "Duration",
       },
     },
     {

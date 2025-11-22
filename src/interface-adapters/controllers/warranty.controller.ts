@@ -34,6 +34,7 @@ import type {
 import type { Warranty } from "@/core/domain/entities/warranty.entity";
 import type { ListAssetsUseCase } from "@/core/use-cases/asset/asset";
 import type { ListVendorsUseCase } from "@/core/use-cases/foundation/vendor";
+import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
@@ -131,8 +132,16 @@ export async function createWarrantyAction(
       metadata: validated.metadata ?? undefined,
     });
 
+    // Get asset tag for revalidation
+    const assetRepo = container.get<IAssetRepository>(
+      DI_TOKENS.IAssetRepository,
+    );
+    const asset = await assetRepo.findById(validated.assetId);
+
     revalidatePath("/warranties");
-    revalidatePath(`/assets/${validated.assetId}`);
+    if (asset) {
+      revalidatePath(`/assets/${asset.assetTag}`);
+    }
 
     return {
       success: true,
@@ -226,9 +235,17 @@ export async function updateWarrantyAction(
       ...validated,
     });
 
+    // Get asset tag for revalidation
+    const assetRepo = container.get<IAssetRepository>(
+      DI_TOKENS.IAssetRepository,
+    );
+    const asset = await assetRepo.findById(warranty.assetId);
+
     revalidatePath("/warranties");
     revalidatePath(`/warranties/${id}`);
-    revalidatePath(`/assets/${warranty.assetId}`);
+    if (asset) {
+      revalidatePath(`/assets/${asset.assetTag}`);
+    }
 
     return {
       success: true,
@@ -257,13 +274,21 @@ export async function deleteWarrantyAction(
     );
     const warranty = await getUseCase.execute(id);
 
+    // Get asset tag for revalidation
+    const assetRepo = container.get<IAssetRepository>(
+      DI_TOKENS.IAssetRepository,
+    );
+    const asset = await assetRepo.findById(warranty.assetId);
+
     const deleteUseCase = container.get<DeleteWarrantyUseCase>(
       DI_TOKENS.DeleteWarrantyUseCase,
     );
     await deleteUseCase.execute(id);
 
     revalidatePath("/warranties");
-    revalidatePath(`/assets/${warranty.assetId}`);
+    if (asset) {
+      revalidatePath(`/assets/${asset.assetTag}`);
+    }
 
     return {
       success: true,

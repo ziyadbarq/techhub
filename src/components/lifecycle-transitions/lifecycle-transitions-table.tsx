@@ -148,6 +148,9 @@ export function LifecycleTransitionsTable({
           </div>
         );
       },
+      meta: {
+        label: "Name",
+      },
     },
     {
       id: "flow",
@@ -163,6 +166,9 @@ export function LifecycleTransitionsTable({
           </Badge>
         </div>
       ),
+      meta: {
+        label: "Flow",
+      },
     },
     {
       accessorKey: "requiresApproval",
@@ -176,6 +182,9 @@ export function LifecycleTransitionsTable({
         ) : (
           <span className="text-muted-foreground text-sm">None</span>
         );
+      },
+      meta: {
+        label: "Approval",
       },
     },
     {
@@ -193,6 +202,9 @@ export function LifecycleTransitionsTable({
             {isActive ? "Active" : "Inactive"}
           </Badge>
         );
+      },
+      meta: {
+        label: "Status",
       },
     },
     {

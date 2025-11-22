@@ -43,6 +43,11 @@ import {
   Trash2,
   Boxes,
   CalendarClock,
+  FileSignature,
+  FileKey,
+  Key,
+  Award,
+  UserSquare2,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -134,117 +139,10 @@ export const navGroups: NavGroup[] = [
     collapsible: false, // Always visible
   },
 
-  // Lifecycle
+  // Asset Management - Core asset entities
   {
-    id: "lifecycle",
-    title: "Lifecycle",
-    items: [
-      {
-        title: "Models",
-        href: "/lifecycle-models",
-        icon: GitBranch,
-        description: "Manage lifecycle models",
-        permission: PERMISSIONS.LIFECYCLE_MODELS_VIEW,
-      },
-      {
-        title: "States",
-        href: "/lifecycle-states",
-        icon: Activity,
-        description: "Manage lifecycle states",
-        permission: PERMISSIONS.LIFECYCLE_STATES_VIEW,
-      },
-      {
-        title: "Transitions",
-        href: "/lifecycle-transitions",
-        icon: ArrowRightLeft,
-        description: "Manage state transitions",
-        permission: PERMISSIONS.LIFECYCLE_TRANSITIONS_VIEW,
-      },
-    ],
-    visible: true,
-    collapsible: true,
-    defaultCollapsed: false,
-  },
-
-  // Suppliers
-  {
-    id: "suppliers",
-    title: "Suppliers",
-    items: [
-      {
-        title: "Vendors",
-        href: "/vendors",
-        icon: Package,
-        description: "Manage vendors",
-        permission: PERMISSIONS.VENDORS_VIEW,
-      },
-      {
-        title: "Vendor Contacts",
-        href: "/vendor-contacts",
-        icon: ContactRound,
-        description: "Manage vendor contacts",
-        permission: PERMISSIONS.VENDOR_CONTACTS_VIEW,
-      },
-    ],
-    visible: true,
-    collapsible: true,
-    defaultCollapsed: true,
-  },
-
-  // Organization & Locations
-  {
-    id: "organization",
-    title: "Org & Locations",
-    items: [
-      {
-        title: "Organization",
-        href: "/organization-units",
-        icon: Building2,
-        description: "Organization structure",
-        permission: PERMISSIONS.ORGANIZATION_UNITS_VIEW,
-      },
-      {
-        title: "Locations",
-        href: "/locations",
-        icon: MapPin,
-        description: "Manage locations",
-        permission: PERMISSIONS.LOCATIONS_VIEW,
-      },
-    ],
-    visible: true,
-    collapsible: true,
-    defaultCollapsed: true,
-  },
-
-  // People & Roles
-  {
-    id: "people-and-roles",
-    title: "People & Roles",
-    items: [
-      {
-        title: "Persons",
-        href: "/persons",
-        icon: UserCircle,
-        description: "Manage persons",
-        permission: PERMISSIONS.PERSONS_VIEW,
-      },
-      {
-        title: "Role Assignments",
-        href: "/person-role-assignments",
-        icon: UserCog,
-        description: "Manage person role assignments",
-        permission: PERMISSIONS.PERSON_ROLE_ASSIGNMENTS_VIEW,
-      },
-    ],
-    visible: true,
-    collapsible: true,
-    defaultCollapsed: true,
-  },
-
-  // Assets
-  {
-    id: "assets",
-    title: "Assets",
+    id: "asset-management",
+    title: "Asset Management",
     items: [
       {
         title: "Assets",
@@ -275,6 +173,24 @@ export const navGroups: NavGroup[] = [
         permission: PERMISSIONS.ASSET_ASSIGNMENTS_VIEW,
       },
       {
+        title: "Warranties",
+        href: "/warranties",
+        icon: Shield,
+        description: "Manage asset warranties",
+        permission: PERMISSIONS.WARRANTIES_VIEW,
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: false,
+  },
+
+  // Asset Operations - Operational workflows
+  {
+    id: "asset-operations",
+    title: "Asset Operations",
+    items: [
+      {
         title: "Asset Kits",
         href: "/asset-kits",
         icon: Boxes,
@@ -294,13 +210,6 @@ export const navGroups: NavGroup[] = [
         icon: Trash2,
         description: "Asset disposal workflow",
         permission: PERMISSIONS.ASSET_DISPOSALS_VIEW,
-      },
-      {
-        title: "Warranties",
-        href: "/warranties",
-        icon: Shield,
-        description: "Manage asset warranties",
-        permission: PERMISSIONS.WARRANTIES_VIEW,
       },
     ],
     visible: true,
@@ -397,6 +306,148 @@ export const navGroups: NavGroup[] = [
     defaultCollapsed: false,
   },
 
+  // Contracts
+  {
+    id: "contracts",
+    title: "Contracts",
+    items: [
+      {
+        title: "Contract Types",
+        href: "/contract-types",
+        icon: FileKey,
+        description: "Manage contract types and templates",
+        permission: PERMISSIONS.CONTRACT_TYPES_VIEW,
+      },
+      {
+        title: "Contracts",
+        href: "/contracts",
+        icon: FileSignature,
+        description: "Manage vendor and service contracts",
+        permission: PERMISSIONS.CONTRACTS_VIEW,
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: false,
+  },
+
+  // Licenses
+  {
+    id: "licenses",
+    title: "Licenses",
+    items: [
+      {
+        title: "License Products",
+        href: "/license-products",
+        icon: Key,
+        description: "Manage software license products",
+        permission: PERMISSIONS.LICENSE_PRODUCTS_VIEW,
+      },
+      {
+        title: "License Entitlements",
+        href: "/license-entitlements",
+        icon: Award,
+        description: "Manage purchased license entitlements",
+        permission: PERMISSIONS.LICENSE_ENTITLEMENTS_VIEW,
+      },
+      {
+        title: "License Allocations",
+        href: "/license-allocations",
+        icon: UserSquare2,
+        description: "Track license allocations to users and assets",
+        permission: PERMISSIONS.LICENSE_ALLOCATIONS_VIEW,
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: false,
+  },
+
+  // Lifecycle
+  {
+    id: "lifecycle",
+    title: "Lifecycle",
+    items: [
+      {
+        title: "Models",
+        href: "/lifecycle-models",
+        icon: GitBranch,
+        description: "Manage lifecycle models",
+        permission: PERMISSIONS.LIFECYCLE_MODELS_VIEW,
+      },
+      {
+        title: "States",
+        href: "/lifecycle-states",
+        icon: Activity,
+        description: "Manage lifecycle states",
+        permission: PERMISSIONS.LIFECYCLE_STATES_VIEW,
+      },
+      {
+        title: "Transitions",
+        href: "/lifecycle-transitions",
+        icon: ArrowRightLeft,
+        description: "Manage state transitions",
+        permission: PERMISSIONS.LIFECYCLE_TRANSITIONS_VIEW,
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: false,
+  },
+
+  // Organization - Consolidated foundation entities
+  {
+    id: "organization",
+    title: "Organization",
+    items: [
+      {
+        title: "Vendors",
+        href: "/vendors",
+        icon: Package,
+        description: "Manage vendors",
+        permission: PERMISSIONS.VENDORS_VIEW,
+      },
+      {
+        title: "Vendor Contacts",
+        href: "/vendor-contacts",
+        icon: ContactRound,
+        description: "Manage vendor contacts",
+        permission: PERMISSIONS.VENDOR_CONTACTS_VIEW,
+      },
+      {
+        title: "Organization Units",
+        href: "/organization-units",
+        icon: Building2,
+        description: "Organization structure",
+        permission: PERMISSIONS.ORGANIZATION_UNITS_VIEW,
+      },
+      {
+        title: "Locations",
+        href: "/locations",
+        icon: MapPin,
+        description: "Manage locations",
+        permission: PERMISSIONS.LOCATIONS_VIEW,
+      },
+      {
+        title: "Persons",
+        href: "/persons",
+        icon: UserCircle,
+        description: "Manage persons",
+        permission: PERMISSIONS.PERSONS_VIEW,
+      },
+      {
+        title: "Role Assignments",
+        href: "/person-role-assignments",
+        icon: UserCog,
+        description: "Manage person role assignments",
+        permission: PERMISSIONS.PERSON_ROLE_ASSIGNMENTS_VIEW,
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: false,
+  },
+
   // Configuration
   {
     id: "configuration",
@@ -412,7 +463,7 @@ export const navGroups: NavGroup[] = [
     ],
     visible: true,
     collapsible: true,
-    defaultCollapsed: true,
+    defaultCollapsed: false,
   },
 
   // Admin Section - Permission-based, collapsible
@@ -466,7 +517,7 @@ export const navGroups: NavGroup[] = [
     ],
     visible: true,
     collapsible: true,
-    defaultCollapsed: true,
+    defaultCollapsed: false,
   },
 ];
 

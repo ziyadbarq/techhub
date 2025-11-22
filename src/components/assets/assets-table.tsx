@@ -69,7 +69,7 @@ export function AssetsTable({
   const handleDelete = async (asset: AssetDTO) => {
     setIsDeleting(true);
     try {
-      const result = await deleteAssetAction(asset.id);
+      const result = await deleteAssetAction(asset.assetTag);
       if (result.success) {
         toast.success("Asset deleted successfully");
         onRefresh();
@@ -120,7 +120,7 @@ export function AssetsTable({
         return (
           <div className="flex flex-col gap-1">
             <Link
-              href={`/assets/${asset.id}`}
+              href={`/assets/${asset.assetTag}`}
               className="text-primary font-medium hover:underline"
             >
               {assetTag}
@@ -132,6 +132,9 @@ export function AssetsTable({
             )}
           </div>
         );
+      },
+      meta: {
+        label: "Asset Tag",
       },
     },
     {
@@ -146,6 +149,9 @@ export function AssetsTable({
             {categoryName || <span className="text-muted-foreground">—</span>}
           </span>
         );
+      },
+      meta: {
+        label: "Category",
       },
     },
     {
@@ -172,6 +178,9 @@ export function AssetsTable({
           </div>
         );
       },
+      meta: {
+        label: "Model",
+      },
     },
     {
       accessorKey: "stockLocationName",
@@ -186,6 +195,9 @@ export function AssetsTable({
           </span>
         );
       },
+      meta: {
+        label: "Location",
+      },
     },
     {
       accessorKey: "lifecycleStateName",
@@ -199,6 +211,9 @@ export function AssetsTable({
             {stateName || <span className="text-muted-foreground">—</span>}
           </span>
         );
+      },
+      meta: {
+        label: "Status",
       },
     },
     {
@@ -217,6 +232,9 @@ export function AssetsTable({
           </span>
         );
       },
+      meta: {
+        label: "Purchase Date",
+      },
     },
     {
       accessorKey: "purchaseCost",
@@ -234,6 +252,9 @@ export function AssetsTable({
             {currency || "USD"} {cost.toLocaleString()}
           </span>
         );
+      },
+      meta: {
+        label: "Cost",
       },
     },
     {
@@ -265,6 +286,9 @@ export function AssetsTable({
           </div>
         );
       },
+      meta: {
+        label: "Warranty",
+      },
     },
     {
       accessorKey: "createdAt",
@@ -278,6 +302,9 @@ export function AssetsTable({
             {format(new Date(createdAt), "MMM d, yyyy")}
           </span>
         );
+      },
+      meta: {
+        label: "Created",
       },
     },
     {
@@ -332,7 +359,17 @@ export function AssetsTable({
 
   return (
     <>
-      <DataTable columns={columns} data={data} loading={loading} />
+      <DataTable
+        columns={columns}
+        data={data}
+        loading={loading}
+        initialColumnVisibility={{
+          stockLocationName: false,
+          purchaseDate: false,
+          purchaseCost: false,
+          isUnderWarranty: false,
+        }}
+      />
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

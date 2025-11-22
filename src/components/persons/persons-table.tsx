@@ -141,6 +141,9 @@ export function PersonsTable({
           )}
         </div>
       ),
+      meta: {
+        label: "Name",
+      },
     },
     {
       accessorKey: "email",
@@ -153,6 +156,9 @@ export function PersonsTable({
           <span className="text-sm">{row.getValue("email")}</span>
         </div>
       ),
+      meta: {
+        label: "Email",
+      },
     },
     {
       accessorKey: "title",
@@ -165,6 +171,9 @@ export function PersonsTable({
             <span className="text-sm">{title}</span>
           </div>
         ) : null;
+      },
+      meta: {
+        label: "Title",
       },
     },
     {
@@ -183,6 +192,9 @@ export function PersonsTable({
           </Badge>
         );
       },
+      meta: {
+        label: "Status",
+      },
     },
     {
       accessorKey: "createdAt",
@@ -196,6 +208,9 @@ export function PersonsTable({
             {format(date, "MMM d, yyyy")}
           </span>
         );
+      },
+      meta: {
+        label: "Created",
       },
     },
     {

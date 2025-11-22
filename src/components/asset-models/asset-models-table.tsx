@@ -116,6 +116,9 @@ export function AssetModelsTable({
           </div>
         );
       },
+      meta: {
+        label: "Model",
+      },
     },
     {
       accessorKey: "assetCategoryId",
@@ -130,6 +133,9 @@ export function AssetModelsTable({
             Category #{row.original.assetCategoryId.slice(0, 8)}
           </span>
         );
+      },
+      meta: {
+        label: "Category",
       },
     },
     {
@@ -148,6 +154,9 @@ export function AssetModelsTable({
             Vendor #{vendorId.slice(0, 8)}
           </span>
         );
+      },
+      meta: {
+        label: "Vendor",
       },
     },
     {
@@ -171,6 +180,9 @@ export function AssetModelsTable({
           </Badge>
         );
       },
+      meta: {
+        label: "Warranty",
+      },
     },
     {
       accessorKey: "createdAt",
@@ -184,6 +196,9 @@ export function AssetModelsTable({
             {format(new Date(createdAt), "MMM d, yyyy")}
           </span>
         );
+      },
+      meta: {
+        label: "Created",
       },
     },
     {

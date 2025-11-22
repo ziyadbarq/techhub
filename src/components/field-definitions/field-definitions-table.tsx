@@ -166,6 +166,9 @@ export function FieldDefinitionsTable({
           </div>
         </div>
       ),
+      meta: {
+        label: "Field",
+      },
     },
     {
       accessorKey: "dataType",
@@ -183,6 +186,9 @@ export function FieldDefinitionsTable({
           </Badge>
         );
       },
+      meta: {
+        label: "Type",
+      },
     },
     {
       accessorKey: "entityType",
@@ -194,6 +200,9 @@ export function FieldDefinitionsTable({
           {row.getValue("entityType") as string}
         </Badge>
       ),
+      meta: {
+        label: "Entity",
+      },
     },
     {
       id: "constraints",
@@ -220,6 +229,9 @@ export function FieldDefinitionsTable({
           </div>
         );
       },
+      meta: {
+        label: "Constraints",
+      },
     },
     {
       accessorKey: "displayOrder",
@@ -231,6 +243,9 @@ export function FieldDefinitionsTable({
           {row.getValue("displayOrder") as number}
         </span>
       ),
+      meta: {
+        label: "Order",
+      },
     },
     {
       accessorKey: "isActive",
@@ -248,6 +263,9 @@ export function FieldDefinitionsTable({
           </Badge>
         );
       },
+      meta: {
+        label: "Status",
+      },
     },
     {
       accessorKey: "createdAt",
@@ -261,6 +279,9 @@ export function FieldDefinitionsTable({
             {format(date, "MMM d, yyyy")}
           </span>
         );
+      },
+      meta: {
+        label: "Created",
       },
     },
     {

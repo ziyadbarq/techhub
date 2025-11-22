@@ -136,6 +136,9 @@ export function LocationsTable({
           </span>
         </div>
       ),
+      meta: {
+        label: "Name",
+      },
     },
     {
       accessorKey: "locationType",
@@ -145,6 +148,9 @@ export function LocationsTable({
       cell: ({ row }) => (
         <Badge variant="outline">{row.getValue("locationType")}</Badge>
       ),
+      meta: {
+        label: "Type",
+      },
     },
     {
       id: "address",
@@ -158,6 +164,9 @@ export function LocationsTable({
             <span className="text-sm">{parts.join(", ")}</span>
           </div>
         ) : null;
+      },
+      meta: {
+        label: "Address",
       },
     },
     {
@@ -176,6 +185,9 @@ export function LocationsTable({
           </Badge>
         );
       },
+      meta: {
+        label: "Status",
+      },
     },
     {
       accessorKey: "createdAt",
@@ -189,6 +201,9 @@ export function LocationsTable({
             {format(date, "MMM d, yyyy")}
           </span>
         );
+      },
+      meta: {
+        label: "Created",
       },
     },
     {

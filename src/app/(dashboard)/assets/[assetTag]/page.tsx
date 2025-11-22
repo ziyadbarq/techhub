@@ -12,18 +12,18 @@ export const dynamic = "force-dynamic";
 
 interface AssetDetailPageProps {
   params: Promise<{
-    id: string;
+    assetTag: string;
   }>;
 }
 
 export default async function AssetDetailPage({
   params,
 }: AssetDetailPageProps) {
-  const { id } = await params;
+  const { assetTag } = await params;
 
   await requirePermission(PERMISSIONS.ASSETS_VIEW);
 
-  const result = await getAssetAction(id);
+  const result = await getAssetAction(assetTag);
 
   if (!result.success || !result.data) {
     notFound();

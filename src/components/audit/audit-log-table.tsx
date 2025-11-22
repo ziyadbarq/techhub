@@ -125,6 +125,9 @@ export function AuditLogTable({
           </div>
         );
       },
+      meta: {
+        label: "Date & Time",
+      },
     },
     {
       accessorKey: "userId",
@@ -148,6 +151,9 @@ export function AuditLogTable({
           </div>
         );
       },
+      meta: {
+        label: "User",
+      },
     },
     {
       accessorKey: "action",
@@ -157,6 +163,9 @@ export function AuditLogTable({
       cell: ({ row }) => getActionBadge(row.getValue("action")),
       filterFn: (row, id, value) => {
         return value.includes(row.getValue(id));
+      },
+      meta: {
+        label: "Action",
       },
     },
     {
@@ -170,6 +179,9 @@ export function AuditLogTable({
       },
       filterFn: (row, id, value) => {
         return value.includes(row.getValue(id));
+      },
+      meta: {
+        label: "Entity Type",
       },
     },
     {
@@ -187,6 +199,9 @@ export function AuditLogTable({
             {entityId.length > 12 ? `${entityId.slice(0, 12)}...` : entityId}
           </span>
         );
+      },
+      meta: {
+        label: "Entity ID",
       },
     },
   ];

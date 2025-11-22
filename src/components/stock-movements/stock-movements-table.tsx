@@ -147,6 +147,9 @@ export function StockMovementsTable({
           </Badge>
         );
       },
+      meta: {
+        label: "Type",
+      },
     },
     {
       accessorKey: "assetId",
@@ -161,6 +164,9 @@ export function StockMovementsTable({
           </span>
         );
       },
+      meta: {
+        label: "Asset",
+      },
     },
     {
       accessorKey: "quantity",
@@ -170,6 +176,9 @@ export function StockMovementsTable({
       cell: ({ row }) => {
         const quantity = row.getValue("quantity") as number;
         return <span className="font-medium">{quantity}</span>;
+      },
+      meta: {
+        label: "Quantity",
       },
     },
     {
@@ -185,6 +194,9 @@ export function StockMovementsTable({
           </span>
         );
       },
+      meta: {
+        label: "From",
+      },
     },
     {
       accessorKey: "stockLocationToId",
@@ -198,6 +210,9 @@ export function StockMovementsTable({
             {toId ? toId.substring(0, 8) : "—"}
           </span>
         );
+      },
+      meta: {
+        label: "To",
       },
     },
     {
@@ -213,6 +228,9 @@ export function StockMovementsTable({
           </span>
         );
       },
+      meta: {
+        label: "Reason",
+      },
     },
     {
       accessorKey: "occurredAt",
@@ -226,6 +244,9 @@ export function StockMovementsTable({
             {format(new Date(occurredAt), "MMM d, yyyy HH:mm")}
           </span>
         );
+      },
+      meta: {
+        label: "Occurred",
       },
     },
     {

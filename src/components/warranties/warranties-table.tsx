@@ -148,6 +148,9 @@ export function WarrantiesTable({
                 </div>
               );
             },
+            meta: {
+              label: "Asset",
+            },
           } as ColumnDef<WarrantyDTO>,
         ]
       : []),
@@ -165,6 +168,9 @@ export function WarrantiesTable({
           </div>
         );
       },
+      meta: {
+        label: "Policy",
+      },
     },
     {
       accessorKey: "coverageType",
@@ -176,6 +182,9 @@ export function WarrantiesTable({
         return (
           <Badge variant="outline">{coverageType.replace(/_/g, " ")}</Badge>
         );
+      },
+      meta: {
+        label: "Coverage",
       },
     },
     {
@@ -193,6 +202,9 @@ export function WarrantiesTable({
           </span>
         );
       },
+      meta: {
+        label: "Vendor",
+      },
     },
     {
       accessorKey: "startDate",
@@ -207,6 +219,9 @@ export function WarrantiesTable({
           </span>
         );
       },
+      meta: {
+        label: "Start Date",
+      },
     },
     {
       accessorKey: "endDate",
@@ -220,6 +235,9 @@ export function WarrantiesTable({
             {format(date, "MMM d, yyyy")}
           </span>
         );
+      },
+      meta: {
+        label: "End Date",
       },
     },
     {
@@ -237,6 +255,9 @@ export function WarrantiesTable({
             daysRemaining={warranty.daysRemaining}
           />
         );
+      },
+      meta: {
+        label: "Status",
       },
     },
     {
@@ -257,6 +278,9 @@ export function WarrantiesTable({
             }).format(cost)}
           </span>
         );
+      },
+      meta: {
+        label: "Cost",
       },
     },
     {

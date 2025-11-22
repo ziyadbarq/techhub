@@ -145,6 +145,9 @@ export function PersonRoleAssignmentsTable({
           </div>
         </div>
       ),
+      meta: {
+        label: "Assignment",
+      },
     },
     {
       accessorKey: "roleId",
@@ -155,6 +158,9 @@ export function PersonRoleAssignmentsTable({
         </span>
       ),
       enableHiding: true,
+      meta: {
+        label: "Role ID",
+      },
     },
     {
       accessorKey: "scope",
@@ -163,6 +169,9 @@ export function PersonRoleAssignmentsTable({
         const scope = row.getValue("scope") as string | null;
         return scope ? <Badge variant="outline">{scope}</Badge> : null;
       },
+      meta: {
+        label: "Scope",
+      },
     },
     {
       accessorKey: "isPrimary",
@@ -170,6 +179,9 @@ export function PersonRoleAssignmentsTable({
       cell: ({ row }) => {
         const isPrimary = row.getValue("isPrimary") as boolean;
         return isPrimary ? <Badge variant="default">Primary</Badge> : null;
+      },
+      meta: {
+        label: "Primary",
       },
     },
     {
@@ -190,6 +202,9 @@ export function PersonRoleAssignmentsTable({
           </div>
         );
       },
+      meta: {
+        label: "Period",
+      },
     },
     {
       accessorKey: "isActive",
@@ -207,6 +222,9 @@ export function PersonRoleAssignmentsTable({
           </Badge>
         );
       },
+      meta: {
+        label: "Status",
+      },
     },
     {
       accessorKey: "createdAt",
@@ -220,6 +238,9 @@ export function PersonRoleAssignmentsTable({
             {format(date, "MMM d, yyyy")}
           </span>
         );
+      },
+      meta: {
+        label: "Created",
       },
     },
     {

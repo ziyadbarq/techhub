@@ -10,13 +10,14 @@ import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
-import { getCurrentUserId } from "@/lib/auth/session";
+import { getSession } from "@/lib/auth/session";
 import type {
   CreateAssetAssignmentUseCase,
   UpdateAssetAssignmentUseCase,
 } from "@/core/use-cases/asset/asset-assignment";
 import type { CreateStockMovementUseCase } from "@/core/use-cases/inventory/stock-movement";
 import type { UpdateAssetUseCase } from "@/core/use-cases/asset/asset";
+import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import {
   presentAssetAssignment,
   type AssetAssignmentDTO,
@@ -27,6 +28,34 @@ import {
 } from "../presenters/stock-movement.presenter";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+async function resolveCurrentPersonId(
+  container: ReturnType<typeof getContainer>,
+) {
+  const { user } = await getSession();
+  if (!user) {
+    return { personId: null, error: "Not authenticated" };
+  }
+
+  const personRepository = container.get<IPersonRepository>(
+    DI_TOKENS.IPersonRepository,
+  );
+
+  // Prefer explicit user linkage, fallback to email match for existing records
+  const person =
+    (await personRepository.findByUserId(user.id)) ||
+    (user.email ? await personRepository.findByEmail(user.email) : null);
+
+  if (!person) {
+    return {
+      personId: null,
+      error:
+        "Your account is not linked to a person record. Ask an admin to link your user to a Person before assigning assets.",
+    };
+  }
+
+  return { personId: person.id, error: null };
+}
 
 /**
  * Assign Asset to Employee Workflow
@@ -46,16 +75,15 @@ export async function assignAssetToEmployeeAction(data: {
     await requirePermission(PERMISSIONS.ASSET_ASSIGNMENTS_CREATE);
     await requirePermission(PERMISSIONS.STOCK_MOVEMENTS_CREATE);
 
-    // Get current user from session for performedById
-    const currentUserId = await getCurrentUserId();
-    if (!currentUserId) {
+    const container = getContainer();
+    const { personId, error } = await resolveCurrentPersonId(container);
+    if (!personId) {
       return {
         success: false,
-        error: "Not authenticated",
+        error: error ?? "Authentication required",
       };
     }
 
-    const container = getContainer();
     const now = new Date();
 
     // 1. Create assignment
@@ -81,7 +109,7 @@ export async function assignAssetToEmployeeAction(data: {
       assetId: data.assetId,
       quantity: 1,
       reason: `Assigned to employee`,
-      performedById: currentUserId, // Use current user from session
+      performedById: personId, // Use current user's linked person
       occurredAt: now,
     });
 
@@ -89,13 +117,13 @@ export async function assignAssetToEmployeeAction(data: {
     const updateAssetUseCase = container.get<UpdateAssetUseCase>(
       DI_TOKENS.UpdateAssetUseCase,
     );
-    await updateAssetUseCase.execute({
+    const updatedAsset = await updateAssetUseCase.execute({
       id: data.assetId,
       currentStockLocationId: null,
     });
 
     revalidatePath("/assets");
-    revalidatePath(`/assets/${data.assetId}`);
+    revalidatePath(`/assets/${updatedAsset.assetTag}`);
     revalidatePath("/asset-assignments");
 
     return {
@@ -130,16 +158,15 @@ export async function returnAssetAction(data: {
     await requirePermission(PERMISSIONS.ASSET_ASSIGNMENTS_UPDATE);
     await requirePermission(PERMISSIONS.STOCK_MOVEMENTS_CREATE);
 
-    // Get current user from session for performedById
-    const currentUserId = await getCurrentUserId();
-    if (!currentUserId) {
+    const container = getContainer();
+    const { personId, error } = await resolveCurrentPersonId(container);
+    if (!personId) {
       return {
         success: false,
-        error: "Not authenticated",
+        error: error ?? "Authentication required",
       };
     }
 
-    const container = getContainer();
     const now = new Date();
 
     // 1. End assignment
@@ -161,7 +188,7 @@ export async function returnAssetAction(data: {
       assetId: data.assetId,
       quantity: 1,
       reason: data.note || "Returned to inventory",
-      performedById: currentUserId, // Use current user from session
+      performedById: personId, // Use current user's linked person
       occurredAt: now,
     });
 
@@ -169,13 +196,13 @@ export async function returnAssetAction(data: {
     const updateAssetUseCase = container.get<UpdateAssetUseCase>(
       DI_TOKENS.UpdateAssetUseCase,
     );
-    await updateAssetUseCase.execute({
+    const updatedAsset = await updateAssetUseCase.execute({
       id: data.assetId,
       currentStockLocationId: data.stockLocationToId,
     });
 
     revalidatePath("/assets");
-    revalidatePath(`/assets/${data.assetId}`);
+    revalidatePath(`/assets/${updatedAsset.assetTag}`);
     revalidatePath("/asset-assignments");
 
     return {

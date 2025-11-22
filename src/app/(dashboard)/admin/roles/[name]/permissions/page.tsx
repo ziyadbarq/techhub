@@ -24,7 +24,7 @@ import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 interface AssignPermissionsPageProps {
   params: Promise<{
-    id: string;
+    name: string;
   }>;
 }
 
@@ -34,9 +34,12 @@ export default async function AssignPermissionsPage(
   // Resolve params (Next.js 16 async request API)
   const params = await props.params;
 
+  // Decode URL-encoded role name
+  const roleName = decodeURIComponent(params.name);
+
   // Fetch role and all available permissions on the server
   const [roleResult, permissionsResult] = await Promise.all([
-    getRoleAction(params.id),
+    getRoleAction(roleName),
     listPermissionsAction(),
   ]);
 

@@ -148,6 +148,9 @@ export function LifecycleModelsTable({
           </div>
         );
       },
+      meta: {
+        label: "Name",
+      },
     },
     {
       accessorKey: "createdAt",
@@ -162,6 +165,9 @@ export function LifecycleModelsTable({
           </span>
         );
       },
+      meta: {
+        label: "Created",
+      },
     },
     {
       accessorKey: "updatedAt",
@@ -175,6 +181,9 @@ export function LifecycleModelsTable({
             {format(date, "MMM d, yyyy")}
           </span>
         );
+      },
+      meta: {
+        label: "Updated",
       },
     },
     {

@@ -17,11 +17,11 @@ import { EditPermissionClient } from "./edit-permission-client";
 import { getPermissionAction } from "@/interface-adapters/controllers/permission.controller";
 
 interface EditPermissionPageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ name: string }>;
 }
 
-async function PermissionDetails({ id }: { id: string }) {
-  const result = await getPermissionAction(id);
+async function PermissionDetails({ name }: { name: string }) {
+  const result = await getPermissionAction(name);
 
   if (!result.success || !result.data) {
     notFound();
@@ -44,7 +44,9 @@ function PermissionDetailsSkeleton() {
 export default async function EditPermissionPage({
   params,
 }: EditPermissionPageProps) {
-  const { id } = await params;
+  const { name } = await params;
+  // Decode URL-encoded permission name
+  const permissionName = decodeURIComponent(name);
 
   return (
     <div className="container mx-auto max-w-3xl space-y-6 py-8">
@@ -67,7 +69,7 @@ export default async function EditPermissionPage({
       <Card>
         <CardContent className="pt-6">
           <Suspense fallback={<PermissionDetailsSkeleton />}>
-            <PermissionDetails id={id} />
+            <PermissionDetails name={permissionName} />
           </Suspense>
         </CardContent>
       </Card>

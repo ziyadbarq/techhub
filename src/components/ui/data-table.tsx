@@ -92,6 +92,7 @@ export interface DataTableProps<TData, TValue> {
   onSelectionChange?: (selectedRows: TData[]) => void;
   // Column visibility
   showColumnToggle?: boolean;
+  initialColumnVisibility?: VisibilityState;
   // Loading state
   loading?: boolean;
   // Empty state
@@ -114,6 +115,7 @@ export function DataTable<TData, TValue>({
   selectable = false,
   onSelectionChange,
   showColumnToggle = true,
+  initialColumnVisibility,
   loading = false,
   emptyMessage = "No results.",
   toolbarActions,
@@ -125,7 +127,7 @@ export function DataTable<TData, TValue>({
     [],
   );
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+    React.useState<VisibilityState>(initialColumnVisibility ?? {});
   const [rowSelection, setRowSelection] = React.useState({});
   const [internalPagination, setInternalPagination] =
     React.useState<PaginationState>({
@@ -243,6 +245,9 @@ export function DataTable<TData, TValue>({
                   .getAllColumns()
                   .filter((column) => column.getCanHide())
                   .map((column) => {
+                    const label =
+                      (column.columnDef.meta as { label?: string })?.label ||
+                      column.id;
                     return (
                       <DropdownMenuCheckboxItem
                         key={column.id}
@@ -252,7 +257,7 @@ export function DataTable<TData, TValue>({
                           column.toggleVisibility(!!value)
                         }
                       >
-                        {column.id}
+                        {label}
                       </DropdownMenuCheckboxItem>
                     );
                   })}

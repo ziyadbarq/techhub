@@ -34,7 +34,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 export default function UserRolesPage() {
   const params = useParams();
   const _router = useRouter();
-  const userId = params.id as string;
+  const userEmail = decodeURIComponent(params.email as string);
 
   const [user, setUser] = React.useState<UserWithRolesDTO | null>(null);
   const [availableRoles, setAvailableRoles] = React.useState<
@@ -49,7 +49,7 @@ export default function UserRolesPage() {
 
     try {
       const [userResult, rolesResult] = await Promise.all([
-        getUserWithRolesAction(userId),
+        getUserWithRolesAction(userEmail),
         listAvailableRolesAction(),
       ]);
 
@@ -70,7 +70,7 @@ export default function UserRolesPage() {
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [userEmail]);
 
   React.useEffect(() => {
     fetchData();
