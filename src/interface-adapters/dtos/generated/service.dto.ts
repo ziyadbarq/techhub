@@ -14,7 +14,7 @@ import {
   OwnershipType,
   ServiceLocation,
   AssetRelationship,
-} from "@/generated/prisma";
+} from "@/generated/prisma/enums";
 
 // ==================== Service DTOs ====================
 

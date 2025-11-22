@@ -39,12 +39,8 @@ import type { ServiceDTO } from "@/interface-adapters/presenters/service.present
 import { deleteServiceAction } from "@/interface-adapters/controllers/service.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { usePermissions } from "@/hooks/use-permissions";
-import type {
-  ServiceType} from "@/generated/prisma";
-import {
-  ServiceStatus,
-  CriticalityLevel
-} from "@/generated/prisma";
+import type { ServiceType } from "@/generated/prisma/enums";
+import { ServiceStatus, CriticalityLevel } from "@/generated/prisma/enums";
 
 interface ServicesTableProps {
   data: ServiceDTO[];

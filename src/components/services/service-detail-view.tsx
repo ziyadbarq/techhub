@@ -45,7 +45,7 @@ import {
 } from "@/interface-adapters/controllers/service.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { usePermissions } from "@/hooks/use-permissions";
-import { ServiceStatus, CriticalityLevel } from "@/generated/prisma";
+import { ServiceStatus, CriticalityLevel } from "@/generated/prisma/enums";
 
 interface ServiceDetailViewProps {
   service: ServiceDTO;

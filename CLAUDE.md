@@ -35,6 +35,9 @@ npm run build       # Production build
 npm run build:fast  # Fast build (skips TypeScript)
 
 npm run reset # Reset database + seed (drops all data!)
+
+# Ad-hoc Prisma scripts (with env + correct client import)
+npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastructure/database/prisma/client.ts'; (async()=>{ /* your queries */ await prisma.$disconnect();})();"
 ```
 
 ## Documentation

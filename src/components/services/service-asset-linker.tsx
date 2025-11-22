@@ -46,7 +46,7 @@ import {
   linkServiceToAssetAction,
   unlinkServiceFromAssetAction,
 } from "@/interface-adapters/controllers/service.controller";
-import { AssetRelationship } from "@/generated/prisma";
+import { AssetRelationship } from "@/generated/prisma/enums";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { usePermissions } from "@/hooks/use-permissions";
 

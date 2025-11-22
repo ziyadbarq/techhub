@@ -47,7 +47,7 @@ import {
   removeServiceOwnerAction,
   setServicePrimaryOwnerAction,
 } from "@/interface-adapters/controllers/service.controller";
-import { OwnershipType } from "@/generated/prisma";
+import { OwnershipType } from "@/generated/prisma/enums";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { usePermissions } from "@/hooks/use-permissions";
 

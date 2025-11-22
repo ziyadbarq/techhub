@@ -8,7 +8,7 @@
     "dev": "next dev",
     "dev:restart": "bash scripts/restart-dev.sh && npm run dev",
     "dev:clean": "npm run cache:clear && bash scripts/restart-dev.sh && npm run dev",
-    "build": "node scripts/build.js",
+    "build": "npm run lint && node scripts/build.js",
     "build:fast": "SKIP_TYPE_CHECK=true next build",
     "build:analyze": "npm run build:quiet && node scripts/analyze-bundle.js",
     "build:quiet": "next build",

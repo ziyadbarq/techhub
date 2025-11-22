@@ -53,7 +53,7 @@ import {
   DataConfidentiality,
   BusinessImpactLevel,
   CriticalityLevel,
-} from "@/generated/prisma";
+} from "@/generated/prisma/enums";
 
 interface ServiceFormProps {
   mode: "create" | "edit";

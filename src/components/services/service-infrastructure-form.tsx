@@ -41,7 +41,7 @@ import {
   CreateServiceInfrastructureSchema,
   type CreateServiceInfrastructureDTO,
 } from "@/interface-adapters/dtos/generated/service.dto";
-import { ServiceLocation } from "@/generated/prisma";
+import { ServiceLocation } from "@/generated/prisma/enums";
 
 interface ServiceInfrastructureFormProps {
   serviceId: string;
@@ -105,8 +105,6 @@ export function ServiceInfrastructureForm({
       const normalizedData = {
         ...data,
         cloudProvider: data.cloudProvider || undefined,
-        cloudAccountId: data.cloudAccountId || undefined,
-        cloudRegion: data.cloudRegion || undefined,
         compartment: data.compartment || undefined,
         project: data.project || undefined,
         region: data.region || undefined,
@@ -114,11 +112,6 @@ export function ServiceInfrastructureForm({
         hostname: data.hostname || undefined,
         backupSchedule: data.backupSchedule || undefined,
         lastBackupDate: data.lastBackupDate || undefined,
-        backupLocation: data.backupLocation || undefined,
-      };
-
-      const result = isEditing
-        ? await updateServiceInfrastructureAction(infrastructure.id, normalizedData)
       };
 
       const result = isEditing

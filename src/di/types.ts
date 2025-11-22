@@ -108,6 +108,7 @@ export const DI_TOKENS = {
   IServiceInfrastructureRepository: Symbol.for(
     "IServiceInfrastructureRepository",
   ),
+  ISearchRepository: Symbol.for("ISearchRepository"),
 
   // ==========================================
   // Service Tokens
