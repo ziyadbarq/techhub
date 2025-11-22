@@ -17,7 +17,15 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2, X, Search, ChevronDown, ChevronRight } from "lucide-react";
+import {
+  Loader2,
+  X,
+  Search,
+  ChevronDown,
+  ChevronRight,
+  AlertCircle,
+  Info,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -31,6 +39,12 @@ import {
 } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import type {
   RoleDTO,
@@ -38,6 +52,11 @@ import type {
 } from "@/interface-adapters/presenters/role.presenter";
 import { assignPermissionsToRoleAction } from "@/interface-adapters/controllers/role.controller";
 import { PERMISSION_GROUPS } from "@/lib/rbac/permission-groups";
+import {
+  validatePermissionDependencies,
+  getPermissionDependencies,
+} from "@/lib/rbac/permission-dependencies";
+import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
 
 interface PermissionsManagerProps {
   role: RoleDTO;
@@ -66,6 +85,12 @@ export function PermissionsManager({
     allPermissions.forEach((perm) => map.set(perm.name, perm));
     return map;
   }, [allPermissions]);
+
+  // Validate permission dependencies
+  const dependencyValidation = React.useMemo(() => {
+    const selectedArray = Array.from(selectedPermissions) as PermissionKey[];
+    return validatePermissionDependencies(selectedArray);
+  }, [selectedPermissions]);
 
   // Group permissions by logical categories
   const groupedPermissions = React.useMemo(() => {
@@ -203,6 +228,19 @@ export function PermissionsManager({
     toast.info("Changes discarded");
   };
 
+  const handleAddMissingDependencies = () => {
+    setSelectedPermissions((prev) => {
+      const next = new Set(prev);
+      dependencyValidation.missing.forEach((item) => {
+        item.requiredDependencies.forEach((dep) => next.add(dep));
+      });
+      return next;
+    });
+    toast.success(
+      `Added ${dependencyValidation.missing.reduce((sum, item) => sum + item.requiredDependencies.length, 0)} missing dependencies`,
+    );
+  };
+
   return (
     <div className="space-y-6">
       {/* Summary Card */}
@@ -256,6 +294,72 @@ export function PermissionsManager({
           </div>
         </CardContent>
       </Card>
+
+      {/* Dependency Warning */}
+      {!dependencyValidation.valid && (
+        <Card className="border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
+          <CardHeader>
+            <div className="flex items-start gap-3">
+              <AlertCircle className="mt-0.5 h-5 w-5 text-yellow-600 dark:text-yellow-500" />
+              <div className="flex-1">
+                <CardTitle className="text-yellow-900 dark:text-yellow-100">
+                  Missing Permission Dependencies
+                </CardTitle>
+                <CardDescription className="text-yellow-800 dark:text-yellow-200">
+                  Some selected permissions require additional permissions to
+                  function correctly
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {dependencyValidation.missing.map((item, idx) => {
+                const permission = permissionMap.get(item.permission);
+                return (
+                  <div
+                    key={idx}
+                    className="rounded-md border border-yellow-300 bg-white p-3 dark:border-yellow-700 dark:bg-yellow-900/20"
+                  >
+                    <div className="mb-2 flex items-center gap-2">
+                      <code className="text-yellow-900 rounded bg-yellow-100 px-2 py-1 font-mono text-xs dark:bg-yellow-800 dark:text-yellow-100">
+                        {permission?.displayName ?? item.permission}
+                      </code>
+                      <span className="text-yellow-700 dark:text-yellow-300 text-sm">
+                        requires:
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {item.requiredDependencies.map((dep) => {
+                        const depPerm = permissionMap.get(dep);
+                        return (
+                          <Badge
+                            key={dep}
+                            variant="outline"
+                            className="border-yellow-600 text-yellow-700 dark:border-yellow-500 dark:text-yellow-300"
+                          >
+                            {depPerm?.displayName ?? dep}
+                          </Badge>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="mt-4">
+              <Button
+                onClick={handleAddMissingDependencies}
+                disabled={isSystemRole || isSaving}
+                variant="outline"
+                className="border-yellow-600 text-yellow-700 hover:bg-yellow-100 dark:border-yellow-500 dark:text-yellow-300 dark:hover:bg-yellow-900/40"
+              >
+                Add Missing Dependencies Automatically
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Permissions by Logical Groups */}
       <div className="space-y-4">
@@ -332,6 +436,10 @@ export function PermissionsManager({
                           const wasOriginal = role.permissions?.includes(
                             permission.name,
                           );
+                          const dependencies = getPermissionDependencies(
+                            permission.name as PermissionKey,
+                          );
+                          const hasDependencies = dependencies.length > 0;
 
                           return (
                             <div
@@ -354,6 +462,31 @@ export function PermissionsManager({
                                   <code className="text-muted-foreground bg-muted rounded px-1.5 py-0.5 font-mono text-xs">
                                     {permission.name}
                                   </code>
+                                  {hasDependencies && (
+                                    <TooltipProvider delayDuration={300}>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Info className="text-muted-foreground h-4 w-4 cursor-help" />
+                                        </TooltipTrigger>
+                                        <TooltipContent className="max-w-xs">
+                                          <p className="mb-1 font-medium">
+                                            Requires:
+                                          </p>
+                                          <ul className="list-inside list-disc space-y-0.5 text-sm">
+                                            {dependencies.map((dep) => {
+                                              const depPerm =
+                                                permissionMap.get(dep);
+                                              return (
+                                                <li key={dep}>
+                                                  {depPerm?.displayName ?? dep}
+                                                </li>
+                                              );
+                                            })}
+                                          </ul>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                  )}
                                   {wasOriginal && !isSelected && (
                                     <Badge
                                       variant="outline"
