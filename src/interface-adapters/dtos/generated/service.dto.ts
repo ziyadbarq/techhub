@@ -36,11 +36,11 @@ export const CreateServiceSchema = z.object({
   lastPatchDate: z.coerce.date().nullish(),
   plannedDecommissionDate: z.coerce.date().nullish(),
   vendorId: z.string().uuid().nullish(),
-  slaDetails: z.record(z.unknown()).nullish(),
+  slaDetails: z.record(z.string(), z.unknown()).nullish(),
   businessProcessId: z.string().uuid().nullish(),
   isInCentralRegister: z.boolean().default(true),
   complianceNotes: z.string().nullish(),
-  metadata: z.record(z.unknown()).nullish(),
+  metadata: z.record(z.string(), z.unknown()).nullish(),
 });
 
 export const UpdateServiceSchema = CreateServiceSchema.partial();
@@ -90,7 +90,7 @@ export const CreateBusinessProcessSchema = z.object({
     .max(200, "Business process name must not exceed 200 characters"),
   description: z.string().nullish(),
   category: z.string().nullish(),
-  metadata: z.record(z.unknown()).nullish(),
+  metadata: z.record(z.string(), z.unknown()).nullish(),
 });
 
 export const UpdateBusinessProcessSchema = z.object({
@@ -110,7 +110,7 @@ export const UpdateBusinessProcessSchema = z.object({
     .optional(),
   description: z.string().nullish(),
   category: z.string().nullish(),
-  metadata: z.record(z.unknown()).nullish(),
+  metadata: z.record(z.string(), z.unknown()).nullish(),
 });
 
 export type CreateBusinessProcessDTO = z.infer<
@@ -144,7 +144,7 @@ export const CreateServiceInfrastructureSchema = z.object({
   backupEnabled: z.boolean().default(false),
   backupSchedule: z.string().nullish(),
   lastBackupDate: z.coerce.date().nullish(),
-  cloudProviderDetails: z.record(z.unknown()).nullish(),
+  cloudProviderDetails: z.record(z.string(), z.unknown()).nullish(),
 });
 
 export const UpdateServiceInfrastructureSchema = z.object({
@@ -168,7 +168,7 @@ export const UpdateServiceInfrastructureSchema = z.object({
   backupEnabled: z.boolean().optional(),
   backupSchedule: z.string().nullish(),
   lastBackupDate: z.coerce.date().nullish(),
-  cloudProviderDetails: z.record(z.unknown()).nullish(),
+  cloudProviderDetails: z.record(z.string(), z.unknown()).nullish(),
 });
 
 export type CreateServiceInfrastructureDTO = z.infer<

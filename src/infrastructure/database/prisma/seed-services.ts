@@ -165,35 +165,35 @@ export async function seedServices(prisma: PrismaClient) {
                 location: infrastructure.location,
                 cloudProvider:
                   "cloudProvider" in infrastructure
-                    ? infrastructure.cloudProvider
+                    ? (infrastructure.cloudProvider as string | undefined)
                     : undefined,
                 compartment:
                   "compartment" in infrastructure
-                    ? infrastructure.compartment
+                    ? (infrastructure.compartment as string | undefined)
                     : undefined,
                 project:
                   "project" in infrastructure
-                    ? infrastructure.project
+                    ? (infrastructure.project as string | undefined)
                     : undefined,
                 region:
                   "region" in infrastructure
-                    ? infrastructure.region
+                    ? (infrastructure.region as string | undefined)
                     : undefined,
                 ipAddress:
                   "ipAddress" in infrastructure
-                    ? infrastructure.ipAddress
+                    ? (infrastructure.ipAddress as string | undefined)
                     : undefined,
                 hostname:
                   "hostname" in infrastructure
-                    ? infrastructure.hostname
+                    ? (infrastructure.hostname as string | undefined)
                     : undefined,
                 backupEnabled:
                   "backupEnabled" in infrastructure
-                    ? infrastructure.backupEnabled
+                    ? (infrastructure.backupEnabled as boolean | undefined)
                     : undefined,
                 backupSchedule:
                   "backupSchedule" in infrastructure
-                    ? infrastructure.backupSchedule
+                    ? (infrastructure.backupSchedule as string | undefined)
                     : undefined,
               },
             }

@@ -143,7 +143,7 @@ export class ServiceInfrastructure {
         key !== "ipAddress" &&
         key !== "hostname"
       ) {
-        (this.props as Record<string, unknown>)[key] = value;
+        (this.props as unknown as Record<string, unknown>)[key] = value;
       }
     });
 

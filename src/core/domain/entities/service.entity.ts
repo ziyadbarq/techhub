@@ -158,7 +158,7 @@ export class Service {
     Object.keys(updates).forEach((key) => {
       const value = updates[key as keyof typeof updates];
       if (value !== undefined && key !== "name" && key !== "serviceType") {
-        (this.props as Record<string, unknown>)[key] = value;
+        (this.props as unknown as Record<string, unknown>)[key] = value;
       }
     });
 
