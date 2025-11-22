@@ -24,6 +24,7 @@ import { logger } from "@/lib/logger";
 
 // Import module binding functions
 import { bindLoggerDependencies } from "./modules/logger.module";
+import { bindFileStorageDependencies } from "./modules/file-storage.module";
 import { bindCodeGeneratorDependencies } from "./modules/code-generator.module";
 import { bindDatabaseDependencies } from "./modules/database.module";
 import { bindRBACDependencies } from "./modules/rbac.module";
@@ -94,6 +95,9 @@ function createContainer(): Container {
 
   // Bind logger dependencies (must be first for other modules to use)
   bindLoggerDependencies(newContainer);
+
+  // Bind file storage dependencies (depends on logger)
+  bindFileStorageDependencies(newContainer);
 
   // Bind code generator dependencies (depends on logger and database)
   bindCodeGeneratorDependencies(newContainer);

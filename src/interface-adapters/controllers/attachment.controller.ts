@@ -106,6 +106,7 @@ export async function getAttachment(
 export async function listAttachments(options?: {
   uploadedById?: string;
   attachmentTypeId?: string;
+  targetType?: string;
 }): Promise<
   | { success: true; data: AttachmentDTO[] }
   | { success: false; error: string }
@@ -121,6 +122,7 @@ export async function listAttachments(options?: {
     const attachments = await useCase.execute({
       uploadedById: options?.uploadedById,
       attachmentTypeId: options?.attachmentTypeId,
+      targetType: options?.targetType as TargetObjectTypeEnum | undefined,
     });
 
     return {
@@ -208,6 +210,43 @@ export async function updateAttachment(
       success: false,
       error:
         error instanceof Error ? error.message : "Failed to update attachment",
+    };
+  }
+}
+
+/**
+ * Download an attachment
+ */
+export async function downloadAttachment(
+  id: string,
+): Promise<
+  { success: true; url: string } | { success: false; error: string }
+> {
+  try {
+    await requirePermission(PERMISSIONS.ATTACHMENTS_VIEW);
+
+    const container = getContainer();
+    const useCase = container.get<GetAttachmentUseCase>(
+      DI_TOKENS.GetAttachmentUseCase,
+    );
+
+    const attachment = await useCase.execute({ id });
+
+    // Return the public URL for the file
+    // Files are stored in /public/uploads/... so we need to prepend with /
+    const url = `/${attachment.filePath}`;
+
+    return {
+      success: true,
+      url,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to download attachment",
     };
   }
 }

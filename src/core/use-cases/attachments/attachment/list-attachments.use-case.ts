@@ -6,10 +6,12 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAttachmentRepository } from "@/core/repositories/attachment.repository.interface";
 import type { Attachment } from "@/core/domain/entities/attachment.entity";
+import type { TargetObjectTypeEnum } from "@/generated/prisma";
 
 export interface ListAttachmentsRequest {
   uploadedById?: string;
   attachmentTypeId?: string;
+  targetType?: TargetObjectTypeEnum;
 }
 
 @injectable()
@@ -20,21 +22,33 @@ export class ListAttachmentsUseCase {
   ) {}
 
   async execute(request: ListAttachmentsRequest = {}): Promise<Attachment[]> {
+    // Get all attachments first
+    let attachments: Attachment[];
+
     // If filtering by uploader
     if (request.uploadedById) {
-      return await this.attachmentRepository.findByUploader(
+      attachments = await this.attachmentRepository.findByUploader(
         request.uploadedById,
       );
     }
-
     // If filtering by attachment type
-    if (request.attachmentTypeId) {
-      return await this.attachmentRepository.findByAttachmentType(
+    else if (request.attachmentTypeId) {
+      attachments = await this.attachmentRepository.findByAttachmentType(
         request.attachmentTypeId,
       );
     }
-
     // Otherwise return all
-    return await this.attachmentRepository.findAll();
+    else {
+      attachments = await this.attachmentRepository.findAll();
+    }
+
+    // Apply targetType filter if provided
+    if (request.targetType) {
+      attachments = attachments.filter(
+        (attachment) => attachment.targetType === request.targetType,
+      );
+    }
+
+    return attachments;
   }
 }
