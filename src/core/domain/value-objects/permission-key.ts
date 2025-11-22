@@ -117,6 +117,14 @@ export const PERMISSIONS = {
   FIELD_DEFINITIONS_DELETE: "field-definitions:delete",
   FIELD_DEFINITIONS_MANAGE: "field-definitions:manage",
 
+  // Foundation: Exchange Rates (FX Rates)
+  FX_RATES_VIEW: "fx-rates:view",
+  FX_RATES_CREATE: "fx-rates:create",
+  FX_RATES_UPDATE: "fx-rates:update",
+  FX_RATES_DELETE: "fx-rates:delete",
+  FX_RATES_MANAGE: "fx-rates:manage",
+  FX_RATES_CONVERT: "fx-rates:convert",
+
   // Assets: Asset Categories
   ASSET_CATEGORIES_VIEW: "asset-categories:view",
   ASSET_CATEGORIES_CREATE: "asset-categories:create",
