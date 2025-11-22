@@ -26,12 +26,12 @@ export class GetServiceOwnersUseCase {
   async execute(
     request: GetServiceOwnersRequest,
   ): Promise<ServiceOwnershipWithPerson[]> {
-    // Check if service exists
+    // Check if service exists; return empty list instead of throwing to keep UI resilient
     const service = await prisma.service.findUnique({
       where: { id: request.serviceId },
     });
     if (!service) {
-      throw new Error(`Service with ID ${request.serviceId} not found`);
+      return [];
     }
 
     // Get all owners for this service

@@ -97,8 +97,8 @@ export function ServiceForm({
       plannedDecommissionDate: service?.plannedDecommissionDate
         ? new Date(service.plannedDecommissionDate).toISOString().split("T")[0]
         : "",
-      vendorId: service?.vendorId ?? "",
-      businessProcessId: service?.businessProcessId ?? "",
+      vendorId: service?.vendorId ?? null,
+      businessProcessId: service?.businessProcessId ?? null,
       isInCentralRegister: service?.isInCentralRegister ?? true,
       complianceNotes: service?.complianceNotes ?? "",
       slaDetails: service?.slaDetails ?? null,
@@ -504,8 +504,10 @@ export function ServiceForm({
                     <FormItem>
                       <FormLabel>Vendor</FormLabel>
                       <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value || ""}
+                        onValueChange={(value) =>
+                          field.onChange(value === "none" ? null : value)
+                        }
+                        value={field.value ?? "none"}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -513,7 +515,7 @@ export function ServiceForm({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="">No vendor</SelectItem>
+                          <SelectItem value="none">No vendor</SelectItem>
                           {vendors.map((vendor) => (
                             <SelectItem key={vendor.id} value={vendor.id}>
                               {vendor.name}
@@ -533,8 +535,10 @@ export function ServiceForm({
                     <FormItem>
                       <FormLabel>Business Process</FormLabel>
                       <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value || ""}
+                        onValueChange={(value) =>
+                          field.onChange(value === "none" ? null : value)
+                        }
+                        value={field.value ?? "none"}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -542,7 +546,9 @@ export function ServiceForm({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="">No business process</SelectItem>
+                          <SelectItem value="none">
+                            No business process
+                          </SelectItem>
                           {businessProcesses.map((process) => (
                             <SelectItem key={process.id} value={process.id}>
                               {process.name} ({process.code})
