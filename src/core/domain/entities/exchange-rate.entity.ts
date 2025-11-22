@@ -3,6 +3,8 @@
  * Multi-currency support - stores exchange rates to SAR (Saudi Riyal)
  */
 
+import { CURRENCY_CODES } from "@/lib/currencies.config";
+
 export interface ExchangeRateProps {
   id: string;
   currency: string; // 3-letter ISO code (USD, EUR, GBP, etc. - SAR is base currency and not stored)
@@ -104,27 +106,10 @@ export class ExchangeRate {
       throw new Error("Currency code must contain only letters");
     }
 
-    // Validate against common ISO 4217 codes (excluding SAR)
-    const validCurrencies = [
-      "USD",
-      "EUR",
-      "GBP",
-      "JPY",
-      "AUD",
-      "CAD",
-      "CHF",
-      "CNY",
-      "INR",
-      "AED",
-      "KWD",
-      "BHD",
-      "OMR",
-      "QAR",
-    ];
-
-    if (!validCurrencies.includes(currencyUpper)) {
+    // Validate against supported currencies
+    if (!CURRENCY_CODES.includes(currencyUpper)) {
       throw new Error(
-        `Currency code '${currencyUpper}' is not supported. Supported currencies: ${validCurrencies.join(", ")}`,
+        `Currency code '${currencyUpper}' is not supported. Supported currencies: ${CURRENCY_CODES.join(", ")}`,
       );
     }
   }
