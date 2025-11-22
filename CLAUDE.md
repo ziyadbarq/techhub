@@ -14,13 +14,15 @@ This file provides high-level guidance when working with this repository.
 
 - **Layer 1 (Foundation)**: 11 core entities - OrganizationUnit, Person, Role, Location, Vendor, Lifecycle models, Field definitions
 - **Layer 2 (Asset/Inventory)**: 9 entities - Asset, AssetCategory, AssetModel, AssetAssignment, StockLocation, StockMovement, Warranty, MaintenanceSchedule, MaintenanceRecord
-- **Layer 3 (Advanced ITAM)**: 6 modules, 26 entities
+- **Layer 3 (Advanced ITAM)**: 8 modules, 32 entities
   - **Asset Disposals**: AssetDisposal, DisposalApproval, DisposalDocument (3 entities, 11 use cases)
   - **Asset Kits**: AssetKit, AssetKitItem, AssetKitCheckout, AssetKitCheckoutItem (4 entities, 19 use cases)
   - **Asset Reservations**: AssetReservation, AssetReservationConflict (2 entities, 17 use cases)
   - **CMDB**: ConfigurationItem, CIRelationship, RelationshipType, CIClass, CIClassField, RelationshipTypeScope (6 entities, 28 use cases)
   - **Contract Management**: ContractType, Contract, ContractLinkedObject (3 entities, 17 use cases)
   - **License Management**: LicenseProduct, LicenseProductField, LicenseEntitlement, LicenseAllocation (4 entities, 23 use cases)
+  - **Governance**: DataDomain, DataOwnership, VerificationCampaign, VerificationItem (4 entities, 24 use cases)
+  - **Attachments**: AttachmentType, Attachment (2 entities, 11 use cases)
 - **Reference**: Task entity (complete implementation, hidden from UI)
 - **Marketing**: Public landing page showcasing system capabilities
 
@@ -77,6 +79,8 @@ npm run reset # Reset database + seed (drops all data!)
 - [ASSET_KITS.md](docs/ASSET_KITS.md) - Predefined asset bundles with checkout tracking and partial returns
 - [ASSET_RESERVATIONS.md](docs/ASSET_RESERVATIONS.md) - Future asset reservations with conflict detection and calendar view
 - [CMDB_GUIDE.md](docs/CMDB_GUIDE.md) - Configuration Management Database with dependency tracking
+- [GOVERNANCE_SYSTEM.md](docs/GOVERNANCE_SYSTEM.md) - Data governance, ownership tracking, and verification campaigns for SAMA compliance
+- [ATTACHMENTS_SYSTEM.md](docs/ATTACHMENTS_SYSTEM.md) - Polymorphic file attachments for compliance documentation and audit trails
 
 ### In-App Documentation (MDX)
 
@@ -166,12 +170,12 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 
 - **CRITICAL**: Create `index.ts` in use case modules to export all use cases
 - Pre-commit type-checking **fails** without barrel exports
-- **All Layer 3 features have barrel exports**: `src/core/use-cases/{disposal,asset-kits,reservations,cmdb,contract,license-*}/*/index.ts`
+- **All Layer 3 features have barrel exports**: `src/core/use-cases/{disposal,asset-kits,reservations,cmdb,contract,license-*,governance,attachments}/*/index.ts`
 - **See**: [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "Adding a New Feature"
 
 ## Layer 3 ITAM Features
 
-**6 Advanced Modules** - Fully implemented with Clean Architecture patterns:
+**8 Advanced Modules** - Fully implemented with Clean Architecture patterns:
 
 1. **Asset Disposals** (`/asset-disposals`)
    - Multi-step approval workflow (PENDING_APPROVAL → APPROVED → IN_PROGRESS → SANITIZED → COMPLETED)
@@ -219,18 +223,36 @@ See [docs/README.md](docs/README.md) for complete documentation index.
    - Soft deactivation (deallocate/reactivate) support
    - Permissions: `LICENSE_PRODUCTS_VIEW`, `LICENSE_ENTITLEMENTS_VIEW`, `LICENSE_ALLOCATIONS_VIEW`
 
-**Database**: 17 new tables (CMDB: 6, Contracts: 3, Licenses: 4, plus config entities: 4)
+7. **Governance** (`/data-domains`, `/data-ownerships`, `/verification-campaigns`)
+   - Data Domains for data classification (PII, Financial Data, etc.)
+   - Data Ownerships with polymorphic mapping (CIClass OR AssetCategory, Person OR OrgUnit)
+   - Verification Campaigns for scheduled compliance audits
+   - Verification Items with status tracking (PENDING → IN_PROGRESS → VERIFIED/EXCEPTION)
+   - SAMA compliance support with audit trails
+   - Permissions: `DATA_DOMAINS_VIEW`, `DATA_OWNERSHIPS_VIEW`, `VERIFICATION_CAMPAIGNS_VIEW`, `VERIFICATION_ITEMS_VIEW`
+
+8. **Attachments** (`/attachment-types`, `/attachments`)
+   - Attachment Types with file validation rules (extensions, size limits)
+   - Polymorphic attachments to any entity (23 target types: Asset, CI, Contract, Warranty, Disposal, etc.)
+   - File metadata tracking (fileName, mimeType, sizeBytes, storagePath)
+   - Business methods for file operations (isImage, isPDF, getFormattedFileSize)
+   - Ready for compliance documentation, invoices, certificates, audit reports
+   - Permissions: `ATTACHMENT_TYPES_VIEW`, `ATTACHMENTS_VIEW`
+
+**Database**: 23 new tables (CMDB: 6, Contracts: 3, Licenses: 4, Governance: 4, Attachments: 2, plus config entities: 4)
 
 **DI Modules**: All registered in `src/di/container.ts`:
 
 - `bindCMDBDependencies()` - CMDB entities
+- `bindContractsDependencies()` - Contract management
+- `bindLicensesDependencies()` - License management
+- `bindGovernanceDependencies()` - Governance features (data domains, ownerships, verification)
+- `bindAttachmentsDependencies()` - Attachment system
 - `loadDisposalModule()` - Asset disposals
 - `loadAssetKitsModule()` - Asset kits
 - `loadReservationsModule()` - Asset reservations
-- `bindContractsDependencies()` - Contract management
-- `bindLicensesDependencies()` - License management
 
-**Navigation**: New "CMDB", "Contracts", and "Licenses" groups added with permission-based filtering
+**Navigation**: New "CMDB", "Contracts", "Licenses", "Governance", and "Attachments" groups added with permission-based filtering
 
 ## Architecture Overview
 
