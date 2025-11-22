@@ -5,7 +5,7 @@
 
 export interface ExchangeRateProps {
   id: string;
-  currency: string; // 3-letter ISO code (USD, EUR, GBP, SAR)
+  currency: string; // 3-letter ISO code (USD, EUR, GBP, etc. - SAR is base currency and not stored)
   rateToSAR: number; // 1 CURRENCY = X SAR
   isActive: boolean;
   createdAt: Date;
