@@ -1,11 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import type { PrismaClient } from "@/generated/prisma";
 import { DI_TOKENS } from "@/di/types";
@@ -14,14 +6,11 @@ import {
   AssetKitCheckoutItem,
   type KitCheckoutItemStatus,
 } from "@/core/domain/entities/asset-kit-checkout-item.entity";
-import { createRepositoryLogger } from "./repository-logger";
 
 @injectable()
 export class PrismaAssetKitCheckoutItemRepository
   implements IAssetKitCheckoutItemRepository
 {
-  private readonly logger = createRepositoryLogger("AssetKitCheckoutItem");
-
   constructor(
     @inject(DI_TOKENS.PrismaClient)
     private readonly prisma: PrismaClient,
@@ -30,17 +19,17 @@ export class PrismaAssetKitCheckoutItemRepository
   async create(item: AssetKitCheckoutItem): Promise<AssetKitCheckoutItem> {
     const data = {
       id: item.id,
-      kit_checkout_id: item.kitCheckoutId,
-      asset_id: item.assetId,
-      kit_item_id: item.kitItemId,
-      checkout_date: item.checkoutDate,
-      return_date: item.returnDate,
+      kitCheckoutId: item.kitCheckoutId,
+      assetId: item.assetId,
+      kitItemId: item.kitItemId,
+      checkoutDate: item.checkoutDate,
+      returnDate: item.returnDate,
       status: item.status,
-      condition_at_checkout: item.conditionAtCheckout,
-      condition_at_return: item.conditionAtReturn,
+      conditionAtCheckout: item.conditionAtCheckout,
+      conditionAtReturn: item.conditionAtReturn,
       note: item.note,
-      created_at: item.createdAt,
-      updated_at: item.updatedAt,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
     };
 
     const created = await this.prisma.assetKitCheckoutItem.create({ data });
@@ -57,8 +46,8 @@ export class PrismaAssetKitCheckoutItemRepository
 
   async findByCheckoutId(checkoutId: string): Promise<AssetKitCheckoutItem[]> {
     const items = await this.prisma.assetKitCheckoutItem.findMany({
-      where: { kit_checkout_id: checkoutId },
-      orderBy: { checkout_date: "asc" },
+      where: { kitCheckoutId: checkoutId },
+      orderBy: { checkoutDate: "asc" },
     });
 
     return items.map((i) => this.toDomain(i));
@@ -69,10 +58,10 @@ export class PrismaAssetKitCheckoutItemRepository
     options?: { skip?: number; take?: number },
   ): Promise<AssetKitCheckoutItem[]> {
     const items = await this.prisma.assetKitCheckoutItem.findMany({
-      where: { asset_id: assetId },
+      where: { assetId: assetId },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { checkout_date: "desc" },
+      orderBy: { checkoutDate: "desc" },
     });
 
     return items.map((i) => this.toDomain(i));
@@ -86,7 +75,7 @@ export class PrismaAssetKitCheckoutItemRepository
       where: { status },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { checkout_date: "desc" },
+      orderBy: { checkoutDate: "desc" },
     });
 
     return items.map((i) => this.toDomain(i));
@@ -100,7 +89,7 @@ export class PrismaAssetKitCheckoutItemRepository
       where: { status: "CHECKED_OUT" },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { checkout_date: "desc" },
+      orderBy: { checkoutDate: "desc" },
     });
 
     return items.map((i) => this.toDomain(i));
@@ -118,7 +107,7 @@ export class PrismaAssetKitCheckoutItemRepository
       },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { return_date: "desc" },
+      orderBy: { returnDate: "desc" },
     });
 
     return items.map((i) => this.toDomain(i));
@@ -132,7 +121,7 @@ export class PrismaAssetKitCheckoutItemRepository
       where: { status: "DAMAGED" },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { return_date: "desc" },
+      orderBy: { returnDate: "desc" },
     });
 
     return items.map((i) => this.toDomain(i));
@@ -146,7 +135,7 @@ export class PrismaAssetKitCheckoutItemRepository
       where: { status: "LOST" },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { return_date: "desc" },
+      orderBy: { returnDate: "desc" },
     });
 
     return items.map((i) => this.toDomain(i));
@@ -155,7 +144,7 @@ export class PrismaAssetKitCheckoutItemRepository
   async isAssetCheckedOut(assetId: string): Promise<boolean> {
     const count = await this.prisma.assetKitCheckoutItem.count({
       where: {
-        asset_id: assetId,
+        assetId: assetId,
         status: "CHECKED_OUT",
       },
     });
@@ -168,10 +157,10 @@ export class PrismaAssetKitCheckoutItemRepository
   ): Promise<AssetKitCheckoutItem | null> {
     const item = await this.prisma.assetKitCheckoutItem.findFirst({
       where: {
-        asset_id: assetId,
+        assetId: assetId,
         status: "CHECKED_OUT",
       },
-      orderBy: { checkout_date: "desc" },
+      orderBy: { checkoutDate: "desc" },
     });
 
     return item ? this.toDomain(item) : null;
@@ -183,7 +172,7 @@ export class PrismaAssetKitCheckoutItemRepository
   ): Promise<number> {
     return this.prisma.assetKitCheckoutItem.count({
       where: {
-        kit_checkout_id: checkoutId,
+        kitCheckoutId: checkoutId,
         status,
       },
     });
@@ -192,7 +181,7 @@ export class PrismaAssetKitCheckoutItemRepository
   async countCheckedOutForCheckout(checkoutId: string): Promise<number> {
     return this.prisma.assetKitCheckoutItem.count({
       where: {
-        kit_checkout_id: checkoutId,
+        kitCheckoutId: checkoutId,
         status: "CHECKED_OUT",
       },
     });
@@ -201,7 +190,7 @@ export class PrismaAssetKitCheckoutItemRepository
   async countReturnedForCheckout(checkoutId: string): Promise<number> {
     return this.prisma.assetKitCheckoutItem.count({
       where: {
-        kit_checkout_id: checkoutId,
+        kitCheckoutId: checkoutId,
         status: "RETURNED",
       },
     });
@@ -210,7 +199,7 @@ export class PrismaAssetKitCheckoutItemRepository
   async countWithIssuesForCheckout(checkoutId: string): Promise<number> {
     return this.prisma.assetKitCheckoutItem.count({
       where: {
-        kit_checkout_id: checkoutId,
+        kitCheckoutId: checkoutId,
         status: {
           in: ["DAMAGED", "LOST"],
         },
@@ -220,11 +209,11 @@ export class PrismaAssetKitCheckoutItemRepository
 
   async update(item: AssetKitCheckoutItem): Promise<AssetKitCheckoutItem> {
     const data = {
-      return_date: item.returnDate,
+      returnDate: item.returnDate,
       status: item.status,
-      condition_at_return: item.conditionAtReturn,
+      conditionAtReturn: item.conditionAtReturn,
       note: item.note,
-      updated_at: item.updatedAt,
+      updatedAt: item.updatedAt,
     };
 
     const updated = await this.prisma.assetKitCheckoutItem.update({
@@ -243,43 +232,43 @@ export class PrismaAssetKitCheckoutItemRepository
 
   async deleteByCheckoutId(checkoutId: string): Promise<void> {
     await this.prisma.assetKitCheckoutItem.deleteMany({
-      where: { kit_checkout_id: checkoutId },
+      where: { kitCheckoutId: checkoutId },
     });
   }
 
   async countByCheckoutId(checkoutId: string): Promise<number> {
     return this.prisma.assetKitCheckoutItem.count({
-      where: { kit_checkout_id: checkoutId },
+      where: { kitCheckoutId: checkoutId },
     });
   }
 
   private toDomain(prismaItem: {
     id: string;
-    kit_checkout_id: string;
-    asset_id: string;
-    kit_item_id: string;
-    checkout_date: Date;
-    return_date: Date | null;
+    kitCheckoutId: string;
+    assetId: string;
+    kitItemId: string;
+    checkoutDate: Date;
+    returnDate: Date | null;
     status: string;
-    condition_at_checkout: string | null;
-    condition_at_return: string | null;
+    conditionAtCheckout: string | null;
+    conditionAtReturn: string | null;
     note: string | null;
-    created_at: Date;
-    updated_at: Date;
+    createdAt: Date;
+    updatedAt: Date;
   }): AssetKitCheckoutItem {
     return AssetKitCheckoutItem.reconstitute({
       id: prismaItem.id,
-      kitCheckoutId: prismaItem.kit_checkout_id,
-      assetId: prismaItem.asset_id,
-      kitItemId: prismaItem.kit_item_id,
-      checkoutDate: prismaItem.checkout_date,
-      returnDate: prismaItem.return_date,
+      kitCheckoutId: prismaItem.kitCheckoutId,
+      assetId: prismaItem.assetId,
+      kitItemId: prismaItem.kitItemId,
+      checkoutDate: prismaItem.checkoutDate,
+      returnDate: prismaItem.returnDate,
       status: prismaItem.status as KitCheckoutItemStatus,
-      conditionAtCheckout: prismaItem.condition_at_checkout,
-      conditionAtReturn: prismaItem.condition_at_return,
+      conditionAtCheckout: prismaItem.conditionAtCheckout,
+      conditionAtReturn: prismaItem.conditionAtReturn,
       note: prismaItem.note,
-      createdAt: prismaItem.created_at,
-      updatedAt: prismaItem.updated_at,
+      createdAt: prismaItem.createdAt,
+      updatedAt: prismaItem.updatedAt,
     });
   }
 }

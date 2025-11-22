@@ -23,6 +23,7 @@
  */
 
 "use client";
+"use no memo";
 
 import * as React from "react";
 import {
@@ -153,7 +154,6 @@ export function DataTable<TData, TValue>({
     return () => window.removeEventListener("resize", checkScroll);
   }, [data]);
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,

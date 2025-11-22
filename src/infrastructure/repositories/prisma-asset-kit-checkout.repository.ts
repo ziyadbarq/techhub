@@ -1,11 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import type { PrismaClient } from "@/generated/prisma";
 import { DI_TOKENS } from "@/di/types";
@@ -15,14 +7,11 @@ import {
   type KitCheckoutStatus,
   type AssigneeType,
 } from "@/core/domain/entities/asset-kit-checkout.entity";
-import { createRepositoryLogger } from "./repository-logger";
 
 @injectable()
 export class PrismaAssetKitCheckoutRepository
   implements IAssetKitCheckoutRepository
 {
-  private readonly logger = createRepositoryLogger("AssetKitCheckout");
-
   constructor(
     @inject(DI_TOKENS.PrismaClient)
     private readonly prisma: PrismaClient,
@@ -31,17 +20,17 @@ export class PrismaAssetKitCheckoutRepository
   async create(checkout: AssetKitCheckout): Promise<AssetKitCheckout> {
     const data = {
       id: checkout.id,
-      asset_kit_id: checkout.assetKitId,
-      assignee_type: checkout.assigneeType,
-      assignee_id: checkout.assigneeId,
-      checkout_date: checkout.checkoutDate,
-      expected_return_date: checkout.expectedReturnDate,
-      actual_return_date: checkout.actualReturnDate,
+      assetKitId: checkout.assetKitId,
+      assigneeType: checkout.assigneeType,
+      assigneeId: checkout.assigneeId,
+      checkoutDate: checkout.checkoutDate,
+      expectedReturnDate: checkout.expectedReturnDate,
+      actualReturnDate: checkout.actualReturnDate,
       status: checkout.status,
-      checked_out_by_id: checkout.checkedOutById,
+      checkedOutById: checkout.checkedOutById,
       note: checkout.note,
-      created_at: checkout.createdAt,
-      updated_at: checkout.updatedAt,
+      createdAt: checkout.createdAt,
+      updatedAt: checkout.updatedAt,
     };
 
     const created = await this.prisma.assetKitCheckout.create({ data });
@@ -63,9 +52,9 @@ export class PrismaAssetKitCheckoutRepository
     order?: "asc" | "desc";
   }): Promise<AssetKitCheckout[]> {
     const orderByMap = {
-      checkoutDate: "checkout_date",
-      expectedReturnDate: "expected_return_date",
-      createdAt: "created_at",
+      checkoutDate: "checkoutDate",
+      expectedReturnDate: "expectedReturnDate",
+      createdAt: "createdAt",
     };
 
     const checkouts = await this.prisma.assetKitCheckout.findMany({
@@ -84,10 +73,10 @@ export class PrismaAssetKitCheckoutRepository
     options?: { skip?: number; take?: number },
   ): Promise<AssetKitCheckout[]> {
     const checkouts = await this.prisma.assetKitCheckout.findMany({
-      where: { asset_kit_id: kitId },
+      where: { assetKitId: kitId },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { checkout_date: "desc" },
+      orderBy: { checkoutDate: "desc" },
     });
 
     return checkouts.map((c) => this.toDomain(c));
@@ -100,12 +89,12 @@ export class PrismaAssetKitCheckoutRepository
   ): Promise<AssetKitCheckout[]> {
     const checkouts = await this.prisma.assetKitCheckout.findMany({
       where: {
-        assignee_type: assigneeType,
-        assignee_id: assigneeId,
+        assigneeType: assigneeType,
+        assigneeId: assigneeId,
       },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { checkout_date: "desc" },
+      orderBy: { checkoutDate: "desc" },
     });
 
     return checkouts.map((c) => this.toDomain(c));
@@ -119,7 +108,7 @@ export class PrismaAssetKitCheckoutRepository
       where: { status },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { checkout_date: "desc" },
+      orderBy: { checkoutDate: "desc" },
     });
 
     return checkouts.map((c) => this.toDomain(c));
@@ -137,7 +126,7 @@ export class PrismaAssetKitCheckoutRepository
       },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { checkout_date: "desc" },
+      orderBy: { checkoutDate: "desc" },
     });
 
     return checkouts.map((c) => this.toDomain(c));
@@ -154,14 +143,14 @@ export class PrismaAssetKitCheckoutRepository
         status: {
           in: ["CHECKED_OUT", "PARTIALLY_RETURNED"],
         },
-        expected_return_date: {
+        expectedReturnDate: {
           not: null,
           lt: now,
         },
       },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { expected_return_date: "asc" },
+      orderBy: { expectedReturnDate: "asc" },
     });
 
     return checkouts.map((c) => this.toDomain(c));
@@ -172,10 +161,10 @@ export class PrismaAssetKitCheckoutRepository
     options?: { skip?: number; take?: number },
   ): Promise<AssetKitCheckout[]> {
     const checkouts = await this.prisma.assetKitCheckout.findMany({
-      where: { checked_out_by_id: checkedOutById },
+      where: { checkedOutById: checkedOutById },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { checkout_date: "desc" },
+      orderBy: { checkoutDate: "desc" },
     });
 
     return checkouts.map((c) => this.toDomain(c));
@@ -188,7 +177,7 @@ export class PrismaAssetKitCheckoutRepository
   ): Promise<AssetKitCheckout[]> {
     const checkouts = await this.prisma.assetKitCheckout.findMany({
       where: {
-        expected_return_date: {
+        expectedReturnDate: {
           not: null,
           gte: startDate,
           lte: endDate,
@@ -196,7 +185,7 @@ export class PrismaAssetKitCheckoutRepository
       },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { expected_return_date: "asc" },
+      orderBy: { expectedReturnDate: "asc" },
     });
 
     return checkouts.map((c) => this.toDomain(c));
@@ -209,14 +198,14 @@ export class PrismaAssetKitCheckoutRepository
   ): Promise<AssetKitCheckout[]> {
     const checkouts = await this.prisma.assetKitCheckout.findMany({
       where: {
-        checkout_date: {
+        checkoutDate: {
           gte: startDate,
           lte: endDate,
         },
       },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { checkout_date: "desc" },
+      orderBy: { checkoutDate: "desc" },
     });
 
     return checkouts.map((c) => this.toDomain(c));
@@ -229,9 +218,9 @@ export class PrismaAssetKitCheckoutRepository
   ): Promise<boolean> {
     const count = await this.prisma.assetKitCheckout.count({
       where: {
-        asset_kit_id: kitId,
-        assignee_type: assigneeType,
-        assignee_id: assigneeId,
+        assetKitId: kitId,
+        assigneeType: assigneeType,
+        assigneeId: assigneeId,
         status: {
           in: ["CHECKED_OUT", "PARTIALLY_RETURNED"],
         },
@@ -243,11 +232,11 @@ export class PrismaAssetKitCheckoutRepository
 
   async update(checkout: AssetKitCheckout): Promise<AssetKitCheckout> {
     const data = {
-      expected_return_date: checkout.expectedReturnDate,
-      actual_return_date: checkout.actualReturnDate,
+      expectedReturnDate: checkout.expectedReturnDate,
+      actualReturnDate: checkout.actualReturnDate,
       status: checkout.status,
       note: checkout.note,
-      updated_at: checkout.updatedAt,
+      updatedAt: checkout.updatedAt,
     };
 
     const updated = await this.prisma.assetKitCheckout.update({
@@ -278,7 +267,7 @@ export class PrismaAssetKitCheckoutRepository
         status: {
           in: ["CHECKED_OUT", "PARTIALLY_RETURNED"],
         },
-        expected_return_date: {
+        expectedReturnDate: {
           not: null,
           lt: now,
         },
@@ -302,31 +291,31 @@ export class PrismaAssetKitCheckoutRepository
 
   private toDomain(prismaCheckout: {
     id: string;
-    asset_kit_id: string;
-    assignee_type: string;
-    assignee_id: string;
-    checkout_date: Date;
-    expected_return_date: Date | null;
-    actual_return_date: Date | null;
+    assetKitId: string;
+    assigneeType: string;
+    assigneeId: string;
+    checkoutDate: Date;
+    expectedReturnDate: Date | null;
+    actualReturnDate: Date | null;
     status: string;
-    checked_out_by_id: string;
+    checkedOutById: string;
     note: string | null;
-    created_at: Date;
-    updated_at: Date;
+    createdAt: Date;
+    updatedAt: Date;
   }): AssetKitCheckout {
     return AssetKitCheckout.reconstitute({
       id: prismaCheckout.id,
-      assetKitId: prismaCheckout.asset_kit_id,
-      assigneeType: prismaCheckout.assignee_type as AssigneeType,
-      assigneeId: prismaCheckout.assignee_id,
-      checkoutDate: prismaCheckout.checkout_date,
-      expectedReturnDate: prismaCheckout.expected_return_date,
-      actualReturnDate: prismaCheckout.actual_return_date,
+      assetKitId: prismaCheckout.assetKitId,
+      assigneeType: prismaCheckout.assigneeType as AssigneeType,
+      assigneeId: prismaCheckout.assigneeId,
+      checkoutDate: prismaCheckout.checkoutDate,
+      expectedReturnDate: prismaCheckout.expectedReturnDate,
+      actualReturnDate: prismaCheckout.actualReturnDate,
       status: prismaCheckout.status as KitCheckoutStatus,
-      checkedOutById: prismaCheckout.checked_out_by_id,
+      checkedOutById: prismaCheckout.checkedOutById,
       note: prismaCheckout.note,
-      createdAt: prismaCheckout.created_at,
-      updatedAt: prismaCheckout.updated_at,
+      createdAt: prismaCheckout.createdAt,
+      updatedAt: prismaCheckout.updatedAt,
     });
   }
 }

@@ -9,6 +9,7 @@ Documentation of major stack upgrades and breaking changes in this project (Nove
 - [Zod 4.1](#zod-41)
 - [Next.js 16.0](#nextjs-160)
 - [React 19.2.0](#react-1920)
+  - [TanStack Table v8 Incompatibility](#5-tanstack-table-v8-incompatibility)
 - [InversifyJS 7.10](#inversifyjs-710)
 - [@types/node 24.x](#typesnode-24x)
 - [Migration Timeline](#migration-timeline)
@@ -459,6 +460,81 @@ function MyComponent() {
   };
 }
 ```
+
+#### 5. TanStack Table v8 Incompatibility
+
+**Issue**: TanStack Table v8 is not compatible with React Compiler
+
+**Affected API**: `useReactTable()` returns functions that cannot be safely memoized
+
+**Symptoms**:
+
+- ESLint warning: `react-hooks/incompatible-library`
+- React Compiler skips optimization for table components
+- Tables don't re-render when data changes with compiler enabled
+
+**Workaround Applied**:
+
+```typescript
+// Add "use no memo" directive to table components
+"use client";
+"use no memo";
+
+import { useReactTable } from "@tanstack/react-table";
+
+export function MyTable() {
+  const table = useReactTable({
+    // ... configuration
+  });
+}
+```
+
+**ESLint Configuration**:
+
+```javascript
+// eslint.config.mjs
+{
+  files: [
+    "src/components/ui/data-table.tsx",
+    "src/components/asset-disposals/asset-disposals-table.tsx",
+    // ... other table files
+  ],
+  rules: {
+    "react-compiler/react-compiler": "off",
+    "react-hooks/incompatible-library": "off",
+  },
+}
+```
+
+**Affected Components** (9 total):
+
+- `src/components/ui/data-table.tsx`
+- `src/components/asset-disposals/asset-disposals-table.tsx`
+- `src/components/asset-kits/kit-checkouts-table.tsx`
+- `src/components/asset-kits/asset-kits-table.tsx`
+- `src/components/asset-reservations/asset-reservations-table.tsx`
+- `src/components/ci-classes/ci-classes-table.tsx`
+- `src/components/relationship-types/relationship-types-table.tsx`
+- `src/components/configuration-items/configuration-items-table.tsx`
+- `src/components/ci-relationships/ci-relationships-table.tsx`
+
+**Future Resolution**:
+
+- TanStack Table v9 (in alpha) will fix React Compiler compatibility
+- Expected stable release: Q2-Q3 2025
+- When upgrading: Remove `"use no memo"` directives and ESLint overrides
+
+**Why This Works**:
+
+- `"use no memo"` is React's official escape hatch for incompatible libraries
+- Explicitly tells React Compiler to skip optimizing these components
+- Tables work correctly, just without automatic memoization
+- No impact on other components in the codebase
+
+**References**:
+
+- GitHub Issue: https://github.com/TanStack/table/issues/5567
+- TanStack Table v9 RFC: Addresses React Compiler compatibility
 
 ## InversifyJS 7.10
 

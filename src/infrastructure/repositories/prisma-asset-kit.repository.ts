@@ -1,11 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import type { PrismaClient } from "@/generated/prisma";
 import { DI_TOKENS } from "@/di/types";
@@ -14,13 +6,10 @@ import {
   AssetKit,
   type KitType,
 } from "@/core/domain/entities/asset-kit.entity";
-import { createRepositoryLogger } from "./repository-logger";
 import { toJsonValue, fromJsonValue } from "./prisma-helpers";
 
 @injectable()
 export class PrismaAssetKitRepository implements IAssetKitRepository {
-  private readonly logger = createRepositoryLogger("AssetKit");
-
   constructor(
     @inject(DI_TOKENS.PrismaClient)
     private readonly prisma: PrismaClient,
@@ -32,11 +21,11 @@ export class PrismaAssetKitRepository implements IAssetKitRepository {
       name: kit.name,
       code: kit.code,
       description: kit.description,
-      kit_type: kit.kitType,
-      is_active: kit.isActive,
+      kitType: kit.kitType,
+      isActive: kit.isActive,
       metadata: toJsonValue(kit.metadata),
-      created_at: kit.createdAt,
-      updated_at: kit.updatedAt,
+      createdAt: kit.createdAt,
+      updatedAt: kit.updatedAt,
     };
 
     const created = await this.prisma.assetKit.create({ data });
@@ -94,7 +83,7 @@ export class PrismaAssetKitRepository implements IAssetKitRepository {
     options?: { skip?: number; take?: number },
   ): Promise<AssetKit[]> {
     const kits = await this.prisma.assetKit.findMany({
-      where: { kit_type: type },
+      where: { kitType: type },
       skip: options?.skip,
       take: options?.take,
       orderBy: { name: "asc" },
@@ -108,7 +97,7 @@ export class PrismaAssetKitRepository implements IAssetKitRepository {
     take?: number;
   }): Promise<AssetKit[]> {
     const kits = await this.prisma.assetKit.findMany({
-      where: { is_active: true },
+      where: { isActive: true },
       skip: options?.skip,
       take: options?.take,
       orderBy: { name: "asc" },
@@ -122,7 +111,7 @@ export class PrismaAssetKitRepository implements IAssetKitRepository {
     take?: number;
   }): Promise<AssetKit[]> {
     const kits = await this.prisma.assetKit.findMany({
-      where: { is_active: false },
+      where: { isActive: false },
       skip: options?.skip,
       take: options?.take,
       orderBy: { name: "asc" },
@@ -167,10 +156,10 @@ export class PrismaAssetKitRepository implements IAssetKitRepository {
     const data = {
       name: kit.name,
       description: kit.description,
-      kit_type: kit.kitType,
-      is_active: kit.isActive,
+      kitType: kit.kitType,
+      isActive: kit.isActive,
       metadata: toJsonValue(kit.metadata),
-      updated_at: kit.updatedAt,
+      updatedAt: kit.updatedAt,
     };
 
     const updated = await this.prisma.assetKit.update({
@@ -189,13 +178,13 @@ export class PrismaAssetKitRepository implements IAssetKitRepository {
 
   async countByType(type: KitType): Promise<number> {
     return this.prisma.assetKit.count({
-      where: { kit_type: type },
+      where: { kitType: type },
     });
   }
 
   async countActive(): Promise<number> {
     return this.prisma.assetKit.count({
-      where: { is_active: true },
+      where: { isActive: true },
     });
   }
 
@@ -208,22 +197,24 @@ export class PrismaAssetKitRepository implements IAssetKitRepository {
     name: string;
     code: string;
     description: string | null;
-    kit_type: string;
-    is_active: boolean;
+    kitType: string;
+    isActive: boolean;
     metadata: unknown;
-    created_at: Date;
-    updated_at: Date;
+    createdAt: Date;
+    updatedAt: Date;
   }): AssetKit {
     return AssetKit.reconstitute({
       id: prismaKit.id,
       name: prismaKit.name,
       code: prismaKit.code,
       description: prismaKit.description,
-      kitType: prismaKit.kit_type as KitType,
-      isActive: prismaKit.is_active,
-      metadata: fromJsonValue<Record<string, unknown>>(prismaKit.metadata),
-      createdAt: prismaKit.created_at,
-      updatedAt: prismaKit.updated_at,
+      kitType: prismaKit.kitType as KitType,
+      isActive: prismaKit.isActive,
+      metadata: fromJsonValue<Record<string, unknown>>(
+        prismaKit.metadata as Parameters<typeof fromJsonValue>[0],
+      ),
+      createdAt: prismaKit.createdAt,
+      updatedAt: prismaKit.updatedAt,
     });
   }
 }

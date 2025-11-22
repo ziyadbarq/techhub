@@ -54,6 +54,26 @@ export default [
       "react-compiler/react-compiler": "error",
     },
   },
+  // Disable React Compiler warnings for TanStack Table components (known incompatibility with v8)
+  // See: https://github.com/TanStack/table/issues/5567
+  // TODO: Remove when upgrading to TanStack Table v9
+  {
+    files: [
+      "src/components/asset-disposals/asset-disposals-table.tsx",
+      "src/components/asset-kits/kit-checkouts-table.tsx",
+      "src/components/asset-reservations/asset-reservations-table.tsx",
+      "src/components/ci-classes/ci-classes-table.tsx",
+      "src/components/relationship-types/relationship-types-table.tsx",
+      "src/components/configuration-items/configuration-items-table.tsx",
+      "src/components/ci-relationships/ci-relationships-table.tsx",
+      "src/components/asset-kits/asset-kits-table.tsx",
+      "src/components/ui/data-table.tsx",
+    ],
+    rules: {
+      "react-compiler/react-compiler": "off",
+      "react-hooks/incompatible-library": "off",
+    },
+  },
   {
     files: ["**/*.{js,jsx,ts,tsx}"],
     rules: {

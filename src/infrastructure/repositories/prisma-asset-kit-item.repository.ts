@@ -1,22 +1,11 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import type { PrismaClient } from "@/generated/prisma";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetKitItemRepository } from "@/core/repositories/asset-kit-item.repository.interface";
 import { AssetKitItem } from "@/core/domain/entities/asset-kit-item.entity";
-import { createRepositoryLogger } from "./repository-logger";
 
 @injectable()
 export class PrismaAssetKitItemRepository implements IAssetKitItemRepository {
-  private readonly logger = createRepositoryLogger("AssetKitItem");
-
   constructor(
     @inject(DI_TOKENS.PrismaClient)
     private readonly prisma: PrismaClient,
@@ -25,14 +14,13 @@ export class PrismaAssetKitItemRepository implements IAssetKitItemRepository {
   async create(item: AssetKitItem): Promise<AssetKitItem> {
     const data = {
       id: item.id,
-      asset_kit_id: item.assetKitId,
-      asset_category_id: item.assetCategoryId,
-      asset_model_id: item.assetModelId,
+      assetKitId: item.assetKitId,
+      assetCategoryId: item.assetCategoryId,
+      assetModelId: item.assetModelId,
       quantity: item.quantity,
-      is_required: item.isRequired,
+      isRequired: item.isRequired,
       note: item.note,
-      created_at: item.createdAt,
-      updated_at: item.updatedAt,
+      createdAt: item.createdAt,
     };
 
     const created = await this.prisma.assetKitItem.create({ data });
@@ -49,8 +37,8 @@ export class PrismaAssetKitItemRepository implements IAssetKitItemRepository {
 
   async findByKitId(kitId: string): Promise<AssetKitItem[]> {
     const items = await this.prisma.assetKitItem.findMany({
-      where: { asset_kit_id: kitId },
-      orderBy: { created_at: "asc" },
+      where: { assetKitId: kitId },
+      orderBy: { createdAt: "asc" },
     });
 
     return items.map((i) => this.toDomain(i));
@@ -61,10 +49,10 @@ export class PrismaAssetKitItemRepository implements IAssetKitItemRepository {
     options?: { skip?: number; take?: number },
   ): Promise<AssetKitItem[]> {
     const items = await this.prisma.assetKitItem.findMany({
-      where: { asset_category_id: categoryId },
+      where: { assetCategoryId: categoryId },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { created_at: "desc" },
+      orderBy: { createdAt: "desc" },
     });
 
     return items.map((i) => this.toDomain(i));
@@ -75,10 +63,10 @@ export class PrismaAssetKitItemRepository implements IAssetKitItemRepository {
     options?: { skip?: number; take?: number },
   ): Promise<AssetKitItem[]> {
     const items = await this.prisma.assetKitItem.findMany({
-      where: { asset_model_id: modelId },
+      where: { assetModelId: modelId },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { created_at: "desc" },
+      orderBy: { createdAt: "desc" },
     });
 
     return items.map((i) => this.toDomain(i));
@@ -87,10 +75,10 @@ export class PrismaAssetKitItemRepository implements IAssetKitItemRepository {
   async findRequiredByKitId(kitId: string): Promise<AssetKitItem[]> {
     const items = await this.prisma.assetKitItem.findMany({
       where: {
-        asset_kit_id: kitId,
-        is_required: true,
+        assetKitId: kitId,
+        isRequired: true,
       },
-      orderBy: { created_at: "asc" },
+      orderBy: { createdAt: "asc" },
     });
 
     return items.map((i) => this.toDomain(i));
@@ -99,10 +87,10 @@ export class PrismaAssetKitItemRepository implements IAssetKitItemRepository {
   async findOptionalByKitId(kitId: string): Promise<AssetKitItem[]> {
     const items = await this.prisma.assetKitItem.findMany({
       where: {
-        asset_kit_id: kitId,
-        is_required: false,
+        assetKitId: kitId,
+        isRequired: false,
       },
-      orderBy: { created_at: "asc" },
+      orderBy: { createdAt: "asc" },
     });
 
     return items.map((i) => this.toDomain(i));
@@ -111,8 +99,8 @@ export class PrismaAssetKitItemRepository implements IAssetKitItemRepository {
   async kitHasCategory(kitId: string, categoryId: string): Promise<boolean> {
     const count = await this.prisma.assetKitItem.count({
       where: {
-        asset_kit_id: kitId,
-        asset_category_id: categoryId,
+        assetKitId: kitId,
+        assetCategoryId: categoryId,
       },
     });
 
@@ -122,8 +110,8 @@ export class PrismaAssetKitItemRepository implements IAssetKitItemRepository {
   async kitHasModel(kitId: string, modelId: string): Promise<boolean> {
     const count = await this.prisma.assetKitItem.count({
       where: {
-        asset_kit_id: kitId,
-        asset_model_id: modelId,
+        assetKitId: kitId,
+        assetModelId: modelId,
       },
     });
 
@@ -132,7 +120,7 @@ export class PrismaAssetKitItemRepository implements IAssetKitItemRepository {
 
   async getTotalQuantityByKitId(kitId: string): Promise<number> {
     const result = await this.prisma.assetKitItem.aggregate({
-      where: { asset_kit_id: kitId },
+      where: { assetKitId: kitId },
       _sum: {
         quantity: true,
       },
@@ -144,9 +132,8 @@ export class PrismaAssetKitItemRepository implements IAssetKitItemRepository {
   async update(item: AssetKitItem): Promise<AssetKitItem> {
     const data = {
       quantity: item.quantity,
-      is_required: item.isRequired,
+      isRequired: item.isRequired,
       note: item.note,
-      updated_at: item.updatedAt,
     };
 
     const updated = await this.prisma.assetKitItem.update({
@@ -165,46 +152,44 @@ export class PrismaAssetKitItemRepository implements IAssetKitItemRepository {
 
   async deleteByKitId(kitId: string): Promise<void> {
     await this.prisma.assetKitItem.deleteMany({
-      where: { asset_kit_id: kitId },
+      where: { assetKitId: kitId },
     });
   }
 
   async countByKitId(kitId: string): Promise<number> {
     return this.prisma.assetKitItem.count({
-      where: { asset_kit_id: kitId },
+      where: { assetKitId: kitId },
     });
   }
 
   async countRequiredByKitId(kitId: string): Promise<number> {
     return this.prisma.assetKitItem.count({
       where: {
-        asset_kit_id: kitId,
-        is_required: true,
+        assetKitId: kitId,
+        isRequired: true,
       },
     });
   }
 
   private toDomain(prismaItem: {
     id: string;
-    asset_kit_id: string;
-    asset_category_id: string | null;
-    asset_model_id: string | null;
+    assetKitId: string;
+    assetCategoryId: string | null;
+    assetModelId: string | null;
     quantity: number;
-    is_required: boolean;
+    isRequired: boolean;
     note: string | null;
-    created_at: Date;
-    updated_at: Date;
+    createdAt: Date;
   }): AssetKitItem {
     return AssetKitItem.reconstitute({
       id: prismaItem.id,
-      assetKitId: prismaItem.asset_kit_id,
-      assetCategoryId: prismaItem.asset_category_id,
-      assetModelId: prismaItem.asset_model_id,
+      assetKitId: prismaItem.assetKitId,
+      assetCategoryId: prismaItem.assetCategoryId!,
+      assetModelId: prismaItem.assetModelId,
       quantity: prismaItem.quantity,
-      isRequired: prismaItem.is_required,
+      isRequired: prismaItem.isRequired,
       note: prismaItem.note,
-      createdAt: prismaItem.created_at,
-      updatedAt: prismaItem.updated_at,
+      createdAt: prismaItem.createdAt,
     });
   }
 }

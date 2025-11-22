@@ -1,11 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import type { PrismaClient } from "@/generated/prisma";
 import { DI_TOKENS } from "@/di/types";
@@ -14,14 +6,11 @@ import {
   AssetReservation,
   type ReservationStatus,
 } from "@/core/domain/entities/asset-reservation.entity";
-import { createRepositoryLogger } from "./repository-logger";
 
 @injectable()
 export class PrismaAssetReservationRepository
   implements IAssetReservationRepository
 {
-  private readonly logger = createRepositoryLogger("AssetReservation");
-
   constructor(
     @inject(DI_TOKENS.PrismaClient)
     private readonly prisma: PrismaClient,
@@ -30,22 +19,22 @@ export class PrismaAssetReservationRepository
   async create(reservation: AssetReservation): Promise<AssetReservation> {
     const data = {
       id: reservation.id,
-      asset_id: reservation.assetId,
-      reserved_for_person_id: reservation.reservedForPersonId,
-      reserved_for_org_unit_id: reservation.reservedForOrgUnitId,
-      reserved_by_id: reservation.reservedById,
-      start_date: reservation.startDate,
-      end_date: reservation.endDate,
+      assetId: reservation.assetId,
+      reservedForPersonId: reservation.reservedForPersonId,
+      reservedForOrgUnitId: reservation.reservedForOrgUnitId,
+      reservedById: reservation.reservedById,
+      startDate: reservation.startDate,
+      endDate: reservation.endDate,
       status: reservation.status,
       purpose: reservation.purpose,
       note: reservation.note,
-      confirmation_date: reservation.confirmationDate,
-      confirmed_by_id: reservation.confirmedById,
-      cancellation_reason: reservation.cancellationReason,
-      cancelled_at: reservation.cancelledAt,
-      cancelled_by_id: reservation.cancelledById,
-      created_at: reservation.createdAt,
-      updated_at: reservation.updatedAt,
+      confirmationDate: reservation.confirmationDate,
+      confirmedById: reservation.confirmedById,
+      cancellationReason: reservation.cancellationReason,
+      cancelledAt: reservation.cancelledAt,
+      cancelledById: reservation.cancelledById,
+      createdAt: reservation.createdAt,
+      updatedAt: reservation.updatedAt,
     };
 
     const created = await this.prisma.assetReservation.create({ data });
@@ -67,9 +56,9 @@ export class PrismaAssetReservationRepository
     order?: "asc" | "desc";
   }): Promise<AssetReservation[]> {
     const orderByMap = {
-      startDate: "start_date",
-      endDate: "end_date",
-      createdAt: "created_at",
+      startDate: "startDate",
+      endDate: "endDate",
+      createdAt: "createdAt",
     };
 
     const reservations = await this.prisma.assetReservation.findMany({
@@ -88,10 +77,10 @@ export class PrismaAssetReservationRepository
     options?: { skip?: number; take?: number },
   ): Promise<AssetReservation[]> {
     const reservations = await this.prisma.assetReservation.findMany({
-      where: { asset_id: assetId },
+      where: { assetId: assetId },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { start_date: "asc" },
+      orderBy: { startDate: "asc" },
     });
 
     return reservations.map((r) => this.toDomain(r));
@@ -105,7 +94,7 @@ export class PrismaAssetReservationRepository
       where: { status },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { start_date: "asc" },
+      orderBy: { startDate: "asc" },
     });
 
     return reservations.map((r) => this.toDomain(r));
@@ -116,10 +105,10 @@ export class PrismaAssetReservationRepository
     options?: { skip?: number; take?: number },
   ): Promise<AssetReservation[]> {
     const reservations = await this.prisma.assetReservation.findMany({
-      where: { reserved_for_person_id: personId },
+      where: { reservedForPersonId: personId },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { start_date: "asc" },
+      orderBy: { startDate: "asc" },
     });
 
     return reservations.map((r) => this.toDomain(r));
@@ -130,10 +119,10 @@ export class PrismaAssetReservationRepository
     options?: { skip?: number; take?: number },
   ): Promise<AssetReservation[]> {
     const reservations = await this.prisma.assetReservation.findMany({
-      where: { reserved_for_org_unit_id: orgUnitId },
+      where: { reservedForOrgUnitId: orgUnitId },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { start_date: "asc" },
+      orderBy: { startDate: "asc" },
     });
 
     return reservations.map((r) => this.toDomain(r));
@@ -144,10 +133,10 @@ export class PrismaAssetReservationRepository
     options?: { skip?: number; take?: number },
   ): Promise<AssetReservation[]> {
     const reservations = await this.prisma.assetReservation.findMany({
-      where: { reserved_by_id: reservedById },
+      where: { reservedById: reservedById },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { created_at: "desc" },
+      orderBy: { createdAt: "desc" },
     });
 
     return reservations.map((r) => this.toDomain(r));
@@ -161,7 +150,7 @@ export class PrismaAssetReservationRepository
       where: { status: "PENDING" },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { created_at: "asc" },
+      orderBy: { createdAt: "asc" },
     });
 
     return reservations.map((r) => this.toDomain(r));
@@ -175,7 +164,7 @@ export class PrismaAssetReservationRepository
       where: { status: "CONFIRMED" },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { start_date: "asc" },
+      orderBy: { startDate: "asc" },
     });
 
     return reservations.map((r) => this.toDomain(r));
@@ -189,7 +178,7 @@ export class PrismaAssetReservationRepository
       where: { status: "ACTIVE" },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { start_date: "asc" },
+      orderBy: { startDate: "asc" },
     });
 
     return reservations.map((r) => this.toDomain(r));
@@ -212,14 +201,14 @@ export class PrismaAssetReservationRepository
         status: {
           in: ["PENDING", "CONFIRMED"],
         },
-        start_date: {
+        startDate: {
           gte: now,
           lte: futureDate,
         },
       },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { start_date: "asc" },
+      orderBy: { startDate: "asc" },
     });
 
     return reservations.map((r) => this.toDomain(r));
@@ -232,14 +221,14 @@ export class PrismaAssetReservationRepository
   ): Promise<AssetReservation[]> {
     const reservations = await this.prisma.assetReservation.findMany({
       where: {
-        start_date: {
+        startDate: {
           gte: startDate,
           lte: endDate,
         },
       },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { start_date: "asc" },
+      orderBy: { startDate: "asc" },
     });
 
     return reservations.map((r) => this.toDomain(r));
@@ -252,11 +241,11 @@ export class PrismaAssetReservationRepository
   ): Promise<AssetReservation[]> {
     const reservations = await this.prisma.assetReservation.findMany({
       where: {
-        AND: [{ start_date: { lt: endDate } }, { end_date: { gt: startDate } }],
+        AND: [{ startDate: { lt: endDate } }, { endDate: { gt: startDate } }],
       },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { start_date: "asc" },
+      orderBy: { startDate: "asc" },
     });
 
     return reservations.map((r) => this.toDomain(r));
@@ -269,16 +258,16 @@ export class PrismaAssetReservationRepository
     excludeReservationId?: string,
   ): Promise<AssetReservation[]> {
     const where: {
-      asset_id: string;
+      assetId: string;
       status: { in: ReservationStatus[] };
       AND: Array<Record<string, unknown>>;
       id?: { not: string };
     } = {
-      asset_id: assetId,
+      assetId: assetId,
       status: {
         in: ["PENDING", "CONFIRMED", "ACTIVE"],
       },
-      AND: [{ start_date: { lt: endDate } }, { end_date: { gt: startDate } }],
+      AND: [{ startDate: { lt: endDate } }, { endDate: { gt: startDate } }],
     };
 
     if (excludeReservationId) {
@@ -287,7 +276,7 @@ export class PrismaAssetReservationRepository
 
     const reservations = await this.prisma.assetReservation.findMany({
       where,
-      orderBy: { start_date: "asc" },
+      orderBy: { startDate: "asc" },
     });
 
     return reservations.map((r) => this.toDomain(r));
@@ -298,10 +287,10 @@ export class PrismaAssetReservationRepository
     options?: { skip?: number; take?: number },
   ): Promise<AssetReservation[]> {
     const reservations = await this.prisma.assetReservation.findMany({
-      where: { confirmed_by_id: confirmedById },
+      where: { confirmedById: confirmedById },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { confirmation_date: "desc" },
+      orderBy: { confirmationDate: "desc" },
     });
 
     return reservations.map((r) => this.toDomain(r));
@@ -313,9 +302,9 @@ export class PrismaAssetReservationRepository
     const reservations = await this.prisma.assetReservation.findMany({
       where: {
         status: "CONFIRMED",
-        start_date: { lte: now },
+        startDate: { lte: now },
       },
-      orderBy: { start_date: "asc" },
+      orderBy: { startDate: "asc" },
     });
 
     return reservations.map((r) => this.toDomain(r));
@@ -327,9 +316,9 @@ export class PrismaAssetReservationRepository
     const reservations = await this.prisma.assetReservation.findMany({
       where: {
         status: "ACTIVE",
-        end_date: { lte: now },
+        endDate: { lte: now },
       },
-      orderBy: { end_date: "asc" },
+      orderBy: { endDate: "asc" },
     });
 
     return reservations.map((r) => this.toDomain(r));
@@ -338,7 +327,7 @@ export class PrismaAssetReservationRepository
   async hasActiveReservation(assetId: string): Promise<boolean> {
     const count = await this.prisma.assetReservation.count({
       where: {
-        asset_id: assetId,
+        assetId: assetId,
         status: "ACTIVE",
       },
     });
@@ -353,16 +342,16 @@ export class PrismaAssetReservationRepository
     excludeReservationId?: string,
   ): Promise<boolean> {
     const where: {
-      asset_id: string;
+      assetId: string;
       status: { in: ReservationStatus[] };
       AND: Array<Record<string, unknown>>;
       id?: { not: string };
     } = {
-      asset_id: assetId,
+      assetId: assetId,
       status: {
         in: ["PENDING", "CONFIRMED", "ACTIVE"],
       },
-      AND: [{ start_date: { lt: endDate } }, { end_date: { gt: startDate } }],
+      AND: [{ startDate: { lt: endDate } }, { endDate: { gt: startDate } }],
     };
 
     if (excludeReservationId) {
@@ -375,15 +364,15 @@ export class PrismaAssetReservationRepository
 
   async update(reservation: AssetReservation): Promise<AssetReservation> {
     const data = {
-      end_date: reservation.endDate,
+      endDate: reservation.endDate,
       status: reservation.status,
       note: reservation.note,
-      confirmation_date: reservation.confirmationDate,
-      confirmed_by_id: reservation.confirmedById,
-      cancellation_reason: reservation.cancellationReason,
-      cancelled_at: reservation.cancelledAt,
-      cancelled_by_id: reservation.cancelledById,
-      updated_at: reservation.updatedAt,
+      confirmationDate: reservation.confirmationDate,
+      confirmedById: reservation.confirmedById,
+      cancellationReason: reservation.cancellationReason,
+      cancelledAt: reservation.cancelledAt,
+      cancelledById: reservation.cancelledById,
+      updatedAt: reservation.updatedAt,
     };
 
     const updated = await this.prisma.assetReservation.update({
@@ -426,7 +415,7 @@ export class PrismaAssetReservationRepository
         status: {
           in: ["PENDING", "CONFIRMED"],
         },
-        start_date: {
+        startDate: {
           gte: now,
           lte: futureDate,
         },
@@ -440,41 +429,41 @@ export class PrismaAssetReservationRepository
 
   private toDomain(prismaReservation: {
     id: string;
-    asset_id: string;
-    reserved_for_person_id: string | null;
-    reserved_for_org_unit_id: string | null;
-    reserved_by_id: string;
-    start_date: Date;
-    end_date: Date;
+    assetId: string;
+    reservedForPersonId: string | null;
+    reservedForOrgUnitId: string | null;
+    reservedById: string;
+    startDate: Date;
+    endDate: Date;
     status: string;
     purpose: string | null;
     note: string | null;
-    confirmation_date: Date | null;
-    confirmed_by_id: string | null;
-    cancellation_reason: string | null;
-    cancelled_at: Date | null;
-    cancelled_by_id: string | null;
-    created_at: Date;
-    updated_at: Date;
+    confirmationDate: Date | null;
+    confirmedById: string | null;
+    cancellationReason: string | null;
+    cancelledAt: Date | null;
+    cancelledById: string | null;
+    createdAt: Date;
+    updatedAt: Date;
   }): AssetReservation {
     return AssetReservation.reconstitute({
       id: prismaReservation.id,
-      assetId: prismaReservation.asset_id,
-      reservedForPersonId: prismaReservation.reserved_for_person_id,
-      reservedForOrgUnitId: prismaReservation.reserved_for_org_unit_id,
-      reservedById: prismaReservation.reserved_by_id,
-      startDate: prismaReservation.start_date,
-      endDate: prismaReservation.end_date,
+      assetId: prismaReservation.assetId,
+      reservedForPersonId: prismaReservation.reservedForPersonId,
+      reservedForOrgUnitId: prismaReservation.reservedForOrgUnitId,
+      reservedById: prismaReservation.reservedById,
+      startDate: prismaReservation.startDate,
+      endDate: prismaReservation.endDate,
       status: prismaReservation.status as ReservationStatus,
       purpose: prismaReservation.purpose,
       note: prismaReservation.note,
-      confirmationDate: prismaReservation.confirmation_date,
-      confirmedById: prismaReservation.confirmed_by_id,
-      cancellationReason: prismaReservation.cancellation_reason,
-      cancelledAt: prismaReservation.cancelled_at,
-      cancelledById: prismaReservation.cancelled_by_id,
-      createdAt: prismaReservation.created_at,
-      updatedAt: prismaReservation.updated_at,
+      confirmationDate: prismaReservation.confirmationDate,
+      confirmedById: prismaReservation.confirmedById,
+      cancellationReason: prismaReservation.cancellationReason,
+      cancelledAt: prismaReservation.cancelledAt,
+      cancelledById: prismaReservation.cancelledById,
+      createdAt: prismaReservation.createdAt,
+      updatedAt: prismaReservation.updatedAt,
     });
   }
 }

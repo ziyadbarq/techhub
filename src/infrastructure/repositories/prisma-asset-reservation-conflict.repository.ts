@@ -1,24 +1,13 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import type { PrismaClient } from "@/generated/prisma";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetReservationConflictRepository } from "@/core/repositories/asset-reservation-conflict.repository.interface";
 import { AssetReservationConflict } from "@/core/domain/entities/asset-reservation-conflict.entity";
-import { createRepositoryLogger } from "./repository-logger";
 
 @injectable()
 export class PrismaAssetReservationConflictRepository
   implements IAssetReservationConflictRepository
 {
-  private readonly logger = createRepositoryLogger("AssetReservationConflict");
-
   constructor(
     @inject(DI_TOKENS.PrismaClient)
     private readonly prisma: PrismaClient,
@@ -29,11 +18,11 @@ export class PrismaAssetReservationConflictRepository
   ): Promise<AssetReservationConflict> {
     const data = {
       id: conflict.id,
-      reservation_id: conflict.reservationId,
-      conflicting_reservation_id: conflict.conflictingReservationId,
-      detected_at: conflict.detectedAt,
-      resolved_at: conflict.resolvedAt,
-      resolution_note: conflict.resolutionNote,
+      reservationId: conflict.reservationId,
+      conflictingReservationId: conflict.conflictingReservationId,
+      detectedAt: conflict.detectedAt,
+      resolvedAt: conflict.resolvedAt,
+      resolutionNote: conflict.resolutionNote,
     };
 
     const created = await this.prisma.assetReservationConflict.create({ data });
@@ -52,8 +41,8 @@ export class PrismaAssetReservationConflictRepository
     reservationId: string,
   ): Promise<AssetReservationConflict[]> {
     const conflicts = await this.prisma.assetReservationConflict.findMany({
-      where: { reservation_id: reservationId },
-      orderBy: { detected_at: "desc" },
+      where: { reservationId: reservationId },
+      orderBy: { detectedAt: "desc" },
     });
 
     return conflicts.map((c) => this.toDomain(c));
@@ -65,11 +54,11 @@ export class PrismaAssetReservationConflictRepository
     const conflicts = await this.prisma.assetReservationConflict.findMany({
       where: {
         OR: [
-          { reservation_id: reservationId },
-          { conflicting_reservation_id: reservationId },
+          { reservationId: reservationId },
+          { conflictingReservationId: reservationId },
         ],
       },
-      orderBy: { detected_at: "desc" },
+      orderBy: { detectedAt: "desc" },
     });
 
     return conflicts.map((c) => this.toDomain(c));
@@ -80,10 +69,10 @@ export class PrismaAssetReservationConflictRepository
     take?: number;
   }): Promise<AssetReservationConflict[]> {
     const conflicts = await this.prisma.assetReservationConflict.findMany({
-      where: { resolved_at: null },
+      where: { resolvedAt: null },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { detected_at: "asc" },
+      orderBy: { detectedAt: "asc" },
     });
 
     return conflicts.map((c) => this.toDomain(c));
@@ -94,10 +83,10 @@ export class PrismaAssetReservationConflictRepository
     take?: number;
   }): Promise<AssetReservationConflict[]> {
     const conflicts = await this.prisma.assetReservationConflict.findMany({
-      where: { resolved_at: { not: null } },
+      where: { resolvedAt: { not: null } },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { resolved_at: "desc" },
+      orderBy: { resolvedAt: "desc" },
     });
 
     return conflicts.map((c) => this.toDomain(c));
@@ -110,7 +99,7 @@ export class PrismaAssetReservationConflictRepository
   ): Promise<AssetReservationConflict[]> {
     const conflicts = await this.prisma.assetReservationConflict.findMany({
       where: {
-        resolved_at: {
+        resolvedAt: {
           not: null,
           gte: startDate,
           lte: endDate,
@@ -118,7 +107,7 @@ export class PrismaAssetReservationConflictRepository
       },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { resolved_at: "desc" },
+      orderBy: { resolvedAt: "desc" },
     });
 
     return conflicts.map((c) => this.toDomain(c));
@@ -131,14 +120,14 @@ export class PrismaAssetReservationConflictRepository
   ): Promise<AssetReservationConflict[]> {
     const conflicts = await this.prisma.assetReservationConflict.findMany({
       where: {
-        detected_at: {
+        detectedAt: {
           gte: startDate,
           lte: endDate,
         },
       },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { detected_at: "desc" },
+      orderBy: { detectedAt: "desc" },
     });
 
     return conflicts.map((c) => this.toDomain(c));
@@ -152,12 +141,12 @@ export class PrismaAssetReservationConflictRepository
       where: {
         OR: [
           {
-            reservation_id: reservationId,
-            conflicting_reservation_id: conflictingReservationId,
+            reservationId: reservationId,
+            conflictingReservationId: conflictingReservationId,
           },
           {
-            reservation_id: conflictingReservationId,
-            conflicting_reservation_id: reservationId,
+            reservationId: conflictingReservationId,
+            conflictingReservationId: reservationId,
           },
         ],
       },
@@ -170,10 +159,10 @@ export class PrismaAssetReservationConflictRepository
     const count = await this.prisma.assetReservationConflict.count({
       where: {
         OR: [
-          { reservation_id: reservationId },
-          { conflicting_reservation_id: reservationId },
+          { reservationId: reservationId },
+          { conflictingReservationId: reservationId },
         ],
-        resolved_at: null,
+        resolvedAt: null,
       },
     });
 
@@ -184,8 +173,8 @@ export class PrismaAssetReservationConflictRepository
     conflict: AssetReservationConflict,
   ): Promise<AssetReservationConflict> {
     const data = {
-      resolved_at: conflict.resolvedAt,
-      resolution_note: conflict.resolutionNote,
+      resolvedAt: conflict.resolvedAt,
+      resolutionNote: conflict.resolutionNote,
     };
 
     const updated = await this.prisma.assetReservationConflict.update({
@@ -206,8 +195,8 @@ export class PrismaAssetReservationConflictRepository
     await this.prisma.assetReservationConflict.deleteMany({
       where: {
         OR: [
-          { reservation_id: reservationId },
-          { conflicting_reservation_id: reservationId },
+          { reservationId: reservationId },
+          { conflictingReservationId: reservationId },
         ],
       },
     });
@@ -215,7 +204,7 @@ export class PrismaAssetReservationConflictRepository
 
   async countUnresolved(): Promise<number> {
     return this.prisma.assetReservationConflict.count({
-      where: { resolved_at: null },
+      where: { resolvedAt: null },
     });
   }
 
@@ -223,8 +212,8 @@ export class PrismaAssetReservationConflictRepository
     return this.prisma.assetReservationConflict.count({
       where: {
         OR: [
-          { reservation_id: reservationId },
-          { conflicting_reservation_id: reservationId },
+          { reservationId: reservationId },
+          { conflictingReservationId: reservationId },
         ],
       },
     });
@@ -234,29 +223,29 @@ export class PrismaAssetReservationConflictRepository
     return this.prisma.assetReservationConflict.count({
       where: {
         OR: [
-          { reservation_id: reservationId },
-          { conflicting_reservation_id: reservationId },
+          { reservationId: reservationId },
+          { conflictingReservationId: reservationId },
         ],
-        resolved_at: null,
+        resolvedAt: null,
       },
     });
   }
 
   private toDomain(prismaConflict: {
     id: string;
-    reservation_id: string;
-    conflicting_reservation_id: string;
-    detected_at: Date;
-    resolved_at: Date | null;
-    resolution_note: string | null;
+    reservationId: string;
+    conflictingReservationId: string;
+    detectedAt: Date;
+    resolvedAt: Date | null;
+    resolutionNote: string | null;
   }): AssetReservationConflict {
     return AssetReservationConflict.reconstitute({
       id: prismaConflict.id,
-      reservationId: prismaConflict.reservation_id,
-      conflictingReservationId: prismaConflict.conflicting_reservation_id,
-      detectedAt: prismaConflict.detected_at,
-      resolvedAt: prismaConflict.resolved_at,
-      resolutionNote: prismaConflict.resolution_note,
+      reservationId: prismaConflict.reservationId,
+      conflictingReservationId: prismaConflict.conflictingReservationId,
+      detectedAt: prismaConflict.detectedAt,
+      resolvedAt: prismaConflict.resolvedAt,
+      resolutionNote: prismaConflict.resolutionNote,
     });
   }
 }

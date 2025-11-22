@@ -1,11 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import type { PrismaClient } from "@/generated/prisma";
 import { DI_TOKENS } from "@/di/types";
@@ -14,14 +6,11 @@ import {
   DisposalApproval,
   type ApprovalStatus,
 } from "@/core/domain/entities/disposal-approval.entity";
-import { createRepositoryLogger } from "./repository-logger";
 
 @injectable()
 export class PrismaDisposalApprovalRepository
   implements IDisposalApprovalRepository
 {
-  private readonly logger = createRepositoryLogger("DisposalApproval");
-
   constructor(
     @inject(DI_TOKENS.PrismaClient)
     private readonly prisma: PrismaClient,
@@ -30,12 +19,12 @@ export class PrismaDisposalApprovalRepository
   async create(approval: DisposalApproval): Promise<DisposalApproval> {
     const data = {
       id: approval.id,
-      disposal_id: approval.disposalId,
-      approver_id: approval.approverId,
+      disposalId: approval.disposalId,
+      approverId: approval.approverId,
       status: approval.status,
-      decision_at: approval.decisionAt,
+      decisionAt: approval.decisionAt,
       comment: approval.comment,
-      created_at: approval.createdAt,
+      createdAt: approval.createdAt,
     };
 
     const created = await this.prisma.disposalApproval.create({ data });
@@ -52,8 +41,8 @@ export class PrismaDisposalApprovalRepository
 
   async findByDisposalId(disposalId: string): Promise<DisposalApproval[]> {
     const approvals = await this.prisma.disposalApproval.findMany({
-      where: { disposal_id: disposalId },
-      orderBy: { created_at: "asc" },
+      where: { disposalId: disposalId },
+      orderBy: { createdAt: "asc" },
     });
 
     return approvals.map((a) => this.toDomain(a));
@@ -64,10 +53,10 @@ export class PrismaDisposalApprovalRepository
     options?: { skip?: number; take?: number },
   ): Promise<DisposalApproval[]> {
     const approvals = await this.prisma.disposalApproval.findMany({
-      where: { approver_id: approverId },
+      where: { approverId: approverId },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { created_at: "desc" },
+      orderBy: { createdAt: "desc" },
     });
 
     return approvals.map((a) => this.toDomain(a));
@@ -81,7 +70,7 @@ export class PrismaDisposalApprovalRepository
       where: { status },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { created_at: "desc" },
+      orderBy: { createdAt: "desc" },
     });
 
     return approvals.map((a) => this.toDomain(a));
@@ -90,10 +79,10 @@ export class PrismaDisposalApprovalRepository
   async findPendingByApprover(approverId: string): Promise<DisposalApproval[]> {
     const approvals = await this.prisma.disposalApproval.findMany({
       where: {
-        approver_id: approverId,
+        approverId: approverId,
         status: "PENDING",
       },
-      orderBy: { created_at: "asc" },
+      orderBy: { createdAt: "asc" },
     });
 
     return approvals.map((a) => this.toDomain(a));
@@ -107,7 +96,7 @@ export class PrismaDisposalApprovalRepository
       where: { status: "PENDING" },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { created_at: "asc" },
+      orderBy: { createdAt: "asc" },
     });
 
     return approvals.map((a) => this.toDomain(a));
@@ -116,7 +105,7 @@ export class PrismaDisposalApprovalRepository
   async hasPendingApprovals(disposalId: string): Promise<boolean> {
     const count = await this.prisma.disposalApproval.count({
       where: {
-        disposal_id: disposalId,
+        disposalId: disposalId,
         status: "PENDING",
       },
     });
@@ -127,7 +116,7 @@ export class PrismaDisposalApprovalRepository
   async hasRejectedApprovals(disposalId: string): Promise<boolean> {
     const count = await this.prisma.disposalApproval.count({
       where: {
-        disposal_id: disposalId,
+        disposalId: disposalId,
         status: "REJECTED",
       },
     });
@@ -137,12 +126,12 @@ export class PrismaDisposalApprovalRepository
 
   async areAllApproved(disposalId: string): Promise<boolean> {
     const total = await this.prisma.disposalApproval.count({
-      where: { disposal_id: disposalId },
+      where: { disposalId: disposalId },
     });
 
     const approved = await this.prisma.disposalApproval.count({
       where: {
-        disposal_id: disposalId,
+        disposalId: disposalId,
         status: "APPROVED",
       },
     });
@@ -153,7 +142,7 @@ export class PrismaDisposalApprovalRepository
   async update(approval: DisposalApproval): Promise<DisposalApproval> {
     const data = {
       status: approval.status,
-      decision_at: approval.decisionAt,
+      decisionAt: approval.decisionAt,
       comment: approval.comment,
     };
 
@@ -173,7 +162,7 @@ export class PrismaDisposalApprovalRepository
 
   async deleteByDisposalId(disposalId: string): Promise<void> {
     await this.prisma.disposalApproval.deleteMany({
-      where: { disposal_id: disposalId },
+      where: { disposalId: disposalId },
     });
   }
 
@@ -185,27 +174,27 @@ export class PrismaDisposalApprovalRepository
 
   async countByDisposalId(disposalId: string): Promise<number> {
     return this.prisma.disposalApproval.count({
-      where: { disposal_id: disposalId },
+      where: { disposalId: disposalId },
     });
   }
 
   private toDomain(prismaApproval: {
     id: string;
-    disposal_id: string;
-    approver_id: string;
+    disposalId: string;
+    approverId: string;
     status: string;
-    decision_at: Date | null;
+    decisionAt: Date | null;
     comment: string | null;
-    created_at: Date;
+    createdAt: Date;
   }): DisposalApproval {
     return DisposalApproval.reconstitute({
       id: prismaApproval.id,
-      disposalId: prismaApproval.disposal_id,
-      approverId: prismaApproval.approver_id,
+      disposalId: prismaApproval.disposalId,
+      approverId: prismaApproval.approverId,
       status: prismaApproval.status as ApprovalStatus,
-      decisionAt: prismaApproval.decision_at,
+      decisionAt: prismaApproval.decisionAt,
       comment: prismaApproval.comment,
-      createdAt: prismaApproval.created_at,
+      createdAt: prismaApproval.createdAt,
     });
   }
 }

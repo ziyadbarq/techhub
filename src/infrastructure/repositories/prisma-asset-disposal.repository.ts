@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import type { PrismaClient } from "@/generated/prisma";
 import { DI_TOKENS } from "@/di/types";
@@ -12,43 +8,38 @@ import {
   type DisposalType,
   type SanitizationChecklist,
 } from "@/core/domain/entities/asset-disposal.entity";
-import { createRepositoryLogger } from "./repository-logger";
 import { toJsonValue, fromJsonValue } from "./prisma-helpers";
 
 @injectable()
 export class PrismaAssetDisposalRepository implements IAssetDisposalRepository {
-  private readonly logger = createRepositoryLogger("AssetDisposal");
-
   constructor(
     @inject(DI_TOKENS.PrismaClient)
     private readonly prisma: PrismaClient,
   ) {}
 
   async create(disposal: AssetDisposal): Promise<AssetDisposal> {
-    this.logger.logOperation("create", { disposalId: disposal.id });
-
     const data = {
       id: disposal.id,
-      asset_id: disposal.assetId,
-      disposal_type: disposal.disposalType,
+      assetId: disposal.assetId,
+      disposalType: disposal.disposalType,
       reason: disposal.reason,
-      initiated_by_id: disposal.initiatedById,
-      approved_by_id: disposal.approvedById,
-      approved_at: disposal.approvedAt,
+      initiatedById: disposal.initiatedById,
+      approvedById: disposal.approvedById,
+      approvedAt: disposal.approvedAt,
       status: disposal.status,
-      estimated_value: disposal.estimatedValue,
-      actual_proceeds: disposal.actualProceeds,
+      estimatedValue: disposal.estimatedValue,
+      actualProceeds: disposal.actualProceeds,
       currency: disposal.currency,
-      sanitization_checklist: toJsonValue(disposal.sanitizationChecklist),
-      disposal_date: disposal.disposalDate,
-      certificate_number: disposal.certificateNumber,
-      certificate_issued_at: disposal.certificateIssuedAt,
-      disposal_vendor_id: disposal.disposalVendorId,
-      recipient_info: disposal.recipientInfo,
+      sanitizationChecklist: toJsonValue(disposal.sanitizationChecklist),
+      disposalDate: disposal.disposalDate,
+      certificateNumber: disposal.certificateNumber,
+      certificateIssuedAt: disposal.certificateIssuedAt,
+      disposalVendorId: disposal.disposalVendorId,
+      recipientInfo: disposal.recipientInfo,
       note: disposal.note,
       metadata: toJsonValue(disposal.metadata),
-      created_at: disposal.createdAt,
-      updated_at: disposal.updatedAt,
+      createdAt: disposal.createdAt,
+      updatedAt: disposal.updatedAt,
     };
 
     const created = await this.prisma.assetDisposal.create({ data });
@@ -56,8 +47,6 @@ export class PrismaAssetDisposalRepository implements IAssetDisposalRepository {
   }
 
   async findById(id: string): Promise<AssetDisposal | null> {
-    this.logger.logOperation("findById", { id });
-
     const disposal = await this.prisma.assetDisposal.findUnique({
       where: { id },
     });
@@ -71,8 +60,6 @@ export class PrismaAssetDisposalRepository implements IAssetDisposalRepository {
     orderBy?: "createdAt" | "updatedAt" | "disposalDate";
     order?: "asc" | "desc";
   }): Promise<AssetDisposal[]> {
-    this.logger.logOperation("findAll", options);
-
     const disposals = await this.prisma.assetDisposal.findMany({
       skip: options?.skip,
       take: options?.take,
@@ -85,11 +72,9 @@ export class PrismaAssetDisposalRepository implements IAssetDisposalRepository {
   }
 
   async findByAssetId(assetId: string): Promise<AssetDisposal[]> {
-    this.logger.logOperation("findByAssetId", { assetId });
-
     const disposals = await this.prisma.assetDisposal.findMany({
-      where: { asset_id: assetId },
-      orderBy: { created_at: "desc" },
+      where: { assetId: assetId },
+      orderBy: { createdAt: "desc" },
     });
 
     return disposals.map((d) => this.toDomain(d));
@@ -99,13 +84,11 @@ export class PrismaAssetDisposalRepository implements IAssetDisposalRepository {
     status: DisposalStatus,
     options?: { skip?: number; take?: number },
   ): Promise<AssetDisposal[]> {
-    this.logger.logOperation("findByStatus", { status, ...options });
-
     const disposals = await this.prisma.assetDisposal.findMany({
       where: { status },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { updated_at: "desc" },
+      orderBy: { updatedAt: "desc" },
     });
 
     return disposals.map((d) => this.toDomain(d));
@@ -115,13 +98,11 @@ export class PrismaAssetDisposalRepository implements IAssetDisposalRepository {
     type: DisposalType,
     options?: { skip?: number; take?: number },
   ): Promise<AssetDisposal[]> {
-    this.logger.logOperation("findByType", { type, ...options });
-
     const disposals = await this.prisma.assetDisposal.findMany({
-      where: { disposal_type: type },
+      where: { disposalType: type },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { created_at: "desc" },
+      orderBy: { createdAt: "desc" },
     });
 
     return disposals.map((d) => this.toDomain(d));
@@ -131,13 +112,11 @@ export class PrismaAssetDisposalRepository implements IAssetDisposalRepository {
     initiatedById: string,
     options?: { skip?: number; take?: number },
   ): Promise<AssetDisposal[]> {
-    this.logger.logOperation("findByInitiator", { initiatedById, ...options });
-
     const disposals = await this.prisma.assetDisposal.findMany({
-      where: { initiated_by_id: initiatedById },
+      where: { initiatedById: initiatedById },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { created_at: "desc" },
+      orderBy: { createdAt: "desc" },
     });
 
     return disposals.map((d) => this.toDomain(d));
@@ -147,13 +126,11 @@ export class PrismaAssetDisposalRepository implements IAssetDisposalRepository {
     approvedById: string,
     options?: { skip?: number; take?: number },
   ): Promise<AssetDisposal[]> {
-    this.logger.logOperation("findByApprover", { approvedById, ...options });
-
     const disposals = await this.prisma.assetDisposal.findMany({
-      where: { approved_by_id: approvedById },
+      where: { approvedById: approvedById },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { approved_at: "desc" },
+      orderBy: { approvedAt: "desc" },
     });
 
     return disposals.map((d) => this.toDomain(d));
@@ -163,13 +140,11 @@ export class PrismaAssetDisposalRepository implements IAssetDisposalRepository {
     skip?: number;
     take?: number;
   }): Promise<AssetDisposal[]> {
-    this.logger.logOperation("findPendingApproval", options);
-
     const disposals = await this.prisma.assetDisposal.findMany({
       where: { status: "PENDING_APPROVAL" },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { created_at: "asc" },
+      orderBy: { createdAt: "asc" },
     });
 
     return disposals.map((d) => this.toDomain(d));
@@ -180,23 +155,17 @@ export class PrismaAssetDisposalRepository implements IAssetDisposalRepository {
     endDate: Date,
     options?: { skip?: number; take?: number },
   ): Promise<AssetDisposal[]> {
-    this.logger.logOperation("findCompletedInDateRange", {
-      startDate,
-      endDate,
-      ...options,
-    });
-
     const disposals = await this.prisma.assetDisposal.findMany({
       where: {
         status: "COMPLETED",
-        disposal_date: {
+        disposalDate: {
           gte: startDate,
           lte: endDate,
         },
       },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { disposal_date: "desc" },
+      orderBy: { disposalDate: "desc" },
     });
 
     return disposals.map((d) => this.toDomain(d));
@@ -206,13 +175,11 @@ export class PrismaAssetDisposalRepository implements IAssetDisposalRepository {
     vendorId: string,
     options?: { skip?: number; take?: number },
   ): Promise<AssetDisposal[]> {
-    this.logger.logOperation("findByVendor", { vendorId, ...options });
-
     const disposals = await this.prisma.assetDisposal.findMany({
-      where: { disposal_vendor_id: vendorId },
+      where: { disposalVendorId: vendorId },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { created_at: "desc" },
+      orderBy: { createdAt: "desc" },
     });
 
     return disposals.map((d) => this.toDomain(d));
@@ -222,15 +189,13 @@ export class PrismaAssetDisposalRepository implements IAssetDisposalRepository {
     skip?: number;
     take?: number;
   }): Promise<AssetDisposal[]> {
-    this.logger.logOperation("findWithCertificates", options);
-
     const disposals = await this.prisma.assetDisposal.findMany({
       where: {
-        certificate_number: { not: null },
+        certificateNumber: { not: null },
       },
       skip: options?.skip,
       take: options?.take,
-      orderBy: { certificate_issued_at: "desc" },
+      orderBy: { certificateIssuedAt: "desc" },
     });
 
     return disposals.map((d) => this.toDomain(d));
@@ -241,14 +206,8 @@ export class PrismaAssetDisposalRepository implements IAssetDisposalRepository {
     maxValue: number,
     currency?: string,
   ): Promise<AssetDisposal[]> {
-    this.logger.logOperation("findByValueRange", {
-      minValue,
-      maxValue,
-      currency,
-    });
-
     const where: Record<string, unknown> = {
-      estimated_value: {
+      estimatedValue: {
         gte: minValue,
         lte: maxValue,
       },
@@ -260,27 +219,25 @@ export class PrismaAssetDisposalRepository implements IAssetDisposalRepository {
 
     const disposals = await this.prisma.assetDisposal.findMany({
       where,
-      orderBy: { estimated_value: "desc" },
+      orderBy: { estimatedValue: "desc" },
     });
 
     return disposals.map((d) => this.toDomain(d));
   }
 
   async update(disposal: AssetDisposal): Promise<AssetDisposal> {
-    this.logger.logOperation("update", { disposalId: disposal.id });
-
     const data = {
       status: disposal.status,
-      approved_by_id: disposal.approvedById,
-      approved_at: disposal.approvedAt,
-      actual_proceeds: disposal.actualProceeds,
-      sanitization_checklist: toJsonValue(disposal.sanitizationChecklist),
-      disposal_date: disposal.disposalDate,
-      certificate_number: disposal.certificateNumber,
-      certificate_issued_at: disposal.certificateIssuedAt,
+      approvedById: disposal.approvedById,
+      approvedAt: disposal.approvedAt,
+      actualProceeds: disposal.actualProceeds,
+      sanitizationChecklist: toJsonValue(disposal.sanitizationChecklist),
+      disposalDate: disposal.disposalDate,
+      certificateNumber: disposal.certificateNumber,
+      certificateIssuedAt: disposal.certificateIssuedAt,
       note: disposal.note,
       metadata: toJsonValue(disposal.metadata),
-      updated_at: disposal.updatedAt,
+      updatedAt: disposal.updatedAt,
     };
 
     const updated = await this.prisma.assetDisposal.update({
@@ -292,74 +249,72 @@ export class PrismaAssetDisposalRepository implements IAssetDisposalRepository {
   }
 
   async delete(id: string): Promise<void> {
-    this.logger.logOperation("delete", { id });
-
     await this.prisma.assetDisposal.delete({
       where: { id },
     });
   }
 
   async countByStatus(status: DisposalStatus): Promise<number> {
-    this.logger.logOperation("countByStatus", { status });
-
     return this.prisma.assetDisposal.count({
       where: { status },
     });
   }
 
   async count(): Promise<number> {
-    this.logger.logOperation("count", {});
-
     return this.prisma.assetDisposal.count();
   }
 
   private toDomain(prismaDisposal: {
     id: string;
-    asset_id: string;
-    disposal_type: string;
+    assetId: string;
+    disposalType: string;
     reason: string | null;
-    initiated_by_id: string;
-    approved_by_id: string | null;
-    approved_at: Date | null;
+    initiatedById: string;
+    approvedById: string | null;
+    approvedAt: Date | null;
     status: string;
-    estimated_value: number | null;
-    actual_proceeds: number | null;
+    estimatedValue: { toNumber(): number } | null;
+    actualProceeds: { toNumber(): number } | null;
     currency: string | null;
-    sanitization_checklist: unknown;
-    disposal_date: Date | null;
-    certificate_number: string | null;
-    certificate_issued_at: Date | null;
-    disposal_vendor_id: string | null;
-    recipient_info: string | null;
+    sanitizationChecklist: unknown;
+    disposalDate: Date | null;
+    certificateNumber: string | null;
+    certificateIssuedAt: Date | null;
+    disposalVendorId: string | null;
+    recipientInfo: string | null;
     note: string | null;
     metadata: unknown;
-    created_at: Date;
-    updated_at: Date;
+    createdAt: Date;
+    updatedAt: Date;
   }): AssetDisposal {
     return AssetDisposal.reconstitute({
       id: prismaDisposal.id,
-      assetId: prismaDisposal.asset_id,
-      disposalType: prismaDisposal.disposal_type as DisposalType,
+      assetId: prismaDisposal.assetId,
+      disposalType: prismaDisposal.disposalType as DisposalType,
       reason: prismaDisposal.reason,
-      initiatedById: prismaDisposal.initiated_by_id,
-      approvedById: prismaDisposal.approved_by_id,
-      approvedAt: prismaDisposal.approved_at,
+      initiatedById: prismaDisposal.initiatedById,
+      approvedById: prismaDisposal.approvedById,
+      approvedAt: prismaDisposal.approvedAt,
       status: prismaDisposal.status as DisposalStatus,
-      estimatedValue: prismaDisposal.estimated_value,
-      actualProceeds: prismaDisposal.actual_proceeds,
+      estimatedValue: prismaDisposal.estimatedValue?.toNumber() ?? null,
+      actualProceeds: prismaDisposal.actualProceeds?.toNumber() ?? null,
       currency: prismaDisposal.currency,
       sanitizationChecklist: fromJsonValue<SanitizationChecklist>(
-        prismaDisposal.sanitization_checklist,
+        prismaDisposal.sanitizationChecklist as Parameters<
+          typeof fromJsonValue
+        >[0],
       ),
-      disposalDate: prismaDisposal.disposal_date,
-      certificateNumber: prismaDisposal.certificate_number,
-      certificateIssuedAt: prismaDisposal.certificate_issued_at,
-      disposalVendorId: prismaDisposal.disposal_vendor_id,
-      recipientInfo: prismaDisposal.recipient_info,
+      disposalDate: prismaDisposal.disposalDate,
+      certificateNumber: prismaDisposal.certificateNumber,
+      certificateIssuedAt: prismaDisposal.certificateIssuedAt,
+      disposalVendorId: prismaDisposal.disposalVendorId,
+      recipientInfo: prismaDisposal.recipientInfo,
       note: prismaDisposal.note,
-      metadata: fromJsonValue<Record<string, unknown>>(prismaDisposal.metadata),
-      createdAt: prismaDisposal.created_at,
-      updatedAt: prismaDisposal.updated_at,
+      metadata: fromJsonValue<Record<string, unknown>>(
+        prismaDisposal.metadata as Parameters<typeof fromJsonValue>[0],
+      ),
+      createdAt: prismaDisposal.createdAt,
+      updatedAt: prismaDisposal.updatedAt,
     });
   }
 }

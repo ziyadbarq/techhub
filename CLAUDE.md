@@ -1,6 +1,4 @@
-# CLAUDE.md
-
-This file provides high-level guidance to Claude Code when working with this repository.
+This file provides high-level guidance when working with this repository.
 
 ## Project Overview
 
@@ -115,6 +113,24 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 ### Type Safety
 
 - **ALWAYS** use `import type` for type-only imports (ESLint enforces this)
+
+### TanStack Table & React Compiler
+
+- **IMPORTANT**: TanStack Table v8 is incompatible with React Compiler
+- **ALWAYS** add `"use no memo";` directive to table components using `useReactTable()`
+- Pattern:
+
+  ```typescript
+  "use client";
+  "use no memo";
+
+  import { useReactTable } from "@tanstack/react-table";
+  ```
+
+- **Affected Components**: 9 table components (see [STACK_UPGRADES.md](docs/guides/STACK_UPGRADES.md#5-tanstack-table-v8-incompatibility))
+- **Why**: Prevents React Compiler warnings and ensures tables render correctly
+- **Temporary**: Will be removed when upgrading to TanStack Table v9 (Q2-Q3 2025)
+- **See**: [STACK_UPGRADES.md](docs/guides/STACK_UPGRADES.md) section "TanStack Table v8 Incompatibility"
 
 ### Permissions
 
