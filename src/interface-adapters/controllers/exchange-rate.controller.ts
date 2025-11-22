@@ -112,12 +112,6 @@ export async function getExchangeRateAction(
 
     const exchangeRate = await useCase.execute(currency, onlyActive);
 
-    if (!exchangeRate) {
-      return {
-        success: false,
-        error: "Exchange rate not found",
-      };
-    }
 
     return {
       success: true,
