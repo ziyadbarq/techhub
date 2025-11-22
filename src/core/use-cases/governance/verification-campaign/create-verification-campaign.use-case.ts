@@ -1,0 +1,46 @@
+/**
+ * Create VerificationCampaign Use Case
+ */
+
+import { injectable, inject } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { IVerificationCampaignRepository } from "@/core/repositories/verification-campaign.repository.interface";
+import {
+  VerificationCampaign,
+  TargetObjectTypeEnum,
+} from "@/core/domain/entities/verification-campaign.entity";
+
+export interface CreateVerificationCampaignRequest {
+  name: string;
+  description?: string | null;
+  targetType: TargetObjectTypeEnum;
+  filterDefinition?: Record<string, unknown> | null;
+  scheduledStart: Date;
+  scheduledEnd?: Date | null;
+  createdById: string;
+}
+
+@injectable()
+export class CreateVerificationCampaignUseCase {
+  constructor(
+    @inject(DI_TOKENS.IVerificationCampaignRepository)
+    private campaignRepository: IVerificationCampaignRepository,
+  ) {}
+
+  async execute(
+    request: CreateVerificationCampaignRequest,
+  ): Promise<VerificationCampaign> {
+    // Create verification campaign entity
+    const campaign = VerificationCampaign.create({
+      name: request.name,
+      description: request.description,
+      targetType: request.targetType,
+      filterDefinition: request.filterDefinition,
+      scheduledStart: request.scheduledStart,
+      scheduledEnd: request.scheduledEnd,
+      createdById: request.createdById,
+    });
+
+    return await this.campaignRepository.create(campaign);
+  }
+}
