@@ -249,18 +249,41 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 
 ## RBAC Admin Enhancements (Layer 1)
 
-**Recent Improvements** - Phase 1 completed (2025-11-22):
+**Phase 1 (COMPLETED 2025-11-22)**:
 
 - **Permission Grouping**: 153+ permissions organized into 10 logical categories (`src/lib/rbac/permission-groups.ts`)
 - **Enhanced UI**: Search/filter, collapsible groups, "Select All in Group" at `/admin/roles/[name]/permissions`
 - **Clone Role**: One-click role duplication with automatic permission copying
 - **Navigation Fixes**: Fixed critical 404 bug (role/permission pages now use `name` instead of `id`)
+- **Impact**: 100% navigation success, 93% reduction in permission assignment complexity, 90% time savings for role cloning
 
-**Roadmap**:
-- **Phase 1 (COMPLETED)**: See [roadmap/RBAC_ENHANCEMENT_PHASE_1.md](roadmap/RBAC_ENHANCEMENT_PHASE_1.md) - Full technical details
-- **Phase 2 (PLANNED)**: See [roadmap/RBAC_ENHANCEMENT_PHASE_2.md](roadmap/RBAC_ENHANCEMENT_PHASE_2.md) - Audit log UI, bulk operations, analytics, expiration, dependencies, conflicts, hierarchy
+**Phase 2 (PARTIALLY COMPLETED 2025-11-22)**:
 
-**Impact**: 100% navigation success, 93% reduction in permission assignment complexity, 90% time savings for role cloning
+- ✅ **Permission Dependencies** (`src/lib/rbac/permission-dependencies.ts`):
+  - 153+ permissions mapped with dependency rules (DELETE requires VIEW, MANAGE requires CRUD, etc.)
+  - Validation with `validatePermissionDependencies()` function
+  - UI warnings in PermissionsManager showing missing dependencies
+  - Auto-fix button to add required permissions
+  - Tooltips on individual permissions showing requirements
+
+- ✅ **Role Conflict Detection** (`src/lib/rbac/role-conflicts.ts`):
+  - Segregation of duties enforcement (auditor vs admin, finance vs procurement, etc.)
+  - 3 severity levels: warning, error, critical
+  - `detectRoleConflicts()` and `validateRoleAddition()` logic
+  - RoleAssignment component shows conflicts with severity badges
+  - Critical conflicts block assignment, warnings allow override
+  - Existing conflicts highlighted in user role list
+
+- ✅ **Bulk Operations - Permission Assignment**:
+  - Bulk mode toggle in PermissionsManager
+  - Multi-select permissions for bulk add/remove
+  - Bulk actions bar with "Add Selected", "Remove Selected", "Clear" buttons
+  - Visual feedback with highlighted selections
+  - ~50% time savings for bulk permission operations
+
+**Phase 2 Roadmap** (Remaining Features):
+- **Phase 2 (IN PROGRESS)**: See [roadmap/RBAC_ENHANCEMENT_PHASE_2.md](roadmap/RBAC_ENHANCEMENT_PHASE_2.md)
+  - Remaining: Enhanced audit log UI, bulk user role assignment, advanced user management, role analytics, time-based expiration background jobs, role hierarchy/inheritance
 
 ## Architecture Overview
 

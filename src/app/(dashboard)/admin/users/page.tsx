@@ -6,10 +6,11 @@
  */
 
 import { Suspense } from "react";
-import { UserTable } from "@/components/users/UserTable";
+import { UserTableWrapper } from "@/components/users/UserTableWrapper";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { listUsersWithRolesAction } from "@/interface-adapters/controllers/user-role.controller";
+import { listRolesAction } from "@/interface-adapters/controllers/role.controller";
 import {
   Card,
   CardContent,
@@ -20,19 +21,40 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 
 async function UsersTableContent() {
-  const result = await listUsersWithRolesAction();
+  const [usersResult, rolesResult] = await Promise.all([
+    listUsersWithRolesAction(),
+    listRolesAction(),
+  ]);
 
-  if (!result.success) {
+  if (!usersResult.success) {
     return (
       <div className="flex min-h-[400px] items-center justify-center rounded-lg border border-dashed p-8">
         <div className="text-center">
-          <p className="text-muted-foreground text-sm">{result.error}</p>
+          <p className="text-muted-foreground text-sm">{usersResult.error}</p>
         </div>
       </div>
     );
   }
 
-  return <UserTable data={result.data} />;
+  if (!rolesResult.success) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center rounded-lg border border-dashed p-8">
+        <div className="text-center">
+          <p className="text-muted-foreground text-sm">{rolesResult.error}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const availableRoles = rolesResult.data.map((role) => ({
+    id: role.id,
+    name: role.name,
+    displayName: role.displayName,
+  }));
+
+  return (
+    <UserTableWrapper data={usersResult.data} availableRoles={availableRoles} />
+  );
 }
 
 function LoadingSkeleton() {
