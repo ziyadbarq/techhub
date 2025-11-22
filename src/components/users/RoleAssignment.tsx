@@ -96,19 +96,21 @@ export function RoleAssignment({
     .filter((r) => r.isActive)
     .map((r) => r.roleName);
 
+  // Get selected role name for conflict detection
+  const selectedRoleName = React.useMemo(() => {
+    if (!selectedRoleId) return null;
+    const selectedRole = availableRoles.find((r) => r.id === selectedRoleId);
+    return selectedRole?.name ?? null;
+  }, [selectedRoleId, availableRoles]);
+
   // Detect conflicts with selected role
   const conflictValidation = React.useMemo(() => {
-    if (!selectedRoleId) {
+    if (!selectedRoleName) {
       return { canAdd: true, conflicts: [] };
     }
 
-    const selectedRole = availableRoles.find((r) => r.id === selectedRoleId);
-    if (!selectedRole) {
-      return { canAdd: true, conflicts: [] };
-    }
-
-    return validateRoleAddition(currentRoleNames, selectedRole.name);
-  }, [selectedRoleId, currentRoleNames, availableRoles]);
+    return validateRoleAddition(currentRoleNames, selectedRoleName);
+  }, [selectedRoleName, currentRoleNames]);
 
   const hasCriticalConflicts = conflictValidation.conflicts.some(
     (c) => c.severity === "critical",
@@ -392,7 +394,7 @@ export function RoleAssignment({
                               }`}
                             >
                               <span className="font-medium">
-                                {conflict.role1 === selectedRoleId
+                                {conflict.role1 === selectedRoleName
                                   ? conflict.role2
                                   : conflict.role1}
                               </span>
@@ -465,7 +467,11 @@ export function RoleAssignment({
                       mode="single"
                       selected={expirationDate}
                       onSelect={setExpirationDate}
-                      disabled={(date: Date) => date < new Date()}
+                      disabled={(date: Date) => {
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        return date < today;
+                      }}
                       initialFocus
                     />
                     {expirationDate && (

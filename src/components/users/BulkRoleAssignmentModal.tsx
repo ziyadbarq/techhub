@@ -41,6 +41,8 @@ import {
 
 import type { UserWithRolesDTO } from "@/interface-adapters/controllers/user-role.controller";
 import { bulkAssignRolesToUsersAction } from "@/interface-adapters/controllers/user-role.controller";
+import { validateRoleAddition } from "@/lib/rbac/role-conflicts";
+import type { RoleConflict } from "@/lib/rbac/role-conflicts";
 
 interface BulkRoleAssignmentModalProps {
   open: boolean;
@@ -48,6 +50,14 @@ interface BulkRoleAssignmentModalProps {
   selectedUsers: UserWithRolesDTO[];
   availableRoles: { id: string; name: string; displayName: string }[];
   onSuccess: () => void;
+}
+
+interface ConflictSummary {
+  userId: string;
+  userEmail: string;
+  roleId: string;
+  roleName: string;
+  conflicts: RoleConflict[];
 }
 
 export function BulkRoleAssignmentModal({
@@ -62,12 +72,18 @@ export function BulkRoleAssignmentModal({
   );
   const [expirationDate, setExpirationDate] = React.useState<Date>();
   const [isAssigning, setIsAssigning] = React.useState(false);
+  const [showConflictSummary, setShowConflictSummary] = React.useState(false);
+  const [conflictSummary, setConflictSummary] = React.useState<
+    ConflictSummary[]
+  >([]);
 
   // Reset state when modal closes
   React.useEffect(() => {
     if (!open) {
       setSelectedRoleIds(new Set());
       setExpirationDate(undefined);
+      setShowConflictSummary(false);
+      setConflictSummary([]);
     }
   }, [open]);
 
@@ -83,7 +99,7 @@ export function BulkRoleAssignmentModal({
     });
   };
 
-  const handleAssign = async () => {
+  const handlePreflightCheck = () => {
     if (selectedRoleIds.size === 0) {
       toast.error("Please select at least one role");
       return;
@@ -94,27 +110,89 @@ export function BulkRoleAssignmentModal({
       return;
     }
 
+    // Check for conflicts per user/role combination
+    const conflicts: ConflictSummary[] = [];
+
+    for (const user of selectedUsers) {
+      const currentRoleNames = user.roles
+        .filter((r) => r.isActive)
+        .map((r) => r.roleName);
+
+      for (const roleId of selectedRoleIds) {
+        const role = availableRoles.find((r) => r.id === roleId);
+        if (!role) continue;
+
+        const validation = validateRoleAddition(currentRoleNames, role.name);
+        if (validation.conflicts.length > 0) {
+          conflicts.push({
+            userId: user.id,
+            userEmail: user.email,
+            roleId: role.id,
+            roleName: role.displayName,
+            conflicts: validation.conflicts,
+          });
+        }
+      }
+    }
+
+    if (conflicts.length > 0) {
+      setConflictSummary(conflicts);
+      setShowConflictSummary(true);
+    } else {
+      // No conflicts, proceed with assignment
+      handleAssign();
+    }
+  };
+
+  const handleAssign = async (skipConflicts = false) => {
     setIsAssigning(true);
     try {
+      // If skipping conflicts, filter out users/roles with critical conflicts
+      let userIds = selectedUsers.map((u) => u.id);
+      let roleIds = Array.from(selectedRoleIds);
+
+      if (skipConflicts && conflictSummary.length > 0) {
+        const criticalConflicts = conflictSummary.filter((cs) =>
+          cs.conflicts.some((c) => c.severity === "critical"),
+        );
+
+        // Create set of user-role pairs to skip
+        const skipPairs = new Set(
+          criticalConflicts.map((cs) => `${cs.userId}:${cs.roleId}`),
+        );
+
+        // For simplicity, we'll still call the API with all users/roles
+        // The backend will handle blocking critical conflicts
+        // A more sophisticated approach would pre-filter, but that's complex with many users/roles
+      }
+
       const result = await bulkAssignRolesToUsersAction({
-        userIds: selectedUsers.map((u) => u.id),
-        roleIds: Array.from(selectedRoleIds),
+        userIds,
+        roleIds,
         expiresAt: expirationDate,
       });
 
-      if (result.success) {
-        toast.success(
-          `Successfully assigned ${selectedRoleIds.size} role(s) to ${selectedUsers.length} user(s)`,
-        );
+      if (result.success && result.data) {
+        const { assigned, conflicts: conflictCount, failed } = result.data;
+        if (assigned > 0 && (conflictCount > 0 || failed > 0)) {
+          toast.warning(
+            `Partially completed: ${assigned} succeeded, ${conflictCount} conflicts, ${failed} failed`,
+          );
+        } else if (assigned > 0) {
+          toast.success(`Successfully assigned ${assigned} role(s)`);
+        } else {
+          toast.error("No roles were assigned");
+        }
         onOpenChange(false);
         onSuccess();
       } else {
-        toast.error(result.error);
+        toast.error(result.error ?? "Failed to assign roles");
       }
     } catch (_error) {
       toast.error("Failed to assign roles");
     } finally {
       setIsAssigning(false);
+      setShowConflictSummary(false);
     }
   };
 
@@ -134,6 +212,134 @@ export function BulkRoleAssignmentModal({
   };
 
   const summary = getUserSummary();
+
+  // Count critical conflicts
+  const criticalConflictCount = conflictSummary.filter((cs) =>
+    cs.conflicts.some((c) => c.severity === "critical"),
+  ).length;
+
+  // If showing conflict summary, render conflict dialog instead
+  if (showConflictSummary) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Role Conflict Detection</DialogTitle>
+            <DialogDescription>
+              {conflictSummary.length} conflict
+              {conflictSummary.length === 1 ? "" : "s"} detected. Review before
+              proceeding.
+            </DialogDescription>
+          </DialogHeader>
+
+          <ScrollArea className="max-h-96">
+            <div className="space-y-3">
+              {conflictSummary.map((cs, idx) => {
+                const hasCritical = cs.conflicts.some(
+                  (c) => c.severity === "critical",
+                );
+                return (
+                  <Card
+                    key={idx}
+                    className={
+                      hasCritical
+                        ? "border-red-500 bg-red-50 dark:bg-red-950"
+                        : "border-yellow-500 bg-yellow-50 dark:bg-yellow-950"
+                    }
+                  >
+                    <CardContent className="pt-4">
+                      <div className="flex items-start gap-2">
+                        <AlertTriangle
+                          className={`mt-0.5 h-5 w-5 ${
+                            hasCritical
+                              ? "text-red-600 dark:text-red-500"
+                              : "text-yellow-600 dark:text-yellow-500"
+                          }`}
+                        />
+                        <div className="flex-1">
+                          <p
+                            className={`font-medium ${
+                              hasCritical
+                                ? "text-red-900 dark:text-red-100"
+                                : "text-yellow-900 dark:text-yellow-100"
+                            }`}
+                          >
+                            {cs.userEmail} + {cs.roleName}
+                          </p>
+                          <div className="mt-2 space-y-1">
+                            {cs.conflicts.map((conflict, cIdx) => (
+                              <div key={cIdx} className="flex items-center gap-2">
+                                <Badge
+                                  variant="outline"
+                                  className={
+                                    conflict.severity === "critical"
+                                      ? "border-red-600 text-red-700"
+                                      : conflict.severity === "error"
+                                        ? "border-orange-600 text-orange-700"
+                                        : "border-yellow-600 text-yellow-700"
+                                  }
+                                >
+                                  {conflict.severity.toUpperCase()}
+                                </Badge>
+                                <span
+                                  className={`text-sm ${
+                                    hasCritical
+                                      ? "text-red-800 dark:text-red-200"
+                                      : "text-yellow-800 dark:text-yellow-200"
+                                  }`}
+                                >
+                                  {conflict.reason}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </ScrollArea>
+
+          <Card className="border-blue-500 bg-blue-50 dark:bg-blue-950">
+            <CardContent className="pt-4">
+              <p className="text-blue-900 dark:text-blue-100 text-sm">
+                <strong>{criticalConflictCount}</strong> critical conflict
+                {criticalConflictCount === 1 ? "" : "s"} will be blocked.{" "}
+                {conflictSummary.length - criticalConflictCount > 0 && (
+                  <>
+                    <strong>
+                      {conflictSummary.length - criticalConflictCount}
+                    </strong>{" "}
+                    warning{conflictSummary.length - criticalConflictCount === 1 ? "" : "s"} can
+                    proceed with caution.
+                  </>
+                )}
+              </p>
+            </CardContent>
+          </Card>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowConflictSummary(false)}
+              disabled={isAssigning}
+            >
+              Back
+            </Button>
+            <Button
+              onClick={() => handleAssign(false)}
+              disabled={isAssigning}
+              variant="default"
+            >
+              {isAssigning ? "Assigning..." : "Proceed Anyway"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -248,7 +454,11 @@ export function BulkRoleAssignmentModal({
                   mode="single"
                   selected={expirationDate}
                   onSelect={setExpirationDate}
-                  disabled={(date: Date) => date < new Date()}
+                  disabled={(date: Date) => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    return date < today;
+                  }}
                   initialFocus
                 />
                 {expirationDate && (
@@ -295,7 +505,7 @@ export function BulkRoleAssignmentModal({
             Cancel
           </Button>
           <Button
-            onClick={handleAssign}
+            onClick={handlePreflightCheck}
             disabled={selectedRoleIds.size === 0 || isAssigning}
           >
             {isAssigning

@@ -661,7 +661,12 @@ export function PermissionsManager({
           <div className="flex gap-4">
             <Button
               onClick={handleSave}
-              disabled={!hasChanges() || isSystemRole || isSaving}
+              disabled={
+                !hasChanges() ||
+                isSystemRole ||
+                isSaving ||
+                !dependencyValidation.valid
+              }
               className="flex-1"
             >
               {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -679,6 +684,11 @@ export function PermissionsManager({
           {isSystemRole && (
             <p className="text-muted-foreground mt-4 text-center text-sm">
               System roles cannot be modified
+            </p>
+          )}
+          {!isSystemRole && !dependencyValidation.valid && hasChanges() && (
+            <p className="text-destructive mt-4 text-center text-sm">
+              Please resolve missing permission dependencies before saving
             </p>
           )}
         </CardContent>

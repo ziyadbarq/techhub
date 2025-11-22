@@ -148,8 +148,8 @@ export function detectRoleConflicts(roleNames: string[]): {
       const role1 = roleNames[i];
       const role2 = roleNames[j];
 
-      // Check if role1 conflicts with role2
-      if (ROLE_CONFLICTS[role1]?.includes(role2)) {
+      // Check if role1 conflicts with role2 (bidirectional check)
+      if (rolesConflict(role1, role2)) {
         const conflictKey1 = `${role1}:${role2}`;
         const conflictKey2 = `${role2}:${role1}`;
 
