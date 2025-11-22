@@ -24,6 +24,7 @@ import type { ILocationRepository } from "@/core/repositories/location.repositor
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import type { IPersonRoleAssignmentRepository } from "@/core/repositories/person-role-assignment.repository.interface";
 import type { IFieldDefinitionRepository } from "@/core/repositories/field-definition.repository.interface";
+import type { IExchangeRateRepository } from "@/core/repositories/exchange-rate.repository.interface";
 
 import { PrismaLifecycleModelRepository } from "@/infrastructure/repositories/prisma-lifecycle-model.repository";
 import { PrismaLifecycleStateRepository } from "@/infrastructure/repositories/prisma-lifecycle-state.repository";
@@ -35,6 +36,7 @@ import { PrismaLocationRepository } from "@/infrastructure/repositories/prisma-l
 import { PrismaPersonRepository } from "@/infrastructure/repositories/prisma-person.repository";
 import { PrismaPersonRoleAssignmentRepository } from "@/infrastructure/repositories/prisma-person-role-assignment.repository";
 import { PrismaFieldDefinitionRepository } from "@/infrastructure/repositories/prisma-field-definition.repository";
+import { PrismaExchangeRateRepository } from "@/infrastructure/repositories/prisma-exchange-rate.repository";
 
 // Lifecycle Model Use Cases
 import { CreateLifecycleModelUseCase } from "@/core/use-cases/foundation/lifecycle-model/create-lifecycle-model.use-case";
@@ -107,6 +109,14 @@ import { ListFieldDefinitionsUseCase } from "@/core/use-cases/foundation/field-d
 import { UpdateFieldDefinitionUseCase } from "@/core/use-cases/foundation/field-definition/update-field-definition.use-case";
 import { DeleteFieldDefinitionUseCase } from "@/core/use-cases/foundation/field-definition/delete-field-definition.use-case";
 
+// Exchange Rate Use Cases
+import { CreateExchangeRateUseCase } from "@/core/use-cases/foundation/exchange-rate/create-exchange-rate.use-case";
+import { GetExchangeRateUseCase } from "@/core/use-cases/foundation/exchange-rate/get-exchange-rate.use-case";
+import { ListExchangeRatesUseCase } from "@/core/use-cases/foundation/exchange-rate/list-exchange-rates.use-case";
+import { UpdateExchangeRateUseCase } from "@/core/use-cases/foundation/exchange-rate/update-exchange-rate.use-case";
+import { DeleteExchangeRateUseCase } from "@/core/use-cases/foundation/exchange-rate/delete-exchange-rate.use-case";
+import { ConvertCurrencyUseCase } from "@/core/use-cases/foundation/exchange-rate/convert-currency.use-case";
+
 const diLogger = logger.scope("DI");
 
 /**
@@ -169,6 +179,11 @@ export function bindFoundationDependencies(container: Container): void {
   container
     .bind<IFieldDefinitionRepository>(DI_TOKENS.IFieldDefinitionRepository)
     .to(PrismaFieldDefinitionRepository)
+    .inSingletonScope();
+
+  container
+    .bind<IExchangeRateRepository>(DI_TOKENS.IExchangeRateRepository)
+    .to(PrismaExchangeRateRepository)
     .inSingletonScope();
 
   // ==========================================
@@ -492,6 +507,40 @@ export function bindFoundationDependencies(container: Container): void {
   container
     .bind<DeleteFieldDefinitionUseCase>(DI_TOKENS.DeleteFieldDefinitionUseCase)
     .to(DeleteFieldDefinitionUseCase)
+    .inTransientScope();
+
+  // ==========================================
+  // Exchange Rate Use Cases
+  // ==========================================
+
+  container
+    .bind<CreateExchangeRateUseCase>(DI_TOKENS.CreateExchangeRateUseCase)
+    .to(CreateExchangeRateUseCase)
+    .inTransientScope();
+
+  container
+    .bind<GetExchangeRateUseCase>(DI_TOKENS.GetExchangeRateUseCase)
+    .to(GetExchangeRateUseCase)
+    .inTransientScope();
+
+  container
+    .bind<ListExchangeRatesUseCase>(DI_TOKENS.ListExchangeRatesUseCase)
+    .to(ListExchangeRatesUseCase)
+    .inTransientScope();
+
+  container
+    .bind<UpdateExchangeRateUseCase>(DI_TOKENS.UpdateExchangeRateUseCase)
+    .to(UpdateExchangeRateUseCase)
+    .inTransientScope();
+
+  container
+    .bind<DeleteExchangeRateUseCase>(DI_TOKENS.DeleteExchangeRateUseCase)
+    .to(DeleteExchangeRateUseCase)
+    .inTransientScope();
+
+  container
+    .bind<ConvertCurrencyUseCase>(DI_TOKENS.ConvertCurrencyUseCase)
+    .to(ConvertCurrencyUseCase)
     .inTransientScope();
 
   diLogger.debug(
