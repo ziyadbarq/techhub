@@ -4,8 +4,8 @@
 
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useCallback, useEffect } from "react";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Edit2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -38,6 +37,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import type { z } from "zod";
+import { InlineEditableField } from "@/components/ui/inline-editable-field";
 import type { CIClassDTO } from "@/interface-adapters/presenters/ci-class.presenter";
 import {
   createCIClassAction,
@@ -100,7 +100,6 @@ export function CIClassForm({
   };
 
   const isEditing = !!ciClass;
-  const [showCodeField, setShowCodeField] = useState(isEditing);
   const [lifecycleModels, setLifecycleModels] = useState<LifecycleModelDTO[]>(
     [],
   );

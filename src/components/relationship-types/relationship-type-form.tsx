@@ -4,8 +4,8 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Edit2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -38,6 +37,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import type { z } from "zod";
+import { InlineEditableField } from "@/components/ui/inline-editable-field";
 import {
   createRelationshipTypeAction,
   updateRelationshipTypeAction,
@@ -67,7 +67,6 @@ export function RelationshipTypeForm({
   editingType,
 }: RelationshipTypeFormProps) {
   const isEditing = !!editingType;
-  const [showCodeField, setShowCodeField] = useState(isEditing);
 
   const createForm = useForm<CreateFormValues, undefined, CreateFormOutput>({
     resolver: zodResolver(CreateRelationshipTypeSchema),
@@ -89,6 +88,20 @@ export function RelationshipTypeForm({
       isImpacting: false,
     },
   });
+
+  // Focus the first field when dialog opens
+  useEffect(() => {
+    if (open) {
+      const timer = setTimeout(() => {
+        const firstField =
+          document.querySelector<HTMLInputElement>('input[name="name"]');
+        if (firstField) {
+          firstField.focus();
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [open]);
 
   useEffect(() => {
     if (open && editingType) {
