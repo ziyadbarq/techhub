@@ -183,6 +183,31 @@ export class PrismaConfigurationItemRepository
     return cis.map((ci) => this.toDomain(ci));
   }
 
+  async search(
+    query: string,
+    options?: {
+      skip?: number;
+      take?: number;
+      ciClassId?: string;
+    },
+  ): Promise<ConfigurationItem[]> {
+    const cis = await this.prisma.configurationItem.findMany({
+      where: {
+        ...(options?.ciClassId && { ciClassId: options.ciClassId }),
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { ciKey: { contains: query, mode: "insensitive" } },
+          { description: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      skip: options?.skip,
+      take: options?.take,
+      orderBy: { name: "asc" },
+    });
+
+    return cis.map((ci) => this.toDomain(ci));
+  }
+
   async update(ci: ConfigurationItem): Promise<ConfigurationItem> {
     const timer = this.logger.startTimer();
 

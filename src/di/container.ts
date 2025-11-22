@@ -58,6 +58,7 @@ import { bindCSVServiceDependencies } from "./modules/csv.module";
 import { bindRealtimeDependencies } from "./modules/realtime.module";
 import { bindQueueDependencies } from "./modules/queue.module";
 import { bindEmailDependencies } from "./modules/email.module";
+import { bindSearchDependencies } from "./modules/search.module";
 
 /**
  * AI Service Interfaces - Uncomment when enabling AI services
@@ -128,6 +129,9 @@ function createContainer(): Container {
 
   // Bind Reservations dependencies (reservations, conflicts, availability)
   loadReservationsModule(newContainer);
+
+  // Bind Search dependencies (global search across entities)
+  bindSearchDependencies(newContainer);
 
   /**
    * AI Services - Currently Disabled

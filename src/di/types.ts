@@ -102,6 +102,9 @@ export const DI_TOKENS = {
   ILicenseProductRepository: Symbol.for("ILicenseProductRepository"),
   ILicenseProductFieldRepository: Symbol.for("ILicenseProductFieldRepository"),
 
+  // Search Repository
+  ISearchRepository: Symbol.for("ISearchRepository"),
+
   // ==========================================
   // Service Tokens
   // ==========================================
@@ -187,6 +190,9 @@ export const DI_TOKENS = {
 
   // Real-time Use Cases
   BroadcastTaskEventUseCase: Symbol.for("BroadcastTaskEventUseCase"),
+
+  // Search Use Cases
+  GlobalSearchUseCase: Symbol.for("GlobalSearchUseCase"),
 
   // RBAC Use Cases
   CheckPermissionUseCase: Symbol.for("CheckPermissionUseCase"),

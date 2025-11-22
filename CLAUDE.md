@@ -64,6 +64,7 @@ npm run reset # Reset database + seed (drops all data!)
 - [LOGGING.md](docs/guides/LOGGING.md) - Structured logging with Pino
 - [BUILD_OPTIMIZATION.md](docs/guides/BUILD_OPTIMIZATION.md) - Turbopack, bundle analysis
 - [UI_UX_IMPROVEMENTS.md](docs/guides/UI_UX_IMPROVEMENTS.md) - UI/UX enhancements and navigation improvements
+- [GLOBAL_SEARCH.md](docs/GLOBAL_SEARCH.md) - Command palette global search with keyboard shortcuts (⌘K)
 
 ### Asset Layer (Layer 2)
 

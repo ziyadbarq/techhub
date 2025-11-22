@@ -57,11 +57,14 @@ npm run reset # Reset database + seed (drops all data!)
 ### Development Guides
 
 - [ENTITY_REFERENCE.md](docs/guides/ENTITY_REFERENCE.md) - Entity quick reference, validation standards
+- [CODE_GENERATION.md](docs/guides/CODE_GENERATION.md) - Auto-generation of codes/tags for entities with manual override
 - [FOUNDATION_LAYER.md](docs/guides/FOUNDATION_LAYER.md) - Foundation entities user guide
 - [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md) - Implementing permissions
 - [DATABASE_MIGRATIONS.md](docs/guides/DATABASE_MIGRATIONS.md) - Prisma migrations workflow
 - [LOGGING.md](docs/guides/LOGGING.md) - Structured logging with Pino
 - [BUILD_OPTIMIZATION.md](docs/guides/BUILD_OPTIMIZATION.md) - Turbopack, bundle analysis
+- [UI_UX_IMPROVEMENTS.md](docs/guides/UI_UX_IMPROVEMENTS.md) - UI/UX enhancements and navigation improvements
+- [GLOBAL_SEARCH.md](docs/GLOBAL_SEARCH.md) - Command palette global search with keyboard shortcuts (⌘K)
 
 ### Asset Layer (Layer 2)
 

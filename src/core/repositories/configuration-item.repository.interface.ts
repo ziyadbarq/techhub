@@ -81,6 +81,18 @@ export interface IConfigurationItemRepository {
   findUnowned(): Promise<ConfigurationItem[]>;
 
   /**
+   * Search configuration items by name, ciKey, or hostname
+   */
+  search(
+    query: string,
+    options?: {
+      skip?: number;
+      take?: number;
+      ciClassId?: string;
+    },
+  ): Promise<ConfigurationItem[]>;
+
+  /**
    * Update an existing CI
    */
   update(ci: ConfigurationItem): Promise<ConfigurationItem>;
