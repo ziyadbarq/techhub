@@ -98,6 +98,11 @@ export type Vendor = Prisma.VendorModel
  */
 export type VendorContact = Prisma.VendorContactModel
 /**
+ * Model ExchangeRate
+ * 
+ */
+export type ExchangeRate = Prisma.ExchangeRateModel
+/**
  * Model LifecycleModel
  * 
  */

@@ -400,6 +400,7 @@ export const ModelName = {
   Location: 'Location',
   Vendor: 'Vendor',
   VendorContact: 'VendorContact',
+  ExchangeRate: 'ExchangeRate',
   LifecycleModel: 'LifecycleModel',
   LifecycleState: 'LifecycleState',
   LifecycleTransition: 'LifecycleTransition',
@@ -467,7 +468,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verification" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "organizationUnit" | "person" | "personRoleAssignment" | "location" | "vendor" | "vendorContact" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "maintenanceSchedule" | "maintenanceRecord" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "contractType" | "contract" | "contractLinkedObject" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "attachmentType" | "attachment" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock"
+    modelProps: "user" | "account" | "session" | "verification" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "organizationUnit" | "person" | "personRoleAssignment" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "maintenanceSchedule" | "maintenanceRecord" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "contractType" | "contract" | "contractLinkedObject" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "attachmentType" | "attachment" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1652,6 +1653,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.VendorContactCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.VendorContactCountAggregateOutputType> | number
+        }
+      }
+    }
+    ExchangeRate: {
+      payload: Prisma.$ExchangeRatePayload<ExtArgs>
+      fields: Prisma.ExchangeRateFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ExchangeRateFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExchangeRatePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ExchangeRateFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExchangeRatePayload>
+        }
+        findFirst: {
+          args: Prisma.ExchangeRateFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExchangeRatePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ExchangeRateFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExchangeRatePayload>
+        }
+        findMany: {
+          args: Prisma.ExchangeRateFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExchangeRatePayload>[]
+        }
+        create: {
+          args: Prisma.ExchangeRateCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExchangeRatePayload>
+        }
+        createMany: {
+          args: Prisma.ExchangeRateCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ExchangeRateCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExchangeRatePayload>[]
+        }
+        delete: {
+          args: Prisma.ExchangeRateDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExchangeRatePayload>
+        }
+        update: {
+          args: Prisma.ExchangeRateUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExchangeRatePayload>
+        }
+        deleteMany: {
+          args: Prisma.ExchangeRateDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ExchangeRateUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ExchangeRateUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExchangeRatePayload>[]
+        }
+        upsert: {
+          args: Prisma.ExchangeRateUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ExchangeRatePayload>
+        }
+        aggregate: {
+          args: Prisma.ExchangeRateAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateExchangeRate>
+        }
+        groupBy: {
+          args: Prisma.ExchangeRateGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ExchangeRateGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ExchangeRateCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ExchangeRateCountAggregateOutputType> | number
         }
       }
     }
@@ -5827,6 +5902,18 @@ export const VendorContactScalarFieldEnum = {
 export type VendorContactScalarFieldEnum = (typeof VendorContactScalarFieldEnum)[keyof typeof VendorContactScalarFieldEnum]
 
 
+export const ExchangeRateScalarFieldEnum = {
+  id: 'id',
+  currency: 'currency',
+  rateToSAR: 'rateToSAR',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ExchangeRateScalarFieldEnum = (typeof ExchangeRateScalarFieldEnum)[keyof typeof ExchangeRateScalarFieldEnum]
+
+
 export const LifecycleModelScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -6178,6 +6265,7 @@ export const MaintenanceRecordScalarFieldEnum = {
   status: 'status',
   notes: 'notes',
   cost: 'cost',
+  currency: 'currency',
   partsUsed: 'partsUsed',
   nextMaintenanceDate: 'nextMaintenanceDate',
   createdAt: 'createdAt',
@@ -7301,6 +7389,7 @@ export type GlobalOmitConfig = {
   location?: Prisma.LocationOmit
   vendor?: Prisma.VendorOmit
   vendorContact?: Prisma.VendorContactOmit
+  exchangeRate?: Prisma.ExchangeRateOmit
   lifecycleModel?: Prisma.LifecycleModelOmit
   lifecycleState?: Prisma.LifecycleStateOmit
   lifecycleTransition?: Prisma.LifecycleTransitionOmit

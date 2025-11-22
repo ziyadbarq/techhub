@@ -6,7 +6,7 @@
 "use no memo";
 
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TrendingUp } from "lucide-react";
 import type { z } from "zod";
@@ -126,8 +126,14 @@ export function FxRateForm({
     onOpenChange(newOpen);
   };
 
-  const selectedCurrency = form.watch("currency");
-  const rateValue = form.watch("rateToSAR");
+  const selectedCurrency = useWatch({
+    control: form.control,
+    name: "currency",
+  });
+  const rateValue = useWatch({
+    control: form.control,
+    name: "rateToSAR",
+  });
   const currencyInfo = CURRENCIES_FOR_FORM.find(
     (c) => c.code === selectedCurrency,
   );

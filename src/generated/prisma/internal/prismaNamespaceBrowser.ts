@@ -67,6 +67,7 @@ export const ModelName = {
   Location: 'Location',
   Vendor: 'Vendor',
   VendorContact: 'VendorContact',
+  ExchangeRate: 'ExchangeRate',
   LifecycleModel: 'LifecycleModel',
   LifecycleState: 'LifecycleState',
   LifecycleTransition: 'LifecycleTransition',
@@ -422,6 +423,18 @@ export const VendorContactScalarFieldEnum = {
 export type VendorContactScalarFieldEnum = (typeof VendorContactScalarFieldEnum)[keyof typeof VendorContactScalarFieldEnum]
 
 
+export const ExchangeRateScalarFieldEnum = {
+  id: 'id',
+  currency: 'currency',
+  rateToSAR: 'rateToSAR',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ExchangeRateScalarFieldEnum = (typeof ExchangeRateScalarFieldEnum)[keyof typeof ExchangeRateScalarFieldEnum]
+
+
 export const LifecycleModelScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -773,6 +786,7 @@ export const MaintenanceRecordScalarFieldEnum = {
   status: 'status',
   notes: 'notes',
   cost: 'cost',
+  currency: 'currency',
   partsUsed: 'partsUsed',
   nextMaintenanceDate: 'nextMaintenanceDate',
   createdAt: 'createdAt',

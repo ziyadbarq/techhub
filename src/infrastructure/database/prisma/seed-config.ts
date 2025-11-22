@@ -2779,6 +2779,9 @@ export const SERVICE_DATA = [
       compartment: "prod-compliance",
     },
   },
+] as const;
+
+// ==============================================
 // Exchange Rates (Multi-Currency Support)
 // ==============================================
 
