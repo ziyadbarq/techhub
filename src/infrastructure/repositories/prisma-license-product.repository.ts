@@ -92,6 +92,33 @@ export class PrismaLicenseProductRepository
     return data.map((item) => this.toDomain(item));
   }
 
+  async search(
+    query: string,
+    options?: {
+      skip?: number;
+      take?: number;
+      vendorId?: string;
+    },
+  ): Promise<LicenseProduct[]> {
+    this.logger.debug("Searching license products", { query, options });
+
+    const data = await this.prisma.licenseProduct.findMany({
+      where: {
+        ...(options?.vendorId && { vendorId: options.vendorId }),
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { code: { contains: query, mode: "insensitive" } },
+          { description: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      skip: options?.skip,
+      take: options?.take,
+      orderBy: { name: "asc" },
+    });
+
+    return data.map((item) => this.toDomain(item));
+  }
+
   async update(licenseProduct: LicenseProduct): Promise<LicenseProduct> {
     this.logger.debug("Updating license product", { id: licenseProduct.id });
 

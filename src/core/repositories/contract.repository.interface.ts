@@ -48,6 +48,18 @@ export interface IContractRepository {
   findExpiringSoon(daysAhead: number): Promise<Contract[]>;
 
   /**
+   * Search contracts by contract number or name
+   */
+  search(
+    query: string,
+    options?: {
+      skip?: number;
+      take?: number;
+      vendorId?: string;
+    },
+  ): Promise<Contract[]>;
+
+  /**
    * Updates an existing contract
    */
   update(contract: Contract): Promise<Contract>;

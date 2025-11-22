@@ -77,6 +77,7 @@ Advanced IT Asset Management features:
 
 - [UI Components Guide](./guides/UI_COMPONENTS.md) - Advanced UI patterns with TanStack Table, React Hook Form, and CSV
 - [UI/UX Improvements](./guides/UI_UX_IMPROVEMENTS.md) - User experience enhancements and navigation improvements
+- [Global Search](./GLOBAL_SEARCH.md) - Command palette global search with keyboard shortcuts (⌘K/Ctrl+K)
 - [Sidebar Features](./guides/SIDEBAR_FEATURES.md) - Advanced sidebar features including collapsible groups, nested navigation, permissions, animations, and real-time badges
 - [Real-time Features Guide](./guides/REALTIME.md) - Server-Sent Events (SSE) and Partykit WebSocket integration
 - [Background Jobs Guide](./guides/BACKGROUND_JOBS.md) - BullMQ job queue system for background processing

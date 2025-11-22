@@ -19,6 +19,7 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { Clock } from "lucide-react";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -61,12 +62,13 @@ export async function generateMetadata({ params }: DocPageProps) {
  */
 export default async function DocPage({ params }: DocPageProps) {
   const { slug } = await params;
+  const scopedLogger = logger.scope("DocPage");
 
   let docContent;
   try {
     docContent = getDocContent(slug);
   } catch (error) {
-    console.error(`Failed to load documentation: ${slug}`, error);
+    scopedLogger.error("load", "Failed to load documentation", error, { slug });
     notFound();
   }
 

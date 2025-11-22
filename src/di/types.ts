@@ -195,6 +195,9 @@ export const DI_TOKENS = {
   // Real-time Use Cases
   BroadcastTaskEventUseCase: Symbol.for("BroadcastTaskEventUseCase"),
 
+  // Search Use Cases
+  GlobalSearchUseCase: Symbol.for("GlobalSearchUseCase"),
+
   // RBAC Use Cases
   CheckPermissionUseCase: Symbol.for("CheckPermissionUseCase"),
   CreateRoleUseCase: Symbol.for("CreateRoleUseCase"),

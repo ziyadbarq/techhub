@@ -38,6 +38,18 @@ export interface ILicenseProductRepository {
   findByVendorId(vendorId: string): Promise<LicenseProduct[]>;
 
   /**
+   * Search license products by name or code
+   */
+  search(
+    query: string,
+    options?: {
+      skip?: number;
+      take?: number;
+      vendorId?: string;
+    },
+  ): Promise<LicenseProduct[]>;
+
+  /**
    * Updates an existing license product
    */
   update(licenseProduct: LicenseProduct): Promise<LicenseProduct>;

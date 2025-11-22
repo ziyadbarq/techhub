@@ -40,6 +40,8 @@ import type { RoleDTO } from "@/interface-adapters/presenters/role.presenter";
 import {
   createRoleAction,
   updateRoleAction,
+  assignPermissionsToRoleAction,
+  listPermissionsAction,
 } from "@/interface-adapters/controllers/role.controller";
 
 // Form validation schema
@@ -61,20 +63,44 @@ type RoleFormValues = z.infer<typeof roleFormSchema>;
 interface RoleFormProps {
   role?: RoleDTO;
   mode: "create" | "edit";
+  sourceRole?: RoleDTO; // Role to clone from
 }
 
-export function RoleForm({ role, mode }: RoleFormProps) {
+export function RoleForm({ role, mode, sourceRole }: RoleFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
+  // Generate default values for cloning
+  const getDefaultValues = (): Partial<RoleFormValues> => {
+    if (role) {
+      // Editing existing role
+      return {
+        name: role.name,
+        displayName: role.displayName,
+        description: role.description ?? "",
+        isActive: role.isActive,
+      };
+    } else if (sourceRole) {
+      // Cloning from source role
+      return {
+        name: `${sourceRole.name}-copy`,
+        displayName: `${sourceRole.displayName} (Copy)`,
+        description: sourceRole.description ?? "",
+        isActive: true,
+      };
+    }
+    // Creating new role
+    return {
+      name: "",
+      displayName: "",
+      description: "",
+      isActive: true,
+    };
+  };
+
   const form = useForm<RoleFormValues>({
     resolver: zodResolver(roleFormSchema),
-    defaultValues: {
-      name: role?.name ?? "",
-      displayName: role?.displayName ?? "",
-      description: role?.description ?? "",
-      isActive: role?.isActive ?? true,
-    },
+    defaultValues: getDefaultValues(),
   });
 
   const onSubmit = async (data: RoleFormValues) => {
@@ -88,7 +114,42 @@ export function RoleForm({ role, mode }: RoleFormProps) {
         });
 
         if (result.success) {
-          toast.success("Role created successfully");
+          const newRoleId = result.data.id;
+
+          // If cloning, copy permissions from source role
+          if (
+            sourceRole &&
+            sourceRole.permissions &&
+            sourceRole.permissions.length > 0
+          ) {
+            // Get all permissions to map names to IDs
+            const allPermissionsResult = await listPermissionsAction();
+            if (allPermissionsResult.success) {
+              const allPermissions = allPermissionsResult.data;
+              const permissionIds = allPermissions
+                .filter((p) => sourceRole.permissions?.includes(p.name))
+                .map((p) => p.id);
+
+              // Assign permissions to new role
+              const assignResult = await assignPermissionsToRoleAction({
+                roleId: newRoleId,
+                permissionIds,
+              });
+
+              if (assignResult.success) {
+                toast.success(
+                  `Role cloned successfully with ${permissionIds.length} permissions`,
+                );
+              } else {
+                toast.warning(
+                  `Role created but failed to copy permissions: ${assignResult.error}`,
+                );
+              }
+            }
+          } else {
+            toast.success("Role created successfully");
+          }
+
           router.push("/admin/roles");
           router.refresh();
         } else {

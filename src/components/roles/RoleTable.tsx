@@ -9,7 +9,7 @@
 
 import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Trash2, Pencil, Shield } from "lucide-react";
+import { MoreHorizontal, Trash2, Pencil, Shield, Copy } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -180,18 +180,32 @@ export function RoleTable({
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => router.push(`/admin/roles/${role.id}`)}
+                onClick={() =>
+                  router.push(`/admin/roles/${encodeURIComponent(role.name)}`)
+                }
               >
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() =>
-                  router.push(`/admin/roles/${role.id}/permissions`)
+                  router.push(
+                    `/admin/roles/${encodeURIComponent(role.name)}/permissions`,
+                  )
                 }
               >
                 <Shield className="mr-2 h-4 w-4" />
                 Manage Permissions
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() =>
+                  router.push(
+                    `/admin/roles/new?clone=${encodeURIComponent(role.name)}`,
+                  )
+                }
+              >
+                <Copy className="mr-2 h-4 w-4" />
+                Clone Role
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem

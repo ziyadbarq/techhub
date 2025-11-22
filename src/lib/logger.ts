@@ -35,24 +35,39 @@ export interface LogContext {
 function createClientLogger(
   baseContext?: Record<string, unknown>,
 ): ILoggerService {
+  const levelOrder = { debug: 0, info: 1, warn: 2, error: 3 } as const;
+  const envLevel = (process.env.LOG_LEVEL ??
+    (process.env.NODE_ENV === "test" ? "error" : undefined)) as
+    | keyof typeof levelOrder
+    | undefined;
+  const currentLevel: keyof typeof levelOrder = envLevel ?? "info";
+  const shouldLog = (level: keyof typeof levelOrder) =>
+    levelOrder[level] >= levelOrder[currentLevel];
+
   return {
     debug: (message: string, context?: Record<string, unknown>) => {
-      if (process.env.NODE_ENV === "development") {
+      if (shouldLog("debug")) {
         console.debug(message, { ...baseContext, ...context });
       }
     },
     info: (message: string, context?: Record<string, unknown>) => {
-      console.info(message, { ...baseContext, ...context });
+      if (shouldLog("info")) {
+        console.info(message, { ...baseContext, ...context });
+      }
     },
     warn: (message: string, context?: Record<string, unknown>) => {
-      console.warn(message, { ...baseContext, ...context });
+      if (shouldLog("warn")) {
+        console.warn(message, { ...baseContext, ...context });
+      }
     },
     error: (
       message: string,
       error?: Error,
       context?: Record<string, unknown>,
     ) => {
-      console.error(message, error, { ...baseContext, ...context });
+      if (shouldLog("error")) {
+        console.error(message, error, { ...baseContext, ...context });
+      }
     },
     child: (context: Record<string, unknown>) => {
       return createClientLogger({ ...baseContext, ...context });
@@ -65,20 +80,28 @@ function createClientLogger(
       };
     },
     endTimer: (timer, additionalContext?: Record<string, unknown>) => {
-      const duration = performance.now() - timer.startTime;
-      console.debug(
-        `[TIMER] ${timer.operation} completed in ${duration.toFixed(2)}ms`,
-        { ...timer.context, ...additionalContext },
-      );
+      if (shouldLog("debug")) {
+        const duration = performance.now() - timer.startTime;
+        console.debug(
+          `[TIMER] ${timer.operation} completed in ${duration.toFixed(2)}ms`,
+          { ...timer.context, ...additionalContext },
+        );
+      }
     },
     audit: (entry) => {
-      console.info("[AUDIT]", entry);
+      if (shouldLog("info")) {
+        console.info("[AUDIT]", entry);
+      }
     },
     withTiming: async <T>(
       operation: string,
       fn: () => Promise<T>,
       context?: Record<string, unknown>,
     ) => {
+      if (!shouldLog("debug")) {
+        return fn();
+      }
+
       const timer = {
         startTime: performance.now(),
         operation,

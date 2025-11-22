@@ -83,7 +83,7 @@ export function PermissionTable({
   };
 
   const handleEdit = (permission: PermissionDTO) => {
-    router.push(`/admin/permissions/${permission.id}`);
+    router.push(`/admin/permissions/${encodeURIComponent(permission.name)}`);
   };
 
   const getStatusBadge = (permission: PermissionDTO) => {

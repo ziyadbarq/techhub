@@ -4,8 +4,8 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Edit2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -38,6 +37,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import type { z } from "zod";
+import { InlineEditableField } from "@/components/ui/inline-editable-field";
 import {
   createRelationshipTypeAction,
   updateRelationshipTypeAction,
@@ -67,7 +67,6 @@ export function RelationshipTypeForm({
   editingType,
 }: RelationshipTypeFormProps) {
   const isEditing = !!editingType;
-  const [showCodeField, setShowCodeField] = useState(isEditing);
 
   const createForm = useForm<CreateFormValues, undefined, CreateFormOutput>({
     resolver: zodResolver(CreateRelationshipTypeSchema),
@@ -89,6 +88,20 @@ export function RelationshipTypeForm({
       isImpacting: false,
     },
   });
+
+  // Focus the first field when dialog opens
+  useEffect(() => {
+    if (open) {
+      const timer = setTimeout(() => {
+        const firstField =
+          document.querySelector<HTMLInputElement>('input[name="name"]');
+        if (firstField) {
+          firstField.focus();
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [open]);
 
   useEffect(() => {
     if (open && editingType) {
@@ -135,297 +148,279 @@ export function RelationshipTypeForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
-            {isEditing ? "Edit Relationship Type" : "New Relationship Type"}
-          </DialogTitle>
-          <DialogDescription>
-            {isEditing
-              ? "Update the relationship type details below."
-              : "Create a new relationship type for CI relationships."}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent
+        className="max-h-[90vh] max-w-2xl overflow-y-auto"
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+        }}
+      >
+        {isEditing ? (
+          <FormProvider {...updateForm}>
+            <DialogHeader>
+              <DialogTitle className="flex flex-wrap items-center gap-2">
+                <span>Edit Relationship Type:</span>
+                <span className="text-muted-foreground text-sm">
+                  Code: {editingType?.code}
+                </span>
+              </DialogTitle>
+              <DialogDescription>
+                Update the relationship type details below.
+              </DialogDescription>
+            </DialogHeader>
 
-        {!isEditing ? (
-          <Form {...createForm}>
-            <form
-              onSubmit={createForm.handleSubmit(onCreateSubmit)}
-              className="space-y-4"
-            >
-              <FormField
-                control={createForm.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name *</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="e.g., Depends On, Runs On, Hosted By"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {!showCodeField && !isEditing ? (
-                <div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowCodeField(true)}
-                    className="h-8 text-xs"
-                  >
-                    <Edit2 className="mr-2 h-3 w-3" />
-                    Manually set code (optional)
-                  </Button>
-                  <p className="text-muted-foreground mt-1 text-xs">
-                    Code will be auto-generated if not provided
-                  </p>
-                </div>
-              ) : (
+            <Form {...updateForm}>
+              <form
+                onSubmit={updateForm.handleSubmit(onUpdateSubmit)}
+                className="space-y-4"
+              >
                 <FormField
-                  control={createForm.control}
-                  name="code"
+                  control={updateForm.control}
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Code{" "}
-                        {isEditing && (
-                          <span className="text-destructive">*</span>
-                        )}
-                      </FormLabel>
+                      <FormLabel>Name *</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="e.g., DEPENDS_ON, RUNS_ON, HOSTED_BY"
+                          placeholder="e.g., Depends On, Runs On, Hosted By"
+                          tabIndex={1}
                           {...field}
-                          value={field.value || ""}
-                          onChange={(e) =>
-                            field.onChange(e.target.value.toUpperCase())
-                          }
                         />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={updateForm.control}
+                  name="direction"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Direction *</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value ?? undefined}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select direction" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="UNIDIRECTIONAL">
+                            Unidirectional (A → B)
+                          </SelectItem>
+                          <SelectItem value="BIDIRECTIONAL">
+                            Bidirectional (A ⟷ B)
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormDescription>
-                        {isEditing
-                          ? "Unique code using uppercase letters, numbers, hyphens, and underscores"
-                          : "Leave empty to auto-generate"}
+                        Unidirectional: relationship flows in one direction.
+                        Bidirectional: relationship applies in both directions.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              )}
 
-              <FormField
-                control={createForm.control}
-                name="direction"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Direction *</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value ?? undefined}
-                    >
+                <FormField
+                  control={updateForm.control}
+                  name="isImpacting"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4">
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select direction" />
-                        </SelectTrigger>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value="UNIDIRECTIONAL">
-                          Unidirectional (A → B)
-                        </SelectItem>
-                        <SelectItem value="BIDIRECTIONAL">
-                          Bidirectional (A ⟷ B)
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      Unidirectional: relationship flows in one direction.
-                      Bidirectional: relationship applies in both directions.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Impacting Relationship</FormLabel>
+                        <FormDescription>
+                          Mark this relationship as impacting for dependency
+                          analysis and impact assessments
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={createForm.control}
-                name="isImpacting"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Impacting Relationship</FormLabel>
-                      <FormDescription>
-                        Mark this relationship as impacting for dependency
-                        analysis and impact assessments
-                      </FormDescription>
-                    </div>
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={updateForm.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Describe what this relationship represents"
+                          rows={3}
+                          {...field}
+                          value={field.value ?? ""}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={createForm.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Describe what this relationship represents"
-                        rows={3}
-                        {...field}
-                        value={field.value ?? ""}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => onOpenChange(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
-                  disabled={createForm.formState.isSubmitting}
-                >
-                  {createForm.formState.isSubmitting ? "Creating..." : "Create"}
-                </Button>
-              </DialogFooter>
-            </form>
-          </Form>
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => onOpenChange(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
+                    disabled={updateForm.formState.isSubmitting}
+                  >
+                    {updateForm.formState.isSubmitting
+                      ? "Updating..."
+                      : "Update"}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </FormProvider>
         ) : (
-          <Form {...updateForm}>
-            <form
-              onSubmit={updateForm.handleSubmit(onUpdateSubmit)}
-              className="space-y-4"
-            >
-              <FormField
-                control={updateForm.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name *</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="e.g., Depends On, Runs On, Hosted By"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          <FormProvider {...createForm}>
+            <DialogHeader>
+              <DialogTitle className="flex flex-wrap items-center gap-2">
+                <span>New Relationship Type:</span>
+                <InlineEditableField
+                  name="code"
+                  placeholder="Auto-generated"
+                  transform="uppercase"
+                  optional
+                />
+              </DialogTitle>
+              <DialogDescription>
+                Create a new relationship type for CI relationships.
+              </DialogDescription>
+            </DialogHeader>
 
-              <FormField
-                control={updateForm.control}
-                name="direction"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Direction *</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      value={field.value ?? undefined}
-                    >
+            <Form {...createForm}>
+              <form
+                onSubmit={createForm.handleSubmit(onCreateSubmit)}
+                className="space-y-4"
+              >
+                <FormField
+                  control={createForm.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name *</FormLabel>
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select direction" />
-                        </SelectTrigger>
+                        <Input
+                          placeholder="e.g., Depends On, Runs On, Hosted By"
+                          tabIndex={1}
+                          {...field}
+                        />
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value="UNIDIRECTIONAL">
-                          Unidirectional (A → B)
-                        </SelectItem>
-                        <SelectItem value="BIDIRECTIONAL">
-                          Bidirectional (A ⟷ B)
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      Unidirectional: relationship flows in one direction.
-                      Bidirectional: relationship applies in both directions.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={updateForm.control}
-                name="isImpacting"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Impacting Relationship</FormLabel>
+                <FormField
+                  control={createForm.control}
+                  name="direction"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Direction *</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value ?? undefined}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select direction" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="UNIDIRECTIONAL">
+                            Unidirectional (A → B)
+                          </SelectItem>
+                          <SelectItem value="BIDIRECTIONAL">
+                            Bidirectional (A ⟷ B)
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormDescription>
-                        Mark this relationship as impacting for dependency
-                        analysis and impact assessments
+                        Unidirectional: relationship flows in one direction.
+                        Bidirectional: relationship applies in both directions.
                       </FormDescription>
-                    </div>
-                  </FormItem>
-                )}
-              />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={updateForm.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Describe what this relationship represents"
-                        rows={3}
-                        {...field}
-                        value={field.value ?? ""}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={createForm.control}
+                  name="isImpacting"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4">
+                      <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel>Impacting Relationship</FormLabel>
+                        <FormDescription>
+                          Mark this relationship as impacting for dependency
+                          analysis and impact assessments
+                        </FormDescription>
+                      </div>
+                    </FormItem>
+                  )}
+                />
 
-              <DialogFooter>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => onOpenChange(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
-                  disabled={updateForm.formState.isSubmitting}
-                >
-                  {updateForm.formState.isSubmitting ? "Updating..." : "Update"}
-                </Button>
-              </DialogFooter>
-            </form>
-          </Form>
+                <FormField
+                  control={createForm.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Describe what this relationship represents"
+                          rows={3}
+                          {...field}
+                          value={field.value ?? ""}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => onOpenChange(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
+                    disabled={createForm.formState.isSubmitting}
+                  >
+                    {createForm.formState.isSubmitting
+                      ? "Creating..."
+                      : "Create"}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </FormProvider>
         )}
       </DialogContent>
     </Dialog>

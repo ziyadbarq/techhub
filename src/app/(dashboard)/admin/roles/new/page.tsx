@@ -1,20 +1,43 @@
 /**
  * Create Role Page
  *
- * Admin page to create a new role.
+ * Admin page to create a new role or clone an existing one.
  * Features:
  * - React Hook Form with Zod validation
  * - Permission guard for ROLES_CREATE
+ * - Clone support via ?clone=roleName query parameter
  */
 
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { RoleForm } from "@/components/roles/RoleForm";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { getRoleAction } from "@/interface-adapters/controllers/role.controller";
 
-export default function CreateRolePage() {
+interface CreateRolePageProps {
+  searchParams: Promise<{
+    clone?: string;
+  }>;
+}
+
+export default async function CreateRolePage(props: CreateRolePageProps) {
+  // Resolve searchParams (Next.js 16 async request API)
+  const searchParams = await props.searchParams;
+  const cloneRoleName = searchParams.clone
+    ? decodeURIComponent(searchParams.clone)
+    : undefined;
+
+  // If cloning, fetch the source role
+  let sourceRole = null;
+  if (cloneRoleName) {
+    const roleResult = await getRoleAction(cloneRoleName);
+    if (roleResult.success) {
+      sourceRole = roleResult.data;
+    }
+  }
   return (
     <PermissionGuard
       permission={PERMISSIONS.ROLES_CREATE}
@@ -49,14 +72,26 @@ export default function CreateRolePage() {
 
           {/* Page Header */}
           <div className="mb-8">
-            <h1 className="mb-2 text-4xl font-bold">Create New Role</h1>
-            <p className="text-muted-foreground text-lg">
-              Create a new role to organize permissions for your users
+            <div className="flex items-center gap-3">
+              <h1 className="text-4xl font-bold">
+                {sourceRole ? "Clone Role" : "Create New Role"}
+              </h1>
+              {sourceRole && (
+                <Badge variant="outline" className="gap-1">
+                  <Copy className="h-3 w-3" />
+                  Cloning from {sourceRole.displayName}
+                </Badge>
+              )}
+            </div>
+            <p className="text-muted-foreground mt-2 text-lg">
+              {sourceRole
+                ? `Create a new role based on "${sourceRole.displayName}" with its ${sourceRole.permissions?.length ?? 0} permissions`
+                : "Create a new role to organize permissions for your users"}
             </p>
           </div>
 
           {/* Role Form */}
-          <RoleForm mode="create" />
+          <RoleForm mode="create" sourceRole={sourceRole ?? undefined} />
         </div>
       </div>
     </PermissionGuard>

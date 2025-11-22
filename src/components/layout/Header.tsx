@@ -9,17 +9,19 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, Settings, LogOut, Moon, Sun } from "lucide-react";
+import { User, Settings, LogOut, Moon, Sun, Search } from "lucide-react";
 import { useTheme } from "next-themes";
 import { usePathname, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth/client";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useCommandPalette } from "@/components/search/command-palette-context";
 
 export function Header() {
   const { resolvedTheme, setTheme } = useTheme();
   const pathname = usePathname();
   const router = useRouter();
+  const { setOpen } = useCommandPalette();
 
   // Generate breadcrumbs from pathname
   const breadcrumbs =
@@ -75,6 +77,18 @@ export function Header() {
 
       {/* User Actions */}
       <div className="flex items-center gap-2">
+        {/* Search Button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setOpen(true)}
+          className="hover:bg-accent h-12 w-12 transition-colors md:h-9 md:w-9"
+          aria-label="Search (⌘K)"
+        >
+          <Search className="h-5 w-5" />
+          <span className="sr-only">Search</span>
+        </Button>
+
         {/* Theme Toggle */}
         <Button
           variant="ghost"
