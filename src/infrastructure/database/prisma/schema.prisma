@@ -1837,13 +1837,15 @@ model AuditLogEntry {
 
 // AttachmentType model
 model AttachmentType {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  code        String   @unique
-  description String?  @db.Text
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                String   @id @default(cuid())
+  name              String   @unique
+  code              String   @unique
+  description       String?  @db.Text
+  allowedExtensions String[] // e.g., ["pdf", "jpg", "png"]
+  maxFileSizeMB     Int      // Maximum file size in megabytes
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   // Relations
   attachments Attachment[]

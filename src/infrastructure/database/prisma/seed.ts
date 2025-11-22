@@ -8,8 +8,10 @@
  * 4. Warranties & Maintenance (warranties, schedules, records)
  * 5. CMDB (relationship types, configuration items, relationships)
  * 6. Layer 3 ITAM (disposals, asset kits, reservations)
- * 7. AI prompt templates
- * 8. Example tasks (for demonstration)
+ * 7. Attachment Types (polymorphic file attachments)
+ * 8. Governance (data domains, ownerships, verification campaigns)
+ * 9. AI prompt templates
+ * 10. Example tasks (for demonstration)
  */
 
 import { TaskStatus } from "../../../generated/prisma/client.js";
@@ -21,6 +23,8 @@ import { seedAssets } from "./seed-assets.js";
 import { seedWarrantiesMaintenance } from "./seed-warranties-maintenance.js";
 import { seedCMDB } from "./seed-cmdb.js";
 import { seedLayer3ITAM } from "./seed-layer3-itam.js";
+import { seedAttachments } from "./seed-attachments.js";
+import { seedGovernance } from "./seed-governance.js";
 import { seedBusinessProcesses, seedServices } from "./seed-services.js";
 import { logSection, logSuccess, logStep } from "./seed-utils.js";
 
@@ -42,6 +46,12 @@ async function main() {
     await prisma.service.deleteMany({});
     await prisma.businessProcess.deleteMany({});
     // Layer 3 cleanup
+    await prisma.attachment.deleteMany({});
+    await prisma.attachmentType.deleteMany({});
+    await prisma.verificationItem.deleteMany({});
+    await prisma.verificationCampaign.deleteMany({});
+    await prisma.dataOwnership.deleteMany({});
+    await prisma.dataDomain.deleteMany({});
     await prisma.assetKitCheckoutItem.deleteMany({});
     await prisma.assetKitCheckout.deleteMany({});
     await prisma.assetKitItem.deleteMany({});
@@ -144,6 +154,14 @@ async function main() {
     await seedLayer3ITAM(prisma);
     console.log("");
 
+    // 7. Seed Attachment Types
+    await seedAttachments(prisma);
+    console.log("");
+
+    // 8. Seed Governance (data domains, ownerships, verification campaigns)
+    await seedGovernance(prisma);
+    console.log("");
+
     // 9. Seed AI prompt templates
     logSection("AI Prompt Templates");
     logStep("🤖", "Seeding AI prompt templates...");
@@ -238,6 +256,10 @@ async function main() {
     );
     console.log(
       "    ✓ CMDB (configuration items, relationships, dependency tracking)",
+    );
+    console.log("    ✓ Attachment Types (polymorphic file attachments)");
+    console.log(
+      "    ✓ Governance (data domains, ownerships, verification campaigns)",
     );
     console.log("  Support Systems:");
     console.log("    ✓ AI prompt templates");

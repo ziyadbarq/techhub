@@ -24,6 +24,7 @@ import { logger } from "@/lib/logger";
 
 // Import module binding functions
 import { bindLoggerDependencies } from "./modules/logger.module";
+import { bindFileStorageDependencies } from "./modules/file-storage.module";
 import { bindCodeGeneratorDependencies } from "./modules/code-generator.module";
 import { bindDatabaseDependencies } from "./modules/database.module";
 import { bindRBACDependencies } from "./modules/rbac.module";
@@ -33,6 +34,8 @@ import { bindInventoryDependencies } from "./modules/inventory.module";
 import { bindCMDBDependencies } from "./modules/cmdb.module";
 import { bindContractsDependencies } from "./modules/contracts.module";
 import { bindLicensesDependencies } from "./modules/licenses.module";
+import { bindGovernanceDependencies } from "./modules/governance.module";
+import { bindAttachmentsDependencies } from "./modules/attachments.module";
 import { bindServiceDependencies } from "./modules/service.module";
 import { loadDisposalModule } from "./modules/disposal.module";
 import { loadAssetKitsModule } from "./modules/asset-kits.module";
@@ -95,6 +98,9 @@ function createContainer(): Container {
   // Bind logger dependencies (must be first for other modules to use)
   bindLoggerDependencies(newContainer);
 
+  // Bind file storage dependencies (depends on logger)
+  bindFileStorageDependencies(newContainer);
+
   // Bind code generator dependencies (depends on logger and database)
   bindCodeGeneratorDependencies(newContainer);
 
@@ -116,6 +122,11 @@ function createContainer(): Container {
   // Bind Licenses dependencies (license products, entitlements, allocations)
   bindLicensesDependencies(newContainer);
 
+  // Bind Governance dependencies (data domains, ownerships, verification campaigns/items)
+  bindGovernanceDependencies(newContainer);
+
+  // Bind Attachments dependencies (attachment types, attachments)
+  bindAttachmentsDependencies(newContainer);
   // Bind Service Management dependencies (services, business processes, infrastructure)
   bindServiceDependencies(newContainer);
 

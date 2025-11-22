@@ -528,6 +528,68 @@ export const DI_TOKENS = {
     "ReactivateLicenseAllocationUseCase",
   ),
 
+  // ==========================================
+  // Governance Module Tokens
+  // ==========================================
+
+  // Governance: Data Domain Repository
+  IDataDomainRepository: Symbol.for("IDataDomainRepository"),
+
+  // Governance: Data Domain Use Cases
+  CreateDataDomainUseCase: Symbol.for("CreateDataDomainUseCase"),
+  GetDataDomainUseCase: Symbol.for("GetDataDomainUseCase"),
+  ListDataDomainsUseCase: Symbol.for("ListDataDomainsUseCase"),
+  UpdateDataDomainUseCase: Symbol.for("UpdateDataDomainUseCase"),
+  DeleteDataDomainUseCase: Symbol.for("DeleteDataDomainUseCase"),
+
+  // Governance: Data Ownership Repository
+  IDataOwnershipRepository: Symbol.for("IDataOwnershipRepository"),
+
+  // Governance: Data Ownership Use Cases
+  CreateDataOwnershipUseCase: Symbol.for("CreateDataOwnershipUseCase"),
+  GetDataOwnershipUseCase: Symbol.for("GetDataOwnershipUseCase"),
+  ListDataOwnershipsUseCase: Symbol.for("ListDataOwnershipsUseCase"),
+  UpdateDataOwnershipUseCase: Symbol.for("UpdateDataOwnershipUseCase"),
+  DeleteDataOwnershipUseCase: Symbol.for("DeleteDataOwnershipUseCase"),
+
+  // Governance: Verification Campaign Repository
+  IVerificationCampaignRepository: Symbol.for("IVerificationCampaignRepository"),
+
+  // Governance: Verification Campaign Use Cases
+  CreateVerificationCampaignUseCase: Symbol.for("CreateVerificationCampaignUseCase"),
+  GetVerificationCampaignUseCase: Symbol.for("GetVerificationCampaignUseCase"),
+  ListVerificationCampaignsUseCase: Symbol.for("ListVerificationCampaignsUseCase"),
+  UpdateVerificationCampaignUseCase: Symbol.for("UpdateVerificationCampaignUseCase"),
+  DeleteVerificationCampaignUseCase: Symbol.for("DeleteVerificationCampaignUseCase"),
+  StartVerificationCampaignUseCase: Symbol.for("StartVerificationCampaignUseCase"),
+  CompleteVerificationCampaignUseCase: Symbol.for("CompleteVerificationCampaignUseCase"),
+
+  // Governance: Verification Item Repository
+  IVerificationItemRepository: Symbol.for("IVerificationItemRepository"),
+
+  // Governance: Verification Item Use Cases
+  CreateVerificationItemUseCase: Symbol.for("CreateVerificationItemUseCase"),
+  GetVerificationItemUseCase: Symbol.for("GetVerificationItemUseCase"),
+  ListVerificationItemsUseCase: Symbol.for("ListVerificationItemsUseCase"),
+  UpdateVerificationItemUseCase: Symbol.for("UpdateVerificationItemUseCase"),
+  DeleteVerificationItemUseCase: Symbol.for("DeleteVerificationItemUseCase"),
+  VerifyVerificationItemUseCase: Symbol.for("VerifyVerificationItemUseCase"),
+  FlagExceptionVerificationItemUseCase: Symbol.for("FlagExceptionVerificationItemUseCase"),
+
+  // ==========================================
+  // Attachments Module Tokens
+  // ==========================================
+
+  // Attachments: AttachmentType Repository
+  IAttachmentTypeRepository: Symbol.for("IAttachmentTypeRepository"),
+
+  // Attachments: AttachmentType Use Cases
+  CreateAttachmentTypeUseCase: Symbol.for("CreateAttachmentTypeUseCase"),
+  GetAttachmentTypeUseCase: Symbol.for("GetAttachmentTypeUseCase"),
+  ListAttachmentTypesUseCase: Symbol.for("ListAttachmentTypesUseCase"),
+  UpdateAttachmentTypeUseCase: Symbol.for("UpdateAttachmentTypeUseCase"),
+  DeleteAttachmentTypeUseCase: Symbol.for("DeleteAttachmentTypeUseCase"),
+
   // Assets: Asset Category Repository
   IAssetCategoryRepository: Symbol.for("IAssetCategoryRepository"),
   IAssetCategoryFieldRepository: Symbol.for("IAssetCategoryFieldRepository"),
@@ -691,6 +753,21 @@ export const DI_TOKENS = {
   UnlinkServiceFromAssetUseCase: Symbol.for("UnlinkServiceFromAssetUseCase"),
   GetServiceAssetsUseCase: Symbol.for("GetServiceAssetsUseCase"),
   GetAssetServicesUseCase: Symbol.for("GetAssetServicesUseCase"),
+
+  // ==========================================
+  // Attachments Module Tokens
+  // ==========================================
+
+  // Attachments: Attachment Repository
+  IAttachmentRepository: Symbol.for("IAttachmentRepository"),
+
+  // Attachments: Attachment Use Cases
+  CreateAttachmentUseCase: Symbol.for("CreateAttachmentUseCase"),
+  GetAttachmentUseCase: Symbol.for("GetAttachmentUseCase"),
+  ListAttachmentsUseCase: Symbol.for("ListAttachmentsUseCase"),
+  GetAttachmentsByTargetUseCase: Symbol.for("GetAttachmentsByTargetUseCase"),
+  UpdateAttachmentUseCase: Symbol.for("UpdateAttachmentUseCase"),
+  DeleteAttachmentUseCase: Symbol.for("DeleteAttachmentUseCase"),
 
   // ==========================================
   // Infrastructure Tokens

@@ -1,189 +1,108 @@
 /**
  * File Storage Service Interface
  *
- * Provides secure file system operations with validation and error handling.
- * Supports both text and binary files.
+ * Provides file upload/download operations for managing uploaded files.
+ * Supports file uploads with automatic organization by date and unique file naming.
+ *
+ * Storage Strategy:
+ * - Base path: /public/uploads/{year}/{month}/{cuid}.{ext}
+ * - Example: /public/uploads/2025/11/clq1234567890abcdef.pdf
+ * - Uses CUID for collision-free unique file names
+ * - Automatically creates year/month directory structure
  */
 
 /**
- * File encoding types
- */
-export type FileEncoding = "utf-8" | "binary";
-
-/**
- * Service interface for managing files on the file system.
+ * Service interface for managing uploaded files.
  *
  * This service is responsible for:
- * - Reading and writing files (text and binary)
- * - Directory management
- * - File validation and security
- * - File metadata operations
+ * - Uploading files with unique names and organized storage
+ * - Deleting files from storage
+ * - Generating public URLs for file access
+ * - Checking file existence
  *
- * **Security Features:**
- * - Path traversal protection
- * - File size validation
- * - Content validation (UTF-8, null bytes)
- * - Safe path resolution
+ * **Storage Features:**
+ * - Date-based organization (year/month folders)
+ * - Collision-free unique file names using CUID
+ * - Preserves original file extensions
+ * - Returns relative paths for database storage
+ * - Generates public URLs for file access
  */
 export interface IFileStorageService {
-  // ========================================
-  // Core File Operations
-  // ========================================
-
   /**
-   * Writes content to a file.
+   * Uploads a file to the storage system.
    *
-   * Creates parent directories if they don't exist.
-   * Validates file size and content before writing.
+   * Creates year/month directory structure and saves the file with a unique CUID-based name.
+   * Preserves the original file extension.
    *
-   * @param filePath - Relative path from project root
-   * @param content - Content to write (string or Buffer for binary)
-   * @throws {Error} If path is invalid, content exceeds size limit, or write fails
-   * @returns Promise that resolves when file is written
+   * @param file - File content as Buffer
+   * @param fileName - Original file name (used to extract extension)
+   * @param mimeType - MIME type of the file (e.g., 'application/pdf', 'image/png')
+   * @returns Promise that resolves with the storage path relative to /public
+   *          (e.g., 'uploads/2025/11/clq1234567890abcdef.pdf')
+   * @throws {Error} If directory creation fails or file write fails
    *
    * @example
    * ```typescript
-   * // Write text file
-   * await fileStorage.writeFile('.ai-debug/prompt.txt', 'Hello World');
-   *
-   * // Write binary file
-   * const imageBuffer = await fetchImage();
-   * await fileStorage.writeFile('uploads/logo.png', imageBuffer);
+   * // Upload a PDF file
+   * const fileBuffer = await request.formData().get('file');
+   * const storagePath = await fileStorage.uploadFile(
+   *   fileBuffer,
+   *   'invoice.pdf',
+   *   'application/pdf'
+   * );
+   * // storagePath: 'uploads/2025/11/clq1234567890abcdef.pdf'
    * ```
    */
-  writeFile(filePath: string, content: string | Buffer): Promise<void>;
+  uploadFile(
+    file: Buffer,
+    fileName: string,
+    mimeType: string,
+  ): Promise<string>;
 
   /**
-   * Reads content from a file.
+   * Deletes a file from the storage system.
    *
-   * @param filePath - Relative path from project root
-   * @param encoding - File encoding ('utf-8' for text, 'binary' for Buffer). Default: 'utf-8'
-   * @throws {Error} If file doesn't exist or read fails
-   * @returns Promise that resolves with the file content
-   *
-   * @example
-   * ```typescript
-   * // Read text file
-   * const text = await fileStorage.readFile('.ai-debug/prompt.txt');
-   *
-   * // Read binary file
-   * const buffer = await fileStorage.readFile('uploads/logo.png', 'binary');
-   * ```
-   */
-  readFile(filePath: string, encoding?: "utf-8"): Promise<string>;
-  readFile(filePath: string, encoding: "binary"): Promise<Buffer>;
-  readFile(filePath: string, encoding?: FileEncoding): Promise<string | Buffer>;
-
-  /**
-   * Deletes a file.
-   *
-   * @param filePath - Relative path from project root
+   * @param storagePath - Storage path relative to /public (e.g., 'uploads/2025/11/clq1234567890abcdef.pdf')
    * @throws {Error} If file doesn't exist or deletion fails
    * @returns Promise that resolves when file is deleted
    *
    * @example
    * ```typescript
-   * await fileStorage.deleteFile('.ai-debug/old-trace.json');
+   * await fileStorage.deleteFile('uploads/2025/11/clq1234567890abcdef.pdf');
    * ```
    */
-  deleteFile(filePath: string): Promise<void>;
-
-  // ========================================
-  // Directory Operations
-  // ========================================
+  deleteFile(storagePath: string): Promise<void>;
 
   /**
-   * Ensures a directory exists, creating it if necessary.
+   * Gets the public URL for accessing a file.
    *
-   * Creates all parent directories recursively.
+   * Returns a URL path relative to the domain root.
    *
-   * @param dirPath - Relative directory path from project root
-   * @throws {Error} If directory creation fails
-   * @returns Promise that resolves when directory exists
+   * @param storagePath - Storage path relative to /public (e.g., 'uploads/2025/11/clq1234567890abcdef.pdf')
+   * @returns Public URL path (e.g., '/uploads/2025/11/clq1234567890abcdef.pdf')
    *
    * @example
    * ```typescript
-   * await fileStorage.ensureDir('.ai-debug/prompts');
+   * const url = fileStorage.getFileUrl('uploads/2025/11/clq1234567890abcdef.pdf');
+   * // url: '/uploads/2025/11/clq1234567890abcdef.pdf'
+   * // Use in HTML: <a href={url} download>Download</a>
    * ```
    */
-  ensureDir(dirPath: string): Promise<void>;
-
-  // ========================================
-  // Utility Operations
-  // ========================================
+  getFileUrl(storagePath: string): string;
 
   /**
-   * Checks if a file or directory exists.
+   * Checks if a file exists in the storage system.
    *
-   * @param filePath - Relative path from project root
-   * @returns Promise that resolves with true if path exists
+   * @param storagePath - Storage path relative to /public (e.g., 'uploads/2025/11/clq1234567890abcdef.pdf')
+   * @returns Promise that resolves with true if file exists
    *
    * @example
    * ```typescript
-   * if (await fileStorage.fileExists('.ai-debug/session.json')) {
-   *   const session = await fileStorage.readFile('.ai-debug/session.json');
+   * const exists = await fileStorage.fileExists('uploads/2025/11/clq1234567890abcdef.pdf');
+   * if (!exists) {
+   *   throw new Error('File not found');
    * }
    * ```
    */
-  fileExists(filePath: string): Promise<boolean>;
-
-  /**
-   * Gets the size of a file in bytes.
-   *
-   * @param filePath - Relative path from project root
-   * @throws {Error} If file doesn't exist
-   * @returns Promise that resolves with file size in bytes
-   *
-   * @example
-   * ```typescript
-   * const size = await fileStorage.getFileSize('.ai-debug/trace.json');
-   * console.log(`File size: ${size} bytes`);
-   * ```
-   */
-  getFileSize(filePath: string): Promise<number>;
-
-  // ========================================
-  // Validation Operations
-  // ========================================
-
-  /**
-   * Validates a file path for security and correctness.
-   *
-   * Checks for:
-   * - Path traversal attempts (../)
-   * - Invalid characters
-   * - Absolute paths (should be relative)
-   * - Empty paths
-   *
-   * @param filePath - Path to validate
-   * @returns True if path is valid and safe
-   *
-   * @example
-   * ```typescript
-   * if (!fileStorage.validatePath('../../../etc/passwd')) {
-   *   throw new Error('Invalid path: path traversal detected');
-   * }
-   * ```
-   */
-  validatePath(filePath: string): boolean;
-
-  /**
-   * Validates text content for safety.
-   *
-   * Checks for:
-   * - Null bytes (\x00)
-   * - Invalid UTF-8 sequences
-   * - Size limits (10MB default)
-   *
-   * @param content - Content to validate
-   * @returns True if content is valid
-   *
-   * @example
-   * ```typescript
-   * if (!fileStorage.validateContent(userInput)) {
-   *   throw new Error('Invalid content: contains null bytes');
-   * }
-   * ```
-   */
-  validateContent(content: string): boolean;
+  fileExists(storagePath: string): Promise<boolean>;
 }

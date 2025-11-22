@@ -11,10 +11,7 @@ export type { IAIPromptManagerService } from "./ai-prompt-manager.service.interf
 export type { IAIDebugTraceService } from "./ai-debug-trace.service.interface";
 
 // File Storage Service
-export type {
-  IFileStorageService,
-  FileEncoding,
-} from "./file-storage.service.interface";
+export type { IFileStorageService } from "./file-storage.service.interface";
 
 // Logger Service
 export type {

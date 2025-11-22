@@ -319,6 +319,49 @@ export const PERMISSIONS = {
   LICENSE_ALLOCATIONS_REACTIVATE: "license-allocations:reactivate",
   LICENSE_ALLOCATIONS_MANAGE: "license-allocations:manage",
 
+  // Governance: Data Domains
+  DATA_DOMAINS_VIEW: "data-domains:view",
+  DATA_DOMAINS_CREATE: "data-domains:create",
+  DATA_DOMAINS_UPDATE: "data-domains:update",
+  DATA_DOMAINS_DELETE: "data-domains:delete",
+  DATA_DOMAINS_MANAGE: "data-domains:manage",
+
+  // Governance: Data Ownerships
+  DATA_OWNERSHIPS_VIEW: "data-ownerships:view",
+  DATA_OWNERSHIPS_CREATE: "data-ownerships:create",
+  DATA_OWNERSHIPS_UPDATE: "data-ownerships:update",
+  DATA_OWNERSHIPS_DELETE: "data-ownerships:delete",
+  DATA_OWNERSHIPS_MANAGE: "data-ownerships:manage",
+
+  // Governance: Verification Campaigns
+  VERIFICATION_CAMPAIGNS_VIEW: "verification-campaigns:view",
+  VERIFICATION_CAMPAIGNS_CREATE: "verification-campaigns:create",
+  VERIFICATION_CAMPAIGNS_UPDATE: "verification-campaigns:update",
+  VERIFICATION_CAMPAIGNS_DELETE: "verification-campaigns:delete",
+  VERIFICATION_CAMPAIGNS_START: "verification-campaigns:start",
+  VERIFICATION_CAMPAIGNS_COMPLETE: "verification-campaigns:complete",
+  VERIFICATION_CAMPAIGNS_MANAGE: "verification-campaigns:manage",
+
+  // Governance: Verification Items
+  VERIFICATION_ITEMS_VIEW: "verification-items:view",
+  VERIFICATION_ITEMS_UPDATE: "verification-items:update",
+  VERIFICATION_ITEMS_VERIFY: "verification-items:verify",
+  VERIFICATION_ITEMS_FLAG_EXCEPTION: "verification-items:flag-exception",
+  VERIFICATION_ITEMS_MANAGE: "verification-items:manage",
+
+  // Attachments: Attachment Types
+  ATTACHMENT_TYPES_VIEW: "attachment-types:view",
+  ATTACHMENT_TYPES_CREATE: "attachment-types:create",
+  ATTACHMENT_TYPES_UPDATE: "attachment-types:update",
+  ATTACHMENT_TYPES_DELETE: "attachment-types:delete",
+  ATTACHMENT_TYPES_MANAGE: "attachment-types:manage",
+
+  // Attachments
+  ATTACHMENTS_VIEW: "attachments:view",
+  ATTACHMENTS_CREATE: "attachments:create",
+  ATTACHMENTS_UPDATE: "attachments:update",
+  ATTACHMENTS_DELETE: "attachments:delete",
+  ATTACHMENTS_MANAGE: "attachments:manage",
   // Services: Service Management
   SERVICES_VIEW: "services:view",
   SERVICES_CREATE: "services:create",

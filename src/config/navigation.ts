@@ -53,6 +53,11 @@ import {
   Bell,
   ServerCog,
   Cloud,
+  FolderLock,
+  Users,
+  CheckCircle2,
+  Paperclip,
+  FileType,
   Server,
   GitPullRequest,
   type LucideIcon,
@@ -388,6 +393,63 @@ export const navGroups: NavGroup[] = [
         icon: UserSquare2,
         description: "Track license allocations to users and assets",
         permission: PERMISSIONS.LICENSE_ALLOCATIONS_VIEW,
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: false,
+  },
+
+  // Governance - Data classification and compliance
+  {
+    id: "governance",
+    title: "Governance",
+    items: [
+      {
+        title: "Data Domains",
+        href: "/data-domains",
+        icon: FolderLock,
+        description: "Manage data classification domains (PII, Financial, etc.)",
+        permission: PERMISSIONS.DATA_DOMAINS_VIEW,
+      },
+      {
+        title: "Data Ownerships",
+        href: "/data-ownerships",
+        icon: Users,
+        description: "Assign data ownership for compliance",
+        permission: PERMISSIONS.DATA_OWNERSHIPS_VIEW,
+      },
+      {
+        title: "Verification Campaigns",
+        href: "/verification-campaigns",
+        icon: CheckCircle2,
+        description: "Schedule and track compliance verification campaigns",
+        permission: PERMISSIONS.VERIFICATION_CAMPAIGNS_VIEW,
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: false,
+  },
+
+  // Attachments - File management
+  {
+    id: "attachments",
+    title: "Attachments",
+    items: [
+      {
+        title: "Attachment Types",
+        href: "/attachment-types",
+        icon: FileType,
+        description: "Configure attachment types and validation rules",
+        permission: PERMISSIONS.ATTACHMENT_TYPES_VIEW,
+      },
+      {
+        title: "All Attachments",
+        href: "/attachments",
+        icon: Paperclip,
+        description: "View all attachments across entities",
+        permission: PERMISSIONS.ATTACHMENTS_VIEW,
       },
     ],
     visible: true,
