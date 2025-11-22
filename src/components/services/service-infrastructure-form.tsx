@@ -101,9 +101,22 @@ export function ServiceInfrastructureForm({
   const onSubmit = async (data: CreateServiceInfrastructureDTO) => {
     setIsSubmitting(true);
     try {
+      // Normalize empty strings to undefined for optional fields
+      const normalizedData = {
+        ...data,
+        cloudProvider: data.cloudProvider || undefined,
+        cloudAccountId: data.cloudAccountId || undefined,
+        cloudRegion: data.cloudRegion || undefined,
+        ipAddress: data.ipAddress || undefined,
+        hostname: data.hostname || undefined,
+        backupSchedule: data.backupSchedule || undefined,
+        lastBackupDate: data.lastBackupDate || undefined,
+        backupLocation: data.backupLocation || undefined,
+      };
+
       const result = isEditing
-        ? await updateServiceInfrastructureAction(infrastructure.id, data)
-        : await createServiceInfrastructureAction(data);
+        ? await updateServiceInfrastructureAction(infrastructure.id, normalizedData)
+        : await createServiceInfrastructureAction(normalizedData);
 
       if (result.success) {
         toast.success(
