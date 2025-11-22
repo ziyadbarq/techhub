@@ -44,7 +44,6 @@ export function ContractTypeForm({
 }: ContractTypeFormProps) {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const isEditing = !!contractType;
-  const [showCodeField, setShowCodeField] = React.useState(isEditing);
 
   const form = useForm<CreateContractTypeDTO | UpdateContractTypeDTO>({
     resolver: zodResolver(
@@ -57,10 +56,6 @@ export function ContractTypeForm({
       isActive: contractType?.isActive ?? true,
     },
   });
-
-  React.useEffect(() => {
-    setShowCodeField(isEditing);
-  }, [isEditing]);
 
   const onSubmit = async (
     data: CreateContractTypeDTO | UpdateContractTypeDTO,
@@ -101,6 +96,7 @@ export function ContractTypeForm({
               <FormControl>
                 <Input
                   placeholder="e.g., Software License Agreement"
+                  tabIndex={1}
                   {...field}
                 />
               </FormControl>
@@ -112,49 +108,31 @@ export function ContractTypeForm({
           )}
         />
 
-        {!showCodeField && !isEditing ? (
-          <div>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowCodeField(true)}
-              className="h-8 text-xs"
-            >
-              <Edit2 className="mr-2 h-3 w-3" />
-              Manually set code (optional)
-            </Button>
-            <p className="text-muted-foreground mt-1 text-xs">
-              Code will be auto-generated if not provided
-            </p>
-          </div>
-        ) : (
-          <FormField
-            control={form.control}
-            name="code"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  Code{" "}
-                  {isEditing && <span className="text-destructive">*</span>}
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="e.g., SLA"
-                    {...field}
-                    value={field.value || ""}
-                  />
-                </FormControl>
-                <FormDescription>
-                  {isEditing
-                    ? "Unique code for this contract type (uppercase, letters/numbers/hyphens/underscores only)"
-                    : "Leave empty to auto-generate"}
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
+        <FormField
+          control={form.control}
+          name="code"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                Code {!isEditing && "(Optional)"}
+                {isEditing && <span className="text-destructive"> *</span>}
+              </FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="e.g., SLA"
+                  {...field}
+                  value={field.value || ""}
+                />
+              </FormControl>
+              <FormDescription>
+                {isEditing
+                  ? "Unique code for this contract type (uppercase, letters/numbers/hyphens/underscores only)"
+                  : "Leave empty to auto-generate"}
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <FormField
           control={form.control}

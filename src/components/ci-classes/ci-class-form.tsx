@@ -146,9 +146,22 @@ export function CIClassForm({
     }
   }, [ciClass?.id, isEditing]);
 
+  // Focus the first field when dialog opens
+  useEffect(() => {
+    if (open && !loading) {
+      const timer = setTimeout(() => {
+        const firstField =
+          document.querySelector<HTMLInputElement>('input[name="name"]');
+        if (firstField) {
+          firstField.focus();
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [open, loading]);
+
   useEffect(() => {
     if (open) {
-      setShowCodeField(isEditing);
       loadData();
       form.reset({
         name: ciClass?.name ?? "",
@@ -161,7 +174,7 @@ export function CIClassForm({
         isDiscoverable: ciClass?.isDiscoverable ?? false,
       });
     }
-  }, [open, ciClass, form, loadData, isEditing]);
+  }, [open, ciClass, form, loadData]);
 
   const onSubmit = async (data: CIClassFormOutput) => {
     try {
@@ -186,19 +199,31 @@ export function CIClassForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[700px]">
-        <DialogHeader>
-          <DialogTitle>
-            {isEditing ? "Edit CI Class" : "Create CI Class"}
-          </DialogTitle>
-          <DialogDescription>
-            {isEditing
-              ? "Update the configuration item class information."
-              : "Create a new configuration item class for the CMDB."}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent
+        className="max-h-[90vh] overflow-y-auto sm:max-w-[700px]"
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+        }}
+      >
+        <FormProvider {...form}>
+          <DialogHeader>
+            <DialogTitle className="flex flex-wrap items-center gap-2">
+              <span>{isEditing ? "Edit CI Class:" : "Create CI Class:"}</span>
+              <InlineEditableField
+                name="code"
+                placeholder={isEditing ? "Code" : "Auto-generated"}
+                transform="uppercase"
+                optional={!isEditing}
+              />
+            </DialogTitle>
+            <DialogDescription>
+              {isEditing
+                ? "Update the configuration item class information."
+                : "Create a new configuration item class for the CMDB."}
+            </DialogDescription>
+          </DialogHeader>
 
-        <Form {...form}>
+          <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             {/* Name */}
             <FormField
@@ -210,6 +235,7 @@ export function CIClassForm({
                   <FormControl>
                     <Input
                       placeholder="e.g., Server, Database, Application"
+                      tabIndex={1}
                       {...field}
                     />
                   </FormControl>
@@ -220,54 +246,6 @@ export function CIClassForm({
                 </FormItem>
               )}
             />
-
-            {/* Code */}
-            {!showCodeField && !isEditing ? (
-              <div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowCodeField(true)}
-                  className="h-8 text-xs"
-                >
-                  <Edit2 className="mr-2 h-3 w-3" />
-                  Manually set code (optional)
-                </Button>
-                <p className="text-muted-foreground mt-1 text-xs">
-                  Code will be auto-generated if not provided
-                </p>
-              </div>
-            ) : (
-              <FormField
-                control={form.control}
-                name="code"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Code{" "}
-                      {isEditing && <span className="text-destructive">*</span>}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="e.g., SERVER, DATABASE, APP"
-                        {...field}
-                        value={field.value || ""}
-                        onChange={(e) => {
-                          field.onChange(e.target.value.toUpperCase());
-                        }}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {isEditing
-                        ? "Unique identifier code"
-                        : "Leave empty to auto-generate"}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
 
             {/* Parent Class */}
             <FormField
@@ -478,6 +456,7 @@ export function CIClassForm({
             </DialogFooter>
           </form>
         </Form>
+        </FormProvider>
       </DialogContent>
     </Dialog>
   );
