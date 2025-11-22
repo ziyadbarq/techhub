@@ -553,8 +553,8 @@ export const DI_TOKENS = {
   ListVerificationItemsUseCase: Symbol.for("ListVerificationItemsUseCase"),
   UpdateVerificationItemUseCase: Symbol.for("UpdateVerificationItemUseCase"),
   DeleteVerificationItemUseCase: Symbol.for("DeleteVerificationItemUseCase"),
-  VerifyItemUseCase: Symbol.for("VerifyItemUseCase"),
-  FlagExceptionUseCase: Symbol.for("FlagExceptionUseCase"),
+  VerifyVerificationItemUseCase: Symbol.for("VerifyVerificationItemUseCase"),
+  FlagExceptionVerificationItemUseCase: Symbol.for("FlagExceptionVerificationItemUseCase"),
 
   // ==========================================
   // Attachments Module Tokens

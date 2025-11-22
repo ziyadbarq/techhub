@@ -45,7 +45,7 @@ export async function createVerificationItem(
   | { success: false; error: string }
 > {
   try {
-    await requirePermission(PERMISSIONS.VERIFICATION_ITEMS_VIEW);
+    await requirePermission(PERMISSIONS.VERIFICATION_ITEMS_MANAGE);
 
     // Validate input
     const validatedData = CreateVerificationItemSchema.parse(data);
@@ -199,7 +199,7 @@ export async function deleteVerificationItem(
   id: string,
 ): Promise<{ success: true } | { success: false; error: string }> {
   try {
-    await requirePermission(PERMISSIONS.VERIFICATION_ITEMS_VIEW);
+    await requirePermission(PERMISSIONS.VERIFICATION_ITEMS_MANAGE);
 
     const container = getContainer();
     const useCase = container.get<DeleteVerificationItemUseCase>(

@@ -48,8 +48,8 @@ import { GetVerificationItemUseCase } from "@/core/use-cases/governance/verifica
 import { ListVerificationItemsUseCase } from "@/core/use-cases/governance/verification-item/list-verification-items.use-case";
 import { UpdateVerificationItemUseCase } from "@/core/use-cases/governance/verification-item/update-verification-item.use-case";
 import { DeleteVerificationItemUseCase } from "@/core/use-cases/governance/verification-item/delete-verification-item.use-case";
-import { VerifyItemUseCase } from "@/core/use-cases/governance/verification-item/verify-verification-item.use-case";
-import { FlagExceptionUseCase } from "@/core/use-cases/governance/verification-item/flag-exception-verification-item.use-case";
+import { VerifyVerificationItemUseCase } from "@/core/use-cases/governance/verification-item/verify-verification-item.use-case";
+import { FlagExceptionVerificationItemUseCase } from "@/core/use-cases/governance/verification-item/flag-exception-verification-item.use-case";
 
 const diLogger = logger.scope("DI:GovernanceModule");
 
@@ -198,12 +198,12 @@ export function bindGovernanceDependencies(container: Container): void {
     .to(DeleteVerificationItemUseCase)
     .inTransientScope();
   container
-    .bind<VerifyItemUseCase>(DI_TOKENS.VerifyItemUseCase)
-    .to(VerifyItemUseCase)
+    .bind<VerifyVerificationItemUseCase>(DI_TOKENS.VerifyVerificationItemUseCase)
+    .to(VerifyVerificationItemUseCase)
     .inTransientScope();
   container
-    .bind<FlagExceptionUseCase>(DI_TOKENS.FlagExceptionUseCase)
-    .to(FlagExceptionUseCase)
+    .bind<FlagExceptionVerificationItemUseCase>(DI_TOKENS.FlagExceptionVerificationItemUseCase)
+    .to(FlagExceptionVerificationItemUseCase)
     .inTransientScope();
 
   diLogger.debug(
