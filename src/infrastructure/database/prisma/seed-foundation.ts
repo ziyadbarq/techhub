@@ -850,5 +850,19 @@ export async function seedFoundation(prisma: PrismaClient) {
   await prisma.fieldDefinition.createMany({ data: fieldDefinitions });
   logSuccess(`Created ${fieldDefinitions.length} field definitions`);
 
+  // ==============================================
+  // 11. EXCHANGE RATES (Multi-Currency Support)
+  // ==============================================
+  logStep("💱", "Seeding exchange rates...");
+
+  const exchangeRates = SEED_CONFIG.EXCHANGE_RATES.map((rate) => ({
+    currency: rate.currency,
+    rateToSAR: rate.rateToSAR,
+    isActive: rate.isActive,
+  }));
+
+  await prisma.exchangeRate.createMany({ data: exchangeRates });
+  logSuccess(`Created ${exchangeRates.length} exchange rates`);
+
   logSuccess("Foundation layer seeding completed");
 }

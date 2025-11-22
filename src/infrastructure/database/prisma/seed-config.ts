@@ -22,6 +22,7 @@ export const SEED_QUANTITIES = {
   PERSONS: 15,
   LIFECYCLE_STATUSES: 6,
   FIELD_DEFINITIONS: 8,
+  EXCHANGE_RATES: 14, // All supported currencies except SAR
 
   // Asset Layer
   ASSET_CATEGORIES: 8,
@@ -796,6 +797,32 @@ export const RESERVATION_PURPOSES = [
 ] as const;
 
 // ==============================================
+// Exchange Rates (Multi-Currency Support)
+// ==============================================
+
+/**
+ * Exchange rates to SAR (Saudi Riyal) - Base currency
+ * Real approximate rates as of 2024 Q4
+ * 1 CURRENCY = X SAR
+ */
+export const EXCHANGE_RATE_DATA = [
+  { currency: "USD", rateToSAR: 3.75, isActive: true }, // US Dollar
+  { currency: "EUR", rateToSAR: 4.08, isActive: true }, // Euro
+  { currency: "GBP", rateToSAR: 4.75, isActive: true }, // British Pound
+  { currency: "JPY", rateToSAR: 0.025, isActive: true }, // Japanese Yen
+  { currency: "AUD", rateToSAR: 2.45, isActive: true }, // Australian Dollar
+  { currency: "CAD", rateToSAR: 2.7, isActive: true }, // Canadian Dollar
+  { currency: "CHF", rateToSAR: 4.2, isActive: true }, // Swiss Franc
+  { currency: "CNY", rateToSAR: 0.52, isActive: true }, // Chinese Yuan
+  { currency: "INR", rateToSAR: 0.045, isActive: true }, // Indian Rupee
+  { currency: "AED", rateToSAR: 1.02, isActive: true }, // UAE Dirham
+  { currency: "KWD", rateToSAR: 12.2, isActive: true }, // Kuwaiti Dinar
+  { currency: "BHD", rateToSAR: 9.95, isActive: true }, // Bahraini Dinar
+  { currency: "OMR", rateToSAR: 9.75, isActive: true }, // Omani Rial
+  { currency: "QAR", rateToSAR: 1.03, isActive: true }, // Qatari Riyal
+] as const;
+
+// ==============================================
 // Export Everything
 // ==============================================
 
@@ -806,6 +833,7 @@ export const SEED_CONFIG = {
   ORG_UNITS: ORG_UNIT_DATA,
   PERSONS: PERSON_DATA,
   LIFECYCLE_STATUSES: LIFECYCLE_STATUS_DATA,
+  EXCHANGE_RATES: EXCHANGE_RATE_DATA,
   ASSET_CATEGORIES: ASSET_CATEGORY_DATA,
   ASSET_MODELS: ASSET_MODEL_DATA,
   WARRANTY_CONFIG,
