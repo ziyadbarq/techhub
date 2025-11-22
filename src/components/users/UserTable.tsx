@@ -9,7 +9,7 @@
 
 import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Shield, Mail } from "lucide-react";
+import { MoreHorizontal, Shield, Mail, Users } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
 
@@ -25,15 +25,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { BulkRoleAssignmentModal } from "@/components/users/BulkRoleAssignmentModal";
 
 import type { UserWithRolesDTO } from "@/interface-adapters/controllers/user-role.controller";
 
 interface UserTableProps {
   data: UserWithRolesDTO[];
+  availableRoles: { id: string; name: string; displayName: string }[];
   loading?: boolean;
+  onUpdate?: () => void;
 }
 
-export function UserTable({ data, loading = false }: UserTableProps) {
+export function UserTable({
+  data,
+  availableRoles,
+  loading = false,
+  onUpdate,
+}: UserTableProps) {
+  const [selectedUsers, setSelectedUsers] = React.useState<UserWithRolesDTO[]>(
+    [],
+  );
+  const [bulkModalOpen, setBulkModalOpen] = React.useState(false);
+
   const getInitials = (name: string | null, email: string): string => {
     if (name) {
       return name
@@ -200,18 +213,45 @@ export function UserTable({ data, loading = false }: UserTableProps) {
   ];
 
   return (
-    <DataTable
-      columns={columns}
-      data={data}
-      loading={loading}
-      searchable
-      searchKey="user"
-      searchPlaceholder="Search users by name or email..."
-      showColumnToggle
-      emptyMessage="No users found."
-      pagination={{
-        pageSize: 10,
-      }}
-    />
+    <>
+      <DataTable
+        columns={columns}
+        data={data}
+        loading={loading}
+        searchable
+        searchKey="user"
+        searchPlaceholder="Search users by name or email..."
+        showColumnToggle
+        selectable
+        onSelectionChange={setSelectedUsers}
+        emptyMessage="No users found."
+        pagination={{
+          pageSize: 10,
+        }}
+        toolbarActions={
+          selectedUsers.length > 0 ? (
+            <Button
+              onClick={() => setBulkModalOpen(true)}
+              variant="default"
+              size="sm"
+            >
+              <Users className="mr-2 h-4 w-4" />
+              Assign Roles ({selectedUsers.length})
+            </Button>
+          ) : null
+        }
+      />
+
+      <BulkRoleAssignmentModal
+        open={bulkModalOpen}
+        onOpenChange={setBulkModalOpen}
+        selectedUsers={selectedUsers}
+        availableRoles={availableRoles}
+        onSuccess={() => {
+          setSelectedUsers([]);
+          onUpdate?.();
+        }}
+      />
+    </>
   );
 }

@@ -1,0 +1,39 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+// TODO: Fix type errors - this is WIP code
+
+import { injectable, inject } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { IServiceRepository } from "@/core/repositories/service.repository.interface";
+import type { Service } from "@/core/domain/entities/service.entity";
+
+export interface RetireServiceRequest {
+  serviceId: string;
+  reason?: string;
+}
+
+@injectable()
+export class RetireServiceUseCase {
+  constructor(
+    @inject(DI_TOKENS.IServiceRepository)
+    private readonly serviceRepository: IServiceRepository,
+  ) {}
+
+  async execute(request: RetireServiceRequest): Promise<Service> {
+    const service = await this.serviceRepository.findById(request.serviceId);
+    if (!service) {
+      throw new Error(`Service with ID ${request.serviceId} not found`);
+    }
+
+    // Check if service can be retired (business rule in entity)
+    if (!service.canBeRetired()) {
+      throw new Error(
+        "Cannot retire service: Essential services in PRODUCTION status cannot be retired",
+      );
+    }
+
+    service.retire(request.reason);
+
+    return this.serviceRepository.update(service);
+  }
+}

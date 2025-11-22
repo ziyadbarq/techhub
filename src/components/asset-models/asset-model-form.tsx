@@ -5,9 +5,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
+import { InlineEditableField } from "@/components/ui/inline-editable-field";
 import {
   Dialog,
   DialogContent,
@@ -18,7 +19,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Edit2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -67,7 +67,6 @@ export function AssetModelForm({
   assetModel,
 }: AssetModelFormProps) {
   const isEditing = !!assetModel;
-  const [showCodeField, setShowCodeField] = useState(isEditing);
   const [categories, setCategories] = useState<AssetCategoryDTO[]>([]);
   const [vendors, setVendors] = useState<VendorDTO[]>([]);
   const [loading, setLoading] = useState(true);
@@ -83,6 +82,20 @@ export function AssetModelForm({
       defaultWarrantyMonths: assetModel?.defaultWarrantyMonths ?? undefined,
     },
   });
+
+  // Focus the first field when dialog opens
+  useEffect(() => {
+    if (open && !loading) {
+      const timer = setTimeout(() => {
+        const firstField =
+          document.querySelector<HTMLInputElement>('input[name="name"]');
+        if (firstField) {
+          firstField.focus();
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [open, loading]);
 
   // Load categories and vendors when dialog opens
   useEffect(() => {
@@ -114,7 +127,6 @@ export function AssetModelForm({
   };
 
   useEffect(() => {
-    setShowCodeField(isEditing);
     form.reset({
       name: assetModel?.name ?? "",
       code: assetModel?.code ?? "",
@@ -123,7 +135,7 @@ export function AssetModelForm({
       vendorId: assetModel?.vendorId ?? "",
       defaultWarrantyMonths: assetModel?.defaultWarrantyMonths ?? undefined,
     });
-  }, [assetModel, form, isEditing]);
+  }, [assetModel, form]);
 
   const onSubmit = async (data: CreateAssetModelDTO) => {
     try {
@@ -152,19 +164,33 @@ export function AssetModelForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
-        <DialogHeader>
-          <DialogTitle>
-            {isEditing ? "Edit Asset Model" : "Create Asset Model"}
-          </DialogTitle>
-          <DialogDescription>
-            {isEditing
-              ? "Update the asset model information."
-              : "Add a new asset model to track specific equipment types."}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent
+        className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]"
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+        }}
+      >
+        <FormProvider {...form}>
+          <DialogHeader>
+            <DialogTitle className="flex flex-wrap items-center gap-2">
+              <span>
+                {isEditing ? "Edit Asset Model:" : "Create Asset Model:"}
+              </span>
+              <InlineEditableField
+                name="code"
+                placeholder={isEditing ? "Code" : "Auto-generated"}
+                transform="uppercase"
+                optional={!isEditing}
+              />
+            </DialogTitle>
+            <DialogDescription>
+              {isEditing
+                ? "Update the asset model information."
+                : "Add a new asset model to track specific equipment types."}
+            </DialogDescription>
+          </DialogHeader>
 
-        <Form {...form}>
+          <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
@@ -173,7 +199,11 @@ export function AssetModelForm({
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="HP LaserJet Pro 400" {...field} />
+                    <Input
+                      placeholder="HP LaserJet Pro 400"
+                      tabIndex={1}
+                      {...field}
+                    />
                   </FormControl>
                   <FormDescription>
                     Display name for this asset model
@@ -182,53 +212,6 @@ export function AssetModelForm({
                 </FormItem>
               )}
             />
-
-            {!showCodeField && !isEditing ? (
-              <div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowCodeField(true)}
-                  className="h-8 text-xs"
-                >
-                  <Edit2 className="mr-2 h-3 w-3" />
-                  Manually set code (optional)
-                </Button>
-                <p className="text-muted-foreground mt-1 text-xs">
-                  Code will be auto-generated if not provided
-                </p>
-              </div>
-            ) : (
-              <FormField
-                control={form.control}
-                name="code"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Code{" "}
-                      {isEditing && <span className="text-destructive">*</span>}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="HP-LJ-PRO-400"
-                        {...field}
-                        value={field.value || ""}
-                        onChange={(e) => {
-                          field.onChange(e.target.value.toUpperCase());
-                        }}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {isEditing
-                        ? "Unique identifier (alphanumeric, hyphens, underscores)"
-                        : "Leave empty to auto-generate"}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
 
             <FormField
               control={form.control}
@@ -368,6 +351,7 @@ export function AssetModelForm({
             </DialogFooter>
           </form>
         </Form>
+        </FormProvider>
       </DialogContent>
     </Dialog>
   );

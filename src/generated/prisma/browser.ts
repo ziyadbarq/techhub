@@ -98,6 +98,11 @@ export type Vendor = Prisma.VendorModel
  */
 export type VendorContact = Prisma.VendorContactModel
 /**
+ * Model ExchangeRate
+ * 
+ */
+export type ExchangeRate = Prisma.ExchangeRateModel
+/**
  * Model LifecycleModel
  * 
  */
@@ -242,6 +247,31 @@ export type AssetReservation = Prisma.AssetReservationModel
  * 
  */
 export type AssetReservationConflict = Prisma.AssetReservationConflictModel
+/**
+ * Model BusinessProcess
+ * 
+ */
+export type BusinessProcess = Prisma.BusinessProcessModel
+/**
+ * Model Service
+ * 
+ */
+export type Service = Prisma.ServiceModel
+/**
+ * Model ServiceOwnership
+ * 
+ */
+export type ServiceOwnership = Prisma.ServiceOwnershipModel
+/**
+ * Model ServiceInfrastructure
+ * 
+ */
+export type ServiceInfrastructure = Prisma.ServiceInfrastructureModel
+/**
+ * Model ServiceAsset
+ * 
+ */
+export type ServiceAsset = Prisma.ServiceAssetModel
 /**
  * Model ContractType
  * 

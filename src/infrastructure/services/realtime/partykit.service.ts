@@ -28,6 +28,7 @@ import type {
   RoomInfo,
 } from "@/core/services/realtime.service.interface";
 import { ConnectionState } from "@/core/services/realtime.service.interface";
+import { logger } from "@/lib/logger";
 
 /**
  * Connection info
@@ -55,6 +56,7 @@ interface PartykitConfig {
  */
 @injectable()
 export class PartykitService implements IRealtimeService {
+  private readonly log = logger.scope("PartykitService");
   /** Map of room ID to connection info */
   private connections = new Map<string, ConnectionInfo>();
 
@@ -78,8 +80,10 @@ export class PartykitService implements IRealtimeService {
   async connect(roomId: string, participant: RoomParticipant): Promise<void> {
     // Check if already connected
     if (this.connections.has(roomId)) {
-      console.warn(
-        `[Partykit] Already connected to room ${roomId}, disconnecting first`,
+      this.log.warn(
+        "connect",
+        "Already connected to room, disconnecting first",
+        { roomId },
       );
       await this.disconnect(roomId);
     }
@@ -107,13 +111,17 @@ export class PartykitService implements IRealtimeService {
         // Handle connection opened
         socket.addEventListener("open", () => {
           connectionInfo.state = ConnectionState.CONNECTED;
-          console.log(`[Partykit] Connected to room ${roomId}`);
+          this.log.info("open", "Connected to room", { roomId });
 
           // Send participant info
           this.sendMessage(roomId, {
             type: "presence:update",
             payload: participant,
-          }).catch(console.error);
+          }).catch((error) =>
+            this.log.error("open", "Failed to send presence update", error, {
+              roomId,
+            }),
+          );
 
           resolve();
         });
@@ -128,20 +136,25 @@ export class PartykitService implements IRealtimeService {
               subscriber(message);
             }
           } catch (error) {
-            console.error("[Partykit] Failed to parse message:", error);
+            this.log.error(
+              "message",
+              "Failed to parse incoming message",
+              error,
+              { roomId },
+            );
           }
         });
 
         // Handle errors
         socket.addEventListener("error", (error) => {
           connectionInfo.state = ConnectionState.ERROR;
-          console.error(`[Partykit] Error in room ${roomId}:`, error);
+          this.log.error("error", "Socket error", error, { roomId });
         });
 
         // Handle close
         socket.addEventListener("close", () => {
           connectionInfo.state = ConnectionState.DISCONNECTED;
-          console.log(`[Partykit] Disconnected from room ${roomId}`);
+          this.log.info("close", "Disconnected from room", { roomId });
         });
 
         // Timeout after 10 seconds
@@ -173,7 +186,7 @@ export class PartykitService implements IRealtimeService {
     // Remove from connections
     this.connections.delete(roomId);
 
-    console.log(`[Partykit] Disconnected from room ${roomId}`);
+    this.log.info("disconnect", "Disconnected from room", { roomId });
   }
 
   /**
@@ -283,6 +296,6 @@ export class PartykitService implements IRealtimeService {
 
     await Promise.all(disconnectPromises);
 
-    console.log("[Partykit] Cleanup completed");
+    this.log.info("cleanup", "All connections cleaned up");
   }
 }

@@ -67,6 +67,7 @@ export const ModelName = {
   Location: 'Location',
   Vendor: 'Vendor',
   VendorContact: 'VendorContact',
+  ExchangeRate: 'ExchangeRate',
   LifecycleModel: 'LifecycleModel',
   LifecycleState: 'LifecycleState',
   LifecycleTransition: 'LifecycleTransition',
@@ -96,6 +97,11 @@ export const ModelName = {
   AssetKitCheckoutItem: 'AssetKitCheckoutItem',
   AssetReservation: 'AssetReservation',
   AssetReservationConflict: 'AssetReservationConflict',
+  BusinessProcess: 'BusinessProcess',
+  Service: 'Service',
+  ServiceOwnership: 'ServiceOwnership',
+  ServiceInfrastructure: 'ServiceInfrastructure',
+  ServiceAsset: 'ServiceAsset',
   ContractType: 'ContractType',
   Contract: 'Contract',
   ContractLinkedObject: 'ContractLinkedObject',
@@ -415,6 +421,18 @@ export const VendorContactScalarFieldEnum = {
 } as const
 
 export type VendorContactScalarFieldEnum = (typeof VendorContactScalarFieldEnum)[keyof typeof VendorContactScalarFieldEnum]
+
+
+export const ExchangeRateScalarFieldEnum = {
+  id: 'id',
+  currency: 'currency',
+  rateToSAR: 'rateToSAR',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ExchangeRateScalarFieldEnum = (typeof ExchangeRateScalarFieldEnum)[keyof typeof ExchangeRateScalarFieldEnum]
 
 
 export const LifecycleModelScalarFieldEnum = {
@@ -768,6 +786,7 @@ export const MaintenanceRecordScalarFieldEnum = {
   status: 'status',
   notes: 'notes',
   cost: 'cost',
+  currency: 'currency',
   partsUsed: 'partsUsed',
   nextMaintenanceDate: 'nextMaintenanceDate',
   createdAt: 'createdAt',
@@ -931,6 +950,97 @@ export const AssetReservationConflictScalarFieldEnum = {
 } as const
 
 export type AssetReservationConflictScalarFieldEnum = (typeof AssetReservationConflictScalarFieldEnum)[keyof typeof AssetReservationConflictScalarFieldEnum]
+
+
+export const BusinessProcessScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BusinessProcessScalarFieldEnum = (typeof BusinessProcessScalarFieldEnum)[keyof typeof BusinessProcessScalarFieldEnum]
+
+
+export const ServiceScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  serviceType: 'serviceType',
+  description: 'description',
+  businessPurpose: 'businessPurpose',
+  gitlabRepoUrl: 'gitlabRepoUrl',
+  dataConfidentiality: 'dataConfidentiality',
+  businessImpactLevel: 'businessImpactLevel',
+  criticality: 'criticality',
+  isEssentialService: 'isEssentialService',
+  deploymentDate: 'deploymentDate',
+  currentStatus: 'currentStatus',
+  lastPatchDate: 'lastPatchDate',
+  plannedDecommissionDate: 'plannedDecommissionDate',
+  vendorId: 'vendorId',
+  slaDetails: 'slaDetails',
+  businessProcessId: 'businessProcessId',
+  isInCentralRegister: 'isInCentralRegister',
+  complianceNotes: 'complianceNotes',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdBy: 'createdBy',
+  updatedBy: 'updatedBy'
+} as const
+
+export type ServiceScalarFieldEnum = (typeof ServiceScalarFieldEnum)[keyof typeof ServiceScalarFieldEnum]
+
+
+export const ServiceOwnershipScalarFieldEnum = {
+  id: 'id',
+  serviceId: 'serviceId',
+  personId: 'personId',
+  ownershipType: 'ownershipType',
+  isPrimary: 'isPrimary',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ServiceOwnershipScalarFieldEnum = (typeof ServiceOwnershipScalarFieldEnum)[keyof typeof ServiceOwnershipScalarFieldEnum]
+
+
+export const ServiceInfrastructureScalarFieldEnum = {
+  id: 'id',
+  serviceId: 'serviceId',
+  location: 'location',
+  cloudProvider: 'cloudProvider',
+  compartment: 'compartment',
+  project: 'project',
+  region: 'region',
+  ipAddress: 'ipAddress',
+  hostname: 'hostname',
+  backupEnabled: 'backupEnabled',
+  backupSchedule: 'backupSchedule',
+  lastBackupDate: 'lastBackupDate',
+  cloudProviderDetails: 'cloudProviderDetails',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ServiceInfrastructureScalarFieldEnum = (typeof ServiceInfrastructureScalarFieldEnum)[keyof typeof ServiceInfrastructureScalarFieldEnum]
+
+
+export const ServiceAssetScalarFieldEnum = {
+  id: 'id',
+  serviceId: 'serviceId',
+  assetId: 'assetId',
+  relationship: 'relationship',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ServiceAssetScalarFieldEnum = (typeof ServiceAssetScalarFieldEnum)[keyof typeof ServiceAssetScalarFieldEnum]
 
 
 export const ContractTypeScalarFieldEnum = {

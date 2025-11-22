@@ -61,6 +61,7 @@ export const DI_TOKENS = {
     "IPersonRoleAssignmentRepository",
   ),
   IFieldDefinitionRepository: Symbol.for("IFieldDefinitionRepository"),
+  IExchangeRateRepository: Symbol.for("IExchangeRateRepository"),
 
   // Disposal Repositories
   IAssetDisposalRepository: Symbol.for("IAssetDisposalRepository"),
@@ -101,6 +102,14 @@ export const DI_TOKENS = {
   // Licenses Repositories
   ILicenseProductRepository: Symbol.for("ILicenseProductRepository"),
   ILicenseProductFieldRepository: Symbol.for("ILicenseProductFieldRepository"),
+
+  // Service Management Repositories
+  IServiceRepository: Symbol.for("IServiceRepository"),
+  IBusinessProcessRepository: Symbol.for("IBusinessProcessRepository"),
+  IServiceInfrastructureRepository: Symbol.for(
+    "IServiceInfrastructureRepository",
+  ),
+  ISearchRepository: Symbol.for("ISearchRepository"),
 
   // ==========================================
   // Service Tokens
@@ -187,6 +196,9 @@ export const DI_TOKENS = {
 
   // Real-time Use Cases
   BroadcastTaskEventUseCase: Symbol.for("BroadcastTaskEventUseCase"),
+
+  // Search Use Cases
+  GlobalSearchUseCase: Symbol.for("GlobalSearchUseCase"),
 
   // RBAC Use Cases
   CheckPermissionUseCase: Symbol.for("CheckPermissionUseCase"),
@@ -301,6 +313,14 @@ export const DI_TOKENS = {
   ListFieldDefinitionsUseCase: Symbol.for("ListFieldDefinitionsUseCase"),
   UpdateFieldDefinitionUseCase: Symbol.for("UpdateFieldDefinitionUseCase"),
   DeleteFieldDefinitionUseCase: Symbol.for("DeleteFieldDefinitionUseCase"),
+
+  // Foundation: Exchange Rate Use Cases
+  CreateExchangeRateUseCase: Symbol.for("CreateExchangeRateUseCase"),
+  GetExchangeRateUseCase: Symbol.for("GetExchangeRateUseCase"),
+  ListExchangeRatesUseCase: Symbol.for("ListExchangeRatesUseCase"),
+  UpdateExchangeRateUseCase: Symbol.for("UpdateExchangeRateUseCase"),
+  DeleteExchangeRateUseCase: Symbol.for("DeleteExchangeRateUseCase"),
+  ConvertCurrencyUseCase: Symbol.for("ConvertCurrencyUseCase"),
 
   // Disposal Workflow Use Cases
   CreateAssetDisposalUseCase: Symbol.for("CreateAssetDisposalUseCase"),
@@ -692,6 +712,47 @@ export const DI_TOKENS = {
   StartMaintenanceUseCase: Symbol.for("StartMaintenanceUseCase"),
   CompleteMaintenanceUseCase: Symbol.for("CompleteMaintenanceUseCase"),
   CancelMaintenanceUseCase: Symbol.for("CancelMaintenanceUseCase"),
+
+  // Service Management: Service Use Cases
+  CreateServiceUseCase: Symbol.for("CreateServiceUseCase"),
+  GetServiceUseCase: Symbol.for("GetServiceUseCase"),
+  ListServicesUseCase: Symbol.for("ListServicesUseCase"),
+  UpdateServiceUseCase: Symbol.for("UpdateServiceUseCase"),
+  DeleteServiceUseCase: Symbol.for("DeleteServiceUseCase"),
+  SearchServicesUseCase: Symbol.for("SearchServicesUseCase"),
+  GetEssentialServicesUseCase: Symbol.for("GetEssentialServicesUseCase"),
+  GetRetiringServicesUseCase: Symbol.for("GetRetiringServicesUseCase"),
+  RetireServiceUseCase: Symbol.for("RetireServiceUseCase"),
+
+  // Service Management: Service Ownership Use Cases
+  AddServiceOwnerUseCase: Symbol.for("AddServiceOwnerUseCase"),
+  RemoveServiceOwnerUseCase: Symbol.for("RemoveServiceOwnerUseCase"),
+  SetPrimaryOwnerUseCase: Symbol.for("SetPrimaryOwnerUseCase"),
+  GetServiceOwnersUseCase: Symbol.for("GetServiceOwnersUseCase"),
+
+  // Service Management: Business Process Use Cases
+  CreateBusinessProcessUseCase: Symbol.for("CreateBusinessProcessUseCase"),
+  GetBusinessProcessUseCase: Symbol.for("GetBusinessProcessUseCase"),
+  ListBusinessProcessesUseCase: Symbol.for("ListBusinessProcessesUseCase"),
+  UpdateBusinessProcessUseCase: Symbol.for("UpdateBusinessProcessUseCase"),
+  DeleteBusinessProcessUseCase: Symbol.for("DeleteBusinessProcessUseCase"),
+
+  // Service Management: Service Infrastructure Use Cases
+  CreateServiceInfrastructureUseCase: Symbol.for(
+    "CreateServiceInfrastructureUseCase",
+  ),
+  UpdateServiceInfrastructureUseCase: Symbol.for(
+    "UpdateServiceInfrastructureUseCase",
+  ),
+  GetServiceInfrastructureUseCase: Symbol.for(
+    "GetServiceInfrastructureUseCase",
+  ),
+
+  // Service Management: Service Asset Use Cases
+  LinkServiceToAssetUseCase: Symbol.for("LinkServiceToAssetUseCase"),
+  UnlinkServiceFromAssetUseCase: Symbol.for("UnlinkServiceFromAssetUseCase"),
+  GetServiceAssetsUseCase: Symbol.for("GetServiceAssetsUseCase"),
+  GetAssetServicesUseCase: Symbol.for("GetAssetServicesUseCase"),
 
   // ==========================================
   // Attachments Module Tokens

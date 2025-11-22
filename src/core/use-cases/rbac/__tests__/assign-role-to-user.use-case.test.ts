@@ -45,6 +45,12 @@ class MockUserRoleRepository implements Partial<IUserRoleRepository> {
     );
   }
 
+  async findByUserId(userId: string): Promise<UserRole[]> {
+    return Array.from(this.userRoles.values()).filter(
+      (ur) => ur.userId === userId,
+    );
+  }
+
   setUserRole(userRole: UserRole): void {
     this.userRoles.set(userRole.id, userRole);
   }

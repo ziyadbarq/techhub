@@ -36,6 +36,7 @@ import { bindContractsDependencies } from "./modules/contracts.module";
 import { bindLicensesDependencies } from "./modules/licenses.module";
 import { bindGovernanceDependencies } from "./modules/governance.module";
 import { bindAttachmentsDependencies } from "./modules/attachments.module";
+import { bindServiceDependencies } from "./modules/service.module";
 import { loadDisposalModule } from "./modules/disposal.module";
 import { loadAssetKitsModule } from "./modules/asset-kits.module";
 import { loadReservationsModule } from "./modules/reservations.module";
@@ -61,6 +62,7 @@ import { bindCSVServiceDependencies } from "./modules/csv.module";
 import { bindRealtimeDependencies } from "./modules/realtime.module";
 import { bindQueueDependencies } from "./modules/queue.module";
 import { bindEmailDependencies } from "./modules/email.module";
+import { bindSearchDependencies } from "./modules/search.module";
 
 /**
  * AI Service Interfaces - Uncomment when enabling AI services
@@ -125,6 +127,8 @@ function createContainer(): Container {
 
   // Bind Attachments dependencies (attachment types, attachments)
   bindAttachmentsDependencies(newContainer);
+  // Bind Service Management dependencies (services, business processes, infrastructure)
+  bindServiceDependencies(newContainer);
 
   // Bind Asset dependencies (asset categories, asset models, assets, assignments)
   bindAssetDependencies(newContainer);
@@ -140,6 +144,9 @@ function createContainer(): Container {
 
   // Bind Reservations dependencies (reservations, conflicts, availability)
   loadReservationsModule(newContainer);
+
+  // Bind Search dependencies (global search across entities)
+  bindSearchDependencies(newContainer);
 
   /**
    * AI Services - Currently Disabled

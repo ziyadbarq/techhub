@@ -58,6 +58,8 @@ import {
   CheckCircle2,
   Paperclip,
   FileType,
+  Server,
+  GitPullRequest,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -316,6 +318,31 @@ export const navGroups: NavGroup[] = [
     defaultCollapsed: false,
   },
 
+  // Service Management
+  {
+    id: "service-management",
+    title: "Service Management",
+    items: [
+      {
+        title: "Services",
+        href: "/services",
+        icon: Server,
+        description: "IT services and application catalog",
+        permission: PERMISSIONS.SERVICES_VIEW,
+      },
+      {
+        title: "Business Processes",
+        href: "/business-processes",
+        icon: GitPullRequest,
+        description: "Business processes linked to services",
+        permission: PERMISSIONS.BUSINESS_PROCESSES_VIEW,
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: false,
+  },
+
   // Contracts
   {
     id: "contracts",
@@ -526,6 +553,13 @@ export const navGroups: NavGroup[] = [
         icon: Settings2,
         description: "Manage custom field definitions",
         permission: PERMISSIONS.FIELD_DEFINITIONS_VIEW,
+      },
+      {
+        title: "FX Rates",
+        href: "/fx-rates",
+        icon: TrendingUp,
+        description: "Manage exchange rates for multi-currency support",
+        permission: PERMISSIONS.FX_RATES_VIEW,
       },
     ],
     visible: true,

@@ -54,6 +54,10 @@ const SYSTEM_ROLES = {
       PERMISSIONS.FIELD_DEFINITIONS_VIEW,
       PERMISSIONS.FIELD_DEFINITIONS_CREATE,
       PERMISSIONS.FIELD_DEFINITIONS_UPDATE,
+      PERMISSIONS.FX_RATES_VIEW,
+      PERMISSIONS.FX_RATES_CREATE,
+      PERMISSIONS.FX_RATES_UPDATE,
+      PERMISSIONS.FX_RATES_CONVERT,
 
       // Assets - Full access
       PERMISSIONS.ASSET_CATEGORIES_VIEW,
@@ -140,6 +144,19 @@ const SYSTEM_ROLES = {
       PERMISSIONS.RELATIONSHIP_TYPES_CREATE,
       PERMISSIONS.RELATIONSHIP_TYPES_UPDATE,
 
+      // Service Management - Full access
+      PERMISSIONS.SERVICES_VIEW,
+      PERMISSIONS.SERVICES_CREATE,
+      PERMISSIONS.SERVICES_UPDATE,
+      PERMISSIONS.SERVICES_DELETE,
+      PERMISSIONS.SERVICES_RETIRE,
+      PERMISSIONS.SERVICES_MANAGE,
+      PERMISSIONS.BUSINESS_PROCESSES_VIEW,
+      PERMISSIONS.BUSINESS_PROCESSES_CREATE,
+      PERMISSIONS.BUSINESS_PROCESSES_UPDATE,
+      PERMISSIONS.BUSINESS_PROCESSES_DELETE,
+      PERMISSIONS.BUSINESS_PROCESSES_MANAGE,
+
       // Dashboard & Analytics
       PERMISSIONS.DASHBOARD_VIEW,
       PERMISSIONS.DASHBOARD_ANALYTICS,
@@ -174,6 +191,8 @@ const SYSTEM_ROLES = {
       PERMISSIONS.LIFECYCLE_STATES_VIEW,
       PERMISSIONS.LIFECYCLE_TRANSITIONS_VIEW,
       PERMISSIONS.FIELD_DEFINITIONS_VIEW,
+      PERMISSIONS.FX_RATES_VIEW,
+      PERMISSIONS.FX_RATES_CONVERT,
 
       // Assets - Full CRUD
       PERMISSIONS.ASSET_CATEGORIES_VIEW,
@@ -227,6 +246,14 @@ const SYSTEM_ROLES = {
       PERMISSIONS.CI_RELATIONSHIPS_CREATE,
       PERMISSIONS.RELATIONSHIP_TYPES_VIEW,
 
+      // Service Management - Read + Create/Update (no delete)
+      PERMISSIONS.SERVICES_VIEW,
+      PERMISSIONS.SERVICES_CREATE,
+      PERMISSIONS.SERVICES_UPDATE,
+      PERMISSIONS.BUSINESS_PROCESSES_VIEW,
+      PERMISSIONS.BUSINESS_PROCESSES_CREATE,
+      PERMISSIONS.BUSINESS_PROCESSES_UPDATE,
+
       // Dashboard
       PERMISSIONS.DASHBOARD_VIEW,
 
@@ -247,6 +274,8 @@ const SYSTEM_ROLES = {
       PERMISSIONS.LIFECYCLE_MODELS_VIEW,
       PERMISSIONS.LIFECYCLE_STATES_VIEW,
       PERMISSIONS.FIELD_DEFINITIONS_VIEW,
+      PERMISSIONS.FX_RATES_VIEW,
+      PERMISSIONS.FX_RATES_CONVERT,
 
       // Assets - Read-only
       PERMISSIONS.ASSET_CATEGORIES_VIEW,
@@ -279,6 +308,10 @@ const SYSTEM_ROLES = {
       PERMISSIONS.CONFIGURATION_ITEMS_VIEW,
       PERMISSIONS.CI_RELATIONSHIPS_VIEW,
       PERMISSIONS.RELATIONSHIP_TYPES_VIEW,
+
+      // Service Management - Read-only
+      PERMISSIONS.SERVICES_VIEW,
+      PERMISSIONS.BUSINESS_PROCESSES_VIEW,
 
       // Dashboard
       PERMISSIONS.DASHBOARD_VIEW,
@@ -494,6 +527,87 @@ const SYSTEM_PERMISSIONS = [
     description: "Access analytics and reports",
     resource: "dashboard",
     action: "analytics",
+  },
+
+  // Service Management - Services
+  {
+    name: PERMISSIONS.SERVICES_VIEW,
+    displayName: "View Services",
+    description: "View service catalog entries",
+    resource: "services",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.SERVICES_CREATE,
+    displayName: "Create Services",
+    description: "Create new services",
+    resource: "services",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.SERVICES_UPDATE,
+    displayName: "Update Services",
+    description: "Update existing services",
+    resource: "services",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.SERVICES_DELETE,
+    displayName: "Delete Services",
+    description: "Delete services from catalog",
+    resource: "services",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.SERVICES_RETIRE,
+    displayName: "Retire Services",
+    description: "Retire or decommission services",
+    resource: "services",
+    action: "retire",
+  },
+  {
+    name: PERMISSIONS.SERVICES_MANAGE,
+    displayName: "Manage Services",
+    description: "Full service management access",
+    resource: "services",
+    action: "manage",
+  },
+
+  // Service Management - Business Processes
+  {
+    name: PERMISSIONS.BUSINESS_PROCESSES_VIEW,
+    displayName: "View Business Processes",
+    description: "View service-aligned business processes",
+    resource: "business-processes",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.BUSINESS_PROCESSES_CREATE,
+    displayName: "Create Business Processes",
+    description: "Create new business processes",
+    resource: "business-processes",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.BUSINESS_PROCESSES_UPDATE,
+    displayName: "Update Business Processes",
+    description: "Update business process definitions",
+    resource: "business-processes",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.BUSINESS_PROCESSES_DELETE,
+    displayName: "Delete Business Processes",
+    description: "Delete business processes",
+    resource: "business-processes",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.BUSINESS_PROCESSES_MANAGE,
+    displayName: "Manage Business Processes",
+    description: "Full business process management access",
+    resource: "business-processes",
+    action: "manage",
   },
 
   // Foundation: Organization Units
@@ -873,6 +987,50 @@ const SYSTEM_PERMISSIONS = [
     description: "Full field definition management access",
     resource: "field-definitions",
     action: "manage",
+  },
+
+  // Foundation: FX Rates
+  {
+    name: PERMISSIONS.FX_RATES_VIEW,
+    displayName: "View FX Rates",
+    description: "View foreign exchange rate list and details",
+    resource: "fx-rates",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.FX_RATES_CREATE,
+    displayName: "Create FX Rates",
+    description: "Create new foreign exchange rates",
+    resource: "fx-rates",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.FX_RATES_UPDATE,
+    displayName: "Update FX Rates",
+    description: "Edit foreign exchange rate values and status",
+    resource: "fx-rates",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.FX_RATES_DELETE,
+    displayName: "Delete FX Rates",
+    description: "Remove foreign exchange rates",
+    resource: "fx-rates",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.FX_RATES_MANAGE,
+    displayName: "Manage FX Rates",
+    description: "Full foreign exchange rate management access",
+    resource: "fx-rates",
+    action: "manage",
+  },
+  {
+    name: PERMISSIONS.FX_RATES_CONVERT,
+    displayName: "Convert Currency",
+    description: "Perform currency conversion using exchange rates",
+    resource: "fx-rates",
+    action: "convert",
   },
 
   // Assets: Asset Categories

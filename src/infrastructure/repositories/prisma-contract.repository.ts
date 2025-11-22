@@ -136,6 +136,32 @@ export class PrismaContractRepository implements IContractRepository {
     return data.map((item) => this.toDomain(item));
   }
 
+  async search(
+    query: string,
+    options?: {
+      skip?: number;
+      take?: number;
+      vendorId?: string;
+    },
+  ): Promise<Contract[]> {
+    this.logger.debug("Searching contracts", { query, options });
+
+    const data = await this.prisma.contract.findMany({
+      where: {
+        ...(options?.vendorId && { vendorId: options.vendorId }),
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { contractNumber: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      skip: options?.skip,
+      take: options?.take,
+      orderBy: { createdAt: "desc" },
+    });
+
+    return data.map((item) => this.toDomain(item));
+  }
+
   async update(contract: Contract): Promise<Contract> {
     this.logger.debug("Updating contract", { contractId: contract.id });
 
