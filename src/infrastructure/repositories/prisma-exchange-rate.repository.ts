@@ -150,7 +150,7 @@ export class PrismaExchangeRateRepository implements IExchangeRateRepository {
     return ExchangeRate.reconstitute({
       id: prismaExchangeRate.id,
       currency: prismaExchangeRate.currency,
-      rateToSAR: prismaExchangeRate.rateToSAR,
+      rateToSAR: Number(prismaExchangeRate.rateToSAR), // Convert Decimal to number
       isActive: prismaExchangeRate.isActive,
       createdAt: prismaExchangeRate.createdAt,
       updatedAt: prismaExchangeRate.updatedAt,
