@@ -222,12 +222,8 @@ export const PERMISSION_DEPENDENCIES: Partial<
   ],
 
   // Asset Assignments
-  [PERMISSIONS.ASSET_ASSIGNMENTS_UPDATE]: [
-    PERMISSIONS.ASSET_ASSIGNMENTS_VIEW,
-  ],
-  [PERMISSIONS.ASSET_ASSIGNMENTS_DELETE]: [
-    PERMISSIONS.ASSET_ASSIGNMENTS_VIEW,
-  ],
+  [PERMISSIONS.ASSET_ASSIGNMENTS_UPDATE]: [PERMISSIONS.ASSET_ASSIGNMENTS_VIEW],
+  [PERMISSIONS.ASSET_ASSIGNMENTS_DELETE]: [PERMISSIONS.ASSET_ASSIGNMENTS_VIEW],
   [PERMISSIONS.ASSET_ASSIGNMENTS_MANAGE]: [
     PERMISSIONS.ASSET_ASSIGNMENTS_VIEW,
     PERMISSIONS.ASSET_ASSIGNMENTS_CREATE,
@@ -590,9 +586,7 @@ export function getPermissionDependencies(
  * @param permission - Permission key
  * @returns True if permission has dependencies
  */
-export function hasPermissionDependencies(
-  permission: PermissionKey,
-): boolean {
+export function hasPermissionDependencies(permission: PermissionKey): boolean {
   const deps = PERMISSION_DEPENDENCIES[permission];
   return deps !== undefined && deps.length > 0;
 }

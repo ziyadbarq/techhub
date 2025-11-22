@@ -355,10 +355,12 @@ export function PermissionsManager({
 
             {/* Bulk Actions Bar */}
             {bulkMode && (
-              <div className="rounded-lg border bg-muted p-3">
+              <div className="bg-muted rounded-lg border p-3">
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-2">
-                    <Badge variant="default">{bulkSelection.size} selected</Badge>
+                    <Badge variant="default">
+                      {bulkSelection.size} selected
+                    </Badge>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button
@@ -443,10 +445,10 @@ export function PermissionsManager({
                     className="rounded-md border border-yellow-300 bg-white p-3 dark:border-yellow-700 dark:bg-yellow-900/20"
                   >
                     <div className="mb-2 flex items-center gap-2">
-                      <code className="text-yellow-900 rounded bg-yellow-100 px-2 py-1 font-mono text-xs dark:bg-yellow-800 dark:text-yellow-100">
+                      <code className="rounded bg-yellow-100 px-2 py-1 font-mono text-xs text-yellow-900 dark:bg-yellow-800 dark:text-yellow-100">
                         {permission?.displayName ?? item.permission}
                       </code>
-                      <span className="text-yellow-700 dark:text-yellow-300 text-sm">
+                      <span className="text-sm text-yellow-700 dark:text-yellow-300">
                         requires:
                       </span>
                     </div>
@@ -575,9 +577,7 @@ export function PermissionsManager({
                               }`}
                             >
                               <Checkbox
-                                checked={
-                                  bulkMode ? isBulkSelected : isSelected
-                                }
+                                checked={bulkMode ? isBulkSelected : isSelected}
                                 onCheckedChange={() =>
                                   bulkMode
                                     ? handleToggleBulkSelection(permission.name)

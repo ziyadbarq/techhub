@@ -160,8 +160,7 @@ export function detectRoleConflicts(roleNames: string[]): {
           "Segregation of duties violation";
 
         // Get config (try both orderings, fallback to default)
-        const config =
-          CONFLICT_CONFIG[conflictKey1] ??
+        const config = CONFLICT_CONFIG[conflictKey1] ??
           CONFLICT_CONFIG[conflictKey2] ?? {
             severity: "warning",
             allowOverride: true,

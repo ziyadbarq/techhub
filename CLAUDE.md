@@ -282,6 +282,7 @@ See [docs/README.md](docs/README.md) for complete documentation index.
   - ~50% time savings for bulk permission operations
 
 **Phase 2 Roadmap** (Remaining Features):
+
 - **Phase 2 (IN PROGRESS)**: See [roadmap/RBAC_ENHANCEMENT_PHASE_2.md](roadmap/RBAC_ENHANCEMENT_PHASE_2.md)
   - Remaining: Enhanced audit log UI, bulk user role assignment, advanced user management, role analytics, time-based expiration background jobs, role hierarchy/inheritance
 

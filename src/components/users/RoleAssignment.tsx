@@ -193,7 +193,7 @@ export function RoleAssignment({
             {existingConflicts.hasConflicts && (
               <Badge
                 variant="outline"
-                className="border-yellow-600 text-yellow-700 ml-2"
+                className="ml-2 border-yellow-600 text-yellow-700"
               >
                 {existingConflicts.conflicts.length} Conflict
                 {existingConflicts.conflicts.length > 1 ? "s" : ""}
@@ -210,16 +210,17 @@ export function RoleAssignment({
             <div className="space-y-3">
               {/* Existing Conflicts Warning */}
               {existingConflicts.hasConflicts && (
-                <div className="border-yellow-500 bg-yellow-50 dark:bg-yellow-950 rounded-lg border p-3">
+                <div className="rounded-lg border border-yellow-500 bg-yellow-50 p-3 dark:bg-yellow-950">
                   <div className="flex items-start gap-2">
-                    <AlertTriangle className="text-yellow-600 dark:text-yellow-500 mt-0.5 h-4 w-4" />
+                    <AlertTriangle className="mt-0.5 h-4 w-4 text-yellow-600 dark:text-yellow-500" />
                     <div className="flex-1">
-                      <p className="text-yellow-900 dark:text-yellow-100 text-sm font-medium">
+                      <p className="text-sm font-medium text-yellow-900 dark:text-yellow-100">
                         Conflicting Roles Detected
                       </p>
-                      <p className="text-yellow-800 dark:text-yellow-200 mt-1 text-xs">
+                      <p className="mt-1 text-xs text-yellow-800 dark:text-yellow-200">
                         This user has {existingConflicts.conflicts.length} role
-                        conflict{existingConflicts.conflicts.length > 1 ? "s" : ""}.
+                        conflict
+                        {existingConflicts.conflicts.length > 1 ? "s" : ""}.
                         Review for segregation of duties compliance.
                       </p>
                     </div>
@@ -257,7 +258,7 @@ export function RoleAssignment({
                           {hasConflicts && (
                             <Badge
                               variant="outline"
-                              className="border-yellow-600 text-yellow-700 text-xs"
+                              className="border-yellow-600 text-xs text-yellow-700"
                             >
                               <AlertTriangle className="mr-1 h-3 w-3" />
                               Conflicts
@@ -275,7 +276,7 @@ export function RoleAssignment({
                             {roleConflicts.map((conflict, idx) => (
                               <p
                                 key={idx}
-                                className="text-yellow-800 dark:text-yellow-200 text-xs"
+                                className="text-xs text-yellow-800 dark:text-yellow-200"
                               >
                                 Conflicts with:{" "}
                                 <span className="font-medium">

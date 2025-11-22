@@ -148,17 +148,12 @@ export function BulkRoleAssignmentModal({
     setIsAssigning(true);
     try {
       // If skipping conflicts, filter out users/roles with critical conflicts
-      let userIds = selectedUsers.map((u) => u.id);
-      let roleIds = Array.from(selectedRoleIds);
+      const userIds = selectedUsers.map((u) => u.id);
+      const roleIds = Array.from(selectedRoleIds);
 
       if (skipConflicts && conflictSummary.length > 0) {
-        const criticalConflicts = conflictSummary.filter((cs) =>
+        const _criticalConflicts = conflictSummary.filter((cs) =>
           cs.conflicts.some((c) => c.severity === "critical"),
-        );
-
-        // Create set of user-role pairs to skip
-        const skipPairs = new Set(
-          criticalConflicts.map((cs) => `${cs.userId}:${cs.roleId}`),
         );
 
         // For simplicity, we'll still call the API with all users/roles
@@ -172,22 +167,23 @@ export function BulkRoleAssignmentModal({
         expiresAt: expirationDate,
       });
 
-      if (result.success && result.data) {
-        const { assigned, conflicts: conflictCount, failed } = result.data;
-        if (assigned > 0 && (conflictCount > 0 || failed > 0)) {
-          toast.warning(
-            `Partially completed: ${assigned} succeeded, ${conflictCount} conflicts, ${failed} failed`,
-          );
-        } else if (assigned > 0) {
-          toast.success(`Successfully assigned ${assigned} role(s)`);
-        } else {
-          toast.error("No roles were assigned");
-        }
-        onOpenChange(false);
-        onSuccess();
-      } else {
-        toast.error(result.error ?? "Failed to assign roles");
+      if (!result.success) {
+        toast.error(result.error);
+        return;
       }
+
+      const { assigned, conflicts: conflictCount, failed } = result.data;
+      if (assigned > 0 && (conflictCount > 0 || failed > 0)) {
+        toast.warning(
+          `Partially completed: ${assigned} succeeded, ${conflictCount} conflicts, ${failed} failed`,
+        );
+      } else if (assigned > 0) {
+        toast.success(`Successfully assigned ${assigned} role(s)`);
+      } else {
+        toast.error("No roles were assigned");
+      }
+      onOpenChange(false);
+      onSuccess();
     } catch (_error) {
       toast.error("Failed to assign roles");
     } finally {
@@ -268,7 +264,10 @@ export function BulkRoleAssignmentModal({
                           </p>
                           <div className="mt-2 space-y-1">
                             {cs.conflicts.map((conflict, cIdx) => (
-                              <div key={cIdx} className="flex items-center gap-2">
+                              <div
+                                key={cIdx}
+                                className="flex items-center gap-2"
+                              >
                                 <Badge
                                   variant="outline"
                                   className={
@@ -304,7 +303,7 @@ export function BulkRoleAssignmentModal({
 
           <Card className="border-blue-500 bg-blue-50 dark:bg-blue-950">
             <CardContent className="pt-4">
-              <p className="text-blue-900 dark:text-blue-100 text-sm">
+              <p className="text-sm text-blue-900 dark:text-blue-100">
                 <strong>{criticalConflictCount}</strong> critical conflict
                 {criticalConflictCount === 1 ? "" : "s"} will be blocked.{" "}
                 {conflictSummary.length - criticalConflictCount > 0 && (
@@ -312,8 +311,11 @@ export function BulkRoleAssignmentModal({
                     <strong>
                       {conflictSummary.length - criticalConflictCount}
                     </strong>{" "}
-                    warning{conflictSummary.length - criticalConflictCount === 1 ? "" : "s"} can
-                    proceed with caution.
+                    warning
+                    {conflictSummary.length - criticalConflictCount === 1
+                      ? ""
+                      : "s"}{" "}
+                    can proceed with caution.
                   </>
                 )}
               </p>
@@ -361,8 +363,9 @@ export function BulkRoleAssignmentModal({
                 <CardTitle className="text-base">Selected Users</CardTitle>
               </div>
               <CardDescription>
-                {summary.totalUsers} {summary.totalUsers === 1 ? "user" : "users"}{" "}
-                with an average of {summary.avgRoles} active{" "}
+                {summary.totalUsers}{" "}
+                {summary.totalUsers === 1 ? "user" : "users"} with an average of{" "}
+                {summary.avgRoles} active{" "}
                 {summary.avgRoles === 1 ? "role" : "roles"}
               </CardDescription>
             </CardHeader>
@@ -414,7 +417,9 @@ export function BulkRoleAssignmentModal({
                       />
                       <div className="flex-1">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="font-medium">{role.displayName}</span>
+                          <span className="font-medium">
+                            {role.displayName}
+                          </span>
                           <code className="text-muted-foreground bg-muted rounded px-1.5 py-0.5 font-mono text-xs">
                             {role.name}
                           </code>
@@ -426,8 +431,8 @@ export function BulkRoleAssignmentModal({
               </div>
             </ScrollArea>
             <p className="text-muted-foreground text-xs">
-              {selectedRoleIds.size} {selectedRoleIds.size === 1 ? "role" : "roles"}{" "}
-              selected
+              {selectedRoleIds.size}{" "}
+              {selectedRoleIds.size === 1 ? "role" : "roles"} selected
             </p>
           </div>
 
@@ -484,11 +489,12 @@ export function BulkRoleAssignmentModal({
           <Card className="border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
             <CardContent className="pt-4">
               <div className="flex items-start gap-2">
-                <AlertTriangle className="text-yellow-600 dark:text-yellow-500 mt-0.5 h-4 w-4" />
+                <AlertTriangle className="mt-0.5 h-4 w-4 text-yellow-600 dark:text-yellow-500" />
                 <div className="flex-1">
-                  <p className="text-yellow-900 dark:text-yellow-100 text-sm">
-                    This will assign the selected roles to all {selectedUsers.length}{" "}
-                    users. Users who already have these roles will not be affected.
+                  <p className="text-sm text-yellow-900 dark:text-yellow-100">
+                    This will assign the selected roles to all{" "}
+                    {selectedUsers.length} users. Users who already have these
+                    roles will not be affected.
                   </p>
                 </div>
               </div>

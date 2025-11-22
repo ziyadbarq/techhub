@@ -31,9 +31,7 @@ export class RoleConflictError extends Error {
     public readonly conflicts: RoleConflict[],
     message?: string,
   ) {
-    super(
-      message || "Role assignment blocked due to critical conflicts",
-    );
+    super(message || "Role assignment blocked due to critical conflicts");
     this.name = "RoleConflictError";
   }
 }
@@ -90,10 +88,7 @@ export class AssignRoleToUserUseCase {
     }
 
     // Validate role conflicts
-    const conflictValidation = validateRoleAddition(
-      activeRoleNames,
-      role.name,
-    );
+    const conflictValidation = validateRoleAddition(activeRoleNames, role.name);
 
     // Block assignment if critical conflicts exist
     const hasCriticalConflicts = conflictValidation.conflicts.some(
@@ -106,7 +101,7 @@ export class AssignRoleToUserUseCase {
         userId: request.assignedBy,
         action: "user_role:assign_blocked",
         entityType: "user_role",
-        entityId: null,
+        entityId: undefined,
         changes: {
           attempted: {
             userId: request.userId,

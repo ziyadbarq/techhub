@@ -79,7 +79,8 @@ export class AssignPermissionsToRoleUseCase {
     const permissionNames = permissions.map((p) => p.name) as PermissionKey[];
 
     // Validate permission dependencies
-    const dependencyValidation = validatePermissionDependencies(permissionNames);
+    const dependencyValidation =
+      validatePermissionDependencies(permissionNames);
 
     if (!dependencyValidation.valid) {
       if (request.autoAddDependencies) {
@@ -154,11 +155,12 @@ export class AssignPermissionsToRoleUseCase {
       },
       metadata: {
         addedPermissions: request.permissionIds,
-        ...(request.autoAddDependencies && !dependencyValidation.valid && {
-          autoAddedDependencies: dependencyValidation.missing.flatMap((item) =>
-            item.requiredDependencies,
-          ),
-        }),
+        ...(request.autoAddDependencies &&
+          !dependencyValidation.valid && {
+            autoAddedDependencies: dependencyValidation.missing.flatMap(
+              (item) => item.requiredDependencies,
+            ),
+          }),
       },
       ipAddress: request.ipAddress,
       userAgent: request.userAgent,
