@@ -89,6 +89,11 @@ export class ExchangeRate {
 
     const currencyUpper = currency.trim().toUpperCase();
 
+    // SAR is the base currency and should not have an exchange rate entry
+    if (currencyUpper === "SAR") {
+      throw new Error("Cannot create exchange rate for SAR (base currency)");
+    }
+
     // Must be exactly 3 letters
     if (currencyUpper.length !== 3) {
       throw new Error("Currency code must be exactly 3 letters (ISO 4217)");
@@ -99,9 +104,8 @@ export class ExchangeRate {
       throw new Error("Currency code must contain only letters");
     }
 
-    // Validate against common ISO 4217 codes
+    // Validate against common ISO 4217 codes (excluding SAR)
     const validCurrencies = [
-      "SAR",
       "USD",
       "EUR",
       "GBP",
