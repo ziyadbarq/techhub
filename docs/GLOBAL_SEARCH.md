@@ -9,10 +9,12 @@ The global search feature provides a fast, keyboard-driven command palette for s
 ### Opening the Search
 
 **Keyboard Shortcut:**
+
 - **macOS:** `⌘K`
 - **Windows/Linux:** `Ctrl+K`
 
 **Mouse/Touch:**
+
 - Click the search icon (🔍) in the top navigation bar
 
 ### Using the Search
@@ -29,18 +31,19 @@ The global search feature provides a fast, keyboard-driven command palette for s
 
 The search covers the following entity types:
 
-| Entity Type | Search Fields | Result Link |
-|------------|---------------|-------------|
-| **Assets** | Asset Tag, Serial Number, Notes | Detail page: `/assets/[assetTag]` |
-| **Persons** | First/Last Name, Email, Employee ID, Title | Table view: `/persons?highlight={id}` |
-| **Vendors** | Name, Code, Legal Name | Table view: `/vendors?highlight={id}` |
-| **Configuration Items** | Name, CI Key, Description | Table view: `/configuration-items?highlight={id}` |
-| **Contracts** | Name, Contract Number | Table view: `/contracts?highlight={id}` |
-| **License Products** | Name, Code, Description | Table view: `/license-products?highlight={id}` |
+| Entity Type             | Search Fields                              | Result Link                                       |
+| ----------------------- | ------------------------------------------ | ------------------------------------------------- |
+| **Assets**              | Asset Tag, Serial Number, Notes            | Detail page: `/assets/[assetTag]`                 |
+| **Persons**             | First/Last Name, Email, Employee ID, Title | Table view: `/persons?highlight={id}`             |
+| **Vendors**             | Name, Code, Legal Name                     | Table view: `/vendors?highlight={id}`             |
+| **Configuration Items** | Name, CI Key, Description                  | Table view: `/configuration-items?highlight={id}` |
+| **Contracts**           | Name, Contract Number                      | Table view: `/contracts?highlight={id}`           |
+| **License Products**    | Name, Code, Description                    | Table view: `/license-products?highlight={id}`    |
 
 ### Result Display
 
 Results are grouped by entity type with:
+
 - **Icon** - Visual indicator for entity type
 - **Title** - Primary identifier (e.g., Asset Tag, Person Name)
 - **Subtitle** - Secondary info (e.g., Serial Number, Email)
@@ -69,6 +72,7 @@ Infrastructure (Repositories)
 #### **1. Domain Layer** (`src/core/domain/`)
 
 **SearchResult Entity:**
+
 ```typescript
 // src/core/domain/entities/search/search-result.entity.ts
 export class SearchResult {
@@ -89,6 +93,7 @@ export type SearchEntityType =
 ```
 
 **Repository Interface:**
+
 ```typescript
 // src/core/repositories/search.repository.interface.ts
 export interface ISearchRepository {
@@ -99,6 +104,7 @@ export interface ISearchRepository {
 #### **2. Use Cases Layer** (`src/core/use-cases/search/`)
 
 **GlobalSearchUseCase:**
+
 ```typescript
 // src/core/use-cases/search/global-search/global-search.use-case.ts
 @injectable()
@@ -119,6 +125,7 @@ export class GlobalSearchUseCase {
 #### **3. Interface Adapters Layer**
 
 **Search Controller:**
+
 ```typescript
 // src/interface-adapters/controllers/search.controller.ts
 export async function globalSearchAction(
@@ -132,6 +139,7 @@ export async function globalSearchAction(
 ```
 
 **DTOs:**
+
 ```typescript
 // src/interface-adapters/dtos/search.dto.ts
 export const SearchRequestSchema = z.object({
@@ -153,6 +161,7 @@ export const SearchResultSchema = z.object({
 #### **4. Infrastructure Layer**
 
 **PrismaSearchRepository:**
+
 ```typescript
 // src/infrastructure/repositories/prisma-search.repository.ts
 @injectable()
@@ -163,7 +172,10 @@ export class PrismaSearchRepository implements ISearchRepository {
     // ... other repositories
   ) {}
 
-  async searchAll(query: string, options?: SearchOptions): Promise<SearchResult[]> {
+  async searchAll(
+    query: string,
+    options?: SearchOptions,
+  ): Promise<SearchResult[]> {
     // Searches all entity repositories in parallel
     const [assets, persons, vendors, cis, contracts, licenses] =
       await Promise.all([
@@ -181,11 +193,13 @@ export class PrismaSearchRepository implements ISearchRepository {
 **Repository Search Methods:**
 
 Added `search()` methods to:
+
 - `IConfigurationItemRepository` - searches name, ciKey, description
 - `IContractRepository` - searches name, contractNumber
 - `ILicenseProductRepository` - searches name, code, description
 
 Existing search methods used:
+
 - `IAssetRepository.search()` - searches assetTag, serialNumber, note
 - `IPersonRepository.search()` - searches firstName, lastName, email, employeeId
 - `IVendorRepository.search()` - searches name, code, legalName
@@ -193,6 +207,7 @@ Existing search methods used:
 #### **5. Presentation Layer**
 
 **Command Palette Component:**
+
 ```typescript
 // src/components/search/command-palette.tsx
 export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
@@ -210,13 +225,16 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   }, [query]);
 
   // Groups results by entity type
-  const groupedResults = useMemo(() => { /* ... */ }, [results]);
+  const groupedResults = useMemo(() => {
+    /* ... */
+  }, [results]);
 
   // Renders CommandDialog with categorized results
 }
 ```
 
 **Context Provider:**
+
 ```typescript
 // src/components/search/command-palette-context.tsx
 export function CommandPaletteContextProvider({ children }) {
@@ -246,20 +264,24 @@ export function CommandPaletteContextProvider({ children }) {
 ### Dependency Injection
 
 **DI Module:**
+
 ```typescript
 // src/di/modules/search.module.ts
 export function bindSearchDependencies(container: Container): void {
-  container.bind<ISearchRepository>(DI_TOKENS.ISearchRepository)
+  container
+    .bind<ISearchRepository>(DI_TOKENS.ISearchRepository)
     .to(PrismaSearchRepository)
     .inSingletonScope();
 
-  container.bind<GlobalSearchUseCase>(DI_TOKENS.GlobalSearchUseCase)
+  container
+    .bind<GlobalSearchUseCase>(DI_TOKENS.GlobalSearchUseCase)
     .to(GlobalSearchUseCase)
     .inSingletonScope();
 }
 ```
 
 **Registered in Container:**
+
 ```typescript
 // src/di/container.ts
 import { bindSearchDependencies } from "./modules/search.module";
@@ -302,12 +324,14 @@ async search(query: string, options?: { take?: number }): Promise<Entity[]> {
 ## Future Enhancements
 
 ### Phase 2 Entities
+
 - Asset Categories
 - Asset Models
 - Locations
 - Stock Locations
 
 ### Advanced Features
+
 - **Search Analytics** - Track popular searches to optimize ranking
 - **Redis Caching** - Cache frequent search terms for faster results
 - **Full-Text Search** - PostgreSQL `tsvector`/`tsquery` with ranking
@@ -383,6 +407,7 @@ npm run seed
 ```
 
 Then search for:
+
 - **Assets:** "laptop", "BARQ-IT"
 - **Persons:** "ahmed", "admin@barq"
 - **Vendors:** "dell", "apple"
@@ -410,24 +435,30 @@ Then search for:
 ### Created Files (13)
 
 **Domain:**
+
 - `src/core/domain/entities/search/search-result.entity.ts`
 - `src/core/repositories/search.repository.interface.ts`
 
 **Use Cases:**
+
 - `src/core/use-cases/search/global-search/global-search.use-case.ts`
 - `src/core/use-cases/search/global-search/index.ts`
 
 **Interface Adapters:**
+
 - `src/interface-adapters/controllers/search.controller.ts`
 - `src/interface-adapters/dtos/search.dto.ts`
 
 **Infrastructure:**
+
 - `src/infrastructure/repositories/prisma-search.repository.ts`
 
 **DI:**
+
 - `src/di/modules/search.module.ts`
 
 **Components:**
+
 - `src/components/search/command-palette.tsx`
 - `src/components/search/command-palette-context.tsx`
 - `src/components/search/command-palette-provider.tsx`
@@ -437,24 +468,29 @@ Then search for:
 ### Modified Files (12)
 
 **Repository Interfaces:**
+
 - `src/core/repositories/configuration-item.repository.interface.ts`
 - `src/core/repositories/contract.repository.interface.ts`
 - `src/core/repositories/license-product.repository.interface.ts`
 
 **Repository Implementations:**
+
 - `src/infrastructure/repositories/prisma-configuration-item.repository.ts`
 - `src/infrastructure/repositories/prisma-contract.repository.ts`
 - `src/infrastructure/repositories/prisma-license-product.repository.ts`
 
 **DI Configuration:**
+
 - `src/di/container.ts`
 - `src/di/types.ts`
 
 **UI Integration:**
+
 - `src/app/(dashboard)/layout.tsx`
 - `src/components/layout/Header.tsx`
 
 **Dependencies:**
+
 - `package.json`
 - `package-lock.json`
 

@@ -178,7 +178,10 @@ export async function GET(_request: Request): Promise<Response> {
           </div>
         \`).join('');
       } catch (error) {
-        console.error('Failed to load queue stats:', error);
+        const container = document.getElementById('queues');
+        if (container) {
+          container.innerHTML = '<p style="color: #b91c1c;">Failed to load queue stats. Retry in a moment.</p>';
+        }
       }
     }
 

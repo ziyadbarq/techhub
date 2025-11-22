@@ -14,6 +14,7 @@ import { PermissionForm } from "@/components/permissions/PermissionForm";
 import { updatePermissionAction } from "@/interface-adapters/controllers/permission.controller";
 import type { UpdatePermissionDTO } from "@/interface-adapters/dtos/generated/permission.dto";
 import type { PermissionDTO } from "@/interface-adapters/presenters/permission.presenter";
+import { logger } from "@/lib/logger";
 
 interface EditPermissionClientProps {
   permission: PermissionDTO;
@@ -22,6 +23,7 @@ interface EditPermissionClientProps {
 export function EditPermissionClient({
   permission,
 }: EditPermissionClientProps) {
+  const log = logger.scope("EditPermissionClient");
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -39,7 +41,7 @@ export function EditPermissionClient({
       }
     } catch (error) {
       toast.error("Failed to update permission");
-      console.error("Update permission error:", error);
+      log.error("handleSubmit", "Failed to update permission", error);
     } finally {
       setIsSubmitting(false);
     }

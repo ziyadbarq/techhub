@@ -1,7 +1,9 @@
 import { auth } from "@/lib/auth/better-auth";
 import { createId } from "@paralleldrive/cuid2";
+import { logger } from "@/lib/logger";
 
 const handleAuthRequest = async (request: Request) => {
+  const log = logger.scope("AuthRoute");
   const requestId = createId();
   const url = new URL(request.url);
   const clientIp =
@@ -11,7 +13,7 @@ const handleAuthRequest = async (request: Request) => {
   const userAgent = request.headers.get("user-agent") ?? "unknown";
   const startedAt = Date.now();
 
-  console.info("[AuthRoute] incoming request", {
+  log.info("request", "Incoming auth request", {
     method: request.method,
     path: url.pathname,
     requestId,
@@ -23,7 +25,7 @@ const handleAuthRequest = async (request: Request) => {
     const response = await auth.handler(request);
     const duration = Date.now() - startedAt;
 
-    console.info("[AuthRoute] response", {
+    log.info("response", "Auth response", {
       method: request.method,
       path: url.pathname,
       requestId,
@@ -39,7 +41,7 @@ const handleAuthRequest = async (request: Request) => {
       } catch {
         preview = "";
       }
-      console.warn("[AuthRoute] non-200 response", {
+      log.warn("response", "Auth response not ok", {
         method: request.method,
         path: url.pathname,
         requestId,
@@ -51,12 +53,11 @@ const handleAuthRequest = async (request: Request) => {
     return response;
   } catch (error) {
     const duration = Date.now() - startedAt;
-    console.error("[AuthRoute] handler error", {
+    log.error("handler", "Auth handler error", error, {
       method: request.method,
       path: url.pathname,
       requestId,
       durationMs: duration,
-      error,
     });
     throw error;
   }

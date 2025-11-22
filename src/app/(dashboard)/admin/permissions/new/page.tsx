@@ -18,8 +18,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { PermissionForm } from "@/components/permissions/PermissionForm";
 import { createPermissionAction } from "@/interface-adapters/controllers/permission.controller";
 import type { CreatePermissionDTO } from "@/interface-adapters/dtos/generated/permission.dto";
+import { logger } from "@/lib/logger";
 
 export default function NewPermissionPage() {
+  const log = logger.scope("NewPermissionPage");
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -37,7 +39,7 @@ export default function NewPermissionPage() {
       }
     } catch (error) {
       toast.error("Failed to create permission");
-      console.error("Create permission error:", error);
+      log.error("handleSubmit", "Failed to create permission", error);
     } finally {
       setIsSubmitting(false);
     }

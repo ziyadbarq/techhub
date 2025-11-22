@@ -18,9 +18,10 @@ This folder contains detailed specifications for planned features that are not y
 
 ## Planned Features
 
-### Layer 1 (Foundation)
+### Layer 1 (Foundation) / RBAC & Admin
 
-- None currently
+- [RBAC Enhancement - Phase 1 (COMPLETED)](RBAC_ENHANCEMENT_PHASE_1.md) - **Status: Completed** - Navigation fixes, permission grouping (10 categories), enhanced permission assignment UI with search/filter, and clone role functionality (15-20 hours)
+- [RBAC Enhancement - Phase 2 (Future)](RBAC_ENHANCEMENT_PHASE_2.md) - **Status: Planned** - Enhanced audit log UI, bulk operations, advanced user management, role analytics, time-based expiration, permission dependencies, conflict detection, and role hierarchy (40-60 hours)
 
 ### Layer 2 (Asset Management)
 
@@ -71,4 +72,4 @@ When a feature is approved for implementation:
 ---
 
 **Maintained By**: Development Team
-**Last Updated**: 2025-11-22
+**Last Updated**: 2025-11-22 (RBAC Phase 1 completed)

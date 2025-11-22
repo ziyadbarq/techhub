@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -16,9 +17,15 @@ interface ErrorProps {
  */
 export default function DashboardError({ error, reset }: ErrorProps) {
   useEffect(() => {
-    // Log the error to console in development
-    // In production, you could send this to an error tracking service
-    console.error("Dashboard error:", error);
+    const scopedLogger = logger.scope("DashboardError");
+    scopedLogger.error(
+      "useEffect",
+      "Dashboard error boundary caught an error",
+      error,
+      {
+        digest: error.digest,
+      },
+    );
   }, [error]);
 
   return (

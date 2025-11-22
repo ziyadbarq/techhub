@@ -9,6 +9,7 @@ import type { LicenseProductDTO } from "@/interface-adapters/presenters/license-
 import { listLicenseProducts } from "@/interface-adapters/controllers/license-product.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { usePermissions } from "@/hooks/use-permissions";
+import { toast } from "sonner";
 
 export const dynamic = "force-dynamic";
 
@@ -39,7 +40,7 @@ export default function LicenseProductsPage() {
 
   const handleEdit = (_licenseProduct: LicenseProductDTO) => {
     // TODO: Implement edit dialog
-    console.log("Edit not yet implemented");
+    toast.info("Edit not yet implemented for license products");
   };
 
   return (

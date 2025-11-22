@@ -2,7 +2,6 @@
 
 import type { ReactNode } from "react";
 import { Suspense, useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { ErrorBoundary } from "@/components/error-boundary";
@@ -10,7 +9,6 @@ import { GlobalLoading } from "@/components/global-loading";
 import { CommandPaletteProvider } from "@/components/search/command-palette-provider";
 
 export function DashboardLayoutClient({ children }: { children: ReactNode }) {
-  const _pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
 
   // Only render after client-side hydration to avoid SSR issues with auth hooks
