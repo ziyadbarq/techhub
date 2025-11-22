@@ -107,6 +107,9 @@ export function ServiceInfrastructureForm({
         cloudProvider: data.cloudProvider || undefined,
         cloudAccountId: data.cloudAccountId || undefined,
         cloudRegion: data.cloudRegion || undefined,
+        compartment: data.compartment || undefined,
+        project: data.project || undefined,
+        region: data.region || undefined,
         ipAddress: data.ipAddress || undefined,
         hostname: data.hostname || undefined,
         backupSchedule: data.backupSchedule || undefined,
@@ -116,6 +119,13 @@ export function ServiceInfrastructureForm({
 
       const result = isEditing
         ? await updateServiceInfrastructureAction(infrastructure.id, normalizedData)
+      };
+
+      const result = isEditing
+        ? await updateServiceInfrastructureAction(
+            infrastructure.id,
+            normalizedData,
+          )
         : await createServiceInfrastructureAction(normalizedData);
 
       if (result.success) {

@@ -112,14 +112,15 @@ export function ServiceForm({
       // Normalize empty strings to undefined for optional fields
       const normalizedData = {
         ...data,
-        vendorId: data.vendorId || undefined,
-        businessProcessId: data.businessProcessId || undefined,
         deploymentDate: data.deploymentDate || undefined,
         lastPatchDate: data.lastPatchDate || undefined,
         plannedDecommissionDate: data.plannedDecommissionDate || undefined,
+        vendorId: data.vendorId || undefined,
+        businessProcessId: data.businessProcessId || undefined,
+        description: data.description || undefined,
+        businessPurpose: data.businessPurpose || undefined,
+        gitlabRepoUrl: data.gitlabRepoUrl || undefined,
         complianceNotes: data.complianceNotes || undefined,
-        slaDetails: data.slaDetails || undefined,
-        metadata: data.metadata || undefined,
       };
 
       const result =
