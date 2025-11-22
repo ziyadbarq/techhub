@@ -3,7 +3,10 @@
  * Multi-currency support - stores exchange rates to SAR (Saudi Riyal)
  */
 
-import { CURRENCY_CODES } from "@/lib/currencies.config";
+import {
+  CURRENCY_CODES,
+  isSupportedCurrency,
+} from "@/lib/currencies.config";
 
 export interface ExchangeRateProps {
   id: string;
@@ -102,9 +105,7 @@ export class ExchangeRate {
     }
 
     // Validate against supported currencies
-    if (
-      !CURRENCY_CODES.includes(currencyUpper as (typeof CURRENCY_CODES)[number])
-    ) {
+    if (!isSupportedCurrency(currencyUpper)) {
       throw new Error(
         `Currency code '${currencyUpper}' is not supported. Supported currencies: ${CURRENCY_CODES.join(", ")}`,
       );
