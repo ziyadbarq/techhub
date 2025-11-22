@@ -582,6 +582,310 @@ Final security verification:
 
 ---
 
+## 5. Auth-Aware Navigation Tests
+
+### 5.1 Test Marketing Homepage Navigation (Logged Out)
+
+**Objective**: Verify marketing homepage navigation shows correct buttons for logged-out users
+
+**Steps**:
+
+1. **Sign out** (if signed in):
+   - Click user menu → Sign Out
+   - OR clear cookies in DevTools
+
+2. **Navigate to homepage**: `http://localhost:3000/`
+
+3. **Check top navigation**:
+   - Look for "Enter" button in top-right
+
+4. **Check hero section**:
+   - Look for "Login to Dashboard" button with login icon
+
+5. **Check footer**:
+   - Look for "Login" link
+   - Look for "Dashboard" link
+
+**Expected Results**:
+
+- ✅ Top nav shows **"Enter"** button (not "Dashboard")
+- ✅ "Enter" button links to `/login`
+- ✅ Hero shows **"Login to Dashboard"** button (not "Go to Dashboard")
+- ✅ Hero button has **LogIn icon** (not LayoutDashboard icon)
+- ✅ Hero button links to `/login`
+- ✅ Footer "Login" link goes to `/login`
+- ✅ Footer "Dashboard" link goes to `/login`
+- ✅ No loading spinners or "..." placeholders visible
+
+### 5.2 Test Marketing Homepage Navigation (Logged In)
+
+**Objective**: Verify marketing homepage redirects or shows auth-aware navigation for logged-in users
+
+**Steps**:
+
+1. **Sign in** with Microsoft OAuth or email/password
+
+2. **Navigate to homepage**: `http://localhost:3000/`
+
+**Expected Results (Proxy Redirect)**:
+
+- ✅ Immediately redirected to `/dashboard`
+- ✅ No marketing page content is visible
+- ✅ Redirect happens before page renders
+
+**Expected Results (Fallback - If Proxy Fails)**:
+
+If you DO see the marketing page (proxy didn't trigger):
+
+- ✅ Top nav shows **"Dashboard"** button (not "Enter")
+- ✅ "Dashboard" button links to `/dashboard`
+- ✅ Hero shows **"Go to Dashboard"** button (not "Login to Dashboard")
+- ✅ Hero button has **LayoutDashboard icon** (not LogIn icon)
+- ✅ Hero button links to `/dashboard`
+- ✅ Footer "Login" link goes to `/dashboard`
+- ✅ Footer "Dashboard" link goes to `/dashboard`
+- ✅ Clicking any button navigates to `/dashboard`
+
+### 5.3 Test Login Page Redirect (Logged In)
+
+**Objective**: Verify logged-in users are redirected from login page
+
+**Steps**:
+
+1. **Sign in** with Microsoft OAuth or email/password
+
+2. **Navigate directly to login page**: `http://localhost:3000/login`
+
+**Expected Results**:
+
+- ✅ See loading spinner with pulsing Shield icon
+- ✅ Text reads "Checking authentication..."
+- ✅ After ~100ms, redirected to `/dashboard`
+- ✅ **No flash** of login form content
+- ✅ Login form is never visible
+
+### 5.4 Test Register Page Redirect (Logged In)
+
+**Objective**: Verify logged-in users are redirected from register page
+
+**Steps**:
+
+1. **Sign in** with Microsoft OAuth or email/password
+
+2. **Navigate directly to register page**: `http://localhost:3000/register`
+
+**Expected Results**:
+
+- ✅ See loading spinner with pulsing Shield icon
+- ✅ Text reads "Checking authentication..."
+- ✅ After ~100ms, redirected to `/dashboard`
+- ✅ **No flash** of registration form content
+- ✅ Registration form is never visible
+
+### 5.5 Test Login Page Access (Logged Out)
+
+**Objective**: Verify logged-out users can access login page normally
+
+**Steps**:
+
+1. **Sign out** (if signed in)
+
+2. **Navigate to login page**: `http://localhost:3000/login`
+
+**Expected Results**:
+
+- ✅ See loading spinner briefly (~50-100ms)
+- ✅ Login form renders smoothly
+- ✅ No redirect occurs
+- ✅ Can enter credentials and submit
+- ✅ Microsoft OAuth button works
+
+### 5.6 Test Register Page Access (Logged Out)
+
+**Objective**: Verify logged-out users can access register page normally
+
+**Steps**:
+
+1. **Sign out** (if signed in)
+
+2. **Navigate to register page**: `http://localhost:3000/register`
+
+**Expected Results**:
+
+- ✅ See loading spinner briefly (~50-100ms)
+- ✅ Registration form renders smoothly
+- ✅ No redirect occurs
+- ✅ Can enter details and submit
+
+### 5.7 Test Auth State Changes
+
+**Objective**: Verify navigation updates when auth state changes
+
+**Steps**:
+
+1. **Start logged out**
+
+2. **Open homepage**: `http://localhost:3000/`
+   - Verify "Enter" button visible
+
+3. **Open login page in new tab** and **sign in**
+
+4. **Return to homepage tab and refresh**
+
+**Expected Results**:
+
+- ✅ After refresh, redirected to `/dashboard` (logged in now)
+- ✅ OR see "Dashboard" button in nav (fallback)
+
+**Now Test Sign Out**:
+
+1. **While on dashboard**, navigate to `/` (should redirect back to dashboard)
+
+2. **Sign out** via user menu
+
+3. **Navigate to homepage**: `http://localhost:3000/`
+
+**Expected Results**:
+
+- ✅ See "Enter" button (logged out now)
+- ✅ See "Login to Dashboard" in hero
+- ✅ Footer links go to `/login`
+
+### 5.8 Test Back Button Behavior
+
+**Objective**: Verify back button doesn't return to login page after redirect
+
+**Steps**:
+
+1. **Sign in**
+
+2. **Navigate directly to**: `http://localhost:3000/login`
+   - You should be redirected to `/dashboard`
+
+3. **Click browser back button**
+
+**Expected Results**:
+
+- ✅ Does NOT return to `/login`
+- ✅ Goes to previous page before login (e.g., homepage)
+- ✅ Uses `router.replace()` behavior (no login in history)
+
+### 5.9 Test Loading State Performance
+
+**Objective**: Verify loading spinner is brief and doesn't flicker
+
+**Steps**:
+
+1. **Sign out**
+
+2. **Navigate to login page**: `http://localhost:3000/login`
+
+3. **Observe loading spinner duration**
+
+**Expected Results**:
+
+- ✅ Loading spinner appears immediately
+- ✅ Duration is < 200ms (very brief)
+- ✅ No flicker or visual jank
+- ✅ Smooth transition to login form
+
+### 5.10 Test Network Failure Gracefully
+
+**Objective**: Verify auth check handles network errors
+
+**Steps**:
+
+1. **Open DevTools → Network tab**
+
+2. **Throttle network**: Set to "Slow 3G" or "Offline"
+
+3. **Navigate to login page**: `http://localhost:3000/login`
+
+**Expected Results**:
+
+- ✅ Loading spinner shows
+- ✅ After timeout, assumes user is logged out
+- ✅ Login form renders (fails safely)
+- ✅ No error messages or crashes
+- ✅ User can still attempt to sign in
+
+### 5.11 Test SSR Compatibility
+
+**Objective**: Verify no hydration mismatches in marketing components
+
+**Steps**:
+
+1. **Sign out**
+
+2. **Open browser DevTools → Console**
+
+3. **Navigate to homepage**: `http://localhost:3000/`
+
+4. **Look for React hydration warnings**
+
+**Expected Results**:
+
+- ✅ No hydration mismatch warnings
+- ✅ No "Text content does not match" errors
+- ✅ No "Expected server HTML to contain..." errors
+- ✅ Clean console (except for expected logs)
+
+### 5.12 Test Concurrent Auth Checks
+
+**Objective**: Verify multiple auth checks don't cause race conditions
+
+**Steps**:
+
+1. **Sign in**
+
+2. **Open multiple browser tabs**:
+   - Tab 1: `http://localhost:3000/`
+   - Tab 2: `http://localhost:3000/login`
+   - Tab 3: `http://localhost:3000/register`
+
+3. **All tabs should load simultaneously**
+
+**Expected Results**:
+
+- ✅ All tabs check auth state independently
+- ✅ All tabs redirect to `/dashboard` (logged in)
+- ✅ No race conditions or errors
+- ✅ Session state is consistent across tabs
+
+---
+
+## Manual Testing Checklist (Auth-Aware Navigation)
+
+Quick checklist for comprehensive testing:
+
+### Logged-Out State
+
+- [ ] Homepage nav shows "Enter" → `/login`
+- [ ] Homepage hero shows "Login to Dashboard" → `/login`
+- [ ] Homepage footer "Login" → `/login`
+- [ ] Homepage footer "Dashboard" → `/login`
+- [ ] `/login` shows login form (no flash)
+- [ ] `/register` shows register form (no flash)
+- [ ] No hydration errors in console
+
+### Logged-In State
+
+- [ ] Homepage redirects to `/dashboard` (or shows "Dashboard" button)
+- [ ] `/login` shows loading → redirect to `/dashboard` (no flash)
+- [ ] `/register` shows loading → redirect to `/dashboard` (no flash)
+- [ ] Back button doesn't return to login page
+- [ ] All redirects use `router.replace()`
+
+### Edge Cases
+
+- [ ] Network offline → login page shows (fails safely)
+- [ ] Multiple tabs → consistent auth state
+- [ ] Sign in → homepage updates on refresh
+- [ ] Sign out → homepage updates immediately
+- [ ] Loading spinner is brief (<200ms)
+
+---
+
 ## Next Steps
 
 After successful testing:

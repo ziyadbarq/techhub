@@ -152,6 +152,50 @@ All job handlers registered in `worker.ts` and ready to process
   - `LICENSE_ENTITLEMENTS_*`
   - `LICENSE_ALLOCATIONS_*`
 
+## Marketing Pages & Auth-Aware Navigation ✅
+
+### Public Pages
+
+- **Marketing Homepage** (`/`) - Public landing page
+  - Auth-aware navigation components
+  - Smart CTAs based on login state
+  - Redirects logged-in users to dashboard
+- **Login Page** (`/login`) - Email/password and Microsoft OAuth
+  - Loading state prevents flash
+  - Redirects logged-in users to dashboard
+- **Register Page** (`/register`) - User registration
+  - Loading state prevents flash
+  - Redirects logged-in users to dashboard
+
+### Components
+
+- **MarketingNav** (`src/components/marketing/marketing-nav.tsx`)
+  - Shows "Enter" (logged out) or "Dashboard" (logged in)
+  - Uses `authClient.getSession()` to avoid SSR issues
+
+- **HeroSection** (`src/components/marketing/hero-section.tsx`)
+  - Shows "Login to Dashboard" (logged out) or "Go to Dashboard" (logged in)
+  - Dynamic icon: LogIn vs LayoutDashboard
+
+- **MarketingFooter** (`src/components/marketing/marketing-footer.tsx`)
+  - "Login" and "Dashboard" links adapt to auth state
+
+### Auth Protection Layers
+
+1. **Proxy Layer** (`proxy.ts`) - Server-side redirect
+2. **Page Level** - Client-side auth check with loading state
+3. **Component Level** - Smart navigation components
+
+### Technical Implementation
+
+- Uses `authClient.getSession()` API (not `useSession()` hook)
+- Prevents SSR "Cannot read properties of null" errors
+- Loading states prevent flash of content
+- Uses `router.replace()` for seamless redirects
+- No hydration mismatches
+
+**Documentation**: [MARKETING_PAGES.md](guides/MARKETING_PAGES.md)
+
 ## What's Missing
 
 See [TODO.md](TODO.md) for implementation priorities.

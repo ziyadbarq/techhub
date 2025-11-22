@@ -14,15 +14,49 @@ import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { BRANDING, getCopyrightWithTagline } from "@/config/branding";
+import { authClient } from "@/lib/auth/client";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
-  }, []);
+
+    // Redirect to dashboard if already logged in
+    authClient
+      .getSession()
+      .then((session) => {
+        if (session?.data?.user) {
+          router.replace("/dashboard");
+        } else {
+          // User not logged in, show the register page
+          setIsCheckingAuth(false);
+        }
+      })
+      .catch(() => {
+        // Error checking session, show register page
+        setIsCheckingAuth(false);
+      });
+  }, [router]);
+
+  // Show loading spinner while checking auth
+  if (isCheckingAuth) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="space-y-4 text-center">
+          <Shield className="text-barq-yellow mx-auto h-12 w-12 animate-pulse" />
+          <p className="text-muted-foreground text-sm">
+            Checking authentication...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex min-h-screen">

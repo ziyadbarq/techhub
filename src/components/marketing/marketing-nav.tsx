@@ -6,6 +6,7 @@ import { Logo } from "@/components/ui/logo";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { authClient } from "@/lib/auth/client";
 
 /**
  * Marketing Navigation Component
@@ -14,11 +15,25 @@ import { useEffect, useState } from "react";
 export function MarketingNav() {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Only show theme-dependent UI after hydration to avoid mismatch
+  // Check session after mount to avoid SSR issues with better-auth
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
+
+    // Get session using better-auth client API
+    authClient
+      .getSession()
+      .then((session) => {
+        setIsLoggedIn(!!session?.data?.user);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsLoggedIn(false);
+        setIsLoading(false);
+      });
   }, []);
 
   return (
@@ -54,12 +69,15 @@ export function MarketingNav() {
             <span className="sr-only">Toggle theme</span>
           </Button>
 
-          {/* Enter Button */}
+          {/* Enter/Dashboard Button */}
           <Button
             asChild
             className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
+            disabled={isLoading}
           >
-            <Link href="/login">Enter</Link>
+            <Link href={isLoggedIn ? "/dashboard" : "/login"}>
+              {isLoading ? "..." : isLoggedIn ? "Dashboard" : "Enter"}
+            </Link>
           </Button>
         </div>
       </div>
