@@ -16,9 +16,9 @@ export interface ServiceAssetWithAsset extends ServiceAsset {
   asset: {
     id: string;
     assetTag: string;
-    name: string | null;
-    status: string;
-    categoryId: string;
+    assetCategoryId: string;
+    assetModelId: string | null;
+    vendorId: string | null;
   } | null;
 }
 
@@ -48,9 +48,9 @@ export class GetServiceAssetsUseCase {
           select: {
             id: true,
             assetTag: true,
-            name: true,
-            status: true,
-            categoryId: true,
+            assetCategoryId: true,
+            assetModelId: true,
+            vendorId: true,
           },
         },
       },

@@ -13,11 +13,10 @@ export interface GetServiceOwnersRequest {
 export interface ServiceOwnershipWithPerson extends ServiceOwnership {
   person: {
     id: string;
-    code: string;
     firstName: string;
     lastName: string;
     email: string | null;
-    jobTitle: string | null;
+    title: string | null;
   };
 }
 
@@ -43,11 +42,10 @@ export class GetServiceOwnersUseCase {
         person: {
           select: {
             id: true,
-            code: true,
             firstName: true,
             lastName: true,
             email: true,
-            jobTitle: true,
+            title: true,
           },
         },
       },
