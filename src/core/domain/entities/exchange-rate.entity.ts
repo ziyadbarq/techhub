@@ -143,8 +143,7 @@ export class ExchangeRate {
     }
 
     // Validate precision (max 6 decimal places)
-    const decimalPlaces = (rate.toString().split(".")[1] || "").length;
-    if (decimalPlaces > 6) {
+    if (Math.abs(rate * 1_000_000 - Math.floor(rate * 1_000_000)) > 0) {
       throw new Error("Exchange rate cannot have more than 6 decimal places");
     }
   }
