@@ -292,6 +292,93 @@ export async function assignRoleToUserAction(
 }
 
 /**
+ * Bulk assign roles to multiple users
+ */
+export async function bulkAssignRolesToUsersAction(data: {
+  userIds: string[];
+  roleIds: string[];
+  expiresAt?: Date;
+}): Promise<ActionResponse<{ assigned: number }>> {
+  try {
+    // Check permission
+    const { user } = await getSession();
+    if (!user) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    const container = getContainer();
+    const checkPermission = container.get<CheckPermissionUseCase>(
+      DI_TOKENS.CheckPermissionUseCase,
+    );
+
+    const hasPermission = await checkPermission.execute({
+      userId: user.id,
+      permission: PERMISSIONS.USERS_MANAGE,
+    });
+
+    if (!hasPermission) {
+      return { success: false, error: "Insufficient permissions" };
+    }
+
+    // Get request metadata
+    const headersList = await headers();
+    const ipAddress = headersList.get("x-forwarded-for") || "unknown";
+    const userAgent = headersList.get("user-agent") || "unknown";
+
+    // Get use case from DI container
+    const assignRoleToUser = container.get<AssignRoleToUserUseCase>(
+      DI_TOKENS.AssignRoleToUserUseCase,
+    );
+
+    let assignedCount = 0;
+    const errors: string[] = [];
+
+    // Assign each role to each user
+    for (const userId of data.userIds) {
+      for (const roleId of data.roleIds) {
+        try {
+          await assignRoleToUser.execute({
+            userId,
+            roleId,
+            expiresAt: data.expiresAt,
+            assignedBy: user.id,
+            ipAddress,
+            userAgent,
+          });
+          assignedCount++;
+        } catch (error) {
+          // Log error but continue with other assignments
+          errors.push(
+            `Failed to assign role ${roleId} to user ${userId}: ${error instanceof Error ? error.message : "Unknown error"}`,
+          );
+        }
+      }
+    }
+
+    // Revalidate users list
+    revalidatePath("/admin/users");
+
+    if (errors.length > 0) {
+      return {
+        success: false,
+        error: `Partially completed: ${assignedCount} assignments succeeded, ${errors.length} failed. First error: ${errors[0]}`,
+      };
+    }
+
+    return {
+      success: true,
+      data: { assigned: assignedCount },
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "bulkAssignRolesToUsersAction" },
+      "Failed to bulk assign roles",
+    );
+  }
+}
+
+/**
  * Revoke a role from a user
  */
 export async function revokeRoleFromUserAction(
