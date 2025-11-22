@@ -4,24 +4,9 @@
  */
 
 import { z } from "zod";
+import { CURRENCY_CODES } from "@/lib/currencies.config";
 
-const SUPPORTED_CURRENCIES = [
-  "SAR",
-  "USD",
-  "EUR",
-  "GBP",
-  "JPY",
-  "AUD",
-  "CAD",
-  "CHF",
-  "CNY",
-  "INR",
-  "AED",
-  "KWD",
-  "BHD",
-  "OMR",
-  "QAR",
-] as const;
+const SUPPORTED_CURRENCIES = CURRENCY_CODES;
 
 export const CreateExchangeRateSchema = z.object({
   currency: z
