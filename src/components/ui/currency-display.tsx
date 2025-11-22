@@ -116,7 +116,7 @@ export function CurrencyDisplay({
       showCode,
     });
   } else if (mode === "dual") {
-    displayText = formatDualCurrency(amount, currency, sarAmount);
+    displayText = formatDualCurrency(amount, currency, sarAmount, { showSymbol, showCode });
   } else {
     // mode === "single"
     displayText = formatCurrency(amount, currency, {
