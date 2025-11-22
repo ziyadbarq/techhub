@@ -506,9 +506,9 @@ const NestedNavItem = React.memo(function NestedNavItem({
         "relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
         // Default state
         "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-        // Active state - bold yellow accent with left border
+        // Active state - accent background with yellow border
         isActive &&
-          "bg-barq-yellow/10 text-barq-yellow border-barq-yellow dark:bg-barq-yellow/20 border-l-3 font-semibold",
+          "bg-sidebar-accent text-sidebar-accent-foreground border-barq-yellow border-l-3 font-semibold",
         // Section state - subtle highlight
         isSection && !isActive && "bg-sidebar-accent/50",
         // Collapsed state centering
@@ -522,10 +522,7 @@ const NestedNavItem = React.memo(function NestedNavItem({
     >
       {/* Icon */}
       <Icon
-        className={cn(
-          "h-5 w-5 flex-shrink-0 transition-colors",
-          isActive && "text-barq-yellow",
-        )}
+        className="h-5 w-5 flex-shrink-0 transition-colors"
         aria-hidden="true"
       />
 

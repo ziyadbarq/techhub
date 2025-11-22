@@ -12,9 +12,16 @@ import { Shield, Users, Lock, ShieldCheck, Moon, Sun } from "lucide-react";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 export default function RegisterPage() {
   const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
 
   return (
     <div className="relative flex min-h-screen">
@@ -25,8 +32,12 @@ export default function RegisterPage() {
           size="icon"
           onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
           className="hover:bg-accent h-9 w-9 transition-colors"
-          aria-label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
-          aria-pressed={resolvedTheme === "dark"}
+          aria-label={
+            mounted
+              ? `Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`
+              : "Toggle theme"
+          }
+          aria-pressed={mounted ? resolvedTheme === "dark" : undefined}
         >
           <Sun className="h-5 w-5 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
           <Moon className="absolute h-5 w-5 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />

@@ -12,12 +12,18 @@ import { Logo } from "@/components/ui/logo";
 import { Shield, Lock, ShieldCheck, FileCheck, Moon, Sun } from "lucide-react";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { Separator } from "@/components/ui/separator";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 
 export default function LoginPage() {
   const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
 
   const handleMicrosoftLogin = async () => {
     await authClient.signIn.social({
@@ -35,8 +41,12 @@ export default function LoginPage() {
           size="icon"
           onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
           className="hover:bg-accent h-9 w-9 transition-colors"
-          aria-label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
-          aria-pressed={resolvedTheme === "dark"}
+          aria-label={
+            mounted
+              ? `Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`
+              : "Toggle theme"
+          }
+          aria-pressed={mounted ? resolvedTheme === "dark" : undefined}
         >
           <Sun className="h-5 w-5 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
           <Moon className="absolute h-5 w-5 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
