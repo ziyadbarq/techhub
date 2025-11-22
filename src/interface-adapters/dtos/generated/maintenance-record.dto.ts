@@ -34,6 +34,13 @@ export const CreateMaintenanceRecordSchema = z.object({
     .optional()
     .nullable(),
   cost: currencyField("Maintenance cost"),
+  currency: z
+    .string()
+    .length(3, "Currency code must be exactly 3 letters")
+    .regex(/^[A-Z]{3}$/, "Currency code must contain only uppercase letters")
+    .default("SAR")
+    .optional()
+    .nullable(),
   partsUsed: z.array(z.string()).optional().nullable(),
   nextMaintenanceDate: dateSchema.optional().nullable(),
 });
@@ -59,6 +66,12 @@ export const UpdateMaintenanceRecordSchema = z.object({
     .optional()
     .nullable(),
   cost: currencyField("Maintenance cost"),
+  currency: z
+    .string()
+    .length(3, "Currency code must be exactly 3 letters")
+    .regex(/^[A-Z]{3}$/, "Currency code must contain only uppercase letters")
+    .optional()
+    .nullable(),
   partsUsed: z.array(z.string()).optional().nullable(),
   nextMaintenanceDate: dateSchema.optional().nullable(),
 });
@@ -89,6 +102,12 @@ export const CompleteMaintenanceSchema = z.object({
     .optional()
     .nullable(),
   cost: currencyField("Maintenance cost"),
+  currency: z
+    .string()
+    .length(3, "Currency code must be exactly 3 letters")
+    .regex(/^[A-Z]{3}$/, "Currency code must contain only uppercase letters")
+    .optional()
+    .nullable(),
   partsUsed: z.array(z.string()).optional().nullable(),
   nextMaintenanceDate: dateSchema.optional().nullable(),
 });

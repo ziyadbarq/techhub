@@ -1,0 +1,38 @@
+/**
+ * Delete Exchange Rate Use Case
+ *
+ * Business logic for deleting (deactivating) an exchange rate.
+ */
+
+import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { IExchangeRateRepository } from "@/core/repositories/exchange-rate.repository.interface";
+
+@injectable()
+export class DeleteExchangeRateUseCase {
+  constructor(
+    @inject(DI_TOKENS.IExchangeRateRepository)
+    private readonly exchangeRateRepository: IExchangeRateRepository,
+  ) {}
+
+  /**
+   * Execute delete exchange rate use case
+   *
+   * @param id - Exchange rate ID
+   * @throws Error if exchange rate not found
+   */
+  async execute(id: string): Promise<void> {
+    const exchangeRate = await this.exchangeRateRepository.findById(id);
+
+    if (!exchangeRate) {
+      throw new Error(`Exchange rate with ID "${id}" not found`);
+    }
+
+    // Check if this is the SAR rate - cannot delete
+    if (exchangeRate.isSAR()) {
+      throw new Error("Cannot delete the SAR base rate");
+    }
+
+    await this.exchangeRateRepository.delete(id);
+  }
+}
