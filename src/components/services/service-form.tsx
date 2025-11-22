@@ -109,10 +109,24 @@ export function ServiceForm({
   const onSubmit = async (data: CreateServiceDTO) => {
     setIsSubmitting(true);
     try {
+      // Normalize empty strings to undefined for optional fields
+      const normalizedData = {
+        ...data,
+        deploymentDate: data.deploymentDate || undefined,
+        lastPatchDate: data.lastPatchDate || undefined,
+        plannedDecommissionDate: data.plannedDecommissionDate || undefined,
+        vendorId: data.vendorId || undefined,
+        businessProcessId: data.businessProcessId || undefined,
+        description: data.description || undefined,
+        businessPurpose: data.businessPurpose || undefined,
+        gitlabRepoUrl: data.gitlabRepoUrl || undefined,
+        complianceNotes: data.complianceNotes || undefined,
+      };
+
       const result =
         mode === "edit" && service
-          ? await updateServiceAction(service.id, data)
-          : await createServiceAction(data);
+          ? await updateServiceAction(service.id, normalizedData)
+          : await createServiceAction(normalizedData);
 
       if (result.success) {
         toast.success(

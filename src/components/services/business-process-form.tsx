@@ -85,9 +85,16 @@ export function BusinessProcessForm({
 
   const onSubmit = async (data: CreateBusinessProcessDTO) => {
     try {
+      // Normalize empty strings to undefined for optional fields
+      const normalizedData = {
+        ...data,
+        description: data.description || undefined,
+        category: data.category || undefined,
+      };
+
       const result = isEditing
-        ? await updateBusinessProcessAction(businessProcess.id, data)
-        : await createBusinessProcessAction(data);
+        ? await updateBusinessProcessAction(businessProcess.id, normalizedData)
+        : await createBusinessProcessAction(normalizedData);
 
       if (result.success) {
         toast.success(
