@@ -192,10 +192,10 @@ export function detectRoleConflicts(roleNames: string[]): {
  * @returns True if roles conflict
  */
 export function rolesConflict(role1: string, role2: string): boolean {
-  return (
-    ROLE_CONFLICTS[role1]?.includes(role2) ||
-    ROLE_CONFLICTS[role2]?.includes(role1)
-  );
+  const conflictsFromRole1 = ROLE_CONFLICTS[role1]?.includes(role2);
+  const conflictsFromRole2 = ROLE_CONFLICTS[role2]?.includes(role1);
+
+  return Boolean(conflictsFromRole1 || conflictsFromRole2);
 }
 
 /**
