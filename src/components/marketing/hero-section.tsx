@@ -4,7 +4,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, LogIn, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Logo } from "@/components/ui/logo";
 
 /**
  * Hero Section Component
@@ -19,49 +18,37 @@ export function HeroSection() {
       {/* Content */}
       <div className="relative container mx-auto px-4 md:px-6">
         <div className="flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center py-16 text-center md:py-24">
-          {/* Logo */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="mb-8"
-          >
-            <Logo className="h-16 w-auto md:h-20" />
-          </motion.div>
-
           {/* Tagline */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
+            transition={{ duration: 0.6 }}
             className="mb-6 max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
           >
-            Intelligent Asset Management{" "}
             <span className="from-barq-yellow to-barq-yellow/70 bg-gradient-to-r bg-clip-text text-transparent">
-              for Modern Enterprises
-            </span>
+              SAMA-Ready
+            </span>{" "}
+            IT Asset Management for Financial Services
           </motion.h1>
 
           {/* Subheading */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="text-muted-foreground mb-10 max-w-2xl text-lg sm:text-xl md:text-2xl"
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="text-muted-foreground mb-10 max-w-3xl text-lg sm:text-xl md:text-2xl"
           >
-            Keep asset and inventory data clean, connected, and auditable. Built
-            with enterprise-grade architecture for{" "}
-            <span className="text-foreground font-semibold">
-              Barq's operational excellence
+            Track everything. Automate workflows. Pass audits.{" "}
+            <span className="text-foreground font-semibold whitespace-nowrap">
+              Built for SAMA compliance.
             </span>
-            .
           </motion.p>
 
           {/* CTA Buttons */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
             className="flex flex-col gap-4 sm:flex-row"
           >
             <Button
@@ -86,7 +73,7 @@ export function HeroSection() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 0.6 }}
+            transition={{ delay: 0.8, duration: 0.6 }}
             className="text-muted-foreground mt-16 flex flex-col items-center gap-2 text-sm"
           >
             <span>Scroll to explore features</span>

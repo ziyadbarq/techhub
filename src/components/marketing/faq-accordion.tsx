@@ -9,44 +9,64 @@ import {
 
 const faqs = [
   {
+    question: "Is Barq Assets compliant with SAMA regulations?",
+    answer:
+      "Yes. Immutable audit trails, disposal certificates, and exportable compliance reports. All changes logged with who, what, when, and why.",
+  },
+  {
+    question: "What is the CMDB and why do we need it?",
+    answer:
+      "Configuration Management Database tracks infrastructure dependencies. Shows which systems depend on each other for impact analysis during incidents and changes.",
+  },
+  {
+    question: "How does the asset disposal process work?",
+    answer:
+      "Workflow: PENDING → APPROVED → SANITIZED → COMPLETED. Multiple approvers, sanitization checklists, and auto-generated certificates.",
+  },
+  {
+    question: "Can I reserve assets for future use?",
+    answer:
+      "Yes. Reserve for specific date/time ranges with automatic conflict detection. Availability checker shows free assets.",
+  },
+  {
+    question: "What are Asset Kits?",
+    answer:
+      "Predefined bundles like 'New Hire Kit' (laptop + accessories). Checkout entire kits, track item status, process partial returns.",
+  },
+  {
+    question: "How does license management work?",
+    answer:
+      "Track entitlements and allocations to persons, CIs, or assets. Real-time available vs. allocated quantities prevent over-purchasing.",
+  },
+  {
+    question: "Can I track vendor contracts?",
+    answer:
+      "Yes. Create contract types, link to assets/CIs/licenses, track renewals, get alerts 30 days before expiration.",
+  },
+  {
+    question: "How does MDM integration work?",
+    answer:
+      "Auto-sync devices from Intune/MDM platforms. Real-time compliance status, automated asset updates, device health monitoring.",
+  },
+  {
     question: "Who can access Barq Assets?",
     answer:
-      "Barq Assets is available to all Barq employees with appropriate permissions. Access levels are configured based on your role and department within the organization.",
+      "All Barq employees with appropriate role-based permissions. Contact Technology Operations or your manager for access.",
   },
   {
-    question: "How do I request access or additional permissions?",
+    question: "Can I customize asset fields?",
     answer:
-      "Contact the Technology Operations team or your direct manager to request access. They will evaluate your needs and grant the appropriate permissions based on your role requirements.",
+      "Yes. Add custom fields per category with validation rules, multiple data types, and UI grouping—no code changes needed.",
   },
   {
-    question: "Can I track software licenses and contracts?",
+    question: "How do webhooks work?",
     answer:
-      "Yes, Barq Assets includes comprehensive license and contract management capabilities. You can track software licenses, vendor contracts, SLAs, and link them to assets and vendors.",
+      "Configure webhooks for asset lifecycle events. Real-time notifications to external systems with custom payload formatting.",
   },
   {
-    question: "How does the warranty tracking work?",
+    question: "Is the system secure?",
     answer:
-      "The system automatically tracks warranty end dates for all assets and provides expiration alerts. You can view active, expiring, and expired warranties, and receive notifications 30 days before expiration.",
-  },
-  {
-    question: "Is my data secure and auditable?",
-    answer:
-      "Absolutely. Barq Assets features enterprise-grade role-based access control (RBAC), complete audit trails tracking all changes, and comprehensive logging for compliance and accountability.",
-  },
-  {
-    question: "How do I report issues or request features?",
-    answer:
-      "You can submit issues, bug reports, or feature requests through the internal helpdesk system or contact the Technology Operations team directly. We continuously improve the platform based on user feedback.",
-  },
-  {
-    question: "Can I customize asset categories and fields?",
-    answer:
-      "Yes, administrators can create custom asset categories and define custom fields using the Field Definitions feature. This allows the system to adapt to your specific asset tracking needs without code changes.",
-  },
-  {
-    question: "How do I transfer assets between locations or employees?",
-    answer:
-      "Use the Stock Movements feature to record transfers. You can transfer assets between stock locations (warehouses) or reassign them to different employees, with full audit trail tracking.",
+      "Yes. Granular RBAC, temporal role assignments, immutable audit trails, and comprehensive logging for compliance.",
   },
 ];
 

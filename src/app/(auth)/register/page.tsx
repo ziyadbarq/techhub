@@ -3,56 +3,162 @@
 /**
  * Registration Page
  * User registration with email and password
+ * Split-screen design matching login page
  */
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { UserPlus, Lock, Key } from "lucide-react";
+import { Logo } from "@/components/ui/logo";
+import { Button } from "@/components/ui/button";
+import { Shield, Users, Lock, ShieldCheck, Moon, Sun } from "lucide-react";
 import { RegisterForm } from "@/components/auth/RegisterForm";
+import Link from "next/link";
+import { useTheme } from "next-themes";
 
 export default function RegisterPage() {
+  const { resolvedTheme, setTheme } = useTheme();
+
   return (
-    <div className="from-background to-muted flex min-h-screen items-center justify-center bg-gradient-to-br p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
-          <div className="bg-primary/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full">
-            <UserPlus className="text-primary h-8 w-8" />
-          </div>
-          <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
-          <CardDescription>
-            Sign up to get started with your account and manage your tasks
-          </CardDescription>
-        </CardHeader>
+    <div className="relative flex min-h-screen">
+      {/* Theme Toggle - Top Right */}
+      <div className="absolute top-4 right-4 z-50">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+          className="hover:bg-accent h-9 w-9 transition-colors"
+          aria-label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
+          aria-pressed={resolvedTheme === "dark"}
+        >
+          <Sun className="h-5 w-5 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+          <Moon className="absolute h-5 w-5 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+      </div>
+      {/* Left Side - Branding */}
+      <div className="bg-muted/30 dark:from-barq-yellow/10 dark:via-background dark:to-barq-light-blue/10 relative hidden flex-1 flex-col justify-between border-r p-12 lg:flex dark:border-r-0 dark:bg-gradient-to-br">
+        {/* Background Pattern */}
+        <div className="bg-grid-pattern absolute inset-0 opacity-5" />
 
-        <CardContent className="space-y-6">
-          {/* Registration Form */}
-          <RegisterForm />
+        {/* Logo */}
+        <div className="relative z-10">
+          <Link
+            href="/"
+            className="inline-block transition-opacity hover:opacity-80"
+          >
+            <Logo className="h-10 w-auto" />
+          </Link>
+        </div>
 
-          {/* Security Features */}
-          <div className="mt-8 space-y-4 border-t pt-6">
-            <p className="text-muted-foreground text-center text-sm font-medium">
-              Secured with
+        {/* Content */}
+        <div className="relative z-10 space-y-8">
+          <div>
+            <h1 className="mb-4 text-4xl font-bold">
+              Join the
+              <br />
+              <span className="from-barq-yellow to-barq-yellow/70 bg-gradient-to-r bg-clip-text text-transparent">
+                Barq Assets
+              </span>{" "}
+              Team
+            </h1>
+            <p className="text-muted-foreground max-w-lg text-lg">
+              Get access to enterprise-grade ITAM & CMDB built for
+              SAMA-regulated financial services.
             </p>
+          </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col items-center space-y-2 rounded-lg border p-4 text-center">
-                <Lock className="text-muted-foreground h-6 w-6" />
-                <p className="text-xs font-medium">Encrypted</p>
+          {/* Features */}
+          <div className="space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="bg-barq-yellow/10 text-barq-yellow flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg">
+                <Users className="h-5 w-5" />
               </div>
+              <div>
+                <p className="font-semibold">Role-Based Access</p>
+                <p className="text-muted-foreground text-sm">
+                  Granular permissions with temporal role assignments
+                </p>
+              </div>
+            </div>
 
-              <div className="flex flex-col items-center space-y-2 rounded-lg border p-4 text-center">
-                <Key className="text-muted-foreground h-6 w-6" />
-                <p className="text-xs font-medium">Secure Storage</p>
+            <div className="flex items-start gap-3">
+              <div className="bg-barq-yellow/10 text-barq-yellow flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg">
+                <ShieldCheck className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="font-semibold">Audit Trail</p>
+                <p className="text-muted-foreground text-sm">
+                  100% coverage with immutable change logs
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <div className="bg-barq-yellow/10 text-barq-yellow flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg">
+                <Lock className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="font-semibold">Encrypted & Secure</p>
+                <p className="text-muted-foreground text-sm">
+                  AES-256-GCM encryption for all sensitive data
+                </p>
               </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        {/* Footer */}
+        <div className="relative z-10">
+          <p className="text-muted-foreground text-sm">
+            © {new Date().getFullYear()} Barq. Built for Technology Operations.
+          </p>
+        </div>
+      </div>
+
+      {/* Right Side - Registration Form */}
+      <div className="flex flex-1 items-center justify-center p-8">
+        <div className="w-full max-w-md space-y-8">
+          {/* Mobile Logo */}
+          <div className="flex justify-center lg:hidden">
+            <Link
+              href="/"
+              className="inline-block transition-opacity hover:opacity-80"
+            >
+              <Logo className="h-10 w-auto" />
+            </Link>
+          </div>
+
+          {/* Header */}
+          <div className="space-y-2 text-center">
+            <h2 className="text-3xl font-bold tracking-tight">
+              Create Account
+            </h2>
+            <p className="text-muted-foreground">
+              Join Barq Assets for SAMA-compliant ITAM
+            </p>
+          </div>
+
+          {/* Registration Form */}
+          <div className="space-y-6">
+            <RegisterForm />
+
+            {/* Footer */}
+            <div className="space-y-4 pt-4">
+              <div className="bg-muted/50 rounded-lg p-4">
+                <div className="flex items-center gap-2 text-sm">
+                  <Shield className="text-barq-yellow h-4 w-4 flex-shrink-0" />
+                  <p className="text-muted-foreground text-xs">
+                    Internal use only. Contact Technology Operations for access
+                    approval.
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-muted-foreground text-center text-xs">
+                Need help? Contact Technology Operations
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

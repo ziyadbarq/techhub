@@ -194,16 +194,21 @@ export function RegisterForm() {
         <div className="flex items-center justify-center">
           <Link
             href="/login"
-            className="text-primary hover:text-primary/80 text-sm underline-offset-4 hover:underline"
+            className="text-barq-yellow hover:text-barq-yellow/80 text-sm font-medium underline-offset-4 hover:underline"
           >
             Already have an account? Sign in
           </Link>
         </div>
 
-        <Button type="submit" className="w-full" disabled={isLoading}>
+        <Button
+          type="submit"
+          className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90 w-full"
+          size="lg"
+          disabled={isLoading}
+        >
           {isLoading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
               Creating account...
             </>
           ) : (

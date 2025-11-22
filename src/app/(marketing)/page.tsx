@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { MarketingNav } from "@/components/marketing/marketing-nav";
 import { HeroSection } from "@/components/marketing/hero-section";
 import { SectionContainer } from "@/components/marketing/section-container";
 import { FeatureGrid } from "@/components/marketing/feature-grid";
@@ -6,11 +7,12 @@ import { TechStackBadges } from "@/components/marketing/tech-stack-badges";
 import { UseCases } from "@/components/marketing/use-case-card";
 import { FAQAccordion } from "@/components/marketing/faq-accordion";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
+import { ValuePropositionSection } from "@/components/marketing/value-proposition-section";
 
 export const metadata: Metadata = {
-  title: "Barq Assets | Enterprise CMDB & ITAM System",
+  title: "Barq Assets | SAMA-Ready CMDB & ITAM System",
   description:
-    "Complete asset and inventory management for Barq. Track devices, manage warranties, control inventory, and maintain full audit trails with enterprise-grade architecture.",
+    "Enterprise IT Asset Management and CMDB built for SAMA-regulated financial services. Track assets, manage dependencies, ensure compliance, and pass audits with confidence. Built by Barq for Barq.",
 };
 
 /**
@@ -21,44 +23,51 @@ export const metadata: Metadata = {
 export default function LandingPage() {
   return (
     <div className="flex min-h-screen flex-col">
+      {/* Navigation */}
+      <MarketingNav />
+
       {/* Hero Section */}
       <HeroSection />
 
+      {/* Value Proposition Section */}
+      <SectionContainer id="value">
+        <ValuePropositionSection />
+      </SectionContainer>
+
       {/* Key Features Section */}
-      <SectionContainer id="features">
+      <SectionContainer id="features" variant="alternate">
         <div className="mb-12 text-center">
           <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-            Comprehensive Asset Management
+            Platform Capabilities
           </h2>
-          <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
-            Everything you need to track, manage, and optimize your technology
-            assets in one powerful platform
+          <p className="text-muted-foreground mx-auto max-w-3xl text-lg">
+            16 integrated modules: Assets, CMDB, Disposals, Kits, Reservations,
+            Contracts, Licenses, MDM, Webhooks.
           </p>
         </div>
         <FeatureGrid />
       </SectionContainer>
 
       {/* Use Cases Section */}
-      <SectionContainer id="use-cases" variant="alternate">
+      <SectionContainer id="use-cases">
         <div className="mb-12 text-center">
           <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
-            Built for Every Team at Barq
+            Team Workflows
           </h2>
-          <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
-            From technology operations to finance, Barq Assets empowers every
-            department with the tools they need
+          <p className="text-muted-foreground mx-auto max-w-3xl text-lg">
+            Technology, Compliance, Finance, Security, Facilities, HR.
           </p>
         </div>
         <UseCases />
       </SectionContainer>
 
       {/* Tech Stack Section */}
-      <SectionContainer id="technology">
+      <SectionContainer id="technology" variant="alternate">
         <TechStackBadges />
       </SectionContainer>
 
       {/* FAQ Section */}
-      <SectionContainer id="faq" variant="alternate">
+      <SectionContainer id="faq">
         <FAQAccordion />
       </SectionContainer>
 

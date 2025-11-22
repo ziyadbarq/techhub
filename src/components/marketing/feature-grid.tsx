@@ -4,12 +4,20 @@ import type { LucideIcon } from "lucide-react";
 import {
   Package,
   Warehouse,
-  Building2,
   ShieldCheck,
   Workflow,
   Lock,
   Wrench,
   FileText,
+  Trash2,
+  Network,
+  FileSignature,
+  PackageCheck,
+  CalendarClock,
+  Key,
+  Settings,
+  Webhook,
+  RefreshCw,
 } from "lucide-react";
 import { FeatureCard } from "./feature-card";
 
@@ -21,104 +29,197 @@ export interface Feature {
 }
 
 const features: Feature[] = [
+  // Compliance & Governance
+  {
+    icon: Trash2,
+    title: "Secure Asset Disposals",
+    description:
+      "Multi-step approval workflow with sanitization tracking and certificates.",
+    features: [
+      "Workflow: PENDING → APPROVED → SANITIZED → COMPLETED",
+      "Data sanitization checklists",
+      "Auto-generated disposal certificates",
+      "Multiple approvers support",
+    ],
+  },
+  {
+    icon: Network,
+    title: "CMDB & Dependencies",
+    description: "Map infrastructure relationships for impact analysis.",
+    features: [
+      "Configuration Items with CI classes",
+      "Relationship types (DEPENDS_ON, RUNS_ON, CONNECTED_TO)",
+      "Impact analysis for changes",
+      "Active/inactive relationship states",
+    ],
+  },
+  {
+    icon: FileSignature,
+    title: "Contract Management",
+    description: "Track vendor agreements and renewal dates.",
+    features: [
+      "Customizable contract types",
+      "Link to Assets, CIs, or Licenses",
+      "Renewal alerts",
+      "Financial value tracking",
+    ],
+  },
+  {
+    icon: Key,
+    title: "License Management",
+    description: "Track software entitlements and allocations.",
+    features: [
+      "Metrics: per_device, per_user, per_core, per_vm",
+      "Purchased quantities and validity",
+      "Allocate to Persons, CIs, or Assets",
+      "Available vs. allocated tracking",
+    ],
+  },
+
+  // Operational Excellence
   {
     icon: Package,
-    title: "Complete Asset Tracking",
-    description:
-      "Track devices from procurement to disposal with full lifecycle visibility.",
+    title: "Asset Tracking",
+    description: "Complete lifecycle from procurement to retirement.",
     features: [
-      "Asset tags, serial numbers, and purchase details",
-      "Depreciation and financial tracking",
-      "Warranty management with expiration alerts",
-      "Complete asset history and audit trail",
+      "Tags, serials, purchase details",
+      "Assignment history",
+      "Depreciation and warranty",
+      "Maintenance and disposal integration",
+    ],
+  },
+  {
+    icon: PackageCheck,
+    title: "Asset Kits",
+    description: "Predefined bundles for consistent deployments.",
+    features: [
+      "Kit templates (New Hire, Conference Room)",
+      "Checkout and return workflows",
+      "Item status tracking",
+      "Partial return support",
+    ],
+  },
+  {
+    icon: CalendarClock,
+    title: "Asset Reservations",
+    description: "Future booking with conflict detection.",
+    features: [
+      "Date/time range reservations",
+      "Conflict detection",
+      "Availability checker",
+      "Calendar view",
     ],
   },
   {
     icon: Warehouse,
     title: "Inventory Management",
-    description:
-      "Real-time visibility into stock levels, locations, and movements.",
+    description: "Real-time stock visibility across locations.",
     features: [
-      "Stock locations and warehouses",
-      "Stock movements (IN/OUT/TRANSFER/ADJUSTMENT)",
-      "Real-time inventory visibility",
-      "Audit trail for every transaction",
+      "Hierarchical stock locations",
+      "Movement types: IN, OUT, TRANSFER, ADJUSTMENT",
+      "Reason codes and references",
+      "Real-time stock levels",
     ],
   },
   {
-    icon: Building2,
-    title: "Organization & Locations",
-    description:
-      "Manage hierarchical organizational structure and geographical locations.",
+    icon: Settings,
+    title: "Maintenance System",
+    description: "Preventive schedules and corrective maintenance tracking.",
     features: [
-      "Hierarchical structure (Company → Department → Team)",
-      "Geographical locations (Country → Building → Room)",
-      "Assignment tracking (who has what, where)",
-      "Multi-dimensional asset organization",
+      "Recurring schedules (daily, weekly, monthly, quarterly, annual)",
+      "Auto-generation of maintenance records",
+      "Priority levels and resolution tracking",
+      "Workflow states with technician assignment",
     ],
   },
   {
-    icon: ShieldCheck,
-    title: "Vendor & Warranty Management",
+    icon: RefreshCw,
+    title: "Live MDM Integration",
     description:
-      "Centralized vendor database with warranty and contract tracking.",
+      "Real-time sync with Intune and MDM for automated laptop and device tracking.",
     features: [
-      "Vendor database (suppliers, manufacturers, service providers)",
-      "Warranty tracking with automated expiration alerts",
-      "Contract management and SLA tracking",
-      "Vendor contact management",
+      "Auto-sync devices from Intune/MDM platforms",
+      "Real-time compliance status and policy enforcement",
+      "Automated asset creation and updates",
+      "Device health monitoring and patch status",
     ],
   },
   {
-    icon: Workflow,
-    title: "Lifecycle Management",
+    icon: Webhook,
+    title: "Webhook Automation",
     description:
-      "Customizable workflows for asset lifecycle states and transitions.",
+      "Event-driven integrations for real-time infrastructure asset updates.",
     features: [
-      "Customizable state machines for asset workflows",
-      "Automated transitions with approval rules",
-      "Status tracking (In Stock, Deployed, Maintenance, Retired)",
-      "Role-based transition permissions",
+      "Configurable webhooks for asset lifecycle events",
+      "Real-time notifications to external systems",
+      "Custom payload formatting and filtering",
+      "Integration with monitoring and ticketing systems",
+    ],
+  },
+
+  // Security & Access
+  {
+    icon: FileText,
+    title: "Audit Trail",
+    description: "Immutable change logs for compliance.",
+    features: [
+      "26+ entity types tracked",
+      "Who, what, when, why documentation",
+      "Exportable reports",
+      "Tamper-proof logs",
     ],
   },
   {
     icon: Lock,
-    title: "Role-Based Access Control",
-    description: "Enterprise-grade security with granular permissions.",
+    title: "RBAC & Permissions",
+    description: "Granular access control with temporal roles.",
     features: [
-      "Granular permissions system",
+      "Levels: VIEW, CREATE, UPDATE, DELETE, MANAGE",
       "Temporal role assignments",
-      "Secure access based on organizational role",
-      "Complete audit trail of access and changes",
+      "Auto-filtered navigation",
+      "Permission inheritance",
     ],
   },
+  {
+    icon: ShieldCheck,
+    title: "Vendor & Warranty",
+    description: "Vendor database with warranty tracking.",
+    features: [
+      "Vendor types and contacts",
+      "30-day expiration alerts",
+      "Link to assets and contracts",
+      "Warranty lifecycle management",
+    ],
+  },
+
+  // Customization
   {
     icon: Wrench,
-    title: "Custom Field Definitions",
-    description: "Extend your data model without writing code.",
+    title: "Custom Fields",
+    description: "Extend schema without code changes.",
     features: [
-      "Dynamic schema extension",
-      "Custom attributes per asset category",
-      "Multiple data types (text, number, date, reference)",
-      "Validation rules and UI grouping",
+      "Data types: text, number, date, boolean, reference",
+      "Validation rules (required, min/max, regex)",
+      "UI grouping and ordering",
+      "Category-specific definitions",
     ],
   },
   {
-    icon: FileText,
-    title: "Full Audit Trail",
-    description: "Complete change history for compliance and accountability.",
+    icon: Workflow,
+    title: "Lifecycle Workflows",
+    description: "Customizable state machines.",
     features: [
-      "Track all changes (who, what, when)",
-      "Compliance-ready reporting",
-      "Detailed change logs",
-      "Exportable audit reports",
+      "Custom states and transitions",
+      "Role-based permissions",
+      "Reason codes",
+      "Visual designer (planned)",
     ],
   },
 ];
 
 /**
  * Feature Grid Component
- * Grid layout displaying all key features
+ * Grid layout displaying all key features organized by category
  */
 export function FeatureGrid() {
   return (

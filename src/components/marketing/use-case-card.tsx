@@ -2,7 +2,14 @@
 
 import type { LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
-import { Laptop, DollarSign, MapPin, Users } from "lucide-react";
+import {
+  Laptop,
+  DollarSign,
+  MapPin,
+  Users,
+  ShieldAlert,
+  FileCheck,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -65,45 +72,67 @@ const TEAM_USE_CASES = [
   {
     icon: Laptop,
     team: "Technology Operations",
-    description: "Streamline device management from warehouse to desk",
+    description: "Device lifecycle and infrastructure",
     examples: [
-      "Track laptops, phones, and equipment assignments",
-      "Manage stock levels and prevent shortages",
-      "Monitor warranty expirations and plan replacements",
-      "Handle employee onboarding and offboarding efficiently",
+      "Stock IN → Deploy → Track assignment",
+      "Map CMDB dependencies for incident response",
+      "Auto-sync devices from Intune/MDM",
+      "Initiate disposal when end-of-life",
+    ],
+  },
+  {
+    icon: FileCheck,
+    team: "Compliance & Audit",
+    description: "SAMA audit readiness",
+    examples: [
+      "Export change logs for SAMA audits",
+      "Review disposal certificates",
+      "Run verification campaigns",
+      "Generate filtered compliance reports",
     ],
   },
   {
     icon: DollarSign,
     team: "Finance & Procurement",
-    description: "Complete financial visibility and compliance",
+    description: "Cost tracking and optimization",
     examples: [
-      "Track asset costs, depreciation, and total value",
-      "Link purchases to vendors and contracts",
-      "Generate compliance reports for audits",
-      "Monitor spending and budget allocation",
+      "Monitor depreciation by category",
+      "Track contract renewals",
+      "Identify unused licenses",
+      "Link POs to assets and vendors",
+    ],
+  },
+  {
+    icon: ShieldAlert,
+    team: "Information Security",
+    description: "Security and risk management",
+    examples: [
+      "Approve disposal requests",
+      "Track patch compliance",
+      "Analyze CMDB impact for changes",
+      "Review access audit trails",
     ],
   },
   {
     icon: MapPin,
-    team: "Facilities Management",
-    description: "Manage physical assets across all locations",
+    team: "Facilities",
+    description: "Physical inventory management",
     examples: [
-      "Track office equipment and furniture",
-      "Monitor asset transfers between offices",
-      "Plan lifecycle replacements and disposals",
-      "Maintain location-based inventory accuracy",
+      "Transfer assets between offices",
+      "Deploy Conference Room Kits",
+      "Track locations (building/floor/room)",
+      "Coordinate disposal pickups",
     ],
   },
   {
     icon: Users,
-    team: "HR & People Operations",
-    description: "Seamless employee asset lifecycle management",
+    team: "HR & People Ops",
+    description: "Employee lifecycle automation",
     examples: [
-      "Onboard new employees with equipment assignments",
-      "Track who has what equipment",
-      "Manage asset returns during offboarding",
-      "Handle role changes and transfers",
+      "Reserve New Hire Kits in advance",
+      "Auto-assign items on day 1",
+      "Trigger returns on resignation",
+      "Track partial returns",
     ],
   },
 ];
@@ -114,7 +143,7 @@ const TEAM_USE_CASES = [
  */
 export function UseCases() {
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {TEAM_USE_CASES.map((useCase, index) => (
         <UseCaseCard key={useCase.team} {...useCase} index={index} />
       ))}

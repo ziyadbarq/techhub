@@ -17,9 +17,17 @@ export function MarketingFooter() {
           <div className="space-y-4">
             <Logo className="h-8 w-auto" />
             <p className="text-muted-foreground text-sm">
-              Enterprise CMDB & ITAM system built for Barq's operational
-              excellence.
+              Enterprise CMDB & ITAM system built by Barq for Barq.
+              SAMA-compliant asset management for financial services.
             </p>
+            <div className="border-barq-yellow/20 bg-barq-yellow/5 rounded-md border p-3">
+              <p className="text-foreground text-xs font-semibold">
+                🔒 Internal Use Only
+              </p>
+              <p className="text-muted-foreground mt-1 text-xs">
+                Built for SAMA regulatory compliance and audit readiness
+              </p>
+            </div>
           </div>
 
           {/* Quick Links */}
@@ -106,7 +114,9 @@ export function MarketingFooter() {
                 </a>
               </li>
               <li>
-                <span className="text-muted-foreground">Internal Use Only</span>
+                <span className="text-muted-foreground text-xs">
+                  Regulated by SAMA (Saudi Central Bank)
+                </span>
               </li>
             </ul>
           </div>
@@ -114,9 +124,21 @@ export function MarketingFooter() {
 
         {/* Bottom Bar */}
         <div className="mt-12 border-t pt-8">
-          <div className="text-muted-foreground flex flex-col items-center justify-between gap-4 text-sm sm:flex-row">
-            <p>© {currentYear} Barq. All rights reserved.</p>
-            <p className="text-xs">Built with ❤️ by Barq's Technology team</p>
+          <div className="flex flex-col items-center justify-between gap-4 text-sm sm:flex-row">
+            <div className="text-center sm:text-left">
+              <p className="text-muted-foreground">
+                © {currentYear} Barq. All rights reserved.
+              </p>
+              <p className="text-muted-foreground mt-1 text-xs">
+                On-premises deployment for Technology Operations. SAMA-compliant
+                ITAM & CMDB.
+              </p>
+            </div>
+            <div className="text-center sm:text-right">
+              <p className="bg-barq-yellow/10 text-barq-yellow inline-block rounded-md px-3 py-1.5 text-xs font-semibold">
+                Built by Barq Technology Team
+              </p>
+            </div>
           </div>
         </div>
       </div>
