@@ -22,6 +22,7 @@ This folder contains detailed specifications for planned features that are not y
 
 - [RBAC Enhancement - Phase 1 (COMPLETED)](RBAC_ENHANCEMENT_PHASE_1.md) - **Status: Completed** - Navigation fixes, permission grouping (10 categories), enhanced permission assignment UI with search/filter, and clone role functionality (15-20 hours)
 - [RBAC Enhancement - Phase 2 (Partially Complete)](RBAC_ENHANCEMENT_PHASE_2.md) - **Status: Partially Complete** - ✅ Permission dependencies, role conflict detection, bulk permission mode | Remaining: Enhanced audit log UI, bulk user role assignment, advanced user management, role analytics, time-based expiration background jobs, role hierarchy (40-60 hours total, ~15 hours completed)
+- [RBAC Phase 2 Corrections](RBAC_PHASE2_CORRECTIONS.md) - **Status: Planned** - Fix bidirectional conflict detection, enforce SoD in bulk assignment, enforce permission dependencies server-side, UI fixes (role name comparison, same-day expiration), and audit/logging for blocked operations (8-12 hours)
 
 ### Layer 2 (Asset Management)
 
