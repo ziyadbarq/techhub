@@ -310,6 +310,21 @@ export const PERMISSIONS = {
   LICENSE_ALLOCATIONS_DEALLOCATE: "license-allocations:deallocate",
   LICENSE_ALLOCATIONS_REACTIVATE: "license-allocations:reactivate",
   LICENSE_ALLOCATIONS_MANAGE: "license-allocations:manage",
+
+  // Services: Service Management
+  SERVICES_VIEW: "services:view",
+  SERVICES_CREATE: "services:create",
+  SERVICES_UPDATE: "services:update",
+  SERVICES_DELETE: "services:delete",
+  SERVICES_RETIRE: "services:retire",
+  SERVICES_MANAGE: "services:manage",
+
+  // Services: Business Processes
+  BUSINESS_PROCESSES_VIEW: "business-processes:view",
+  BUSINESS_PROCESSES_CREATE: "business-processes:create",
+  BUSINESS_PROCESSES_UPDATE: "business-processes:update",
+  BUSINESS_PROCESSES_DELETE: "business-processes:delete",
+  BUSINESS_PROCESSES_MANAGE: "business-processes:manage",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
