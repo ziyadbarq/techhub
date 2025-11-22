@@ -102,7 +102,9 @@ export class ExchangeRate {
     }
 
     // Validate against supported currencies
-    if (!CURRENCY_CODES.includes(currencyUpper)) {
+    if (
+      !CURRENCY_CODES.includes(currencyUpper as (typeof CURRENCY_CODES)[number])
+    ) {
       throw new Error(
         `Currency code '${currencyUpper}' is not supported. Supported currencies: ${CURRENCY_CODES.join(", ")}`,
       );

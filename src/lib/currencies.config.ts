@@ -79,6 +79,8 @@ export function getCurrencyInfo(code: string): CurrencyInfo | undefined {
 /**
  * Check if a currency code is supported
  */
-export function isSupportedCurrency(code: string): boolean {
-  return (CURRENCY_CODES as readonly string[]).includes(code);
+export function isSupportedCurrency(
+  code: string,
+): code is (typeof CURRENCY_CODES)[number] {
+  return CURRENCY_CODES.includes(code as (typeof CURRENCY_CODES)[number]);
 }
