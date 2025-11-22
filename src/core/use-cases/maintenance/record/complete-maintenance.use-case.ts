@@ -14,6 +14,7 @@ export interface CompleteMaintenanceProps {
   completedDate?: Date;
   notes?: string | null;
   cost?: number | null;
+  currency?: string | null;
   partsUsed?: string[] | null;
   nextMaintenanceDate?: Date | null;
 }
@@ -41,6 +42,7 @@ export class CompleteMaintenanceUseCase {
       completedDate: props.completedDate,
       notes: props.notes,
       cost: props.cost,
+      currency: props.currency,
       partsUsed: props.partsUsed,
       nextMaintenanceDate: props.nextMaintenanceDate,
     });
