@@ -6,10 +6,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { BRANDING } from "@/config/branding";
 
 const faqs = [
   {
-    question: "Is Barq Assets compliant with SAMA regulations?",
+    question: "Is barq TechHub compliant with SAMA regulations?",
     answer:
       "Yes. Immutable audit trails, disposal certificates, and exportable compliance reports. All changes logged with who, what, when, and why.",
   },
@@ -49,9 +50,9 @@ const faqs = [
       "Auto-sync devices from Intune/MDM platforms. Real-time compliance status, automated asset updates, device health monitoring.",
   },
   {
-    question: "Who can access Barq Assets?",
+    question: "Who can access barq TechHub?",
     answer:
-      "All Barq employees with appropriate role-based permissions. Contact Technology Operations or your manager for access.",
+      "All barq employees with appropriate role-based permissions. Contact Technology Operations or your manager for access.",
   },
   {
     question: "Can I customize asset fields?",
@@ -78,10 +79,8 @@ export function FAQAccordion() {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div className="text-center">
-        <h2 className="mb-2 text-3xl font-bold">Frequently Asked Questions</h2>
-        <p className="text-muted-foreground">
-          Common questions about using Barq Assets
-        </p>
+        <h2 className="mb-2 text-3xl font-bold">{BRANDING.faq.heading}</h2>
+        <p className="text-muted-foreground">{BRANDING.faq.subheading}</p>
       </div>
       <Accordion type="single" collapsible className="w-full">
         {faqs.map((faq, index) => (

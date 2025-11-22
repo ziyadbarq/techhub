@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import { BRANDING, getCopyrightWithTagline } from "@/config/branding";
 
 export default function LoginPage() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -79,8 +80,7 @@ export default function LoginPage() {
               IT Asset Management
             </h1>
             <p className="text-muted-foreground max-w-lg text-lg">
-              Enterprise CMDB & ITAM system built for financial services
-              compliance and operational excellence.
+              {BRANDING.taglines.auth}
             </p>
           </div>
 
@@ -91,9 +91,12 @@ export default function LoginPage() {
                 <ShieldCheck className="h-5 w-5" />
               </div>
               <div>
-                <p className="font-semibold">SAMA Compliance Ready</p>
+                <p className="font-semibold">
+                  {BRANDING.sama.compliance.ready}
+                </p>
                 <p className="text-muted-foreground text-sm">
-                  Immutable audit trails and disposal certificates
+                  {BRANDING.sama.compliance.features[0]} and{" "}
+                  {BRANDING.sama.compliance.features[1].toLowerCase()}
                 </p>
               </div>
             </div>
@@ -127,7 +130,7 @@ export default function LoginPage() {
         {/* Footer */}
         <div className="relative z-10">
           <p className="text-muted-foreground text-sm">
-            © {new Date().getFullYear()} Barq. Built for Technology Operations.
+            {getCopyrightWithTagline(BRANDING.footer.builtFor)}
           </p>
         </div>
       </div>
@@ -147,9 +150,11 @@ export default function LoginPage() {
 
           {/* Header */}
           <div className="space-y-2 text-center">
-            <h2 className="text-3xl font-bold tracking-tight">Welcome Back</h2>
+            <h2 className="text-3xl font-bold tracking-tight">
+              {BRANDING.auth.login.heading}
+            </h2>
             <p className="text-muted-foreground">
-              Sign in to access your dashboard
+              {BRANDING.auth.login.subheading}
             </p>
           </div>
 
@@ -204,13 +209,13 @@ export default function LoginPage() {
                 <div className="flex items-center gap-2 text-sm">
                   <Shield className="text-barq-yellow h-4 w-4 flex-shrink-0" />
                   <p className="text-muted-foreground text-xs">
-                    Internal use only. All access is logged for SAMA compliance.
+                    {BRANDING.sama.compliance.internal}
                   </p>
                 </div>
               </div>
 
               <p className="text-muted-foreground text-center text-xs">
-                Need help? Contact Technology Operations
+                {BRANDING.contact.support.helpText}
               </p>
             </div>
           </div>

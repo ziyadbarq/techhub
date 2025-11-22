@@ -6,9 +6,358 @@ Centralized application configuration files for easy maintenance and updates.
 
 ```
 src/config/
+├── branding.ts      # Branding, logos, taglines, and company info
 ├── navigation.ts    # Navigation menu items and groups configuration
 ├── index.ts         # Barrel export file
 └── README.md        # This file
+```
+
+## 🎨 Branding Configuration
+
+Centralized branding constants for app identity, logos, taglines, and company information. Single source of truth for all branding-related content across the application.
+
+### Location
+
+[`src/config/branding.ts`](./branding.ts)
+
+### Quick Start
+
+```tsx
+// Import branding constants
+import { BRANDING } from "@/config/branding";
+
+// Use app name
+<h1>{BRANDING.app.name}</h1> // "barq TechHub"
+
+// Use logo (theme-aware)
+import { getLogoPath } from "@/config/branding";
+const logoPath = getLogoPath(theme);
+
+// Use copyright text
+import { getCopyrightText } from "@/config/branding";
+<footer>{getCopyrightText()}</footer>
+
+// Use page metadata
+import { getPageTitle, getPageDescription } from "@/config/branding";
+export const metadata = {
+  title: getPageTitle("landing"),
+  description: getPageDescription("default"),
+};
+```
+
+### Branding Object Structure
+
+```typescript
+export const BRANDING = {
+  app: {
+    name: string;           // "barq TechHub"
+    shortName: string;      // "TechHub"
+    fullTitle: string;      // Full page title
+  },
+  company: {
+    name: string;           // "Barq"
+    legalName: string;      // Legal entity name
+    website: string;        // Company website URL
+  },
+  logos: {
+    icon: {
+      default: string;      // Icon for light theme
+      whiteBG: string;      // Icon with white background
+    },
+    full: {
+      light: string;        // Full logo for light theme
+      dark: string;         // Full logo for dark theme
+      fallback: string;     // External fallback URL
+    },
+  },
+  taglines: {
+    main: string;           // Main hero tagline
+    short: string;          // Short description
+    hero: string;           // Hero subheading
+    compliance: string;     // Compliance tagline
+    auth: string;           // Auth page tagline
+  },
+  valueProps: {
+    heading: string;        // Value proposition heading
+    subheading: string;     // Value proposition subheading
+  },
+  faq: {
+    heading: string;        // FAQ section heading
+    subheading: string;     // FAQ section subheading
+  },
+  sama: {
+    compliance: {
+      ready: string;        // "SAMA Compliance Ready"
+      tagline: string;      // SAMA tagline
+      internal: string;     // Internal use notice
+      internalApproval: string; // Approval notice
+      features: string[];   // Feature list
+    },
+  },
+  contact: {
+    support: {
+      email: string;        // Support email
+      helpText: string;     // Help text
+    },
+  },
+  auth: {
+    login: {
+      heading: string;      // Login page heading
+      subheading: string;   // Login page subheading
+    },
+    register: {
+      heading: string;      // Register page main heading
+      subheading: string;   // Register page description
+      cta: string;          // Registration CTA
+      ctaSubheading: string; // CTA subheading
+    },
+  },
+  footer: {
+    description: string;    // Footer description
+    builtBy: string;        // "Built by Barq Technology Team"
+    builtFor: string;       // "Built for Barq employees"
+  },
+  copyright: {
+    template: (year: number) => string; // Copyright template function
+    currentYear: () => number;          // Current year helper
+  },
+  ai: {
+    name: string;           // AI assistant name
+    tagline: string;        // AI assistant tagline
+  },
+} as const;
+```
+
+### Features
+
+- ✅ **Type Safety**: All values typed with `as const` for literal types
+- ✅ **Single Source of Truth**: No hardcoded branding strings in components
+- ✅ **Easy Rebranding**: Update one file to rebrand entire app
+- ✅ **Theme-Aware Logos**: Automatic logo selection based on theme
+- ✅ **Helper Functions**: Utilities for common patterns (copyright, metadata)
+- ✅ **Autocomplete**: Full IDE autocomplete support
+- ✅ **SAMA Compliance**: Built-in compliance messaging
+
+### Helper Functions
+
+#### `getLogoPath(theme, variant)`
+
+Returns appropriate logo path based on current theme.
+
+```typescript
+import { getLogoPath } from "@/config/branding";
+import { useTheme } from "next-themes";
+
+const { theme } = useTheme();
+const logoPath = getLogoPath(theme, "full");
+// Returns: light theme logo or dark theme logo
+```
+
+**Parameters:**
+- `theme`: `"light" | "dark" | "system" | undefined`
+- `variant`: `"full" | "icon"` (default: `"full"`)
+
+**Returns:** Logo file path string
+
+#### `getCopyrightText(year?)`
+
+Generates copyright text with optional year override.
+
+```typescript
+import { getCopyrightText } from "@/config/branding";
+
+// Current year
+<p>{getCopyrightText()}</p>
+// Output: "© 2025 Barq. All rights reserved."
+
+// Specific year
+<p>{getCopyrightText(2024)}</p>
+// Output: "© 2024 Barq. All rights reserved."
+```
+
+**Parameters:**
+- `year`: `number` (optional, defaults to current year)
+
+**Returns:** Copyright string
+
+#### `getCopyrightWithTagline(tagline)`
+
+Generates copyright with custom tagline.
+
+```typescript
+import { getCopyrightWithTagline } from "@/config/branding";
+
+<p>{getCopyrightWithTagline(BRANDING.footer.builtFor)}</p>
+// Output: "© 2025 Barq. All rights reserved. Built for Barq employees."
+```
+
+**Parameters:**
+- `tagline`: `string`
+
+**Returns:** Copyright string with tagline
+
+#### `getPageTitle(page)`
+
+Generates page title with app name suffix.
+
+```typescript
+import { getPageTitle } from "@/config/branding";
+
+export const metadata = {
+  title: getPageTitle("home"),
+  // Output: "barq TechHub | Enterprise CMDB & ITAM System"
+};
+```
+
+**Parameters:**
+- `page`: `"home" | "landing"` (extensible)
+
+**Returns:** Full page title string
+
+#### `getPageDescription(variant)`
+
+Returns appropriate meta description.
+
+```typescript
+import { getPageDescription } from "@/config/branding";
+
+export const metadata = {
+  description: getPageDescription("default"),
+  // Output: "Track everything. Automate workflows. Pass audits."
+};
+```
+
+**Parameters:**
+- `variant`: `"default" | "landing"` (extensible)
+
+**Returns:** Meta description string
+
+### Usage Examples
+
+#### Basic App Name
+
+```tsx
+import { BRANDING } from "@/config/branding";
+
+<h1>{BRANDING.app.name}</h1>
+// Output: "barq TechHub"
+```
+
+#### Theme-Aware Logo
+
+```tsx
+import { BRANDING } from "@/config/branding";
+import { getLogoPath } from "@/config/branding";
+import { useTheme } from "next-themes";
+import Image from "next/image";
+
+const { theme } = useTheme();
+
+<Image
+  src={getLogoPath(theme, "full")}
+  alt={`${BRANDING.app.name} Logo`}
+  width={120}
+  height={40}
+/>
+```
+
+#### Page Metadata
+
+```tsx
+import { getPageTitle, getPageDescription } from "@/config/branding";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: getPageTitle("home"),
+  description: getPageDescription("default"),
+};
+```
+
+#### Footer with Copyright
+
+```tsx
+import { BRANDING, getCopyrightText } from "@/config/branding";
+
+<footer>
+  <p>{BRANDING.footer.description}</p>
+  <p>{getCopyrightText()}</p>
+</footer>
+```
+
+#### SAMA Compliance Notice
+
+```tsx
+import { BRANDING } from "@/config/branding";
+
+<div className="compliance-notice">
+  <Shield className="icon" />
+  <p>{BRANDING.sama.compliance.internal}</p>
+</div>
+```
+
+#### Auth Page Headings
+
+```tsx
+import { BRANDING } from "@/config/branding";
+
+<div>
+  <h1>{BRANDING.auth.login.heading}</h1>
+  <p>{BRANDING.auth.login.subheading}</p>
+</div>
+```
+
+### Best Practices
+
+1. **Always Import from Config**: Never hardcode branding strings in components
+2. **Use Helper Functions**: Leverage utilities for common patterns
+3. **Theme-Aware Components**: Use `getLogoPath()` for automatic theme handling
+4. **Consistent Naming**: Follow brand guidelines (lowercase "b" in "barq TechHub")
+5. **Extend, Don't Modify**: Add new properties to BRANDING object as needed
+6. **Type Safety**: Maintain `as const` assertion for literal types
+7. **Document Changes**: Update this README when adding new branding properties
+
+### Migration Notes
+
+**Before Centralization:**
+```tsx
+<h1>barq TechHub</h1>
+<p>© 2025 Barq. All rights reserved.</p>
+<img src="/logos/logo-black.svg" alt="Logo" />
+```
+
+**After Centralization:**
+```tsx
+import { BRANDING, getCopyrightText, getLogoPath } from "@/config/branding";
+import { useTheme } from "next-themes";
+
+const { theme } = useTheme();
+
+<h1>{BRANDING.app.name}</h1>
+<p>{getCopyrightText()}</p>
+<img src={getLogoPath(theme)} alt={`${BRANDING.app.name} Logo`} />
+```
+
+### Extending Branding Config
+
+To add new branding properties:
+
+```typescript
+// In branding.ts
+export const BRANDING = {
+  // ... existing properties
+  social: {
+    twitter: "https://twitter.com/barq",
+    linkedin: "https://linkedin.com/company/barq",
+  },
+} as const;
+```
+
+Then use in components:
+
+```tsx
+import { BRANDING } from "@/config/branding";
+
+<a href={BRANDING.social.twitter}>Follow us</a>
 ```
 
 ## 🧭 Navigation Configuration

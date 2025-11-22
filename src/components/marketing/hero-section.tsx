@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, LogIn, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BRANDING } from "@/config/branding";
 
 /**
  * Hero Section Component
@@ -25,10 +26,7 @@ export function HeroSection() {
             transition={{ duration: 0.6 }}
             className="mb-6 max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
           >
-            <span className="from-barq-yellow to-barq-yellow/70 bg-gradient-to-r bg-clip-text text-transparent">
-              SAMA-Ready
-            </span>{" "}
-            IT Asset Management for Financial Services
+            {BRANDING.taglines.main}
           </motion.h1>
 
           {/* Subheading */}
@@ -38,9 +36,9 @@ export function HeroSection() {
             transition={{ delay: 0.2, duration: 0.6 }}
             className="text-muted-foreground mb-10 max-w-3xl text-lg sm:text-xl md:text-2xl"
           >
-            Track everything. Automate workflows. Pass audits.{" "}
+            {BRANDING.taglines.hero}{" "}
             <span className="text-foreground font-semibold whitespace-nowrap">
-              Built for SAMA compliance.
+              {BRANDING.taglines.compliance}
             </span>
           </motion.p>
 

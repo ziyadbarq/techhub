@@ -28,7 +28,7 @@ interface UseCaseCardProps {
 
 /**
  * Use Case Card Component
- * Showcases how different teams use Barq Assets
+ * Showcases how different teams use barq TechHub
  */
 function UseCaseCard({
   icon: Icon,

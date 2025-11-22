@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { initContainer } from "@/di/container";
+import { BRANDING, getPageTitle, getPageDescription } from "@/config/branding";
 
 // Initialize DI container globally (required for all server actions)
 initContainer();
@@ -11,12 +12,11 @@ initContainer();
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Barq Assets | Enterprise CMDB & ITAM System",
-  description:
-    "Complete asset and inventory management for Barq. Track devices, manage warranties, control inventory, and maintain full audit trails with enterprise-grade architecture.",
+  title: getPageTitle("home"),
+  description: getPageDescription("default"),
   icons: {
-    icon: "/logos/barq-icon-black-whiteBG-margined.png",
-    apple: "/logos/barq-icon-black-whiteBG-margined.png",
+    icon: BRANDING.logos.icon.whiteBG,
+    apple: BRANDING.logos.icon.whiteBG,
   },
 };
 

@@ -2,6 +2,7 @@
 
 import type { LucideIcon } from "lucide-react";
 import { motion } from "framer-motion";
+import { BRANDING } from "@/config/branding";
 import {
   ShieldCheck,
   FileCheck,
@@ -161,7 +162,7 @@ export function ValuePropositionSection() {
           transition={{ delay: 0.1, duration: 0.5 }}
           className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl"
         >
-          Why Barq Assets?
+          {BRANDING.valueProps.heading}
         </motion.h2>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
@@ -170,7 +171,7 @@ export function ValuePropositionSection() {
           transition={{ delay: 0.2, duration: 0.5 }}
           className="text-muted-foreground mx-auto max-w-3xl text-lg"
         >
-          Four critical outcomes for SAMA-regulated fintech operations.
+          {BRANDING.valueProps.subheading}
         </motion.p>
       </div>
 

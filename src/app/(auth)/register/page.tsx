@@ -13,6 +13,7 @@ import { RegisterForm } from "@/components/auth/RegisterForm";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { BRANDING, getCopyrightWithTagline } from "@/config/branding";
 
 export default function RegisterPage() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -63,16 +64,10 @@ export default function RegisterPage() {
         <div className="relative z-10 space-y-8">
           <div>
             <h1 className="mb-4 text-4xl font-bold">
-              Join the
-              <br />
-              <span className="from-barq-yellow to-barq-yellow/70 bg-gradient-to-r bg-clip-text text-transparent">
-                Barq Assets
-              </span>{" "}
-              Team
+              {BRANDING.auth.register.heading}
             </h1>
             <p className="text-muted-foreground max-w-lg text-lg">
-              Get access to enterprise-grade ITAM & CMDB built for
-              SAMA-regulated financial services.
+              {BRANDING.auth.register.subheading}
             </p>
           </div>
 
@@ -119,7 +114,7 @@ export default function RegisterPage() {
         {/* Footer */}
         <div className="relative z-10">
           <p className="text-muted-foreground text-sm">
-            © {new Date().getFullYear()} Barq. Built for Technology Operations.
+            {getCopyrightWithTagline(BRANDING.footer.builtFor)}
           </p>
         </div>
       </div>
@@ -140,10 +135,10 @@ export default function RegisterPage() {
           {/* Header */}
           <div className="space-y-2 text-center">
             <h2 className="text-3xl font-bold tracking-tight">
-              Create Account
+              {BRANDING.auth.register.cta}
             </h2>
             <p className="text-muted-foreground">
-              Join Barq Assets for SAMA-compliant ITAM
+              {BRANDING.auth.register.ctaSubheading}
             </p>
           </div>
 
@@ -157,14 +152,13 @@ export default function RegisterPage() {
                 <div className="flex items-center gap-2 text-sm">
                   <Shield className="text-barq-yellow h-4 w-4 flex-shrink-0" />
                   <p className="text-muted-foreground text-xs">
-                    Internal use only. Contact Technology Operations for access
-                    approval.
+                    {BRANDING.sama.compliance.internalApproval}
                   </p>
                 </div>
               </div>
 
               <p className="text-muted-foreground text-center text-xs">
-                Need help? Contact Technology Operations
+                {BRANDING.contact.support.helpText}
               </p>
             </div>
           </div>

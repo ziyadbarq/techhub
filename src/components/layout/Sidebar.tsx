@@ -38,6 +38,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Menu,
@@ -48,7 +49,9 @@ import {
   Sparkles,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
+import { BRANDING } from "@/config/branding";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -77,6 +80,8 @@ interface SidebarProps {
 function SidebarComponent({ className }: SidebarProps) {
   const pathname = usePathname();
   const sidebarRef = React.useRef<HTMLElement>(null);
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
 
   // State management with safe localStorage
   const [isCollapsed, setIsCollapsed] = useLocalStorage(
@@ -94,6 +99,12 @@ function SidebarComponent({ className }: SidebarProps) {
     toggleItem,
     getBadgeValue,
   } = useSidebarNavigation();
+
+  // Detect client-side hydration for theme-dependent rendering
+  React.useEffect(() => {
+     
+    setMounted(true);
+  }, []);
 
   // Focus trap for mobile menu accessibility
   useFocusTrap(sidebarRef, isMobileOpen);
@@ -210,10 +221,24 @@ function SidebarComponent({ className }: SidebarProps) {
             <Link
               href="/"
               className="hover:text-sidebar-accent-foreground flex items-center gap-2 font-semibold transition-colors"
-              aria-label="Barq App Home"
+              aria-label={`${BRANDING.app.name} Home`}
             >
-              <div className="bg-barq-yellow flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md dark:bg-white">
-                <span className="text-barq-black text-lg font-bold">B</span>
+              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center">
+                {mounted ? (
+                  <Image
+                    src={BRANDING.logos.icon.default}
+                    alt={`${BRANDING.app.name} Logo`}
+                    width={32}
+                    height={32}
+                    className={cn(
+                      "h-8 w-8 object-contain transition-all",
+                      resolvedTheme === "dark" && "brightness-0 invert",
+                    )}
+                    priority
+                  />
+                ) : (
+                  <div className="h-8 w-8" />
+                )}
               </div>
               <AnimatePresence mode="wait">
                 {!isCollapsed && (
@@ -225,7 +250,7 @@ function SidebarComponent({ className }: SidebarProps) {
                     transition={{ duration: 0.2, ease: "easeInOut" }}
                     className="overflow-hidden text-lg whitespace-nowrap"
                   >
-                    Barq App
+                    {BRANDING.app.name}
                   </motion.span>
                 )}
               </AnimatePresence>
@@ -308,7 +333,9 @@ function SidebarComponent({ className }: SidebarProps) {
                     <p className="text-muted-foreground text-xs font-medium">
                       Powered by
                     </p>
-                    <p className="text-foreground text-sm font-bold">Barq AI</p>
+                    <p className="text-foreground text-sm font-bold">
+                      {BRANDING.ai.name}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -322,7 +349,7 @@ function SidebarComponent({ className }: SidebarProps) {
                   </div>
                 </TooltipTrigger>
                 <TooltipContent side="right">
-                  <p className="font-medium">Powered by Barq AI</p>
+                  <p className="font-medium">{BRANDING.ai.tagline}</p>
                 </TooltipContent>
               </Tooltip>
             )}

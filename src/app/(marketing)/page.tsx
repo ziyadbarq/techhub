@@ -8,16 +8,16 @@ import { UseCases } from "@/components/marketing/use-case-card";
 import { FAQAccordion } from "@/components/marketing/faq-accordion";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
 import { ValuePropositionSection } from "@/components/marketing/value-proposition-section";
+import { getPageTitle, getPageDescription } from "@/config/branding";
 
 export const metadata: Metadata = {
-  title: "Barq Assets | SAMA-Ready CMDB & ITAM System",
-  description:
-    "Enterprise IT Asset Management and CMDB built for SAMA-regulated financial services. Track assets, manage dependencies, ensure compliance, and pass audits with confidence. Built by Barq for Barq.",
+  title: getPageTitle("landing"),
+  description: getPageDescription("landing"),
 };
 
 /**
  * Landing Page
- * Public-facing marketing page showcasing Barq Assets capabilities
+ * Public-facing marketing page showcasing barq TechHub capabilities
  * Authenticated users are automatically redirected to /dashboard
  */
 export default function LandingPage() {

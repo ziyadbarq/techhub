@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
 import { ExternalLink } from "lucide-react";
+import { BRANDING, getCopyrightText } from "@/config/branding";
 
 /**
  * Marketing Footer Component
@@ -17,15 +18,14 @@ export function MarketingFooter() {
           <div className="space-y-4">
             <Logo className="h-8 w-auto" />
             <p className="text-muted-foreground text-sm">
-              Enterprise CMDB & ITAM system built by Barq for Barq.
-              SAMA-compliant asset management for financial services.
+              {BRANDING.footer.description}
             </p>
             <div className="border-barq-yellow/20 bg-barq-yellow/5 rounded-md border p-3">
               <p className="text-foreground text-xs font-semibold">
                 🔒 Internal Use Only
               </p>
               <p className="text-muted-foreground mt-1 text-xs">
-                Built for SAMA regulatory compliance and audit readiness
+                {BRANDING.sama.compliance.tagline}
               </p>
             </div>
           </div>
@@ -87,7 +87,7 @@ export function MarketingFooter() {
               </li>
               <li>
                 <a
-                  href="mailto:it-support@barq.com"
+                  href={`mailto:${BRANDING.contact.support.email}`}
                   className="text-muted-foreground hover:text-barq-yellow transition-colors"
                 >
                   Support
@@ -99,23 +99,23 @@ export function MarketingFooter() {
           {/* About Barq */}
           <div>
             <h3 className="mb-4 text-sm font-semibold tracking-wide uppercase">
-              About Barq
+              About {BRANDING.company.name}
             </h3>
             <ul className="space-y-3 text-sm">
               <li>
                 <a
-                  href="https://barq.com"
+                  href={BRANDING.company.website}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-muted-foreground hover:text-barq-yellow inline-flex items-center gap-1 transition-colors"
                 >
-                  Barq.com
+                  {BRANDING.company.name}.com
                   <ExternalLink className="h-3 w-3" />
                 </a>
               </li>
               <li>
                 <span className="text-muted-foreground text-xs">
-                  Regulated by SAMA (Saudi Central Bank)
+                  {BRANDING.sama.regulator}
                 </span>
               </li>
             </ul>
@@ -127,16 +127,15 @@ export function MarketingFooter() {
           <div className="flex flex-col items-center justify-between gap-4 text-sm sm:flex-row">
             <div className="text-center sm:text-left">
               <p className="text-muted-foreground">
-                © {currentYear} Barq. All rights reserved.
+                {getCopyrightText(currentYear)}
               </p>
               <p className="text-muted-foreground mt-1 text-xs">
-                On-premises deployment for Technology Operations. SAMA-compliant
-                ITAM & CMDB.
+                {BRANDING.footer.deployment}
               </p>
             </div>
             <div className="text-center sm:text-right">
               <p className="bg-barq-yellow/10 text-barq-yellow inline-block rounded-md px-3 py-1.5 text-xs font-semibold">
-                Built by Barq Technology Team
+                {BRANDING.footer.builtBy}
               </p>
             </div>
           </div>

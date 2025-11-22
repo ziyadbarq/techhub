@@ -4,4 +4,5 @@
  * Export all configuration modules from this file for easy imports
  */
 
+export * from "./branding";
 export * from "./navigation";
