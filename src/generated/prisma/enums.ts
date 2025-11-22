@@ -228,3 +228,91 @@ export const PromptPurpose = {
 } as const
 
 export type PromptPurpose = (typeof PromptPurpose)[keyof typeof PromptPurpose]
+
+
+export const ServiceType = {
+  APPLICATION: 'APPLICATION',
+  SERVER: 'SERVER',
+  NETWORK: 'NETWORK',
+  DATABASE: 'DATABASE',
+  ENDPOINT: 'ENDPOINT',
+  CLOUD_SERVICE: 'CLOUD_SERVICE',
+  API: 'API',
+  MIDDLEWARE: 'MIDDLEWARE',
+  STORAGE: 'STORAGE',
+  OTHER: 'OTHER'
+} as const
+
+export type ServiceType = (typeof ServiceType)[keyof typeof ServiceType]
+
+
+export const ServiceStatus = {
+  PRODUCTION: 'PRODUCTION',
+  UAT: 'UAT',
+  DR: 'DR',
+  DEVELOPMENT: 'DEVELOPMENT',
+  RETIRED: 'RETIRED',
+  PLANNED: 'PLANNED'
+} as const
+
+export type ServiceStatus = (typeof ServiceStatus)[keyof typeof ServiceStatus]
+
+
+export const DataConfidentiality = {
+  PUBLIC: 'PUBLIC',
+  INTERNAL: 'INTERNAL',
+  CONFIDENTIAL: 'CONFIDENTIAL',
+  RESTRICTED: 'RESTRICTED'
+} as const
+
+export type DataConfidentiality = (typeof DataConfidentiality)[keyof typeof DataConfidentiality]
+
+
+export const BusinessImpactLevel = {
+  HIGH: 'HIGH',
+  MEDIUM: 'MEDIUM',
+  LOW: 'LOW'
+} as const
+
+export type BusinessImpactLevel = (typeof BusinessImpactLevel)[keyof typeof BusinessImpactLevel]
+
+
+export const CriticalityLevel = {
+  CRITICAL: 'CRITICAL',
+  HIGH: 'HIGH',
+  MEDIUM: 'MEDIUM',
+  LOW: 'LOW'
+} as const
+
+export type CriticalityLevel = (typeof CriticalityLevel)[keyof typeof CriticalityLevel]
+
+
+export const OwnershipType = {
+  TECHNICAL: 'TECHNICAL',
+  PRODUCT: 'PRODUCT',
+  BUSINESS: 'BUSINESS'
+} as const
+
+export type OwnershipType = (typeof OwnershipType)[keyof typeof OwnershipType]
+
+
+export const ServiceLocation = {
+  ON_PREM: 'ON_PREM',
+  OCI_CLOUD: 'OCI_CLOUD',
+  GCP_CLOUD: 'GCP_CLOUD',
+  AWS_CLOUD: 'AWS_CLOUD',
+  HYBRID: 'HYBRID'
+} as const
+
+export type ServiceLocation = (typeof ServiceLocation)[keyof typeof ServiceLocation]
+
+
+export const AssetRelationship = {
+  HOSTS: 'HOSTS',
+  SUPPORTS: 'SUPPORTS',
+  DEPENDS_ON: 'DEPENDS_ON',
+  MONITORS: 'MONITORS',
+  BACKS_UP: 'BACKS_UP'
+} as const
+
+export type AssetRelationship = (typeof AssetRelationship)[keyof typeof AssetRelationship]

@@ -102,6 +102,13 @@ export const DI_TOKENS = {
   ILicenseProductRepository: Symbol.for("ILicenseProductRepository"),
   ILicenseProductFieldRepository: Symbol.for("ILicenseProductFieldRepository"),
 
+  // Service Management Repositories
+  IServiceRepository: Symbol.for("IServiceRepository"),
+  IBusinessProcessRepository: Symbol.for("IBusinessProcessRepository"),
+  IServiceInfrastructureRepository: Symbol.for(
+    "IServiceInfrastructureRepository",
+  ),
+
   // ==========================================
   // Service Tokens
   // ==========================================
@@ -630,6 +637,47 @@ export const DI_TOKENS = {
   StartMaintenanceUseCase: Symbol.for("StartMaintenanceUseCase"),
   CompleteMaintenanceUseCase: Symbol.for("CompleteMaintenanceUseCase"),
   CancelMaintenanceUseCase: Symbol.for("CancelMaintenanceUseCase"),
+
+  // Service Management: Service Use Cases
+  CreateServiceUseCase: Symbol.for("CreateServiceUseCase"),
+  GetServiceUseCase: Symbol.for("GetServiceUseCase"),
+  ListServicesUseCase: Symbol.for("ListServicesUseCase"),
+  UpdateServiceUseCase: Symbol.for("UpdateServiceUseCase"),
+  DeleteServiceUseCase: Symbol.for("DeleteServiceUseCase"),
+  SearchServicesUseCase: Symbol.for("SearchServicesUseCase"),
+  GetEssentialServicesUseCase: Symbol.for("GetEssentialServicesUseCase"),
+  GetRetiringServicesUseCase: Symbol.for("GetRetiringServicesUseCase"),
+  RetireServiceUseCase: Symbol.for("RetireServiceUseCase"),
+
+  // Service Management: Service Ownership Use Cases
+  AddServiceOwnerUseCase: Symbol.for("AddServiceOwnerUseCase"),
+  RemoveServiceOwnerUseCase: Symbol.for("RemoveServiceOwnerUseCase"),
+  SetPrimaryOwnerUseCase: Symbol.for("SetPrimaryOwnerUseCase"),
+  GetServiceOwnersUseCase: Symbol.for("GetServiceOwnersUseCase"),
+
+  // Service Management: Business Process Use Cases
+  CreateBusinessProcessUseCase: Symbol.for("CreateBusinessProcessUseCase"),
+  GetBusinessProcessUseCase: Symbol.for("GetBusinessProcessUseCase"),
+  ListBusinessProcessesUseCase: Symbol.for("ListBusinessProcessesUseCase"),
+  UpdateBusinessProcessUseCase: Symbol.for("UpdateBusinessProcessUseCase"),
+  DeleteBusinessProcessUseCase: Symbol.for("DeleteBusinessProcessUseCase"),
+
+  // Service Management: Service Infrastructure Use Cases
+  CreateServiceInfrastructureUseCase: Symbol.for(
+    "CreateServiceInfrastructureUseCase",
+  ),
+  UpdateServiceInfrastructureUseCase: Symbol.for(
+    "UpdateServiceInfrastructureUseCase",
+  ),
+  GetServiceInfrastructureUseCase: Symbol.for(
+    "GetServiceInfrastructureUseCase",
+  ),
+
+  // Service Management: Service Asset Use Cases
+  LinkServiceToAssetUseCase: Symbol.for("LinkServiceToAssetUseCase"),
+  UnlinkServiceFromAssetUseCase: Symbol.for("UnlinkServiceFromAssetUseCase"),
+  GetServiceAssetsUseCase: Symbol.for("GetServiceAssetsUseCase"),
+  GetAssetServicesUseCase: Symbol.for("GetAssetServicesUseCase"),
 
   // ==========================================
   // Infrastructure Tokens

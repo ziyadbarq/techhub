@@ -363,6 +363,7 @@ export type AssetWhereInput = {
   disposals?: Prisma.AssetDisposalListRelationFilter
   reservations?: Prisma.AssetReservationListRelationFilter
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemListRelationFilter
+  serviceAssets?: Prisma.ServiceAssetListRelationFilter
 }
 
 export type AssetOrderByWithRelationInput = {
@@ -403,6 +404,7 @@ export type AssetOrderByWithRelationInput = {
   disposals?: Prisma.AssetDisposalOrderByRelationAggregateInput
   reservations?: Prisma.AssetReservationOrderByRelationAggregateInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemOrderByRelationAggregateInput
+  serviceAssets?: Prisma.ServiceAssetOrderByRelationAggregateInput
 }
 
 export type AssetWhereUniqueInput = Prisma.AtLeast<{
@@ -446,6 +448,7 @@ export type AssetWhereUniqueInput = Prisma.AtLeast<{
   disposals?: Prisma.AssetDisposalListRelationFilter
   reservations?: Prisma.AssetReservationListRelationFilter
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemListRelationFilter
+  serviceAssets?: Prisma.ServiceAssetListRelationFilter
 }, "id" | "assetTag" | "serialNumber">
 
 export type AssetOrderByWithAggregationInput = {
@@ -538,6 +541,7 @@ export type AssetCreateInput = {
   disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateInput = {
@@ -572,6 +576,7 @@ export type AssetUncheckedCreateInput = {
   disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUpdateInput = {
@@ -606,6 +611,7 @@ export type AssetUpdateInput = {
   disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateInput = {
@@ -640,6 +646,7 @@ export type AssetUncheckedUpdateInput = {
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetCreateManyInput = {
@@ -1152,6 +1159,22 @@ export type AssetUpdateOneRequiredWithoutReservationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutReservationsInput, Prisma.AssetUpdateWithoutReservationsInput>, Prisma.AssetUncheckedUpdateWithoutReservationsInput>
 }
 
+export type AssetCreateNestedOneWithoutServiceAssetsInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutServiceAssetsInput, Prisma.AssetUncheckedCreateWithoutServiceAssetsInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutServiceAssetsInput
+  connect?: Prisma.AssetWhereUniqueInput
+}
+
+export type AssetUpdateOneWithoutServiceAssetsNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutServiceAssetsInput, Prisma.AssetUncheckedCreateWithoutServiceAssetsInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutServiceAssetsInput
+  upsert?: Prisma.AssetUpsertWithoutServiceAssetsInput
+  disconnect?: Prisma.AssetWhereInput | boolean
+  delete?: Prisma.AssetWhereInput | boolean
+  connect?: Prisma.AssetWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutServiceAssetsInput, Prisma.AssetUpdateWithoutServiceAssetsInput>, Prisma.AssetUncheckedUpdateWithoutServiceAssetsInput>
+}
+
 export type AssetCreateNestedManyWithoutContractInput = {
   create?: Prisma.XOR<Prisma.AssetCreateWithoutContractInput, Prisma.AssetUncheckedCreateWithoutContractInput> | Prisma.AssetCreateWithoutContractInput[] | Prisma.AssetUncheckedCreateWithoutContractInput[]
   connectOrCreate?: Prisma.AssetCreateOrConnectWithoutContractInput | Prisma.AssetCreateOrConnectWithoutContractInput[]
@@ -1225,6 +1248,7 @@ export type AssetCreateWithoutVendorInput = {
   disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateWithoutVendorInput = {
@@ -1258,6 +1282,7 @@ export type AssetUncheckedCreateWithoutVendorInput = {
   disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetCreateOrConnectWithoutVendorInput = {
@@ -1345,6 +1370,7 @@ export type AssetCreateWithoutLifecycleStateInput = {
   disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateWithoutLifecycleStateInput = {
@@ -1378,6 +1404,7 @@ export type AssetUncheckedCreateWithoutLifecycleStateInput = {
   disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetCreateOrConnectWithoutLifecycleStateInput = {
@@ -1437,6 +1464,7 @@ export type AssetCreateWithoutConfigurationItemsInput = {
   disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateWithoutConfigurationItemsInput = {
@@ -1470,6 +1498,7 @@ export type AssetUncheckedCreateWithoutConfigurationItemsInput = {
   disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetCreateOrConnectWithoutConfigurationItemsInput = {
@@ -1519,6 +1548,7 @@ export type AssetUpdateWithoutConfigurationItemsInput = {
   disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutConfigurationItemsInput = {
@@ -1552,6 +1582,7 @@ export type AssetUncheckedUpdateWithoutConfigurationItemsInput = {
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetCreateWithoutAssetCategoryInput = {
@@ -1585,6 +1616,7 @@ export type AssetCreateWithoutAssetCategoryInput = {
   disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateWithoutAssetCategoryInput = {
@@ -1618,6 +1650,7 @@ export type AssetUncheckedCreateWithoutAssetCategoryInput = {
   disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetCreateOrConnectWithoutAssetCategoryInput = {
@@ -1677,6 +1710,7 @@ export type AssetCreateWithoutAssetModelInput = {
   disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateWithoutAssetModelInput = {
@@ -1710,6 +1744,7 @@ export type AssetUncheckedCreateWithoutAssetModelInput = {
   disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetCreateOrConnectWithoutAssetModelInput = {
@@ -1769,6 +1804,7 @@ export type AssetCreateWithoutCurrentStockLocationInput = {
   disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateWithoutCurrentStockLocationInput = {
@@ -1802,6 +1838,7 @@ export type AssetUncheckedCreateWithoutCurrentStockLocationInput = {
   disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetCreateOrConnectWithoutCurrentStockLocationInput = {
@@ -1861,6 +1898,7 @@ export type AssetCreateWithoutStockMovementsInput = {
   disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateWithoutStockMovementsInput = {
@@ -1894,6 +1932,7 @@ export type AssetUncheckedCreateWithoutStockMovementsInput = {
   disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetCreateOrConnectWithoutStockMovementsInput = {
@@ -1943,6 +1982,7 @@ export type AssetUpdateWithoutStockMovementsInput = {
   disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutStockMovementsInput = {
@@ -1976,6 +2016,7 @@ export type AssetUncheckedUpdateWithoutStockMovementsInput = {
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetCreateWithoutAssetAssignmentsInput = {
@@ -2009,6 +2050,7 @@ export type AssetCreateWithoutAssetAssignmentsInput = {
   disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateWithoutAssetAssignmentsInput = {
@@ -2042,6 +2084,7 @@ export type AssetUncheckedCreateWithoutAssetAssignmentsInput = {
   disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetCreateOrConnectWithoutAssetAssignmentsInput = {
@@ -2091,6 +2134,7 @@ export type AssetUpdateWithoutAssetAssignmentsInput = {
   disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutAssetAssignmentsInput = {
@@ -2124,6 +2168,7 @@ export type AssetUncheckedUpdateWithoutAssetAssignmentsInput = {
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetCreateWithoutWarrantiesInput = {
@@ -2157,6 +2202,7 @@ export type AssetCreateWithoutWarrantiesInput = {
   disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateWithoutWarrantiesInput = {
@@ -2190,6 +2236,7 @@ export type AssetUncheckedCreateWithoutWarrantiesInput = {
   disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetCreateOrConnectWithoutWarrantiesInput = {
@@ -2239,6 +2286,7 @@ export type AssetUpdateWithoutWarrantiesInput = {
   disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutWarrantiesInput = {
@@ -2272,6 +2320,7 @@ export type AssetUncheckedUpdateWithoutWarrantiesInput = {
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetCreateWithoutMaintenanceSchedulesInput = {
@@ -2305,6 +2354,7 @@ export type AssetCreateWithoutMaintenanceSchedulesInput = {
   disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateWithoutMaintenanceSchedulesInput = {
@@ -2338,6 +2388,7 @@ export type AssetUncheckedCreateWithoutMaintenanceSchedulesInput = {
   disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetCreateOrConnectWithoutMaintenanceSchedulesInput = {
@@ -2387,6 +2438,7 @@ export type AssetUpdateWithoutMaintenanceSchedulesInput = {
   disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutMaintenanceSchedulesInput = {
@@ -2420,6 +2472,7 @@ export type AssetUncheckedUpdateWithoutMaintenanceSchedulesInput = {
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetCreateWithoutMaintenanceRecordsInput = {
@@ -2453,6 +2506,7 @@ export type AssetCreateWithoutMaintenanceRecordsInput = {
   disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateWithoutMaintenanceRecordsInput = {
@@ -2486,6 +2540,7 @@ export type AssetUncheckedCreateWithoutMaintenanceRecordsInput = {
   disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetCreateOrConnectWithoutMaintenanceRecordsInput = {
@@ -2535,6 +2590,7 @@ export type AssetUpdateWithoutMaintenanceRecordsInput = {
   disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutMaintenanceRecordsInput = {
@@ -2568,6 +2624,7 @@ export type AssetUncheckedUpdateWithoutMaintenanceRecordsInput = {
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetCreateWithoutDisposalsInput = {
@@ -2601,6 +2658,7 @@ export type AssetCreateWithoutDisposalsInput = {
   maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateWithoutDisposalsInput = {
@@ -2634,6 +2692,7 @@ export type AssetUncheckedCreateWithoutDisposalsInput = {
   maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetCreateOrConnectWithoutDisposalsInput = {
@@ -2683,6 +2742,7 @@ export type AssetUpdateWithoutDisposalsInput = {
   maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutDisposalsInput = {
@@ -2716,6 +2776,7 @@ export type AssetUncheckedUpdateWithoutDisposalsInput = {
   maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetCreateWithoutKitCheckoutItemsInput = {
@@ -2749,6 +2810,7 @@ export type AssetCreateWithoutKitCheckoutItemsInput = {
   maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
   disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateWithoutKitCheckoutItemsInput = {
@@ -2782,6 +2844,7 @@ export type AssetUncheckedCreateWithoutKitCheckoutItemsInput = {
   maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
   disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetCreateOrConnectWithoutKitCheckoutItemsInput = {
@@ -2831,6 +2894,7 @@ export type AssetUpdateWithoutKitCheckoutItemsInput = {
   maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
   disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutKitCheckoutItemsInput = {
@@ -2864,6 +2928,7 @@ export type AssetUncheckedUpdateWithoutKitCheckoutItemsInput = {
   maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetCreateWithoutReservationsInput = {
@@ -2897,6 +2962,7 @@ export type AssetCreateWithoutReservationsInput = {
   maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
   disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateWithoutReservationsInput = {
@@ -2930,6 +2996,7 @@ export type AssetUncheckedCreateWithoutReservationsInput = {
   maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
   disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetCreateOrConnectWithoutReservationsInput = {
@@ -2979,6 +3046,7 @@ export type AssetUpdateWithoutReservationsInput = {
   maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
   disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutReservationsInput = {
@@ -3011,6 +3079,159 @@ export type AssetUncheckedUpdateWithoutReservationsInput = {
   maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput
   maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+}
+
+export type AssetCreateWithoutServiceAssetsInput = {
+  id?: string
+  assetTag: string
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
+  assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
+  vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
+  contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
+  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutAssetsInput
+  currentStockLocation?: Prisma.StockLocationCreateNestedOneWithoutAssetsInput
+  warranties?: Prisma.WarrantyCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+}
+
+export type AssetUncheckedCreateWithoutServiceAssetsInput = {
+  id?: string
+  assetTag: string
+  assetCategoryId: string
+  assetModelId?: string | null
+  vendorId?: string | null
+  contractId?: string | null
+  lifecycleStateId?: string | null
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  currentStockLocationId?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+}
+
+export type AssetCreateOrConnectWithoutServiceAssetsInput = {
+  where: Prisma.AssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCreateWithoutServiceAssetsInput, Prisma.AssetUncheckedCreateWithoutServiceAssetsInput>
+}
+
+export type AssetUpsertWithoutServiceAssetsInput = {
+  update: Prisma.XOR<Prisma.AssetUpdateWithoutServiceAssetsInput, Prisma.AssetUncheckedUpdateWithoutServiceAssetsInput>
+  create: Prisma.XOR<Prisma.AssetCreateWithoutServiceAssetsInput, Prisma.AssetUncheckedCreateWithoutServiceAssetsInput>
+  where?: Prisma.AssetWhereInput
+}
+
+export type AssetUpdateToOneWithWhereWithoutServiceAssetsInput = {
+  where?: Prisma.AssetWhereInput
+  data: Prisma.XOR<Prisma.AssetUpdateWithoutServiceAssetsInput, Prisma.AssetUncheckedUpdateWithoutServiceAssetsInput>
+}
+
+export type AssetUpdateWithoutServiceAssetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
+  assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
+  vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
+  contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
+  lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutAssetsNestedInput
+  currentStockLocation?: Prisma.StockLocationUpdateOneWithoutAssetsNestedInput
+  warranties?: Prisma.WarrantyUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+}
+
+export type AssetUncheckedUpdateWithoutServiceAssetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
 }
 
@@ -3045,6 +3266,7 @@ export type AssetCreateWithoutContractInput = {
   disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateWithoutContractInput = {
@@ -3078,6 +3300,7 @@ export type AssetUncheckedCreateWithoutContractInput = {
   disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetCreateOrConnectWithoutContractInput = {
@@ -3161,6 +3384,7 @@ export type AssetUpdateWithoutVendorInput = {
   disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutVendorInput = {
@@ -3194,6 +3418,7 @@ export type AssetUncheckedUpdateWithoutVendorInput = {
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateManyWithoutVendorInput = {
@@ -3275,6 +3500,7 @@ export type AssetUpdateWithoutLifecycleStateInput = {
   disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutLifecycleStateInput = {
@@ -3308,6 +3534,7 @@ export type AssetUncheckedUpdateWithoutLifecycleStateInput = {
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateManyWithoutLifecycleStateInput = {
@@ -3389,6 +3616,7 @@ export type AssetUpdateWithoutAssetCategoryInput = {
   disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutAssetCategoryInput = {
@@ -3422,6 +3650,7 @@ export type AssetUncheckedUpdateWithoutAssetCategoryInput = {
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateManyWithoutAssetCategoryInput = {
@@ -3503,6 +3732,7 @@ export type AssetUpdateWithoutAssetModelInput = {
   disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutAssetModelInput = {
@@ -3536,6 +3766,7 @@ export type AssetUncheckedUpdateWithoutAssetModelInput = {
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateManyWithoutAssetModelInput = {
@@ -3617,6 +3848,7 @@ export type AssetUpdateWithoutCurrentStockLocationInput = {
   disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutCurrentStockLocationInput = {
@@ -3650,6 +3882,7 @@ export type AssetUncheckedUpdateWithoutCurrentStockLocationInput = {
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateManyWithoutCurrentStockLocationInput = {
@@ -3731,6 +3964,7 @@ export type AssetUpdateWithoutContractInput = {
   disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutContractInput = {
@@ -3764,6 +3998,7 @@ export type AssetUncheckedUpdateWithoutContractInput = {
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateManyWithoutContractInput = {
@@ -3805,6 +4040,7 @@ export type AssetCountOutputType = {
   disposals: number
   reservations: number
   kitCheckoutItems: number
+  serviceAssets: number
 }
 
 export type AssetCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3817,6 +4053,7 @@ export type AssetCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.
   disposals?: boolean | AssetCountOutputTypeCountDisposalsArgs
   reservations?: boolean | AssetCountOutputTypeCountReservationsArgs
   kitCheckoutItems?: boolean | AssetCountOutputTypeCountKitCheckoutItemsArgs
+  serviceAssets?: boolean | AssetCountOutputTypeCountServiceAssetsArgs
 }
 
 /**
@@ -3892,6 +4129,13 @@ export type AssetCountOutputTypeCountKitCheckoutItemsArgs<ExtArgs extends runtim
   where?: Prisma.AssetKitCheckoutItemWhereInput
 }
 
+/**
+ * AssetCountOutputType without action
+ */
+export type AssetCountOutputTypeCountServiceAssetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ServiceAssetWhereInput
+}
+
 
 export type AssetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3931,6 +4175,7 @@ export type AssetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   disposals?: boolean | Prisma.Asset$disposalsArgs<ExtArgs>
   reservations?: boolean | Prisma.Asset$reservationsArgs<ExtArgs>
   kitCheckoutItems?: boolean | Prisma.Asset$kitCheckoutItemsArgs<ExtArgs>
+  serviceAssets?: boolean | Prisma.Asset$serviceAssetsArgs<ExtArgs>
   _count?: boolean | Prisma.AssetCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["asset"]>
 
@@ -4038,6 +4283,7 @@ export type AssetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   disposals?: boolean | Prisma.Asset$disposalsArgs<ExtArgs>
   reservations?: boolean | Prisma.Asset$reservationsArgs<ExtArgs>
   kitCheckoutItems?: boolean | Prisma.Asset$kitCheckoutItemsArgs<ExtArgs>
+  serviceAssets?: boolean | Prisma.Asset$serviceAssetsArgs<ExtArgs>
   _count?: boolean | Prisma.AssetCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AssetIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4075,6 +4321,7 @@ export type $AssetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     disposals: Prisma.$AssetDisposalPayload<ExtArgs>[]
     reservations: Prisma.$AssetReservationPayload<ExtArgs>[]
     kitCheckoutItems: Prisma.$AssetKitCheckoutItemPayload<ExtArgs>[]
+    serviceAssets: Prisma.$ServiceAssetPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -4508,6 +4755,7 @@ export interface Prisma__AssetClient<T, Null = never, ExtArgs extends runtime.Ty
   disposals<T extends Prisma.Asset$disposalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$disposalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetDisposalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reservations<T extends Prisma.Asset$reservationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$reservationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   kitCheckoutItems<T extends Prisma.Asset$kitCheckoutItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$kitCheckoutItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetKitCheckoutItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  serviceAssets<T extends Prisma.Asset$serviceAssetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$serviceAssetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServiceAssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5263,6 +5511,30 @@ export type Asset$kitCheckoutItemsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.AssetKitCheckoutItemScalarFieldEnum | Prisma.AssetKitCheckoutItemScalarFieldEnum[]
+}
+
+/**
+ * Asset.serviceAssets
+ */
+export type Asset$serviceAssetsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ServiceAsset
+   */
+  select?: Prisma.ServiceAssetSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ServiceAsset
+   */
+  omit?: Prisma.ServiceAssetOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceAssetInclude<ExtArgs> | null
+  where?: Prisma.ServiceAssetWhereInput
+  orderBy?: Prisma.ServiceAssetOrderByWithRelationInput | Prisma.ServiceAssetOrderByWithRelationInput[]
+  cursor?: Prisma.ServiceAssetWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ServiceAssetScalarFieldEnum | Prisma.ServiceAssetScalarFieldEnum[]
 }
 
 /**
