@@ -36,6 +36,10 @@ This folder contains detailed specifications for planned features that are not y
 
 - None currently
 
+### UI/UX Enhancements (Cross-cutting)
+
+- [Inline-Editable Code Fields](INLINE_EDITABLE_CODE_FIELDS.md) - **Status: Planned** - Move code/tag fields from form body to inline-editable fields in dialog titles (11 forms, 4-6 hours)
+
 ## Adding New Features
 
 When adding a new roadmap item:
@@ -67,4 +71,4 @@ When a feature is approved for implementation:
 ---
 
 **Maintained By**: Development Team
-**Last Updated**: 2025-01-21
+**Last Updated**: 2025-11-22

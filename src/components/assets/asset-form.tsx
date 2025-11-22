@@ -5,10 +5,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Edit2 } from "lucide-react";
 import type { z } from "zod";
+import { InlineEditableField } from "@/components/ui/inline-editable-field";
 import {
   Dialog,
   DialogContent,
@@ -85,7 +85,6 @@ export function AssetForm({
   };
 
   const isEditing = !!asset;
-  const [showCodeField, setShowCodeField] = useState(isEditing);
   const [categories, setCategories] = useState<AssetCategoryDTO[]>([]);
   const [models, setModels] = useState<AssetModelDTO[]>([]);
   const [vendors, setVendors] = useState<VendorDTO[]>([]);
@@ -94,6 +93,21 @@ export function AssetForm({
     [],
   );
   const [loading, setLoading] = useState(true);
+
+  // Focus the first field when dialog opens
+  useEffect(() => {
+    if (open && !loading) {
+      // Use a timeout to ensure the dialog is fully rendered
+      const timer = setTimeout(() => {
+        const firstField =
+          document.querySelector<HTMLButtonElement>('[role="combobox"]');
+        if (firstField) {
+          firstField.focus();
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [open, loading]);
 
   const form = useForm<AssetFormValues, undefined, CreateAssetDTO>({
     resolver: zodResolver(CreateAssetSchema),
@@ -213,463 +227,446 @@ export function AssetForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[700px]">
-        <DialogHeader>
-          <DialogTitle>{isEditing ? "Edit Asset" : "Create Asset"}</DialogTitle>
-          <DialogDescription>
-            {isEditing
-              ? "Update the asset information."
-              : "Add a new asset to your inventory."}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent
+        className="max-h-[90vh] overflow-y-auto sm:max-w-[700px]"
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+        }}
+      >
+        <FormProvider {...form}>
+          <DialogHeader>
+            <DialogTitle className="flex flex-wrap items-center gap-2">
+              <span>{isEditing ? "Edit Asset:" : "Create Asset:"}</span>
+              <InlineEditableField
+                name="assetTag"
+                placeholder={isEditing ? "Asset tag" : "Auto-generated"}
+                transform="uppercase"
+                optional={!isEditing}
+              />
+            </DialogTitle>
+            <DialogDescription>
+              {isEditing
+                ? "Update the asset information."
+                : "Add a new asset to your inventory."}
+            </DialogDescription>
+          </DialogHeader>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {/* Asset Tag */}
-            {!showCodeField && !isEditing ? (
-              <div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowCodeField(true)}
-                  className="h-8 text-xs"
-                >
-                  <Edit2 className="mr-2 h-3 w-3" />
-                  Manually set asset tag (optional)
-                </Button>
-                <p className="text-muted-foreground mt-1 text-xs">
-                  Asset tag will be auto-generated if not provided
-                </p>
-              </div>
-            ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {/* Asset Category */}
               <FormField
                 control={form.control}
-                name="assetTag"
+                name="assetCategoryId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      Asset Tag{" "}
-                      {isEditing && <span className="text-destructive">*</span>}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="ASSET-000001"
-                        {...field}
-                        value={field.value || ""}
-                        onChange={(e) => {
-                          field.onChange(e.target.value.toUpperCase());
-                        }}
-                      />
-                    </FormControl>
+                    <FormLabel>Asset Category</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value || undefined}
+                      disabled={loading}
+                    >
+                      <FormControl>
+                        <SelectTrigger tabIndex={1}>
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.name} ({category.code})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormDescription>
-                      {isEditing
-                        ? "Unique identifier for this asset"
-                        : "Leave empty to auto-generate"}
+                      The category this asset belongs to
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            )}
 
-            {/* Asset Category */}
-            <FormField
-              control={form.control}
-              name="assetCategoryId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Asset Category</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value || undefined}
-                    disabled={loading}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a category" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name} ({category.code})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    The category this asset belongs to
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Asset Model */}
-            <FormField
-              control={form.control}
-              name="assetModelId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Asset Model (Optional)</FormLabel>
-                  <Select
-                    onValueChange={(value) =>
-                      field.onChange(value === NONE_OPTION_VALUE ? null : value)
-                    }
-                    value={field.value ?? undefined}
-                    disabled={loading}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a model" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
-                      {models.map((model) => (
-                        <SelectItem key={model.id} value={model.id}>
-                          {model.name} ({model.code})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    Specific model/make of this asset
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Vendor */}
-            <FormField
-              control={form.control}
-              name="vendorId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Vendor (Optional)</FormLabel>
-                  <Select
-                    onValueChange={(value) =>
-                      field.onChange(value === NONE_OPTION_VALUE ? null : value)
-                    }
-                    value={field.value ?? undefined}
-                    disabled={loading}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a vendor" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
-                      {vendors.map((vendor) => (
-                        <SelectItem key={vendor.id} value={vendor.id}>
-                          {vendor.name} ({vendor.code})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    The supplier or manufacturer
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Stock Location */}
-            <FormField
-              control={form.control}
-              name="currentStockLocationId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Stock Location (Optional)</FormLabel>
-                  <Select
-                    onValueChange={(value) =>
-                      field.onChange(value === NONE_OPTION_VALUE ? null : value)
-                    }
-                    value={field.value ?? undefined}
-                    disabled={loading}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a location" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
-                      {stockLocations.map((location) => (
-                        <SelectItem key={location.id} value={location.id}>
-                          {location.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    Current physical location of the asset
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Lifecycle State */}
-            <FormField
-              control={form.control}
-              name="lifecycleStateId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Lifecycle State (Optional)</FormLabel>
-                  <Select
-                    onValueChange={(value) =>
-                      field.onChange(value === NONE_OPTION_VALUE ? null : value)
-                    }
-                    value={field.value ?? undefined}
-                    disabled={loading}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a state" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
-                      {lifecycleStates.map((state) => (
-                        <SelectItem key={state.id} value={state.id}>
-                          {state.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    Current lifecycle state of the asset
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Serial Number */}
-            <FormField
-              control={form.control}
-              name="serialNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Serial Number (Optional)</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="ABC123XYZ789"
-                      {...field}
-                      value={field.value || ""}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Manufacturer's serial number
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Condition */}
-            <FormField
-              control={form.control}
-              name="condition"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Condition (Optional)</FormLabel>
-                  <Select
-                    onValueChange={(value) =>
-                      field.onChange(value === NONE_OPTION_VALUE ? null : value)
-                    }
-                    value={field.value ?? undefined}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select condition" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
-                      <SelectItem value="NEW">New</SelectItem>
-                      <SelectItem value="GOOD">Good</SelectItem>
-                      <SelectItem value="FAIR">Fair</SelectItem>
-                      <SelectItem value="POOR">Poor</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    Physical condition of the asset
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Purchase Date */}
-            <FormField
-              control={form.control}
-              name="purchaseDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Purchase Date (Optional)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="date"
-                      {...field}
-                      value={
-                        field.value && field.value instanceof Date
-                          ? field.value.toISOString().split("T")[0]
-                          : field.value && typeof field.value === "string"
-                            ? new Date(field.value).toISOString().split("T")[0]
-                            : ""
-                      }
-                      onChange={(e) => {
-                        field.onChange(
-                          e.target.value ? new Date(e.target.value) : null,
-                        );
-                      }}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    When the asset was purchased
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Purchase Cost */}
-            <div className="grid grid-cols-2 gap-4">
+              {/* Asset Model */}
               <FormField
                 control={form.control}
-                name="purchaseCost"
+                name="assetModelId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Purchase Cost (Optional)</FormLabel>
+                    <FormLabel>Asset Model (Optional)</FormLabel>
+                    <Select
+                      onValueChange={(value) =>
+                        field.onChange(
+                          value === NONE_OPTION_VALUE ? null : value,
+                        )
+                      }
+                      value={field.value ?? undefined}
+                      disabled={loading}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a model" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
+                        {models.map((model) => (
+                          <SelectItem key={model.id} value={model.id}>
+                            {model.name} ({model.code})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Specific model/make of this asset
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Vendor */}
+              <FormField
+                control={form.control}
+                name="vendorId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Vendor (Optional)</FormLabel>
+                    <Select
+                      onValueChange={(value) =>
+                        field.onChange(
+                          value === NONE_OPTION_VALUE ? null : value,
+                        )
+                      }
+                      value={field.value ?? undefined}
+                      disabled={loading}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a vendor" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
+                        {vendors.map((vendor) => (
+                          <SelectItem key={vendor.id} value={vendor.id}>
+                            {vendor.name} ({vendor.code})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      The supplier or manufacturer
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Stock Location */}
+              <FormField
+                control={form.control}
+                name="currentStockLocationId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Stock Location (Optional)</FormLabel>
+                    <Select
+                      onValueChange={(value) =>
+                        field.onChange(
+                          value === NONE_OPTION_VALUE ? null : value,
+                        )
+                      }
+                      value={field.value ?? undefined}
+                      disabled={loading}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a location" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
+                        {stockLocations.map((location) => (
+                          <SelectItem key={location.id} value={location.id}>
+                            {location.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Current physical location of the asset
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Lifecycle State */}
+              <FormField
+                control={form.control}
+                name="lifecycleStateId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Lifecycle State (Optional)</FormLabel>
+                    <Select
+                      onValueChange={(value) =>
+                        field.onChange(
+                          value === NONE_OPTION_VALUE ? null : value,
+                        )
+                      }
+                      value={field.value ?? undefined}
+                      disabled={loading}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a state" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
+                        {lifecycleStates.map((state) => (
+                          <SelectItem key={state.id} value={state.id}>
+                            {state.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Current lifecycle state of the asset
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Serial Number */}
+              <FormField
+                control={form.control}
+                name="serialNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Serial Number (Optional)</FormLabel>
                     <FormControl>
                       <Input
-                        type="number"
-                        step="0.01"
-                        placeholder="999.99"
+                        placeholder="ABC123XYZ789"
                         {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Manufacturer's serial number
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Condition */}
+              <FormField
+                control={form.control}
+                name="condition"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Condition (Optional)</FormLabel>
+                    <Select
+                      onValueChange={(value) =>
+                        field.onChange(
+                          value === NONE_OPTION_VALUE ? null : value,
+                        )
+                      }
+                      value={field.value ?? undefined}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select condition" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
+                        <SelectItem value="NEW">New</SelectItem>
+                        <SelectItem value="GOOD">Good</SelectItem>
+                        <SelectItem value="FAIR">Fair</SelectItem>
+                        <SelectItem value="POOR">Poor</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Physical condition of the asset
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Purchase Date */}
+              <FormField
+                control={form.control}
+                name="purchaseDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Purchase Date (Optional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="date"
+                        {...field}
+                        value={
+                          field.value && field.value instanceof Date
+                            ? field.value.toISOString().split("T")[0]
+                            : field.value && typeof field.value === "string"
+                              ? new Date(field.value)
+                                  .toISOString()
+                                  .split("T")[0]
+                              : ""
+                        }
                         onChange={(e) => {
-                          const value = e.target.value;
                           field.onChange(
-                            value === "" ? undefined : Number(value),
+                            e.target.value ? new Date(e.target.value) : null,
                           );
                         }}
-                        value={field.value ?? ""}
                       />
                     </FormControl>
                     <FormDescription>
-                      Cost in specified currency
+                      When the asset was purchased
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
+              {/* Purchase Cost */}
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="purchaseCost"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Purchase Cost (Optional)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          placeholder="999.99"
+                          {...field}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            field.onChange(
+                              value === "" ? undefined : Number(value),
+                            );
+                          }}
+                          value={field.value ?? ""}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Cost in specified currency
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="currency"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Currency (Optional)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="USD"
+                          maxLength={3}
+                          {...field}
+                          onChange={(e) => {
+                            field.onChange(e.target.value.toUpperCase());
+                          }}
+                          value={field.value || ""}
+                        />
+                      </FormControl>
+                      <FormDescription>3-letter ISO code</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Warranty End Date */}
               <FormField
                 control={form.control}
-                name="currency"
+                name="warrantyEndDate"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Currency (Optional)</FormLabel>
+                    <FormLabel>Warranty End Date (Optional)</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="USD"
-                        maxLength={3}
+                        type="date"
                         {...field}
+                        value={
+                          field.value && field.value instanceof Date
+                            ? field.value.toISOString().split("T")[0]
+                            : field.value && typeof field.value === "string"
+                              ? new Date(field.value)
+                                  .toISOString()
+                                  .split("T")[0]
+                              : ""
+                        }
                         onChange={(e) => {
-                          field.onChange(e.target.value.toUpperCase());
+                          field.onChange(
+                            e.target.value ? new Date(e.target.value) : null,
+                          );
                         }}
-                        value={field.value || ""}
                       />
                     </FormControl>
-                    <FormDescription>3-letter ISO code</FormDescription>
+                    <FormDescription>When the warranty expires</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            </div>
 
-            {/* Warranty End Date */}
-            <FormField
-              control={form.control}
-              name="warrantyEndDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Warranty End Date (Optional)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="date"
-                      {...field}
-                      value={
-                        field.value && field.value instanceof Date
-                          ? field.value.toISOString().split("T")[0]
-                          : field.value && typeof field.value === "string"
-                            ? new Date(field.value).toISOString().split("T")[0]
-                            : ""
-                      }
-                      onChange={(e) => {
-                        field.onChange(
-                          e.target.value ? new Date(e.target.value) : null,
-                        );
-                      }}
-                    />
-                  </FormControl>
-                  <FormDescription>When the warranty expires</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              {/* Note */}
+              <FormField
+                control={form.control}
+                name="note"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Note (Optional)</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Additional notes about this asset"
+                        className="resize-none"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Any additional information
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            {/* Note */}
-            <FormField
-              control={form.control}
-              name="note"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Note (Optional)</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Additional notes about this asset"
-                      className="resize-none"
-                      {...field}
-                      value={field.value || ""}
-                    />
-                  </FormControl>
-                  <FormDescription>Any additional information</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={form.formState.isSubmitting || loading}
-                className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
-              >
-                {form.formState.isSubmitting
-                  ? isEditing
-                    ? "Updating..."
-                    : "Creating..."
-                  : isEditing
-                    ? "Update"
-                    : "Create"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onOpenChange(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={form.formState.isSubmitting || loading}
+                  className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
+                >
+                  {form.formState.isSubmitting
+                    ? isEditing
+                      ? "Updating..."
+                      : "Creating..."
+                    : isEditing
+                      ? "Update"
+                      : "Create"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </FormProvider>
       </DialogContent>
     </Dialog>
   );
