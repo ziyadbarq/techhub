@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -224,238 +224,252 @@ export function CIClassForm({
           </DialogHeader>
 
           <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {/* Name */}
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="e.g., Server, Database, Application"
-                      tabIndex={1}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Display name for this CI class
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Parent Class */}
-            <FormField
-              control={form.control}
-              name="parentClassId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Parent Class (Optional)</FormLabel>
-                  <Select
-                    onValueChange={(value) =>
-                      field.onChange(value === NONE_OPTION_VALUE ? null : value)
-                    }
-                    value={field.value ?? NONE_OPTION_VALUE}
-                    disabled={loading}
-                  >
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {/* Name */}
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="None (root class)" />
-                      </SelectTrigger>
+                      <Input
+                        placeholder="e.g., Server, Database, Application"
+                        tabIndex={1}
+                        {...field}
+                      />
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value={NONE_OPTION_VALUE}>
-                        None (root class)
-                      </SelectItem>
-                      {parentClasses.map((cls) => (
-                        <SelectItem key={cls.id} value={cls.id}>
-                          {cls.name} ({cls.code})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>Hierarchical parent class</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Description */}
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description (Optional)</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Describe this CI class..."
-                      className="resize-none"
-                      {...field}
-                      value={field.value ?? ""}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Purpose and usage of this class
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Lifecycle Model */}
-            <FormField
-              control={form.control}
-              name="lifecycleModelId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Lifecycle Model (Optional)</FormLabel>
-                  <Select
-                    onValueChange={(value) =>
-                      field.onChange(value === NONE_OPTION_VALUE ? null : value)
-                    }
-                    value={field.value ?? NONE_OPTION_VALUE}
-                    disabled={loading}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="None" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
-                      {lifecycleModels.map((model) => (
-                        <SelectItem key={model.id} value={model.id}>
-                          {model.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    Default lifecycle model for CIs of this class
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Default Criticality */}
-            <FormField
-              control={form.control}
-              name="defaultCriticality"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Default Criticality (Optional)</FormLabel>
-                  <Select
-                    onValueChange={(value) =>
-                      field.onChange(value === NONE_OPTION_VALUE ? null : value)
-                    }
-                    value={field.value ?? NONE_OPTION_VALUE}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="None" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
-                      <SelectItem value="LOW">Low</SelectItem>
-                      <SelectItem value="MEDIUM">Medium</SelectItem>
-                      <SelectItem value="HIGH">High</SelectItem>
-                      <SelectItem value="CRITICAL">Critical</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    Default criticality level for CIs
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Default Environment */}
-            <FormField
-              control={form.control}
-              name="defaultEnvironment"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Default Environment (Optional)</FormLabel>
-                  <Select
-                    onValueChange={(value) =>
-                      field.onChange(value === NONE_OPTION_VALUE ? null : value)
-                    }
-                    value={field.value ?? NONE_OPTION_VALUE}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="None" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
-                      <SelectItem value="PROD">Production (PROD)</SelectItem>
-                      <SelectItem value="UAT">User Acceptance (UAT)</SelectItem>
-                      <SelectItem value="DEV">Development (DEV)</SelectItem>
-                      <SelectItem value="DR">Disaster Recovery (DR)</SelectItem>
-                      <SelectItem value="TEST">Testing (TEST)</SelectItem>
-                      <SelectItem value="OTHER">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>Default environment for CIs</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Is Discoverable */}
-            <FormField
-              control={form.control}
-              name="isDiscoverable"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">Discoverable</FormLabel>
                     <FormDescription>
-                      Can CIs of this class be auto-discovered?
+                      Display name for this CI class
                     </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={form.formState.isSubmitting || loading}
-                className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
-              >
-                {form.formState.isSubmitting
-                  ? isEditing
-                    ? "Updating..."
-                    : "Creating..."
-                  : isEditing
-                    ? "Update"
-                    : "Create"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+              {/* Parent Class */}
+              <FormField
+                control={form.control}
+                name="parentClassId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Parent Class (Optional)</FormLabel>
+                    <Select
+                      onValueChange={(value) =>
+                        field.onChange(
+                          value === NONE_OPTION_VALUE ? null : value,
+                        )
+                      }
+                      value={field.value ?? NONE_OPTION_VALUE}
+                      disabled={loading}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="None (root class)" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={NONE_OPTION_VALUE}>
+                          None (root class)
+                        </SelectItem>
+                        {parentClasses.map((cls) => (
+                          <SelectItem key={cls.id} value={cls.id}>
+                            {cls.name} ({cls.code})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>Hierarchical parent class</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Description */}
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description (Optional)</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Describe this CI class..."
+                        className="resize-none"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Purpose and usage of this class
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Lifecycle Model */}
+              <FormField
+                control={form.control}
+                name="lifecycleModelId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Lifecycle Model (Optional)</FormLabel>
+                    <Select
+                      onValueChange={(value) =>
+                        field.onChange(
+                          value === NONE_OPTION_VALUE ? null : value,
+                        )
+                      }
+                      value={field.value ?? NONE_OPTION_VALUE}
+                      disabled={loading}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="None" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
+                        {lifecycleModels.map((model) => (
+                          <SelectItem key={model.id} value={model.id}>
+                            {model.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Default lifecycle model for CIs of this class
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Default Criticality */}
+              <FormField
+                control={form.control}
+                name="defaultCriticality"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Default Criticality (Optional)</FormLabel>
+                    <Select
+                      onValueChange={(value) =>
+                        field.onChange(
+                          value === NONE_OPTION_VALUE ? null : value,
+                        )
+                      }
+                      value={field.value ?? NONE_OPTION_VALUE}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="None" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
+                        <SelectItem value="LOW">Low</SelectItem>
+                        <SelectItem value="MEDIUM">Medium</SelectItem>
+                        <SelectItem value="HIGH">High</SelectItem>
+                        <SelectItem value="CRITICAL">Critical</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Default criticality level for CIs
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Default Environment */}
+              <FormField
+                control={form.control}
+                name="defaultEnvironment"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Default Environment (Optional)</FormLabel>
+                    <Select
+                      onValueChange={(value) =>
+                        field.onChange(
+                          value === NONE_OPTION_VALUE ? null : value,
+                        )
+                      }
+                      value={field.value ?? NONE_OPTION_VALUE}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="None" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
+                        <SelectItem value="PROD">Production (PROD)</SelectItem>
+                        <SelectItem value="UAT">
+                          User Acceptance (UAT)
+                        </SelectItem>
+                        <SelectItem value="DEV">Development (DEV)</SelectItem>
+                        <SelectItem value="DR">
+                          Disaster Recovery (DR)
+                        </SelectItem>
+                        <SelectItem value="TEST">Testing (TEST)</SelectItem>
+                        <SelectItem value="OTHER">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Default environment for CIs
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Is Discoverable */}
+              <FormField
+                control={form.control}
+                name="isDiscoverable"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Discoverable</FormLabel>
+                      <FormDescription>
+                        Can CIs of this class be auto-discovered?
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onOpenChange(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={form.formState.isSubmitting || loading}
+                  className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
+                >
+                  {form.formState.isSubmitting
+                    ? isEditing
+                      ? "Updating..."
+                      : "Creating..."
+                    : isEditing
+                      ? "Update"
+                      : "Create"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
         </FormProvider>
       </DialogContent>
     </Dialog>
