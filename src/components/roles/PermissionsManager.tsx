@@ -30,6 +30,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import {
   Card,
   CardContent,
@@ -77,6 +78,10 @@ export function PermissionsManager({
   const [searchQuery, setSearchQuery] = React.useState("");
   const [expandedGroups, setExpandedGroups] = React.useState<Set<string>>(
     new Set(PERMISSION_GROUPS.map((g) => g.id)),
+  );
+  const [bulkMode, setBulkMode] = React.useState(false);
+  const [bulkSelection, setBulkSelection] = React.useState<Set<string>>(
+    new Set(),
   );
 
   // Create permission map for quick lookup
@@ -147,35 +152,52 @@ export function PermissionsManager({
   };
 
   const toggleAllInGroup = (groupId: string, checked: boolean) => {
-    setSelectedPermissions((prev) => {
-      const next = new Set(prev);
-      const group = groupedPermissions.find((g) => g.id === groupId);
-      if (!group) return prev;
+    if (bulkMode) {
+      setBulkSelection((prev) => {
+        const next = new Set(prev);
+        const group = groupedPermissions.find((g) => g.id === groupId);
+        if (!group) return prev;
 
-      group.permissions.forEach((perm) => {
-        if (checked) {
-          next.add(perm.name);
-        } else {
-          next.delete(perm.name);
-        }
+        group.permissions.forEach((perm) => {
+          if (checked) {
+            next.add(perm.name);
+          } else {
+            next.delete(perm.name);
+          }
+        });
+        return next;
       });
-      return next;
-    });
+    } else {
+      setSelectedPermissions((prev) => {
+        const next = new Set(prev);
+        const group = groupedPermissions.find((g) => g.id === groupId);
+        if (!group) return prev;
+
+        group.permissions.forEach((perm) => {
+          if (checked) {
+            next.add(perm.name);
+          } else {
+            next.delete(perm.name);
+          }
+        });
+        return next;
+      });
+    }
   };
 
   const isGroupFullySelected = (groupId: string) => {
     const group = groupedPermissions.find((g) => g.id === groupId);
     if (!group || group.permissions.length === 0) return false;
-    return group.permissions.every((perm) =>
-      selectedPermissions.has(perm.name),
-    );
+    const targetSet = bulkMode ? bulkSelection : selectedPermissions;
+    return group.permissions.every((perm) => targetSet.has(perm.name));
   };
 
   const isGroupPartiallySelected = (groupId: string) => {
     const group = groupedPermissions.find((g) => g.id === groupId);
     if (!group || group.permissions.length === 0) return false;
+    const targetSet = bulkMode ? bulkSelection : selectedPermissions;
     const selectedCount = group.permissions.filter((perm) =>
-      selectedPermissions.has(perm.name),
+      targetSet.has(perm.name),
     ).length;
     return selectedCount > 0 && selectedCount < group.permissions.length;
   };
@@ -183,9 +205,8 @@ export function PermissionsManager({
   const getGroupSelectedCount = (groupId: string) => {
     const group = groupedPermissions.find((g) => g.id === groupId);
     if (!group) return 0;
-    return group.permissions.filter((perm) =>
-      selectedPermissions.has(perm.name),
-    ).length;
+    const targetSet = bulkMode ? bulkSelection : selectedPermissions;
+    return group.permissions.filter((perm) => targetSet.has(perm.name)).length;
   };
 
   const hasChanges = () => {
@@ -241,6 +262,44 @@ export function PermissionsManager({
     );
   };
 
+  // Bulk mode handlers
+  const handleToggleBulkSelection = (permissionName: string) => {
+    setBulkSelection((prev) => {
+      const next = new Set(prev);
+      if (next.has(permissionName)) {
+        next.delete(permissionName);
+      } else {
+        next.add(permissionName);
+      }
+      return next;
+    });
+  };
+
+  const handleBulkAdd = () => {
+    setSelectedPermissions((prev) => {
+      const next = new Set(prev);
+      bulkSelection.forEach((perm) => next.add(perm));
+      return next;
+    });
+    setBulkSelection(new Set());
+    toast.success(`Added ${bulkSelection.size} permissions`);
+  };
+
+  const handleBulkRemove = () => {
+    setSelectedPermissions((prev) => {
+      const next = new Set(prev);
+      bulkSelection.forEach((perm) => next.delete(perm));
+      return next;
+    });
+    setBulkSelection(new Set());
+    toast.success(`Removed ${bulkSelection.size} permissions`);
+  };
+
+  const handleClearBulkSelection = () => {
+    setBulkSelection(new Set());
+    toast.info("Selection cleared");
+  };
+
   return (
     <div className="space-y-6">
       {/* Summary Card */}
@@ -254,7 +313,7 @@ export function PermissionsManager({
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 <Badge variant="outline">
                   {role.permissions?.length ?? 0} current
@@ -262,12 +321,74 @@ export function PermissionsManager({
                 <X className="text-muted-foreground h-4 w-4" />
                 <Badge variant="default">{selectedPermissions.size} new</Badge>
               </div>
-              {hasChanges() && (
-                <Badge variant="default" className="bg-barq-yellow text-white">
-                  Unsaved Changes
-                </Badge>
-              )}
+              <div className="flex items-center gap-4">
+                {hasChanges() && (
+                  <Badge
+                    variant="default"
+                    className="bg-barq-yellow text-white"
+                  >
+                    Unsaved Changes
+                  </Badge>
+                )}
+                {!isSystemRole && (
+                  <div className="flex items-center gap-2">
+                    <label
+                      htmlFor="bulk-mode"
+                      className="text-muted-foreground text-sm"
+                    >
+                      Bulk Mode
+                    </label>
+                    <Switch
+                      id="bulk-mode"
+                      checked={bulkMode}
+                      onCheckedChange={(checked) => {
+                        setBulkMode(checked);
+                        if (!checked) {
+                          setBulkSelection(new Set());
+                        }
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
+
+            {/* Bulk Actions Bar */}
+            {bulkMode && (
+              <div className="rounded-lg border bg-muted p-3">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="default">{bulkSelection.size} selected</Badge>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleBulkAdd}
+                      disabled={bulkSelection.size === 0}
+                    >
+                      Add Selected
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleBulkRemove}
+                      disabled={bulkSelection.size === 0}
+                    >
+                      Remove Selected
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={handleClearBulkSelection}
+                      disabled={bulkSelection.size === 0}
+                    >
+                      Clear
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Search Input */}
             <div className="relative">
@@ -440,16 +561,27 @@ export function PermissionsManager({
                             permission.name as PermissionKey,
                           );
                           const hasDependencies = dependencies.length > 0;
+                          const isBulkSelected = bulkSelection.has(
+                            permission.name,
+                          );
 
                           return (
                             <div
                               key={permission.id}
-                              className="hover:bg-muted/50 flex items-start gap-3 rounded-lg border p-3 transition-colors"
+                              className={`hover:bg-muted/50 flex items-start gap-3 rounded-lg border p-3 transition-colors ${
+                                isBulkSelected && bulkMode
+                                  ? "border-primary bg-primary/5"
+                                  : ""
+                              }`}
                             >
                               <Checkbox
-                                checked={isSelected}
+                                checked={
+                                  bulkMode ? isBulkSelected : isSelected
+                                }
                                 onCheckedChange={() =>
-                                  togglePermission(permission.name)
+                                  bulkMode
+                                    ? handleToggleBulkSelection(permission.name)
+                                    : togglePermission(permission.name)
                                 }
                                 disabled={isSystemRole || isSaving}
                                 className="mt-1"
