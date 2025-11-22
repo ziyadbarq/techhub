@@ -108,7 +108,7 @@ export interface ICodeGeneratorService {
   generateCode(
     entityType: string,
     prefix: string,
-    options?: CodeGenerationOptions
+    options?: CodeGenerationOptions,
   ): Promise<string>;
 
   /**
@@ -137,21 +137,21 @@ export interface ICodeGeneratorService {
 
 ## Supported Entities
 
-| Entity              | Code Field | Prefix  | Example         | Scoped |
-| ------------------- | ---------- | ------- | --------------- | ------ |
-| Vendor              | `code`     | VENDOR  | VENDOR-000001   | No     |
-| Asset               | `assetTag` | ASSET   | ASSET-000001    | No     |
-| Organization Unit   | `code`     | ORG     | ORG-000001      | No     |
-| Location            | `code`     | LOC     | LOC-000001      | No     |
-| Lifecycle State     | `code`     | STATE   | STATE-000001    | Yes\*  |
-| CI Class            | `code`     | CI      | CI-000001       | No     |
-| Relationship Type   | `code`     | REL     | REL-000001      | No     |
-| Asset Category      | `code`     | CAT     | CAT-000001      | No     |
-| Asset Model         | `code`     | MODEL   | MODEL-000001    | No     |
-| Stock Location      | `code`     | STOCK   | STOCK-000001    | No     |
-| Asset Kit           | `code`     | KIT     | KIT-000001      | No     |
-| Contract Type       | `code`     | CTYPE   | CTYPE-000001    | No     |
-| License Product     | `code`     | LIC     | LIC-000001      | No     |
+| Entity            | Code Field | Prefix | Example       | Scoped |
+| ----------------- | ---------- | ------ | ------------- | ------ |
+| Vendor            | `code`     | VENDOR | VENDOR-000001 | No     |
+| Asset             | `assetTag` | ASSET  | ASSET-000001  | No     |
+| Organization Unit | `code`     | ORG    | ORG-000001    | No     |
+| Location          | `code`     | LOC    | LOC-000001    | No     |
+| Lifecycle State   | `code`     | STATE  | STATE-000001  | Yes\*  |
+| CI Class          | `code`     | CI     | CI-000001     | No     |
+| Relationship Type | `code`     | REL    | REL-000001    | No     |
+| Asset Category    | `code`     | CAT    | CAT-000001    | No     |
+| Asset Model       | `code`     | MODEL  | MODEL-000001  | No     |
+| Stock Location    | `code`     | STOCK  | STOCK-000001  | No     |
+| Asset Kit         | `code`     | KIT    | KIT-000001    | No     |
+| Contract Type     | `code`     | CTYPE  | CTYPE-000001  | No     |
+| License Product   | `code`     | LIC    | LIC-000001    | No     |
 
 \* **Lifecycle State** is scoped per lifecycle model, meaning each model has its own sequence starting from STATE-000001.
 
@@ -198,7 +198,7 @@ export class CreateVendorUseCase {
     @inject(DI_TOKENS.IVendorRepository)
     private readonly vendorRepository: IVendorRepository,
     @inject(DI_TOKENS.ICodeGeneratorService)
-    private readonly codeGenerator: ICodeGeneratorService
+    private readonly codeGenerator: ICodeGeneratorService,
   ) {}
 
   async execute(props: CreateVendorProps): Promise<Vendor> {
@@ -384,13 +384,13 @@ After clicking **"Manually set code (optional)"**:
 export class CodeGeneratorService implements ICodeGeneratorService {
   constructor(
     @inject(DI_TOKENS.PrismaClient) private readonly prisma: PrismaClient,
-    @inject(DI_TOKENS.ILoggerService) private readonly logger: ILoggerService
+    @inject(DI_TOKENS.ILoggerService) private readonly logger: ILoggerService,
   ) {}
 
   async generateCode(
     entityType: string,
     prefix: string,
-    options?: CodeGenerationOptions
+    options?: CodeGenerationOptions,
   ): Promise<string> {
     const entityTypeKey = options?.scopeId
       ? `${entityType}:${options.scopeId}`
@@ -421,7 +421,9 @@ The service uses **Prisma's atomic upsert** operation with increment:
 
 ```typescript
 update: {
-  lastNumber: { increment: 1 }
+  lastNumber: {
+    increment: 1;
+  }
 }
 ```
 
@@ -543,7 +545,7 @@ export class CreateEntityUseCase {
     @inject(DI_TOKENS.IEntityRepository)
     private readonly entityRepository: IEntityRepository,
     @inject(DI_TOKENS.ICodeGeneratorService) // ← Inject service
-    private readonly codeGenerator: ICodeGeneratorService
+    private readonly codeGenerator: ICodeGeneratorService,
   ) {}
 
   async execute(props: CreateEntityProps): Promise<Entity> {
@@ -692,7 +694,7 @@ describe("CreateEntityUseCase", () => {
     mockCodeGenerator = new MockCodeGeneratorService();
     useCase = new CreateEntityUseCase(
       mockRepository as unknown as IEntityRepository,
-      mockCodeGenerator as unknown as ICodeGeneratorService
+      mockCodeGenerator as unknown as ICodeGeneratorService,
     );
   });
 

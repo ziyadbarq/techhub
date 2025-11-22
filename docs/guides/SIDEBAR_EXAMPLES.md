@@ -924,12 +924,6 @@ export const navGroups: NavGroup[] = [
     permission: "view:admin",
     items: [
       {
-        title: "Organization Settings",
-        href: "/admin/settings",
-        icon: Settings,
-        permission: "manage:organization",
-      },
-      {
         title: "API Keys",
         href: "/admin/api-keys",
         icon: Key,
@@ -946,6 +940,44 @@ export const navGroups: NavGroup[] = [
         href: "/admin/audit",
         icon: Shield,
         permission: "view:audit",
+      },
+    ],
+  },
+  {
+    id: "system-settings",
+    title: "System Settings",
+    collapsible: true,
+    permission: "manage:settings",
+    items: [
+      {
+        title: "Platform Settings",
+        href: "/settings/platform",
+        icon: Globe2,
+        permission: "manage:settings",
+      },
+      {
+        title: "Authentication",
+        href: "/settings/authentication",
+        icon: LockKeyhole,
+        permission: "manage:settings",
+      },
+      {
+        title: "Notifications",
+        href: "/settings/notifications",
+        icon: Bell,
+        permission: "manage:settings",
+      },
+      {
+        title: "Operations",
+        href: "/settings/operations",
+        icon: ServerCog,
+        permission: "manage:settings",
+      },
+      {
+        title: "Integrations",
+        href: "/settings/integrations",
+        icon: Cloud,
+        permission: "manage:settings",
       },
     ],
   },

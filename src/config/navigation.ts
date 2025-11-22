@@ -48,6 +48,11 @@ import {
   Key,
   Award,
   UserSquare2,
+  Globe2,
+  LockKeyhole,
+  Bell,
+  ServerCog,
+  Cloud,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -464,6 +469,53 @@ export const navGroups: NavGroup[] = [
     visible: true,
     collapsible: true,
     defaultCollapsed: false,
+  },
+
+  // System Settings - Platform configuration
+  {
+    id: "system-settings",
+    title: "System Settings",
+    items: [
+      {
+        title: "Platform Settings",
+        href: "/settings/platform",
+        icon: Globe2,
+        description: "Platform identity and general configuration",
+        permission: PERMISSIONS.SETTINGS_MANAGE,
+      },
+      {
+        title: "Authentication",
+        href: "/settings/authentication",
+        icon: LockKeyhole,
+        description: "Authentication and access control policies",
+        permission: PERMISSIONS.SETTINGS_MANAGE,
+      },
+      {
+        title: "Notifications",
+        href: "/settings/notifications",
+        icon: Bell,
+        description: "Email and Slack notification settings",
+        permission: PERMISSIONS.SETTINGS_MANAGE,
+      },
+      {
+        title: "Operations",
+        href: "/settings/operations",
+        icon: ServerCog,
+        description: "Maintenance windows and retention policies",
+        permission: PERMISSIONS.SETTINGS_MANAGE,
+      },
+      {
+        title: "Integrations",
+        href: "/settings/integrations",
+        icon: Cloud,
+        description: "External system integrations and webhooks",
+        permission: PERMISSIONS.SETTINGS_MANAGE,
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: false,
+    permission: PERMISSIONS.SETTINGS_MANAGE,
   },
 
   // Admin Section - Permission-based, collapsible

@@ -510,10 +510,23 @@ async function loadNotifications() {
       icon: Users,
       permission: "manage:users",
     },
+  ],
+},
+{
+  id: "system-settings",
+  title: "System Settings",
+  permission: "manage:settings",
+  items: [
     {
-      title: "Settings",
-      href: "/admin/settings",
-      icon: Settings,
+      title: "Platform Settings",
+      href: "/settings/platform",
+      icon: Globe2,
+      permission: "manage:settings",
+    },
+    {
+      title: "Authentication",
+      href: "/settings/authentication",
+      icon: LockKeyhole,
       permission: "manage:settings",
     },
   ],

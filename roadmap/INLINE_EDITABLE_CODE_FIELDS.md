@@ -32,27 +32,29 @@ Move code/tag fields from the form body to inline-editable fields in the DialogT
 
 **11 forms require updates:**
 
-| Form Component | Entity | Code Field Name | Location |
-|----------------|--------|-----------------|----------|
-| ✅ `asset-form.tsx` | Asset | `assetTag` | **COMPLETED** |
-| `asset-category-form.tsx` | AssetCategory | `code` | `src/components/asset-categories/` |
-| `asset-model-form.tsx` | AssetModel | `code` | `src/components/asset-models/` |
-| `kit-form.tsx` | AssetKit | `code` | `src/components/asset-kits/` |
-| `ci-class-form.tsx` | CIClass | `code` | `src/components/ci-classes/` |
-| `contract-type-form.tsx` | ContractType | `code` | `src/components/contract-types/` |
-| `lifecycle-state-form.tsx` | LifecycleState | `code` | `src/components/lifecycle-states/` |
-| `location-form.tsx` | Location | `code` | `src/components/locations/` |
-| `organization-unit-form.tsx` | OrganizationUnit | `code` | `src/components/organization-units/` |
-| `relationship-type-form.tsx` | RelationshipType | `code` | `src/components/relationship-types/` |
-| `stock-location-form.tsx` | StockLocation | `code` | `src/components/stock-locations/` |
-| `vendor-form.tsx` | Vendor | `code` | `src/components/vendors/` |
+| Form Component               | Entity           | Code Field Name | Location                             |
+| ---------------------------- | ---------------- | --------------- | ------------------------------------ |
+| ✅ `asset-form.tsx`          | Asset            | `assetTag`      | **COMPLETED**                        |
+| `asset-category-form.tsx`    | AssetCategory    | `code`          | `src/components/asset-categories/`   |
+| `asset-model-form.tsx`       | AssetModel       | `code`          | `src/components/asset-models/`       |
+| `kit-form.tsx`               | AssetKit         | `code`          | `src/components/asset-kits/`         |
+| `ci-class-form.tsx`          | CIClass          | `code`          | `src/components/ci-classes/`         |
+| `contract-type-form.tsx`     | ContractType     | `code`          | `src/components/contract-types/`     |
+| `lifecycle-state-form.tsx`   | LifecycleState   | `code`          | `src/components/lifecycle-states/`   |
+| `location-form.tsx`          | Location         | `code`          | `src/components/locations/`          |
+| `organization-unit-form.tsx` | OrganizationUnit | `code`          | `src/components/organization-units/` |
+| `relationship-type-form.tsx` | RelationshipType | `code`          | `src/components/relationship-types/` |
+| `stock-location-form.tsx`    | StockLocation    | `code`          | `src/components/stock-locations/`    |
+| `vendor-form.tsx`            | Vendor           | `code`          | `src/components/vendors/`            |
 
 ### Reusable Component
 
 **Already Created:**
+
 - ✅ `InlineEditableField` - [src/components/ui/inline-editable-field.tsx](../src/components/ui/inline-editable-field.tsx)
 
 **Features:**
+
 - Click-to-edit behavior
 - Integrates with react-hook-form via `FormProvider`
 - Supports text transformations (uppercase, lowercase, capitalize)
@@ -63,11 +65,12 @@ Move code/tag fields from the form body to inline-editable fields in the DialogT
 ### Pattern for Each Form
 
 **1. Add FormProvider Wrapper:**
+
 ```tsx
 <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
   <FormProvider {...form}>
     <DialogHeader>
-      <DialogTitle className="flex items-center gap-2 flex-wrap">
+      <DialogTitle className="flex flex-wrap items-center gap-2">
         <span>{isEditing ? "Edit Entity:" : "Create Entity:"}</span>
         <InlineEditableField
           name="code"
@@ -77,27 +80,26 @@ Move code/tag fields from the form body to inline-editable fields in the DialogT
         />
       </DialogTitle>
     </DialogHeader>
-    <Form {...form}>
-      {/* Rest of form */}
-    </Form>
+    <Form {...form}>{/* Rest of form */}</Form>
   </FormProvider>
 </DialogContent>
 ```
 
 **2. Remove Code Field from Form Body:**
+
 - Delete the code field `<FormField>` block
 - Remove `showCodeField` state (if present)
 - Remove toggle button logic (create mode)
 
 **3. Add Focus Management:**
+
 ```tsx
 // Focus the first field when dialog opens
 useEffect(() => {
   if (open && !loading) {
     const timer = setTimeout(() => {
-      const firstField = document.querySelector<HTMLButtonElement>(
-        '[role="combobox"]'
-      );
+      const firstField =
+        document.querySelector<HTMLButtonElement>('[role="combobox"]');
       if (firstField) {
         firstField.focus();
       }
@@ -108,6 +110,7 @@ useEffect(() => {
 ```
 
 **4. Update Imports:**
+
 ```tsx
 import { useForm, FormProvider } from "react-hook-form";
 import { InlineEditableField } from "@/components/ui/inline-editable-field";
@@ -121,6 +124,7 @@ Add `tabIndex={1}` to the first Select field in the form body to ensure proper f
 ## Implementation Checklist
 
 ### Phase 1: Foundation Layer Forms (3 forms)
+
 **Estimated: 1.5 hours**
 
 - [ ] **Location Form** (`location-form.tsx`)
@@ -145,6 +149,7 @@ Add `tabIndex={1}` to the first Select field in the form body to ensure proper f
   - [ ] Test create/edit flows
 
 ### Phase 2: Asset Layer Forms (4 forms)
+
 **Estimated: 2 hours**
 
 - [ ] **Asset Category Form** (`asset-category-form.tsx`)
@@ -176,6 +181,7 @@ Add `tabIndex={1}` to the first Select field in the form body to ensure proper f
   - [ ] Test create/edit flows
 
 ### Phase 3: Advanced ITAM Forms (4 forms)
+
 **Estimated: 2 hours**
 
 - [ ] **Asset Kit Form** (`kit-form.tsx`)
@@ -207,6 +213,7 @@ Add `tabIndex={1}` to the first Select field in the form body to ensure proper f
   - [ ] Test create/edit flows
 
 ### Phase 4: Testing & Polish
+
 **Estimated: 0.5 hours**
 
 - [ ] Verify consistent behavior across all forms
@@ -224,6 +231,7 @@ Add `tabIndex={1}` to the first Select field in the form body to ensure proper f
 ### Manual Testing Checklist (Per Form)
 
 **Create Mode:**
+
 1. ✅ Dialog opens with Asset Category focused (not code field)
 2. ✅ Code field shows "(optional)" placeholder in title
 3. ✅ Clicking code field opens inline editor
@@ -233,6 +241,7 @@ Add `tabIndex={1}` to the first Select field in the form body to ensure proper f
 7. ✅ Tab order flows naturally through form
 
 **Edit Mode:**
+
 1. ✅ Dialog opens with Asset Category focused (not code field)
 2. ✅ Code field shows current value in title
 3. ✅ Clicking code opens inline editor with current value selected
@@ -242,6 +251,7 @@ Add `tabIndex={1}` to the first Select field in the form body to ensure proper f
 7. ✅ Tab order flows naturally through form
 
 **Focus Management:**
+
 1. ✅ No "jump" from Serial Number (or first input) to first Select
 2. ✅ Code field does not receive auto-focus
 3. ✅ First Select field receives focus immediately
@@ -254,27 +264,32 @@ Add `tabIndex={1}` to the first Select field in the form body to ensure proper f
 ### Key Discoveries
 
 **1. Dialog Auto-Focus Issue:**
+
 - shadcn/ui Dialog auto-focuses the first native `<input>` element
 - Select components (rendered as buttons) are skipped
 - **Solution**: Add `onOpenAutoFocus={(e) => e.preventDefault()}` to DialogContent
 
 **2. Tab Order Management:**
+
 - Using explicit `tabIndex` values (1, 2, 3...) is **bad practice**
 - Browser follows natural DOM order by default
 - Only use `tabIndex={-1}` to exclude elements (inline editable button)
 - Only use `tabIndex={1}` on first field to prioritize focus
 
 **3. FormProvider Requirement:**
+
 - `InlineEditableField` uses `useFormContext()` to access form state
 - Must wrap DialogContent with `<FormProvider {...form}>`
 - Place FormProvider **inside** DialogContent but **outside** `<Form>`
 
 **4. Focus Timing:**
+
 - Dialog needs 100ms to fully render before focusing first field
 - Use `setTimeout` in `useEffect` to ensure DOM is ready
 - Wait for both `open` and `!loading` states
 
 **5. Serial Number Focus Issue:**
+
 - First `<Input>` field always received auto-focus
 - Even with `tabIndex={-1}` on Input, Dialog would try to focus it first
 - **Solution**: Prevent Dialog auto-focus entirely, then manually focus first Select
@@ -286,17 +301,20 @@ Add `tabIndex={1}` to the first Select field in the form body to ensure proper f
 ### Low Risk
 
 **✅ Proven Pattern:**
+
 - Asset form implementation validates the approach
 - InlineEditableField is fully tested and reusable
 - Focus management solution is confirmed working
 
 **✅ No Breaking Changes:**
+
 - Code generation logic remains unchanged
 - Validation rules remain the same
 - Backend APIs unaffected
 - Only UI/UX presentation changes
 
 **✅ Incremental Rollout:**
+
 - Can implement per-form without dependencies
 - Easy to test and validate each form individually
 - Can pause/resume implementation at any phase
@@ -304,16 +322,19 @@ Add `tabIndex={1}` to the first Select field in the form body to ensure proper f
 ### Considerations
 
 **⚠️ Consistency:**
+
 - All forms must follow the exact same pattern
 - Ensure InlineEditableField styling is consistent
 - Verify placeholder text matches entity naming
 
 **⚠️ Mobile UX:**
+
 - Inline editing on small screens may be challenging
 - Test touch interactions carefully
 - May need responsive adjustments for title wrapping
 
 **⚠️ Accessibility:**
+
 - Ensure keyboard navigation works perfectly
 - Screen readers must announce inline edit mode
 - Error messages must be accessible
@@ -323,6 +344,7 @@ Add `tabIndex={1}` to the first Select field in the form body to ensure proper f
 ## Success Criteria
 
 ✅ **Completed when:**
+
 1. All 11 forms use inline-editable code fields in DialogTitle
 2. No code fields remain in form body
 3. Focus management works correctly on all forms
@@ -334,6 +356,7 @@ Add `tabIndex={1}` to the first Select field in the form body to ensure proper f
 9. All manual tests pass
 
 ✅ **User Experience:**
+
 - Forms feel cleaner and less cluttered
 - Code fields are accessible but not intrusive
 - Focus always starts on the most important field

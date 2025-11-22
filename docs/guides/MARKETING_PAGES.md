@@ -33,28 +33,30 @@ The Barq Assets application includes a public marketing homepage and authenticat
 **File**: `src/components/marketing/marketing-nav.tsx`
 
 **Features**:
+
 - Logo (links to `/`)
 - Theme toggle (light/dark mode)
 - Auth-aware "Enter/Dashboard" button
 
 **Auth-Aware Behavior**:
+
 ```tsx
 // Checks session on mount
 useEffect(() => {
-  authClient.getSession()
-    .then((session) => {
-      setIsLoggedIn(!!session?.data?.user);
-      setIsLoading(false);
-    });
+  authClient.getSession().then((session) => {
+    setIsLoggedIn(!!session?.data?.user);
+    setIsLoading(false);
+  });
 }, []);
 
 // Conditional rendering
 <Link href={isLoggedIn ? "/dashboard" : "/login"}>
   {isLoading ? "..." : isLoggedIn ? "Dashboard" : "Enter"}
-</Link>
+</Link>;
 ```
 
 **States**:
+
 - **Loading**: Shows "..." while checking session
 - **Logged In**: Shows "Dashboard" button → links to `/dashboard`
 - **Logged Out**: Shows "Enter" button → links to `/login`
@@ -64,11 +66,13 @@ useEffect(() => {
 **File**: `src/components/marketing/hero-section.tsx`
 
 **Features**:
+
 - Main headline and tagline
 - Two CTA buttons (primary and secondary)
 - Scroll indicator with animation
 
 **Auth-Aware Primary CTA**:
+
 ```tsx
 <Button href={isLoggedIn ? "/dashboard" : "/login"}>
   {isLoggedIn ? (
@@ -85,6 +89,7 @@ useEffect(() => {
 ```
 
 **States**:
+
 - **Loading**: Shows "Loading..." with disabled state
 - **Logged In**: Shows "Go to Dashboard" with dashboard icon
 - **Logged Out**: Shows "Login to Dashboard" with login icon
@@ -94,12 +99,14 @@ useEffect(() => {
 **File**: `src/components/marketing/marketing-footer.tsx`
 
 **Features**:
+
 - Quick links section
 - Resources section
 - About Barq section
 - Copyright and compliance information
 
 **Auth-Aware Links**:
+
 ```tsx
 // Both "Login" and "Dashboard" links adapt
 <Link href={isLoggedIn ? "/dashboard" : "/login"}>Login</Link>
@@ -107,6 +114,7 @@ useEffect(() => {
 ```
 
 **Behavior**:
+
 - **Logged In**: Both links go to `/dashboard`
 - **Logged Out**: Both links go to `/login`
 
@@ -119,17 +127,20 @@ useEffect(() => {
 **File**: `src/app/(auth)/login/page.tsx`
 
 **Features**:
+
 - Email/password authentication
 - Microsoft OAuth login
 - Split-screen design with branding
 - Auth-aware redirect
 
 **Auth Protection**:
+
 ```tsx
 const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
 useEffect(() => {
-  authClient.getSession()
+  authClient
+    .getSession()
     .then((session) => {
       if (session?.data?.user) {
         router.replace("/dashboard"); // Redirect if logged in
@@ -154,6 +165,7 @@ if (isCheckingAuth) {
 ```
 
 **User Flow**:
+
 1. **Logged-Out User**:
    - Shows loading spinner briefly
    - Displays login form
@@ -169,11 +181,13 @@ if (isCheckingAuth) {
 **File**: `src/app/(auth)/register/page.tsx`
 
 **Features**:
+
 - Email/password registration
 - Split-screen design with branding
 - Auth-aware redirect (same as login page)
 
 **Auth Protection**:
+
 - Identical implementation to login page
 - Redirects logged-in users to `/dashboard`
 - Shows loading spinner to prevent flash
@@ -193,6 +207,7 @@ The application uses a **defense-in-depth** approach with three layers:
 **Purpose**: First line of defense at network boundary
 
 **Implementation**:
+
 ```typescript
 // Redirect authenticated users from landing page
 if (pathname === "/" && hasSessionCookie(request)) {
@@ -200,7 +215,10 @@ if (pathname === "/" && hasSessionCookie(request)) {
 }
 
 // Redirect authenticated users from auth pages
-if ((pathname === "/login" || pathname === "/register") && hasSessionCookie(request)) {
+if (
+  (pathname === "/login" || pathname === "/register") &&
+  hasSessionCookie(request)
+) {
   return NextResponse.redirect(new URL("/dashboard", request.url));
 }
 
@@ -213,6 +231,7 @@ if (!isPublicRoute(pathname) && !hasSessionCookie(request)) {
 ```
 
 **Cookie Check**:
+
 ```typescript
 function hasSessionCookie(request: NextRequest): boolean {
   const sessionToken = request.cookies.get("better-auth.session_token");
@@ -225,6 +244,7 @@ function hasSessionCookie(request: NextRequest): boolean {
 **Purpose**: Secondary protection with loading states
 
 **Implementation**:
+
 - Login and register pages check `authClient.getSession()`
 - Show loading spinner while checking
 - Redirect if already authenticated
@@ -235,6 +255,7 @@ function hasSessionCookie(request: NextRequest): boolean {
 **Purpose**: Smart UI that adapts to auth state
 
 **Implementation**:
+
 - Marketing nav, hero, and footer check session
 - Conditional links and button text
 - Seamless experience for logged-in users
@@ -275,6 +296,7 @@ export function MyComponent() {
 ### Why Not `useSession()` Hook?
 
 The `useSession()` hook from better-auth/react causes SSR errors:
+
 ```
 Cannot read properties of null (reading 'useRef')
 ```
@@ -293,6 +315,7 @@ router.replace("/dashboard"); // Replace instead of push
 ```
 
 **Why `replace()`?**
+
 - Prevents back-button issues
 - User can't go back to login page after being redirected
 - Cleaner navigation history
@@ -316,6 +339,7 @@ router.replace("/dashboard"); // Replace instead of push
 3. User never sees marketing page (instant redirect)
 
 **Fallback** (if proxy doesn't trigger):
+
 1. Marketing nav shows "Dashboard" button (links to `/dashboard`)
 2. Hero shows "Go to Dashboard" button (links to `/dashboard`)
 3. Footer links both go to `/dashboard`
@@ -350,9 +374,11 @@ router.replace("/dashboard"); // Replace instead of push
 ### 1. Always Check Session Client-Side
 
 For auth-aware components:
+
 ```typescript
 useEffect(() => {
-  authClient.getSession()
+  authClient
+    .getSession()
     .then((session) => setIsLoggedIn(!!session?.data?.user))
     .catch(() => setIsLoggedIn(false));
 }, []);
@@ -361,6 +387,7 @@ useEffect(() => {
 ### 2. Show Loading States
 
 Prevent flash of content:
+
 ```typescript
 if (isCheckingAuth) {
   return <LoadingSpinner />;
@@ -370,16 +397,19 @@ if (isCheckingAuth) {
 ### 3. Use `router.replace()` for Redirects
 
 Prevent back-button issues:
+
 ```typescript
 router.replace("/dashboard"); // ✅ Good
-router.push("/dashboard");    // ❌ Bad
+router.push("/dashboard"); // ❌ Bad
 ```
 
 ### 4. Handle Errors Gracefully
 
 Always have a fallback:
+
 ```typescript
-authClient.getSession()
+authClient
+  .getSession()
   .then(/* ... */)
   .catch(() => {
     // Assume not logged in
@@ -395,6 +425,7 @@ authClient.getSession()
 ### Manual Testing Checklist
 
 **Logged-Out User**:
+
 - [ ] Visit `/` → see "Enter" button in nav
 - [ ] Visit `/` → see "Login to Dashboard" in hero
 - [ ] Visit `/` → footer "Login" and "Dashboard" links go to `/login`
@@ -402,6 +433,7 @@ authClient.getSession()
 - [ ] Visit `/register` → see registration form (no flash)
 
 **Logged-In User**:
+
 - [ ] Visit `/` → redirected to `/dashboard` immediately
 - [ ] Visit `/login` → see loading spinner → redirected to `/dashboard`
 - [ ] Visit `/register` → see loading spinner → redirected to `/dashboard`
@@ -410,6 +442,7 @@ authClient.getSession()
 - [ ] Visit `/` (if proxy fails) → footer links go to `/dashboard`
 
 **Navigation**:
+
 - [ ] Click "Enter" when logged out → go to `/login`
 - [ ] Click "Dashboard" when logged in → go to `/dashboard`
 - [ ] Click "Login to Dashboard" when logged out → go to `/login`
@@ -464,6 +497,7 @@ describe("Login Page", () => {
 **Cause**: Session cookie not being read correctly
 
 **Debug**:
+
 1. Check browser DevTools → Application → Cookies
 2. Look for `better-auth.session_token`
 3. Check proxy logs for cookie detection

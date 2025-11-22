@@ -63,6 +63,7 @@ npm run reset # Reset database + seed (drops all data!)
 - [DATABASE_MIGRATIONS.md](docs/guides/DATABASE_MIGRATIONS.md) - Prisma migrations workflow
 - [LOGGING.md](docs/guides/LOGGING.md) - Structured logging with Pino
 - [BUILD_OPTIMIZATION.md](docs/guides/BUILD_OPTIMIZATION.md) - Turbopack, bundle analysis
+- [UI_UX_IMPROVEMENTS.md](docs/guides/UI_UX_IMPROVEMENTS.md) - UI/UX enhancements and navigation improvements
 
 ### Asset Layer (Layer 2)
 
