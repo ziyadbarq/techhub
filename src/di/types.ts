@@ -166,6 +166,12 @@ export const DI_TOKENS = {
    */
   IEmailService: Symbol.for("IEmailService"),
 
+  /**
+   * Token for ICodeGeneratorService
+   * Provides auto-generation of unique codes and tags for entities
+   */
+  ICodeGeneratorService: Symbol.for("ICodeGeneratorService"),
+
   // ==========================================
   // Use Case Tokens (Example)
   // ==========================================

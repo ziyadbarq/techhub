@@ -5,10 +5,12 @@ Welcome to the comprehensive documentation for Barq Assets. This index provides 
 ## 🚀 Start Here
 
 **Current System State:**
+
 - [CURRENT_STATUS.md](./CURRENT_STATUS.md) - What's working now, navigation structure, type safety status
 - [TODO.md](./TODO.md) - Implementation priorities and next steps
 
 **Project Overview:**
+
 - [Main README](../README.md) - Project overview, features, and quick start guide
 - [STATUS.md](../STATUS.md) - Quick status at a glance (root level)
 - [CLAUDE.md](../CLAUDE.md) - Architecture guide and development workflows for AI assistants
@@ -59,8 +61,10 @@ Advanced IT Asset Management features:
 
 - **[Prisma Guide](./guides/PRISMA_GUIDE.md)** - Complete Prisma 7 patterns, connection pool management, type-safe imports, and repository implementation
 - **[Next.js 16 Guide](./guides/NEXTJS_16_GUIDE.md)** - Next.js 16 async request APIs, rendering modes, Turbopack, and migration patterns
+- **[Code Generation System](./guides/CODE_GENERATION.md)** - Automatic code/tag generation for entities with database-backed sequences and manual override
 - **[Stack Upgrades Reference](./guides/STACK_UPGRADES.md)** - Breaking changes in Prisma 7, Zod 4, Next.js 16, React 19, and InversifyJS 7
 - [Database Migrations & Deployment](./guides/DATABASE_MIGRATIONS.md) - Prisma migrations workflow, development vs production, and deployment best practices
+- [Database Seeding Guide](./guides/DATABASE_SEEDING.md) - Comprehensive seed system: architecture, factories, configuration, and layered seeders
 - [Build Optimization Guide](./guides/BUILD_OPTIMIZATION.md) - Build performance optimization and bundle analysis
 
 #### Authentication & Security

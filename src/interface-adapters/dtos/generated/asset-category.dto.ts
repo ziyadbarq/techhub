@@ -13,13 +13,13 @@ export const CreateAssetCategorySchema = z.object({
     .max(200, "Name must be 200 characters or less"),
   code: z
     .string()
-    .min(1, "Code is required")
     .min(2, "Code must be at least 2 characters")
     .max(50, "Code must be 50 characters or less")
     .regex(
       /^[A-Z0-9_-]+$/i,
       "Code must contain only letters, numbers, hyphens, and underscores",
-    ),
+    )
+    .optional(),
   description: z
     .string()
     .max(1000, "Description must be 1000 characters or less")

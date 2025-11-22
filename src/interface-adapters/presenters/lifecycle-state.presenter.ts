@@ -9,6 +9,7 @@ import type { StateType } from "@/core/domain/value-objects/foundation-enums";
 export interface LifecycleStateDTO {
   id: string;
   name: string;
+  code: string;
   description: string | null;
   modelId: string;
   stateType: StateType;
@@ -24,6 +25,7 @@ export function presentLifecycleState(
   return {
     id: state.id,
     name: state.name,
+    code: state.code,
     description: state.description,
     modelId: state.lifecycleModelId,
     stateType: state.stateType,

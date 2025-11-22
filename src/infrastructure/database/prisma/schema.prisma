@@ -195,6 +195,20 @@ model AuditLog {
   @@map("audit_logs")
 }
 
+// CodeSequence model
+// Auto-generation of unique codes for entities
+model CodeSequence {
+  id         String   @id @default(cuid())
+  entityType String   @unique // e.g., "VENDOR", "ASSET_KIT", "LIFECYCLE_STATE_{modelId}"
+  prefix     String // e.g., "VENDOR", "KIT", "STATE"
+  lastNumber Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([entityType])
+  @@map("code_sequences")
+}
+
 // ============================================
 // FOUNDATION LAYER: Organization, People, Locations, Vendors, Lifecycle
 // ============================================

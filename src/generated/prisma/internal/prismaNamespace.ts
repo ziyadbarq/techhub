@@ -393,6 +393,7 @@ export const ModelName = {
   RolePermission: 'RolePermission',
   UserRole: 'UserRole',
   AuditLog: 'AuditLog',
+  CodeSequence: 'CodeSequence',
   OrganizationUnit: 'OrganizationUnit',
   Person: 'Person',
   PersonRoleAssignment: 'PersonRoleAssignment',
@@ -461,7 +462,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verification" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "organizationUnit" | "person" | "personRoleAssignment" | "location" | "vendor" | "vendorContact" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "maintenanceSchedule" | "maintenanceRecord" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "assetReservation" | "assetReservationConflict" | "contractType" | "contract" | "contractLinkedObject" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "attachmentType" | "attachment" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock"
+    modelProps: "user" | "account" | "session" | "verification" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "organizationUnit" | "person" | "personRoleAssignment" | "location" | "vendor" | "vendorContact" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "maintenanceSchedule" | "maintenanceRecord" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "assetReservation" | "assetReservationConflict" | "contractType" | "contract" | "contractLinkedObject" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "attachmentType" | "attachment" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1128,6 +1129,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.AuditLogCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.AuditLogCountAggregateOutputType> | number
+        }
+      }
+    }
+    CodeSequence: {
+      payload: Prisma.$CodeSequencePayload<ExtArgs>
+      fields: Prisma.CodeSequenceFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CodeSequenceFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodeSequencePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CodeSequenceFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodeSequencePayload>
+        }
+        findFirst: {
+          args: Prisma.CodeSequenceFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodeSequencePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CodeSequenceFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodeSequencePayload>
+        }
+        findMany: {
+          args: Prisma.CodeSequenceFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodeSequencePayload>[]
+        }
+        create: {
+          args: Prisma.CodeSequenceCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodeSequencePayload>
+        }
+        createMany: {
+          args: Prisma.CodeSequenceCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CodeSequenceCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodeSequencePayload>[]
+        }
+        delete: {
+          args: Prisma.CodeSequenceDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodeSequencePayload>
+        }
+        update: {
+          args: Prisma.CodeSequenceUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodeSequencePayload>
+        }
+        deleteMany: {
+          args: Prisma.CodeSequenceDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CodeSequenceUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CodeSequenceUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodeSequencePayload>[]
+        }
+        upsert: {
+          args: Prisma.CodeSequenceUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CodeSequencePayload>
+        }
+        aggregate: {
+          args: Prisma.CodeSequenceAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCodeSequence>
+        }
+        groupBy: {
+          args: Prisma.CodeSequenceGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CodeSequenceGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CodeSequenceCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CodeSequenceCountAggregateOutputType> | number
         }
       }
     }
@@ -5223,6 +5298,18 @@ export const AuditLogScalarFieldEnum = {
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
 
 
+export const CodeSequenceScalarFieldEnum = {
+  id: 'id',
+  entityType: 'entityType',
+  prefix: 'prefix',
+  lastNumber: 'lastNumber',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CodeSequenceScalarFieldEnum = (typeof CodeSequenceScalarFieldEnum)[keyof typeof CodeSequenceScalarFieldEnum]
+
+
 export const OrganizationUnitScalarFieldEnum = {
   id: 'id',
   parentId: 'parentId',
@@ -6249,20 +6336,6 @@ export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$Prisma
 
 
 /**
- * Reference to a field of type 'OrganizationUnitType'
- */
-export type EnumOrganizationUnitTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrganizationUnitType'>
-    
-
-
-/**
- * Reference to a field of type 'OrganizationUnitType[]'
- */
-export type ListEnumOrganizationUnitTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrganizationUnitType[]'>
-    
-
-
-/**
  * Reference to a field of type 'Int'
  */
 export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
@@ -6273,6 +6346,20 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'OrganizationUnitType'
+ */
+export type EnumOrganizationUnitTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrganizationUnitType'>
+    
+
+
+/**
+ * Reference to a field of type 'OrganizationUnitType[]'
+ */
+export type ListEnumOrganizationUnitTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrganizationUnitType[]'>
     
 
 
@@ -6629,6 +6716,7 @@ export type GlobalOmitConfig = {
   rolePermission?: Prisma.RolePermissionOmit
   userRole?: Prisma.UserRoleOmit
   auditLog?: Prisma.AuditLogOmit
+  codeSequence?: Prisma.CodeSequenceOmit
   organizationUnit?: Prisma.OrganizationUnitOmit
   person?: Prisma.PersonOmit
   personRoleAssignment?: Prisma.PersonRoleAssignmentOmit

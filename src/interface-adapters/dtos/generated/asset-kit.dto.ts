@@ -3,7 +3,7 @@ import { z } from "zod";
 // Asset Kit DTOs
 export const CreateAssetKitDTO = z.object({
   name: z.string().min(1, "Kit name is required"),
-  code: z.string().min(1, "Kit code is required"),
+  code: z.string().optional(),
   description: z.string().optional(),
   kitType: z.enum(
     ["NEW_HIRE", "CONTRACTOR", "EXECUTIVE", "PROJECT", "TEMPORARY", "OTHER"],

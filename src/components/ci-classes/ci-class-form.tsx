@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Edit2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -99,6 +100,7 @@ export function CIClassForm({
   };
 
   const isEditing = !!ciClass;
+  const [showCodeField, setShowCodeField] = useState(isEditing);
   const [lifecycleModels, setLifecycleModels] = useState<LifecycleModelDTO[]>(
     [],
   );
@@ -147,6 +149,7 @@ export function CIClassForm({
 
   useEffect(() => {
     if (open) {
+      setShowCodeField(isEditing);
       loadData();
       form.reset({
         name: ciClass?.name ?? "",
@@ -159,7 +162,7 @@ export function CIClassForm({
         isDiscoverable: ciClass?.isDiscoverable ?? false,
       });
     }
-  }, [open, ciClass, form, loadData]);
+  }, [open, ciClass, form, loadData, isEditing]);
 
   const onSubmit = async (data: CIClassFormOutput) => {
     try {
@@ -220,26 +223,52 @@ export function CIClassForm({
             />
 
             {/* Code */}
-            <FormField
-              control={form.control}
-              name="code"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Code</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="e.g., SERVER, DATABASE, APP"
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e.target.value.toUpperCase());
-                      }}
-                    />
-                  </FormControl>
-                  <FormDescription>Unique identifier code</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {!showCodeField && !isEditing ? (
+              <div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowCodeField(true)}
+                  className="h-8 text-xs"
+                >
+                  <Edit2 className="mr-2 h-3 w-3" />
+                  Manually set code (optional)
+                </Button>
+                <p className="text-muted-foreground mt-1 text-xs">
+                  Code will be auto-generated if not provided
+                </p>
+              </div>
+            ) : (
+              <FormField
+                control={form.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Code{" "}
+                      {isEditing && <span className="text-destructive">*</span>}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g., SERVER, DATABASE, APP"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          field.onChange(e.target.value.toUpperCase());
+                        }}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {isEditing
+                        ? "Unique identifier code"
+                        : "Leave empty to auto-generate"}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             {/* Parent Class */}
             <FormField

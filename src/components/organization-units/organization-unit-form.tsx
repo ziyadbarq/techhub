@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Edit2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -63,6 +64,7 @@ export function OrganizationUnitForm({
   unit,
 }: OrganizationUnitFormProps) {
   const isEditing = !!unit;
+  const [showCodeField, setShowCodeField] = useState(isEditing);
   const form = useForm<
     OrganizationUnitFormValues,
     undefined,
@@ -144,21 +146,49 @@ export function OrganizationUnitForm({
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="code"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Code <span className="text-destructive">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder="ORG-001" maxLength={50} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {!showCodeField && !isEditing ? (
+              <div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowCodeField(true)}
+                  className="h-8 text-xs"
+                >
+                  <Edit2 className="mr-2 h-3 w-3" />
+                  Manually set code (optional)
+                </Button>
+                <p className="text-muted-foreground mt-1 text-xs">
+                  Code will be auto-generated if not provided
+                </p>
+              </div>
+            ) : (
+              <FormField
+                control={form.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Code{" "}
+                      {isEditing && <span className="text-destructive">*</span>}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="ORG-001"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {isEditing
+                        ? "Unique code (uppercase letters, numbers, hyphens, underscores)"
+                        : "Leave empty to auto-generate"}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}

@@ -115,8 +115,8 @@ export const BRANDING = {
 
   // AI Branding
   ai: {
-    name: "barq Technology",
-    tagline: "Powered by barq Technology",
+    name: "barq technology",
+    tagline: "Powered by barq technology",
   },
 
   // Metadata templates

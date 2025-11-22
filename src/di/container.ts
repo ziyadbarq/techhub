@@ -24,6 +24,7 @@ import { logger } from "@/lib/logger";
 
 // Import module binding functions
 import { bindLoggerDependencies } from "./modules/logger.module";
+import { bindCodeGeneratorDependencies } from "./modules/code-generator.module";
 import { bindDatabaseDependencies } from "./modules/database.module";
 import { bindRBACDependencies } from "./modules/rbac.module";
 import { bindFoundationDependencies } from "./modules/foundation.module";
@@ -91,6 +92,9 @@ function createContainer(): Container {
 
   // Bind logger dependencies (must be first for other modules to use)
   bindLoggerDependencies(newContainer);
+
+  // Bind code generator dependencies (depends on logger and database)
+  bindCodeGeneratorDependencies(newContainer);
 
   // Bind database dependencies (repositories, Prisma client)
   bindDatabaseDependencies(newContainer);

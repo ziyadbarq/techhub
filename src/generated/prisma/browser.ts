@@ -63,6 +63,11 @@ export type UserRole = Prisma.UserRoleModel
  */
 export type AuditLog = Prisma.AuditLogModel
 /**
+ * Model CodeSequence
+ * 
+ */
+export type CodeSequence = Prisma.CodeSequenceModel
+/**
  * Model OrganizationUnit
  * 
  */

@@ -13,14 +13,14 @@
 ✅ **Asset Kits** - Full checkout system  
 ✅ **Asset Reservations** - Full system with automated background jobs  
 ✅ **CMDB** - Configuration items and relationships  
-✅ **All Foundation & Asset Features** - Fully operational  
+✅ **All Foundation & Asset Features** - Fully operational
 
 ## What Needs Work
 
 🔧 **License Entitlements** - Needs table component (3-4 hours)  
 🔧 **License Allocations** - Needs table component (3-4 hours)  
 🔧 **Contracts** - Needs create/edit forms (4-6 hours)  
-🔧 **Reservation Calendar** - Needs calendar view (4-6 hours)  
+🔧 **Reservation Calendar** - Needs calendar view (4-6 hours)
 
 ## Type Safety
 

@@ -7,6 +7,7 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Edit2 } from "lucide-react";
 import type { z } from "zod";
 import {
   Dialog,
@@ -84,6 +85,7 @@ export function AssetForm({
   };
 
   const isEditing = !!asset;
+  const [showCodeField, setShowCodeField] = useState(isEditing);
   const [categories, setCategories] = useState<AssetCategoryDTO[]>([]);
   const [models, setModels] = useState<AssetModelDTO[]>([]);
   const [vendors, setVendors] = useState<VendorDTO[]>([]);
@@ -224,28 +226,52 @@ export function AssetForm({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             {/* Asset Tag */}
-            <FormField
-              control={form.control}
-              name="assetTag"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Asset Tag</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="IT-LAP-001"
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e.target.value.toUpperCase());
-                      }}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Unique identifier for this asset
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {!showCodeField && !isEditing ? (
+              <div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowCodeField(true)}
+                  className="h-8 text-xs"
+                >
+                  <Edit2 className="mr-2 h-3 w-3" />
+                  Manually set asset tag (optional)
+                </Button>
+                <p className="text-muted-foreground mt-1 text-xs">
+                  Asset tag will be auto-generated if not provided
+                </p>
+              </div>
+            ) : (
+              <FormField
+                control={form.control}
+                name="assetTag"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Asset Tag{" "}
+                      {isEditing && <span className="text-destructive">*</span>}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="ASSET-000001"
+                        {...field}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          field.onChange(e.target.value.toUpperCase());
+                        }}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {isEditing
+                        ? "Unique identifier for this asset"
+                        : "Leave empty to auto-generate"}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             {/* Asset Category */}
             <FormField

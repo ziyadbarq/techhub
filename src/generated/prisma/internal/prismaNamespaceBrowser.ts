@@ -60,6 +60,7 @@ export const ModelName = {
   RolePermission: 'RolePermission',
   UserRole: 'UserRole',
   AuditLog: 'AuditLog',
+  CodeSequence: 'CodeSequence',
   OrganizationUnit: 'OrganizationUnit',
   Person: 'Person',
   PersonRoleAssignment: 'PersonRoleAssignment',
@@ -260,6 +261,18 @@ export const AuditLogScalarFieldEnum = {
 } as const
 
 export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
+export const CodeSequenceScalarFieldEnum = {
+  id: 'id',
+  entityType: 'entityType',
+  prefix: 'prefix',
+  lastNumber: 'lastNumber',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CodeSequenceScalarFieldEnum = (typeof CodeSequenceScalarFieldEnum)[keyof typeof CodeSequenceScalarFieldEnum]
 
 
 export const OrganizationUnitScalarFieldEnum = {

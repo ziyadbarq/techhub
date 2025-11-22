@@ -13,12 +13,12 @@ export const CreateVendorSchema = z.object({
     .max(200, "Name must be 200 characters or less"),
   code: z
     .string()
-    .min(1, "Code is required")
     .max(50, "Code must be 50 characters or less")
     .regex(
       /^[A-Z0-9_-]+$/,
       "Code must contain only uppercase letters, numbers, hyphens, and underscores",
-    ),
+    )
+    .optional(),
   legalName: z
     .string()
     .max(200, "Legal name must be 200 characters or less")

@@ -16,12 +16,12 @@ export const CreateLicenseProductSchema = z.object({
     .string()
     .trim()
     .toUpperCase()
-    .min(1, "License product code is required")
     .max(50, "License product code must not exceed 50 characters")
     .regex(
       /^[A-Z0-9_-]+$/,
       "License product code must contain only letters, numbers, hyphens, and underscores",
-    ),
+    )
+    .optional(),
   vendorId: z.string().uuid("Invalid vendor ID"),
   metricType: z.nativeEnum(LicenseMetricType),
   description: z

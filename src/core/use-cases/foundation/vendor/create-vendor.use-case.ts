@@ -9,10 +9,11 @@ import { DI_TOKENS } from "@/di/types";
 import { Vendor } from "@/core/domain/entities/vendor.entity";
 import type { VendorType } from "@/core/domain/value-objects/foundation-enums";
 import type { IVendorRepository } from "@/core/repositories/vendor.repository.interface";
+import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
 
 export interface CreateVendorProps {
   name: string;
-  code: string;
+  code?: string;
   legalName?: string | null;
   description?: string | null;
   vendorType: VendorType;
@@ -37,6 +38,8 @@ export class CreateVendorUseCase {
   constructor(
     @inject(DI_TOKENS.IVendorRepository)
     private readonly vendorRepository: IVendorRepository,
+    @inject(DI_TOKENS.ICodeGeneratorService)
+    private readonly codeGenerator: ICodeGeneratorService,
   ) {}
 
   /**
@@ -53,7 +56,11 @@ export class CreateVendorUseCase {
       throw new Error(`Vendor with name "${props.name}" already exists`);
     }
 
-    const vendor = Vendor.create(props);
+    // Auto-generate code if not provided
+    const code =
+      props.code ?? (await this.codeGenerator.generateCode("VENDOR", "VENDOR"));
+
+    const vendor = Vendor.create({ ...props, code });
     const created = await this.vendorRepository.create(vendor);
     return created;
   }

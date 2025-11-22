@@ -27,7 +27,7 @@ Centralized branding constants for app identity, logos, taglines, and company in
 import { BRANDING } from "@/config/branding";
 
 // Use app name
-<h1>{BRANDING.app.name}</h1> // "barq TechHub"
+<h1>{BRANDING.app.name}</h1>; // "barq TechHub"
 
 // Use logo (theme-aware)
 import { getLogoPath } from "@/config/branding";
@@ -35,7 +35,7 @@ const logoPath = getLogoPath(theme);
 
 // Use copyright text
 import { getCopyrightText } from "@/config/branding";
-<footer>{getCopyrightText()}</footer>
+<footer>{getCopyrightText()}</footer>;
 
 // Use page metadata
 import { getPageTitle, getPageDescription } from "@/config/branding";
@@ -154,6 +154,7 @@ const logoPath = getLogoPath(theme, "full");
 ```
 
 **Parameters:**
+
 - `theme`: `"light" | "dark" | "system" | undefined`
 - `variant`: `"full" | "icon"` (default: `"full"`)
 
@@ -176,6 +177,7 @@ import { getCopyrightText } from "@/config/branding";
 ```
 
 **Parameters:**
+
 - `year`: `number` (optional, defaults to current year)
 
 **Returns:** Copyright string
@@ -192,6 +194,7 @@ import { getCopyrightWithTagline } from "@/config/branding";
 ```
 
 **Parameters:**
+
 - `tagline`: `string`
 
 **Returns:** Copyright string with tagline
@@ -210,6 +213,7 @@ export const metadata = {
 ```
 
 **Parameters:**
+
 - `page`: `"home" | "landing"` (extensible)
 
 **Returns:** Full page title string
@@ -228,6 +232,7 @@ export const metadata = {
 ```
 
 **Parameters:**
+
 - `variant`: `"default" | "landing"` (extensible)
 
 **Returns:** Meta description string
@@ -239,7 +244,7 @@ export const metadata = {
 ```tsx
 import { BRANDING } from "@/config/branding";
 
-<h1>{BRANDING.app.name}</h1>
+<h1>{BRANDING.app.name}</h1>;
 // Output: "barq TechHub"
 ```
 
@@ -258,7 +263,7 @@ const { theme } = useTheme();
   alt={`${BRANDING.app.name} Logo`}
   width={120}
   height={40}
-/>
+/>;
 ```
 
 #### Page Metadata
@@ -281,7 +286,7 @@ import { BRANDING, getCopyrightText } from "@/config/branding";
 <footer>
   <p>{BRANDING.footer.description}</p>
   <p>{getCopyrightText()}</p>
-</footer>
+</footer>;
 ```
 
 #### SAMA Compliance Notice
@@ -292,7 +297,7 @@ import { BRANDING } from "@/config/branding";
 <div className="compliance-notice">
   <Shield className="icon" />
   <p>{BRANDING.sama.compliance.internal}</p>
-</div>
+</div>;
 ```
 
 #### Auth Page Headings
@@ -303,7 +308,7 @@ import { BRANDING } from "@/config/branding";
 <div>
   <h1>{BRANDING.auth.login.heading}</h1>
   <p>{BRANDING.auth.login.subheading}</p>
-</div>
+</div>;
 ```
 
 ### Best Practices
@@ -319,6 +324,7 @@ import { BRANDING } from "@/config/branding";
 ### Migration Notes
 
 **Before Centralization:**
+
 ```tsx
 <h1>barq TechHub</h1>
 <p>© 2025 Barq. All rights reserved.</p>
@@ -326,6 +332,7 @@ import { BRANDING } from "@/config/branding";
 ```
 
 **After Centralization:**
+
 ```tsx
 import { BRANDING, getCopyrightText, getLogoPath } from "@/config/branding";
 import { useTheme } from "next-themes";
@@ -357,7 +364,7 @@ Then use in components:
 ```tsx
 import { BRANDING } from "@/config/branding";
 
-<a href={BRANDING.social.twitter}>Follow us</a>
+<a href={BRANDING.social.twitter}>Follow us</a>;
 ```
 
 ## 🧭 Navigation Configuration

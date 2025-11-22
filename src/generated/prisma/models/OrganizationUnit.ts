@@ -624,14 +624,6 @@ export type EnumOrganizationUnitTypeFieldUpdateOperationsInput = {
   set?: $Enums.OrganizationUnitType
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type OrganizationUnitUpdateOneWithoutChildrenNestedInput = {
   create?: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutChildrenInput, Prisma.OrganizationUnitUncheckedCreateWithoutChildrenInput>
   connectOrCreate?: Prisma.OrganizationUnitCreateOrConnectWithoutChildrenInput

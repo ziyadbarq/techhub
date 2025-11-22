@@ -5,6 +5,7 @@ import {
   RelationshipType,
   type CreateRelationshipTypeProps,
 } from "../../../domain/entities/relationship-type.entity";
+import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
 
 export type CreateRelationshipTypeRequest = CreateRelationshipTypeProps;
 
@@ -13,22 +14,25 @@ export class CreateRelationshipTypeUseCase {
   constructor(
     @inject(DI_TOKENS.IRelationshipTypeRepository)
     private readonly relationshipTypeRepository: IRelationshipTypeRepository,
+    @inject(DI_TOKENS.ICodeGeneratorService)
+    private readonly codeGenerator: ICodeGeneratorService,
   ) {}
 
   async execute(
     request: CreateRelationshipTypeRequest,
   ): Promise<RelationshipType> {
+    // Auto-generate code if not provided
+    const code =
+      request.code ??
+      (await this.codeGenerator.generateCode("RELATIONSHIP_TYPE", "REL"));
+
     // Check if code already exists
-    const exists = await this.relationshipTypeRepository.existsByCode(
-      request.code,
-    );
+    const exists = await this.relationshipTypeRepository.existsByCode(code);
     if (exists) {
-      throw new Error(
-        `Relationship type with code already exists: ${request.code}`,
-      );
+      throw new Error(`Relationship type with code already exists: ${code}`);
     }
 
-    const relationshipType = RelationshipType.create(request);
+    const relationshipType = RelationshipType.create({ ...request, code });
     return await this.relationshipTypeRepository.create(relationshipType);
   }
 }

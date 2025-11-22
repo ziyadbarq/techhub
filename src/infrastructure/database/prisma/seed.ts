@@ -68,7 +68,42 @@ async function main() {
     await prisma.lifecycleTransition.deleteMany({});
     await prisma.lifecycleState.deleteMany({});
     await prisma.lifecycleModel.deleteMany({});
+    // Infrastructure cleanup
+    await prisma.codeSequence.deleteMany({});
     logSuccess("Dependent tables cleaned");
+    console.log("");
+
+    // 0.5. Initialize Code Sequence table
+    logSection("Code Sequence Initialization");
+    logStep("🔢", "Initializing code sequences for auto-generation...");
+
+    const sequenceConfigs = [
+      { entityType: "VENDOR", prefix: "VENDOR" },
+      { entityType: "ASSET", prefix: "ASSET" },
+      { entityType: "ORGANIZATION_UNIT", prefix: "ORG" },
+      { entityType: "LOCATION", prefix: "LOC" },
+      { entityType: "LIFECYCLE_STATE", prefix: "STATE" },
+      { entityType: "CI_CLASS", prefix: "CI" },
+      { entityType: "RELATIONSHIP_TYPE", prefix: "REL" },
+      { entityType: "ASSET_CATEGORY", prefix: "CAT" },
+      { entityType: "ASSET_MODEL", prefix: "MODEL" },
+      { entityType: "STOCK_LOCATION", prefix: "STOCK" },
+      { entityType: "ASSET_KIT", prefix: "KIT" },
+      { entityType: "CONTRACT_TYPE", prefix: "CTYPE" },
+      { entityType: "LICENSE_PRODUCT", prefix: "LIC" },
+    ];
+
+    for (const config of sequenceConfigs) {
+      await prisma.codeSequence.create({
+        data: {
+          entityType: config.entityType,
+          prefix: config.prefix,
+          lastNumber: 0,
+        },
+      });
+    }
+
+    logSuccess(`Initialized ${sequenceConfigs.length} code sequences`);
     console.log("");
 
     // 1. Seed RBAC (roles, permissions, assignments)

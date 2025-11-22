@@ -102,7 +102,6 @@ function SidebarComponent({ className }: SidebarProps) {
 
   // Detect client-side hydration for theme-dependent rendering
   React.useEffect(() => {
-     
     setMounted(true);
   }, []);
 

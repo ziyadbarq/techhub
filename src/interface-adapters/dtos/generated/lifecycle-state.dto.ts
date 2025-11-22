@@ -11,6 +11,14 @@ export const CreateLifecycleStateSchema = z.object({
     .string()
     .min(1, "Name is required")
     .max(100, "Name must be 100 characters or less"),
+  code: z
+    .string()
+    .max(50, "Code must be 50 characters or less")
+    .regex(
+      /^[A-Z0-9_-]+$/,
+      "Code must contain only uppercase letters, numbers, hyphens, and underscores",
+    )
+    .optional(),
   description: z
     .string()
     .max(500, "Description must be 500 characters or less")

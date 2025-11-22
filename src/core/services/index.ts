@@ -73,3 +73,9 @@ export type {
   EmailAttachment,
   SendEmailResult,
 } from "./email.service.interface";
+
+// Code Generator Service
+export type {
+  ICodeGeneratorService,
+  CodeGenerationOptions,
+} from "./code-generator.service.interface";

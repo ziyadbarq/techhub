@@ -11,6 +11,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { CreateAssetUseCase } from "../create-asset.use-case";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
+import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
 import type { Asset } from "@/core/domain/entities/asset.entity";
 
 /**
@@ -51,14 +52,31 @@ class MockAssetRepository implements Partial<IAssetRepository> {
   }
 }
 
+/**
+ * Mock Code Generator Service
+ */
+class MockCodeGeneratorService implements Partial<ICodeGeneratorService> {
+  private counters = new Map<string, number>();
+
+  async generateCode(entityType: string, prefix: string): Promise<string> {
+    const current = this.counters.get(entityType) || 0;
+    const next = current + 1;
+    this.counters.set(entityType, next);
+    return `${prefix}-${String(next).padStart(6, "0")}`;
+  }
+}
+
 describe("CreateAssetUseCase", () => {
   let useCase: CreateAssetUseCase;
   let mockRepository: MockAssetRepository;
+  let mockCodeGenerator: MockCodeGeneratorService;
 
   beforeEach(() => {
     mockRepository = new MockAssetRepository();
+    mockCodeGenerator = new MockCodeGeneratorService();
     useCase = new CreateAssetUseCase(
       mockRepository as unknown as IAssetRepository,
+      mockCodeGenerator as unknown as ICodeGeneratorService,
     );
   });
 

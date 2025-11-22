@@ -4,9 +4,10 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Edit2 } from "lucide-react";
 import type { z } from "zod";
 import {
   Dialog,
@@ -64,6 +65,7 @@ export function VendorForm({
   vendor,
 }: VendorFormProps) {
   const isEditing = !!vendor;
+  const [showCodeField, setShowCodeField] = useState(isEditing);
 
   const form = useForm<VendorFormValues, undefined, CreateVendorDTO>({
     resolver: zodResolver(CreateVendorSchema),
@@ -163,25 +165,50 @@ export function VendorForm({
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="code"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    Code <span className="text-destructive">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder="VENDOR-001" maxLength={50} {...field} />
-                  </FormControl>
-                  <FormDescription>
-                    Unique vendor code (uppercase letters, numbers, hyphens,
-                    underscores)
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {!showCodeField && !isEditing ? (
+              <div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowCodeField(true)}
+                  className="h-8 text-xs"
+                >
+                  <Edit2 className="mr-2 h-3 w-3" />
+                  Manually set code (optional)
+                </Button>
+                <p className="text-muted-foreground mt-1 text-xs">
+                  Code will be auto-generated if not provided
+                </p>
+              </div>
+            ) : (
+              <FormField
+                control={form.control}
+                name="code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Code{" "}
+                      {isEditing && <span className="text-destructive">*</span>}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="VENDOR-001"
+                        maxLength={50}
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      {isEditing
+                        ? "Unique vendor code (uppercase letters, numbers, hyphens, underscores)"
+                        : "Leave empty to auto-generate"}
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}

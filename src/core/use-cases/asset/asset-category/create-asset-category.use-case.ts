@@ -8,9 +8,10 @@ import { inject, injectable } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import { AssetCategory } from "@/core/domain/entities/asset-category.entity";
 import type { IAssetCategoryRepository } from "@/core/repositories/asset-category.repository.interface";
+import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
 
 export interface CreateAssetCategoryProps {
-  code: string;
+  code?: string;
   name: string;
   description?: string;
   lifecycleModelId?: string | null;
@@ -22,6 +23,8 @@ export class CreateAssetCategoryUseCase {
   constructor(
     @inject(DI_TOKENS.IAssetCategoryRepository)
     private readonly assetCategoryRepository: IAssetCategoryRepository,
+    @inject(DI_TOKENS.ICodeGeneratorService)
+    private readonly codeGenerator: ICodeGeneratorService,
   ) {}
 
   /**
@@ -32,14 +35,15 @@ export class CreateAssetCategoryUseCase {
    * @throws Error if code or name already exists
    */
   async execute(props: CreateAssetCategoryProps): Promise<AssetCategory> {
+    // Auto-generate code if not provided
+    const code =
+      props.code ??
+      (await this.codeGenerator.generateCode("ASSET_CATEGORY", "CAT"));
+
     // Check for duplicate code
-    const existsByCode = await this.assetCategoryRepository.existsByCode(
-      props.code,
-    );
+    const existsByCode = await this.assetCategoryRepository.existsByCode(code);
     if (existsByCode) {
-      throw new Error(
-        `Asset category with code "${props.code}" already exists`,
-      );
+      throw new Error(`Asset category with code "${code}" already exists`);
     }
 
     // Check for duplicate name
@@ -52,7 +56,7 @@ export class CreateAssetCategoryUseCase {
       );
     }
 
-    const assetCategory = AssetCategory.create(props);
+    const assetCategory = AssetCategory.create({ ...props, code });
     const created = await this.assetCategoryRepository.create(assetCategory);
     return created;
   }

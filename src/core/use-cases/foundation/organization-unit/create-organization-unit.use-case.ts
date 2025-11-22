@@ -9,9 +9,10 @@ import { DI_TOKENS } from "@/di/types";
 import { OrganizationUnit } from "@/core/domain/entities/organization-unit.entity";
 import type { OrganizationUnitType } from "@/core/domain/value-objects/foundation-enums";
 import type { IOrganizationUnitRepository } from "@/core/repositories/organization-unit.repository.interface";
+import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
 
 export interface CreateOrganizationUnitProps {
-  code: string;
+  code?: string;
   name: string;
   description?: string;
   parentId?: string | null;
@@ -28,6 +29,8 @@ export class CreateOrganizationUnitUseCase {
   constructor(
     @inject(DI_TOKENS.IOrganizationUnitRepository)
     private readonly organizationUnitRepository: IOrganizationUnitRepository,
+    @inject(DI_TOKENS.ICodeGeneratorService)
+    private readonly codeGenerator: ICodeGeneratorService,
   ) {}
 
   /**
@@ -38,17 +41,19 @@ export class CreateOrganizationUnitUseCase {
    * @throws Error if code already exists
    */
   async execute(props: CreateOrganizationUnitProps): Promise<OrganizationUnit> {
+    // Auto-generate code if not provided
+    const code =
+      props.code ??
+      (await this.codeGenerator.generateCode("ORGANIZATION_UNIT", "ORG"));
+
     // Check for duplicate code
-    const existsByCode = await this.organizationUnitRepository.existsByCode(
-      props.code,
-    );
+    const existsByCode =
+      await this.organizationUnitRepository.existsByCode(code);
     if (existsByCode) {
-      throw new Error(
-        `Organization unit with code "${props.code}" already exists`,
-      );
+      throw new Error(`Organization unit with code "${code}" already exists`);
     }
 
-    const organizationUnit = OrganizationUnit.create(props);
+    const organizationUnit = OrganizationUnit.create({ ...props, code });
     const created =
       await this.organizationUnitRepository.create(organizationUnit);
     return created;
