@@ -35,7 +35,23 @@ export const SUPPORTED_CURRENCIES: readonly CurrencyInfo[] = [
 /**
  * Currency codes only (for validation)
  */
-export const CURRENCY_CODES = SUPPORTED_CURRENCIES.map((c) => c.code);
+export const CURRENCY_CODES = [
+  "SAR",
+  "USD",
+  "EUR",
+  "GBP",
+  "JPY",
+  "AUD",
+  "CAD",
+  "CHF",
+  "CNY",
+  "INR",
+  "AED",
+  "KWD",
+  "BHD",
+  "OMR",
+  "QAR",
+] as const;
 
 /**
  * Currency symbols mapping (for quick lookup)
@@ -64,5 +80,5 @@ export function getCurrencyInfo(code: string): CurrencyInfo | undefined {
  * Check if a currency code is supported
  */
 export function isSupportedCurrency(code: string): boolean {
-  return CURRENCY_CODES.includes(code);
+  return (CURRENCY_CODES as readonly string[]).includes(code);
 }
