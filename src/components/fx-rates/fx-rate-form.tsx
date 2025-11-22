@@ -47,6 +47,7 @@ import {
   CreateExchangeRateSchema,
   type CreateExchangeRateDTO,
 } from "@/interface-adapters/dtos/generated/exchange-rate.dto";
+import { SUPPORTED_CURRENCIES } from "@/lib/currencies.config";
 
 interface FxRateFormProps {
   open: boolean;
@@ -58,22 +59,9 @@ interface FxRateFormProps {
 type FxRateFormValues = z.input<typeof CreateExchangeRateSchema>;
 
 // List of supported currencies (excluding SAR which is the base)
-const SUPPORTED_CURRENCIES = [
-  { code: "USD", name: "US Dollar", symbol: "$" },
-  { code: "EUR", name: "Euro", symbol: "€" },
-  { code: "GBP", name: "British Pound", symbol: "£" },
-  { code: "JPY", name: "Japanese Yen", symbol: "¥" },
-  { code: "AUD", name: "Australian Dollar", symbol: "A$" },
-  { code: "CAD", name: "Canadian Dollar", symbol: "C$" },
-  { code: "CHF", name: "Swiss Franc", symbol: "CHF" },
-  { code: "CNY", name: "Chinese Yuan", symbol: "¥" },
-  { code: "INR", name: "Indian Rupee", symbol: "₹" },
-  { code: "AED", name: "UAE Dirham", symbol: "د.إ" },
-  { code: "KWD", name: "Kuwaiti Dinar", symbol: "د.ك" },
-  { code: "BHD", name: "Bahraini Dinar", symbol: "د.ب" },
-  { code: "OMR", name: "Omani Rial", symbol: "ر.ع" },
-  { code: "QAR", name: "Qatari Riyal", symbol: "ر.ق" },
-];
+const CURRENCIES_FOR_FORM = SUPPORTED_CURRENCIES.filter(
+  (c) => c.code !== "SAR",
+);
 
 export function FxRateForm({
   open,
@@ -140,7 +128,7 @@ export function FxRateForm({
 
   const selectedCurrency = form.watch("currency");
   const rateValue = form.watch("rateToSAR");
-  const currencyInfo = SUPPORTED_CURRENCIES.find(
+  const currencyInfo = CURRENCIES_FOR_FORM.find(
     (c) => c.code === selectedCurrency,
   );
 
@@ -178,7 +166,7 @@ export function FxRateForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {SUPPORTED_CURRENCIES.map((currency) => (
+                      {CURRENCIES_FOR_FORM.map((currency) => (
                         <SelectItem key={currency.code} value={currency.code}>
                           {currency.code} - {currency.name} ({currency.symbol})
                         </SelectItem>

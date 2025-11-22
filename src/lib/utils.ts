@@ -1,5 +1,9 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import {
+  CURRENCY_SYMBOLS as CURRENCY_SYMBOLS_CONFIG,
+  CURRENCY_LOCALES as CURRENCY_LOCALES_CONFIG,
+} from "./currencies.config";
 
 /**
  * Utility function to merge Tailwind CSS classes
@@ -16,45 +20,15 @@ export function cn(...inputs: ClassValue[]) {
 
 /**
  * Currency symbols mapping
+ * @deprecated Import from @/lib/currencies.config instead
  */
-export const CURRENCY_SYMBOLS: Record<string, string> = {
-  SAR: "ر.س",
-  USD: "$",
-  EUR: "€",
-  GBP: "£",
-  JPY: "¥",
-  AUD: "A$",
-  CAD: "C$",
-  CHF: "CHF",
-  CNY: "¥",
-  INR: "₹",
-  AED: "د.إ",
-  KWD: "د.ك",
-  BHD: "د.ب",
-  OMR: "ر.ع",
-  QAR: "ر.ق",
-};
+export const CURRENCY_SYMBOLS = CURRENCY_SYMBOLS_CONFIG;
 
 /**
  * Currency locales mapping for Intl.NumberFormat
+ * @deprecated Import from @/lib/currencies.config instead
  */
-export const CURRENCY_LOCALES: Record<string, string> = {
-  SAR: "ar-SA",
-  USD: "en-US",
-  EUR: "de-DE",
-  GBP: "en-GB",
-  JPY: "ja-JP",
-  AUD: "en-AU",
-  CAD: "en-CA",
-  CHF: "de-CH",
-  CNY: "zh-CN",
-  INR: "en-IN",
-  AED: "ar-AE",
-  KWD: "ar-KW",
-  BHD: "ar-BH",
-  OMR: "ar-OM",
-  QAR: "ar-QA",
-};
+export const CURRENCY_LOCALES = CURRENCY_LOCALES_CONFIG;
 
 /**
  * Format a currency amount with proper locale and symbol
