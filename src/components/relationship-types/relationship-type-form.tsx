@@ -4,8 +4,8 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Edit2 } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -38,6 +37,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import type { z } from "zod";
+import { InlineEditableField } from "@/components/ui/inline-editable-field";
 import {
   createRelationshipTypeAction,
   updateRelationshipTypeAction,
@@ -67,7 +67,6 @@ export function RelationshipTypeForm({
   editingType,
 }: RelationshipTypeFormProps) {
   const isEditing = !!editingType;
-  const [showCodeField, setShowCodeField] = useState(isEditing);
 
   const createForm = useForm<CreateFormValues, undefined, CreateFormOutput>({
     resolver: zodResolver(CreateRelationshipTypeSchema),
@@ -89,6 +88,20 @@ export function RelationshipTypeForm({
       isImpacting: false,
     },
   });
+
+  // Focus the first field when dialog opens
+  useEffect(() => {
+    if (open) {
+      const timer = setTimeout(() => {
+        const firstField =
+          document.querySelector<HTMLInputElement>('input[name="name"]');
+        if (firstField) {
+          firstField.focus();
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [open]);
 
   useEffect(() => {
     if (open && editingType) {
@@ -135,20 +148,34 @@ export function RelationshipTypeForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
-            {isEditing ? "Edit Relationship Type" : "New Relationship Type"}
-          </DialogTitle>
-          <DialogDescription>
-            {isEditing
-              ? "Update the relationship type details below."
-              : "Create a new relationship type for CI relationships."}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent
+        className="max-h-[90vh] max-w-2xl overflow-y-auto"
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+        }}
+      >
+        <FormProvider {...(isEditing ? updateForm : createForm)}>
+          <DialogHeader>
+            <DialogTitle className="flex flex-wrap items-center gap-2">
+              <span>
+                {isEditing ? "Edit Relationship Type:" : "New Relationship Type:"}
+              </span>
+              <InlineEditableField
+                name="code"
+                placeholder={isEditing ? "Code" : "Auto-generated"}
+                transform="uppercase"
+                optional={!isEditing}
+              />
+            </DialogTitle>
+            <DialogDescription>
+              {isEditing
+                ? "Update the relationship type details below."
+                : "Create a new relationship type for CI relationships."}
+            </DialogDescription>
+          </DialogHeader>
 
-        {!isEditing ? (
-          <Form {...createForm}>
+          {!isEditing ? (
+            <Form {...createForm}>
             <form
               onSubmit={createForm.handleSubmit(onCreateSubmit)}
               className="space-y-4"
@@ -162,6 +189,7 @@ export function RelationshipTypeForm({
                     <FormControl>
                       <Input
                         placeholder="e.g., Depends On, Runs On, Hosted By"
+                        tabIndex={1}
                         {...field}
                       />
                     </FormControl>
@@ -169,55 +197,6 @@ export function RelationshipTypeForm({
                   </FormItem>
                 )}
               />
-
-              {!showCodeField && !isEditing ? (
-                <div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowCodeField(true)}
-                    className="h-8 text-xs"
-                  >
-                    <Edit2 className="mr-2 h-3 w-3" />
-                    Manually set code (optional)
-                  </Button>
-                  <p className="text-muted-foreground mt-1 text-xs">
-                    Code will be auto-generated if not provided
-                  </p>
-                </div>
-              ) : (
-                <FormField
-                  control={createForm.control}
-                  name="code"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        Code{" "}
-                        {isEditing && (
-                          <span className="text-destructive">*</span>
-                        )}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="e.g., DEPENDS_ON, RUNS_ON, HOSTED_BY"
-                          {...field}
-                          value={field.value || ""}
-                          onChange={(e) =>
-                            field.onChange(e.target.value.toUpperCase())
-                          }
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        {isEditing
-                          ? "Unique code using uppercase letters, numbers, hyphens, and underscores"
-                          : "Leave empty to auto-generate"}
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
 
               <FormField
                 control={createForm.control}
@@ -326,6 +305,7 @@ export function RelationshipTypeForm({
                     <FormControl>
                       <Input
                         placeholder="e.g., Depends On, Runs On, Hosted By"
+                        tabIndex={1}
                         {...field}
                       />
                     </FormControl>
@@ -427,6 +407,7 @@ export function RelationshipTypeForm({
             </form>
           </Form>
         )}
+        </FormProvider>
       </DialogContent>
     </Dialog>
   );
