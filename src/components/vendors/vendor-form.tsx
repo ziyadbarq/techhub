@@ -4,11 +4,11 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Edit2 } from "lucide-react";
 import type { z } from "zod";
+import { InlineEditableField } from "@/components/ui/inline-editable-field";
 import {
   Dialog,
   DialogContent,
@@ -65,7 +65,6 @@ export function VendorForm({
   vendor,
 }: VendorFormProps) {
   const isEditing = !!vendor;
-  const [showCodeField, setShowCodeField] = useState(isEditing);
 
   const form = useForm<VendorFormValues, undefined, CreateVendorDTO>({
     resolver: zodResolver(CreateVendorSchema),
@@ -82,6 +81,20 @@ export function VendorForm({
       isActive: vendor?.isActive ?? true,
     },
   });
+
+  // Focus the first field when dialog opens
+  useEffect(() => {
+    if (open) {
+      const timer = setTimeout(() => {
+        const firstField =
+          document.querySelector<HTMLInputElement>('input[name="name"]');
+        if (firstField) {
+          firstField.focus();
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [open]);
 
   useEffect(() => {
     form.reset({
@@ -131,19 +144,31 @@ export function VendorForm({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>
-            {isEditing ? "Edit Vendor" : "Create Vendor"}
-          </DialogTitle>
-          <DialogDescription>
-            {isEditing
-              ? "Update the vendor details below."
-              : "Add a new vendor to the system."}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent
+        className="max-h-[90vh] overflow-y-auto"
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+        }}
+      >
+        <FormProvider {...form}>
+          <DialogHeader>
+            <DialogTitle className="flex flex-wrap items-center gap-2">
+              <span>{isEditing ? "Edit Vendor:" : "Create Vendor:"}</span>
+              <InlineEditableField
+                name="code"
+                placeholder={isEditing ? "Code" : "Auto-generated"}
+                transform="uppercase"
+                optional={!isEditing}
+              />
+            </DialogTitle>
+            <DialogDescription>
+              {isEditing
+                ? "Update the vendor details below."
+                : "Add a new vendor to the system."}
+            </DialogDescription>
+          </DialogHeader>
 
-        <Form {...form}>
+          <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
@@ -157,6 +182,7 @@ export function VendorForm({
                     <Input
                       placeholder="Enter vendor name..."
                       maxLength={200}
+                      tabIndex={1}
                       {...field}
                     />
                   </FormControl>
@@ -164,51 +190,6 @@ export function VendorForm({
                 </FormItem>
               )}
             />
-
-            {!showCodeField && !isEditing ? (
-              <div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowCodeField(true)}
-                  className="h-8 text-xs"
-                >
-                  <Edit2 className="mr-2 h-3 w-3" />
-                  Manually set code (optional)
-                </Button>
-                <p className="text-muted-foreground mt-1 text-xs">
-                  Code will be auto-generated if not provided
-                </p>
-              </div>
-            ) : (
-              <FormField
-                control={form.control}
-                name="code"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Code{" "}
-                      {isEditing && <span className="text-destructive">*</span>}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="VENDOR-001"
-                        maxLength={50}
-                        {...field}
-                        value={field.value || ""}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      {isEditing
-                        ? "Unique vendor code (uppercase letters, numbers, hyphens, underscores)"
-                        : "Leave empty to auto-generate"}
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
 
             <FormField
               control={form.control}
@@ -399,6 +380,7 @@ export function VendorForm({
             </DialogFooter>
           </form>
         </Form>
+        </FormProvider>
       </DialogContent>
     </Dialog>
   );

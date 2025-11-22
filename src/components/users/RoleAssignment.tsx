@@ -10,7 +10,12 @@
 import * as React from "react";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import { Calendar as CalendarIcon, Trash2, Plus } from "lucide-react";
+import {
+  Calendar as CalendarIcon,
+  Trash2,
+  Plus,
+  AlertTriangle,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -52,6 +57,10 @@ import {
   assignRoleToUserAction,
   revokeRoleFromUserAction,
 } from "@/interface-adapters/controllers/user-role.controller";
+import {
+  validateRoleAddition,
+  detectRoleConflicts,
+} from "@/lib/rbac/role-conflicts";
 
 interface RoleAssignmentProps {
   user: UserWithRolesDTO;
@@ -81,6 +90,43 @@ export function RoleAssignment({
   const assignableRoles = availableRoles.filter(
     (r) => !activeRoleIds.includes(r.id),
   );
+
+  // Get current active role names for conflict detection
+  const currentRoleNames = user.roles
+    .filter((r) => r.isActive)
+    .map((r) => r.roleName);
+
+  // Get selected role name for conflict detection
+  const selectedRoleName = React.useMemo(() => {
+    if (!selectedRoleId) return null;
+    const selectedRole = availableRoles.find((r) => r.id === selectedRoleId);
+    return selectedRole?.name ?? null;
+  }, [selectedRoleId, availableRoles]);
+
+  // Detect conflicts with selected role
+  const conflictValidation = React.useMemo(() => {
+    if (!selectedRoleName) {
+      return { canAdd: true, conflicts: [] };
+    }
+
+    return validateRoleAddition(currentRoleNames, selectedRoleName);
+  }, [selectedRoleName, currentRoleNames]);
+
+  const hasCriticalConflicts = conflictValidation.conflicts.some(
+    (c) => c.severity === "critical",
+  );
+
+  // Detect existing conflicts among current roles
+  const existingConflicts = React.useMemo(() => {
+    return detectRoleConflicts(currentRoleNames);
+  }, [currentRoleNames]);
+
+  // Helper to check if a role is involved in conflicts
+  const getRoleConflicts = (roleName: string) => {
+    return existingConflicts.conflicts.filter(
+      (c) => c.role1 === roleName || c.role2 === roleName,
+    );
+  };
 
   const handleAssignRole = async () => {
     if (!selectedRoleId) {
@@ -144,6 +190,15 @@ export function RoleAssignment({
           <CardTitle>Current Roles</CardTitle>
           <CardDescription>
             Roles currently assigned to this user
+            {existingConflicts.hasConflicts && (
+              <Badge
+                variant="outline"
+                className="ml-2 border-yellow-600 text-yellow-700"
+              >
+                {existingConflicts.conflicts.length} Conflict
+                {existingConflicts.conflicts.length > 1 ? "s" : ""}
+              </Badge>
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -153,52 +208,107 @@ export function RoleAssignment({
             </p>
           ) : (
             <div className="space-y-3">
-              {user.roles.map((role) => (
-                <div
-                  key={role.id}
-                  className="flex items-center justify-between rounded-lg border p-3"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">
-                          {role.roleDisplayName}
-                        </span>
-                        {!role.isActive && (
-                          <Badge
-                            variant="outline"
-                            className="text-muted-foreground text-xs"
-                          >
-                            Expired
-                          </Badge>
-                        )}
-                      </div>
-                      {role.expiresAt && (
-                        <span className="text-muted-foreground text-xs">
-                          {role.isActive ? "Expires" : "Expired"}:{" "}
-                          {format(new Date(role.expiresAt), "PPP")}
-                        </span>
-                      )}
+              {/* Existing Conflicts Warning */}
+              {existingConflicts.hasConflicts && (
+                <div className="rounded-lg border border-yellow-500 bg-yellow-50 p-3 dark:bg-yellow-950">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="mt-0.5 h-4 w-4 text-yellow-600 dark:text-yellow-500" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-yellow-900 dark:text-yellow-100">
+                        Conflicting Roles Detected
+                      </p>
+                      <p className="mt-1 text-xs text-yellow-800 dark:text-yellow-200">
+                        This user has {existingConflicts.conflicts.length} role
+                        conflict
+                        {existingConflicts.conflicts.length > 1 ? "s" : ""}.
+                        Review for segregation of duties compliance.
+                      </p>
                     </div>
                   </div>
-                  {role.isActive && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setRoleToRevoke({
-                          id: role.roleId,
-                          name: role.roleDisplayName,
-                        });
-                        setRevokeDialogOpen(true);
-                      }}
-                      className="text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  )}
                 </div>
-              ))}
+              )}
+
+              {user.roles.map((role) => {
+                const roleConflicts = role.isActive
+                  ? getRoleConflicts(role.roleName)
+                  : [];
+                const hasConflicts = roleConflicts.length > 0;
+
+                return (
+                  <div
+                    key={role.id}
+                    className={`flex items-center justify-between rounded-lg border p-3 ${
+                      hasConflicts ? "border-yellow-300 bg-yellow-50/50" : ""
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">
+                            {role.roleDisplayName}
+                          </span>
+                          {!role.isActive && (
+                            <Badge
+                              variant="outline"
+                              className="text-muted-foreground text-xs"
+                            >
+                              Expired
+                            </Badge>
+                          )}
+                          {hasConflicts && (
+                            <Badge
+                              variant="outline"
+                              className="border-yellow-600 text-xs text-yellow-700"
+                            >
+                              <AlertTriangle className="mr-1 h-3 w-3" />
+                              Conflicts
+                            </Badge>
+                          )}
+                        </div>
+                        {role.expiresAt && (
+                          <span className="text-muted-foreground text-xs">
+                            {role.isActive ? "Expires" : "Expired"}:{" "}
+                            {format(new Date(role.expiresAt), "PPP")}
+                          </span>
+                        )}
+                        {hasConflicts && (
+                          <div className="mt-1 space-y-1">
+                            {roleConflicts.map((conflict, idx) => (
+                              <p
+                                key={idx}
+                                className="text-xs text-yellow-800 dark:text-yellow-200"
+                              >
+                                Conflicts with:{" "}
+                                <span className="font-medium">
+                                  {conflict.role1 === role.roleName
+                                    ? conflict.role2
+                                    : conflict.role1}
+                                </span>
+                              </p>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    {role.isActive && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setRoleToRevoke({
+                            id: role.roleId,
+                            name: role.roleDisplayName,
+                          });
+                          setRevokeDialogOpen(true);
+                        }}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </CardContent>
@@ -238,6 +348,101 @@ export function RoleAssignment({
                 </Select>
               </div>
 
+              {/* Conflict Warnings */}
+              {conflictValidation.conflicts.length > 0 && (
+                <div
+                  className={`rounded-lg border p-4 ${
+                    hasCriticalConflicts
+                      ? "border-red-500 bg-red-50 dark:bg-red-950"
+                      : "border-yellow-500 bg-yellow-50 dark:bg-yellow-950"
+                  }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle
+                      className={`mt-0.5 h-5 w-5 ${
+                        hasCriticalConflicts
+                          ? "text-red-600 dark:text-red-500"
+                          : "text-yellow-600 dark:text-yellow-500"
+                      }`}
+                    />
+                    <div className="flex-1">
+                      <h4
+                        className={`font-semibold ${
+                          hasCriticalConflicts
+                            ? "text-red-900 dark:text-red-100"
+                            : "text-yellow-900 dark:text-yellow-100"
+                        }`}
+                      >
+                        {hasCriticalConflicts
+                          ? "Critical Role Conflict"
+                          : "Role Conflict Warning"}
+                      </h4>
+                      <div className="mt-2 space-y-2">
+                        {conflictValidation.conflicts.map((conflict, idx) => (
+                          <div
+                            key={idx}
+                            className={`rounded-md border p-2 ${
+                              hasCriticalConflicts
+                                ? "border-red-300 bg-white dark:border-red-700 dark:bg-red-900/20"
+                                : "border-yellow-300 bg-white dark:border-yellow-700 dark:bg-yellow-900/20"
+                            }`}
+                          >
+                            <p
+                              className={`text-sm ${
+                                hasCriticalConflicts
+                                  ? "text-red-900 dark:text-red-100"
+                                  : "text-yellow-900 dark:text-yellow-100"
+                              }`}
+                            >
+                              <span className="font-medium">
+                                {conflict.role1 === selectedRoleName
+                                  ? conflict.role2
+                                  : conflict.role1}
+                              </span>
+                            </p>
+                            <p
+                              className={`mt-1 text-xs ${
+                                hasCriticalConflicts
+                                  ? "text-red-700 dark:text-red-300"
+                                  : "text-yellow-700 dark:text-yellow-300"
+                              }`}
+                            >
+                              {conflict.reason}
+                            </p>
+                            <div className="mt-1">
+                              <Badge
+                                variant="outline"
+                                className={
+                                  conflict.severity === "critical"
+                                    ? "border-red-600 text-red-700 dark:border-red-500 dark:text-red-300"
+                                    : conflict.severity === "error"
+                                      ? "border-orange-600 text-orange-700 dark:border-orange-500 dark:text-orange-300"
+                                      : "border-yellow-600 text-yellow-700 dark:border-yellow-500 dark:text-yellow-300"
+                                }
+                              >
+                                {conflict.severity.toUpperCase()}
+                              </Badge>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      {hasCriticalConflicts && (
+                        <p className="mt-2 text-xs text-red-700 dark:text-red-300">
+                          This role cannot be assigned due to critical conflicts
+                          with segregation of duties policies.
+                        </p>
+                      )}
+                      {!hasCriticalConflicts && (
+                        <p className="mt-2 text-xs text-yellow-700 dark:text-yellow-300">
+                          You can still assign this role, but review the
+                          conflicts carefully.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <Separator />
 
               <div className="space-y-2">
@@ -263,7 +468,11 @@ export function RoleAssignment({
                       mode="single"
                       selected={expirationDate}
                       onSelect={setExpirationDate}
-                      disabled={(date: Date) => date < new Date()}
+                      disabled={(date: Date) => {
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        return date < today;
+                      }}
                       initialFocus
                     />
                     {expirationDate && (
@@ -287,12 +496,19 @@ export function RoleAssignment({
 
               <Button
                 onClick={handleAssignRole}
-                disabled={!selectedRoleId || isAssigning}
+                disabled={
+                  !selectedRoleId || isAssigning || hasCriticalConflicts
+                }
                 className="w-full"
               >
                 <Plus className="mr-2 h-4 w-4" />
                 {isAssigning ? "Assigning..." : "Assign Role"}
               </Button>
+              {hasCriticalConflicts && (
+                <p className="text-destructive text-center text-xs">
+                  Cannot assign role due to critical conflicts
+                </p>
+              )}
             </div>
           )}
         </CardContent>

@@ -17,11 +17,20 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2, X, Search, ChevronDown, ChevronRight } from "lucide-react";
+import {
+  Loader2,
+  X,
+  Search,
+  ChevronDown,
+  ChevronRight,
+  AlertCircle,
+  Info,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import {
   Card,
   CardContent,
@@ -31,6 +40,12 @@ import {
 } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import type {
   RoleDTO,
@@ -38,6 +53,11 @@ import type {
 } from "@/interface-adapters/presenters/role.presenter";
 import { assignPermissionsToRoleAction } from "@/interface-adapters/controllers/role.controller";
 import { PERMISSION_GROUPS } from "@/lib/rbac/permission-groups";
+import {
+  validatePermissionDependencies,
+  getPermissionDependencies,
+} from "@/lib/rbac/permission-dependencies";
+import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
 
 interface PermissionsManagerProps {
   role: RoleDTO;
@@ -59,6 +79,10 @@ export function PermissionsManager({
   const [expandedGroups, setExpandedGroups] = React.useState<Set<string>>(
     new Set(PERMISSION_GROUPS.map((g) => g.id)),
   );
+  const [bulkMode, setBulkMode] = React.useState(false);
+  const [bulkSelection, setBulkSelection] = React.useState<Set<string>>(
+    new Set(),
+  );
 
   // Create permission map for quick lookup
   const permissionMap = React.useMemo(() => {
@@ -66,6 +90,12 @@ export function PermissionsManager({
     allPermissions.forEach((perm) => map.set(perm.name, perm));
     return map;
   }, [allPermissions]);
+
+  // Validate permission dependencies
+  const dependencyValidation = React.useMemo(() => {
+    const selectedArray = Array.from(selectedPermissions) as PermissionKey[];
+    return validatePermissionDependencies(selectedArray);
+  }, [selectedPermissions]);
 
   // Group permissions by logical categories
   const groupedPermissions = React.useMemo(() => {
@@ -122,35 +152,52 @@ export function PermissionsManager({
   };
 
   const toggleAllInGroup = (groupId: string, checked: boolean) => {
-    setSelectedPermissions((prev) => {
-      const next = new Set(prev);
-      const group = groupedPermissions.find((g) => g.id === groupId);
-      if (!group) return prev;
+    if (bulkMode) {
+      setBulkSelection((prev) => {
+        const next = new Set(prev);
+        const group = groupedPermissions.find((g) => g.id === groupId);
+        if (!group) return prev;
 
-      group.permissions.forEach((perm) => {
-        if (checked) {
-          next.add(perm.name);
-        } else {
-          next.delete(perm.name);
-        }
+        group.permissions.forEach((perm) => {
+          if (checked) {
+            next.add(perm.name);
+          } else {
+            next.delete(perm.name);
+          }
+        });
+        return next;
       });
-      return next;
-    });
+    } else {
+      setSelectedPermissions((prev) => {
+        const next = new Set(prev);
+        const group = groupedPermissions.find((g) => g.id === groupId);
+        if (!group) return prev;
+
+        group.permissions.forEach((perm) => {
+          if (checked) {
+            next.add(perm.name);
+          } else {
+            next.delete(perm.name);
+          }
+        });
+        return next;
+      });
+    }
   };
 
   const isGroupFullySelected = (groupId: string) => {
     const group = groupedPermissions.find((g) => g.id === groupId);
     if (!group || group.permissions.length === 0) return false;
-    return group.permissions.every((perm) =>
-      selectedPermissions.has(perm.name),
-    );
+    const targetSet = bulkMode ? bulkSelection : selectedPermissions;
+    return group.permissions.every((perm) => targetSet.has(perm.name));
   };
 
   const isGroupPartiallySelected = (groupId: string) => {
     const group = groupedPermissions.find((g) => g.id === groupId);
     if (!group || group.permissions.length === 0) return false;
+    const targetSet = bulkMode ? bulkSelection : selectedPermissions;
     const selectedCount = group.permissions.filter((perm) =>
-      selectedPermissions.has(perm.name),
+      targetSet.has(perm.name),
     ).length;
     return selectedCount > 0 && selectedCount < group.permissions.length;
   };
@@ -158,9 +205,8 @@ export function PermissionsManager({
   const getGroupSelectedCount = (groupId: string) => {
     const group = groupedPermissions.find((g) => g.id === groupId);
     if (!group) return 0;
-    return group.permissions.filter((perm) =>
-      selectedPermissions.has(perm.name),
-    ).length;
+    const targetSet = bulkMode ? bulkSelection : selectedPermissions;
+    return group.permissions.filter((perm) => targetSet.has(perm.name)).length;
   };
 
   const hasChanges = () => {
@@ -203,6 +249,57 @@ export function PermissionsManager({
     toast.info("Changes discarded");
   };
 
+  const handleAddMissingDependencies = () => {
+    setSelectedPermissions((prev) => {
+      const next = new Set(prev);
+      dependencyValidation.missing.forEach((item) => {
+        item.requiredDependencies.forEach((dep) => next.add(dep));
+      });
+      return next;
+    });
+    toast.success(
+      `Added ${dependencyValidation.missing.reduce((sum, item) => sum + item.requiredDependencies.length, 0)} missing dependencies`,
+    );
+  };
+
+  // Bulk mode handlers
+  const handleToggleBulkSelection = (permissionName: string) => {
+    setBulkSelection((prev) => {
+      const next = new Set(prev);
+      if (next.has(permissionName)) {
+        next.delete(permissionName);
+      } else {
+        next.add(permissionName);
+      }
+      return next;
+    });
+  };
+
+  const handleBulkAdd = () => {
+    setSelectedPermissions((prev) => {
+      const next = new Set(prev);
+      bulkSelection.forEach((perm) => next.add(perm));
+      return next;
+    });
+    setBulkSelection(new Set());
+    toast.success(`Added ${bulkSelection.size} permissions`);
+  };
+
+  const handleBulkRemove = () => {
+    setSelectedPermissions((prev) => {
+      const next = new Set(prev);
+      bulkSelection.forEach((perm) => next.delete(perm));
+      return next;
+    });
+    setBulkSelection(new Set());
+    toast.success(`Removed ${bulkSelection.size} permissions`);
+  };
+
+  const handleClearBulkSelection = () => {
+    setBulkSelection(new Set());
+    toast.info("Selection cleared");
+  };
+
   return (
     <div className="space-y-6">
       {/* Summary Card */}
@@ -216,7 +313,7 @@ export function PermissionsManager({
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 <Badge variant="outline">
                   {role.permissions?.length ?? 0} current
@@ -224,12 +321,76 @@ export function PermissionsManager({
                 <X className="text-muted-foreground h-4 w-4" />
                 <Badge variant="default">{selectedPermissions.size} new</Badge>
               </div>
-              {hasChanges() && (
-                <Badge variant="default" className="bg-barq-yellow text-white">
-                  Unsaved Changes
-                </Badge>
-              )}
+              <div className="flex items-center gap-4">
+                {hasChanges() && (
+                  <Badge
+                    variant="default"
+                    className="bg-barq-yellow text-white"
+                  >
+                    Unsaved Changes
+                  </Badge>
+                )}
+                {!isSystemRole && (
+                  <div className="flex items-center gap-2">
+                    <label
+                      htmlFor="bulk-mode"
+                      className="text-muted-foreground text-sm"
+                    >
+                      Bulk Mode
+                    </label>
+                    <Switch
+                      id="bulk-mode"
+                      checked={bulkMode}
+                      onCheckedChange={(checked) => {
+                        setBulkMode(checked);
+                        if (!checked) {
+                          setBulkSelection(new Set());
+                        }
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
+
+            {/* Bulk Actions Bar */}
+            {bulkMode && (
+              <div className="bg-muted rounded-lg border p-3">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="default">
+                      {bulkSelection.size} selected
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleBulkAdd}
+                      disabled={bulkSelection.size === 0}
+                    >
+                      Add Selected
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleBulkRemove}
+                      disabled={bulkSelection.size === 0}
+                    >
+                      Remove Selected
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={handleClearBulkSelection}
+                      disabled={bulkSelection.size === 0}
+                    >
+                      Clear
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Search Input */}
             <div className="relative">
@@ -256,6 +417,72 @@ export function PermissionsManager({
           </div>
         </CardContent>
       </Card>
+
+      {/* Dependency Warning */}
+      {!dependencyValidation.valid && (
+        <Card className="border-yellow-500 bg-yellow-50 dark:bg-yellow-950">
+          <CardHeader>
+            <div className="flex items-start gap-3">
+              <AlertCircle className="mt-0.5 h-5 w-5 text-yellow-600 dark:text-yellow-500" />
+              <div className="flex-1">
+                <CardTitle className="text-yellow-900 dark:text-yellow-100">
+                  Missing Permission Dependencies
+                </CardTitle>
+                <CardDescription className="text-yellow-800 dark:text-yellow-200">
+                  Some selected permissions require additional permissions to
+                  function correctly
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {dependencyValidation.missing.map((item, idx) => {
+                const permission = permissionMap.get(item.permission);
+                return (
+                  <div
+                    key={idx}
+                    className="rounded-md border border-yellow-300 bg-white p-3 dark:border-yellow-700 dark:bg-yellow-900/20"
+                  >
+                    <div className="mb-2 flex items-center gap-2">
+                      <code className="rounded bg-yellow-100 px-2 py-1 font-mono text-xs text-yellow-900 dark:bg-yellow-800 dark:text-yellow-100">
+                        {permission?.displayName ?? item.permission}
+                      </code>
+                      <span className="text-sm text-yellow-700 dark:text-yellow-300">
+                        requires:
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {item.requiredDependencies.map((dep) => {
+                        const depPerm = permissionMap.get(dep);
+                        return (
+                          <Badge
+                            key={dep}
+                            variant="outline"
+                            className="border-yellow-600 text-yellow-700 dark:border-yellow-500 dark:text-yellow-300"
+                          >
+                            {depPerm?.displayName ?? dep}
+                          </Badge>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="mt-4">
+              <Button
+                onClick={handleAddMissingDependencies}
+                disabled={isSystemRole || isSaving}
+                variant="outline"
+                className="border-yellow-600 text-yellow-700 hover:bg-yellow-100 dark:border-yellow-500 dark:text-yellow-300 dark:hover:bg-yellow-900/40"
+              >
+                Add Missing Dependencies Automatically
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Permissions by Logical Groups */}
       <div className="space-y-4">
@@ -332,16 +559,29 @@ export function PermissionsManager({
                           const wasOriginal = role.permissions?.includes(
                             permission.name,
                           );
+                          const dependencies = getPermissionDependencies(
+                            permission.name as PermissionKey,
+                          );
+                          const hasDependencies = dependencies.length > 0;
+                          const isBulkSelected = bulkSelection.has(
+                            permission.name,
+                          );
 
                           return (
                             <div
                               key={permission.id}
-                              className="hover:bg-muted/50 flex items-start gap-3 rounded-lg border p-3 transition-colors"
+                              className={`hover:bg-muted/50 flex items-start gap-3 rounded-lg border p-3 transition-colors ${
+                                isBulkSelected && bulkMode
+                                  ? "border-primary bg-primary/5"
+                                  : ""
+                              }`}
                             >
                               <Checkbox
-                                checked={isSelected}
+                                checked={bulkMode ? isBulkSelected : isSelected}
                                 onCheckedChange={() =>
-                                  togglePermission(permission.name)
+                                  bulkMode
+                                    ? handleToggleBulkSelection(permission.name)
+                                    : togglePermission(permission.name)
                                 }
                                 disabled={isSystemRole || isSaving}
                                 className="mt-1"
@@ -354,6 +594,31 @@ export function PermissionsManager({
                                   <code className="text-muted-foreground bg-muted rounded px-1.5 py-0.5 font-mono text-xs">
                                     {permission.name}
                                   </code>
+                                  {hasDependencies && (
+                                    <TooltipProvider delayDuration={300}>
+                                      <Tooltip>
+                                        <TooltipTrigger asChild>
+                                          <Info className="text-muted-foreground h-4 w-4 cursor-help" />
+                                        </TooltipTrigger>
+                                        <TooltipContent className="max-w-xs">
+                                          <p className="mb-1 font-medium">
+                                            Requires:
+                                          </p>
+                                          <ul className="list-inside list-disc space-y-0.5 text-sm">
+                                            {dependencies.map((dep) => {
+                                              const depPerm =
+                                                permissionMap.get(dep);
+                                              return (
+                                                <li key={dep}>
+                                                  {depPerm?.displayName ?? dep}
+                                                </li>
+                                              );
+                                            })}
+                                          </ul>
+                                        </TooltipContent>
+                                      </Tooltip>
+                                    </TooltipProvider>
+                                  )}
                                   {wasOriginal && !isSelected && (
                                     <Badge
                                       variant="outline"
@@ -396,7 +661,12 @@ export function PermissionsManager({
           <div className="flex gap-4">
             <Button
               onClick={handleSave}
-              disabled={!hasChanges() || isSystemRole || isSaving}
+              disabled={
+                !hasChanges() ||
+                isSystemRole ||
+                isSaving ||
+                !dependencyValidation.valid
+              }
               className="flex-1"
             >
               {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -414,6 +684,11 @@ export function PermissionsManager({
           {isSystemRole && (
             <p className="text-muted-foreground mt-4 text-center text-sm">
               System roles cannot be modified
+            </p>
+          )}
+          {!isSystemRole && !dependencyValidation.valid && hasChanges() && (
+            <p className="text-destructive mt-4 text-center text-sm">
+              Please resolve missing permission dependencies before saving
             </p>
           )}
         </CardContent>

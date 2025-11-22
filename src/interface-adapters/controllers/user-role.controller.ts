@@ -15,6 +15,7 @@ import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
 import { getSession } from "@/lib/auth/session";
 import type { AssignRoleToUserUseCase } from "@/core/use-cases/rbac/assign-role-to-user.use-case";
+import { RoleConflictError } from "@/core/use-cases/rbac/assign-role-to-user.use-case";
 import type { RevokeRoleFromUserUseCase } from "@/core/use-cases/rbac/revoke-role-from-user.use-case";
 // import { GetUserRolesUseCase } from "@/core/use-cases/rbac/get-user-roles.use-case"; // Unused for now
 import type { ListRolesUseCase } from "@/core/use-cases/rbac/list-roles.use-case";
@@ -287,6 +288,156 @@ export async function assignRoleToUserAction(
       error,
       { function: "assignRoleToUserAction" },
       "Failed to assign role",
+    );
+  }
+}
+
+/**
+ * Bulk assign roles to multiple users
+ */
+export async function bulkAssignRolesToUsersAction(data: {
+  userIds: string[];
+  roleIds: string[];
+  expiresAt?: Date;
+}): Promise<
+  ActionResponse<{
+    assigned: number;
+    failed: number;
+    conflicts: number;
+    results: Array<{
+      userId: string;
+      userEmail: string;
+      roleId: string;
+      roleName: string;
+      status: "success" | "failed" | "conflict";
+      error?: string;
+    }>;
+  }>
+> {
+  try {
+    // Check permission
+    const { user } = await getSession();
+    if (!user) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    const container = getContainer();
+    const checkPermission = container.get<CheckPermissionUseCase>(
+      DI_TOKENS.CheckPermissionUseCase,
+    );
+
+    const hasPermission = await checkPermission.execute({
+      userId: user.id,
+      permission: PERMISSIONS.USERS_MANAGE,
+    });
+
+    if (!hasPermission) {
+      return { success: false, error: "Insufficient permissions" };
+    }
+
+    // Get request metadata
+    const headersList = await headers();
+    const ipAddress = headersList.get("x-forwarded-for") || "unknown";
+    const userAgent = headersList.get("user-agent") || "unknown";
+
+    // Get use case from DI container
+    const assignRoleToUser = container.get<AssignRoleToUserUseCase>(
+      DI_TOKENS.AssignRoleToUserUseCase,
+    );
+
+    let assignedCount = 0;
+    let conflictCount = 0;
+    let failedCount = 0;
+    const results: Array<{
+      userId: string;
+      userEmail: string;
+      roleId: string;
+      roleName: string;
+      status: "success" | "failed" | "conflict";
+      error?: string;
+    }> = [];
+
+    // Fetch user and role details for better reporting
+    const users = await prisma.user.findMany({
+      where: { id: { in: data.userIds } },
+      select: { id: true, email: true },
+    });
+
+    const roles = await prisma.role.findMany({
+      where: { id: { in: data.roleIds } },
+      select: { id: true, name: true, displayName: true },
+    });
+
+    const userMap = new Map(users.map((u) => [u.id, u]));
+    const roleMap = new Map(roles.map((r) => [r.id, r]));
+
+    // Assign each role to each user
+    for (const userId of data.userIds) {
+      const userInfo = userMap.get(userId);
+      for (const roleId of data.roleIds) {
+        const roleInfo = roleMap.get(roleId);
+        try {
+          await assignRoleToUser.execute({
+            userId,
+            roleId,
+            expiresAt: data.expiresAt,
+            assignedBy: user.id,
+            ipAddress,
+            userAgent,
+          });
+          assignedCount++;
+          results.push({
+            userId,
+            userEmail: userInfo?.email ?? userId,
+            roleId,
+            roleName: roleInfo?.displayName ?? roleId,
+            status: "success",
+          });
+        } catch (error) {
+          if (error instanceof RoleConflictError) {
+            // Handle conflict errors separately
+            conflictCount++;
+            results.push({
+              userId,
+              userEmail: userInfo?.email ?? userId,
+              roleId,
+              roleName: roleInfo?.displayName ?? roleId,
+              status: "conflict",
+              error: `Critical role conflict: ${error.conflicts.map((c) => `${c.role1} ↔ ${c.role2}`).join(", ")}`,
+            });
+          } else {
+            // Other errors
+            failedCount++;
+            results.push({
+              userId,
+              userEmail: userInfo?.email ?? userId,
+              roleId,
+              roleName: roleInfo?.displayName ?? roleId,
+              status: "failed",
+              error: error instanceof Error ? error.message : "Unknown error",
+            });
+          }
+        }
+      }
+    }
+
+    // Revalidate users list
+    revalidatePath("/admin/users");
+
+    return {
+      success: true,
+      data: {
+        assigned: assignedCount,
+        failed: failedCount,
+        conflicts: conflictCount,
+        results,
+      },
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "bulkAssignRolesToUsersAction" },
+      "Failed to bulk assign roles",
     );
   }
 }
