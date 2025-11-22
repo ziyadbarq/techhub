@@ -13,7 +13,7 @@
 
 **Phase 1: Database & Domain** - ✅ Complete
 - ✅ ExchangeRate model added to schema
-- ✅ Currency field added to MaintenanceRecord
+- ⚠️ Currency field added to MaintenanceRecord (Prisma schema & DTOs only; domain entity update pending)
 - ✅ ExchangeRate entity created
 - ✅ ExchangeRate repository interface created
 - ✅ Prisma repository implemented
