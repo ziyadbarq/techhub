@@ -10,7 +10,7 @@ import {
 
 export interface ExchangeRateProps {
   id: string;
-  currency: string; // 3-letter ISO code (USD, EUR, GBP, SAR)
+  currency: string; // 3-letter ISO code (USD, EUR, GBP, etc. - SAR is base currency and not stored)
   rateToSAR: number; // 1 CURRENCY = X SAR
   isActive: boolean;
   createdAt: Date;
@@ -93,6 +93,11 @@ export class ExchangeRate {
     }
 
     const currencyUpper = currency.trim().toUpperCase();
+
+    // SAR is the base currency and should not have an exchange rate entry
+    if (currencyUpper === "SAR") {
+      throw new Error("Cannot create exchange rate for SAR (base currency)");
+    }
 
     // Must be exactly 3 letters
     if (currencyUpper.length !== 3) {
