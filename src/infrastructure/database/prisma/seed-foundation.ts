@@ -19,7 +19,7 @@ import {
   LocationType,
 } from "../../../generated/prisma/client.js";
 import { SEED_CONFIG } from "./seed-config.js";
-import { logStep, logSuccess } from "./seed-utils.js";
+import { logStep, logSuccess, logWarning } from "./seed-utils.js";
 
 export async function seedFoundation(prisma: PrismaClient) {
   console.log("🏗️  Seeding Foundation layer...");
@@ -341,79 +341,32 @@ export async function seedFoundation(prisma: PrismaClient) {
     },
   });
 
-  const orgIT = await prisma.organizationUnit.create({
-    data: {
-      name: "Information Technology",
-      code: "IT",
-      description: "IT department managing technology infrastructure",
-      level: 1,
-      parentId: orgRoot.id,
-      isActive: true,
-    },
-  });
+  const orgUnitMap = new Map<string, string>();
 
-  const _orgFinance = await prisma.organizationUnit.create({
-    data: {
-      name: "Finance & Accounting",
-      code: "FIN",
-      description: "Finance and accounting department",
-      level: 1,
-      parentId: orgRoot.id,
-      isActive: true,
-    },
-  });
+  for (const orgUnit of SEED_CONFIG.ORG_UNITS) {
+    const parentCode = "parentCode" in orgUnit ? orgUnit.parentCode : undefined;
+    const parentId = parentCode ? orgUnitMap.get(parentCode) : orgRoot.id;
 
-  const _orgHR = await prisma.organizationUnit.create({
-    data: {
-      name: "Human Resources",
-      code: "HR",
-      description: "Human resources and talent management",
-      level: 1,
-      parentId: orgRoot.id,
-      isActive: true,
-    },
-  });
+    if (parentCode && !parentId) {
+      logWarning(
+        `Parent org unit ${parentCode} not found for ${orgUnit.code}, skipping`,
+      );
+      continue;
+    }
 
-  const _orgOps = await prisma.organizationUnit.create({
-    data: {
-      name: "Operations",
-      code: "OPS",
-      description: "Business operations and logistics",
-      level: 1,
-      parentId: orgRoot.id,
-      isActive: true,
-    },
-  });
-
-  // IT sub-departments
-  await prisma.organizationUnit.createMany({
-    data: [
-      {
-        name: "Infrastructure & Operations",
-        code: "IT-INFRA",
-        description: "IT infrastructure and operations team",
-        level: 2,
-        parentId: orgIT.id,
+    const createdOrgUnit = await prisma.organizationUnit.create({
+      data: {
+        name: orgUnit.name,
+        code: orgUnit.code,
+        description: orgUnit.description,
+        parentId,
+        level: parentCode ? 2 : 1,
         isActive: true,
       },
-      {
-        name: "Application Development",
-        code: "IT-DEV",
-        description: "Software development team",
-        level: 2,
-        parentId: orgIT.id,
-        isActive: true,
-      },
-      {
-        name: "IT Support",
-        code: "IT-SUPPORT",
-        description: "End-user support and helpdesk",
-        level: 2,
-        parentId: orgIT.id,
-        isActive: true,
-      },
-    ],
-  });
+    });
+
+    orgUnitMap.set(orgUnit.code, createdOrgUnit.id);
+  }
 
   logSuccess(
     `Created ${await prisma.organizationUnit.count()} organization units`,
@@ -509,100 +462,60 @@ export async function seedFoundation(prisma: PrismaClient) {
   if (!adminRole || !viewerRole || !managerRole) {
     console.log("   ⚠ Skipped persons (RBAC roles not found)");
   } else {
-    const persons = [
-      {
-        firstName: "John",
-        lastName: "Smith",
-        email: "john.smith@barq.com",
-        phone: "+1-555-1001",
-        title: "Chief Information Officer",
-        department: "Information Technology",
-        orgUnitId: orgIT.id,
-        primaryRoleId: adminRole.id,
-        isActive: true,
-      },
-      {
-        firstName: "Emma",
-        lastName: "Davis",
-        email: "emma.davis@barq.com",
-        phone: "+1-555-1002",
-        title: "IT Manager",
-        department: "Information Technology",
-        orgUnitId: orgIT.id,
-        primaryRoleId: managerRole.id,
-        isActive: true,
-      },
-      {
-        firstName: "James",
-        lastName: "Wilson",
-        email: "james.wilson@barq.com",
-        phone: "+1-555-1003",
-        title: "Systems Administrator",
-        department: "Information Technology",
-        orgUnitId: orgIT.id,
-        primaryRoleId: viewerRole.id,
-        isActive: true,
-      },
-      {
-        firstName: "Olivia",
-        lastName: "Brown",
-        email: "olivia.brown@barq.com",
-        phone: "+1-555-1004",
-        title: "Finance Director",
-        department: "Finance & Accounting",
-        orgUnitId: _orgFinance.id,
-        primaryRoleId: viewerRole.id,
-        isActive: true,
-      },
-      {
-        firstName: "William",
-        lastName: "Taylor",
-        email: "william.taylor@barq.com",
-        phone: "+1-555-1005",
-        title: "HR Manager",
-        department: "Human Resources",
-        orgUnitId: _orgHR.id,
-        primaryRoleId: viewerRole.id,
-        isActive: true,
-      },
-      {
-        firstName: "Sophia",
-        lastName: "Anderson",
-        email: "sophia.anderson@barq.com",
-        phone: "+1-555-1006",
-        title: "Operations Manager",
-        department: "Operations",
-        orgUnitId: _orgOps.id,
-        primaryRoleId: viewerRole.id,
-        isActive: true,
-      },
-      {
-        firstName: "Liam",
-        lastName: "Martinez",
-        email: "liam.martinez@barq.com",
-        phone: "+1-555-1007",
-        title: "Software Developer",
-        department: "Information Technology",
-        orgUnitId: orgIT.id,
-        primaryRoleId: viewerRole.id,
-        isActive: true,
-      },
-      {
-        firstName: "Ava",
-        lastName: "Garcia",
-        email: "ava.garcia@barq.com",
-        phone: "+1-555-1008",
-        title: "IT Support Specialist",
-        department: "Information Technology",
-        orgUnitId: orgIT.id,
-        primaryRoleId: viewerRole.id,
-        isActive: true,
-      },
-    ];
+    const createdPersons = [];
 
-    const createdPersons = await Promise.all(
-      persons.map((person) => prisma.person.create({ data: person })),
-    );
+    const toEmail = (firstName: string, lastName: string): string => {
+      const slug = (value: string) =>
+        value
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-+|-+$)/g, "");
+      return `${slug(firstName)}.${slug(lastName)}@barq.com`;
+    };
+
+    for (const person of SEED_CONFIG.PERSONS) {
+      const orgUnitId = orgUnitMap.get(person.orgUnitCode);
+
+      if (!orgUnitId) {
+        logWarning(
+          `Org unit ${person.orgUnitCode} not found for ${person.firstName} ${person.lastName}, skipping`,
+        );
+        continue;
+      }
+
+      const isManager =
+        person.title?.toLowerCase().includes("manager") ||
+        person.title?.toLowerCase().includes("architect");
+
+      const primaryRoleId = isManager ? managerRole.id : viewerRole.id;
+      const email = toEmail(person.firstName, person.lastName);
+
+      const createdPerson = await prisma.person.upsert({
+        where: { email },
+        update: {
+          firstName: person.firstName,
+          lastName: person.lastName,
+          title: person.title,
+          department: person.orgUnitCode,
+          orgUnitId,
+          primaryRoleId,
+          isActive: true,
+          email,
+        },
+        create: {
+          firstName: person.firstName,
+          lastName: person.lastName,
+          email,
+          title: person.title,
+          department: person.orgUnitCode,
+          orgUnitId,
+          primaryRoleId,
+          isActive: true,
+        },
+      });
+
+      createdPersons.push(createdPerson);
+    }
 
     logSuccess(`Created ${createdPersons.length} persons`);
 
@@ -611,66 +524,29 @@ export async function seedFoundation(prisma: PrismaClient) {
     // ==============================================
     logStep("🎭", "Seeding person role assignments...");
 
-    const roleAssignments = [
-      {
-        personId: createdPersons[0].id, // John Smith (CIO)
+    const roleAssignments = createdPersons.map((person) => ({
+      personId: person.id,
+      roleId: person.primaryRoleId,
+      scope: "Default",
+      isPrimary: true,
+      isActive: true,
+    }));
+
+    // Give the first person an admin role assignment for elevated access
+    if (createdPersons[0]) {
+      roleAssignments.push({
+        personId: createdPersons[0].id,
         roleId: adminRole.id,
         scope: "Global",
-        isPrimary: true,
+        isPrimary: false,
         isActive: true,
-      },
-      {
-        personId: createdPersons[1].id, // Emma Davis (IT Manager)
-        roleId: managerRole.id,
-        scope: "IT Department",
-        isPrimary: true,
-        isActive: true,
-      },
-      {
-        personId: createdPersons[2].id, // James Wilson (Sys Admin)
-        roleId: viewerRole.id,
-        scope: "IT Department",
-        isPrimary: true,
-        isActive: true,
-      },
-      {
-        personId: createdPersons[3].id, // Olivia Brown (Finance Director)
-        roleId: viewerRole.id,
-        scope: "Finance Department",
-        isPrimary: true,
-        isActive: true,
-      },
-      {
-        personId: createdPersons[4].id, // William Taylor (HR Manager)
-        roleId: viewerRole.id,
-        scope: "HR Department",
-        isPrimary: true,
-        isActive: true,
-      },
-      {
-        personId: createdPersons[5].id, // Sophia Anderson (Ops Manager)
-        roleId: viewerRole.id,
-        scope: "Operations Department",
-        isPrimary: true,
-        isActive: true,
-      },
-      {
-        personId: createdPersons[6].id, // Liam Martinez (Developer)
-        roleId: viewerRole.id,
-        scope: "IT Department",
-        isPrimary: true,
-        isActive: true,
-      },
-      {
-        personId: createdPersons[7].id, // Ava Garcia (IT Support)
-        roleId: viewerRole.id,
-        scope: "IT Department",
-        isPrimary: true,
-        isActive: true,
-      },
-    ];
+      });
+    }
 
-    await prisma.personRoleAssignment.createMany({ data: roleAssignments });
+    if (roleAssignments.length > 0) {
+      await prisma.personRoleAssignment.createMany({ data: roleAssignments });
+    }
+
     logSuccess(`Created ${roleAssignments.length} person role assignments`);
   }
 

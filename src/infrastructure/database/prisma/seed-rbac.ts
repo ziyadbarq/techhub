@@ -144,6 +144,19 @@ const SYSTEM_ROLES = {
       PERMISSIONS.RELATIONSHIP_TYPES_CREATE,
       PERMISSIONS.RELATIONSHIP_TYPES_UPDATE,
 
+      // Service Management - Full access
+      PERMISSIONS.SERVICES_VIEW,
+      PERMISSIONS.SERVICES_CREATE,
+      PERMISSIONS.SERVICES_UPDATE,
+      PERMISSIONS.SERVICES_DELETE,
+      PERMISSIONS.SERVICES_RETIRE,
+      PERMISSIONS.SERVICES_MANAGE,
+      PERMISSIONS.BUSINESS_PROCESSES_VIEW,
+      PERMISSIONS.BUSINESS_PROCESSES_CREATE,
+      PERMISSIONS.BUSINESS_PROCESSES_UPDATE,
+      PERMISSIONS.BUSINESS_PROCESSES_DELETE,
+      PERMISSIONS.BUSINESS_PROCESSES_MANAGE,
+
       // Dashboard & Analytics
       PERMISSIONS.DASHBOARD_VIEW,
       PERMISSIONS.DASHBOARD_ANALYTICS,
@@ -233,6 +246,14 @@ const SYSTEM_ROLES = {
       PERMISSIONS.CI_RELATIONSHIPS_CREATE,
       PERMISSIONS.RELATIONSHIP_TYPES_VIEW,
 
+      // Service Management - Read + Create/Update (no delete)
+      PERMISSIONS.SERVICES_VIEW,
+      PERMISSIONS.SERVICES_CREATE,
+      PERMISSIONS.SERVICES_UPDATE,
+      PERMISSIONS.BUSINESS_PROCESSES_VIEW,
+      PERMISSIONS.BUSINESS_PROCESSES_CREATE,
+      PERMISSIONS.BUSINESS_PROCESSES_UPDATE,
+
       // Dashboard
       PERMISSIONS.DASHBOARD_VIEW,
 
@@ -287,6 +308,10 @@ const SYSTEM_ROLES = {
       PERMISSIONS.CONFIGURATION_ITEMS_VIEW,
       PERMISSIONS.CI_RELATIONSHIPS_VIEW,
       PERMISSIONS.RELATIONSHIP_TYPES_VIEW,
+
+      // Service Management - Read-only
+      PERMISSIONS.SERVICES_VIEW,
+      PERMISSIONS.BUSINESS_PROCESSES_VIEW,
 
       // Dashboard
       PERMISSIONS.DASHBOARD_VIEW,
@@ -502,6 +527,87 @@ const SYSTEM_PERMISSIONS = [
     description: "Access analytics and reports",
     resource: "dashboard",
     action: "analytics",
+  },
+
+  // Service Management - Services
+  {
+    name: PERMISSIONS.SERVICES_VIEW,
+    displayName: "View Services",
+    description: "View service catalog entries",
+    resource: "services",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.SERVICES_CREATE,
+    displayName: "Create Services",
+    description: "Create new services",
+    resource: "services",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.SERVICES_UPDATE,
+    displayName: "Update Services",
+    description: "Update existing services",
+    resource: "services",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.SERVICES_DELETE,
+    displayName: "Delete Services",
+    description: "Delete services from catalog",
+    resource: "services",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.SERVICES_RETIRE,
+    displayName: "Retire Services",
+    description: "Retire or decommission services",
+    resource: "services",
+    action: "retire",
+  },
+  {
+    name: PERMISSIONS.SERVICES_MANAGE,
+    displayName: "Manage Services",
+    description: "Full service management access",
+    resource: "services",
+    action: "manage",
+  },
+
+  // Service Management - Business Processes
+  {
+    name: PERMISSIONS.BUSINESS_PROCESSES_VIEW,
+    displayName: "View Business Processes",
+    description: "View service-aligned business processes",
+    resource: "business-processes",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.BUSINESS_PROCESSES_CREATE,
+    displayName: "Create Business Processes",
+    description: "Create new business processes",
+    resource: "business-processes",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.BUSINESS_PROCESSES_UPDATE,
+    displayName: "Update Business Processes",
+    description: "Update business process definitions",
+    resource: "business-processes",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.BUSINESS_PROCESSES_DELETE,
+    displayName: "Delete Business Processes",
+    description: "Delete business processes",
+    resource: "business-processes",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.BUSINESS_PROCESSES_MANAGE,
+    displayName: "Manage Business Processes",
+    description: "Full business process management access",
+    resource: "business-processes",
+    action: "manage",
   },
 
   // Foundation: Organization Units

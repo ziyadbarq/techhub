@@ -53,6 +53,8 @@ import {
   Bell,
   ServerCog,
   Cloud,
+  Server,
+  GitPullRequest,
   type LucideIcon,
 } from "lucide-react";
 import {
@@ -304,6 +306,31 @@ export const navGroups: NavGroup[] = [
         icon: ArrowRightLeft,
         description: "Define relationship types",
         permission: PERMISSIONS.RELATIONSHIP_TYPES_VIEW,
+      },
+    ],
+    visible: true,
+    collapsible: true,
+    defaultCollapsed: false,
+  },
+
+  // Service Management
+  {
+    id: "service-management",
+    title: "Service Management",
+    items: [
+      {
+        title: "Services",
+        href: "/services",
+        icon: Server,
+        description: "IT services and application catalog",
+        permission: PERMISSIONS.SERVICES_VIEW,
+      },
+      {
+        title: "Business Processes",
+        href: "/business-processes",
+        icon: GitPullRequest,
+        description: "Business processes linked to services",
+        permission: PERMISSIONS.BUSINESS_PROCESSES_VIEW,
       },
     ],
     visible: true,

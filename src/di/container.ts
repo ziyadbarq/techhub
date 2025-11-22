@@ -33,6 +33,7 @@ import { bindInventoryDependencies } from "./modules/inventory.module";
 import { bindCMDBDependencies } from "./modules/cmdb.module";
 import { bindContractsDependencies } from "./modules/contracts.module";
 import { bindLicensesDependencies } from "./modules/licenses.module";
+import { bindServiceDependencies } from "./modules/service.module";
 import { loadDisposalModule } from "./modules/disposal.module";
 import { loadAssetKitsModule } from "./modules/asset-kits.module";
 import { loadReservationsModule } from "./modules/reservations.module";
@@ -114,6 +115,9 @@ function createContainer(): Container {
 
   // Bind Licenses dependencies (license products, entitlements, allocations)
   bindLicensesDependencies(newContainer);
+
+  // Bind Service Management dependencies (services, business processes, infrastructure)
+  bindServiceDependencies(newContainer);
 
   // Bind Asset dependencies (asset categories, asset models, assets, assignments)
   bindAssetDependencies(newContainer);

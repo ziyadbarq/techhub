@@ -21,6 +21,7 @@ import { seedAssets } from "./seed-assets.js";
 import { seedWarrantiesMaintenance } from "./seed-warranties-maintenance.js";
 import { seedCMDB } from "./seed-cmdb.js";
 import { seedLayer3ITAM } from "./seed-layer3-itam.js";
+import { seedBusinessProcesses, seedServices } from "./seed-services.js";
 import { logSection, logSuccess, logStep } from "./seed-utils.js";
 
 async function main() {
@@ -34,6 +35,12 @@ async function main() {
   try {
     // 0. Cleanup dependent tables first (to avoid foreign key constraints)
     logStep("🧹", "Cleaning up dependent tables...");
+    // Service Management cleanup
+    await prisma.serviceAsset.deleteMany({});
+    await prisma.serviceInfrastructure.deleteMany({});
+    await prisma.serviceOwnership.deleteMany({});
+    await prisma.service.deleteMany({});
+    await prisma.businessProcess.deleteMany({});
     // Layer 3 cleanup
     await prisma.assetKitCheckoutItem.deleteMany({});
     await prisma.assetKitCheckout.deleteMany({});
@@ -114,30 +121,37 @@ async function main() {
     await seedFoundation(prisma);
     console.log("");
 
-    // 3. Seed Assets (categories, models, assets, stock locations, movements, assignments)
+    // 3. Seed Business Processes (for Service Management)
+    await seedBusinessProcesses(prisma);
+
+    // 4. Seed Assets (categories, models, assets, stock locations, movements, assignments)
     await seedAssets(prisma);
     console.log("");
 
-    // 4. Seed Warranties & Maintenance (warranties, schedules, records)
+    // 5. Seed Warranties & Maintenance (warranties, schedules, records)
     await seedWarrantiesMaintenance(prisma);
     console.log("");
 
-    // 5. Seed CMDB Relationship Types (for Layer 3 to reference)
+    // 6. Seed Services (80 services with owners and infrastructure)
+    await seedServices(prisma);
+    console.log("");
+
+    // 7. Seed CMDB Relationship Types (for Layer 3 to reference)
     await seedCMDB(prisma);
     console.log("");
 
-    // 6. Seed Layer 3 ITAM (disposals, asset kits, reservations, complete CMDB with CIs and relationships)
+    // 8. Seed Layer 3 ITAM (disposals, asset kits, reservations, complete CMDB with CIs and relationships)
     await seedLayer3ITAM(prisma);
     console.log("");
 
-    // 7. Seed AI prompt templates
+    // 9. Seed AI prompt templates
     logSection("AI Prompt Templates");
     logStep("🤖", "Seeding AI prompt templates...");
     await seedPrompts(prisma);
     logSuccess("AI prompt templates seeded");
     console.log("");
 
-    // 8. Seed example tasks
+    // 10. Seed example tasks
     logSection("Example Tasks");
     logStep("📝", "Creating example tasks...");
 
@@ -206,6 +220,11 @@ async function main() {
     console.log(
       "    ✓ Lifecycle, vendors, org units, locations, persons, fields",
     );
+    console.log("  Service Management:");
+    console.log(
+      "    ✓ 25 business processes (Core Banking, Channels, Infrastructure, etc.)",
+    );
+    console.log("    ✓ 80 services with owners and infrastructure details");
     console.log("  Layer 2: Asset Management");
     console.log("    ✓ Categories, models, 50+ assets, stock, assignments");
     console.log(
