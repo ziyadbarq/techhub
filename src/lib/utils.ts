@@ -125,14 +125,20 @@ export function formatDualCurrency(
   amount: number,
   currency: string,
   sarAmount?: number,
+  options?: {
+    showSymbol?: boolean;
+    showCode?: boolean;
+    minimumFractionDigits?: number;
+    maximumFractionDigits?: number;
+  },
 ): string {
-  const formattedOriginal = formatCurrency(amount, currency);
+  const formattedOriginal = formatCurrency(amount, currency, options);
 
   // If already in SAR or no conversion provided, return single format
   if (currency === "SAR" || !sarAmount) {
     return formattedOriginal;
   }
 
-  const formattedSAR = formatSAR(sarAmount);
+  const formattedSAR = formatCurrency(sarAmount, "SAR", options);
   return `${formattedOriginal} (${formattedSAR})`;
 }

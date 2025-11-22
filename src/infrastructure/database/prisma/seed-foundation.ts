@@ -737,7 +737,12 @@ export async function seedFoundation(prisma: PrismaClient) {
     isActive: rate.isActive,
   }));
 
-  await prisma.exchangeRate.createMany({ data: exchangeRates });
+  // Ensure idempotent seeding: clear existing then insert fresh data
+  await prisma.exchangeRate.deleteMany();
+  await prisma.exchangeRate.createMany({
+    data: exchangeRates,
+    skipDuplicates: true,
+  });
   logSuccess(`Created ${exchangeRates.length} exchange rates`);
 
   logSuccess("Foundation layer seeding completed");

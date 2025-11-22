@@ -989,6 +989,50 @@ const SYSTEM_PERMISSIONS = [
     action: "manage",
   },
 
+  // Foundation: FX Rates
+  {
+    name: PERMISSIONS.FX_RATES_VIEW,
+    displayName: "View FX Rates",
+    description: "View foreign exchange rate list and details",
+    resource: "fx-rates",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.FX_RATES_CREATE,
+    displayName: "Create FX Rates",
+    description: "Create new foreign exchange rates",
+    resource: "fx-rates",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.FX_RATES_UPDATE,
+    displayName: "Update FX Rates",
+    description: "Edit foreign exchange rate values and status",
+    resource: "fx-rates",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.FX_RATES_DELETE,
+    displayName: "Delete FX Rates",
+    description: "Remove foreign exchange rates",
+    resource: "fx-rates",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.FX_RATES_MANAGE,
+    displayName: "Manage FX Rates",
+    description: "Full foreign exchange rate management access",
+    resource: "fx-rates",
+    action: "manage",
+  },
+  {
+    name: PERMISSIONS.FX_RATES_CONVERT,
+    displayName: "Convert Currency",
+    description: "Perform currency conversion using exchange rates",
+    resource: "fx-rates",
+    action: "convert",
+  },
+
   // Assets: Asset Categories
   {
     name: PERMISSIONS.ASSET_CATEGORIES_VIEW,
