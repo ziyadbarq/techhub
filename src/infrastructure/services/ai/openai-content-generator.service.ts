@@ -42,6 +42,18 @@ import type {
 } from "@/core/services";
 import { PromptPurpose } from "@/generated/prisma";
 import { serviceLogger } from "@/lib/logger";
+import {
+  buildOutlinePrompt,
+  buildSlideContentPrompt,
+  buildRefinementPrompt,
+  buildThemeRecommendationPrompt,
+  buildQualityReviewPrompt,
+  buildSlideVariationsPrompt,
+} from "./openai-prompt-builders";
+import {
+  logCachePerformance,
+  buildCachedMessages,
+} from "./cache-performance-tracker";
 
 /**
  * Model configuration for different AI operations
