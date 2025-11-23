@@ -12,7 +12,7 @@ This file provides high-level guidance when working with this repository.
 
 **Current Implementation**:
 
-- **Layer 1 (Foundation)**: 11 core entities - OrganizationUnit, Person, Role, Location, Vendor, Lifecycle models, Field definitions
+- **Layer 1 (Foundation)**: 12 core entities - OrganizationUnit, Person, Role, Location, Vendor, Lifecycle models, Field definitions, **ExchangeRate** (multi-currency support)
 - **Layer 2 (Asset/Inventory)**: 9 entities - Asset, AssetCategory, AssetModel, AssetAssignment, StockLocation, StockMovement, Warranty, MaintenanceSchedule, MaintenanceRecord
 - **Layer 3 (Advanced ITAM)**: 8 modules, 32 entities
   - **Asset Disposals**: AssetDisposal, DisposalApproval, DisposalDocument (3 entities, 11 use cases)
@@ -75,6 +75,7 @@ npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastruc
 
 - [WARRANTY_SYSTEM.md](docs/features/WARRANTY_SYSTEM.md) - Complete warranty management implementation (reference for Asset layer features)
 - [MAINTENANCE_SYSTEM.md](docs/features/MAINTENANCE_SYSTEM.md) - Preventive maintenance schedules and records with workflow state management
+- [MULTI_CURRENCY_GUIDE.md](docs/features/MULTI_CURRENCY_GUIDE.md) - Multi-currency support with SAR base, dual display, and exchange rate management
 
 ### Advanced ITAM Layer (Layer 3)
 
@@ -98,7 +99,8 @@ npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastruc
 - **RBAC Enhancements**:
   - [RBAC_ENHANCEMENT_PHASE_1.md](roadmap/RBAC_ENHANCEMENT_PHASE_1.md) - **COMPLETED** - Navigation fixes, permission grouping, enhanced UI, clone role
   - [RBAC_ENHANCEMENT_PHASE_2.md](roadmap/RBAC_ENHANCEMENT_PHASE_2.md) - **PLANNED** - Audit log UI, bulk operations, analytics, expiration, dependencies, conflicts, hierarchy
-- **Layer 2**: Service Management, Security Patch Workflow, Multi-Currency Support
+- **Layer 2 (Foundation)**: **COMPLETED** - Multi-Currency Support (15 currencies, SAR base, dual display, FX rate management at `/fx-rates`)
+- **Layer 2 (Future)**: Service Management, Security Patch Workflow
 - **Layer 3**: Schema-API Alignment completion
 
 ### All Documentation
@@ -154,9 +156,10 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 ### Permissions
 
 - **ALWAYS** check permissions at server action layer: `await requirePermission(PERMISSIONS.CONFIGURATION_ITEMS_VIEW);`
-- **Permission Organization**: 153+ permissions organized into 10 logical groups (see `src/lib/rbac/permission-groups.ts`)
+- **Permission Organization**: 159+ permissions organized into 10 logical groups (see `src/lib/rbac/permission-groups.ts`)
   - System & Administration, Foundation Layer, Asset Management, Maintenance, Inventory
   - Asset Operations, CMDB, Contract Management, License Management, Development & Testing
+  - **Exchange Rates**: `FX_RATES_VIEW`, `FX_RATES_CREATE`, `FX_RATES_UPDATE`, `FX_RATES_DELETE`, `FX_RATES_MANAGE`, `FX_RATES_CONVERT`
 - **Feature-Specific Permissions**: Each Layer 3 feature has its own permission set:
   - `ASSET_DISPOSALS_*` (VIEW, CREATE, UPDATE, DELETE, APPROVE, REJECT, START, COMPLETE, CANCEL, MANAGE)
   - `ASSET_KITS_*` (VIEW, CREATE, UPDATE, DELETE, CHECKOUT, RETURN, MANAGE)
@@ -190,6 +193,20 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - Pre-commit type-checking **fails** without barrel exports
 - **All Layer 3 features have barrel exports**: `src/core/use-cases/{disposal,asset-kits,reservations,cmdb,contract,license-*,governance,attachments}/*/index.ts`
 - **See**: [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "Adding a New Feature"
+
+### Multi-Currency Support
+
+- **SAR as Base**: All financial aggregations use SAR (Saudi Riyal) as the base currency
+- **Dual Currency Display**: Show original amount with SAR equivalent: `$100.00 (ر.س 375.00)`
+- **Currency Component**: Use `<CurrencyDisplay>` from `@/components/ui/currency-display` for consistent formatting
+- **Currency Utilities**: Use `formatCurrency()`, `formatSAR()`, `formatDualCurrency()` from `@/lib/utils`
+- **Supported Currencies**: 15 currencies configured in `src/lib/currencies.config.ts` (SAR, USD, EUR, GBP, JPY, AUD, CAD, CHF, CNY, INR, AED, KWD, BHD, OMR, QAR)
+- **Exchange Rates**: Managed at `/fx-rates` route, stored as "to SAR" rates (e.g., 1 USD = 3.75 SAR)
+- **Currency Fields**: All entities with monetary values include `currency` field (defaults to "SAR")
+- **Currency Forms**: Use Select dropdown with `SUPPORTED_CURRENCIES`, not text input
+- **Aggregation**: Always convert to SAR before summing (dashboard, reports)
+- **Permissions**: `FX_RATES_VIEW`, `FX_RATES_CREATE`, `FX_RATES_UPDATE`, `FX_RATES_DELETE`, `FX_RATES_MANAGE`, `FX_RATES_CONVERT`
+- **See**: [MULTI_CURRENCY_GUIDE.md](docs/features/MULTI_CURRENCY_GUIDE.md) for complete implementation guide
 
 ## Layer 3 ITAM Features
 

@@ -60,6 +60,7 @@ import {
 import { WarrantyCoverageType } from "@/generated/prisma/enums";
 import { listAssetsAction } from "@/interface-adapters/controllers/asset.controller";
 import { listVendorsAction } from "@/interface-adapters/controllers/vendor.controller";
+import { SUPPORTED_CURRENCIES } from "@/lib/currencies.config";
 
 interface WarrantyFormProps {
   open: boolean;
@@ -98,7 +99,7 @@ export function WarrantyForm({
         ? new Date(warranty.endDate)
         : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
       cost: warranty?.cost ?? null,
-      currency: warranty?.currency ?? "USD",
+      currency: warranty?.currency ?? "SAR",
       note: warranty?.note ?? "",
     },
   });
@@ -146,7 +147,7 @@ export function WarrantyForm({
         ? new Date(warranty.endDate)
         : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
       cost: warranty?.cost ?? null,
-      currency: warranty?.currency ?? "USD",
+      currency: warranty?.currency ?? "SAR",
       note: warranty?.note ?? "",
     });
   }, [warranty, preselectedAssetId, form]);
@@ -444,17 +445,26 @@ export function WarrantyForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Currency</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="USD"
-                        maxLength={3}
-                        {...field}
-                        value={field.value || ""}
-                        onChange={(e) =>
-                          field.onChange(e.target.value.toUpperCase())
-                        }
-                      />
-                    </FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value || "SAR"}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select currency" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {SUPPORTED_CURRENCIES.map((curr) => (
+                          <SelectItem key={curr.code} value={curr.code}>
+                            {curr.symbol} {curr.code} - {curr.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Currency for warranty cost
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}

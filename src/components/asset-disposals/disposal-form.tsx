@@ -45,6 +45,7 @@ import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
 import type { PersonDTO } from "@/interface-adapters/presenters/person.presenter";
 import type { VendorDTO } from "@/interface-adapters/presenters/vendor.presenter";
 import { Checkbox } from "@/components/ui/checkbox";
+import { SUPPORTED_CURRENCIES } from "@/lib/currencies.config";
 
 interface DisposalFormProps {
   open: boolean;
@@ -73,7 +74,7 @@ export function DisposalForm({
       disposalType: "DESTRUCTION",
       reason: "",
       estimatedValue: undefined,
-      currency: undefined,
+      currency: "SAR",
       disposalVendorId: undefined,
       recipientInfo: undefined,
       note: "",
@@ -273,19 +274,27 @@ export function DisposalForm({
               name="currency"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Currency (Optional)</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="e.g., USD, SAR, EUR"
-                      maxLength={3}
-                      {...field}
-                      onChange={(e) => {
-                        field.onChange(e.target.value.toUpperCase());
-                      }}
-                      value={field.value ?? ""}
-                    />
-                  </FormControl>
-                  <FormDescription>3-letter ISO currency code</FormDescription>
+                  <FormLabel>Currency</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value || "SAR"}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select currency" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {SUPPORTED_CURRENCIES.map((curr) => (
+                        <SelectItem key={curr.code} value={curr.code}>
+                          {curr.symbol} {curr.code} - {curr.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Currency for estimated value
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

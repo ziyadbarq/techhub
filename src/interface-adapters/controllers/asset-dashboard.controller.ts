@@ -17,6 +17,7 @@ import type { ListStockMovementsUseCase } from "@/core/use-cases/inventory/stock
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { ListStockLocationsUseCase } from "@/core/use-cases/inventory/stock-location";
+import type { ConvertCurrencyUseCase } from "@/core/use-cases/foundation/exchange-rate";
 
 export interface AssetSummaryStats {
   totalAssets: number;
@@ -63,6 +64,7 @@ export interface RecentActivity {
 
 /**
  * Get asset summary statistics
+ * All financial values are aggregated in SAR (Saudi Riyal)
  */
 export async function getAssetSummaryStatsAction(): Promise<
   ActionResponse<AssetSummaryStats>
@@ -77,20 +79,29 @@ export async function getAssetSummaryStatsAction(): Promise<
     const listAssignmentsUseCase = container.get<ListAssetAssignmentsUseCase>(
       DI_TOKENS.ListAssetAssignmentsUseCase,
     );
+    const convertCurrencyUseCase = container.get<ConvertCurrencyUseCase>(
+      DI_TOKENS.ConvertCurrencyUseCase,
+    );
 
     const [assets, assignments] = await Promise.all([
       listAssetsUseCase.execute(),
       listAssignmentsUseCase.execute(),
     ]);
 
-    // Calculate total value (sum of purchase costs)
-    let totalValue = 0;
-    let currency = "USD"; // Default currency
+    // Calculate total value in SAR (convert all currencies to SAR before summing)
+    let totalValueInSAR = 0;
     for (const asset of assets) {
-      if (asset.purchaseCost) {
-        totalValue += asset.purchaseCost;
-        if (asset.currency) {
-          currency = asset.currency;
+      if (asset.purchaseCost && asset.currency) {
+        try {
+          // Convert to SAR using exchange rates
+          const conversionResult = await convertCurrencyUseCase.execute({
+            amount: asset.purchaseCost,
+            fromCurrency: asset.currency,
+          });
+          totalValueInSAR += conversionResult.convertedAmount;
+        } catch (error) {
+          // If exchange rate not found, skip this asset's value
+          // Assets with missing exchange rates are excluded from total calculation
         }
       }
     }
@@ -117,8 +128,8 @@ export async function getAssetSummaryStatsAction(): Promise<
       success: true,
       data: {
         totalAssets: assets.length,
-        totalValue,
-        currency,
+        totalValue: totalValueInSAR,
+        currency: "SAR", // Always SAR for aggregated values
         assetsUnderWarranty,
         unassignedAssets,
       },
@@ -134,6 +145,7 @@ export async function getAssetSummaryStatsAction(): Promise<
 
 /**
  * Get assets breakdown by category
+ * All financial values are aggregated in SAR (Saudi Riyal)
  */
 export async function getAssetsByCategoryAction(): Promise<
   ActionResponse<CategoryBreakdown[]>
@@ -148,6 +160,9 @@ export async function getAssetsByCategoryAction(): Promise<
     const listCategoriesUseCase = container.get<ListAssetCategoriesUseCase>(
       DI_TOKENS.ListAssetCategoriesUseCase,
     );
+    const convertCurrencyUseCase = container.get<ConvertCurrencyUseCase>(
+      DI_TOKENS.ConvertCurrencyUseCase,
+    );
 
     const [assets, categories] = await Promise.all([
       listAssetsUseCase.execute(),
@@ -157,15 +172,31 @@ export async function getAssetsByCategoryAction(): Promise<
     // Build category map for names
     const categoryMap = new Map(categories.map((c) => [c.id, c.name]));
 
-    // Group by category
+    // Group by category (convert all values to SAR)
     const breakdown = new Map<string, { count: number; value: number }>();
 
     for (const asset of assets) {
       const categoryId = asset.assetCategoryId;
       const existing = breakdown.get(categoryId) || { count: 0, value: 0 };
+
+      // Convert asset cost to SAR before adding
+      let costInSAR = 0;
+      if (asset.purchaseCost && asset.currency) {
+        try {
+          const conversionResult = await convertCurrencyUseCase.execute({
+            amount: asset.purchaseCost,
+            fromCurrency: asset.currency,
+          });
+          costInSAR = conversionResult.convertedAmount;
+        } catch (error) {
+          // If exchange rate not found, skip this asset's value
+          // Assets with missing exchange rates are excluded from category value calculation
+        }
+      }
+
       breakdown.set(categoryId, {
         count: existing.count + 1,
-        value: existing.value + (asset.purchaseCost || 0),
+        value: existing.value + costInSAR,
       });
     }
 

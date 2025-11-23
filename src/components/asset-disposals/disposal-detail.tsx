@@ -4,6 +4,7 @@
 
 "use client";
 
+import * as React from "react";
 import { useState } from "react";
 import {
   Dialog,
@@ -15,12 +16,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { CurrencyDisplay } from "@/components/ui/currency-display";
 import type { AssetDisposalDTO } from "@/interface-adapters/dtos/generated/asset-disposal.dto";
 import {
   startDisposalAction,
   completeDisposalAction,
   cancelDisposalAction,
 } from "@/interface-adapters/controllers/asset-disposal.controller";
+import { convertCurrencyAction } from "@/interface-adapters/controllers/exchange-rate.controller";
 import { ApprovalWorkflow } from "./approval-workflow";
 import { Play, X, CheckCircle2, FileText, Download } from "lucide-react";
 import {
@@ -59,6 +62,47 @@ export function DisposalDetail({
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [cancellationReason, setCancellationReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currencyConversion, setCurrencyConversion] = useState<{
+    sarAmount: number;
+    exchangeRate: number;
+  } | null>(null);
+  const [isLoadingConversion, setIsLoadingConversion] = useState(false);
+
+  // Fetch currency conversion on mount if currency is not SAR
+  React.useEffect(() => {
+    async function fetchConversion() {
+      // Only convert if we have an estimated value and currency that's not SAR
+      if (
+        !disposal.estimatedValue ||
+        !disposal.currency ||
+        disposal.currency === "SAR"
+      ) {
+        return;
+      }
+
+      setIsLoadingConversion(true);
+      try {
+        const result = await convertCurrencyAction({
+          amount: disposal.estimatedValue,
+          fromCurrency: disposal.currency,
+        });
+
+        if (result.success && result.data) {
+          setCurrencyConversion({
+            sarAmount: result.data.convertedAmount,
+            exchangeRate: result.data.exchangeRate,
+          });
+        }
+      } catch (error) {
+        // Silently fail - just won't show conversion
+        console.error("Failed to fetch currency conversion:", error);
+      } finally {
+        setIsLoadingConversion(false);
+      }
+    }
+
+    fetchConversion();
+  }, [disposal.estimatedValue, disposal.currency]);
 
   const handleStart = async () => {
     setIsSubmitting(true);
@@ -174,7 +218,21 @@ export function DisposalDetail({
                       Estimated Value:
                     </span>
                     <span className="col-span-2">
-                      ${disposal.estimatedValue.toFixed(2)}
+                      {isLoadingConversion ? (
+                        <span className="text-muted-foreground">
+                          {disposal.currency || "SAR"}{" "}
+                          {disposal.estimatedValue.toLocaleString()}{" "}
+                          (converting...)
+                        </span>
+                      ) : (
+                        <CurrencyDisplay
+                          amount={disposal.estimatedValue}
+                          currency={disposal.currency || "SAR"}
+                          sarAmount={currencyConversion?.sarAmount}
+                          exchangeRate={currencyConversion?.exchangeRate}
+                          mode="dual"
+                        />
+                      )}
                     </span>
                   </div>
                 )}

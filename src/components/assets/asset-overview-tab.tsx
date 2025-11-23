@@ -4,6 +4,7 @@
 
 "use client";
 
+import * as React from "react";
 import { format } from "date-fns";
 import {
   Card,
@@ -13,14 +14,54 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { CurrencyDisplay } from "@/components/ui/currency-display";
 import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
 import { CheckCircle2, XCircle } from "lucide-react";
+import { convertCurrencyAction } from "@/interface-adapters/controllers/exchange-rate.controller";
 
 interface AssetOverviewTabProps {
   asset: AssetDTO;
 }
 
 export function AssetOverviewTab({ asset }: AssetOverviewTabProps) {
+  const [currencyConversion, setCurrencyConversion] = React.useState<{
+    sarAmount: number;
+    exchangeRate: number;
+  } | null>(null);
+  const [isLoadingConversion, setIsLoadingConversion] = React.useState(false);
+
+  // Fetch currency conversion on mount if currency is not SAR
+  React.useEffect(() => {
+    async function fetchConversion() {
+      // Only convert if we have a purchase cost and currency that's not SAR
+      if (!asset.purchaseCost || !asset.currency || asset.currency === "SAR") {
+        return;
+      }
+
+      setIsLoadingConversion(true);
+      try {
+        const result = await convertCurrencyAction({
+          amount: asset.purchaseCost,
+          fromCurrency: asset.currency,
+        });
+
+        if (result.success && result.data) {
+          setCurrencyConversion({
+            sarAmount: result.data.convertedAmount,
+            exchangeRate: result.data.exchangeRate,
+          });
+        }
+      } catch (error) {
+        // Silently fail - just won't show conversion
+        console.error("Failed to fetch currency conversion:", error);
+      } finally {
+        setIsLoadingConversion(false);
+      }
+    }
+
+    fetchConversion();
+  }, [asset.purchaseCost, asset.currency]);
+
   return (
     <div className="grid gap-6 md:grid-cols-2">
       {/* Basic Information */}
@@ -116,9 +157,22 @@ export function AssetOverviewTab({ asset }: AssetOverviewTabProps) {
               <p className="text-muted-foreground text-sm font-medium">
                 Purchase Cost
               </p>
-              <p className="text-sm font-semibold">
-                {asset.currency || "USD"} {asset.purchaseCost.toLocaleString()}
-              </p>
+              <div className="text-sm font-semibold">
+                {isLoadingConversion ? (
+                  <span className="text-muted-foreground">
+                    {asset.currency || "SAR"} {asset.purchaseCost.toLocaleString()} (converting...)
+                  </span>
+                ) : (
+                  <CurrencyDisplay
+                    amount={asset.purchaseCost}
+                    currency={asset.currency || "SAR"}
+                    sarAmount={currencyConversion?.sarAmount}
+                    exchangeRate={currencyConversion?.exchangeRate}
+                    mode="dual"
+                    className="text-sm font-semibold"
+                  />
+                )}
+              </div>
             </div>
           )}
 

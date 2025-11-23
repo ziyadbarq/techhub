@@ -39,9 +39,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { CurrencyDisplay } from "@/components/ui/currency-display";
 
 import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
 import { deleteAssetAction } from "@/interface-adapters/controllers/asset.controller";
+import { listExchangeRatesAction } from "@/interface-adapters/controllers/exchange-rate.controller";
+import type { ExchangeRateResponseDTO } from "@/interface-adapters/presenters/exchange-rate.presenter";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { usePermissions } from "@/hooks/use-permissions";
 
@@ -63,8 +66,53 @@ export function AssetsTable({
     null,
   );
   const [isDeleting, setIsDeleting] = React.useState(false);
+  const [exchangeRates, setExchangeRates] = React.useState<
+    Map<string, ExchangeRateResponseDTO>
+  >(new Map());
 
   const { hasPermission } = usePermissions();
+
+  // Fetch exchange rates on mount
+  React.useEffect(() => {
+    async function fetchExchangeRates() {
+      try {
+        const result = await listExchangeRatesAction({ onlyActive: true });
+        if (result.success && result.data) {
+          const ratesMap = new Map<string, ExchangeRateResponseDTO>();
+          result.data.forEach((rate) => {
+            ratesMap.set(rate.currency, rate);
+          });
+          setExchangeRates(ratesMap);
+        }
+      } catch (error) {
+        // Silently fail - the table will still work with single currency display
+        console.error("Failed to fetch exchange rates:", error);
+      }
+    }
+
+    fetchExchangeRates();
+  }, []);
+
+  // Helper function to calculate SAR conversion
+  const calculateSARAmount = (
+    amount: number,
+    currency: string,
+  ): { sarAmount?: number; exchangeRate?: number } => {
+    // If already in SAR, no conversion needed
+    if (currency === "SAR") {
+      return { sarAmount: amount, exchangeRate: 1.0 };
+    }
+
+    // Get exchange rate for the currency
+    const rate = exchangeRates.get(currency);
+    if (!rate) {
+      return {}; // No conversion available
+    }
+
+    // Calculate SAR amount
+    const sarAmount = amount * rate.rateToSAR;
+    return { sarAmount, exchangeRate: rate.rateToSAR };
+  };
 
   const handleDelete = async (asset: AssetDTO) => {
     setIsDeleting(true);
@@ -243,14 +291,24 @@ export function AssetsTable({
       ),
       cell: ({ row }) => {
         const cost = row.getValue("purchaseCost") as number | null;
-        const currency = row.original.currency;
+        const currency = row.original.currency || "SAR";
+
         if (!cost) {
           return <span className="text-muted-foreground text-sm">—</span>;
         }
+
+        // Calculate SAR conversion
+        const { sarAmount, exchangeRate } = calculateSARAmount(cost, currency);
+
         return (
-          <span className="text-sm">
-            {currency || "USD"} {cost.toLocaleString()}
-          </span>
+          <CurrencyDisplay
+            amount={cost}
+            currency={currency}
+            sarAmount={sarAmount}
+            exchangeRate={exchangeRate}
+            mode="dual"
+            className="text-sm"
+          />
         );
       },
       meta: {
