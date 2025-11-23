@@ -20,8 +20,8 @@ Comprehensive guide to the database seeding system in Barq Assets ITAM applicati
 
 The seed system populates the database with comprehensive, realistic test data following enterprise ITAM best practices. The system is designed with DRY (Don't Repeat Yourself) and SOLID principles using:
 
-- **Centralized Configuration**: All test data in `seed-config.ts`
-- **Factory Pattern**: Type-safe entity builders in `seed-factories.ts`
+- **Domain-Split Configuration**: Test data organized by domain in 5 config modules
+- **Factory Pattern**: Type-safe entity builders in `seed-factories.ts` and `seed-foundation-factories.ts`
 - **Shared Utilities**: Common helpers in `seed-utils.ts`
 - **Layered Architecture**: Seeds respect domain layer dependencies
 - **Idempotent Design**: Cleanup handled centrally for safe re-seeding
@@ -74,17 +74,34 @@ The seed system populates the database with comprehensive, realistic test data f
 
 ```
 src/infrastructure/database/prisma/
-├── seed.ts                        # Main orchestrator
-├── seed-config.ts                 # Centralized configuration
-├── seed-utils.ts                  # Shared utilities
-├── seed-factories.ts              # Entity factories
-├── seed-rbac.ts                   # RBAC seeding
-├── seed-foundation.ts             # Foundation layer
-├── seed-assets.ts                 # Asset layer
-├── seed-warranties-maintenance.ts # Warranties & maintenance
-├── seed-cmdb.ts                   # CMDB relationships
-├── seed-layer3-itam.ts           # Advanced ITAM features
-└── seed-prompts.ts               # AI prompt templates
+├── seed.ts                          # Main orchestrator
+│
+├── Configuration (Domain-Split)
+│   ├── seed-config.ts               # Barrel export + SEED_QUANTITIES
+│   ├── seed-config-foundation.ts    # Foundation layer data
+│   ├── seed-config-assets.ts        # Asset layer data
+│   ├── seed-config-layer3.ts        # Layer 3 ITAM data
+│   ├── seed-config-governance.ts    # Governance data
+│   └── seed-config-system.ts        # System/services data
+│
+├── Utilities & Factories
+│   ├── seed-utils.ts                # Shared utilities
+│   ├── seed-factories.ts            # Asset/maintenance factories
+│   └── seed-foundation-factories.ts # Foundation layer factories
+│
+├── Seeders (by Domain)
+│   ├── seed-rbac.ts                 # RBAC permissions & roles
+│   ├── seed-rbac-permissions.ts     # Permission definitions
+│   ├── seed-rbac-roles.ts           # Role definitions
+│   ├── seed-foundation.ts           # Foundation layer
+│   ├── seed-assets.ts               # Asset layer
+│   ├── seed-warranties-maintenance.ts # Warranties & maintenance
+│   ├── seed-cmdb.ts                 # CMDB relationships
+│   ├── seed-layer3-itam.ts          # Advanced ITAM features
+│   ├── seed-governance.ts           # Governance features
+│   ├── seed-services.ts             # Service catalog
+│   ├── seed-attachments.ts          # Attachment types
+│   └── seed-prompts.ts              # AI prompt templates
 ```
 
 ### Design Principles
@@ -448,9 +465,26 @@ const scheduled = MaintenanceRecordFactory.createScheduled(
 
 ## Configuration
 
-### seed-config.ts
+### Overview: Domain-Split Configuration
 
-Centralized configuration for all seed data - **single source of truth**.
+**Refactored (Nov 2025)**: Configuration data has been split into **domain-specific modules** for better maintainability:
+
+- **seed-config.ts**: Main barrel export + `SEED_QUANTITIES`
+- **seed-config-foundation.ts**: Foundation layer data (vendors, locations, persons, etc.)
+- **seed-config-assets.ts**: Asset layer data (categories, models, warranties, etc.)
+- **seed-config-layer3.ts**: Layer 3 ITAM data (kits, disposals, CIs, etc.)
+- **seed-config-governance.ts**: Governance data (domains, ownerships, campaigns)
+- **seed-config-system.ts**: System data (services, attachments, exchange rates)
+
+**Benefits**:
+- **95% reduction** in main config file (3,056 → 154 lines)
+- Easy to find specific data by domain
+- Import only what you need
+- Better Git diffs (changes isolated to domains)
+
+### seed-config.ts (Main Barrel Export)
+
+Main configuration file that re-exports all domain modules and provides backward compatibility.
 
 #### Quantities
 
@@ -527,9 +561,20 @@ export const WARRANTY_CONFIG = {
 };
 ```
 
-#### Complete Configuration Export
+#### Structure
 
 ```typescript
+// seed-config.ts (Main File)
+export const SEED_QUANTITIES = { /* ... */ };
+
+// Re-export all domain modules
+export * from "./seed-config-foundation.js";
+export * from "./seed-config-assets.js";
+export * from "./seed-config-layer3.js";
+export * from "./seed-config-governance.js";
+export * from "./seed-config-system.js";
+
+// Aggregate configuration (backward compatibility)
 export const SEED_CONFIG = {
   QUANTITIES: SEED_QUANTITIES,
   VENDORS: VENDOR_DATA,
@@ -545,23 +590,136 @@ export const SEED_CONFIG = {
   RELATIONSHIP_TYPES: RELATIONSHIP_TYPE_DATA,
   DISPOSAL_REASONS,
   RESERVATION_PURPOSES,
+  DATA_DOMAINS,
+  DATA_OWNERSHIPS,
+  VERIFICATION_CAMPAIGNS,
+  SERVICES: SERVICE_DATA,
+  BUSINESS_PROCESSES: BUSINESS_PROCESS_DATA,
+  EXCHANGE_RATES: EXCHANGE_RATE_DATA,
+  ATTACHMENT_TYPES,
 } as const;
+```
+
+### Domain-Specific Config Files
+
+#### seed-config-foundation.ts (289 lines)
+
+Foundation layer configuration data.
+
+**Exports**:
+- `VENDOR_DATA`: 9 vendors (manufacturers & resellers)
+- `LOCATION_DATA`: 10 locations (offices, data centers, warehouses)
+- `ORG_UNIT_DATA`: 5 organization units (hierarchical structure)
+- `PERSON_DATA`: 15 persons with Saudi Arabian names
+- `LIFECYCLE_STATUS_DATA`: 6 lifecycle statuses
+
+```typescript
+import { VENDOR_DATA, LOCATION_DATA } from "./seed-config-foundation.js";
+```
+
+#### seed-config-assets.ts (257 lines)
+
+Asset layer configuration data.
+
+**Exports**:
+- `ASSET_CATEGORY_DATA`: 8 categories (Laptop, Desktop, Server, etc.)
+- `ASSET_MODEL_DATA`: 15+ models across vendors
+- `WARRANTY_CONFIG`: Warranty templates by asset type
+- `MAINTENANCE_TEMPLATES`: Recurring maintenance templates
+
+```typescript
+import { ASSET_MODEL_DATA, WARRANTY_CONFIG } from "./seed-config-assets.js";
+```
+
+#### seed-config-layer3.ts (206 lines)
+
+Layer 3 ITAM configuration data.
+
+**Exports**:
+- `ASSET_KIT_TEMPLATES`: Predefined asset bundles
+- `CI_CLASS_DATA`: CI class definitions
+- `RELATIONSHIP_TYPE_DATA`: CMDB relationship types
+- `DISPOSAL_TYPES`, `DISPOSAL_STATUSES`, `DISPOSAL_REASONS`
+- `KIT_TYPES`: Asset kit type definitions
+- `RESERVATION_PURPOSES`: Reservation purpose options
+
+```typescript
+import { CI_CLASS_DATA, ASSET_KIT_TEMPLATES } from "./seed-config-layer3.js";
+```
+
+#### seed-config-governance.ts (135 lines)
+
+Governance configuration data.
+
+**Exports**:
+- `DATA_DOMAINS`: Data classification domains
+- `DATA_OWNERSHIPS`: Ownership mapping templates
+- `VERIFICATION_CAMPAIGNS`: Compliance verification campaigns
+
+```typescript
+import { DATA_DOMAINS } from "./seed-config-governance.js";
+```
+
+#### seed-config-system.ts (2,080 lines)
+
+System and service configuration data.
+
+**Exports**:
+- `SERVICE_DATA`: Service catalog entries
+- `BUSINESS_PROCESS_DATA`: Business process definitions
+- `ATTACHMENT_TYPES`: File attachment type definitions
+- `EXCHANGE_RATE_DATA`: Multi-currency exchange rates (14 currencies)
+
+```typescript
+import { EXCHANGE_RATE_DATA, SERVICE_DATA } from "./seed-config-system.js";
 ```
 
 ---
 
 ## Adding New Seed Data
 
-### 1. Add Configuration
+### 1. Add Configuration to Appropriate Domain File
 
+Choose the correct domain-specific config file based on the entity type:
+
+**Foundation Layer** (`seed-config-foundation.ts`):
 ```typescript
-// seed-config.ts
+// Add to seed-config-foundation.ts
 export const NEW_ENTITY_DATA = [
   { name: "Sample 1", code: "SAMP1", ... },
   { name: "Sample 2", code: "SAMP2", ... },
 ] as const;
+```
 
-// Add to SEED_CONFIG export
+**Asset Layer** (`seed-config-assets.ts`):
+```typescript
+// Add to seed-config-assets.ts for asset-related data
+export const ASSET_RELATED_DATA = [...] as const;
+```
+
+**Layer 3 ITAM** (`seed-config-layer3.ts`):
+```typescript
+// Add to seed-config-layer3.ts for advanced ITAM features
+export const ADVANCED_ITAM_DATA = [...] as const;
+```
+
+**Governance** (`seed-config-governance.ts`):
+```typescript
+// Add to seed-config-governance.ts for governance data
+export const GOVERNANCE_DATA = [...] as const;
+```
+
+**System/Services** (`seed-config-system.ts`):
+```typescript
+// Add to seed-config-system.ts for services, business processes, etc.
+export const SERVICE_DATA = [...] as const;
+```
+
+Then add to the main barrel export in `seed-config.ts`:
+```typescript
+// seed-config.ts
+import { NEW_ENTITY_DATA } from "./seed-config-foundation.js";
+
 export const SEED_CONFIG = {
   // ...
   NEW_ENTITIES: NEW_ENTITY_DATA,
@@ -569,6 +727,8 @@ export const SEED_CONFIG = {
 ```
 
 ### 2. Create Factory (Optional)
+
+For **complex entities**, create class-based factories in `seed-factories.ts`:
 
 ```typescript
 // seed-factories.ts
@@ -600,23 +760,55 @@ export class NewEntityFactory {
 }
 ```
 
+For **foundation entities**, create batch functions in `seed-foundation-factories.ts`:
+
+```typescript
+// seed-foundation-factories.ts
+export interface NewEntityData {
+  name: string;
+  code: string;
+  // ...
+}
+
+/**
+ * Create multiple new entities in batch
+ */
+export async function createNewEntities(
+  prisma: PrismaClient,
+  entities: readonly NewEntityData[] | NewEntityData[],
+) {
+  return prisma.newEntity.createMany({
+    data: entities.map((e) => ({
+      name: e.name,
+      code: e.code,
+      isActive: true,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    })) as any,
+  });
+}
+```
+
 ### 3. Add Seeding Logic
 
 ```typescript
 // Existing seed file or new seed-new-entities.ts
-import { SEED_CONFIG } from "./seed-config.js";
-import { NewEntityFactory } from "./seed-factories.js";
+import { NEW_ENTITY_DATA } from "./seed-config-foundation.js"; // or appropriate domain file
+import { createNewEntities } from "./seed-foundation-factories.js"; // or NewEntityFactory from seed-factories.ts
 import { logStep, logSuccess } from "./seed-utils.js";
 
 export async function seedNewEntities(prisma: PrismaClient) {
   logStep("🆕", "Creating new entities...");
 
+  // Option A: Using batch factory (recommended for foundation entities)
+  await createNewEntities(prisma, NEW_ENTITY_DATA);
+  logSuccess(`Created ${NEW_ENTITY_DATA.length} new entities`);
+
+  // Option B: Using class factory (for complex entities with business logic)
   let count = 0;
-  for (const template of SEED_CONFIG.NEW_ENTITIES) {
+  for (const template of NEW_ENTITY_DATA) {
     await NewEntityFactory.fromTemplate(template, count).create(prisma);
     count++;
   }
-
   logSuccess(`Created ${count} new entities`);
 }
 ```
@@ -656,7 +848,23 @@ async function main() {
 ### Pattern 1: Configuration-Driven Seeding
 
 ```typescript
-// ✅ GOOD - Uses centralized configuration
+// ✅ GOOD - Uses domain-split configuration
+import { VENDOR_DATA } from "./seed-config-foundation.js";
+
+for (const vendorData of VENDOR_DATA) {
+  await prisma.vendor.create({
+    data: {
+      name: vendorData.name,
+      code: vendorData.code,
+      vendorType: vendorData.type,
+      // ...
+    },
+  });
+}
+
+// ✅ ALSO GOOD - Using aggregate config (backward compatibility)
+import { SEED_CONFIG } from "./seed-config.js";
+
 for (const vendorData of SEED_CONFIG.VENDORS) {
   await prisma.vendor.create({
     data: {
@@ -674,7 +882,37 @@ await prisma.vendor.create({
 });
 ```
 
-### Pattern 2: Factory-Based Creation
+### Pattern 2: Batch Factory Functions (Foundation Layer)
+
+```typescript
+// ✅ GOOD - Batch creation with factory function
+import { createVendors } from "./seed-foundation-factories.js";
+import { VENDOR_DATA } from "./seed-config-foundation.js";
+
+await createVendors(prisma, VENDOR_DATA);
+// Creates all vendors in batch with proper type safety
+
+// ✅ GOOD - Batch creation with parent relationships
+import { createOrganizationUnits } from "./seed-foundation-factories.js";
+import { ORG_UNIT_DATA } from "./seed-config-foundation.js";
+
+const orgUnitMap = await createOrganizationUnits(prisma, ORG_UNIT_DATA);
+// Returns Map<code, id> for linking child entities
+
+// ❌ BAD - Individual creates in loop
+for (const vendorData of VENDOR_DATA) {
+  await prisma.vendor.create({
+    data: {
+      name: vendorData.name,
+      code: vendorData.code,
+      type: vendorData.type,
+      isActive: true,
+    },
+  });
+}
+```
+
+### Pattern 3: Class-Based Factories (Complex Entities)
 
 ```typescript
 // ✅ GOOD - Uses factory for complex logic
@@ -701,7 +939,7 @@ await prisma.warranty.create({
 });
 ```
 
-### Pattern 3: Safe Relation Handling
+### Pattern 4: Safe Relation Handling
 
 ```typescript
 // ✅ GOOD - Uses helper with validation
@@ -717,7 +955,7 @@ const data = {
 };
 ```
 
-### Pattern 4: Centralized Cleanup
+### Pattern 5: Centralized Cleanup
 
 ```typescript
 // ✅ GOOD - Cleanup in seed.ts only
@@ -736,7 +974,7 @@ export async function seedAssets(prisma: PrismaClient) {
 }
 ```
 
-### Pattern 5: Realistic Data Generation
+### Pattern 6: Realistic Data Generation
 
 ```typescript
 // ✅ GOOD - Realistic dates, costs, relationships
@@ -969,9 +1207,19 @@ npm run db:seed
 ### Custom Seed Data for Environments
 
 ```typescript
-// seed-config.ts
+// seed-config-assets.ts (or appropriate domain file)
 const isDevelopment = process.env.NODE_ENV === "development";
 
+export const ASSET_MODEL_DATA = [
+  {
+    name: isDevelopment ? "Dell Latitude 7440" : "Test Laptop",
+    code: "DELL-LAT-7440",
+    // ... more development-specific details
+  },
+  // ...
+];
+
+// seed-config.ts
 export const SEED_QUANTITIES = {
   ASSETS_PER_CATEGORY: {
     LAPTOP: isDevelopment ? 15 : 3, // Fewer in test env
@@ -1028,7 +1276,9 @@ The Barq Assets seed system provides:
 
 ✅ **DRY & SOLID**: No code duplication, clear separation of concerns
 ✅ **Type-Safe**: Full TypeScript with Prisma generated types
-✅ **Maintainable**: Centralized configuration, shared utilities, factories
+✅ **Domain-Split Configuration**: Data organized by business domain for better maintainability
+✅ **Batch Factory Functions**: High-performance batch operations for foundation entities
+✅ **Maintainable**: Modular configuration, shared utilities, reusable factories
 ✅ **Realistic**: Enterprise-grade sample data
 ✅ **Layered**: Respects domain architecture and dependencies
 ✅ **Idempotent**: Safe to re-run, centralized cleanup
