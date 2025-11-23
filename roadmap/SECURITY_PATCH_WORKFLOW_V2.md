@@ -1,7 +1,7 @@
 # Security Patch Workflow V2
 
 **Status**: Planned
-**Priority**: High
+**Priority**: High (SAMA Compliance)
 **Complexity**: Medium (15-20 files)
 **Estimated Effort**: 2-3 days
 **Last Updated**: 2025-11-23
@@ -11,6 +11,20 @@
 Automated security patching workflow leveraging Service Management. Services are tracked for patches (30-day rule), technical owners approve via ServiceOwnership, and security team executes approved patches.
 
 **Key Improvement from V1**: Service-centric (not asset-centric) using existing Service.lastPatchDate and ServiceOwnership.
+
+### Compliance Context
+
+- **SAMA Requirements**: Financial institutions must maintain security patch compliance
+- **30-Day Standard**: Industry best practice for non-critical patches
+- **Critical Patches**: Security override allows immediate patching (0-day vulnerabilities)
+- **Audit Trail**: Full history for regulatory inspections and internal audits
+
+### Success Metrics
+
+- **Patch Compliance Rate**: Target >95% of production services patched within 30 days
+- **Mean Time to Patch (MTTP)**: Average days from detection to completion
+- **Self-Patch Rate**: % of patches applied by technical owners vs. security team
+- **Override Rate**: % of emergency patches (should be <5%)
 
 ---
 
@@ -27,26 +41,49 @@ Automated security patching workflow leveraging Service Management. Services are
 
 ---
 
-## Workflow
+## Workflow States
 
 ```
-[DETECT] Services where lastPatchDate > 30 days
+PENDING_OWNER_APPROVAL → APPROVED → IN_PROGRESS → COMPLETED
+                      ↘ SELF_PATCHED
+                      ↘ SECURITY_OVERRIDE → IN_PROGRESS → COMPLETED
+```
+
+## Process Flow
+
+```
+[DETECT] Background job (2 AM daily)
+  Query: Service.lastPatchDate > 30 days AND currentStatus IN [PRODUCTION, UAT, DR]
     ↓
-[OWNERS] Get Technical owners via ServiceOwnership
+[ENRICH] For each overdue service:
+  - Get technical owners (ServiceOwnership WHERE ownershipType = TECHNICAL)
+  - Get hosting assets (ServiceAsset WHERE relationship IN [HOSTS, SUPPORTS])
     ↓
-[ASSETS] Find assets via ServiceAsset (HOSTS/SUPPORTS relationships)
-    ↓
-[CREATE] MaintenanceRecord per asset, linked to service
+[CREATE] MaintenanceRecord per asset
+  - Link to service (serviceId)
+  - Set ownerApprovalRequired = true
+  - Status = PENDING_OWNER_APPROVAL
+  - Priority = HIGH (if service.criticality = CRITICAL)
     ↓
 [NOTIFY] Technical owner dashboard widget
+  "You have X services pending patch approval"
     ↓
-    ├─ Approve → [APPROVED] → Security dashboard
-    ├─ Self-patch → [SELF_PATCHED] → Update Service.lastPatchDate
-    └─ Override → [SECURITY_OVERRIDE] → [IN_PROGRESS]
-    ↓
-[EXECUTE] Security patches → [IN_PROGRESS]
-    ↓
-[COMPLETE] Confirm completion → Update Service.lastPatchDate
+[OWNER DECISION]
+    ├─ APPROVE → Status = APPROVED
+    │   ↓
+    │   Security dashboard shows approved patches
+    │   ↓
+    │   Security team executes → Status = IN_PROGRESS
+    │   ↓
+    │   Security confirms → Status = COMPLETED, Update Service.lastPatchDate
+    │
+    ├─ SELF-PATCH → Status = SELF_PATCHED
+    │   ↓
+    │   Update Service.lastPatchDate immediately
+    │
+    └─ IGNORE (>7 days) → Escalation notification
+        ↓
+        Security override option available
 ```
 
 ---
@@ -112,39 +149,109 @@ SECURITY_PATCH
 6. **GetPendingPatchesForOwnerUseCase** - Owner dashboard query via ServiceOwnership
 7. **GetApprovedPatchesUseCase** - Security dashboard query
 
-### Background Job
+### Background Jobs
 
+#### 1. Patch Detection Job
 **Schedule**: Daily at 2 AM (Asia/Riyadh)
+**Purpose**: Create patch requests for overdue services
 
 ```typescript
 // Pseudo-code
+const thirtyDaysAgo = subDays(new Date(), 30);
+
 const overdueServices = await serviceRepo.find({
-  lastPatchDate: { lt: thirtyDaysAgo },
+  OR: [
+    { lastPatchDate: null }, // Never patched
+    { lastPatchDate: { lt: thirtyDaysAgo } }
+  ],
   currentStatus: ["PRODUCTION", "UAT", "DR"],
-  serviceType: ["APPLICATION", "DATABASE", "API", "SERVER"]
+  serviceType: ["APPLICATION", "DATABASE", "API", "SERVER", "MIDDLEWARE"],
+  isEssentialService: true // Prioritize essential services
 });
 
 for (const service of overdueServices) {
-  const owners = await serviceOwnershipRepo.findTechnicalOwners(service.id);
-  const assets = await serviceAssetRepo.findByService(service.id, ["HOSTS", "SUPPORTS"]);
+  // Skip if already has pending patch request
+  const hasPending = await maintenanceRepo.exists({
+    serviceId: service.id,
+    status: "PENDING_OWNER_APPROVAL"
+  });
+  if (hasPending) continue;
+
+  const technicalOwners = await serviceOwnershipRepo.find({
+    serviceId: service.id,
+    ownershipType: "TECHNICAL",
+    isPrimary: true
+  });
+
+  const assets = await serviceAssetRepo.findByService(service.id, {
+    relationships: ["HOSTS", "SUPPORTS"]
+  });
 
   for (const asset of assets) {
-    createPatchRequest(asset.id, service.id, owners);
+    await createPatchRequest({
+      assetId: asset.id,
+      serviceId: service.id,
+      ownerId: technicalOwners[0]?.personId,
+      priority: service.criticality === "CRITICAL" ? "HIGH" : "MEDIUM"
+    });
   }
 }
 ```
 
+#### 2. Overdue Approval Notification Job
+**Schedule**: Daily at 9 AM (Asia/Riyadh)
+**Purpose**: Escalate patches pending approval >7 days
+
+```typescript
+const sevenDaysAgo = subDays(new Date(), 7);
+
+const overdueApprovals = await maintenanceRepo.find({
+  status: "PENDING_OWNER_APPROVAL",
+  createdAt: { lt: sevenDaysAgo }
+});
+
+// Notify security team for override consideration
+sendEscalationEmail(overdueApprovals);
+```
+
 ### UI Components
 
-1. **PatchRequestsWidget** - Owner dashboard (shows services pending approval)
-2. **PatchApprovalDialog** - Approve or self-patch
-3. **SecurityPatchQueue** - Security dashboard (approved patches)
-4. **CompletePatchDialog** - Mark patch complete
+#### Owner Dashboard (`/dashboard`)
+1. **PatchRequestsWidget** - Card showing pending patch approvals
+   - Badge count of pending items
+   - List: Service name, last patch date, days overdue
+   - Actions: Approve, Self-patch buttons
+
+#### Security Dashboard (`/security-patches` - NEW PAGE)
+2. **SecurityPatchQueue** - Table of approved patches
+   - Columns: Service, Asset, Owner, Approved Date, Priority
+   - Filter by: Service type, criticality, approval date
+   - Bulk actions: Start patching, Mark complete
+
+3. **PatchMetricsDashboard** - Compliance metrics
+   - Patch compliance rate gauge
+   - Mean time to patch trend chart
+   - Services by patch status (pie chart)
+   - Overdue services list (>30 days)
+
+#### Dialogs
+4. **PatchApprovalDialog** - Owner approval workflow
+   - Service details, asset list, criticality badge
+   - Notes field (optional)
+   - Actions: Approve for Security Team | I Already Patched This
+
+5. **CompletePatchDialog** - Security completion form
+   - Patch notes (KB numbers, CVEs, changes)
+   - Completion date picker
+   - Confirm button
 
 ### Permissions
 
-- `SERVICES_MANAGE` - Technical owners approve patches
-- `MAINTENANCE_MANAGE` - Security team executes patches
+| Permission | Who | What |
+|------------|-----|------|
+| `SERVICES_MANAGE` | Technical Owners | Approve/self-patch services they own |
+| `MAINTENANCE_MANAGE` | Security Team | Execute patches, override approvals |
+| `SERVICES_VIEW` | All authenticated | View patch status (read-only) |
 
 ---
 
@@ -204,23 +311,98 @@ for (const service of overdueServices) {
 
 ---
 
-## Integration Points
+## Architecture Integration
 
-- **Service Management**: Uses Service.lastPatchDate, ServiceOwnership, ServiceAsset
-- **Maintenance System**: Extends MaintenanceRecord with approval fields
-- **RBAC**: Leverages existing SERVICES_MANAGE, MAINTENANCE_MANAGE permissions
-- **Audit Logs**: Full trail for SAMA compliance
+### Data Flow
+```
+Service Management (Source)
+  ↓ lastPatchDate, ServiceOwnership, ServiceAsset
+Background Job (Detection)
+  ↓ Create MaintenanceRecord
+Maintenance System (Workflow)
+  ↓ Approval states
+RBAC (Authorization)
+  ↓ Permission checks
+Audit Logs (Compliance)
+  ↓ Full trail
+```
+
+### Dependencies
+
+**Existing Features** (Must exist):
+- ✅ Service model with lastPatchDate
+- ✅ ServiceOwnership table
+- ✅ ServiceAsset table
+- ✅ MaintenanceRecord model
+- ✅ RBAC permissions (SERVICES_MANAGE, MAINTENANCE_MANAGE)
+- ✅ Person entity (for owners)
+- ✅ Asset entity (for physical resources)
+
+**New Components** (To be built):
+- 🆕 MaintenanceRecord schema extensions (approval fields)
+- 🆕 7 new use cases
+- 🆕 2 background jobs
+- 🆕 4 UI components
+- 🆕 Notification system (email/in-app)
+
+### Integration Points
+
+| System | Integration Type | Details |
+|--------|------------------|---------|
+| **Service Management** | Data Source | Query Service.lastPatchDate, ServiceOwnership, ServiceAsset |
+| **Maintenance System** | Workflow Extension | Add approval states to MaintenanceRecord |
+| **RBAC** | Authorization | Use existing SERVICES_MANAGE, MAINTENANCE_MANAGE |
+| **Audit Logs** | Compliance Trail | Log all approval/execution events |
+| **Notifications** | Alerts | Email/dashboard alerts for owners and security |
+| **CMDB** | Future | Impact analysis for patching (which CIs affected) |
 
 ---
 
+## Risk Assessment
+
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+| Owners ignore patch requests | High | Escalation job + security override |
+| False positives (already patched) | Medium | Self-patch option, manual lastPatchDate update |
+| Service-Asset linking incomplete | Medium | ServiceAsset seeding, validation in detection job |
+| Email notification failures | Low | Dashboard widget as primary notification |
+| Background job performance | Low | Pagination, batch processing |
+
+## Rollout Strategy
+
+### Phase 1: Shadow Mode (Week 1)
+- Deploy with notification disabled
+- Run detection job, log results
+- Validate detection accuracy
+- Fix ServiceAsset linkages if needed
+
+### Phase 2: Pilot (Week 2)
+- Enable for non-essential services only
+- Limit to 10-15 services
+- Gather owner feedback
+- Refine UI/notifications
+
+### Phase 3: Full Rollout (Week 3+)
+- Enable for all production services
+- Monitor compliance metrics
+- Adjust thresholds if needed (30-day rule)
+- Document runbooks for security team
+
 ## Future Enhancements
 
+### Near-term (3-6 months)
 - Patch scheduling (maintenance windows)
-- Vulnerability scanner integration (Qualys, Nessus)
-- Auto-patching via Ansible/Puppet
-- SLA tracking (% patched within 30 days)
-- Escalation (auto-assign to security after 7 days)
-- Impact analysis via CMDB relationships
+- Email notifications (SMTP integration)
+- Escalation automation (auto-override after 14 days)
+- SLA tracking dashboard (% patched within 30 days)
+
+### Long-term (6-12 months)
+- Vulnerability scanner integration (Qualys, Nessus, OpenVAS)
+- Auto-patching via Ansible/Puppet playbooks
+- Impact analysis via CMDB relationships (which CIs affected)
+- Patch rollback tracking
+- CVE database integration
+- Patch testing workflow (UAT → Production)
 
 ---
 
