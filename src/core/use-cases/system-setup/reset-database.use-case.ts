@@ -8,6 +8,8 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services";
 import { seedRBAC } from "@/infrastructure/database/prisma/seed-rbac";
+import { cleanupDatabase } from "@/infrastructure/database/prisma/seed-utils";
+import { prisma } from "@/infrastructure/database/prisma/client";
 
 export interface ResetDatabaseRequest {
   reseed?: boolean; // Whether to reseed after reset
@@ -42,9 +44,15 @@ export class ResetDatabaseUseCase {
     this.logger.info("Starting database reset", { reseed });
 
     try {
+      // Clean all data from all layers (Layer 3 → Layer 2 → Layer 1 → RBAC)
+      this.logger.info("Cleaning database (deleting all data)...");
+      await cleanupDatabase(prisma, ["layer3", "layer2", "layer1", "rbac"]);
+      this.logger.info("Database cleaned successfully");
+
       // For system setup, we only provide minimal RBAC seeding
       // Full database seeding should be done via npm scripts (npm run seed)
       if (reseed) {
+        this.logger.info("Reseeding RBAC data...");
         await seedRBAC();
         this.logger.info("Database reseeded with RBAC data");
       }

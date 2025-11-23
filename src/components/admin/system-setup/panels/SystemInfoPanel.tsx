@@ -29,14 +29,6 @@ export function SystemInfoPanel() {
     fetchSystemInfo();
   }, []);
 
-  const formatBytes = (bytes: number | null) => {
-    if (bytes === null || bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
-  };
-
   if (!systemInfo && isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -108,7 +100,7 @@ export function SystemInfoPanel() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{formatBytes(systemInfo?.databaseSize || 0)}</p>
+              <p className="text-2xl font-bold">{systemInfo?.database.size || "N/A"}</p>
               <p className="text-xs text-muted-foreground mt-1">Total Storage</p>
             </CardContent>
           </Card>
@@ -122,7 +114,7 @@ export function SystemInfoPanel() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{systemInfo?.tableCount || 0}</p>
+              <p className="text-2xl font-bold">{systemInfo?.database.tableCount || 0}</p>
               <p className="text-xs text-muted-foreground mt-1">Database Tables</p>
             </CardContent>
           </Card>
@@ -166,20 +158,6 @@ export function SystemInfoPanel() {
             <CardContent>
               <p className="text-2xl font-bold">{systemInfo?.permissionCount || 0}</p>
               <p className="text-xs text-muted-foreground mt-1">RBAC Permissions</p>
-            </CardContent>
-          </Card>
-
-          {/* Organization Units */}
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Server className="h-4 w-4 text-primary" />
-                Org Units
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">{systemInfo?.orgUnitCount || 0}</p>
-              <p className="text-xs text-muted-foreground mt-1">Organization Units</p>
             </CardContent>
           </Card>
         </div>

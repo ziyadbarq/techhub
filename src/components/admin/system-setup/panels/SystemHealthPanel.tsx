@@ -82,8 +82,8 @@ export function SystemHealthPanel() {
               <p className={`text-sm font-medium ${getStatusColor(healthCheck?.database.connected)}`}>
                 {getStatusText(healthCheck?.database.connected)}
               </p>
-              {healthCheck?.database.message && (
-                <p className="text-xs text-muted-foreground">{healthCheck.database.message}</p>
+              {healthCheck?.database.error && (
+                <p className="text-xs text-red-600">{healthCheck.database.error}</p>
               )}
             </div>
           </CardContent>
@@ -102,8 +102,8 @@ export function SystemHealthPanel() {
               <p className={`text-sm font-medium ${getStatusColor(healthCheck?.redis.connected)}`}>
                 {getStatusText(healthCheck?.redis.connected)}
               </p>
-              {healthCheck?.redis.message && (
-                <p className="text-xs text-muted-foreground">{healthCheck.redis.message}</p>
+              {healthCheck?.redis.error && (
+                <p className="text-xs text-red-600">{healthCheck.redis.error}</p>
               )}
             </div>
           </CardContent>
@@ -144,10 +144,13 @@ export function SystemHealthPanel() {
               <p className={`text-sm font-medium ${getStatusColor(healthCheck?.migrations.applied)}`}>
                 {getStatusText(healthCheck?.migrations.applied)}
               </p>
-              {healthCheck?.migrations.pendingCount !== undefined && healthCheck.migrations.pendingCount > 0 && (
+              {healthCheck?.migrations.pending !== undefined && healthCheck.migrations.pending > 0 && (
                 <p className="text-xs text-red-600">
-                  {healthCheck.migrations.pendingCount} pending migration(s)
+                  {healthCheck.migrations.pending} pending migration(s)
                 </p>
+              )}
+              {healthCheck?.migrations.error && (
+                <p className="text-xs text-red-600">{healthCheck.migrations.error}</p>
               )}
             </div>
           </CardContent>
