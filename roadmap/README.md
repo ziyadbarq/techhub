@@ -20,7 +20,7 @@ This folder contains detailed specifications for planned features that are not y
 
 ### Layer 1 (Foundation) / RBAC & Admin
 
-- [RBAC Enhancement - Phase 2 (Partially Complete)](RBAC_ENHANCEMENT_PHASE_2.md) - **Status: Partially Complete** - ✅ Permission dependencies, role conflict detection, bulk permission mode | Remaining: Enhanced audit log UI, bulk user role assignment, advanced user management, role analytics, time-based expiration background jobs, role hierarchy (40-60 hours total, ~15 hours completed)
+- [RBAC Enhancement - Phase 2 (Partially Complete)](RBAC_ENHANCEMENT_PHASE_2.md) - **Status: Partially Complete** - ✅ 6 of 8 features complete: Enhanced audit log UI, bulk operations (permission + user role), time-based expiration, permission dependencies, role conflict detection | Remaining: Advanced user management, role analytics, role hierarchy (40-60 hours total, ~37 hours completed)
 - [RBAC Phase 2 Corrections](RBAC_PHASE2_CORRECTIONS.md) - **Status: Planned** - Fix bidirectional conflict detection, enforce SoD in bulk assignment, enforce permission dependencies server-side, UI fixes (role name comparison, same-day expiration), and audit/logging for blocked operations (8-12 hours)
 
 ### Layer 2 (Asset Management)
@@ -36,10 +36,6 @@ This folder contains detailed specifications for planned features that are not y
 ### Layer 4 (Future)
 
 - None currently
-
-### UI/UX Enhancements (Cross-cutting)
-
-- [Inline-Editable Code Fields](INLINE_EDITABLE_CODE_FIELDS.md) - **Status: Planned** - Move code/tag fields from form body to inline-editable fields in dialog titles (11 forms, 4-6 hours)
 
 ### Infrastructure & Development (Cross-cutting)
 
