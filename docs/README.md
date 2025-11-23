@@ -16,6 +16,7 @@ Technical documentation for system architecture and design decisions:
 - [Architecture Guide](./architecture/ARCHITECTURE.md) - Complete Clean Architecture implementation guide
 - [Layer 1 Implementation](./architecture/LAYER_1_IMPLEMENTATION.md) - Foundation layer technical implementation details
 - [Database Schema Design](./architecture/DATABASE_SCHEMA.md) - Schema design conventions, ID strategies, naming patterns, and best practices
+- [TechHub Layer Dependencies](./architecture/TECHHUB_LAYER_DEPENDENCIES.md) - Complete layer dependency map for data migration and seeding (technical reference)
 - [RBAC Architecture](./architecture/RBAC_ARCHITECTURE.md) - Role-Based Access Control system architecture
 - [Theme System](./architecture/THEME_SYSTEM.md) - Centralized theme system with OKLCH color space
 
@@ -24,6 +25,12 @@ Technical documentation for system architecture and design decisions:
 Developer-facing documentation for building with the assets app:
 
 - [Developer Guide](./guides/DEVELOPER_GUIDE.md) - Comprehensive development guide and best practices
+
+### Data Migration & Initial Setup
+
+**For Teams Populating TechHub with Company Data:**
+
+- [Data Collection Guide](./guides/DATA_COLLECTION_GUIDE.md) - **Non-technical guide** for all Barq teams: what data to provide, examples, and templates for initial data population
 
 ### Foundation Layer (Layer 1)
 
@@ -85,7 +92,7 @@ Cross-cutting features and utilities:
 - **[Code Generation System](./guides/CODE_GENERATION.md)** - Automatic code/tag generation for entities with database-backed sequences and manual override
 - **[Stack Upgrades Reference](./guides/STACK_UPGRADES.md)** - Breaking changes in Prisma 7, Zod 4, Next.js 16, React 19, and InversifyJS 7
 - [Database Migrations & Deployment](./guides/DATABASE_MIGRATIONS.md) - Prisma migrations workflow, development vs production, and deployment best practices
-- [Database Seeding Guide](./guides/DATABASE_SEEDING.md) - Comprehensive seed system: architecture, factories, configuration, and layered seeders
+- [Database Seeding Guide](./guides/DATABASE_SEEDING.md) - Comprehensive seed system: architecture, factories, configuration, and layered seeders (see also: [TechHub Layer Dependencies](./architecture/TECHHUB_LAYER_DEPENDENCIES.md) for complete technical reference)
 - [Build Optimization Guide](./guides/BUILD_OPTIMIZATION.md) - Build performance optimization and bundle analysis
 - **[MISSING]** Email Service Integration - Email service setup, templates, and notification delivery
 - **[MISSING]** File Storage System - File upload/download, storage backends, and metadata management
