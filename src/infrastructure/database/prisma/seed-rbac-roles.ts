@@ -7,6 +7,7 @@
 
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
+import { SYSTEM_PERMISSIONS } from "./seed-rbac-permissions.js";
 
 /**
  * Role definition shape
@@ -22,6 +23,8 @@ export interface RoleDefinition {
  * System roles with their permissions
  * Organized by function: system admin + functional roles
  */
+const ALL_PERMISSION_KEYS = SYSTEM_PERMISSIONS.map((perm) => perm.name);
+
 export const SYSTEM_ROLES: Record<string, RoleDefinition> = {
   /**
    * System Administrator - Full system access
@@ -31,7 +34,89 @@ export const SYSTEM_ROLES: Record<string, RoleDefinition> = {
     name: "system-administrator",
     displayName: "System Administrator",
     description: "Full system access with all permissions",
-    permissions: Object.values(PERMISSIONS), // All permissions
+    permissions: ALL_PERMISSION_KEYS, // All permissions
+  },
+
+  /**
+   * Viewer - Read-only access across the platform
+   * Used as default role for new persons and baseline access
+   */
+  viewer: {
+    name: "viewer",
+    displayName: "Viewer",
+    description: "Read-only access to core data",
+    permissions: [
+      // Dashboard
+      PERMISSIONS.DASHBOARD_VIEW,
+      PERMISSIONS.DASHBOARD_ANALYTICS,
+
+      // Foundation - Read-only
+      PERMISSIONS.ORGANIZATION_UNITS_VIEW,
+      PERMISSIONS.PERSONS_VIEW,
+      PERMISSIONS.PERSON_ROLE_ASSIGNMENTS_VIEW,
+      PERMISSIONS.LOCATIONS_VIEW,
+      PERMISSIONS.VENDORS_VIEW,
+      PERMISSIONS.VENDOR_CONTACTS_VIEW,
+      PERMISSIONS.LIFECYCLE_MODELS_VIEW,
+      PERMISSIONS.LIFECYCLE_STATES_VIEW,
+      PERMISSIONS.LIFECYCLE_TRANSITIONS_VIEW,
+      PERMISSIONS.FIELD_DEFINITIONS_VIEW,
+      PERMISSIONS.FX_RATES_VIEW,
+      PERMISSIONS.FX_RATES_CONVERT,
+
+      // Assets & Operations - Read-only
+      PERMISSIONS.ASSET_CATEGORIES_VIEW,
+      PERMISSIONS.ASSET_CATEGORY_FIELDS_VIEW,
+      PERMISSIONS.ASSET_MODELS_VIEW,
+      PERMISSIONS.ASSETS_VIEW,
+      PERMISSIONS.ASSET_ASSIGNMENTS_VIEW,
+      PERMISSIONS.WARRANTIES_VIEW,
+      PERMISSIONS.ASSET_KITS_VIEW,
+      PERMISSIONS.ASSET_RESERVATIONS_VIEW,
+      PERMISSIONS.ASSET_DISPOSALS_VIEW,
+
+      // Inventory - Read-only
+      PERMISSIONS.STOCK_LOCATIONS_VIEW,
+      PERMISSIONS.STOCK_MOVEMENTS_VIEW,
+
+      // Maintenance - Read-only
+      PERMISSIONS.MAINTENANCE_SCHEDULES_VIEW,
+      PERMISSIONS.MAINTENANCE_RECORDS_VIEW,
+
+      // CMDB - Read-only
+      PERMISSIONS.CI_CLASSES_VIEW,
+      PERMISSIONS.CI_CLASS_FIELDS_VIEW,
+      PERMISSIONS.CONFIGURATION_ITEMS_VIEW,
+      PERMISSIONS.CI_RELATIONSHIPS_VIEW,
+      PERMISSIONS.RELATIONSHIP_TYPES_VIEW,
+      PERMISSIONS.RELATIONSHIP_TYPE_SCOPES_VIEW,
+
+      // Contracts & Licenses - Read-only
+      PERMISSIONS.CONTRACT_TYPES_VIEW,
+      PERMISSIONS.CONTRACTS_VIEW,
+      PERMISSIONS.CONTRACT_LINKED_OBJECTS_VIEW,
+      PERMISSIONS.LICENSE_PRODUCTS_VIEW,
+      PERMISSIONS.LICENSE_PRODUCT_FIELDS_VIEW,
+      PERMISSIONS.LICENSE_ENTITLEMENTS_VIEW,
+      PERMISSIONS.LICENSE_ALLOCATIONS_VIEW,
+
+      // Services - Read-only
+      PERMISSIONS.SERVICES_VIEW,
+      PERMISSIONS.BUSINESS_PROCESSES_VIEW,
+
+      // Governance - Read-only
+      PERMISSIONS.DATA_DOMAINS_VIEW,
+      PERMISSIONS.DATA_OWNERSHIPS_VIEW,
+      PERMISSIONS.VERIFICATION_CAMPAIGNS_VIEW,
+      PERMISSIONS.VERIFICATION_ITEMS_VIEW,
+
+      // Attachments - Read-only
+      PERMISSIONS.ATTACHMENT_TYPES_VIEW,
+      PERMISSIONS.ATTACHMENTS_VIEW,
+
+      // Settings (view only)
+      PERMISSIONS.SETTINGS_VIEW,
+    ],
   },
 
   /**

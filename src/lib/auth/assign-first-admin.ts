@@ -1,7 +1,7 @@
 /**
- * First User Admin Assignment Utility
+ * First User System Administrator Assignment Utility
  *
- * Ensures the first user in the database gets admin role.
+ * Ensures the first user in the database gets system administrator role.
  * This runs automatically via Better Auth hooks, but can also
  * be called manually if needed.
  */
@@ -15,11 +15,13 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
+const SYSTEM_ADMIN_ROLE_NAME = "system-administrator";
+
 /**
- * Assign admin role to the first user if they don't have it
+ * Assign system administrator role to the first user if they don't have it
  * Safe to call multiple times - idempotent operation
  *
- * @returns true if admin role was assigned, false if not needed or failed
+ * @returns true if system admin role was assigned, false if not needed or failed
  */
 export async function assignAdminToFirstUser(): Promise<boolean> {
   try {
@@ -36,27 +38,31 @@ export async function assignAdminToFirstUser(): Promise<boolean> {
       return false;
     }
 
-    // Check if user already has admin role
+    // Check if user already has system admin role
     const adminRole = await prisma.role.findUnique({
-      where: { name: "admin" },
+      where: { name: SYSTEM_ADMIN_ROLE_NAME },
     });
 
     if (!adminRole) {
-      console.error("❌ Admin role not found. Run seed-rbac.ts first.");
+      console.error(
+        "❌ System Administrator role not found. Run seed-rbac.ts first.",
+      );
       return false;
     }
 
-    // Check if user already has admin role assigned
+    // Check if user already has system admin role assigned
     const hasAdminRole = firstUser.roles.some(
       (userRole) => userRole.roleId === adminRole.id,
     );
 
     if (hasAdminRole) {
-      console.log(`✅ First user ${firstUser.email} already has admin role`);
+      console.log(
+        `✅ First user ${firstUser.email} already has System Administrator role`,
+      );
       return false;
     }
 
-    // Assign admin role to first user
+    // Assign system admin role to first user
     await prisma.userRole.create({
       data: {
         userId: firstUser.id,
@@ -65,10 +71,15 @@ export async function assignAdminToFirstUser(): Promise<boolean> {
       },
     });
 
-    console.log(`✅ Admin role assigned to first user: ${firstUser.email}`);
+    console.log(
+      `✅ System Administrator role assigned to first user: ${firstUser.email}`,
+    );
     return true;
   } catch (error) {
-    console.error("Failed to assign admin role to first user:", error);
+    console.error(
+      "Failed to assign System Administrator role to first user:",
+      error,
+    );
     return false;
   } finally {
     await prisma.$disconnect();

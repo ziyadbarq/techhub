@@ -45,7 +45,16 @@ export function HeroSection() {
             transition={{ duration: 0.6 }}
             className="mb-6 max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
           >
-            {BRANDING.taglines.main}
+            {BRANDING.taglines.main.includes("SAMA-Ready") ? (
+              <>
+                <span className="from-barq-yellow to-barq-yellow/70 bg-gradient-to-r bg-clip-text text-transparent">
+                  SAMA-Ready
+                </span>{" "}
+                {BRANDING.taglines.main.replace("SAMA-Ready ", "")}
+              </>
+            ) : (
+              BRANDING.taglines.main
+            )}
           </motion.h1>
 
           {/* Subheading */}

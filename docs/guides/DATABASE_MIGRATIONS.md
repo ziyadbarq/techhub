@@ -349,7 +349,7 @@ npm run reset
 # Clear all caches + reset database
 npm run cache:clear:all
 
-# Assign admin role to first user
+# Assign System Administrator role to first user
 npm run db:assign-admin
 ```
 

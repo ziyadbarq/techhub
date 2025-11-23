@@ -1,6 +1,6 @@
 /**
- * Assign First Admin Use Case
- * Assigns admin role to the first user (one-time setup)
+ * Assign First System Administrator Use Case
+ * Assigns system administrator role to the first user (one-time setup)
  */
 
 import { injectable, inject } from "inversify";
@@ -18,6 +18,8 @@ export interface AssignFirstAdminRequest {
     userAgent?: string;
   };
 }
+
+const SYSTEM_ADMIN_ROLE_NAME = "system-administrator";
 
 export interface AssignFirstAdminResult {
   success: boolean;
@@ -42,40 +44,45 @@ export class AssignFirstAdminUseCase {
   ): Promise<AssignFirstAdminResult> {
     const { userId, metadata } = request;
 
-    this.logger.info("Assigning first admin", { userId });
+    this.logger.info("Assigning first system administrator", { userId });
 
-    // Check if admin role exists
-    const adminRole = await this.roleRepository.findByName("admin");
+    // Check if system admin role exists
+    const adminRole = await this.roleRepository.findByName(
+      SYSTEM_ADMIN_ROLE_NAME,
+    );
     if (!adminRole) {
-      this.logger.error("Admin role not found - run seed data first");
+      this.logger.error(
+        "System Administrator role not found - run seed data first",
+      );
       return {
         success: false,
-        message: "Admin role not found. Please run database seed first.",
+        message:
+          "System Administrator role not found. Please run database seed first.",
       };
     }
 
-    // Check if admin already exists
+    // Check if system admin already exists
     const existingAdmins = await this.userRoleRepository.findByRoleId(
       adminRole.id,
     );
     if (existingAdmins.length > 0) {
-      this.logger.warn("Admin already exists", {
+      this.logger.warn("System Administrator already exists", {
         existingAdminCount: existingAdmins.length,
       });
       return {
         success: false,
-        message: "Admin user already exists.",
+        message: "System Administrator already exists.",
       };
     }
 
-    // Check if user already has admin role
+    // Check if user already has system admin role
     const userRoles = await this.userRoleRepository.findByUserId(userId);
     const hasAdminRole = userRoles.some((ur) => ur.roleId === adminRole.id);
 
     if (hasAdminRole) {
       return {
         success: false,
-        message: "User already has admin role.",
+        message: "User already has System Administrator role.",
       };
     }
 
@@ -98,26 +105,26 @@ export class AssignFirstAdminUseCase {
         after: {
           userId,
           roleId: adminRole.id,
-          roleName: "admin",
+          roleName: SYSTEM_ADMIN_ROLE_NAME,
         },
       },
       metadata: {
         ...metadata,
-        reason: "First admin setup",
+        reason: "First system administrator setup",
         isFirstAdmin: true,
       },
       ipAddress: metadata?.ipAddress,
       userAgent: metadata?.userAgent,
     });
 
-    this.logger.info("First admin assigned successfully", {
+    this.logger.info("First System Administrator assigned successfully", {
       userId,
       roleId: adminRole.id,
     });
 
     return {
       success: true,
-      message: "Admin role assigned successfully.",
+      message: "System Administrator role assigned successfully.",
     };
   }
 }

@@ -69,6 +69,8 @@ type AdminAssignmentResult =
       reason: "has-admin" | "not-first" | "missing-role";
     };
 
+const SYSTEM_ADMIN_ROLE_NAME = "system-administrator";
+
 type PersonLinkResult =
   | { status: "already-linked"; personId: string }
   | { status: "linked-existing"; personId: string }
@@ -91,7 +93,7 @@ const assignAdminRoleToFirstUser = async (
         }
 
         const adminRole = await tx.role.findUnique({
-          where: { name: "admin" },
+          where: { name: SYSTEM_ADMIN_ROLE_NAME },
         });
 
         if (!adminRole) {
@@ -127,7 +129,7 @@ const assignAdminRoleToFirstUser = async (
             action: "user_role.assign",
             entityType: "UserRole",
             changes: {
-              role: "admin",
+              role: SYSTEM_ADMIN_ROLE_NAME,
               reason: "first-user-auto-admin",
             },
             createdAt: new Date(),
@@ -142,7 +144,7 @@ const assignAdminRoleToFirstUser = async (
     );
   } catch (error) {
     console.error(
-      "⚠️ Failed to assign admin role within transaction",
+      "⚠️ Failed to assign system administrator role within transaction",
       error instanceof Error ? error : new Error(String(error)),
     );
     return { assigned: false, reason: "missing-role" };
@@ -609,8 +611,8 @@ export const auth = betterAuth({
     }),
   ],
 
-  // First-user admin hook
-  // Automatically assigns admin role to the first user who signs in
+  // First-user system administrator hook
+  // Automatically assigns system administrator role to the first user who signs in
   hooks: {
     after: createAuthMiddleware(async (ctx) => {
       const path = ctx.path || "";

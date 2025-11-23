@@ -1,6 +1,6 @@
 /**
  * Setup Controller
- * Server actions for first-time setup (admin role assignment)
+ * Server actions for first-time setup (System Administrator role assignment)
  */
 
 "use server";
@@ -17,7 +17,7 @@ import { getCurrentUserId } from "@/lib/auth/session";
 import { revalidatePath } from "next/cache";
 
 /**
- * Check if first admin setup is needed
+ * Check if first system admin setup is needed
  */
 export async function checkFirstAdminAction(): Promise<
   ActionResponse<CheckFirstAdminResult>
@@ -38,13 +38,13 @@ export async function checkFirstAdminAction(): Promise<
     return handleControllerError(
       error,
       { function: "checkFirstAdminAction" },
-      "Failed to check admin status",
+      "Failed to check system administrator status",
     );
   }
 }
 
 /**
- * Assign admin role to current user (first-time setup)
+ * Assign System Administrator role to current user (first-time setup)
  */
 export async function assignFirstAdminAction(): Promise<
   ActionResponse<AssignFirstAdminResult>
@@ -85,7 +85,7 @@ export async function assignFirstAdminAction(): Promise<
     return handleControllerError(
       error,
       { function: "assignFirstAdminAction" },
-      "Failed to assign admin role",
+      "Failed to assign System Administrator role",
     );
   }
 }

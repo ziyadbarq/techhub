@@ -20,14 +20,16 @@ import { UserRole } from "@/core/domain/entities/user-role.entity";
 /**
  * Helpers to create deterministic role instances for tests
  */
+const SYSTEM_ADMIN_ROLE_NAME = "system-administrator";
+
 function createAdminRole(
   overrides: Partial<ReturnType<Role["toObject"]>> = {},
 ) {
   return Role.fromPersistence({
-    id: "role-admin",
-    name: "admin",
-    displayName: "Administrator",
-    description: "System administrator",
+    id: "role-system-admin",
+    name: SYSTEM_ADMIN_ROLE_NAME,
+    displayName: "System Administrator",
+    description: "Full system access",
     isSystem: true,
     isActive: true,
     createdAt: new Date("2024-01-01T00:00:00.000Z"),
@@ -112,7 +114,7 @@ describe("AssignFirstAdminUseCase", () => {
     );
   });
 
-  it("should assign admin role to the first user when no admins exist", async () => {
+  it("should assign system admin role to the first user when none exist", async () => {
     // Arrange
     const adminRole = createAdminRole();
     mockRoleRepository.setRole(adminRole);
@@ -126,7 +128,7 @@ describe("AssignFirstAdminUseCase", () => {
     // Assert
     expect(result).toEqual({
       success: true,
-      message: "Admin role assigned successfully.",
+      message: "System Administrator role assigned successfully.",
     });
 
     const assignments = await mockUserRoleRepository.findByUserId("user-1");
@@ -139,11 +141,11 @@ describe("AssignFirstAdminUseCase", () => {
           after: expect.objectContaining({
             userId: "user-1",
             roleId: adminRole.id,
-            roleName: "admin",
+            roleName: SYSTEM_ADMIN_ROLE_NAME,
           }),
         }),
         metadata: expect.objectContaining({
-          reason: "First admin setup",
+          reason: "First system administrator setup",
           isFirstAdmin: true,
           ipAddress: "1.1.1.1",
           userAgent: "vitest",
@@ -152,19 +154,19 @@ describe("AssignFirstAdminUseCase", () => {
     );
   });
 
-  it("should fail when admin role is missing", async () => {
+  it("should fail when system admin role is missing", async () => {
     // Act
     const result = await useCase.execute({ userId: "user-1" });
 
     // Assert
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.message).toContain("Admin role not found");
+      expect(result.message).toContain("System Administrator role not found");
     }
     expect(mockAuditLogRepository.create).not.toHaveBeenCalled();
   });
 
-  it("should fail if an admin already exists", async () => {
+  it("should fail if a system admin already exists", async () => {
     // Arrange
     const adminRole = createAdminRole();
     mockRoleRepository.setRole(adminRole);
@@ -181,12 +183,12 @@ describe("AssignFirstAdminUseCase", () => {
     // Assert
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.message).toBe("Admin user already exists.");
+      expect(result.message).toBe("System Administrator already exists.");
     }
     expect(mockAuditLogRepository.create).not.toHaveBeenCalled();
   });
 
-  it("should fail when the requesting user already has the admin role", async () => {
+  it("should fail when the requesting user already has the system admin role", async () => {
     // Arrange
     const adminRole = createAdminRole();
     mockRoleRepository.setRole(adminRole);
@@ -207,7 +209,9 @@ describe("AssignFirstAdminUseCase", () => {
     // Assert
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.message).toBe("User already has admin role.");
+      expect(result.message).toBe(
+        "User already has System Administrator role.",
+      );
     }
     expect(mockAuditLogRepository.create).not.toHaveBeenCalled();
   });

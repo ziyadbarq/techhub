@@ -79,7 +79,7 @@ Complete role-based access control system:
 - **Merged Role System** - Single entity for RBAC permissions + organizational job roles
 - **Permission Enforcement** - Multi-layer checks (server actions, use cases, UI components, routes)
 - **Audit Logging** - Complete audit trail for all entity operations
-- **Session Management** - Better Auth integration with automatic first-user admin assignment
+- **Session Management** - Better Auth integration with automatic first-user System Administrator assignment
 
 ### Reference Implementation
 

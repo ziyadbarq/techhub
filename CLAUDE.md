@@ -95,9 +95,20 @@ npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastruc
 - MDX files in `src/content/docs/` with custom components (Card, Callout, CodeBlock)
 - **IMPORTANT**: MDX plugins configured in component (NOT `next.config.ts`) for Turbopack compatibility
 
+### Admin & Data Management
+
+- **Universal Data Importer** (`/data-import`) - CSV/Excel import wizard for all entities
+  - 7-step workflow: Entity selection → Settings → Upload → Field mapping → Validation → Import → Results
+  - Smart features: Auto-mapping, fuzzy matching (Levenshtein distance), sanitization, duplicate handling
+  - Batch processing with real-time progress tracking
+  - Downloadable templates and error reports
+  - **Status**: Core complete (functional for Assets and Persons), extensions pending
+  - **See**: [roadmap/UNIVERSAL_DATA_IMPORTER.md](roadmap/UNIVERSAL_DATA_IMPORTER.md) for remaining work
+
 ### Roadmap (Future Features)
 
 - [Roadmap Index](roadmap/README.md) - Complete list of planned features by layer
+- **Universal Data Importer**: Core complete, 64 entity configurations + import history pending (see `roadmap/UNIVERSAL_DATA_IMPORTER.md`)
 - **RBAC Phase 2 (Partially Complete)**: Permission dependencies, role conflict detection, and bulk permission assignment shipped; remaining work (advanced user management, role analytics, role hierarchy/expiration, enhanced audit UI, bulk user role assignment) tracked in `roadmap/RBAC_PHASE2_CORRECTIONS.md` and `roadmap/README.md`
 - **Security Patch Workflow**: See `roadmap/SECURITY_PATCH_WORKFLOW.md` (planned)
 
@@ -132,6 +143,29 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 ### Type Safety
 
 - **ALWAYS** use `import type` for type-only imports (ESLint enforces this)
+
+### Toast Notifications
+
+- **ALWAYS** use Sonner toast: `import { toast } from "sonner";`
+- **NEVER** use shadcn useToast hook: ~~`import { useToast } from "@/hooks/use-toast";`~~
+- Pattern:
+
+  ```typescript
+  import { toast } from "sonner";
+
+  // Success
+  toast.success("Asset created successfully");
+
+  // Error
+  toast.error("Failed to create asset");
+
+  // Info/Warning
+  toast.info("Processing...");
+  toast.warning("Are you sure?");
+  ```
+
+- **Why**: Sonner provides better UX with stacking, auto-dismiss, and cleaner API
+- **Location**: Sonner's `<Toaster />` is already configured in root layout
 
 ### TanStack Table & React Compiler
 
@@ -209,6 +243,111 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - **Aggregation**: Always convert to SAR before summing (dashboard, reports)
 - **Permissions**: `FX_RATES_VIEW`, `FX_RATES_CREATE`, `FX_RATES_UPDATE`, `FX_RATES_DELETE`, `FX_RATES_MANAGE`, `FX_RATES_CONVERT`
 - **See**: [MULTI_CURRENCY_GUIDE.md](docs/features/MULTI_CURRENCY_GUIDE.md) for complete implementation guide
+
+### Universal Data Importer
+
+**Route**: `/data-import`
+**Permission**: `DATA_IMPORT_MANAGE`
+
+**Architecture**: 7-step wizard with client-side validation and server-side bulk actions
+
+**Core Utilities** (in `src/lib/data-import/`):
+- `entity-config.types.ts` - TypeScript type system for all import configurations
+- `csv-sanitizer.ts` - Universal data cleaning (whitespace, encoding, normalization)
+- `field-validators.ts` - Validation engine with fuzzy matching suggestions
+- `lookup-resolver.ts` - Reference resolution with Levenshtein distance (85%+ = high confidence)
+- `template-generator.ts` - Dynamic CSV/Excel template generation with examples
+- `import-processor.ts` - File parsing, batch processing, progress tracking
+
+**Entity Configuration Pattern**:
+```typescript
+// In src/lib/data-import/entity-configs.ts
+export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
+  ASSET: {
+    key: "ASSET",
+    name: "Assets",
+    tableName: "Asset",
+    category: "ASSET_MANAGEMENT",
+    permission: PERMISSIONS.ASSETS_CREATE,
+    uniqueFields: ["assetTag"],
+    requiredFields: ["assetTag", "assetCategoryId"],
+    lookupFields: ["assetCategoryId", "assetModelId", "vendorId", ...],
+    bulkCreateAction: bulkCreateAssetsAction,
+    maxBatchSize: 100,
+    fields: [
+      {
+        name: "assetTag",
+        label: "Asset Tag",
+        type: "string",
+        required: true,
+        unique: true,
+        sanitization: [{ operation: "trim" }, { operation: "uppercase" }],
+        autoMap: ["asset_tag", "tag", "asset_id"],
+        examples: ["LAP-001", "SRV-042"],
+      },
+      // ... more fields
+    ],
+  },
+};
+```
+
+**Bulk Create Action Pattern**:
+```typescript
+// In src/interface-adapters/controllers/[entity].controller.ts
+export async function bulkCreate[Entity]Action(
+  itemsData: Create[Entity]DTO[]
+): Promise<ActionResponse<{
+  successCount: number;
+  failureCount: number;
+  failures: Array<{ index: number; [uniqueField]: string; error: string }>;
+}>> {
+  await requirePermission(PERMISSIONS.[ENTITY]_CREATE);
+
+  const results = { successCount: 0, failureCount: 0, failures: [] };
+
+  for (let i = 0; i < itemsData.length; i++) {
+    try {
+      const validated = Create[Entity]Schema.parse(itemsData[i]);
+      await useCase.execute(validated);
+      results.successCount++;
+    } catch (error) {
+      results.failureCount++;
+      results.failures.push({ index: i, error: error.message });
+    }
+  }
+
+  revalidatePath("/[entity-route]");
+  return { success: true, data: results };
+}
+```
+
+**Lookup Maps** (server action in `data-import-lookup.controller.ts`):
+```typescript
+// Fetches lookup maps for reference fields (e.g., category codes → IDs)
+const result = await getLookupMapsAction([
+  { name: "assetCategoryId", lookupTarget: "AssetCategory", lookupField: "code", lookupDisplayField: "name" }
+]);
+```
+
+**Key Features**:
+- Auto-mapping: Fuzzy match CSV columns to entity fields
+- Sanitization: Trim, normalize case, remove invisible characters, fix common errors
+- Validation: Type checking, pattern matching, lookup resolution with suggestions
+- Duplicate Handling: Skip, Overwrite, Fail, or Append suffix
+- Batch Processing: Configurable batch sizes (up to 100), parallel batches (up to 4)
+- Progress Tracking: Real-time updates with estimated time remaining
+- Error Reports: Downloadable CSV/Excel with detailed error messages
+
+**Currently Configured**:
+- ✅ Assets (12 fields)
+- ✅ Persons (12 fields)
+- ⏳ 64 entities pending configuration (see `roadmap/UNIVERSAL_DATA_IMPORTER.md`)
+
+**Adding New Entity**:
+1. Add entity config to `entity-configs.ts` (field definitions, validations, lookup mappings)
+2. Create or verify bulk create action in entity controller
+3. Register lookup entities in `data-import-lookup.controller.ts` if needed
+4. Test with sample CSV
 
 ## Layer 3 ITAM Features
 
@@ -374,6 +513,7 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - Use Prisma singleton from `client.ts`
 - Await async request APIs (`params`, `cookies()`, etc.)
 - Use `import type` for type-only imports
+- Use Sonner toast: `import { toast } from "sonner";`
 - Check permissions in server actions
 - Create barrel exports (`index.ts`) for new use case modules
 - Use DI logger (not `console.log`)
@@ -389,6 +529,7 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - Import from `@prisma/client` (causes TypeScript errors)
 - Create new `Pool()` or `PrismaClient()` instances (exhausts connections)
 - Access `params`/`searchParams` synchronously (runtime errors in Next.js 16)
+- Use shadcn useToast hook (use Sonner toast instead)
 - Create `middleware.ts` (use existing `proxy.ts` instead - Next.js 16 convention)
 - Use `withMDX` wrapper in next.config.ts (breaks Turbopack serialization)
 - Skip permission checks

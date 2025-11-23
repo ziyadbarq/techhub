@@ -91,7 +91,7 @@ View complete audit trail of role changes for any user:
 
 ## Role Analytics
 
-**Location**: `/admin/analytics`
+**Location**: `/rbac-analytics`
 **Permission**: `ROLES_VIEW`
 
 ### Dashboard Sections

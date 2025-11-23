@@ -49,7 +49,8 @@ The RBAC system provides **fine-grained access control** with multi-layer enforc
 │  ┌────────────────────────────────────────────────────────┐    │
 │  │                   2. ROLE HIERARCHY                     │    │
 │  │                                                          │    │
-│  │  system-administrator → All 269 permissions            │    │
+│  │  system-administrator → All seeded permissions (~275)  │    │
+│  │  viewer              → Read-only baseline              │    │
 │  │  it-help-desk        → Front-line IT support           │    │
 │  │  auditor             → SAMA compliance & audit         │    │
 │  │  finance-manager     → Financial oversight             │    │
@@ -179,7 +180,7 @@ export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
 
 ### System Roles
 
-The system includes **10 functional roles** designed for enterprise IT asset management and SAMA compliance:
+The system includes **11 system roles** designed for enterprise IT asset management and SAMA compliance (one full-access role + ten functional/read-only roles):
 
 **Location**: `src/infrastructure/database/prisma/seed-rbac-roles.ts`
 
@@ -189,7 +190,14 @@ const SYSTEM_ROLES = {
     name: "system-administrator",
     displayName: "System Administrator",
     description: "Full system access with all permissions",
-    permissions: Object.values(PERMISSIONS), // All 269 permissions
+    permissions: ALL_PERMISSION_KEYS, // All current permissions from SYSTEM_PERMISSIONS
+  },
+  viewer: {
+    name: "viewer",
+    displayName: "Viewer",
+    description: "Read-only access across core modules (default baseline role)",
+    // Read-only for Dashboard, Foundation, Assets, Operations, Inventory, Maintenance,
+    // CMDB, Contracts, Licenses, Services, Governance, Attachments, Settings (view)
   },
   "it-help-desk": {
     name: "it-help-desk",
@@ -252,17 +260,18 @@ const SYSTEM_ROLES = {
 
 ### Role Comparison Matrix
 
-| Role                  | Primary Focus                 | Key Permissions                                                   | SAMA Compliance |
-| --------------------- | ----------------------------- | ----------------------------------------------------------------- | --------------- |
-| **System Admin**      | Full system access            | All 269 permissions                                               | ✓               |
-| **IT Help Desk**      | Front-line support            | Asset checkouts, reservations, kits, user assistance              | -               |
-| **Auditor**           | Compliance & audit            | Read-only all modules + verification workflows + audit logs       | ✓✓✓             |
-| **Finance Manager**   | Financial oversight           | Contracts, licenses, vendors, FX rates, disposal approvals        | ✓               |
-| **Security Officer**  | InfoSec & governance          | Data domains, governance, attachments, CIs (create/update)        | ✓✓              |
-| **Service Owner**     | IT service catalog            | Services, business processes, CIs, CI relationships (all full)    | -               |
+| Role                  | Primary Focus                 | Key Permissions                                                    | SAMA Compliance |
+| --------------------- | ----------------------------- | ------------------------------------------------------------------ | --------------- |
+| **System Admin**      | Full system access            | All seeded permissions (~275)                                      | ✓               |
+| **Viewer**            | Read-only baseline            | Read-only across dashboard, foundation, assets, CMDB, services, etc. | -               |
+| **IT Help Desk**      | Front-line support            | Asset checkouts, reservations, kits, user assistance               | -               |
+| **Auditor**           | Compliance & audit            | Read-only all modules + verification workflows + audit logs        | ✓✓✓             |
+| **Finance Manager**   | Financial oversight           | Contracts, licenses, vendors, FX rates, disposal approvals         | ✓               |
+| **Security Officer**  | InfoSec & governance          | Data domains, governance, attachments, CIs (create/update)         | ✓✓              |
+| **Service Owner**     | IT service catalog            | Services, business processes, CIs, CI relationships (all full)     | -               |
 | **Inventory Manager** | Stock & warehouse             | Stock locations, movements, asset receiving, warranty registration | -               |
-| **Maintenance Tech**  | Repairs & maintenance         | Maintenance records (PERFORM), assets (read/update), attachments  | -               |
-| **Data Steward**      | Data quality (SAMA)           | Data domains, ownerships, verification campaigns                  | ✓✓              |
+| **Maintenance Tech**  | Repairs & maintenance         | Maintenance records (PERFORM), assets (read/update), attachments   | -               |
+| **Data Steward**      | Data quality (SAMA)           | Data domains, ownerships, verification campaigns                   | ✓✓              |
 | **Asset Coordinator** | Asset lifecycle               | Assets, categories, models, warranties, kits, lifecycle (all full) | -               |
 
 ### Role Conflicts (Segregation of Duties)
@@ -286,7 +295,7 @@ SAMA compliance requires conflict detection between roles. **See**: `src/lib/rba
 
 System administrators can create custom roles with any combination of permissions:
 
-- Cannot delete system roles (10 functional roles)
+- Cannot delete system roles (11 total)
 - Cannot modify system role permissions directly
 - Can **clone** system roles and modify the clone (one-click at `/admin/roles`)
 - Custom roles can be deleted if not assigned to users
@@ -295,10 +304,10 @@ System administrators can create custom roles with any combination of permission
 
 ### Functional Roles Reference
 
-Detailed breakdown of the 10 system roles and their responsibilities:
+Detailed breakdown of the 11 system roles and their responsibilities:
 
 #### 1. System Administrator
-**Role**: `system-administrator` | **Permissions**: All 269
+**Role**: `system-administrator` | **Permissions**: All seeded (~275)
 
 Full system access for platform administration and configuration.
 
@@ -312,7 +321,30 @@ Full system access for platform administration and configuration.
 
 ---
 
-#### 2. IT Help Desk
+#### 2. Viewer
+**Role**: `viewer` | **Permissions**: Read-only (baseline)
+
+Read-only access across core modules; used as the default baseline role.
+
+**Read-Only**:
+- Dashboard and analytics
+- Foundation entities (org units, persons, locations, vendors, lifecycle, fields, FX rates)
+- Assets, categories, models, assignments, warranties
+- Asset operations (kits, reservations, disposals)
+- Inventory (stock locations, movements)
+- Maintenance (schedules, records)
+- CMDB (classes, fields, CIs, relationships, relationship scopes)
+- Contracts, licenses
+- Services and business processes
+- Governance (data domains, ownerships, verification campaigns/items)
+- Attachments and attachment types
+- Settings (view)
+
+**Use Case**: Default baseline role, safe read-only access
+
+---
+
+#### 3. IT Help Desk
 **Role**: `it-help-desk` | **Permissions**: ~45 (Front-line support)
 
 Day-to-day user support and asset operations.
@@ -335,7 +367,7 @@ Day-to-day user support and asset operations.
 
 ---
 
-#### 3. Auditor
+#### 4. Auditor
 **Role**: `auditor` | **Permissions**: ~95 (SAMA compliance)
 
 Independent audit and regulatory compliance verification.
@@ -366,7 +398,7 @@ Independent audit and regulatory compliance verification.
 
 ---
 
-#### 4. Finance Manager
+#### 5. Finance Manager
 **Role**: `finance-manager` | **Permissions**: ~65 (Financial oversight)
 
 Financial operations, procurement, and contract management.
@@ -395,7 +427,7 @@ Financial operations, procurement, and contract management.
 
 ---
 
-#### 5. Security Officer
+#### 6. Security Officer
 **Role**: `security-officer` | **Permissions**: ~60 (InfoSec & governance)
 
 Information security, data governance, and compliance.
@@ -425,7 +457,7 @@ Information security, data governance, and compliance.
 
 ---
 
-#### 6. Service Owner
+#### 7. Service Owner
 **Role**: `service-owner` | **Permissions**: ~70 (IT service catalog)
 
 IT service management and CMDB ownership.
@@ -452,7 +484,7 @@ IT service management and CMDB ownership.
 
 ---
 
-#### 7. Inventory Manager
+#### 8. Inventory Manager
 **Role**: `inventory-manager` | **Permissions**: ~35 (Stock control)
 
 Warehouse operations, receiving, and inventory tracking.
@@ -482,7 +514,7 @@ Warehouse operations, receiving, and inventory tracking.
 
 ---
 
-#### 8. Maintenance Technician
+#### 9. Maintenance Technician
 **Role**: `maintenance-technician` | **Permissions**: ~30 (Repairs)
 
 Hands-on technical support and preventive maintenance.
@@ -508,7 +540,7 @@ Hands-on technical support and preventive maintenance.
 
 ---
 
-#### 9. Data Steward
+#### 10. Data Steward
 **Role**: `data-steward` | **Permissions**: ~30 (Data quality)
 
 Data classification, ownership tracking, and quality assurance (SAMA).
@@ -534,7 +566,7 @@ Data classification, ownership tracking, and quality assurance (SAMA).
 
 ---
 
-#### 10. Asset Coordinator
+#### 11. Asset Coordinator
 **Role**: `asset-coordinator` | **Permissions**: ~90 (Asset lifecycle)
 
 Complete asset lifecycle management from procurement to disposal.

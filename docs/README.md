@@ -73,11 +73,12 @@ Advanced IT Asset Management features:
 Cross-cutting features and utilities:
 
 - [Global Search](./features/GLOBAL_SEARCH.md) - Command palette global search with keyboard shortcuts (⌘K/Ctrl+K)
+- **[PARTIALLY COMPLETE]** [Universal Data Importer](../roadmap/UNIVERSAL_DATA_IMPORTER.md) - CSV/Excel import wizard for all entities with fuzzy matching, validation, and batch processing (core complete, 64 entity configurations pending)
 - **[MISSING]** Dashboard & Widgets - Main dashboard with metrics cards, recent activity, task queue, and quick actions
 - **[MISSING]** Navigation System - Global navigation, sidebar with collapsible groups, breadcrumbs, and permission filtering
 - **[MISSING]** Reports System - Asset reports (EOL, by category, value analysis, warranty status, unassigned assets)
 - **[MISSING]** Settings Management - Platform, operations, notifications, authentication, and integration settings
-- **[MISSING]** CSV Import/Export - Bulk import/export functionality with PapaParse integration
+- **[MISSING]** CSV Export - Bulk export functionality for all entities
 - **[MISSING]** Multi-Currency Support - Foreign exchange rates and currency conversion
 - **[MISSING]** Audit Logging (User Guide) - Viewing audit trails and compliance reports (technical docs exist)
 - **[MISSING]** Field Definition System - Dynamic custom fields for assets, CIs, and licenses

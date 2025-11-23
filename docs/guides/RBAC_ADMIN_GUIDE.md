@@ -78,7 +78,7 @@ This will assign the admin role to the first user in the database.
 After becoming admin:
 
 1. **Review System Roles**: Navigate to `/admin/roles`
-   - 4 system roles are pre-configured (admin, manager, editor, viewer)
+   - System roles are pre-configured (System Administrator, IT Help Desk, Auditor, Finance Manager, Security Officer, Service Owner, Inventory Manager, Maintenance Technician, Data Steward, Asset Coordinator, Viewer)
    - These cannot be deleted but you can view their permissions
 
 2. **Review System Permissions**: Navigate to `/admin/permissions`
@@ -137,7 +137,7 @@ After becoming admin:
 2. Update the display name or description
 3. Click "Save Changes"
 
-**Note**: You cannot edit system roles (admin, manager, editor, viewer).
+**Note**: You cannot edit system roles (System Administrator, IT Help Desk, Auditor, Finance Manager, Security Officer, Service Owner, Inventory Manager, Maintenance Technician, Data Steward, Asset Coordinator, Viewer).
 
 ### Assigning Permissions to Roles
 
@@ -182,7 +182,7 @@ Permissions are grouped by resource:
 
 **Requirements**:
 
-- Cannot delete system roles (admin, manager, editor, viewer)
+- Cannot delete system roles
 - Role must not be assigned to any users
 - Must have `roles:delete` permission
 
@@ -658,7 +658,7 @@ Some permissions imply others:
 
 **Reasons**:
 
-1. **System role** - Cannot delete admin, manager, editor, viewer
+1. **System role** - Cannot delete system roles (e.g., System Administrator, IT Help Desk, Auditor, Finance Manager, Security Officer, Service Owner, Inventory Manager, Maintenance Technician, Data Steward, Asset Coordinator, Viewer)
    - Clone the role and modify the clone instead
 
 2. **Role assigned to users** - Must remove role from all users first
@@ -755,7 +755,7 @@ Some permissions imply others:
 
 As an administrator, you have powerful tools to control access to your application:
 
-- **Roles**: Logical groupings of permissions (admin, manager, editor, viewer, custom)
+- **Roles**: Logical groupings of permissions (system roles + custom)
 - **Permissions**: Granular access controls (resource:action pattern)
 - **User Assignment**: Give users specific roles with optional expiration
 - **Audit Logs**: Complete trail of all RBAC changes

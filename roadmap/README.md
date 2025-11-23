@@ -21,6 +21,7 @@ This folder contains detailed specifications for planned features that are not y
 ### Layer 1 (Foundation) / RBAC & Admin
 
 - [RBAC Improvements](RBAC_IMPROVEMENTS.md) - **Status: Planned** - Enhanced validation and enforcement: Bidirectional conflict detection, SoD enforcement in bulk assignment, server-side permission dependency validation, UI improvements (role name comparison, same-day expiration), and audit logging for blocked operations
+- [Universal Data Importer](UNIVERSAL_DATA_IMPORTER.md) - **Status: Partially Complete** - Core complete (7-step wizard, validation engine, fuzzy matching), extensions pending (64 entity configurations, import history, bulk actions for remaining entities). Currently functional for Assets and Persons.
 
 ### Layer 2 (Asset Management)
 
