@@ -230,7 +230,7 @@ When implementing in UI:
 ## Permission Dependencies
 
 **Location**: `src/lib/rbac/permission-dependencies.ts`
-**Status**: Implemented
+**Status**: Implemented (Client + Server-Side Enforcement)
 
 ### Concept
 
@@ -259,38 +259,66 @@ export const PERMISSION_DEPENDENCIES: Record<PermissionKey, PermissionKey[]> = {
 ```typescript
 {
   valid: boolean;
-  missing: PermissionKey[];
+  missing: Array<{
+    permission: PermissionKey;
+    requiredDependencies: PermissionKey[];
+  }>;
 }
 ```
+
+### Server-Side Enforcement
+
+**Controller**: `assignPermissionsToRoleAction` (`src/interface-adapters/controllers/role.controller.ts`)
+
+**Implementation**:
+- Validates permission dependencies before saving to database
+- Returns detailed error message listing missing dependencies
+- Prevents saving incomplete permission sets via any entry point (API, CLI, scripts)
+
+**Error Response Example**:
+```json
+{
+  "success": false,
+  "error": "Missing permission dependencies: ASSETS_UPDATE requires: ASSETS_VIEW; ASSETS_DELETE requires: ASSETS_VIEW"
+}
+```
+
+**Benefits of Server-Side Enforcement**:
+- **Security**: Cannot bypass validation via direct API calls
+- **Data Integrity**: Database never contains invalid permission sets
+- **Multi-Entry Protection**: Enforced across all code paths (UI, API, scripts)
 
 ### UI Integration
 
 **PermissionsManager** (`/admin/roles/[name]/permissions`):
 
-1. **Warning Banner**: Displays when dependencies missing
-2. **Auto-Fix Button**: Adds all required permissions
-3. **Tooltips**: Show individual permission requirements
-4. **Visual Indicators**: Highlight missing dependencies
+1. **Client-Side Validation**: Prevents save button click when dependencies missing
+2. **Warning Banner**: Displays when dependencies missing
+3. **Auto-Fix Button**: Adds all required permissions
+4. **Tooltips**: Show individual permission requirements
+5. **Visual Indicators**: Highlight missing dependencies
 
 **User Flow**:
 1. Admin selects permissions
-2. System validates dependencies
+2. Client validates dependencies (instant feedback)
 3. If missing → Warning appears with list
 4. Admin clicks "Add Required Permissions"
 5. System adds missing dependencies automatically
+6. Server validates again on save (safety net)
 
 ### Benefits
 
 - **Prevent Misconfiguration**: Can't create incomplete permission sets
 - **Guided Experience**: Clear feedback on requirements
 - **Automatic Resolution**: One-click fix for dependency issues
+- **Defense in Depth**: Both client and server validation layers
 
 ---
 
 ## Role Conflicts
 
 **Location**: `src/lib/rbac/role-conflicts.ts`
-**Status**: Implemented
+**Status**: Implemented (Client + Server-Side Enforcement)
 
 ### Concept
 
@@ -303,27 +331,85 @@ Segregation of Duties (SoD) prevents users from having conflicting roles:
 ### Configuration
 
 ```typescript
-export const ROLE_CONFLICTS: RoleConflictConfig[] = [
-  {
-    role1: "auditor",
-    role2: "administrator",
-    reason: "Auditors must be independent from administrators",
-    severity: "critical"
+export const ROLE_CONFLICTS: Record<string, string[]> = {
+  auditor: ["administrator", "developer", "system-admin"],
+  "finance-manager": ["procurement-manager", "vendor-manager"],
+  // ... more conflicts
+};
+
+export const CONFLICT_CONFIG: Record<string, ConflictConfig> = {
+  "auditor:administrator": {
+    severity: "critical",
+    allowOverride: false,
+    requireJustification: false,
   },
-  {
-    role1: "finance-manager",
-    role2: "procurement-manager",
-    reason: "Segregation of duties for financial controls",
-    severity: "error"
-  }
-];
+  "finance-manager:procurement-manager": {
+    severity: "error",
+    allowOverride: true,
+    requireJustification: true,
+  },
+  // ... more configs
+};
 ```
+
+### Bidirectional Conflict Detection
+
+**Function**: `rolesConflict(role1, role2)`
+
+**Implementation**:
+```typescript
+export function rolesConflict(role1: string, role2: string): boolean {
+  const conflictsFromRole1 = ROLE_CONFLICTS[role1]?.includes(role2);
+  const conflictsFromRole2 = ROLE_CONFLICTS[role2]?.includes(role1);
+
+  return Boolean(conflictsFromRole1 || conflictsFromRole2);
+}
+```
+
+**Key Features**:
+- **Bidirectional**: Checks conflicts in both directions
+- **Single-Entry Config**: Only need to configure one side of the conflict
+- **Symmetric**: `rolesConflict("A", "B")` === `rolesConflict("B", "A")`
+
+**Example**:
+- Config: `{ auditor: ["administrator"] }`
+- Works: `rolesConflict("auditor", "administrator")` ✅
+- Also Works: `rolesConflict("administrator", "auditor")` ✅
 
 ### Severity Levels
 
 - **Critical**: Blocks assignment (cannot override)
 - **Error**: Blocks with override option (requires justification)
 - **Warning**: Allows assignment with warning
+
+### Server-Side Enforcement
+
+**Use Case**: `AssignRoleToUserUseCase` (`src/core/use-cases/rbac/assign-role-to-user.use-case.ts`)
+
+**Implementation**:
+- Validates role conflicts before creating assignment
+- Blocks critical conflicts (returns `RoleConflictError`)
+- Logs blocked assignments to audit trail
+- Works for both single and bulk role assignments
+
+**Error Response Example**:
+```typescript
+throw new RoleConflictError(conflicts, "Role assignment blocked due to critical conflicts");
+```
+
+**Audit Logging**:
+```json
+{
+  "action": "user_role:assign_blocked",
+  "changes": {
+    "attempted": { "userId": "...", "roleId": "...", "roleName": "administrator" },
+    "conflicts": [
+      { "role1": "auditor", "role2": "administrator", "severity": "critical", "reason": "..." }
+    ],
+    "reason": "CRITICAL_ROLE_CONFLICT"
+  }
+}
+```
 
 ### Detection Logic
 
@@ -338,6 +424,7 @@ export const ROLE_CONFLICTS: RoleConflictConfig[] = [
     role2: string;
     reason: string;
     severity: "warning" | "error" | "critical";
+    config: ConflictConfig;
   }>;
 }
 ```
@@ -346,18 +433,38 @@ export const ROLE_CONFLICTS: RoleConflictConfig[] = [
 
 Checks if adding a new role would create conflicts.
 
+**Function**: `getConflictingRoles(roleName)`
+
+Returns all roles that conflict with the given role (bidirectional lookup).
+
 ### UI Integration
 
-**RoleAssignment Component**:
-1. **Conflict Badges**: Display severity with color coding
+**RoleAssignment Component** (`/admin/users/[email]/roles`):
+1. **Conflict Badges**: Display severity with color coding (uses role names, not IDs)
 2. **Blocking Behavior**: Critical conflicts prevent assignment
 3. **Warning Dialogs**: Error/warning conflicts show reason
-4. **Existing Conflicts**: Highlighted in user role list
+4. **Existing Conflicts**: Highlighted in user role list with details
 
-**Bulk Assignment**:
-- Per-user validation during bulk operations
-- Conflict report in results summary
-- Failed assignments logged with reason
+**Bulk Assignment Modal** (`/admin/users`):
+1. **Pre-Flight Validation**: Checks all user/role combinations before assignment
+2. **Conflict Summary**: Displays detailed report with severity indicators
+3. **Smart Controls**:
+   - "Proceed Anyway" button for warnings
+   - Automatic blocking for critical conflicts
+   - Per-user/per-role conflict breakdown
+4. **Result Reporting**: Shows assigned, conflicted, and failed counts
+
+**User Flow (Bulk Assignment)**:
+1. Admin selects multiple users and roles
+2. Click "Assign Roles" button
+3. **Pre-flight check** runs for each user/role combination
+4. If conflicts detected → Summary dialog appears
+5. Admin reviews conflicts with severity levels
+6. Choose action:
+   - **Back**: Cancel and adjust selection
+   - **Proceed Anyway**: Assign roles (server will still block critical conflicts)
+7. Server enforces final validation
+8. Results summary shows success/conflict/failure counts
 
 ### Use Cases
 
