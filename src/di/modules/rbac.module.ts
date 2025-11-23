@@ -37,6 +37,13 @@ import { GetRoleUsersUseCase } from "@/core/use-cases/rbac/get-role-users.use-ca
 import { CheckFirstAdminUseCase } from "@/core/use-cases/rbac/check-first-admin.use-case";
 import { AssignFirstAdminUseCase } from "@/core/use-cases/rbac/assign-first-admin.use-case";
 
+// Analytics Use Cases
+import {
+  GetRoleUsageStatsUseCase,
+  GetPermissionUsageStatsUseCase,
+  GetUserRoleStatsUseCase,
+} from "@/core/use-cases/rbac/analytics";
+
 /**
  * Bind all RBAC dependencies to the container
  */
@@ -168,5 +175,23 @@ export function bindRBACDependencies(container: Container): void {
   container
     .bind<AssignFirstAdminUseCase>(DI_TOKENS.AssignFirstAdminUseCase)
     .to(AssignFirstAdminUseCase)
+    .inTransientScope();
+
+  // Analytics
+  container
+    .bind<GetRoleUsageStatsUseCase>(DI_TOKENS.GetRoleUsageStatsUseCase)
+    .to(GetRoleUsageStatsUseCase)
+    .inTransientScope();
+
+  container
+    .bind<GetPermissionUsageStatsUseCase>(
+      DI_TOKENS.GetPermissionUsageStatsUseCase,
+    )
+    .to(GetPermissionUsageStatsUseCase)
+    .inTransientScope();
+
+  container
+    .bind<GetUserRoleStatsUseCase>(DI_TOKENS.GetUserRoleStatsUseCase)
+    .to(GetUserRoleStatsUseCase)
     .inTransientScope();
 }

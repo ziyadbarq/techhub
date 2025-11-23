@@ -109,6 +109,11 @@ model Role {
   updatedAt   DateTime @updatedAt
   createdBy   String?
 
+  // Role Hierarchy - Self-referential relationship
+  parentId String? @db.Text
+  parent   Role?   @relation("RoleHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children Role[]  @relation("RoleHierarchy")
+
   // Relations
   permissions           RolePermission[]
   users                 UserRole[]
@@ -118,6 +123,7 @@ model Role {
 
   @@index([name])
   @@index([isActive])
+  @@index([parentId])
   @@map("roles")
 }
 

@@ -1,8 +1,8 @@
-import { config } from "dotenv";
+// import { config } from "dotenv";
 import { defineConfig, env } from "prisma/config";
 
 // Load environment variables from .env.local (Next.js convention)
-config({ path: ".env.local" });
+// config({ path: ".env.local" });
 
 export default defineConfig({
   schema: "src/infrastructure/database/prisma/schema.prisma",

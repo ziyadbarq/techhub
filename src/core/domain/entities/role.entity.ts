@@ -17,6 +17,10 @@ export interface RoleProps {
   updatedAt: Date;
   createdBy?: string;
   permissions?: PermissionKey[];
+  // Role Hierarchy
+  parentId?: string | null;
+  parent?: Role | null;
+  children?: Role[];
 }
 
 export class Role {
@@ -49,6 +53,7 @@ export class Role {
     isSystem?: boolean;
     isActive?: boolean;
     createdBy?: string;
+    parentId?: string | null;
   }): Role {
     const now = new Date();
     return new Role({
@@ -62,6 +67,9 @@ export class Role {
       updatedAt: now,
       createdBy: params.createdBy,
       permissions: [],
+      parentId: params.parentId,
+      parent: null,
+      children: [],
     });
   }
 
@@ -109,6 +117,62 @@ export class Role {
 
   get permissions(): PermissionKey[] {
     return this.props.permissions || [];
+  }
+
+  get parentId(): string | null | undefined {
+    return this.props.parentId;
+  }
+
+  get parent(): Role | null | undefined {
+    return this.props.parent;
+  }
+
+  get children(): Role[] {
+    return this.props.children || [];
+  }
+
+  /**
+   * Get all permissions including inherited from parent roles
+   * This recursively collects permissions from the entire hierarchy
+   */
+  getAllPermissions(): PermissionKey[] {
+    const permissionsSet = new Set<PermissionKey>();
+
+    // Add own permissions
+    for (const permission of this.permissions) {
+      permissionsSet.add(permission);
+    }
+
+    // Recursively add parent permissions
+    let currentParent = this.parent;
+    while (currentParent) {
+      for (const permission of currentParent.permissions) {
+        permissionsSet.add(permission);
+      }
+      currentParent = currentParent.parent;
+    }
+
+    return Array.from(permissionsSet);
+  }
+
+  /**
+   * Check if this role has a parent in its hierarchy
+   * Used to prevent circular dependencies
+   */
+  hasParentInHierarchy(potentialParentId: string): boolean {
+    if (this.id === potentialParentId) {
+      return true;
+    }
+
+    let currentParent = this.parent;
+    while (currentParent) {
+      if (currentParent.id === potentialParentId) {
+        return true;
+      }
+      currentParent = currentParent.parent;
+    }
+
+    return false;
   }
 
   // Business logic methods
