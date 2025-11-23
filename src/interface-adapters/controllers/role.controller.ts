@@ -48,6 +48,9 @@ import type { IRoleRepository } from "@/core/repositories/role-repository.interf
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { getCurrentUserId } from "@/lib/auth/session";
+import { validatePermissionDependencies } from "@/lib/rbac/permission-dependencies";
+import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
+import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
 
 /**
  * Helper to get request metadata for audit logging
@@ -329,9 +332,39 @@ export async function assignPermissionsToRoleAction(
     const roleRepository = container.get<IRoleRepository>(
       DI_TOKENS.IRoleRepository,
     );
+    const permissionRepository = container.get<IPermissionRepository>(
+      DI_TOKENS.IPermissionRepository,
+    );
 
     // Get role first to know its name for revalidation
     const role = await roleRepository.findById(validated.roleId);
+
+    // Get permission names from IDs for dependency validation
+    const permissions = await Promise.all(
+      validated.permissionIds.map((id) => permissionRepository.findById(id)),
+    );
+    const permissionNames = permissions
+      .filter((p): p is NonNullable<typeof p> => p !== null)
+      .map((p) => p.name as PermissionKey);
+
+    // Validate permission dependencies server-side
+    const dependencyValidation =
+      validatePermissionDependencies(permissionNames);
+
+    if (!dependencyValidation.valid) {
+      // Build error message with missing dependencies
+      const missingDeps = dependencyValidation.missing
+        .map((item) => {
+          const depsStr = item.requiredDependencies.join(", ");
+          return `${item.permission} requires: ${depsStr}`;
+        })
+        .join("; ");
+
+      return {
+        success: false,
+        error: `Missing permission dependencies: ${missingDeps}`,
+      };
+    }
 
     const assignPermissions = container.get<AssignPermissionsToRoleUseCase>(
       DI_TOKENS.AssignPermissionsToRoleUseCase,

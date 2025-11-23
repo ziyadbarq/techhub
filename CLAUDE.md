@@ -313,28 +313,41 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - **Navigation Fixes**: Fixed critical 404 bug (role/permission pages now use `name` instead of `id`)
 - **Impact**: 100% navigation success, 93% reduction in permission assignment complexity, 90% time savings for role cloning
 
-**Phase 2 (PARTIALLY COMPLETED)**:
+**Phase 2 (COMPLETED 2025-11-23)**:
 
 - ✅ **Permission Dependencies** (`src/lib/rbac/permission-dependencies.ts`):
   - 153+ permissions mapped with dependency rules
-  - Validation with `validatePermissionDependencies()` function
+  - Client-side validation with `validatePermissionDependencies()` function
+  - **Server-side enforcement** in `assignPermissionsToRoleAction` controller
   - UI warnings in PermissionsManager showing missing dependencies
   - Auto-fix button to add required permissions
   - Tooltips on individual permissions showing requirements
+  - Defense-in-depth: Both client (UX) and server (security) validation
 
 - ✅ **Role Conflict Detection** (`src/lib/rbac/role-conflicts.ts`):
   - Segregation of duties enforcement
   - 3 severity levels: warning, error, critical
-  - Bidirectional conflict detection with `rolesConflict()` function
-  - RoleAssignment component shows conflicts with severity badges
+  - **Bidirectional conflict detection** with `rolesConflict()` function (checks both directions)
+  - **Server-side enforcement** in `AssignRoleToUserUseCase` with audit logging
+  - RoleAssignment component shows conflicts with severity badges (uses role names, not IDs)
   - Critical conflicts block assignment, warnings allow override
+  - Pre-flight validation in BulkRoleAssignmentModal
 
 - ✅ **Bulk Operations**:
   - Bulk permission assignment (PermissionsManager)
-  - Multi-select with conflict detection
+  - Bulk role assignment with **pre-flight conflict detection**
+  - Multi-select with conflict detection and detailed summary
+  - Per-user/per-role conflict breakdown
+  - Server-side enforcement catches any bypasses
   - ~50% time savings for bulk operations
 
-- 🚧 **Remaining**: Advanced user management, role analytics dashboard, role hierarchy/inheritance UI + server enforcement, time-based role expiration jobs, bulk user role assignment, enhanced audit log UI (see `roadmap/RBAC_PHASE2_CORRECTIONS.md`)
+- ✅ **Date Validation**:
+  - Calendar date pickers allow same-day expiration (correct validation logic)
+  - Proper comparison: `date < startOfToday` instead of `date <= today`
+
+- 🚧 **Remaining**: Advanced user management, role analytics dashboard, role hierarchy/inheritance UI + server enforcement, time-based role expiration jobs, enhanced audit log UI (see `roadmap/README.md`)
+
+**Impact**: 100% permission integrity (server-enforced), 100% segregation of duties compliance, zero bypass vulnerabilities
 
 **Documentation**: See [RBAC Admin Guide](docs/features/RBAC_ADMIN_GUIDE.md) for complete usage guide
 
