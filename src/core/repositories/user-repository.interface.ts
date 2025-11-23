@@ -15,4 +15,35 @@ export interface IUserRepository {
     orderBy?: "email" | "name" | "createdAt";
     order?: "asc" | "desc";
   }): Promise<User[]>;
+
+  /**
+   * Get all users (alias for findAll with no options)
+   */
+  listAll(): Promise<User[]>;
+
+  /**
+   * Count total number of users
+   */
+  count(): Promise<number>;
+
+  /**
+   * Find user by email
+   */
+  findByEmail(email: string): Promise<User | null>;
+
+  /**
+   * Find user by ID
+   */
+  findById(id: string): Promise<User | null>;
+
+  /**
+   * Create user directly (for system setup)
+   * This bypasses Better Auth and creates user directly in database
+   */
+  createDirectly(data: {
+    email: string;
+    name: string;
+    passwordHash: string;
+    emailVerified?: boolean;
+  }): Promise<User>;
 }

@@ -1,6 +1,6 @@
 /**
  * Setup Controller
- * Server actions for first-time setup (admin role assignment)
+ * Server actions for system setup operations
  */
 
 "use server";
@@ -15,6 +15,24 @@ import type { AssignFirstAdminUseCase } from "@/core/use-cases/rbac/assign-first
 import { type AssignFirstAdminResult } from "@/core/use-cases/rbac/assign-first-admin.use-case";
 import { getCurrentUserId } from "@/lib/auth/session";
 import { revalidatePath } from "next/cache";
+import type { CheckSystemHealthUseCase } from "@/core/use-cases/system-setup/check-system-health.use-case";
+import type { GetMigrationStatusUseCase } from "@/core/use-cases/system-setup/get-migration-status.use-case";
+import type { CreateFirstUserUseCase } from "@/core/use-cases/system-setup/create-first-user.use-case";
+import type { SeedMinimalDataUseCase } from "@/core/use-cases/system-setup/seed-minimal-data.use-case";
+import type { ResetDatabaseUseCase } from "@/core/use-cases/system-setup/reset-database.use-case";
+import type { GetSystemInfoUseCase } from "@/core/use-cases/system-setup/get-system-info.use-case";
+import type {
+  SystemHealthCheckDto,
+  MigrationStatusDto,
+  CreateFirstUserDto,
+  SystemInfoDto,
+} from "@/interface-adapters/dtos/system-setup.dto";
+import { createFirstUserDtoSchema } from "@/interface-adapters/dtos/system-setup.dto";
+import type {
+  CreateFirstUserResult,
+  SeedMinimalDataResult,
+  ResetDatabaseResult,
+} from "@/core/use-cases/system-setup";
 
 /**
  * Check if first admin setup is needed
@@ -86,6 +104,185 @@ export async function assignFirstAdminAction(): Promise<
       error,
       { function: "assignFirstAdminAction" },
       "Failed to assign admin role",
+    );
+  }
+}
+
+// ============================================================================
+// System Setup Actions (New comprehensive setup system)
+// ============================================================================
+
+/**
+ * Check system health
+ */
+export async function checkSystemHealthAction(): Promise<
+  ActionResponse<SystemHealthCheckDto>
+> {
+  try {
+    const container = getContainer();
+    const checkSystemHealth = container.get<CheckSystemHealthUseCase>(
+      DI_TOKENS.CheckSystemHealthUseCase,
+    );
+
+    const result = await checkSystemHealth.execute();
+
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "checkSystemHealthAction" },
+      "Failed to check system health",
+    );
+  }
+}
+
+/**
+ * Get migration status
+ */
+export async function getMigrationStatusAction(): Promise<
+  ActionResponse<MigrationStatusDto>
+> {
+  try {
+    const container = getContainer();
+    const getMigrationStatus = container.get<GetMigrationStatusUseCase>(
+      DI_TOKENS.GetMigrationStatusUseCase,
+    );
+
+    const result = await getMigrationStatus.execute();
+
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getMigrationStatusAction" },
+      "Failed to get migration status",
+    );
+  }
+}
+
+/**
+ * Create first user (system setup)
+ */
+export async function createFirstUserAction(
+  data: CreateFirstUserDto,
+): Promise<ActionResponse<CreateFirstUserResult>> {
+  try {
+    // Validate input
+    const validated = createFirstUserDtoSchema.parse(data);
+
+    const container = getContainer();
+    const createFirstUser = container.get<CreateFirstUserUseCase>(
+      DI_TOKENS.CreateFirstUserUseCase,
+    );
+
+    const result = await createFirstUser.execute(validated);
+
+    if (result.success) {
+      revalidatePath("/");
+      revalidatePath("/setup");
+      revalidatePath("/login");
+    }
+
+    return {
+      success: result.success,
+      data: result,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "createFirstUserAction" },
+      "Failed to create first user",
+    );
+  }
+}
+
+/**
+ * Seed minimal data (RBAC only)
+ */
+export async function seedMinimalDataAction(): Promise<
+  ActionResponse<SeedMinimalDataResult>
+> {
+  try {
+    const container = getContainer();
+    const seedMinimalData = container.get<SeedMinimalDataUseCase>(
+      DI_TOKENS.SeedMinimalDataUseCase,
+    );
+
+    const result = await seedMinimalData.execute();
+
+    return {
+      success: result.success,
+      data: result,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "seedMinimalDataAction" },
+      "Failed to seed minimal data",
+    );
+  }
+}
+
+/**
+ * Reset database (DEV ONLY)
+ */
+export async function resetDatabaseAction(
+  reseed: boolean = false,
+): Promise<ActionResponse<ResetDatabaseResult>> {
+  try {
+    const container = getContainer();
+    const resetDatabase = container.get<ResetDatabaseUseCase>(
+      DI_TOKENS.ResetDatabaseUseCase,
+    );
+
+    const result = await resetDatabase.execute({ reseed });
+
+    if (result.success) {
+      revalidatePath("/");
+    }
+
+    return {
+      success: result.success,
+      data: result,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "resetDatabaseAction" },
+      "Failed to reset database",
+    );
+  }
+}
+
+/**
+ * Get system info
+ */
+export async function getSystemInfoAction(): Promise<
+  ActionResponse<SystemInfoDto>
+> {
+  try {
+    const container = getContainer();
+    const getSystemInfo = container.get<GetSystemInfoUseCase>(
+      DI_TOKENS.GetSystemInfoUseCase,
+    );
+
+    const result = await getSystemInfo.execute();
+
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getSystemInfoAction" },
+      "Failed to get system info",
     );
   }
 }
