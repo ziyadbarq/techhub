@@ -64,7 +64,10 @@ const authDebugLog = (
 
 type AdminAssignmentResult =
   | { assigned: true; reason: "assigned" }
-  | { assigned: false; reason: "has-role" | "not-first" | "missing-role" };
+  | {
+      assigned: false;
+      reason: "has-admin" | "not-first" | "missing-role";
+    };
 
 type PersonLinkResult =
   | { status: "already-linked"; personId: string }
@@ -82,14 +85,6 @@ const assignAdminRoleToFirstUser = async (
   try {
     return await prismaWithEncryption.$transaction(
       async (tx) => {
-        const existingRoles = await tx.userRole.count({
-          where: { userId },
-        });
-
-        if (existingRoles > 0) {
-          return { assigned: false, reason: "has-role" };
-        }
-
         const userCount = await tx.user.count();
         if (userCount !== 1) {
           return { assigned: false, reason: "not-first" };
@@ -101,6 +96,19 @@ const assignAdminRoleToFirstUser = async (
 
         if (!adminRole) {
           return { assigned: false, reason: "missing-role" };
+        }
+
+        const hasAdminRole = await tx.userRole.findUnique({
+          where: {
+            userId_roleId: {
+              userId,
+              roleId: adminRole.id,
+            },
+          },
+        });
+
+        if (hasAdminRole) {
+          return { assigned: false, reason: "has-admin" };
         }
 
         await tx.userRole.create({
