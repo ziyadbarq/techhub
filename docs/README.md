@@ -39,6 +39,10 @@ Asset management, inventory tracking, warranties, and maintenance:
 - [Warranty System](./features/WARRANTY_SYSTEM.md) - Complete warranty management implementation with expiration tracking
 - [Maintenance System](./features/MAINTENANCE_SYSTEM.md) - Preventive maintenance schedules and records with recurring schedules and workflow state management
 - [Multi-Currency Support](./features/MULTI_CURRENCY_GUIDE.md) - Multi-currency support with SAR base, dual currency display, and exchange rate management
+- **[MISSING]** Stock Location Management - Inventory location tracking and organization
+- **[MISSING]** Stock Movement System - Inventory movement tracking and audit trail
+- **[MISSING]** Asset Assignment System - Asset checkout/checkin and assignment tracking
+- **[MISSING]** Asset Categories & Models - Category hierarchy and model specifications
 
 ### Advanced ITAM Layer (Layer 3)
 
@@ -49,14 +53,28 @@ Advanced IT Asset Management features:
 - [Asset Kits](./features/ASSET_KITS.md) - Predefined asset bundles with checkout tracking
 - [Asset Reservations](./features/ASSET_RESERVATIONS.md) - Future asset reservations with conflict detection and automated background jobs
 - [CMDB Guide](./features/CMDB_GUIDE.md) - Configuration Management Database with dependency tracking
+- **[MISSING]** Contract Management - Contract types, contract lifecycle, and polymorphic asset/CI linking
+- **[MISSING]** License Management - License products, entitlements, allocations, and compliance tracking
 - [Governance System](./features/GOVERNANCE_SYSTEM.md) - Data governance, ownership tracking, and verification campaigns for SAMA compliance
 - [Attachments System](./features/ATTACHMENTS_SYSTEM.md) - Polymorphic file attachments for compliance documentation and audit trails
+- **[MISSING]** Service Management - Service catalog, service-to-asset mapping, and infrastructure dependencies
+- **[MISSING]** Business Process Management - Business process definitions and workflow orchestration
+- **[MISSING]** Task Management System - Task tracking, reminders, and workflow state management (reference implementation)
 
 ### Global Features
 
 Cross-cutting features and utilities:
 
 - [Global Search](./features/GLOBAL_SEARCH.md) - Command palette global search with keyboard shortcuts (⌘K/Ctrl+K)
+- **[MISSING]** Dashboard & Widgets - Main dashboard with metrics cards, recent activity, task queue, and quick actions
+- **[MISSING]** Navigation System - Global navigation, sidebar with collapsible groups, breadcrumbs, and permission filtering
+- **[MISSING]** Reports System - Asset reports (EOL, by category, value analysis, warranty status, unassigned assets)
+- **[MISSING]** Settings Management - Platform, operations, notifications, authentication, and integration settings
+- **[MISSING]** CSV Import/Export - Bulk import/export functionality with PapaParse integration
+- **[MISSING]** Multi-Currency Support - Foreign exchange rates and currency conversion
+- **[MISSING]** Audit Logging (User Guide) - Viewing audit trails and compliance reports (technical docs exist)
+- **[MISSING]** Field Definition System - Dynamic custom fields for assets, CIs, and licenses
+- **[MISSING]** Lifecycle Management - Lifecycle models, states, and transition rules
 
 ### Infrastructure & Systems
 
@@ -69,18 +87,30 @@ Cross-cutting features and utilities:
 - [Database Migrations & Deployment](./guides/DATABASE_MIGRATIONS.md) - Prisma migrations workflow, development vs production, and deployment best practices
 - [Database Seeding Guide](./guides/DATABASE_SEEDING.md) - Comprehensive seed system: architecture, factories, configuration, and layered seeders
 - [Build Optimization Guide](./guides/BUILD_OPTIMIZATION.md) - Build performance optimization and bundle analysis
+- **[MISSING]** Email Service Integration - Email service setup, templates, and notification delivery
+- **[MISSING]** File Storage System - File upload/download, storage backends, and metadata management
+- **[MISSING]** AI Infrastructure - OpenAI integration, prompt management, caching, and structured outputs (currently disabled)
 
 #### Authentication & Security
 
 - [RBAC Developer Guide](./guides/RBAC_DEVELOPER_GUIDE.md) - Implementing permissions and protecting routes/actions/UI
 - [RBAC Admin Guide](./guides/RBAC_ADMIN_GUIDE.md) - Managing roles, permissions, and user access
+- **[MISSING]** Permission Groups & Dependencies - Permission organization, dependency validation, and auto-fix features
+- **[MISSING]** Role Conflict Detection - Segregation of duties enforcement and conflict resolution
+- **[MISSING]** Role Cloning - One-click role duplication with permission copying
+- **[MISSING]** Bulk Permission Operations - Multi-select permission assignment and removal
+- **[MISSING]** Authentication System - NextAuth.js setup, user registration, login, and initial setup
 - [Logging Guide](./guides/LOGGING.md) - Production-grade structured logging system
+- **[MISSING]** Error Handling System - Error boundaries, global error pages, and structured error logging
 
 #### UI & Real-time Features
 
 - [UI Components Guide](./guides/UI_COMPONENTS.md) - Advanced UI patterns with TanStack Table, React Hook Form, and CSV
 - [UI/UX Improvements](./guides/UI_UX_IMPROVEMENTS.md) - User experience enhancements and navigation improvements
 - [Sidebar Features](./guides/SIDEBAR_FEATURES.md) - Advanced sidebar features including collapsible groups, nested navigation, permissions, animations, and real-time badges
+- **[MISSING]** Theme System (User Guide) - Using and customizing the OKLCH color space theme system
+- **[MISSING]** Form Patterns - React Hook Form integration, validation, and error handling
+- **[MISSING]** Table Patterns - TanStack Table v8 usage, sorting, filtering, and pagination
 - [Real-time Features Guide](./guides/REALTIME.md) - Server-Sent Events (SSE) and Partykit WebSocket integration
 - [Background Jobs Guide](./guides/BACKGROUND_JOBS.md) - BullMQ job queue system for background processing
 
@@ -90,12 +120,28 @@ Documentation embedded within the codebase:
 
 - [Controller Error Handling](../src/interface-adapters/controllers/README.md) - Standardized error handling patterns
 - [Repository Helpers](../src/infrastructure/repositories/prisma-helpers.ts) - Type-safe Prisma utilities
+- **[MISSING]** Controller Patterns - Comprehensive guide to server action patterns and Clean Architecture controllers
+- **[MISSING]** Repository Patterns - Complete repository implementation guide with Prisma best practices
+- **[MISSING]** DTO Validation System - Zod schema patterns and validation at API boundaries
+- **[MISSING]** DI Container Guide - InversifyJS container configuration and dependency injection patterns
+- **[MISSING]** Use Case Patterns - Use case implementation guide and business logic organization
 
 ## 🛠️ Development
 
 Development tools and utilities:
 
 - [Scripts Documentation](../scripts/README.md) - Utility scripts and automation tools
+- **[MISSING]** Environment Configuration Guide - Environment variables, configuration management, and secrets
+- **[MISSING]** API Routes Documentation - REST API endpoints, authentication, and integration patterns
+- **[MISSING]** Testing Guide - Unit testing, integration testing, and test patterns
+- **[MISSING]** Deployment Guide - Production deployment, environment setup, and CI/CD
+
+## 🎯 Public & Marketing
+
+Content for public-facing pages:
+
+- **[MISSING]** Landing Page - Marketing site showcasing system capabilities and features
+- **[MISSING]** In-App Documentation System - MDX documentation pages, custom components, and content management
 
 ## 🔗 External Resources
 

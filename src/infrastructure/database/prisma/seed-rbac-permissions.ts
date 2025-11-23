@@ -5,7 +5,10 @@
  * Uses factory pattern to reduce duplication and apply DRY principles
  */
 
-import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
+import {
+  PERMISSIONS,
+  type PermissionKey,
+} from "@/core/domain/value-objects/permission-key";
 
 /**
  * Permission definition shape
@@ -34,24 +37,18 @@ function createPermission(
     description?: string;
   },
 ): PermissionDefinition {
-  // Generate permission key from resource and action
-  const resourceKey = resource.toUpperCase().replace(/-/g, "_");
-  const actionKey = action.toUpperCase().replace(/:/g, "_");
-  const name = `${resourceKey}_${actionKey}` as PermissionKey;
-
-  // Generate default display name if not provided
-  const displayName =
-    options?.displayName ??
-    `${capitalize(action)} ${capitalize(resource).replace(/-/g, " ")}`;
-
-  // Generate default description if not provided
-  const description =
-    options?.description ?? `${capitalize(action)} ${resource.replace(/-/g, " ")}`;
+  const name = `${resource}:${action}` as PermissionKey;
+  const actionLabel = action.replace(/:/g, " ");
+  const resourceLabel = resource.replace(/-/g, " ");
 
   return {
     name,
-    displayName,
-    description,
+    displayName:
+      options?.displayName ??
+      `${capitalize(actionLabel)} ${capitalize(resourceLabel)}`,
+    description:
+      options?.description ??
+      `${capitalize(actionLabel)} ${resourceLabel}`.trim(),
     resource,
     action,
   };
@@ -83,31 +80,53 @@ function createCRUDPermissions(
   return [
     createPermission(resource, "view", {
       displayName: `View ${resourceDisplay}`,
-      description: options?.viewDescription ?? `View ${resource.replace(/-/g, " ")} list and details`,
+      description:
+        options?.viewDescription ??
+        `View ${resource.replace(/-/g, " ")} list and details`,
     }),
     createPermission(resource, "create", {
       displayName: `Create ${resourceDisplay}`,
-      description: options?.createDescription ?? `Create new ${resource.replace(/-/g, " ")}`,
+      description:
+        options?.createDescription ??
+        `Create new ${resource.replace(/-/g, " ")}`,
     }),
     createPermission(resource, "update", {
       displayName: `Update ${resourceDisplay}`,
-      description: options?.updateDescription ?? `Edit ${resource.replace(/-/g, " ")} information`,
+      description:
+        options?.updateDescription ??
+        `Edit ${resource.replace(/-/g, " ")} information`,
     }),
     createPermission(resource, "delete", {
       displayName: `Delete ${resourceDisplay}`,
-      description: options?.deleteDescription ?? `Remove ${resource.replace(/-/g, " ")}`,
+      description:
+        options?.deleteDescription ?? `Remove ${resource.replace(/-/g, " ")}`,
     }),
     createPermission(resource, "manage", {
       displayName: `Manage ${resourceDisplay}`,
-      description: options?.manageDescription ?? `Full ${resource.replace(/-/g, " ")} management access`,
+      description:
+        options?.manageDescription ??
+        `Full ${resource.replace(/-/g, " ")} management access`,
     }),
   ];
 }
 
 /**
+ * Create permission definition directly from a permission key (resource:action pattern)
+ * Ensures we don't miss any entries defined in PERMISSIONS.
+ */
+function createPermissionFromKey(key: PermissionKey): PermissionDefinition {
+  const [resource, ...actionParts] = key.split(":");
+  const action = actionParts.join(":");
+  return createPermission(resource, action, {
+    displayName: `${capitalize(action.replace(/:/g, " "))} ${capitalize(resource.replace(/-/g, " "))}`,
+    description: `${capitalize(action.replace(/:/g, " "))} ${resource.replace(/-/g, " ")}`,
+  });
+}
+
+/**
  * All system permissions organized by domain
  */
-export const SYSTEM_PERMISSIONS: PermissionDefinition[] = [
+const BASE_PERMISSIONS: PermissionDefinition[] = [
   // ==========================================
   // Users
   // ==========================================
@@ -593,3 +612,16 @@ export const SYSTEM_PERMISSIONS: PermissionDefinition[] = [
     description: "Reactivate previously deallocated licenses",
   }),
 ] as const;
+
+const definedPermissionNames = new Set(
+  BASE_PERMISSIONS.map((p) => p.name as string),
+);
+
+const missingPermissions = (Object.values(PERMISSIONS) as PermissionKey[])
+  .filter((key) => !definedPermissionNames.has(key))
+  .map((key) => createPermissionFromKey(key));
+
+export const SYSTEM_PERMISSIONS: PermissionDefinition[] = [
+  ...BASE_PERMISSIONS,
+  ...missingPermissions,
+];
