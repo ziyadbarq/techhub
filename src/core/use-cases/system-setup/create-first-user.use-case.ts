@@ -53,13 +53,13 @@ export class CreateFirstUserUseCase {
         };
       }
 
-      // Check if admin role exists
-      const adminRole = await this.roleRepository.findByName("admin");
+      // Check if system-administrator role exists
+      const adminRole = await this.roleRepository.findByName("system-administrator");
       if (!adminRole) {
         return {
           success: false,
           message:
-            "Admin role not found. Please run minimal seeding first to create RBAC roles.",
+            "System Administrator role not found. Please run minimal seeding first to create RBAC roles.",
         };
       }
 
@@ -116,7 +116,7 @@ export class CreateFirstUserUseCase {
           after: {
             email: user.email,
             name: user.name,
-            role: "admin",
+            role: "system-administrator",
           },
         },
         metadata: {

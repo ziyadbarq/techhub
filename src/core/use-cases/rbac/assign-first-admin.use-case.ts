@@ -42,40 +42,40 @@ export class AssignFirstAdminUseCase {
   ): Promise<AssignFirstAdminResult> {
     const { userId, metadata } = request;
 
-    this.logger.info("Assigning first admin", { userId });
+    this.logger.info("Assigning first system administrator", { userId });
 
-    // Check if admin role exists
-    const adminRole = await this.roleRepository.findByName("admin");
+    // Check if system-administrator role exists
+    const adminRole = await this.roleRepository.findByName("system-administrator");
     if (!adminRole) {
-      this.logger.error("Admin role not found - run seed data first");
+      this.logger.error("System Administrator role not found - run seed data first");
       return {
         success: false,
-        message: "Admin role not found. Please run database seed first.",
+        message: "System Administrator role not found. Please run database seed first.",
       };
     }
 
-    // Check if admin already exists
+    // Check if system administrator already exists
     const existingAdmins = await this.userRoleRepository.findByRoleId(
       adminRole.id,
     );
     if (existingAdmins.length > 0) {
-      this.logger.warn("Admin already exists", {
+      this.logger.warn("System Administrator already exists", {
         existingAdminCount: existingAdmins.length,
       });
       return {
         success: false,
-        message: "Admin user already exists.",
+        message: "System Administrator user already exists.",
       };
     }
 
-    // Check if user already has admin role
+    // Check if user already has system-administrator role
     const userRoles = await this.userRoleRepository.findByUserId(userId);
     const hasAdminRole = userRoles.some((ur) => ur.roleId === adminRole.id);
 
     if (hasAdminRole) {
       return {
         success: false,
-        message: "User already has admin role.",
+        message: "User already has System Administrator role.",
       };
     }
 
@@ -98,26 +98,26 @@ export class AssignFirstAdminUseCase {
         after: {
           userId,
           roleId: adminRole.id,
-          roleName: "admin",
+          roleName: "system-administrator",
         },
       },
       metadata: {
         ...metadata,
-        reason: "First admin setup",
+        reason: "First system administrator setup",
         isFirstAdmin: true,
       },
       ipAddress: metadata?.ipAddress,
       userAgent: metadata?.userAgent,
     });
 
-    this.logger.info("First admin assigned successfully", {
+    this.logger.info("First system administrator assigned successfully", {
       userId,
       roleId: adminRole.id,
     });
 
     return {
       success: true,
-      message: "Admin role assigned successfully.",
+      message: "System Administrator role assigned successfully.",
     };
   }
 }

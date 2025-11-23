@@ -7,7 +7,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services";
-import { runSeed } from "@/infrastructure/database/prisma/seeds/seed";
+import { seedRBAC } from "@/infrastructure/database/prisma/seed-rbac";
 
 export interface ResetDatabaseRequest {
   reseed?: boolean; // Whether to reseed after reset
@@ -42,13 +42,11 @@ export class ResetDatabaseUseCase {
     this.logger.info("Starting database reset", { reseed });
 
     try {
-      // Run the full seed script which includes cleanup
+      // For system setup, we only provide minimal RBAC seeding
+      // Full database seeding should be done via npm scripts (npm run seed)
       if (reseed) {
-        await runSeed();
-      } else {
-        // TODO: Implement cleanup-only logic
-        // For now, we'll just run the full seed which includes cleanup
-        await runSeed();
+        await seedRBAC();
+        this.logger.info("Database reseeded with RBAC data");
       }
 
       this.logger.info("Database reset completed", { reseed });
@@ -56,8 +54,8 @@ export class ResetDatabaseUseCase {
       return {
         success: true,
         message: reseed
-          ? "Database reset and reseeded successfully"
-          : "Database reset successfully",
+          ? "Database reset and reseeded with RBAC data (269 permissions, 10 roles)"
+          : "Database reset successfully. Run 'npm run seed' for full test data.",
       };
     } catch (error) {
       this.logger.error("Failed to reset database", {

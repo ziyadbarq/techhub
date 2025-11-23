@@ -23,18 +23,18 @@ export class CheckFirstAdminUseCase {
   ) {}
 
   async execute(): Promise<CheckFirstAdminResult> {
-    // Find admin role
-    const adminRole = await this.roleRepository.findByName("admin");
+    // Find system-administrator role
+    const adminRole = await this.roleRepository.findByName("system-administrator");
 
     if (!adminRole) {
-      // Admin role doesn't exist - seed data not run
+      // System Administrator role doesn't exist - seed data not run
       return {
         hasAdmin: false,
         adminRoleId: null,
       };
     }
 
-    // Check if any user has admin role
+    // Check if any user has system-administrator role
     const adminUsers = await this.userRoleRepository.findByRoleId(adminRole.id);
 
     return {
