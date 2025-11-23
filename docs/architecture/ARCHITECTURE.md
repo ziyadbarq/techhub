@@ -34,12 +34,12 @@ This assets app implements **Clean Architecture** (Robert C. Martin) with **Depe
 ┌──────────────────────────────────────────────────────────┐
 │                    Application Stack                      │
 ├──────────────────────────────────────────────────────────┤
-│  UI Layer          │  Next.js 15, React 19, shadcn/ui    │
+│  UI Layer          │  Next.js 16, React 19, shadcn/ui    │
 │  Validation        │  Zod, TypeScript                    │
 │  State Management  │  React Hooks, Server Actions        │
 │  DI Container      │  InversifyJS                        │
 │  Database          │  Prisma ORM, PostgreSQL             │
-│  AI Services       │  OpenAI GPT-5                       │
+│  AI Services       │  OpenAI API                         │
 │  Styling           │  Tailwind CSS 4, OKLCH colors       │
 └──────────────────────────────────────────────────────────┘
 ```

@@ -52,7 +52,7 @@ The Asset Kits module enables creation of reusable asset bundles (e.g., "New Hir
 3. `asset_kit_checkouts` - Checkout records
 4. `asset_kit_checkout_items` - Individual item tracking per checkout
 
-## Use Cases (19)
+## Use Cases (18)
 
 **Kit Management**: Create, Get, List, Update, Delete kits
 **Item Management**: Add, Remove, Update kit items

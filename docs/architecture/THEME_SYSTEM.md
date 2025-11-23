@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Slidev AI RAG Task Manager uses a centralized, type-safe theme system built on **Next.js 15**, **Tailwind CSS 4**, and **shadcn/ui**. The system provides:
+The Barq Assets application uses a centralized, type-safe theme system built on **Next.js 16**, **Tailwind CSS 4**, and **shadcn/ui**. The system provides:
 
 - ✅ **Single Source of Truth** - All colors defined in one place
 - ✅ **Type Safety** - TypeScript types for all theme tokens
@@ -25,7 +25,7 @@ The Slidev AI RAG Task Manager uses a centralized, type-safe theme system built 
 │  Use: className="bg-barq-yellow"                 │
 ├─────────────────────────────────────────────────┤
 │  Tailwind Utilities (Integration Layer)          │
-│  Defined in: tailwind.config.ts                  │
+│  Defined in: globals.css (@theme block)          │
 ├─────────────────────────────────────────────────┤
 │  Theme Utilities (Business Logic)                │
 │  Defined in: src/lib/theme/utils.ts              │
@@ -46,7 +46,7 @@ The Slidev AI RAG Task Manager uses a centralized, type-safe theme system built 
 ```
 src/
 ├── app/
-│   └── globals.css                   # CSS variables and base styles
+│   └── globals.css                   # CSS variables, @theme block, and base styles
 ├── lib/
 │   └── theme/
 │       ├── index.ts                  # Barrel export
@@ -56,7 +56,7 @@ src/
 │       └── utils.ts                  # Utility functions
 └── components/                       # Use theme in components
 
-tailwind.config.ts                    # Tailwind color configuration
+postcss.config.js                     # PostCSS configuration with Tailwind CSS 4
 ```
 
 ---
@@ -390,10 +390,17 @@ if (isDarkMode()) {
 
 ### Adding New Brand Colors
 
-1. **Add to CSS Variables** (`src/app/globals.css`):
+1. **Add to CSS Variables** (`src/app/globals.css` in the `@theme` block):
 
    ```css
    @theme {
+     /* Existing colors... */
+     --color-barq-black: #1e2024;
+     --color-barq-white: #ffffff;
+     --color-barq-light-blue: #dff5f7;
+     --color-barq-yellow: #ffda00;
+
+     /* New color */
      --color-barq-green: #00ff00;
    }
    ```
@@ -407,18 +414,7 @@ if (isDarkMode()) {
    } as const;
    ```
 
-3. **Add to Tailwind Config** (`tailwind.config.ts`):
-
-   ```ts
-   colors: {
-     barq: {
-       // ... existing colors
-       green: "var(--color-barq-green)",
-     }
-   }
-   ```
-
-4. **Add TypeScript Types** (`src/lib/theme/types.ts`):
+3. **Add TypeScript Types** (`src/lib/theme/types.ts`):
 
    ```ts
    export type BarqColorName =
@@ -429,10 +425,12 @@ if (isDarkMode()) {
      | "green";
    ```
 
-5. **Use in Components**:
+4. **Use in Components**:
    ```tsx
    <div className="bg-barq-green text-white">New green brand color</div>
    ```
+
+**Note**: With Tailwind CSS 4, colors are defined directly in the `@theme` block in `globals.css`. No separate `tailwind.config.ts` file is needed. The `@theme` directive automatically generates Tailwind utility classes like `bg-barq-green`, `text-barq-green`, etc.
 
 ---
 

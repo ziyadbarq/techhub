@@ -33,7 +33,7 @@
 
 ### What is Barq Assets?
 
-A production-ready Next.js 15 starter kit implementing Clean Architecture with dependency injection. Built to accelerate development while maintaining code quality, testability, and scalability.
+A production-ready Next.js 16 starter kit implementing Clean Architecture with dependency injection. Built to accelerate development while maintaining code quality, testability, and scalability.
 
 ### Key Features
 
@@ -814,7 +814,7 @@ Prisma-based implementations of repository interfaces.
 
 ```typescript
 import { injectable, inject } from "inversify";
-import { PrismaClient, Task as PrismaTask } from "@prisma/client";
+import type { PrismaClient, Task as PrismaTask } from "@/generated/prisma";
 import { DI_TOKENS } from "@/di/types";
 import type { ITaskRepository } from "@/core/repositories/task.repository.interface";
 import { Task, TaskStatus } from "@/core/domain/entities/task.entity";
@@ -1321,7 +1321,7 @@ export function getContainer(): Container {
 
 ```typescript
 import { Container } from "inversify";
-import { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "@/generated/prisma";
 import { DI_TOKENS } from "../types";
 import type { ITaskRepository } from "@/core/repositories/task.repository.interface";
 import { PrismaTaskRepository } from "@/infrastructure/repositories/prisma-task.repository";
@@ -1471,9 +1471,10 @@ npx prisma migrate reset
 **File**: `src/infrastructure/database/prisma/seed.ts`
 
 ```typescript
-import { PrismaClient, TaskStatus } from "@prisma/client";
+import type { TaskStatus } from "@/generated/prisma";
+import { prisma } from "@/infrastructure/database/prisma/client";
 
-const prisma = new PrismaClient();
+// Use the singleton prisma client from infrastructure layer
 
 async function main() {
   // Seed AI prompt templates

@@ -39,10 +39,10 @@ All modules follow Clean Architecture patterns with complete separation of conce
 
 **62 Total Use Cases**:
 
-- 11 Disposal use cases (approval workflow, certificate generation)
-- 19 Kit use cases (builder, checkout, partial returns)
-- 17 Reservation use cases (conflict detection, availability checks)
-- 15 CMDB use cases (CRUD + dependency graph foundation)
+- 12 Disposal use cases (approval workflow, certificate generation)
+- 18 Kit use cases (builder, checkout, partial returns)
+- 16 Reservation use cases (conflict detection, availability checks)
+- 16 CMDB use cases (CRUD + dependency graph foundation)
 
 ### Interface Adapters
 
@@ -62,10 +62,10 @@ All modules follow Clean Architecture patterns with complete separation of conce
 
 | Feature                | Entities | Use Cases | Routes | Complexity | Status      |
 | ---------------------- | -------- | --------- | ------ | ---------- | ----------- |
-| **Asset Disposals**    | 3        | 11        | 1      | High       | ✅ Complete |
-| **Asset Kits**         | 4        | 19        | 1      | High       | ✅ Complete |
-| **Asset Reservations** | 2        | 17        | 1      | High       | ✅ Complete |
-| **CMDB**               | 3        | 15        | 3      | Medium     | ✅ Complete |
+| **Asset Disposals**    | 3        | 12        | 1      | High       | ✅ Complete |
+| **Asset Kits**         | 4        | 18        | 1      | High       | ✅ Complete |
+| **Asset Reservations** | 2        | 16        | 1      | High       | ✅ Complete |
+| **CMDB**               | 3        | 16        | 3      | Medium     | ✅ Complete |
 | **Total**              | **12**   | **62**    | **6**  | -          | **100%**    |
 
 ---

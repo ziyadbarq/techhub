@@ -82,7 +82,7 @@ class CIRelationshipEntity {
 
 ## Use Cases
 
-### Configuration Items (5 use cases)
+### Configuration Items (6 use cases)
 
 1. **Create Configuration Item**
    - Validates CI key uniqueness
