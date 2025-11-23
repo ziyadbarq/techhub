@@ -9,8 +9,8 @@
 
 import { inject, injectable } from "inversify";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
-import type { IUserRoleRepository } from "@/core/repositories/user-role.repository.interface";
-import type { IRoleRepository } from "@/core/repositories/role.repository.interface";
+import type { IUserRoleRepository } from "@/core/repositories/user-role-repository.interface";
+import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import { DI_TOKENS } from "@/di/types";
 
 export interface RoleUsageStats {
@@ -70,7 +70,10 @@ export class GetRoleUsageStatsUseCase {
 
       return stats;
     } catch (error) {
-      this.logger.error("Failed to fetch role usage statistics", { error });
+      this.logger.error(
+        "Failed to fetch role usage statistics",
+        error instanceof Error ? error : undefined,
+      );
       throw error;
     }
   }

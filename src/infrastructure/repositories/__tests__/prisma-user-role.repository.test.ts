@@ -261,6 +261,7 @@ describe("PrismaUserRoleRepository", () => {
             createdAt: now,
             updatedAt: now,
             createdBy: null,
+            parentId: null,
             permissions: [
               {
                 id: "rp-1",
@@ -365,6 +366,7 @@ describe("PrismaUserRoleRepository", () => {
             createdAt: now,
             updatedAt: now,
             createdBy: null,
+            parentId: null,
             permissions: [],
           } as PrismaRole,
         },
@@ -408,6 +410,7 @@ describe("PrismaUserRoleRepository", () => {
             createdAt: now,
             updatedAt: now,
             createdBy: null,
+            parentId: null,
             permissions: [
               {
                 id: "rp-1",
@@ -447,6 +450,7 @@ describe("PrismaUserRoleRepository", () => {
             createdAt: now,
             updatedAt: now,
             createdBy: null,
+            parentId: null,
             permissions: [
               {
                 id: "rp-2",

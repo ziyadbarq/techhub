@@ -49,6 +49,7 @@ export function UserRoleHistory({
       const result = await listAuditLogsAction({
         userId,
         entityType: "user_role",
+        page: 1,
         pageSize: 100, // Load more history entries
       });
 
@@ -57,7 +58,7 @@ export function UserRoleHistory({
       } else {
         setError(result.error || "Failed to load role history");
       }
-    } catch (err) {
+    } catch (_err) {
       setError("Failed to load role history");
     } finally {
       setLoading(false);
@@ -80,7 +81,7 @@ export function UserRoleHistory({
       case "delete":
         return <UserMinus className="h-4 w-4 text-red-600" />;
       default:
-        return <Clock className="h-4 w-4 text-muted-foreground" />;
+        return <Clock className="text-muted-foreground h-4 w-4" />;
     }
   };
 
@@ -106,18 +107,17 @@ export function UserRoleHistory({
   };
 
   const parseEntityData = (entry: AuditLogDTO) => {
-    try {
-      const data = JSON.parse(entry.entityData);
-      return {
-        roleName: data.roleName || data.roleDisplayName || "Unknown Role",
-        expiresAt: data.expiresAt,
-      };
-    } catch {
-      return {
-        roleName: "Unknown Role",
-        expiresAt: null,
-      };
-    }
+    const meta = entry.metadata ?? {};
+    const roleName =
+      (meta.roleName as string | undefined) ||
+      (meta.roleDisplayName as string | undefined) ||
+      "Unknown Role";
+    const expiresAt = meta.expiresAt as string | Date | null | undefined;
+
+    return {
+      roleName,
+      expiresAt: expiresAt ?? null,
+    };
   };
 
   return (
@@ -141,7 +141,7 @@ export function UserRoleHistory({
         <ScrollArea className="h-[500px] pr-4">
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+              <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
             </div>
           ) : error ? (
             <div className="flex items-center justify-center py-12">
@@ -182,16 +182,10 @@ export function UserRoleHistory({
                         <div className="text-muted-foreground flex items-center gap-2 text-xs">
                           <span>
                             {format(
-                              new Date(entry.timestamp),
+                              new Date(entry.createdAt),
                               "MMM d, yyyy h:mm a",
                             )}
                           </span>
-                          {entry.performedByEmail && (
-                            <>
-                              <span>•</span>
-                              <span>by {entry.performedByEmail}</span>
-                            </>
-                          )}
                         </div>
                       </div>
                     </div>

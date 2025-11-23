@@ -46,6 +46,7 @@ export const DI_TOKENS = {
   IRoleRepository: Symbol.for("IRoleRepository"),
   IPermissionRepository: Symbol.for("IPermissionRepository"),
   IUserRoleRepository: Symbol.for("IUserRoleRepository"),
+  IUserRepository: Symbol.for("IUserRepository"),
   IAuditLogRepository: Symbol.for("IAuditLogRepository"),
 
   // Foundation Repositories
@@ -558,16 +559,30 @@ export const DI_TOKENS = {
   DeleteDataOwnershipUseCase: Symbol.for("DeleteDataOwnershipUseCase"),
 
   // Governance: Verification Campaign Repository
-  IVerificationCampaignRepository: Symbol.for("IVerificationCampaignRepository"),
+  IVerificationCampaignRepository: Symbol.for(
+    "IVerificationCampaignRepository",
+  ),
 
   // Governance: Verification Campaign Use Cases
-  CreateVerificationCampaignUseCase: Symbol.for("CreateVerificationCampaignUseCase"),
+  CreateVerificationCampaignUseCase: Symbol.for(
+    "CreateVerificationCampaignUseCase",
+  ),
   GetVerificationCampaignUseCase: Symbol.for("GetVerificationCampaignUseCase"),
-  ListVerificationCampaignsUseCase: Symbol.for("ListVerificationCampaignsUseCase"),
-  UpdateVerificationCampaignUseCase: Symbol.for("UpdateVerificationCampaignUseCase"),
-  DeleteVerificationCampaignUseCase: Symbol.for("DeleteVerificationCampaignUseCase"),
-  StartVerificationCampaignUseCase: Symbol.for("StartVerificationCampaignUseCase"),
-  CompleteVerificationCampaignUseCase: Symbol.for("CompleteVerificationCampaignUseCase"),
+  ListVerificationCampaignsUseCase: Symbol.for(
+    "ListVerificationCampaignsUseCase",
+  ),
+  UpdateVerificationCampaignUseCase: Symbol.for(
+    "UpdateVerificationCampaignUseCase",
+  ),
+  DeleteVerificationCampaignUseCase: Symbol.for(
+    "DeleteVerificationCampaignUseCase",
+  ),
+  StartVerificationCampaignUseCase: Symbol.for(
+    "StartVerificationCampaignUseCase",
+  ),
+  CompleteVerificationCampaignUseCase: Symbol.for(
+    "CompleteVerificationCampaignUseCase",
+  ),
 
   // Governance: Verification Item Repository
   IVerificationItemRepository: Symbol.for("IVerificationItemRepository"),
@@ -579,7 +594,9 @@ export const DI_TOKENS = {
   UpdateVerificationItemUseCase: Symbol.for("UpdateVerificationItemUseCase"),
   DeleteVerificationItemUseCase: Symbol.for("DeleteVerificationItemUseCase"),
   VerifyVerificationItemUseCase: Symbol.for("VerifyVerificationItemUseCase"),
-  FlagExceptionVerificationItemUseCase: Symbol.for("FlagExceptionVerificationItemUseCase"),
+  FlagExceptionVerificationItemUseCase: Symbol.for(
+    "FlagExceptionVerificationItemUseCase",
+  ),
 
   // ==========================================
   // Attachments Module Tokens

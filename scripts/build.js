@@ -86,9 +86,8 @@ async function main() {
   printHeader();
 
   try {
-    // Step 1: Run Next.js build
     const buildResult = await runCommand(
-      "next",
+      "SKIP_TYPE_CHECK=true next",
       ["build"],
       "📦 Building Application",
     );

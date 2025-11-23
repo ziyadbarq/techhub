@@ -8,7 +8,7 @@
 "use client";
 
 import * as React from "react";
-import { Plus, X, AlertCircle, Loader2 } from "lucide-react";
+import { Plus, X, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,7 +38,10 @@ import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { assignRoleToUserAction, removeRoleFromUserAction } from "@/interface-adapters/controllers/user-role.controller";
+import {
+  assignRoleToUserAction,
+  revokeRoleFromUserAction,
+} from "@/interface-adapters/controllers/user-role.controller";
 import { toast } from "sonner";
 
 interface UserRole {
@@ -47,7 +50,7 @@ interface UserRole {
   roleName: string;
   roleDisplayName: string;
   isActive: boolean;
-  expiresAt: string | null;
+  expiresAt: Date | null;
 }
 
 interface InlineRoleEditorProps {
@@ -91,7 +94,7 @@ export function InlineRoleEditor({
     setRemoving(roleToRemove.id);
     setShowRemoveDialog(false);
 
-    const result = await removeRoleFromUserAction({
+    const result = await revokeRoleFromUserAction({
       userId,
       roleId: roleToRemove.roleId,
     });
@@ -113,7 +116,7 @@ export function InlineRoleEditor({
     const result = await assignRoleToUserAction({
       userId,
       roleId,
-      expiresAt: expirationDate?.toISOString(),
+      expiresAt: expirationDate,
     });
 
     if (result.success) {

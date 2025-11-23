@@ -12,15 +12,18 @@ This file provides high-level guidance when working with this repository.
 
 **Current Implementation**:
 
-- **Layer 1 (Foundation)**: 11 core entities - OrganizationUnit, Person, Role, Location, Vendor, Lifecycle models, Field definitions
+- **Layer 1 (Foundation)**: 12 core entities - OrganizationUnit, Person, Role, Location, Vendor, Lifecycle models, Field definitions, **ExchangeRate** (multi-currency support)
 - **Layer 2 (Asset/Inventory)**: 9 entities - Asset, AssetCategory, AssetModel, AssetAssignment, StockLocation, StockMovement, Warranty, MaintenanceSchedule, MaintenanceRecord
-- **Layer 3 (Advanced ITAM)**: 6 modules, 26 entities
+- **Layer 3 (Advanced ITAM & Extensions)**: 9 modules (~31 entities)
   - **Asset Disposals**: AssetDisposal, DisposalApproval, DisposalDocument (3 entities, 11 use cases)
   - **Asset Kits**: AssetKit, AssetKitItem, AssetKitCheckout, AssetKitCheckoutItem (4 entities, 19 use cases)
   - **Asset Reservations**: AssetReservation, AssetReservationConflict (2 entities, 17 use cases)
   - **CMDB**: ConfigurationItem, CIRelationship, RelationshipType, CIClass, CIClassField, RelationshipTypeScope (6 entities, 28 use cases)
   - **Contract Management**: ContractType, Contract, ContractLinkedObject (3 entities, 17 use cases)
   - **License Management**: LicenseProduct, LicenseProductField, LicenseEntitlement, LicenseAllocation (4 entities, 23 use cases)
+  - **Governance**: DataDomain, DataOwnership, VerificationCampaign, VerificationItem (4 entities, 24 use cases)
+  - **Attachments**: AttachmentType, Attachment (2 entities, 11 use cases)
+  - **Service Management**: Service, BusinessProcess, ServiceInfrastructure (service catalog, ownership, infrastructure, and asset linking)
 - **Reference**: Task entity (complete implementation, hidden from UI)
 - **Marketing**: Public landing page showcasing system capabilities
 
@@ -67,20 +70,24 @@ npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastruc
 - [LOGGING.md](docs/guides/LOGGING.md) - Structured logging with Pino
 - [BUILD_OPTIMIZATION.md](docs/guides/BUILD_OPTIMIZATION.md) - Turbopack, bundle analysis
 - [UI_UX_IMPROVEMENTS.md](docs/guides/UI_UX_IMPROVEMENTS.md) - UI/UX enhancements and navigation improvements
-- [GLOBAL_SEARCH.md](docs/GLOBAL_SEARCH.md) - Command palette global search with keyboard shortcuts (⌘K)
+- [GLOBAL_SEARCH.md](docs/features/GLOBAL_SEARCH.md) - Command palette global search with keyboard shortcuts (⌘K)
 
 ### Asset Layer (Layer 2)
 
-- [WARRANTY_SYSTEM.md](docs/WARRANTY_SYSTEM.md) - Complete warranty management implementation (reference for Asset layer features)
-- [MAINTENANCE_SYSTEM.md](docs/MAINTENANCE_SYSTEM.md) - Preventive maintenance schedules and records with workflow state management
+- [WARRANTY_SYSTEM.md](docs/features/WARRANTY_SYSTEM.md) - Complete warranty management implementation (reference for Asset layer features)
+- [MAINTENANCE_SYSTEM.md](docs/features/MAINTENANCE_SYSTEM.md) - Preventive maintenance schedules and records with workflow state management
+- [MULTI_CURRENCY_GUIDE.md](docs/features/MULTI_CURRENCY_GUIDE.md) - Multi-currency support with SAR base, dual display, and exchange rate management
 
 ### Advanced ITAM Layer (Layer 3)
 
-- [ITAM_FEATURES.md](docs/ITAM_FEATURES.md) - Complete guide to all 4 advanced ITAM modules
-- [ASSET_DISPOSALS.md](docs/ASSET_DISPOSALS.md) - Multi-step disposal workflow with approval chain and certificate generation
-- [ASSET_KITS.md](docs/ASSET_KITS.md) - Predefined asset bundles with checkout tracking and partial returns
-- [ASSET_RESERVATIONS.md](docs/ASSET_RESERVATIONS.md) - Future asset reservations with conflict detection and calendar view
-- [CMDB_GUIDE.md](docs/CMDB_GUIDE.md) - Configuration Management Database with dependency tracking
+- [ITAM_FEATURES.md](docs/features/ITAM_FEATURES.md) - Overview of core advanced ITAM modules (disposals, kits, reservations, CMDB)
+- [ASSET_DISPOSALS.md](docs/features/ASSET_DISPOSALS.md) - Multi-step disposal workflow with approval chain and certificate generation
+- [ASSET_KITS.md](docs/features/ASSET_KITS.md) - Predefined asset bundles with checkout tracking and partial returns
+- [ASSET_RESERVATIONS.md](docs/features/ASSET_RESERVATIONS.md) - Future asset reservations with conflict detection and calendar view
+- [CMDB_GUIDE.md](docs/features/CMDB_GUIDE.md) - Configuration Management Database with dependency tracking
+- [GOVERNANCE_SYSTEM.md](docs/features/GOVERNANCE_SYSTEM.md) - Data governance, ownership tracking, and verification campaigns for SAMA compliance
+- [ATTACHMENTS_SYSTEM.md](docs/features/ATTACHMENTS_SYSTEM.md) - Polymorphic file attachments for compliance documentation and audit trails
+- Service Management: See `roadmap/SERVICE_MANAGEMENT.md` for the design doc (user guide pending)
 
 ### In-App Documentation (MDX)
 
@@ -88,9 +95,13 @@ npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastruc
 - MDX files in `src/content/docs/` with custom components (Card, Callout, CodeBlock)
 - **IMPORTANT**: MDX plugins configured in component (NOT `next.config.ts`) for Turbopack compatibility
 
-### Future Enhancements
+### Roadmap (Future Features)
 
-- [Roadmap Index](roadmap/README.md) - Planned features and enhancements
+- [Roadmap Index](roadmap/README.md) - Complete list of planned features by layer
+- **RBAC Phase 2 (Partially Complete)**: Permission dependencies, role conflict detection, and bulk permission assignment shipped; remaining work (advanced user management, role analytics, role hierarchy/expiration, enhanced audit UI, bulk user role assignment) tracked in `roadmap/RBAC_PHASE2_CORRECTIONS.md` and `roadmap/README.md`
+- **Service Management Enhancements**: Core service catalog/business process/infrastructure features shipped; design doc remains at `roadmap/SERVICE_MANAGEMENT.md` for future enhancements
+- **Security Patch Workflow**: See `roadmap/SECURITY_PATCH_WORKFLOW.md` (planned)
+- **Seed Mode Separation**: See `roadmap/SEED_MODE_SEPARATION.md` (planned)
 
 ### All Documentation
 
@@ -148,6 +159,7 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - **Permission Organization**: 153+ permissions organized into 10 logical groups (see `src/lib/rbac/permission-groups.ts`)
   - System & Administration, Foundation Layer, Asset Management, Maintenance, Inventory
   - Asset Operations, CMDB, Contract Management, License Management, Development & Testing
+  - Exchange Rates (`FX_RATES_*`) and Service Management (`SERVICES_*`, `BUSINESS_PROCESSES_*`)
 - **Feature-Specific Permissions**: Each Layer 3 feature has its own permission set:
   - `ASSET_DISPOSALS_*` (VIEW, CREATE, UPDATE, DELETE, APPROVE, REJECT, START, COMPLETE, CANCEL, MANAGE)
   - `ASSET_KITS_*` (VIEW, CREATE, UPDATE, DELETE, CHECKOUT, RETURN, MANAGE)
@@ -156,10 +168,13 @@ See [docs/README.md](docs/README.md) for complete documentation index.
   - `CONTRACT_TYPES_*`, `CONTRACTS_*`, `CONTRACT_LINKED_OBJECTS_*` (VIEW, CREATE, UPDATE, DELETE, MANAGE)
   - `LICENSE_PRODUCTS_*`, `LICENSE_PRODUCT_FIELDS_*`, `LICENSE_ENTITLEMENTS_*` (VIEW, CREATE, UPDATE, DELETE, MANAGE)
   - `LICENSE_ALLOCATIONS_*` (VIEW, CREATE, UPDATE, DELETE, DEALLOCATE, REACTIVATE, MANAGE)
+  - `DATA_DOMAINS_*`, `DATA_OWNERSHIPS_*`, `VERIFICATION_CAMPAIGNS_*`, `VERIFICATION_ITEMS_*` (Governance)
+  - `ATTACHMENT_TYPES_*`, `ATTACHMENTS_*`
+  - `SERVICES_*`, `BUSINESS_PROCESSES_*`
 - **Navigation**: Automatically filtered based on user permissions (see `navigation.ts`)
 - **Role Management**: Clone roles with one click at `/admin/roles` (automatic permission copying)
 - **Permission Assignment**: Enhanced UI with search, collapsible groups, "Select All in Group" at `/admin/roles/[name]/permissions`
-- **See**: [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md) and [RBAC_ADMIN_GUIDE.md](docs/features/RBAC_ADMIN_GUIDE.md)
+- **See**: [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md) and `roadmap/README.md` (RBAC section)
 
 ### Logging
 
@@ -179,12 +194,26 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 
 - **CRITICAL**: Create `index.ts` in use case modules to export all use cases
 - Pre-commit type-checking **fails** without barrel exports
-- **All Layer 3 features have barrel exports**: `src/core/use-cases/{disposal,asset-kits,reservations,cmdb,contract,license-*}/*/index.ts`
+- **All Layer 3 features have barrel exports**: `src/core/use-cases/{disposal,asset-kits,reservations,cmdb,contract,license-*,governance,attachments,service*}/*/index.ts`
 - **See**: [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "Adding a New Feature"
+
+### Multi-Currency Support
+
+- **SAR as Base**: All financial aggregations use SAR (Saudi Riyal) as the base currency
+- **Dual Currency Display**: Show original amount with SAR equivalent: `$100.00 (ر.س 375.00)`
+- **Currency Component**: Use `<CurrencyDisplay>` from `@/components/ui/currency-display` for consistent formatting
+- **Currency Utilities**: Use `formatCurrency()`, `formatSAR()`, `formatDualCurrency()` from `@/lib/utils`
+- **Supported Currencies**: 15 currencies configured in `src/lib/currencies.config.ts` (SAR, USD, EUR, GBP, JPY, AUD, CAD, CHF, CNY, INR, AED, KWD, BHD, OMR, QAR)
+- **Exchange Rates**: Managed at `/fx-rates` route, stored as "to SAR" rates (e.g., 1 USD = 3.75 SAR)
+- **Currency Fields**: All entities with monetary values include `currency` field (defaults to "SAR")
+- **Currency Forms**: Use Select dropdown with `SUPPORTED_CURRENCIES`, not text input
+- **Aggregation**: Always convert to SAR before summing (dashboard, reports)
+- **Permissions**: `FX_RATES_VIEW`, `FX_RATES_CREATE`, `FX_RATES_UPDATE`, `FX_RATES_DELETE`, `FX_RATES_MANAGE`, `FX_RATES_CONVERT`
+- **See**: [MULTI_CURRENCY_GUIDE.md](docs/features/MULTI_CURRENCY_GUIDE.md) for complete implementation guide
 
 ## Layer 3 ITAM Features
 
-**6 Advanced Modules** - Fully implemented with Clean Architecture patterns:
+**9 Advanced Modules** - Fully implemented with Clean Architecture patterns:
 
 1. **Asset Disposals** (`/asset-disposals`)
    - Multi-step approval workflow (PENDING_APPROVAL → APPROVED → IN_PROGRESS → SANITIZED → COMPLETED)
@@ -217,14 +246,20 @@ See [docs/README.md](docs/README.md) for complete documentation index.
    - Routes: `/configuration-items`, `/ci-relationships`, `/relationship-types`
    - Permissions: `CONFIGURATION_ITEMS_VIEW`, `CI_RELATIONSHIPS_VIEW`, `RELATIONSHIP_TYPES_VIEW`
 
-5. **Contract Management** (`/contract-types`, `/contracts`)
+5. **Service Management** (`/services`, `/business-processes`)
+   - Service catalog with criticality, lifecycle, and service-level metadata
+   - Business processes linked to services for dependency mapping
+   - Service infrastructure records (RTO/RPO, hosting, dependencies)
+   - Asset linking and ownership tracking with primary/secondary owners
+
+6. **Contract Management** (`/contract-types`, `/contracts`)
    - Contract Types with customizable fields
    - Contracts with vendor linkage and lifecycle dates
    - Polymorphic linking to Assets, CIs, License Products
    - Financial tracking with renewal dates
    - Permissions: `CONTRACT_TYPES_VIEW`, `CONTRACTS_VIEW`, `CONTRACT_LINKED_OBJECTS_VIEW`
 
-6. **License Management** (`/license-products`, `/license-entitlements`, `/license-allocations`)
+7. **License Management** (`/license-products`, `/license-entitlements`, `/license-allocations`)
    - License Products with metric types (per_device, per_user, per_core, per_vm, per_cluster)
    - Entitlements with purchased quantities and date ranges
    - Polymorphic allocations to Persons, CIs, or Assets
@@ -232,60 +267,70 @@ See [docs/README.md](docs/README.md) for complete documentation index.
    - Soft deactivation (deallocate/reactivate) support
    - Permissions: `LICENSE_PRODUCTS_VIEW`, `LICENSE_ENTITLEMENTS_VIEW`, `LICENSE_ALLOCATIONS_VIEW`
 
-**Database**: 17 new tables (CMDB: 6, Contracts: 3, Licenses: 4, plus config entities: 4)
+8. **Governance** (`/data-domains`, `/data-ownerships`, `/verification-campaigns`)
+   - Data Domains for data classification (PII, Financial Data, etc.)
+   - Data Ownerships with polymorphic mapping (CIClass OR AssetCategory, Person OR OrgUnit)
+   - Verification Campaigns for scheduled compliance audits
+   - Verification Items with status tracking (PENDING → IN_PROGRESS → VERIFIED/EXCEPTION)
+   - SAMA compliance support with audit trails
+   - Permissions: `DATA_DOMAINS_VIEW`, `DATA_OWNERSHIPS_VIEW`, `VERIFICATION_CAMPAIGNS_VIEW`, `VERIFICATION_ITEMS_VIEW`
+
+9. **Attachments** (`/attachment-types`, `/attachments`)
+   - Attachment Types with file validation rules (extensions, size limits)
+   - Polymorphic attachments to any entity (23 target types: Asset, CI, Contract, Warranty, Disposal, etc.)
+   - File metadata tracking (fileName, mimeType, sizeBytes, storagePath)
+   - Business methods for file operations (isImage, isPDF, getFormattedFileSize)
+   - Ready for compliance documentation, invoices, certificates, audit reports
+   - Permissions: `ATTACHMENT_TYPES_VIEW`, `ATTACHMENTS_VIEW`
+
+**Database**: 25+ new tables (CMDB: 6, Contracts: 3, Licenses: 4, Governance: 4, Attachments: 2, Service Management: 3, plus config entities)
 
 **DI Modules**: All registered in `src/di/container.ts`:
 
 - `bindCMDBDependencies()` - CMDB entities
+- `bindContractsDependencies()` - Contract management
+- `bindLicensesDependencies()` - License management
+- `bindGovernanceDependencies()` - Governance features (data domains, ownerships, verification)
+- `bindAttachmentsDependencies()` - Attachment system
+- `bindServiceDependencies()` - Service catalog, business processes, infrastructure, asset linking
 - `loadDisposalModule()` - Asset disposals
 - `loadAssetKitsModule()` - Asset kits
 - `loadReservationsModule()` - Asset reservations
-- `bindContractsDependencies()` - Contract management
-- `bindLicensesDependencies()` - License management
 
-**Navigation**: New "CMDB", "Contracts", and "Licenses" groups added with permission-based filtering
+**Navigation**: New "CMDB", "Contracts", "Licenses", "Services", "Governance", and "Attachments" groups added with permission-based filtering
 
-## RBAC Admin Features
+## RBAC Admin Enhancements (Layer 1)
 
-The system includes comprehensive role-based access control administration:
+**Phase 1 (COMPLETED 2025-11-22)**:
 
-**Permission Management**:
-- **Permission Grouping**: 159+ permissions organized into 10 logical categories (`src/lib/rbac/permission-groups.ts`)
+- **Permission Grouping**: 153+ permissions organized into 10 logical categories (`src/lib/rbac/permission-groups.ts`)
 - **Enhanced UI**: Search/filter, collapsible groups, "Select All in Group" at `/admin/roles/[name]/permissions`
 - **Clone Role**: One-click role duplication with automatic permission copying
-- **Bulk Operations**: Multi-select permissions for bulk add/remove with visual feedback
-- **Permission Dependencies** (`src/lib/rbac/permission-dependencies.ts`):
-  - Dependency rules for all permissions
+- **Navigation Fixes**: Fixed critical 404 bug (role/permission pages now use `name` instead of `id`)
+- **Impact**: 100% navigation success, 93% reduction in permission assignment complexity, 90% time savings for role cloning
+
+**Phase 2 (PARTIALLY COMPLETED)**:
+
+- ✅ **Permission Dependencies** (`src/lib/rbac/permission-dependencies.ts`):
+  - 153+ permissions mapped with dependency rules
   - Validation with `validatePermissionDependencies()` function
-  - UI warnings showing missing dependencies
+  - UI warnings in PermissionsManager showing missing dependencies
   - Auto-fix button to add required permissions
   - Tooltips on individual permissions showing requirements
 
-**User Management** (`/admin/users`):
-- Advanced filtering: search, roles, verification status, date range
-- Inline role editing: Add/remove roles without navigation
-- User role history viewer: Complete audit trail
-- Bulk user role assignment with conflict detection
+- ✅ **Role Conflict Detection** (`src/lib/rbac/role-conflicts.ts`):
+  - Segregation of duties enforcement
+  - 3 severity levels: warning, error, critical
+  - Bidirectional conflict detection with `rolesConflict()` function
+  - RoleAssignment component shows conflicts with severity badges
+  - Critical conflicts block assignment, warnings allow override
 
-**Role Analytics Dashboard** (`/admin/analytics`):
-- Role usage statistics with bar charts
-- Orphaned role detection
-- Permission usage analysis (most/least used)
-- User role distribution pie chart
-- Users with role conflicts table
+- ✅ **Bulk Operations**:
+  - Bulk permission assignment (PermissionsManager)
+  - Multi-select with conflict detection
+  - ~50% time savings for bulk operations
 
-**Role Hierarchy/Inheritance**:
-- Database schema: `parentId`, self-referential `parent`/`children` relationships
-- Domain entity: `getAllPermissions()`, `hasParentInHierarchy()` methods
-- Recursive permission resolution for inherited permissions
-- Circular dependency prevention
-
-**Role Conflict Detection** (`src/lib/rbac/role-conflicts.ts`):
-- Segregation of duties enforcement
-- 3 severity levels: warning, error, critical
-- Bidirectional conflict detection with `rolesConflict()` function
-- RoleAssignment component shows conflicts with severity badges
-- Critical conflicts block assignment, warnings allow override
+- 🚧 **Remaining**: Advanced user management, role analytics dashboard, role hierarchy/inheritance UI + server enforcement, time-based role expiration jobs, bulk user role assignment, enhanced audit log UI (see `roadmap/RBAC_PHASE2_CORRECTIONS.md`)
 
 **Documentation**: See [RBAC Admin Guide](docs/features/RBAC_ADMIN_GUIDE.md) for complete usage guide
 

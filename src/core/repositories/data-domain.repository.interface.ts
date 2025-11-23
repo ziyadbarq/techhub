@@ -30,7 +30,7 @@ export interface IDataDomainRepository {
   /**
    * Finds all data domains
    */
-  findAll(): Promise<DataDomain[]>;
+  findAll(options?: { includeInactive?: boolean }): Promise<DataDomain[]>;
 
   /**
    * Finds active data domains

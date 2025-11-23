@@ -232,7 +232,7 @@ describe("PrismaDataDomainRepository - Integration Tests", () => {
       await repository.create(domain2);
 
       // Act
-      const dataDomains = await repository.findAll();
+      const dataDomains = await repository.findAll({ includeInactive: true });
 
       // Assert
       expect(dataDomains).toHaveLength(2);

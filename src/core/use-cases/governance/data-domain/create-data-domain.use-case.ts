@@ -7,6 +7,7 @@ import { DI_TOKENS } from "@/di/types";
 import type { IDataDomainRepository } from "@/core/repositories/data-domain.repository.interface";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
 import { DataDomain } from "@/core/domain/entities/data-domain.entity";
+import { ValidationError } from "@/core/domain/errors/validation.error";
 
 export interface CreateDataDomainRequest {
   name: string;
@@ -25,28 +26,37 @@ export class CreateDataDomainUseCase {
   ) {}
 
   async execute(request: CreateDataDomainRequest): Promise<DataDomain> {
+    const trimmedName = request.name?.trim();
+    const providedCode = request.code?.trim();
+
     // Auto-generate code if not provided
     const code =
-      request.code ??
+      providedCode ??
       (await this.codeGenerator.generateCode("DATA_DOMAIN", "DD"));
 
     // Check for duplicate name
-    const existingByName = await this.dataDomainRepository.existsByName(
-      request.name,
-    );
+    const existingByName = trimmedName
+      ? await this.dataDomainRepository.existsByName(trimmedName)
+      : false;
     if (existingByName) {
-      throw new Error("A data domain with this name already exists");
+      throw new ValidationError(
+        `Data domain with name ${trimmedName} already exists`,
+      );
     }
 
     // Check for duplicate code
-    const existingByCode = await this.dataDomainRepository.existsByCode(code);
+    const existingByCode = await this.dataDomainRepository.existsByCode(
+      code.toUpperCase(),
+    );
     if (existingByCode) {
-      throw new Error("A data domain with this code already exists");
+      throw new ValidationError(
+        `Data domain with code ${code.toUpperCase()} already exists`,
+      );
     }
 
     // Create data domain entity
     const dataDomain = DataDomain.create({
-      name: request.name,
+      name: trimmedName ?? request.name,
       code,
       description: request.description,
       isActive: request.isActive,

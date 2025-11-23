@@ -21,10 +21,12 @@ import type { ICodeGeneratorService } from "@/core/services/code-generator.servi
 class MockDataDomainRepository implements Partial<IDataDomainRepository> {
   private dataDomains = new Map<string, DataDomain>();
   private codes = new Set<string>();
+  private names = new Set<string>();
 
   async create(dataDomain: DataDomain): Promise<DataDomain> {
     this.dataDomains.set(dataDomain.id, dataDomain);
     this.codes.add(dataDomain.code);
+    this.names.add(dataDomain.name);
     return dataDomain;
   }
 
@@ -43,9 +45,14 @@ class MockDataDomainRepository implements Partial<IDataDomainRepository> {
     return this.codes.has(code.toUpperCase());
   }
 
+  async existsByName(name: string): Promise<boolean> {
+    return this.names.has(name.trim());
+  }
+
   clear(): void {
     this.dataDomains.clear();
     this.codes.clear();
+    this.names.clear();
   }
 }
 

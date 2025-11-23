@@ -66,10 +66,13 @@ export class PrismaDataDomainRepository implements IDataDomainRepository {
     return data ? this.toDomain(data) : null;
   }
 
-  async findAll(): Promise<DataDomain[]> {
-    this.logger.debug("Finding all data domains");
+  async findAll(options?: {
+    includeInactive?: boolean;
+  }): Promise<DataDomain[]> {
+    this.logger.debug("Finding all data domains", { options });
 
     const data = await this.prisma.dataDomain.findMany({
+      where: options?.includeInactive ? undefined : { isActive: true },
       orderBy: { name: "asc" },
     });
 
@@ -124,9 +127,10 @@ export class PrismaDataDomainRepository implements IDataDomainRepository {
   }
 
   async existsByCode(code: string, excludeId?: string): Promise<boolean> {
+    const normalizedCode = code.toUpperCase();
     const count = await this.prisma.dataDomain.count({
       where: {
-        code,
+        code: normalizedCode,
         ...(excludeId && { id: { not: excludeId } }),
       },
     });

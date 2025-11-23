@@ -9,9 +9,12 @@
 
 import { inject, injectable } from "inversify";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
-import type { IRoleRepository } from "@/core/repositories/role.repository.interface";
+import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import { DI_TOKENS } from "@/di/types";
-import { PERMISSIONS, type PermissionKey } from "@/core/domain/value-objects/permission-key";
+import {
+  PERMISSIONS,
+  type PermissionKey,
+} from "@/core/domain/value-objects/permission-key";
 
 export interface PermissionUsageStats {
   permission: PermissionKey;
@@ -66,9 +69,10 @@ export class GetPermissionUsageStatsUseCase {
 
       return stats;
     } catch (error) {
-      this.logger.error("Failed to fetch permission usage statistics", {
-        error,
-      });
+      this.logger.error(
+        "Failed to fetch permission usage statistics",
+        error instanceof Error ? error : undefined,
+      );
       throw error;
     }
   }

@@ -20,7 +20,13 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type {
   RoleUsageStats,
@@ -28,7 +34,14 @@ import type {
   UserRoleStatsResult,
 } from "@/core/use-cases/rbac/analytics";
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8", "#82CA9D"];
+const COLORS = [
+  "#0088FE",
+  "#00C49F",
+  "#FFBB28",
+  "#FF8042",
+  "#8884D8",
+  "#82CA9D",
+];
 
 interface AnalyticsDashboardClientProps {
   roleUsageStats: RoleUsageStats[];
@@ -62,7 +75,9 @@ export function AnalyticsDashboardClient({
         },
         {
           name: "1 Role",
-          value: userRoleStats.usersByRoleCount.find((d) => d.roleCount === 1)?.userCount || 0,
+          value:
+            userRoleStats.usersByRoleCount.find((d) => d.roleCount === 1)
+              ?.userCount || 0,
         },
         {
           name: "2+ Roles",
@@ -72,7 +87,8 @@ export function AnalyticsDashboardClient({
     : [];
 
   // Users with conflicts
-  const usersWithConflicts = userRoleStats?.topUsersWithMostRoles.filter((u) => u.hasConflicts) || [];
+  const usersWithConflicts =
+    userRoleStats?.topUsersWithMostRoles.filter((u) => u.hasConflicts) || [];
 
   return (
     <div className="space-y-8">
@@ -86,7 +102,11 @@ export function AnalyticsDashboardClient({
           <CardContent>
             <p className="text-muted-foreground text-xs">
               {orphanedRoles.length} orphaned (
-              {((orphanedRoles.length / (roleUsageStats.length || 1)) * 100).toFixed(1)}%)
+              {(
+                (orphanedRoles.length / (roleUsageStats.length || 1)) *
+                100
+              ).toFixed(1)}
+              %)
             </p>
           </CardContent>
         </Card>
@@ -94,12 +114,19 @@ export function AnalyticsDashboardClient({
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Total Users</CardDescription>
-            <CardTitle className="text-3xl">{userRoleStats?.totalUsers || 0}</CardTitle>
+            <CardTitle className="text-3xl">
+              {userRoleStats?.totalUsers || 0}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground text-xs">
               {userRoleStats?.usersWithRoles || 0} with roles (
-              {(((userRoleStats?.usersWithRoles || 0) / (userRoleStats?.totalUsers || 1)) * 100).toFixed(1)}%)
+              {(
+                ((userRoleStats?.usersWithRoles || 0) /
+                  (userRoleStats?.totalUsers || 1)) *
+                100
+              ).toFixed(1)}
+              %)
             </p>
           </CardContent>
         </Card>
@@ -112,19 +139,27 @@ export function AnalyticsDashboardClient({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground text-xs">Max: {userRoleStats?.maxRolesPerUser || 0} roles</p>
+            <p className="text-muted-foreground text-xs">
+              Max: {userRoleStats?.maxRolesPerUser || 0} roles
+            </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Users with Conflicts</CardDescription>
-            <CardTitle className="text-3xl">{userRoleStats?.usersWithConflicts || 0}</CardTitle>
+            <CardTitle className="text-3xl">
+              {userRoleStats?.usersWithConflicts || 0}
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-muted-foreground text-xs">
-              {(((userRoleStats?.usersWithConflicts || 0) / (userRoleStats?.totalUsers || 1)) * 100).toFixed(1)}%
-              of all users
+              {(
+                ((userRoleStats?.usersWithConflicts || 0) /
+                  (userRoleStats?.totalUsers || 1)) *
+                100
+              ).toFixed(1)}
+              % of all users
             </p>
           </CardContent>
         </Card>
@@ -134,13 +169,20 @@ export function AnalyticsDashboardClient({
       <Card>
         <CardHeader>
           <CardTitle>Role Usage Distribution</CardTitle>
-          <CardDescription>Number of users assigned to each role</CardDescription>
+          <CardDescription>
+            Number of users assigned to each role
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={400}>
             <BarChart data={roleUsageStats}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="roleName" angle={-45} textAnchor="end" height={120} />
+              <XAxis
+                dataKey="roleName"
+                angle={-45}
+                textAnchor="end"
+                height={120}
+              />
               <YAxis />
               <Tooltip />
               <Legend />
@@ -155,7 +197,9 @@ export function AnalyticsDashboardClient({
         <Card>
           <CardHeader>
             <CardTitle>Orphaned Roles</CardTitle>
-            <CardDescription>Roles with no users assigned ({orphanedRoles.length} total)</CardDescription>
+            <CardDescription>
+              Roles with no users assigned ({orphanedRoles.length} total)
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -163,7 +207,9 @@ export function AnalyticsDashboardClient({
                 <thead>
                   <tr className="border-b">
                     <th className="pb-2 text-left font-semibold">Role Name</th>
-                    <th className="pb-2 text-left font-semibold">Display Name</th>
+                    <th className="pb-2 text-left font-semibold">
+                      Display Name
+                    </th>
                     <th className="pb-2 text-left font-semibold">Status</th>
                   </tr>
                 </thead>
@@ -171,7 +217,9 @@ export function AnalyticsDashboardClient({
                   {orphanedRoles.map((role) => (
                     <tr key={role.roleId} className="border-b">
                       <td className="py-2">
-                        <code className="bg-muted rounded px-2 py-1 text-sm">{role.roleName}</code>
+                        <code className="bg-muted rounded px-2 py-1 text-sm">
+                          {role.roleName}
+                        </code>
                       </td>
                       <td className="py-2">{role.roleDisplayName}</td>
                       <td className="py-2">
@@ -191,15 +239,24 @@ export function AnalyticsDashboardClient({
         <Card>
           <CardHeader>
             <CardTitle>Top 10 Most Used Permissions</CardTitle>
-            <CardDescription>Permissions assigned to the most roles</CardDescription>
+            <CardDescription>
+              Permissions assigned to the most roles
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {topPermissions.map((perm, index) => (
-                <div key={perm.permission} className="flex items-center justify-between">
+                <div
+                  key={perm.permission}
+                  className="flex items-center justify-between"
+                >
                   <div className="flex items-center gap-2">
-                    <span className="text-muted-foreground text-sm font-medium">#{index + 1}</span>
-                    <code className="bg-muted rounded px-2 py-1 text-xs">{perm.permission}</code>
+                    <span className="text-muted-foreground text-sm font-medium">
+                      #{index + 1}
+                    </span>
+                    <code className="bg-muted rounded px-2 py-1 text-xs">
+                      {perm.permission}
+                    </code>
                   </div>
                   <Badge>{perm.roleCount} roles</Badge>
                 </div>
@@ -211,13 +268,20 @@ export function AnalyticsDashboardClient({
         <Card>
           <CardHeader>
             <CardTitle>Least Used Permissions</CardTitle>
-            <CardDescription>Permissions assigned to the fewest roles</CardDescription>
+            <CardDescription>
+              Permissions assigned to the fewest roles
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               {leastPermissions.map((perm) => (
-                <div key={perm.permission} className="flex items-center justify-between">
-                  <code className="bg-muted rounded px-2 py-1 text-xs">{perm.permission}</code>
+                <div
+                  key={perm.permission}
+                  className="flex items-center justify-between"
+                >
+                  <code className="bg-muted rounded px-2 py-1 text-xs">
+                    {perm.permission}
+                  </code>
                   <Badge variant="outline">{perm.roleCount} roles</Badge>
                 </div>
               ))}
@@ -230,7 +294,9 @@ export function AnalyticsDashboardClient({
       <Card>
         <CardHeader>
           <CardTitle>User Role Distribution</CardTitle>
-          <CardDescription>Distribution of users by number of roles assigned</CardDescription>
+          <CardDescription>
+            Distribution of users by number of roles assigned
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
@@ -240,13 +306,18 @@ export function AnalyticsDashboardClient({
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
+                label={({ name, value, percent }) =>
+                  `${name}: ${value} (${((percent ?? 0) * 100).toFixed(0)}%)`
+                }
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="value"
               >
                 {userRoleDistribution.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Pie>
               <Tooltip />
@@ -261,7 +332,8 @@ export function AnalyticsDashboardClient({
           <CardHeader>
             <CardTitle>Users with Role Conflicts</CardTitle>
             <CardDescription>
-              Users with conflicting role assignments ({usersWithConflicts.length} total)
+              Users with conflicting role assignments (
+              {usersWithConflicts.length} total)
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -285,7 +357,10 @@ export function AnalyticsDashboardClient({
                       <td className="py-2">
                         <div className="flex flex-wrap gap-1">
                           {user.roleNames.map((role) => (
-                            <code key={role} className="bg-muted rounded px-2 py-1 text-xs">
+                            <code
+                              key={role}
+                              className="bg-muted rounded px-2 py-1 text-xs"
+                            >
                               {role}
                             </code>
                           ))}

@@ -6,6 +6,7 @@
  */
 
 import { v4 as uuid } from "uuid";
+import { ValidationError } from "../errors/validation.error";
 
 export interface CreateDataDomainProps {
   name: string;
@@ -111,23 +112,28 @@ export class DataDomain {
   // Validation methods
   private static validateName(name: string): void {
     if (!name || name.trim() === "") {
-      throw new Error("Data domain name is required");
+      throw new ValidationError("Data domain name is required");
     }
-    if (name.length > 255) {
-      throw new Error("Data domain name must not exceed 255 characters");
+    if (name.trim().length > 255) {
+      throw new ValidationError(
+        "Data domain name must not exceed 255 characters",
+      );
     }
   }
 
   private static validateCode(code: string): void {
     if (!code || code.trim() === "") {
-      throw new Error("Data domain code is required");
+      throw new ValidationError("Data domain code is required");
     }
-    if (code.length > 50) {
-      throw new Error("Data domain code must not exceed 50 characters");
+    const trimmed = code.trim();
+    if (trimmed.length > 50) {
+      throw new ValidationError(
+        "Data domain code must not exceed 50 characters",
+      );
     }
-    if (!/^[A-Z0-9_-]+$/i.test(code)) {
-      throw new Error(
-        "Data domain code must contain only letters, numbers, hyphens, and underscores",
+    if (!/^[A-Z0-9_-]+$/i.test(trimmed)) {
+      throw new ValidationError(
+        "Data domain code must contain only alphanumeric characters, hyphens, and underscores",
       );
     }
   }

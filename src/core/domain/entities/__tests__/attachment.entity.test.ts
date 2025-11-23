@@ -321,7 +321,7 @@ describe("Attachment Entity", () => {
         targetId: "contract-123",
         fileName: "contract.pdf",
         filePath: "uploads/contract.pdf",
-        sizeBytes: BigInt(1024 * 1024 * 2.3), // 2.3 MB
+        sizeBytes: (1024n * 1024n * 23n) / 10n, // ~2.3 MB
         attachmentTypeId: "type-1",
         uploadedById: "user-1",
       });
@@ -337,7 +337,7 @@ describe("Attachment Entity", () => {
         targetId: "asset-123",
         fileName: "large-file.zip",
         filePath: "uploads/large-file.zip",
-        sizeBytes: BigInt(1024 * 1024 * 1024 * 1.5), // 1.5 GB
+        sizeBytes: (1024n * 1024n * 1024n * 15n) / 10n, // 1.5 GB
         attachmentTypeId: "type-1",
         uploadedById: "user-1",
       });

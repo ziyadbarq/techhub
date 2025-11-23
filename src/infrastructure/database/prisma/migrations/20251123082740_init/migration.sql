@@ -49,6 +49,30 @@ CREATE TYPE "PromptBlockCategory" AS ENUM ('CORE_SYNTAX', 'CONTENT_GUIDELINES', 
 -- CreateEnum
 CREATE TYPE "PromptPurpose" AS ENUM ('OUTLINE', 'CONTENT', 'THEME', 'REVIEW', 'REFINEMENT');
 
+-- CreateEnum
+CREATE TYPE "ServiceType" AS ENUM ('APPLICATION', 'SERVER', 'NETWORK', 'DATABASE', 'ENDPOINT', 'CLOUD_SERVICE', 'API', 'MIDDLEWARE', 'STORAGE', 'OTHER');
+
+-- CreateEnum
+CREATE TYPE "ServiceStatus" AS ENUM ('PRODUCTION', 'UAT', 'DR', 'DEVELOPMENT', 'RETIRED', 'PLANNED');
+
+-- CreateEnum
+CREATE TYPE "DataConfidentiality" AS ENUM ('PUBLIC', 'INTERNAL', 'CONFIDENTIAL', 'RESTRICTED');
+
+-- CreateEnum
+CREATE TYPE "BusinessImpactLevel" AS ENUM ('HIGH', 'MEDIUM', 'LOW');
+
+-- CreateEnum
+CREATE TYPE "CriticalityLevel" AS ENUM ('CRITICAL', 'HIGH', 'MEDIUM', 'LOW');
+
+-- CreateEnum
+CREATE TYPE "OwnershipType" AS ENUM ('TECHNICAL', 'PRODUCT', 'BUSINESS');
+
+-- CreateEnum
+CREATE TYPE "ServiceLocation" AS ENUM ('ON_PREM', 'OCI_CLOUD', 'GCP_CLOUD', 'AWS_CLOUD', 'HYBRID');
+
+-- CreateEnum
+CREATE TYPE "AssetRelationship" AS ENUM ('HOSTS', 'SUPPORTS', 'DEPENDS_ON', 'MONITORS', 'BACKS_UP');
+
 -- CreateTable
 CREATE TABLE "users" (
     "id" TEXT NOT NULL,
@@ -122,6 +146,7 @@ CREATE TABLE "roles" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "createdBy" TEXT,
+    "parentId" TEXT,
 
     CONSTRAINT "roles_pkey" PRIMARY KEY ("id")
 );
@@ -178,6 +203,18 @@ CREATE TABLE "audit_logs" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "audit_logs_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "code_sequences" (
+    "id" TEXT NOT NULL,
+    "entityType" TEXT NOT NULL,
+    "prefix" TEXT NOT NULL,
+    "lastNumber" INTEGER NOT NULL DEFAULT 0,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "code_sequences_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -320,6 +357,18 @@ CREATE TABLE "vendor_contacts" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "vendor_contacts_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "exchange_rates" (
+    "id" TEXT NOT NULL,
+    "currency" TEXT NOT NULL,
+    "rateToSAR" DECIMAL(10,6) NOT NULL,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "exchange_rates_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -674,6 +723,7 @@ CREATE TABLE "maintenance_records" (
     "status" TEXT NOT NULL DEFAULT 'SCHEDULED',
     "notes" TEXT,
     "cost" DECIMAL(12,2),
+    "currency" TEXT,
     "partsUsed" JSONB,
     "nextMaintenanceDate" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -836,6 +886,97 @@ CREATE TABLE "asset_reservation_conflicts" (
     "resolution_note" TEXT,
 
     CONSTRAINT "asset_reservation_conflicts_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "business_processes" (
+    "id" TEXT NOT NULL,
+    "code" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "category" TEXT,
+    "metadata" JSONB,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "business_processes_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "services" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "serviceType" "ServiceType" NOT NULL,
+    "description" TEXT,
+    "businessPurpose" TEXT,
+    "gitlabRepoUrl" TEXT,
+    "dataConfidentiality" "DataConfidentiality" NOT NULL DEFAULT 'INTERNAL',
+    "businessImpactLevel" "BusinessImpactLevel" NOT NULL DEFAULT 'MEDIUM',
+    "criticality" "CriticalityLevel" NOT NULL DEFAULT 'MEDIUM',
+    "isEssentialService" BOOLEAN NOT NULL DEFAULT false,
+    "deploymentDate" TIMESTAMP(3),
+    "currentStatus" "ServiceStatus" NOT NULL DEFAULT 'PRODUCTION',
+    "lastPatchDate" TIMESTAMP(3),
+    "plannedDecommissionDate" TIMESTAMP(3),
+    "vendorId" TEXT,
+    "slaDetails" JSONB,
+    "businessProcessId" TEXT,
+    "isInCentralRegister" BOOLEAN NOT NULL DEFAULT true,
+    "complianceNotes" TEXT,
+    "metadata" JSONB,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "createdBy" TEXT,
+    "updatedBy" TEXT,
+
+    CONSTRAINT "services_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "service_ownerships" (
+    "id" TEXT NOT NULL,
+    "serviceId" TEXT NOT NULL,
+    "personId" TEXT NOT NULL,
+    "ownershipType" "OwnershipType" NOT NULL,
+    "isPrimary" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "service_ownerships_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "service_infrastructure" (
+    "id" TEXT NOT NULL,
+    "serviceId" TEXT NOT NULL,
+    "location" "ServiceLocation" NOT NULL,
+    "cloudProvider" TEXT,
+    "compartment" TEXT,
+    "project" TEXT,
+    "region" TEXT,
+    "ipAddress" TEXT,
+    "hostname" TEXT,
+    "backupEnabled" BOOLEAN NOT NULL DEFAULT false,
+    "backupSchedule" TEXT,
+    "lastBackupDate" TIMESTAMP(3),
+    "cloudProviderDetails" JSONB,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "service_infrastructure_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "service_assets" (
+    "id" TEXT NOT NULL,
+    "serviceId" TEXT NOT NULL,
+    "assetId" TEXT,
+    "relationship" "AssetRelationship" NOT NULL,
+    "description" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "service_assets_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -1029,6 +1170,8 @@ CREATE TABLE "attachment_types" (
     "name" TEXT NOT NULL,
     "code" TEXT NOT NULL,
     "description" TEXT,
+    "allowedExtensions" TEXT[],
+    "maxFileSizeMB" INTEGER NOT NULL,
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -1146,6 +1289,9 @@ CREATE INDEX "roles_name_idx" ON "roles"("name");
 CREATE INDEX "roles_isActive_idx" ON "roles"("isActive");
 
 -- CreateIndex
+CREATE INDEX "roles_parentId_idx" ON "roles"("parentId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "permissions_name_key" ON "permissions"("name");
 
 -- CreateIndex
@@ -1183,6 +1329,12 @@ CREATE INDEX "audit_logs_entityType_entityId_idx" ON "audit_logs"("entityType", 
 
 -- CreateIndex
 CREATE INDEX "audit_logs_action_idx" ON "audit_logs"("action");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "code_sequences_entityType_key" ON "code_sequences"("entityType");
+
+-- CreateIndex
+CREATE INDEX "code_sequences_entityType_idx" ON "code_sequences"("entityType");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "organization_units_code_key" ON "organization_units"("code");
@@ -1300,6 +1452,15 @@ CREATE INDEX "vendor_contacts_email_idx" ON "vendor_contacts"("email");
 
 -- CreateIndex
 CREATE INDEX "vendor_contacts_isPrimary_idx" ON "vendor_contacts"("isPrimary");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "exchange_rates_currency_key" ON "exchange_rates"("currency");
+
+-- CreateIndex
+CREATE INDEX "exchange_rates_currency_idx" ON "exchange_rates"("currency");
+
+-- CreateIndex
+CREATE INDEX "exchange_rates_isActive_idx" ON "exchange_rates"("isActive");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "lifecycle_models_name_key" ON "lifecycle_models"("name");
@@ -1758,6 +1919,78 @@ CREATE INDEX "asset_reservation_conflicts_conflicting_reservation_id_idx" ON "as
 CREATE INDEX "asset_reservation_conflicts_resolved_at_idx" ON "asset_reservation_conflicts"("resolved_at");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "business_processes_code_key" ON "business_processes"("code");
+
+-- CreateIndex
+CREATE INDEX "business_processes_code_idx" ON "business_processes"("code");
+
+-- CreateIndex
+CREATE INDEX "business_processes_category_idx" ON "business_processes"("category");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "services_name_key" ON "services"("name");
+
+-- CreateIndex
+CREATE INDEX "services_serviceType_idx" ON "services"("serviceType");
+
+-- CreateIndex
+CREATE INDEX "services_currentStatus_idx" ON "services"("currentStatus");
+
+-- CreateIndex
+CREATE INDEX "services_criticality_idx" ON "services"("criticality");
+
+-- CreateIndex
+CREATE INDEX "services_businessImpactLevel_idx" ON "services"("businessImpactLevel");
+
+-- CreateIndex
+CREATE INDEX "services_vendorId_idx" ON "services"("vendorId");
+
+-- CreateIndex
+CREATE INDEX "services_businessProcessId_idx" ON "services"("businessProcessId");
+
+-- CreateIndex
+CREATE INDEX "services_isEssentialService_idx" ON "services"("isEssentialService");
+
+-- CreateIndex
+CREATE INDEX "services_plannedDecommissionDate_idx" ON "services"("plannedDecommissionDate");
+
+-- CreateIndex
+CREATE INDEX "service_ownerships_serviceId_idx" ON "service_ownerships"("serviceId");
+
+-- CreateIndex
+CREATE INDEX "service_ownerships_personId_idx" ON "service_ownerships"("personId");
+
+-- CreateIndex
+CREATE INDEX "service_ownerships_ownershipType_idx" ON "service_ownerships"("ownershipType");
+
+-- CreateIndex
+CREATE INDEX "service_ownerships_isPrimary_idx" ON "service_ownerships"("isPrimary");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "service_ownerships_serviceId_personId_ownershipType_key" ON "service_ownerships"("serviceId", "personId", "ownershipType");
+
+-- CreateIndex
+CREATE INDEX "service_infrastructure_serviceId_idx" ON "service_infrastructure"("serviceId");
+
+-- CreateIndex
+CREATE INDEX "service_infrastructure_location_idx" ON "service_infrastructure"("location");
+
+-- CreateIndex
+CREATE INDEX "service_infrastructure_cloudProvider_idx" ON "service_infrastructure"("cloudProvider");
+
+-- CreateIndex
+CREATE INDEX "service_infrastructure_region_idx" ON "service_infrastructure"("region");
+
+-- CreateIndex
+CREATE INDEX "service_assets_serviceId_idx" ON "service_assets"("serviceId");
+
+-- CreateIndex
+CREATE INDEX "service_assets_assetId_idx" ON "service_assets"("assetId");
+
+-- CreateIndex
+CREATE INDEX "service_assets_relationship_idx" ON "service_assets"("relationship");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "contract_types_name_key" ON "contract_types"("name");
 
 -- CreateIndex
@@ -1960,6 +2193,9 @@ ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_fkey" FOREIGN KEY ("userI
 
 -- AddForeignKey
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "roles" ADD CONSTRAINT "roles_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "roles"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "role_permissions" ADD CONSTRAINT "role_permissions_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "roles"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -2212,6 +2448,27 @@ ALTER TABLE "asset_reservation_conflicts" ADD CONSTRAINT "asset_reservation_conf
 
 -- AddForeignKey
 ALTER TABLE "asset_reservation_conflicts" ADD CONSTRAINT "asset_reservation_conflicts_conflicting_reservation_id_fkey" FOREIGN KEY ("conflicting_reservation_id") REFERENCES "asset_reservations"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "services" ADD CONSTRAINT "services_vendorId_fkey" FOREIGN KEY ("vendorId") REFERENCES "vendors"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "services" ADD CONSTRAINT "services_businessProcessId_fkey" FOREIGN KEY ("businessProcessId") REFERENCES "business_processes"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "service_ownerships" ADD CONSTRAINT "service_ownerships_serviceId_fkey" FOREIGN KEY ("serviceId") REFERENCES "services"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "service_ownerships" ADD CONSTRAINT "service_ownerships_personId_fkey" FOREIGN KEY ("personId") REFERENCES "persons"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "service_infrastructure" ADD CONSTRAINT "service_infrastructure_serviceId_fkey" FOREIGN KEY ("serviceId") REFERENCES "services"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "service_assets" ADD CONSTRAINT "service_assets_serviceId_fkey" FOREIGN KEY ("serviceId") REFERENCES "services"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "service_assets" ADD CONSTRAINT "service_assets_assetId_fkey" FOREIGN KEY ("assetId") REFERENCES "assets"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "contracts" ADD CONSTRAINT "contracts_contractTypeId_fkey" FOREIGN KEY ("contractTypeId") REFERENCES "contract_types"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

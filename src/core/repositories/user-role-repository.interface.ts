@@ -36,6 +36,16 @@ export interface IUserRoleRepository {
   getUserPermissions(userId: string): Promise<PermissionKey[]>;
 
   /**
+   * Get all user-role assignments
+   */
+  findAll(options?: {
+    skip?: number;
+    take?: number;
+    orderBy?: "createdAt" | "expiresAt";
+    order?: "asc" | "desc";
+  }): Promise<UserRole[]>;
+
+  /**
    * Check if user has a specific role
    */
   hasRole(userId: string, roleId: string): Promise<boolean>;

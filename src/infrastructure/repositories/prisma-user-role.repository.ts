@@ -54,6 +54,32 @@ export class PrismaUserRoleRepository implements IUserRoleRepository {
   }
 
   /**
+   * Find all user-role assignments
+   */
+  async findAll(options?: {
+    skip?: number;
+    take?: number;
+    orderBy?: "createdAt" | "expiresAt";
+    order?: "asc" | "desc";
+  }): Promise<UserRole[]> {
+    const timer = this.logger.startTimer();
+
+    const userRoles = await this.prisma.userRole.findMany({
+      skip: options?.skip,
+      take: options?.take,
+      orderBy: {
+        [options?.orderBy ?? "createdAt"]: options?.order ?? "desc",
+      },
+    });
+
+    this.logger.timed("findAll", "UserRoles fetched", timer(), {
+      count: userRoles.length,
+    });
+
+    return userRoles.map((ur: PrismaUserRole) => this.toDomain(ur));
+  }
+
+  /**
    * Find all roles for a user
    */
   async findByUserId(userId: string): Promise<UserRole[]> {

@@ -10,10 +10,12 @@ import { DI_TOKENS } from "../types";
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
 import type { IUserRoleRepository } from "@/core/repositories/user-role-repository.interface";
+import type { IUserRepository } from "@/core/repositories/user-repository.interface";
 import type { IAuditLogRepository } from "@/core/repositories/audit-log-repository.interface";
 import { PrismaRoleRepository } from "@/infrastructure/repositories/prisma-role.repository";
 import { PrismaPermissionRepository } from "@/infrastructure/repositories/prisma-permission.repository";
 import { PrismaUserRoleRepository } from "@/infrastructure/repositories/prisma-user-role.repository";
+import { PrismaUserRepository } from "@/infrastructure/repositories/prisma-user.repository";
 import { PrismaAuditLogRepository } from "@/infrastructure/repositories/prisma-audit-log.repository";
 
 // Use Cases
@@ -65,6 +67,11 @@ export function bindRBACDependencies(container: Container): void {
   container
     .bind<IUserRoleRepository>(DI_TOKENS.IUserRoleRepository)
     .to(PrismaUserRoleRepository)
+    .inSingletonScope();
+
+  container
+    .bind<IUserRepository>(DI_TOKENS.IUserRepository)
+    .to(PrismaUserRepository)
     .inSingletonScope();
 
   container

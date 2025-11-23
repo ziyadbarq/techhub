@@ -10,9 +10,9 @@
 
 import { inject, injectable } from "inversify";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
-import type { IUserRoleRepository } from "@/core/repositories/user-role.repository.interface";
-import type { IUserRepository } from "@/core/repositories/user.repository.interface";
-import type { IRoleRepository } from "@/core/repositories/role.repository.interface";
+import type { IUserRoleRepository } from "@/core/repositories/user-role-repository.interface";
+import type { IUserRepository } from "@/core/repositories/user-repository.interface";
+import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import { DI_TOKENS } from "@/di/types";
 import { detectRoleConflicts } from "@/lib/rbac/role-conflicts";
 
@@ -61,7 +61,9 @@ export class GetUserRoleStatsUseCase {
       ]);
 
       // Create role map for lookups
-      const roleMap = new Map(roles.map((r) => [r.id, r]));
+      const roleMap = new Map<string, (typeof roles)[number]>(
+        roles.map((role) => [role.id, role]),
+      );
 
       // Group user roles by user ID
       const userRoleMap = new Map<string, typeof userRoles>();
@@ -102,8 +104,8 @@ export class GetUserRoleStatsUseCase {
 
           // Check for conflicts
           const roleNames = userRolesList
-            .map((ur) => roleMap.get(ur.roleId)?.name)
-            .filter((n): n is string => n !== undefined);
+            .map((userRole) => roleMap.get(userRole.roleId)?.name)
+            .filter((roleName): roleName is string => roleName !== undefined);
 
           const { hasConflicts } = detectRoleConflicts(roleNames);
           if (hasConflicts) {
@@ -153,7 +155,10 @@ export class GetUserRoleStatsUseCase {
 
       return stats;
     } catch (error) {
-      this.logger.error("Failed to fetch user role statistics", { error });
+      this.logger.error(
+        "Failed to fetch user role statistics",
+        error instanceof Error ? error : undefined,
+      );
       throw error;
     }
   }

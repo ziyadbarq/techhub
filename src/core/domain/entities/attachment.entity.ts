@@ -7,6 +7,7 @@
 
 import { v4 as uuid } from "uuid";
 import type { TargetObjectTypeEnum } from "@/generated/prisma";
+import { ValidationError } from "../errors/validation.error";
 
 export interface CreateAttachmentProps {
   attachmentTypeId: string;
@@ -67,7 +68,8 @@ export class Attachment {
   }
 
   set filePath(value: string) {
-    this.props.filePath = value;
+    Attachment.validateFilePath(value);
+    this.props.filePath = value.trim();
   }
 
   get mimeType(): string | null {
@@ -176,13 +178,21 @@ export class Attachment {
       unitIndex++;
     }
 
-    return `${size.toFixed(2)} ${units[unitIndex]}`;
+    if (unitIndex === 0) {
+      return `${size} ${units[unitIndex]}`;
+    }
+
+    const rounded = Number(size.toFixed(1));
+    return `${rounded} ${units[unitIndex]}`;
   }
 
   /**
    * Update target (polymorphic association)
    */
-  public updateTarget(targetType: TargetObjectTypeEnum, targetId: string): void {
+  public updateTarget(
+    targetType: TargetObjectTypeEnum,
+    targetId: string,
+  ): void {
     this.props.targetType = targetType;
     this.props.targetId = targetId;
   }
@@ -191,6 +201,7 @@ export class Attachment {
   public static create(props: CreateAttachmentProps): Attachment {
     // Validations
     Attachment.validateFileName(props.fileName);
+    Attachment.validateFilePath(props.filePath);
     if (props.sizeBytes !== null && props.sizeBytes !== undefined) {
       Attachment.validateFileSize(props.sizeBytes);
     }
@@ -204,7 +215,7 @@ export class Attachment {
       targetType: props.targetType,
       targetId: props.targetId,
       fileName: props.fileName.trim(),
-      filePath: props.filePath,
+      filePath: props.filePath.trim(),
       mimeType: props.mimeType ?? null,
       sizeBytes: props.sizeBytes ?? null,
       uploadedById: props.uploadedById,
@@ -221,31 +232,37 @@ export class Attachment {
   // Validation methods
   private static validateFileName(fileName: string): void {
     if (!fileName || fileName.trim() === "") {
-      throw new Error("File name is required");
+      throw new ValidationError("File name is required");
     }
-    if (fileName.length > 255) {
-      throw new Error("File name must not exceed 255 characters");
+    if (fileName.trim().length > 255) {
+      throw new ValidationError("File name must not exceed 255 characters");
+    }
+  }
+
+  private static validateFilePath(filePath: string): void {
+    if (!filePath || filePath.trim() === "") {
+      throw new ValidationError("File path is required");
     }
   }
 
   private static validateFileSize(sizeBytes: bigint): void {
-    if (sizeBytes <= BigInt(0)) {
-      throw new Error("File size must be greater than 0");
+    if (sizeBytes < BigInt(0)) {
+      throw new ValidationError("File size cannot be negative");
     }
-    // Optional: Add max file size validation (e.g., 100MB)
-    const maxSize = BigInt(100 * 1024 * 1024); // 100MB
+    // Optional: Add max file size validation (raise to 5GB for flexibility)
+    const maxSize = BigInt(5) * BigInt(1024) * BigInt(1024) * BigInt(1024); // 5GB
     if (sizeBytes > maxSize) {
-      throw new Error("File size must not exceed 100MB");
+      throw new ValidationError("File size must not exceed 5GB");
     }
   }
 
   private static validateMimeType(mimeType: string): void {
     if (!mimeType || mimeType.trim() === "") {
-      throw new Error("MIME type cannot be empty");
+      throw new ValidationError("MIME type cannot be empty");
     }
     // Basic MIME type validation (format: type/subtype)
     if (!/^[a-zA-Z0-9]+\/[a-zA-Z0-9+.-]+$/.test(mimeType)) {
-      throw new Error("Invalid MIME type format");
+      throw new ValidationError("Invalid MIME type format");
     }
   }
 }
