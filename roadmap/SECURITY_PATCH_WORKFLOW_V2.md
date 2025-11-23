@@ -90,6 +90,26 @@ PENDING_OWNER_APPROVAL → APPROVED → IN_PROGRESS → COMPLETED
 
 ## Database Schema Changes
 
+### Service Model Extension (Optional Field)
+
+```prisma
+model Service {
+  // ... existing fields
+
+  // NEW: Patch tracking opt-out
+  requiresPatchTracking Boolean @default(true) // Set false for static/SaaS services
+
+  @@index([requiresPatchTracking])
+}
+```
+
+**Services that should set `requiresPatchTracking = false`**:
+- Static content (landing pages, documentation sites)
+- Third-party SaaS (external services we don't control)
+- Pure infrastructure (switches, routers with vendor-managed firmware)
+- Retired services (status = RETIRED)
+- Read-only databases (replicas, archives)
+
 ### MaintenanceRecord Model Extensions
 
 ```prisma
@@ -166,7 +186,9 @@ const overdueServices = await serviceRepo.find({
   ],
   currentStatus: ["PRODUCTION", "UAT", "DR"],
   serviceType: ["APPLICATION", "DATABASE", "API", "SERVER", "MIDDLEWARE"],
-  isEssentialService: true // Prioritize essential services
+  requiresPatchTracking: true, // NEW: Skip static/SaaS services
+  // Optional: Prioritize essential services first
+  // isEssentialService: true
 });
 
 for (const service of overdueServices) {
@@ -183,9 +205,21 @@ for (const service of overdueServices) {
     isPrimary: true
   });
 
+  // Skip if no technical owner assigned
+  if (!technicalOwners.length) {
+    logger.warn(`Service ${service.name} has no technical owner`);
+    continue;
+  }
+
   const assets = await serviceAssetRepo.findByService(service.id, {
     relationships: ["HOSTS", "SUPPORTS"]
   });
+
+  // Skip if service has no assets (might be SaaS or misconfigured)
+  if (!assets.length) {
+    logger.warn(`Service ${service.name} has no linked assets`);
+    continue;
+  }
 
   for (const asset of assets) {
     await createPatchRequest({
@@ -258,9 +292,11 @@ sendEscalationEmail(overdueApprovals);
 ## Implementation Phases
 
 ### Phase 1: Schema (0.5 days)
-- Add fields to MaintenanceRecord
-- Update enums
+- Add `requiresPatchTracking` boolean to Service model (default true)
+- Add approval workflow fields to MaintenanceRecord
+- Update MaintenanceStatus/Type enums
 - Migrate database
+- Update seed data (set requiresPatchTracking=false for static/SaaS services)
 
 ### Phase 2: Use Cases (1 day)
 - Create 7 service-centric use cases
@@ -288,7 +324,10 @@ sendEscalationEmail(overdueApprovals);
 ## Testing Checklist
 
 - [ ] Service without lastPatchDate → detected as overdue
+- [ ] Service with requiresPatchTracking=false → NOT detected
 - [ ] Background job creates patch requests
+- [ ] Service without technical owner → skipped with warning
+- [ ] Service without linked assets → skipped with warning
 - [ ] Technical owner sees pending patches in dashboard
 - [ ] Owner approves → appears on security dashboard
 - [ ] Security completes → Service.lastPatchDate updated
@@ -308,6 +347,8 @@ sendEscalationEmail(overdueApprovals);
 | Add serviceId to MaintenanceRecord | Direct link cleaner than ServiceAsset indirection |
 | No Asset.lastPatchDate | Avoid duplication - Service owns patch date |
 | Background job at 2 AM | Off-hours detection, Riyadh timezone |
+| requiresPatchTracking flag | Opt-out for static sites, SaaS, non-patchable services |
+| Skip services without owners/assets | Prevents false positives, logs warnings for review |
 
 ---
 
