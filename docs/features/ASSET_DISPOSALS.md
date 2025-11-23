@@ -47,7 +47,7 @@ COMPLETED       → Disposal finished with certificate
 2. `disposal_approvals` - Approval tracking per approver
 3. `disposal_documents` - Supporting documents
 
-## Use Cases (11)
+## Use Cases (12)
 
 - Create, Get, List, Delete disposal requests
 - Approve, Reject disposal

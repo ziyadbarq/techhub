@@ -47,7 +47,7 @@ COMPLETED  → End date reached, asset returned
 1. `asset_reservations` - Reservation records with date ranges
 2. `asset_reservation_conflicts` - Detected conflicts between reservations
 
-## Use Cases (17)
+## Use Cases (16)
 
 **Management**: Create, Get, List, Update, Delete reservations
 **State Changes**: Cancel, Confirm, Start, Complete reservation

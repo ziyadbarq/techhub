@@ -336,7 +336,7 @@ All Foundation entities follow this pattern:
 
 ```typescript
 export class EntityName {
-  private _id?: bigint;
+  private _id?: string;
   private _field1: string;
   private _field2: number;
   // ... private fields
@@ -360,7 +360,7 @@ export class EntityName {
   }
 
   // Getters (no setters - immutability)
-  get id(): bigint | undefined {
+  get id(): string | undefined {
     return this._id;
   }
 
@@ -395,7 +395,7 @@ export class EntityName {
   }
 
   // ID setter (called only by repository after persistence)
-  setId(id: bigint): void {
+  setId(id: string): void {
     if (this._id !== undefined) {
       throw new Error("Cannot change entity ID");
     }
@@ -419,13 +419,13 @@ export class EntityName {
 
 ```typescript
 export class OrganizationUnit {
-  private _id?: bigint;
+  private _id?: string;
   private _name: string;
   private _code: string;
-  private _parentId?: bigint;
+  private _parentId?: string;
   private _unitType: OrganizationUnitType;
   private _level: number;
-  private _managerId?: bigint;
+  private _managerId?: string;
   private _costCenter?: string;
   private _isActive: boolean;
   private _note?: string;
@@ -498,12 +498,12 @@ export class OrganizationUnit {
     this._name = name.trim();
   }
 
-  updateManager(managerId: bigint | undefined): void {
+  updateManager(managerId: string | undefined): void {
     this._managerId = managerId;
   }
 
   // Getters
-  get id(): bigint | undefined {
+  get id(): string | undefined {
     return this._id;
   }
   get name(): string {
@@ -512,7 +512,7 @@ export class OrganizationUnit {
   get code(): string {
     return this._code;
   }
-  get parentId(): bigint | undefined {
+  get parentId(): string | undefined {
     return this._parentId;
   }
   get unitType(): OrganizationUnitType {
@@ -521,7 +521,7 @@ export class OrganizationUnit {
   get level(): number {
     return this._level;
   }
-  get managerId(): bigint | undefined {
+  get managerId(): string | undefined {
     return this._managerId;
   }
   get costCenter(): string | undefined {
@@ -554,7 +554,7 @@ export class OrganizationUnit {
     };
   }
 
-  setId(id: bigint): void {
+  setId(id: string): void {
     if (this._id !== undefined) {
       throw new Error("Cannot change organization unit ID");
     }
@@ -583,7 +583,7 @@ export interface IEntityRepository {
   create(entity: Entity): Promise<Entity>;
 
   // Read
-  findById(id: bigint): Promise<Entity | null>;
+  findById(id: string): Promise<Entity | null>;
   findByCode(code: string): Promise<Entity | null>;
   findAll(options?: FindAllOptions): Promise<Entity[]>;
 
@@ -591,14 +591,14 @@ export interface IEntityRepository {
   update(entity: Entity): Promise<Entity>;
 
   // Delete
-  delete(id: bigint): Promise<void>;
+  delete(id: string): Promise<void>;
 
   // Query methods
   search(options: SearchOptions): Promise<PaginatedResult<Entity>>;
 
   // Validation methods
-  existsByCode(code: string, excludeId?: bigint): Promise<boolean>;
-  existsByName(name: string, excludeId?: bigint): Promise<boolean>;
+  existsByCode(code: string, excludeId?: string): Promise<boolean>;
+  existsByName(name: string, excludeId?: string): Promise<boolean>;
 
   // Domain-specific methods
   // ... entity-specific queries
@@ -633,24 +633,24 @@ export interface PaginatedResult<T> {
 export interface IOrganizationUnitRepository {
   // CRUD
   create(orgUnit: OrganizationUnit): Promise<OrganizationUnit>;
-  findById(id: bigint): Promise<OrganizationUnit | null>;
+  findById(id: string): Promise<OrganizationUnit | null>;
   findByCode(code: string): Promise<OrganizationUnit | null>;
   findAll(options?: FindAllOptions): Promise<OrganizationUnit[]>;
   update(orgUnit: OrganizationUnit): Promise<OrganizationUnit>;
-  delete(id: bigint): Promise<void>;
+  delete(id: string): Promise<void>;
 
   // Query
   search(options: SearchOptions): Promise<PaginatedResult<OrganizationUnit>>;
 
   // Hierarchy
-  findChildren(parentId: bigint): Promise<OrganizationUnit[]>;
-  findParent(id: bigint): Promise<OrganizationUnit | null>;
-  hasChildren(id: bigint): Promise<boolean>;
+  findChildren(parentId: string): Promise<OrganizationUnit[]>;
+  findParent(id: string): Promise<OrganizationUnit | null>;
+  hasChildren(id: string): Promise<boolean>;
 
   // Validation
-  existsByCode(code: string, excludeId?: bigint): Promise<boolean>;
-  existsByName(name: string, excludeId?: bigint): Promise<boolean>;
-  hasPersons(id: bigint): Promise<boolean>;
+  existsByCode(code: string, excludeId?: string): Promise<boolean>;
+  existsByName(name: string, excludeId?: string): Promise<boolean>;
+  hasPersons(id: string): Promise<boolean>;
 }
 ```
 
@@ -710,7 +710,7 @@ export class PrismaEntityRepository implements IEntityRepository {
     }
   }
 
-  async findById(id: bigint): Promise<Entity | null> {
+  async findById(id: string): Promise<Entity | null> {
     const timer = this.logger.startTimer();
 
     try {
@@ -772,7 +772,7 @@ export class PrismaOrganizationUnitRepository
 {
   // ...
 
-  async findChildren(parentId: bigint): Promise<OrganizationUnit[]> {
+  async findChildren(parentId: string): Promise<OrganizationUnit[]> {
     const timer = this.logger.startTimer();
 
     try {
@@ -795,7 +795,7 @@ export class PrismaOrganizationUnitRepository
     }
   }
 
-  async findParent(id: bigint): Promise<OrganizationUnit | null> {
+  async findParent(id: string): Promise<OrganizationUnit | null> {
     const timer = this.logger.startTimer();
 
     try {
@@ -820,7 +820,7 @@ export class PrismaOrganizationUnitRepository
     }
   }
 
-  async hasChildren(id: bigint): Promise<boolean> {
+  async hasChildren(id: string): Promise<boolean> {
     const timer = this.logger.startTimer();
 
     try {
@@ -1333,7 +1333,7 @@ export async function createOrganizationUnitAction(
 }
 
 export async function getOrganizationUnitAction(
-  id: bigint,
+  id: string,
 ): Promise<ActionResponse<OrganizationUnitDTO>> {
   try {
     const container = getContainer();
@@ -1381,7 +1381,7 @@ export async function listOrganizationUnitsAction(
 }
 
 export async function updateOrganizationUnitAction(
-  id: bigint,
+  id: string,
   data: unknown,
 ): Promise<ActionResponse<OrganizationUnitDTO>> {
   try {
@@ -1399,7 +1399,7 @@ export async function updateOrganizationUnitAction(
 }
 
 export async function deleteOrganizationUnitAction(
-  id: bigint,
+  id: string,
 ): Promise<ActionResponse<void>> {
   try {
     const container = getContainer();
@@ -2042,7 +2042,7 @@ const orgUnitCache = new LRUCache<string, OrganizationUnit>({
   ttl: 1000 * 60 * 5 // 5 minutes
 });
 
-async findById(id: bigint): Promise<OrganizationUnit | null> {
+async findById(id: string): Promise<OrganizationUnit | null> {
   const cacheKey = `orgunit:${id}`;
 
   // Check cache
