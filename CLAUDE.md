@@ -12,6 +12,7 @@ This file provides high-level guidance when working with this repository.
 
 **Current Implementation**:
 
+- **System Setup**: First-time installation wizard (`/setup`) and admin dashboard (`/admin/system-setup`) for system health, RBAC seeding, and database operations
 - **Layer 1 (Foundation)**: 12 core entities - OrganizationUnit, Person, Role, Location, Vendor, Lifecycle models, Field definitions, **ExchangeRate** (multi-currency support)
 - **Layer 2 (Asset/Inventory)**: 9 entities - Asset, AssetCategory, AssetModel, AssetAssignment, StockLocation, StockMovement, Warranty, MaintenanceSchedule, MaintenanceRecord
 - **Layer 3 (Advanced ITAM & Extensions)**: 9 modules (~31 entities)
@@ -62,6 +63,7 @@ npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastruc
 
 ### Development Guides
 
+- [SYSTEM_SETUP.md](docs/features/SYSTEM_SETUP.md) - First-time installation wizard and admin dashboard for system health monitoring
 - [ENTITY_REFERENCE.md](docs/guides/ENTITY_REFERENCE.md) - Entity quick reference, validation standards
 - [CODE_GENERATION.md](docs/guides/CODE_GENERATION.md) - Auto-generation of codes/tags for entities with manual override
 - [FOUNDATION_LAYER.md](docs/guides/FOUNDATION_LAYER.md) - Foundation entities user guide
