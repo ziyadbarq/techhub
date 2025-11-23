@@ -628,6 +628,13 @@ export const navGroups: NavGroup[] = [
         permission: PERMISSIONS.USERS_MANAGE,
       },
       {
+        title: "System Setup",
+        href: "/admin/system-setup",
+        icon: ServerCog,
+        description: "System health, diagnostics, and database operations",
+        permission: PERMISSIONS.USERS_MANAGE,
+      },
+      {
         title: "RBAC Analytics",
         href: "/rbac-analytics",
         icon: LayoutDashboard,

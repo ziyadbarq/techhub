@@ -71,11 +71,11 @@ export class AssignFirstAdminUseCase {
       });
       return {
         success: false,
-        message: "System Administrator already exists.",
+        message: "System Administrator user already exists.",
       };
     }
 
-    // Check if user already has system admin role
+    // Check if user already has system-administrator role
     const userRoles = await this.userRoleRepository.findByUserId(userId);
     const hasAdminRole = userRoles.some((ur) => ur.roleId === adminRole.id);
 

@@ -38,7 +38,7 @@ export class CheckFirstAdminUseCase {
       };
     }
 
-    // Check if any user has system admin role
+    // Check if any user has system-administrator role
     const adminUsers = await this.userRoleRepository.findByRoleId(adminRole.id);
 
     return {

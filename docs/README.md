@@ -88,6 +88,7 @@ Cross-cutting features and utilities:
 
 #### Core Technical Guides
 
+- **[System Setup](./features/SYSTEM_SETUP.md)** - First-time installation wizard and admin dashboard for system health, diagnostics, and database operations
 - **[Prisma Guide](./guides/PRISMA_GUIDE.md)** - Complete Prisma 7 patterns, connection pool management, type-safe imports, and repository implementation
 - **[Next.js 16 Guide](./guides/NEXTJS_16_GUIDE.md)** - Next.js 16 async request APIs, rendering modes, Turbopack, and migration patterns
 - **[Code Generation System](./guides/CODE_GENERATION.md)** - Automatic code/tag generation for entities with database-backed sequences and manual override
