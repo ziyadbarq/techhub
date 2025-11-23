@@ -69,22 +69,22 @@ npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastruc
 - [LOGGING.md](docs/guides/LOGGING.md) - Structured logging with Pino
 - [BUILD_OPTIMIZATION.md](docs/guides/BUILD_OPTIMIZATION.md) - Turbopack, bundle analysis
 - [UI_UX_IMPROVEMENTS.md](docs/guides/UI_UX_IMPROVEMENTS.md) - UI/UX enhancements and navigation improvements
-- [GLOBAL_SEARCH.md](docs/GLOBAL_SEARCH.md) - Command palette global search with keyboard shortcuts (⌘K)
+- [GLOBAL_SEARCH.md](docs/features/GLOBAL_SEARCH.md) - Command palette global search with keyboard shortcuts (⌘K)
 
 ### Asset Layer (Layer 2)
 
-- [WARRANTY_SYSTEM.md](docs/WARRANTY_SYSTEM.md) - Complete warranty management implementation (reference for Asset layer features)
-- [MAINTENANCE_SYSTEM.md](docs/MAINTENANCE_SYSTEM.md) - Preventive maintenance schedules and records with workflow state management
+- [WARRANTY_SYSTEM.md](docs/features/WARRANTY_SYSTEM.md) - Complete warranty management implementation (reference for Asset layer features)
+- [MAINTENANCE_SYSTEM.md](docs/features/MAINTENANCE_SYSTEM.md) - Preventive maintenance schedules and records with workflow state management
 
 ### Advanced ITAM Layer (Layer 3)
 
-- [ITAM_FEATURES.md](docs/ITAM_FEATURES.md) - Complete guide to all 4 advanced ITAM modules
-- [ASSET_DISPOSALS.md](docs/ASSET_DISPOSALS.md) - Multi-step disposal workflow with approval chain and certificate generation
-- [ASSET_KITS.md](docs/ASSET_KITS.md) - Predefined asset bundles with checkout tracking and partial returns
-- [ASSET_RESERVATIONS.md](docs/ASSET_RESERVATIONS.md) - Future asset reservations with conflict detection and calendar view
-- [CMDB_GUIDE.md](docs/CMDB_GUIDE.md) - Configuration Management Database with dependency tracking
-- [GOVERNANCE_SYSTEM.md](docs/GOVERNANCE_SYSTEM.md) - Data governance, ownership tracking, and verification campaigns for SAMA compliance
-- [ATTACHMENTS_SYSTEM.md](docs/ATTACHMENTS_SYSTEM.md) - Polymorphic file attachments for compliance documentation and audit trails
+- [ITAM_FEATURES.md](docs/features/ITAM_FEATURES.md) - Complete guide to all 4 advanced ITAM modules
+- [ASSET_DISPOSALS.md](docs/features/ASSET_DISPOSALS.md) - Multi-step disposal workflow with approval chain and certificate generation
+- [ASSET_KITS.md](docs/features/ASSET_KITS.md) - Predefined asset bundles with checkout tracking and partial returns
+- [ASSET_RESERVATIONS.md](docs/features/ASSET_RESERVATIONS.md) - Future asset reservations with conflict detection and calendar view
+- [CMDB_GUIDE.md](docs/features/CMDB_GUIDE.md) - Configuration Management Database with dependency tracking
+- [GOVERNANCE_SYSTEM.md](docs/features/GOVERNANCE_SYSTEM.md) - Data governance, ownership tracking, and verification campaigns for SAMA compliance
+- [ATTACHMENTS_SYSTEM.md](docs/features/ATTACHMENTS_SYSTEM.md) - Polymorphic file attachments for compliance documentation and audit trails
 
 ### In-App Documentation (MDX)
 

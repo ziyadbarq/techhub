@@ -4,15 +4,9 @@ Welcome to the comprehensive documentation for Barq Assets. This index provides 
 
 ## 🚀 Start Here
 
-**Current System State:**
-
-- [CURRENT_STATUS.md](./CURRENT_STATUS.md) - What's working now, navigation structure, type safety status
-- [TODO.md](./TODO.md) - Implementation priorities and next steps
-
 **Project Overview:**
 
 - [Main README](../README.md) - Project overview, features, and quick start guide
-- [STATUS.md](../STATUS.md) - Quick status at a glance (root level)
 - [CLAUDE.md](../CLAUDE.md) - Architecture guide and development workflows for AI assistants
 
 ## 🏗️ Architecture & Technical Design
@@ -42,18 +36,26 @@ Core building blocks for the CMDB/ITAM system:
 
 Asset management, inventory tracking, warranties, and maintenance:
 
-- [Warranty System](./WARRANTY_SYSTEM.md) - Complete warranty management implementation with expiration tracking
-- [Maintenance System](./MAINTENANCE_SYSTEM.md) - Preventive maintenance schedules and records with recurring schedules and workflow state management
+- [Warranty System](./features/WARRANTY_SYSTEM.md) - Complete warranty management implementation with expiration tracking
+- [Maintenance System](./features/MAINTENANCE_SYSTEM.md) - Preventive maintenance schedules and records with recurring schedules and workflow state management
 
 ### Advanced ITAM Layer (Layer 3)
 
 Advanced IT Asset Management features:
 
-- [ITAM Features Overview](./ITAM_FEATURES.md) - Complete guide to all advanced ITAM modules
-- [Asset Disposals](./ASSET_DISPOSALS.md) - Multi-step disposal workflow with approval chain and PDF certificate generation
-- [Asset Kits](./ASSET_KITS.md) - Predefined asset bundles with checkout tracking
-- [Asset Reservations](./ASSET_RESERVATIONS.md) - Future asset reservations with conflict detection and automated background jobs
-- [CMDB Guide](./CMDB_GUIDE.md) - Configuration Management Database with dependency tracking
+- [ITAM Features Overview](./features/ITAM_FEATURES.md) - Complete guide to all advanced ITAM modules
+- [Asset Disposals](./features/ASSET_DISPOSALS.md) - Multi-step disposal workflow with approval chain and PDF certificate generation
+- [Asset Kits](./features/ASSET_KITS.md) - Predefined asset bundles with checkout tracking
+- [Asset Reservations](./features/ASSET_RESERVATIONS.md) - Future asset reservations with conflict detection and automated background jobs
+- [CMDB Guide](./features/CMDB_GUIDE.md) - Configuration Management Database with dependency tracking
+- [Governance System](./features/GOVERNANCE_SYSTEM.md) - Data governance, ownership tracking, and verification campaigns for SAMA compliance
+- [Attachments System](./features/ATTACHMENTS_SYSTEM.md) - Polymorphic file attachments for compliance documentation and audit trails
+
+### Global Features
+
+Cross-cutting features and utilities:
+
+- [Global Search](./features/GLOBAL_SEARCH.md) - Command palette global search with keyboard shortcuts (⌘K/Ctrl+K)
 
 ### Infrastructure & Systems
 
@@ -77,7 +79,6 @@ Advanced IT Asset Management features:
 
 - [UI Components Guide](./guides/UI_COMPONENTS.md) - Advanced UI patterns with TanStack Table, React Hook Form, and CSV
 - [UI/UX Improvements](./guides/UI_UX_IMPROVEMENTS.md) - User experience enhancements and navigation improvements
-- [Global Search](./GLOBAL_SEARCH.md) - Command palette global search with keyboard shortcuts (⌘K/Ctrl+K)
 - [Sidebar Features](./guides/SIDEBAR_FEATURES.md) - Advanced sidebar features including collapsible groups, nested navigation, permissions, animations, and real-time badges
 - [Real-time Features Guide](./guides/REALTIME.md) - Server-Sent Events (SSE) and Partykit WebSocket integration
 - [Background Jobs Guide](./guides/BACKGROUND_JOBS.md) - BullMQ job queue system for background processing
