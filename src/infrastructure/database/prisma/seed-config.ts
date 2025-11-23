@@ -885,6 +885,9 @@ export const ATTACHMENT_TYPES = [
     allowedExtensions: ["pdf", "png", "svg"],
     maxFileSizeMB: 10,
     isActive: true,
+  },
+];
+
 // Service Management: Business Processes
 // ==============================================
 
@@ -1184,6 +1187,9 @@ export const VERIFICATION_CAMPAIGNS = [
     scheduledStartDaysFromNow: 7, // Starts next week
     scheduledEndDaysFromNow: 28, // Ends in 4 weeks
     creatorEmail: "[email protected]", // Security Engineer
+  },
+];
+
 // Service Management: Services
 // ==============================================
 

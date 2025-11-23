@@ -8,9 +8,7 @@ import { TargetObjectTypeEnum } from "@/generated/prisma";
 // Create Attachment DTO
 export const CreateAttachmentSchema = z.object({
   attachmentTypeId: z.string().min(1, "Attachment type is required"),
-  targetType: z.nativeEnum(TargetObjectTypeEnum, {
-    errorMap: () => ({ message: "Invalid target type" }),
-  }),
+  targetType: z.nativeEnum(TargetObjectTypeEnum),
   targetId: z.string().min(1, "Target ID is required"),
   fileName: z
     .string()

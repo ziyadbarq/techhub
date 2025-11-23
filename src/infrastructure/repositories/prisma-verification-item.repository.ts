@@ -6,12 +6,14 @@
 
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
-import type { PrismaClient, VerificationStatusEnum } from "@/generated/prisma";
+import type {
+  PrismaClient,
+  TargetObjectTypeEnum,
+  VerificationStatusEnum,
+} from "@/generated/prisma";
 import type { IVerificationItemRepository } from "@/core/repositories/verification-item.repository.interface";
-import {
-  VerificationItem,
-  VerificationStatusEnum as VerificationStatusEnumEntity,
-} from "@/core/domain/entities/verification-item.entity";
+import { VerificationItem } from "@/core/domain/entities/verification-item.entity";
+import type { VerificationStatusEnum as VerificationStatusEnumEntity } from "@/core/domain/entities/verification-item.entity";
 import type { ILoggerService } from "@/core/services";
 
 @injectable()
@@ -154,7 +156,7 @@ export class PrismaVerificationItemRepository
     return VerificationItem.restore({
       id: data.id,
       verificationCampaignId: data.verificationCampaignId,
-      targetType: data.targetType as any,
+      targetType: data.targetType as TargetObjectTypeEnum,
       targetId: data.targetId,
       verifierPersonId: data.verifierPersonId,
       status: data.status as VerificationStatusEnumEntity,

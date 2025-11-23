@@ -7,11 +7,10 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { PrismaClient } from "@/generated/prisma";
+import { Prisma } from "@/generated/prisma";
 import type { IVerificationCampaignRepository } from "@/core/repositories/verification-campaign.repository.interface";
-import {
-  VerificationCampaign,
-  TargetObjectTypeEnum,
-} from "@/core/domain/entities/verification-campaign.entity";
+import { VerificationCampaign } from "@/core/domain/entities/verification-campaign.entity";
+import type { TargetObjectTypeEnum } from "@/core/domain/entities/verification-campaign.entity";
 import type { ILoggerService } from "@/core/services";
 
 @injectable()
@@ -23,9 +22,7 @@ export class PrismaVerificationCampaignRepository
     @inject(DI_TOKENS.ILoggerService) private logger: ILoggerService,
   ) {}
 
-  async create(
-    campaign: VerificationCampaign,
-  ): Promise<VerificationCampaign> {
+  async create(campaign: VerificationCampaign): Promise<VerificationCampaign> {
     this.logger.debug("Creating verification campaign", { id: campaign.id });
 
     const data = await this.prisma.verificationCampaign.create({
@@ -34,7 +31,9 @@ export class PrismaVerificationCampaignRepository
         name: campaign.name,
         description: campaign.description,
         targetType: campaign.targetType,
-        filterDefinition: campaign.filterDefinition as object | null,
+        filterDefinition:
+          (campaign.filterDefinition as Prisma.JsonValue | null) ??
+          Prisma.JsonNull,
         scheduledStart: campaign.scheduledStart,
         scheduledEnd: campaign.scheduledEnd,
         createdById: campaign.createdById,
@@ -97,9 +96,7 @@ export class PrismaVerificationCampaignRepository
     return data.map((item) => this.toDomain(item));
   }
 
-  async update(
-    campaign: VerificationCampaign,
-  ): Promise<VerificationCampaign> {
+  async update(campaign: VerificationCampaign): Promise<VerificationCampaign> {
     this.logger.debug("Updating verification campaign", { id: campaign.id });
 
     const data = await this.prisma.verificationCampaign.update({
@@ -107,7 +104,9 @@ export class PrismaVerificationCampaignRepository
       data: {
         name: campaign.name,
         description: campaign.description,
-        filterDefinition: campaign.filterDefinition as object | null,
+        filterDefinition:
+          (campaign.filterDefinition as Prisma.JsonValue | null) ??
+          Prisma.JsonNull,
         scheduledStart: campaign.scheduledStart,
         scheduledEnd: campaign.scheduledEnd,
         updatedAt: new Date(),
@@ -133,7 +132,7 @@ export class PrismaVerificationCampaignRepository
     name: string;
     description: string | null;
     targetType: string;
-    filterDefinition: object | null;
+    filterDefinition: Prisma.JsonValue | null;
     scheduledStart: Date;
     scheduledEnd: Date | null;
     createdById: string;
@@ -145,7 +144,10 @@ export class PrismaVerificationCampaignRepository
       name: data.name,
       description: data.description,
       targetType: data.targetType as TargetObjectTypeEnum,
-      filterDefinition: data.filterDefinition as Record<string, unknown> | null,
+      filterDefinition:
+        data.filterDefinition === null
+          ? null
+          : (data.filterDefinition as Record<string, unknown>),
       scheduledStart: data.scheduledStart,
       scheduledEnd: data.scheduledEnd,
       createdById: data.createdById,

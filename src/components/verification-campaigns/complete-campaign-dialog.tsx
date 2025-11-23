@@ -47,7 +47,7 @@ export function CompleteCampaignDialog({
       } else {
         toast.error(result.error);
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to complete campaign");
     } finally {
       setIsSubmitting(false);
@@ -69,13 +69,13 @@ export function CompleteCampaignDialog({
           <div>
             <p className="font-semibold">{campaign.name}</p>
             {campaign.description && (
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-muted-foreground mt-1 text-sm">
                 {campaign.description}
               </p>
             )}
           </div>
 
-          <div className="text-sm space-y-2">
+          <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Target Type:</span>
               <span className="font-medium">
@@ -92,7 +92,7 @@ export function CompleteCampaignDialog({
             </div>
           </div>
 
-          <div className="bg-muted p-3 rounded-md">
+          <div className="bg-muted rounded-md p-3">
             <p className="text-sm">
               Completing this campaign will mark it as finished and prevent
               further modifications. Verification items will remain in their

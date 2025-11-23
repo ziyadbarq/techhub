@@ -110,11 +110,14 @@ export class LocalFileStorageService implements IFileStorageService {
       // Return path relative to /public
       return filePath;
     } catch (error) {
-      this.logger.error("Failed to upload file", {
-        fileName,
-        mimeType,
-        error: error instanceof Error ? error.message : String(error),
-      });
+      this.logger.error(
+        "Failed to upload file",
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          fileName,
+          mimeType,
+        },
+      );
 
       throw new Error(
         `Failed to upload file: ${error instanceof Error ? error.message : String(error)}`,
@@ -150,10 +153,11 @@ export class LocalFileStorageService implements IFileStorageService {
         storagePath,
       });
     } catch (error) {
-      this.logger.error("Failed to delete file", {
-        storagePath,
-        error: error instanceof Error ? error.message : String(error),
-      });
+      this.logger.error(
+        "Failed to delete file",
+        error instanceof Error ? error : new Error(String(error)),
+        { storagePath },
+      );
 
       throw new Error(
         `Failed to delete file: ${error instanceof Error ? error.message : String(error)}`,
@@ -216,6 +220,25 @@ export class LocalFileStorageService implements IFileStorageService {
     }
   }
 
+  async writeFile(filePath: string, content: string | Buffer): Promise<void> {
+    const fullPath = this.resolveSafePath(filePath);
+    await fs.mkdir(path.dirname(fullPath), { recursive: true });
+    await fs.writeFile(fullPath, content);
+  }
+
+  async readFile(filePath: string, encoding?: "utf-8"): Promise<string>;
+  async readFile(filePath: string, encoding: "binary"): Promise<Buffer>;
+  async readFile(
+    filePath: string,
+    encoding: "utf-8" | "binary" = "utf-8",
+  ): Promise<string | Buffer> {
+    const fullPath = this.resolveSafePath(filePath);
+    if (encoding === "binary") {
+      return await fs.readFile(fullPath);
+    }
+    return await fs.readFile(fullPath, "utf-8");
+  }
+
   // ========================================
   // Private Helper Methods
   // ========================================
@@ -271,5 +294,21 @@ export class LocalFileStorageService implements IFileStorageService {
     } catch {
       return false;
     }
+  }
+
+  private resolveSafePath(filePath: string): string {
+    if (!filePath || path.isAbsolute(filePath)) {
+      throw new Error(`Invalid file path: ${filePath}`);
+    }
+
+    const normalizedPath = path.normalize(filePath);
+    const fullPath = path.join(this.projectRoot, normalizedPath);
+    const normalizedRoot = path.normalize(this.projectRoot);
+
+    if (!fullPath.startsWith(normalizedRoot) || normalizedPath.includes("..")) {
+      throw new Error(`Invalid file path: ${filePath}`);
+    }
+
+    return fullPath;
   }
 }

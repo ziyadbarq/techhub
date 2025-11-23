@@ -4,7 +4,8 @@
  * POST - Create a new asset category field
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import {
   createAssetCategoryFieldAction,
   listAssetCategoryFieldsAction,
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(result.data, { status: 201 });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: "Invalid request body" },
       { status: 400 },

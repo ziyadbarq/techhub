@@ -1233,6 +1233,8 @@ export const AttachmentTypeScalarFieldEnum = {
   name: 'name',
   code: 'code',
   description: 'description',
+  allowedExtensions: 'allowedExtensions',
+  maxFileSizeMB: 'maxFileSizeMB',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

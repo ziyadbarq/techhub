@@ -53,11 +53,7 @@ export interface IFileStorageService {
    * // storagePath: 'uploads/2025/11/clq1234567890abcdef.pdf'
    * ```
    */
-  uploadFile(
-    file: Buffer,
-    fileName: string,
-    mimeType: string,
-  ): Promise<string>;
+  uploadFile(file: Buffer, fileName: string, mimeType: string): Promise<string>;
 
   /**
    * Deletes a file from the storage system.
@@ -105,4 +101,21 @@ export interface IFileStorageService {
    * ```
    */
   fileExists(storagePath: string): Promise<boolean>;
+
+  /**
+   * Writes a file to storage at an arbitrary path.
+   *
+   * @param filePath - Relative file path
+   * @param content - File contents as string or Buffer
+   */
+  writeFile(filePath: string, content: string | Buffer): Promise<void>;
+
+  /**
+   * Reads a file from storage.
+   *
+   * @param filePath - Relative file path
+   * @param encoding - Optional encoding ('utf-8' for text, 'binary' for Buffer)
+   */
+  readFile(filePath: string, encoding?: "utf-8"): Promise<string>;
+  readFile(filePath: string, encoding: "binary"): Promise<Buffer>;
 }

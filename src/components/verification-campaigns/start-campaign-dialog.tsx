@@ -47,7 +47,7 @@ export function StartCampaignDialog({
       } else {
         toast.error(result.error);
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to start campaign");
     } finally {
       setIsSubmitting(false);
@@ -68,13 +68,13 @@ export function StartCampaignDialog({
           <div>
             <p className="font-semibold">{campaign.name}</p>
             {campaign.description && (
-              <p className="text-sm text-muted-foreground mt-1">
+              <p className="text-muted-foreground mt-1 text-sm">
                 {campaign.description}
               </p>
             )}
           </div>
 
-          <div className="text-sm space-y-2">
+          <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Target Type:</span>
               <span className="font-medium">
@@ -99,10 +99,10 @@ export function StartCampaignDialog({
             )}
           </div>
 
-          <div className="bg-muted p-3 rounded-md">
+          <div className="bg-muted rounded-md p-3">
             <p className="text-sm">
-              Starting this campaign will activate it and make verification items
-              available for review. This action cannot be undone.
+              Starting this campaign will activate it and make verification
+              items available for review. This action cannot be undone.
             </p>
           </div>
         </div>

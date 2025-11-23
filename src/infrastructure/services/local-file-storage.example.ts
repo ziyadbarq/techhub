@@ -115,10 +115,11 @@ export class UploadAttachmentUseCase {
 
       return { storagePath, fileUrl };
     } catch (error) {
-      this.logger.error("Failed to upload attachment", {
-        fileName: input.fileName,
-        error: error instanceof Error ? error.message : String(error),
-      });
+      this.logger.error(
+        "Failed to upload attachment",
+        error instanceof Error ? error : new Error(String(error)),
+        { fileName: input.fileName },
+      );
       throw error;
     }
   }
@@ -153,10 +154,11 @@ export class DeleteAttachmentUseCase {
 
       this.logger.info("Attachment deleted successfully", { storagePath });
     } catch (error) {
-      this.logger.error("Failed to delete attachment", {
-        storagePath,
-        error: error instanceof Error ? error.message : String(error),
-      });
+      this.logger.error(
+        "Failed to delete attachment",
+        error instanceof Error ? error : new Error(String(error)),
+        { storagePath },
+      );
       throw error;
     }
   }

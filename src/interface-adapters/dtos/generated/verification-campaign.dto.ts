@@ -21,17 +21,9 @@ export const CreateVerificationCampaignSchema = z.object({
     .optional()
     .nullable(),
   targetType: TargetObjectTypeSchema,
-  filterDefinition: z.record(z.unknown()).optional().nullable(),
-  scheduledStart: z.coerce.date({
-    required_error: "Scheduled start date is required",
-    invalid_type_error: "Scheduled start must be a valid date",
-  }),
-  scheduledEnd: z.coerce
-    .date({
-      invalid_type_error: "Scheduled end must be a valid date",
-    })
-    .optional()
-    .nullable(),
+  filterDefinition: z.record(z.string(), z.unknown()).optional().nullable(),
+  scheduledStart: z.coerce.date(),
+  scheduledEnd: z.coerce.date().optional().nullable(),
   createdById: z.string().min(1, "Creator ID is required"),
 });
 
@@ -49,18 +41,9 @@ export const UpdateVerificationCampaignSchema = z.object({
     .max(2000, "Description must not exceed 2000 characters")
     .optional()
     .nullable(),
-  filterDefinition: z.record(z.unknown()).optional().nullable(),
-  scheduledStart: z.coerce
-    .date({
-      invalid_type_error: "Scheduled start must be a valid date",
-    })
-    .optional(),
-  scheduledEnd: z.coerce
-    .date({
-      invalid_type_error: "Scheduled end must be a valid date",
-    })
-    .optional()
-    .nullable(),
+  filterDefinition: z.record(z.string(), z.unknown()).optional().nullable(),
+  scheduledStart: z.coerce.date().optional(),
+  scheduledEnd: z.coerce.date().optional().nullable(),
 });
 
 // Type exports

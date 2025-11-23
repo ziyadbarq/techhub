@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
@@ -63,11 +63,13 @@ export function CreateVerificationCampaignDialog({
   onOpenChange,
   onSuccess,
 }: CreateVerificationCampaignDialogProps) {
-  const { session } = useSession();
+  const { data: session } = useSession();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<CreateVerificationCampaignDTO>({
-    resolver: zodResolver(CreateVerificationCampaignSchema),
+    resolver: zodResolver(
+      CreateVerificationCampaignSchema,
+    ) as Resolver<CreateVerificationCampaignDTO>,
     defaultValues: {
       name: "",
       description: "",
@@ -94,7 +96,7 @@ export function CreateVerificationCampaignDialog({
       } else {
         toast.error(result.error);
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to create campaign");
     } finally {
       setIsSubmitting(false);
@@ -103,7 +105,7 @@ export function CreateVerificationCampaignDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create Verification Campaign</DialogTitle>
           <DialogDescription>
@@ -113,7 +115,10 @@ export function CreateVerificationCampaignDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4"
+          >
             <FormField
               control={form.control}
               name="name"

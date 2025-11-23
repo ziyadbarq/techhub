@@ -13,6 +13,7 @@ import { CreateDataDomainUseCase } from "../create-data-domain.use-case";
 import type { IDataDomainRepository } from "@/core/repositories/data-domain.repository.interface";
 import type { DataDomain } from "@/core/domain/entities/data-domain.entity";
 import { ValidationError } from "@/core/domain/errors/validation.error";
+import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
 
 /**
  * Mock DataDomain Repository
@@ -48,14 +49,39 @@ class MockDataDomainRepository implements Partial<IDataDomainRepository> {
   }
 }
 
+class MockCodeGeneratorService implements ICodeGeneratorService {
+  async generateCode(): Promise<string> {
+    return "GENERATED";
+  }
+
+  generateTimestampCode(): string {
+    return "TS-CODE";
+  }
+
+  validateFormat(_code: string): boolean {
+    return true;
+  }
+
+  async peekNextSequence(): Promise<number> {
+    return 1;
+  }
+
+  async resetSequence(): Promise<void> {
+    return;
+  }
+}
+
 describe("CreateDataDomainUseCase", () => {
   let useCase: CreateDataDomainUseCase;
   let mockRepository: MockDataDomainRepository;
+  let mockCodeGenerator: MockCodeGeneratorService;
 
   beforeEach(() => {
     mockRepository = new MockDataDomainRepository();
+    mockCodeGenerator = new MockCodeGeneratorService();
     useCase = new CreateDataDomainUseCase(
       mockRepository as unknown as IDataDomainRepository,
+      mockCodeGenerator,
     );
     mockRepository.clear();
   });

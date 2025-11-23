@@ -57,7 +57,10 @@ export async function createVerificationItem(
     );
 
     // Execute use case
-    const verificationItem = await useCase.execute(validatedData);
+    const verificationItem = await useCase.execute({
+      ...validatedData,
+      status: validatedData.status as VerificationStatusEnum | undefined,
+    });
 
     // Revalidate relevant paths
     revalidatePath("/verification-campaigns");

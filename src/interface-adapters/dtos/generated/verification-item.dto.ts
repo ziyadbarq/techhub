@@ -3,7 +3,10 @@
  */
 
 import { z } from "zod";
-import { TargetObjectTypeEnum, VerificationStatusEnum } from "@/generated/prisma";
+import {
+  TargetObjectTypeEnum,
+  VerificationStatusEnum,
+} from "@/generated/prisma";
 
 // Create VerificationItem DTO
 export const CreateVerificationItemSchema = z.object({
@@ -11,9 +14,7 @@ export const CreateVerificationItemSchema = z.object({
     .string()
     .trim()
     .min(1, "Verification campaign ID is required"),
-  targetType: z.nativeEnum(TargetObjectTypeEnum, {
-    required_error: "Target type is required",
-  }),
+  targetType: z.nativeEnum(TargetObjectTypeEnum),
   targetId: z.string().trim().min(1, "Target ID is required"),
   verifierPersonId: z.string().trim().optional().nullable(),
   status: z.nativeEnum(VerificationStatusEnum).optional(),

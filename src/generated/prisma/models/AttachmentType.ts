@@ -20,8 +20,18 @@ export type AttachmentTypeModel = runtime.Types.Result.DefaultSelection<Prisma.$
 
 export type AggregateAttachmentType = {
   _count: AttachmentTypeCountAggregateOutputType | null
+  _avg: AttachmentTypeAvgAggregateOutputType | null
+  _sum: AttachmentTypeSumAggregateOutputType | null
   _min: AttachmentTypeMinAggregateOutputType | null
   _max: AttachmentTypeMaxAggregateOutputType | null
+}
+
+export type AttachmentTypeAvgAggregateOutputType = {
+  maxFileSizeMB: number | null
+}
+
+export type AttachmentTypeSumAggregateOutputType = {
+  maxFileSizeMB: number | null
 }
 
 export type AttachmentTypeMinAggregateOutputType = {
@@ -29,6 +39,7 @@ export type AttachmentTypeMinAggregateOutputType = {
   name: string | null
   code: string | null
   description: string | null
+  maxFileSizeMB: number | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -39,6 +50,7 @@ export type AttachmentTypeMaxAggregateOutputType = {
   name: string | null
   code: string | null
   description: string | null
+  maxFileSizeMB: number | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -49,6 +61,8 @@ export type AttachmentTypeCountAggregateOutputType = {
   name: number
   code: number
   description: number
+  allowedExtensions: number
+  maxFileSizeMB: number
   isActive: number
   createdAt: number
   updatedAt: number
@@ -56,11 +70,20 @@ export type AttachmentTypeCountAggregateOutputType = {
 }
 
 
+export type AttachmentTypeAvgAggregateInputType = {
+  maxFileSizeMB?: true
+}
+
+export type AttachmentTypeSumAggregateInputType = {
+  maxFileSizeMB?: true
+}
+
 export type AttachmentTypeMinAggregateInputType = {
   id?: true
   name?: true
   code?: true
   description?: true
+  maxFileSizeMB?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -71,6 +94,7 @@ export type AttachmentTypeMaxAggregateInputType = {
   name?: true
   code?: true
   description?: true
+  maxFileSizeMB?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -81,6 +105,8 @@ export type AttachmentTypeCountAggregateInputType = {
   name?: true
   code?: true
   description?: true
+  allowedExtensions?: true
+  maxFileSizeMB?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -125,6 +151,18 @@ export type AttachmentTypeAggregateArgs<ExtArgs extends runtime.Types.Extensions
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: AttachmentTypeAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: AttachmentTypeSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: AttachmentTypeMinAggregateInputType
@@ -155,6 +193,8 @@ export type AttachmentTypeGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   _count?: AttachmentTypeCountAggregateInputType | true
+  _avg?: AttachmentTypeAvgAggregateInputType
+  _sum?: AttachmentTypeSumAggregateInputType
   _min?: AttachmentTypeMinAggregateInputType
   _max?: AttachmentTypeMaxAggregateInputType
 }
@@ -164,10 +204,14 @@ export type AttachmentTypeGroupByOutputType = {
   name: string
   code: string
   description: string | null
+  allowedExtensions: string[]
+  maxFileSizeMB: number
   isActive: boolean
   createdAt: Date
   updatedAt: Date
   _count: AttachmentTypeCountAggregateOutputType | null
+  _avg: AttachmentTypeAvgAggregateOutputType | null
+  _sum: AttachmentTypeSumAggregateOutputType | null
   _min: AttachmentTypeMinAggregateOutputType | null
   _max: AttachmentTypeMaxAggregateOutputType | null
 }
@@ -195,6 +239,8 @@ export type AttachmentTypeWhereInput = {
   name?: Prisma.StringFilter<"AttachmentType"> | string
   code?: Prisma.StringFilter<"AttachmentType"> | string
   description?: Prisma.StringNullableFilter<"AttachmentType"> | string | null
+  allowedExtensions?: Prisma.StringNullableListFilter<"AttachmentType">
+  maxFileSizeMB?: Prisma.IntFilter<"AttachmentType"> | number
   isActive?: Prisma.BoolFilter<"AttachmentType"> | boolean
   createdAt?: Prisma.DateTimeFilter<"AttachmentType"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AttachmentType"> | Date | string
@@ -206,6 +252,8 @@ export type AttachmentTypeOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   code?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  allowedExtensions?: Prisma.SortOrder
+  maxFileSizeMB?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -220,6 +268,8 @@ export type AttachmentTypeWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.AttachmentTypeWhereInput[]
   NOT?: Prisma.AttachmentTypeWhereInput | Prisma.AttachmentTypeWhereInput[]
   description?: Prisma.StringNullableFilter<"AttachmentType"> | string | null
+  allowedExtensions?: Prisma.StringNullableListFilter<"AttachmentType">
+  maxFileSizeMB?: Prisma.IntFilter<"AttachmentType"> | number
   isActive?: Prisma.BoolFilter<"AttachmentType"> | boolean
   createdAt?: Prisma.DateTimeFilter<"AttachmentType"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AttachmentType"> | Date | string
@@ -231,12 +281,16 @@ export type AttachmentTypeOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   code?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  allowedExtensions?: Prisma.SortOrder
+  maxFileSizeMB?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.AttachmentTypeCountOrderByAggregateInput
+  _avg?: Prisma.AttachmentTypeAvgOrderByAggregateInput
   _max?: Prisma.AttachmentTypeMaxOrderByAggregateInput
   _min?: Prisma.AttachmentTypeMinOrderByAggregateInput
+  _sum?: Prisma.AttachmentTypeSumOrderByAggregateInput
 }
 
 export type AttachmentTypeScalarWhereWithAggregatesInput = {
@@ -247,6 +301,8 @@ export type AttachmentTypeScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"AttachmentType"> | string
   code?: Prisma.StringWithAggregatesFilter<"AttachmentType"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"AttachmentType"> | string | null
+  allowedExtensions?: Prisma.StringNullableListFilter<"AttachmentType">
+  maxFileSizeMB?: Prisma.IntWithAggregatesFilter<"AttachmentType"> | number
   isActive?: Prisma.BoolWithAggregatesFilter<"AttachmentType"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AttachmentType"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"AttachmentType"> | Date | string
@@ -257,6 +313,8 @@ export type AttachmentTypeCreateInput = {
   name: string
   code: string
   description?: string | null
+  allowedExtensions?: Prisma.AttachmentTypeCreateallowedExtensionsInput | string[]
+  maxFileSizeMB: number
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -268,6 +326,8 @@ export type AttachmentTypeUncheckedCreateInput = {
   name: string
   code: string
   description?: string | null
+  allowedExtensions?: Prisma.AttachmentTypeCreateallowedExtensionsInput | string[]
+  maxFileSizeMB: number
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -279,6 +339,8 @@ export type AttachmentTypeUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allowedExtensions?: Prisma.AttachmentTypeUpdateallowedExtensionsInput | string[]
+  maxFileSizeMB?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -290,6 +352,8 @@ export type AttachmentTypeUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allowedExtensions?: Prisma.AttachmentTypeUpdateallowedExtensionsInput | string[]
+  maxFileSizeMB?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -301,6 +365,8 @@ export type AttachmentTypeCreateManyInput = {
   name: string
   code: string
   description?: string | null
+  allowedExtensions?: Prisma.AttachmentTypeCreateallowedExtensionsInput | string[]
+  maxFileSizeMB: number
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -311,6 +377,8 @@ export type AttachmentTypeUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allowedExtensions?: Prisma.AttachmentTypeUpdateallowedExtensionsInput | string[]
+  maxFileSizeMB?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -321,6 +389,8 @@ export type AttachmentTypeUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allowedExtensions?: Prisma.AttachmentTypeUpdateallowedExtensionsInput | string[]
+  maxFileSizeMB?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -331,9 +401,15 @@ export type AttachmentTypeCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   code?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  allowedExtensions?: Prisma.SortOrder
+  maxFileSizeMB?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type AttachmentTypeAvgOrderByAggregateInput = {
+  maxFileSizeMB?: Prisma.SortOrder
 }
 
 export type AttachmentTypeMaxOrderByAggregateInput = {
@@ -341,6 +417,7 @@ export type AttachmentTypeMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   code?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  maxFileSizeMB?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -351,14 +428,28 @@ export type AttachmentTypeMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   code?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  maxFileSizeMB?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
+export type AttachmentTypeSumOrderByAggregateInput = {
+  maxFileSizeMB?: Prisma.SortOrder
+}
+
 export type AttachmentTypeScalarRelationFilter = {
   is?: Prisma.AttachmentTypeWhereInput
   isNot?: Prisma.AttachmentTypeWhereInput
+}
+
+export type AttachmentTypeCreateallowedExtensionsInput = {
+  set: string[]
+}
+
+export type AttachmentTypeUpdateallowedExtensionsInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
 export type AttachmentTypeCreateNestedOneWithoutAttachmentsInput = {
@@ -380,6 +471,8 @@ export type AttachmentTypeCreateWithoutAttachmentsInput = {
   name: string
   code: string
   description?: string | null
+  allowedExtensions?: Prisma.AttachmentTypeCreateallowedExtensionsInput | string[]
+  maxFileSizeMB: number
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -390,6 +483,8 @@ export type AttachmentTypeUncheckedCreateWithoutAttachmentsInput = {
   name: string
   code: string
   description?: string | null
+  allowedExtensions?: Prisma.AttachmentTypeCreateallowedExtensionsInput | string[]
+  maxFileSizeMB: number
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -416,6 +511,8 @@ export type AttachmentTypeUpdateWithoutAttachmentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allowedExtensions?: Prisma.AttachmentTypeUpdateallowedExtensionsInput | string[]
+  maxFileSizeMB?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -426,6 +523,8 @@ export type AttachmentTypeUncheckedUpdateWithoutAttachmentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allowedExtensions?: Prisma.AttachmentTypeUpdateallowedExtensionsInput | string[]
+  maxFileSizeMB?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -467,6 +566,8 @@ export type AttachmentTypeSelect<ExtArgs extends runtime.Types.Extensions.Intern
   name?: boolean
   code?: boolean
   description?: boolean
+  allowedExtensions?: boolean
+  maxFileSizeMB?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -479,6 +580,8 @@ export type AttachmentTypeSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   name?: boolean
   code?: boolean
   description?: boolean
+  allowedExtensions?: boolean
+  maxFileSizeMB?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -489,6 +592,8 @@ export type AttachmentTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   name?: boolean
   code?: boolean
   description?: boolean
+  allowedExtensions?: boolean
+  maxFileSizeMB?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -499,12 +604,14 @@ export type AttachmentTypeSelectScalar = {
   name?: boolean
   code?: boolean
   description?: boolean
+  allowedExtensions?: boolean
+  maxFileSizeMB?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type AttachmentTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "code" | "description" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["attachmentType"]>
+export type AttachmentTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "code" | "description" | "allowedExtensions" | "maxFileSizeMB" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["attachmentType"]>
 export type AttachmentTypeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   attachments?: boolean | Prisma.AttachmentType$attachmentsArgs<ExtArgs>
   _count?: boolean | Prisma.AttachmentTypeCountOutputTypeDefaultArgs<ExtArgs>
@@ -522,6 +629,8 @@ export type $AttachmentTypePayload<ExtArgs extends runtime.Types.Extensions.Inte
     name: string
     code: string
     description: string | null
+    allowedExtensions: string[]
+    maxFileSizeMB: number
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -953,6 +1062,8 @@ export interface AttachmentTypeFieldRefs {
   readonly name: Prisma.FieldRef<"AttachmentType", 'String'>
   readonly code: Prisma.FieldRef<"AttachmentType", 'String'>
   readonly description: Prisma.FieldRef<"AttachmentType", 'String'>
+  readonly allowedExtensions: Prisma.FieldRef<"AttachmentType", 'String[]'>
+  readonly maxFileSizeMB: Prisma.FieldRef<"AttachmentType", 'Int'>
   readonly isActive: Prisma.FieldRef<"AttachmentType", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"AttachmentType", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"AttachmentType", 'DateTime'>

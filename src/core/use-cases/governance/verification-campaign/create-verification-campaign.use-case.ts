@@ -5,10 +5,8 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IVerificationCampaignRepository } from "@/core/repositories/verification-campaign.repository.interface";
-import {
-  VerificationCampaign,
-  TargetObjectTypeEnum,
-} from "@/core/domain/entities/verification-campaign.entity";
+import { VerificationCampaign } from "@/core/domain/entities/verification-campaign.entity";
+import type { TargetObjectTypeEnum } from "@/core/domain/entities/verification-campaign.entity";
 
 export interface CreateVerificationCampaignRequest {
   name: string;

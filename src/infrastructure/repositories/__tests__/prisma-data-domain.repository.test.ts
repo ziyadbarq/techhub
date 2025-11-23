@@ -11,6 +11,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { PrismaDataDomainRepository } from "../prisma-data-domain.repository";
 import { DataDomain } from "@/core/domain/entities/data-domain.entity";
 import type { PrismaClient } from "@/generated/prisma";
+import type { ILoggerService } from "@/core/services";
 
 interface DataDomainData {
   id: string;
@@ -42,22 +43,20 @@ class MockPrismaClient {
       },
     ),
 
-    findMany: vi.fn(
-      async ({ where }: { where?: { isActive?: boolean } }) => {
-        let dataDomains = Array.from(this.dataDomains.values());
+    findMany: vi.fn(async ({ where }: { where?: { isActive?: boolean } }) => {
+      let dataDomains = Array.from(this.dataDomains.values());
 
-        if (where?.isActive !== undefined) {
-          dataDomains = dataDomains.filter(
-            (dd) => dd.isActive === where.isActive,
-          );
-        }
+      if (where?.isActive !== undefined) {
+        dataDomains = dataDomains.filter(
+          (dd) => dd.isActive === where.isActive,
+        );
+      }
 
-        // Sort by name
-        dataDomains.sort((a, b) => a.name.localeCompare(b.name));
+      // Sort by name
+      dataDomains.sort((a, b) => a.name.localeCompare(b.name));
 
-        return dataDomains;
-      },
-    ),
+      return dataDomains;
+    }),
 
     create: vi.fn(async ({ data }: { data: DataDomainData }) => {
       this.dataDomains.set(data.id, { ...data });
@@ -109,11 +108,23 @@ class MockPrismaClient {
 describe("PrismaDataDomainRepository - Integration Tests", () => {
   let repository: PrismaDataDomainRepository;
   let mockPrisma: MockPrismaClient;
+  const mockLogger: ILoggerService = {
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    child: () => mockLogger,
+    startTimer: vi.fn(() => ({ operation: "", startTime: 0 })),
+    endTimer: vi.fn(),
+    audit: vi.fn(),
+    withTiming: vi.fn((fn) => fn()),
+  };
 
   beforeEach(() => {
     mockPrisma = new MockPrismaClient();
     repository = new PrismaDataDomainRepository(
       mockPrisma as unknown as PrismaClient,
+      mockLogger,
     );
     mockPrisma.clear();
   });
@@ -221,7 +232,7 @@ describe("PrismaDataDomainRepository - Integration Tests", () => {
       await repository.create(domain2);
 
       // Act
-      const dataDomains = await repository.findAll({ includeInactive: true });
+      const dataDomains = await repository.findAll();
 
       // Assert
       expect(dataDomains).toHaveLength(2);

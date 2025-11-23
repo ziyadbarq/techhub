@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
@@ -61,7 +61,9 @@ export function EditVerificationCampaignDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<UpdateVerificationCampaignDTO>({
-    resolver: zodResolver(UpdateVerificationCampaignSchema),
+    resolver: zodResolver(
+      UpdateVerificationCampaignSchema,
+    ) as Resolver<UpdateVerificationCampaignDTO>,
     defaultValues: {
       name: campaign.name,
       description: campaign.description || "",
@@ -82,7 +84,7 @@ export function EditVerificationCampaignDialog({
       } else {
         toast.error(result.error);
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to update campaign");
     } finally {
       setIsSubmitting(false);
@@ -91,7 +93,7 @@ export function EditVerificationCampaignDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Verification Campaign</DialogTitle>
           <DialogDescription>
@@ -101,7 +103,10 @@ export function EditVerificationCampaignDialog({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4"
+          >
             <FormField
               control={form.control}
               name="name"

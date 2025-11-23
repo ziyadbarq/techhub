@@ -5,7 +5,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAttachmentTypeRepository } from "@/core/repositories/attachment-type.repository.interface";
-import { AttachmentType } from "@/core/domain/entities/attachment-type.entity";
+import type { AttachmentType } from "@/core/domain/entities/attachment-type.entity";
 
 export interface UpdateAttachmentTypeRequest {
   id: string;

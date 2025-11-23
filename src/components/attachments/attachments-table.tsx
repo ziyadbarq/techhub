@@ -36,7 +36,7 @@ import type { AttachmentDTO } from "@/interface-adapters/presenters/attachment.p
 import { deleteAttachment } from "@/interface-adapters/controllers/attachment.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { usePermissions } from "@/hooks/use-permissions";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 interface AttachmentsTableProps {
   data: AttachmentDTO[];
@@ -76,7 +76,6 @@ export function AttachmentsTable({
 
   const { hasPermission } = usePermissions();
   const canDelete = hasPermission(PERMISSIONS.ATTACHMENTS_DELETE);
-  const { toast } = useToast();
 
   const handleDelete = async () => {
     if (!selectedAttachment) return;
@@ -85,17 +84,10 @@ export function AttachmentsTable({
     try {
       const result = await deleteAttachment(selectedAttachment.id);
       if (result.success) {
-        toast({
-          title: "Success",
-          description: "Attachment deleted successfully",
-        });
+        toast.success("Attachment deleted successfully");
         onRefresh?.();
       } else {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: result.error || "Failed to delete attachment",
-        });
+        toast.error(result.error || "Failed to delete attachment");
       }
     } finally {
       setIsDeleting(false);
@@ -132,9 +124,9 @@ export function AttachmentsTable({
       accessorKey: "attachmentType",
       header: "Type",
       cell: ({ row }) => {
-        const typeName = row.original.attachmentType?.name;
-        return typeName ? (
-          <Badge variant="outline">{typeName}</Badge>
+        const typeId = row.original.attachmentTypeId;
+        return typeId ? (
+          <Badge variant="outline">{typeId}</Badge>
         ) : (
           <span className="text-muted-foreground">-</span>
         );
@@ -144,9 +136,7 @@ export function AttachmentsTable({
       accessorKey: "targetType",
       header: "Entity Type",
       cell: ({ row }) => {
-        return (
-          <Badge variant="secondary">{row.original.targetType}</Badge>
-        );
+        return <Badge variant="secondary">{row.original.targetType}</Badge>;
       },
     },
     {
@@ -235,7 +225,7 @@ export function AttachmentsTable({
 
   if (loading) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
+      <div className="text-muted-foreground py-8 text-center">
         Loading attachments...
       </div>
     );
@@ -243,7 +233,7 @@ export function AttachmentsTable({
 
   if (data.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
+      <div className="text-muted-foreground py-8 text-center">
         No attachments found
       </div>
     );

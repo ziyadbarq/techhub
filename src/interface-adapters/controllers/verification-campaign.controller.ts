@@ -29,6 +29,7 @@ import {
 } from "@/interface-adapters/presenters/verification-campaign.presenter";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import type { TargetObjectTypeEnum } from "@/core/domain/entities/verification-campaign.entity";
 
 /**
  * Create a new verification campaign
@@ -52,7 +53,10 @@ export async function createVerificationCampaign(
     );
 
     // Execute use case
-    const campaign = await useCase.execute(validatedData);
+    const campaign = await useCase.execute({
+      ...validatedData,
+      targetType: validatedData.targetType as TargetObjectTypeEnum,
+    });
 
     // Revalidate relevant paths
     revalidatePath("/verification-campaigns");

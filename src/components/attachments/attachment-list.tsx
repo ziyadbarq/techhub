@@ -54,11 +54,7 @@ export function AttachmentList({
   const [isLoading, setIsLoading] = React.useState(true);
   const [deletingId, setDeletingId] = React.useState<string | null>(null);
 
-  React.useEffect(() => {
-    loadAttachments();
-  }, [targetType, targetId]);
-
-  const loadAttachments = async () => {
+  const loadAttachments = React.useCallback(async () => {
     setIsLoading(true);
     try {
       const result = await listAttachmentsByTarget(targetType, targetId);
@@ -73,7 +69,11 @@ export function AttachmentList({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [targetId, targetType]);
+
+  React.useEffect(() => {
+    void loadAttachments();
+  }, [loadAttachments]);
 
   const handleDelete = async (attachmentId: string) => {
     setDeletingId(attachmentId);
@@ -96,7 +96,9 @@ export function AttachmentList({
 
   const handleDownload = (attachment: AttachmentDTO) => {
     // For now, we'll show a toast. This will be enhanced with actual file download later
-    toast.info(`Download functionality will be implemented soon: ${attachment.fileName}`);
+    toast.info(
+      `Download functionality will be implemented soon: ${attachment.fileName}`,
+    );
     // TODO: Implement actual file download using filePath
     // const url = `/api/attachments/${attachment.id}/download`;
     // window.open(url, '_blank');
@@ -118,10 +120,10 @@ export function AttachmentList({
         {[1, 2, 3].map((i) => (
           <Card key={i} className="p-4">
             <div className="flex items-center space-x-4">
-              <div className="size-8 animate-pulse rounded bg-muted" />
+              <div className="bg-muted size-8 animate-pulse rounded" />
               <div className="flex-1 space-y-2">
-                <div className="h-4 w-1/3 animate-pulse rounded bg-muted" />
-                <div className="h-3 w-1/4 animate-pulse rounded bg-muted" />
+                <div className="bg-muted h-4 w-1/3 animate-pulse rounded" />
+                <div className="bg-muted h-3 w-1/4 animate-pulse rounded" />
               </div>
             </div>
           </Card>
@@ -134,9 +136,9 @@ export function AttachmentList({
     return (
       <Card className="p-12">
         <div className="flex flex-col items-center justify-center text-center">
-          <File className="mb-4 size-12 text-muted-foreground" />
+          <File className="text-muted-foreground mb-4 size-12" />
           <h3 className="mb-2 text-lg font-semibold">No Attachments</h3>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             No files have been attached to this item yet.
           </p>
         </div>
@@ -155,7 +157,10 @@ export function AttachmentList({
             {/* File Info */}
             <div className="min-w-0 flex-1">
               <div className="mb-1 flex items-start justify-between gap-2">
-                <h4 className="truncate font-medium" title={attachment.fileName}>
+                <h4
+                  className="truncate font-medium"
+                  title={attachment.fileName}
+                >
                   {attachment.fileName}
                 </h4>
                 <div className="flex flex-shrink-0 gap-1">
@@ -204,7 +209,7 @@ export function AttachmentList({
               </div>
 
               {/* File Metadata */}
-              <div className="space-y-1 text-sm text-muted-foreground">
+              <div className="text-muted-foreground space-y-1 text-sm">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="secondary" className="text-xs">
                     {attachment.formattedFileSize}
@@ -237,7 +242,7 @@ export function AttachmentList({
 
               {/* Note */}
               {attachment.note && (
-                <p className="mt-2 text-sm text-muted-foreground">
+                <p className="text-muted-foreground mt-2 text-sm">
                   {attachment.note}
                 </p>
               )}

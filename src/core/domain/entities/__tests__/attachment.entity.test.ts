@@ -17,7 +17,7 @@ describe("Attachment Entity", () => {
     it("should create an attachment with valid properties", () => {
       // Act
       const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.Asset,
+        targetType: TargetObjectTypeEnum.ASSET,
         targetId: "asset-123",
         fileName: "document.pdf",
         filePath: "uploads/2025/01/abc123.pdf",
@@ -29,7 +29,7 @@ describe("Attachment Entity", () => {
 
       // Assert
       expect(attachment).toBeDefined();
-      expect(attachment.targetType).toBe(TargetObjectTypeEnum.Asset);
+      expect(attachment.targetType).toBe(TargetObjectTypeEnum.ASSET);
       expect(attachment.targetId).toBe("asset-123");
       expect(attachment.fileName).toBe("document.pdf");
       expect(attachment.filePath).toBe("uploads/2025/01/abc123.pdf");
@@ -44,7 +44,7 @@ describe("Attachment Entity", () => {
     it("should create attachment without optional mimeType", () => {
       // Act
       const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.ConfigurationItem,
+        targetType: TargetObjectTypeEnum.CI,
         targetId: "ci-123",
         fileName: "config.txt",
         filePath: "uploads/config.txt",
@@ -60,12 +60,12 @@ describe("Attachment Entity", () => {
     it("should support all target types", () => {
       // Arrange
       const targetTypes = [
-        TargetObjectTypeEnum.Asset,
-        TargetObjectTypeEnum.ConfigurationItem,
-        TargetObjectTypeEnum.Contract,
-        TargetObjectTypeEnum.LicenseProduct,
-        TargetObjectTypeEnum.Person,
-        TargetObjectTypeEnum.Warranty,
+        TargetObjectTypeEnum.ASSET,
+        TargetObjectTypeEnum.CI,
+        TargetObjectTypeEnum.CONTRACT,
+        TargetObjectTypeEnum.LICENSE_ENTITLEMENT,
+        TargetObjectTypeEnum.PERSON,
+        TargetObjectTypeEnum.WARRANTY,
       ];
 
       // Act & Assert
@@ -89,7 +89,7 @@ describe("Attachment Entity", () => {
       // Act & Assert
       expect(() =>
         Attachment.create({
-          targetType: TargetObjectTypeEnum.Asset,
+          targetType: TargetObjectTypeEnum.ASSET,
           targetId: "asset-123",
           fileName: "",
           filePath: "uploads/file.pdf",
@@ -100,7 +100,7 @@ describe("Attachment Entity", () => {
       ).toThrow(ValidationError);
       expect(() =>
         Attachment.create({
-          targetType: TargetObjectTypeEnum.Asset,
+          targetType: TargetObjectTypeEnum.ASSET,
           targetId: "asset-123",
           fileName: "",
           filePath: "uploads/file.pdf",
@@ -115,7 +115,7 @@ describe("Attachment Entity", () => {
       // Act & Assert
       expect(() =>
         Attachment.create({
-          targetType: TargetObjectTypeEnum.Asset,
+          targetType: TargetObjectTypeEnum.ASSET,
           targetId: "asset-123",
           fileName: "A".repeat(256) + ".pdf",
           filePath: "uploads/file.pdf",
@@ -130,7 +130,7 @@ describe("Attachment Entity", () => {
       // Act & Assert
       expect(() =>
         Attachment.create({
-          targetType: TargetObjectTypeEnum.Asset,
+          targetType: TargetObjectTypeEnum.ASSET,
           targetId: "asset-123",
           fileName: "file.pdf",
           filePath: "",
@@ -141,7 +141,7 @@ describe("Attachment Entity", () => {
       ).toThrow(ValidationError);
       expect(() =>
         Attachment.create({
-          targetType: TargetObjectTypeEnum.Asset,
+          targetType: TargetObjectTypeEnum.ASSET,
           targetId: "asset-123",
           fileName: "file.pdf",
           filePath: "",
@@ -156,7 +156,7 @@ describe("Attachment Entity", () => {
       // Act & Assert
       expect(() =>
         Attachment.create({
-          targetType: TargetObjectTypeEnum.Asset,
+          targetType: TargetObjectTypeEnum.ASSET,
           targetId: "asset-123",
           fileName: "file.pdf",
           filePath: "uploads/file.pdf",
@@ -167,7 +167,7 @@ describe("Attachment Entity", () => {
       ).toThrow(ValidationError);
       expect(() =>
         Attachment.create({
-          targetType: TargetObjectTypeEnum.Asset,
+          targetType: TargetObjectTypeEnum.ASSET,
           targetId: "asset-123",
           fileName: "file.pdf",
           filePath: "uploads/file.pdf",
@@ -182,17 +182,12 @@ describe("Attachment Entity", () => {
   describe("business methods - file type detection", () => {
     it("should detect image files", () => {
       // Arrange
-      const imageTypes = [
-        "image/jpeg",
-        "image/png",
-        "image/gif",
-        "image/webp",
-      ];
+      const imageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
 
       // Act & Assert
       imageTypes.forEach((mimeType) => {
         const attachment = Attachment.create({
-          targetType: TargetObjectTypeEnum.Asset,
+          targetType: TargetObjectTypeEnum.ASSET,
           targetId: "asset-123",
           fileName: "photo.jpg",
           filePath: "uploads/photo.jpg",
@@ -209,7 +204,7 @@ describe("Attachment Entity", () => {
     it("should detect PDF files", () => {
       // Arrange
       const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.Contract,
+        targetType: TargetObjectTypeEnum.CONTRACT,
         targetId: "contract-123",
         fileName: "contract.pdf",
         filePath: "uploads/contract.pdf",
@@ -227,7 +222,7 @@ describe("Attachment Entity", () => {
     it("should return false for unknown file types", () => {
       // Arrange
       const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.Asset,
+        targetType: TargetObjectTypeEnum.ASSET,
         targetId: "asset-123",
         fileName: "data.json",
         filePath: "uploads/data.json",
@@ -245,7 +240,7 @@ describe("Attachment Entity", () => {
     it("should handle missing mimeType", () => {
       // Arrange
       const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.Asset,
+        targetType: TargetObjectTypeEnum.ASSET,
         targetId: "asset-123",
         fileName: "file.txt",
         filePath: "uploads/file.txt",
@@ -273,7 +268,7 @@ describe("Attachment Entity", () => {
       // Act & Assert
       testCases.forEach(({ fileName, expected }) => {
         const attachment = Attachment.create({
-          targetType: TargetObjectTypeEnum.Asset,
+          targetType: TargetObjectTypeEnum.ASSET,
           targetId: "asset-123",
           fileName,
           filePath: "uploads/" + fileName,
@@ -290,7 +285,7 @@ describe("Attachment Entity", () => {
     it("should format bytes correctly", () => {
       // Arrange
       const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.Asset,
+        targetType: TargetObjectTypeEnum.ASSET,
         targetId: "asset-123",
         fileName: "tiny.txt",
         filePath: "uploads/tiny.txt",
@@ -306,7 +301,7 @@ describe("Attachment Entity", () => {
     it("should format kilobytes correctly", () => {
       // Arrange
       const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.Asset,
+        targetType: TargetObjectTypeEnum.ASSET,
         targetId: "asset-123",
         fileName: "small.txt",
         filePath: "uploads/small.txt",
@@ -322,7 +317,7 @@ describe("Attachment Entity", () => {
     it("should format megabytes correctly", () => {
       // Arrange
       const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.Contract,
+        targetType: TargetObjectTypeEnum.CONTRACT,
         targetId: "contract-123",
         fileName: "contract.pdf",
         filePath: "uploads/contract.pdf",
@@ -338,7 +333,7 @@ describe("Attachment Entity", () => {
     it("should format gigabytes correctly", () => {
       // Arrange
       const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.Asset,
+        targetType: TargetObjectTypeEnum.ASSET,
         targetId: "asset-123",
         fileName: "large-file.zip",
         filePath: "uploads/large-file.zip",
@@ -356,7 +351,7 @@ describe("Attachment Entity", () => {
     it("should return file size in megabytes", () => {
       // Arrange
       const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.Asset,
+        targetType: TargetObjectTypeEnum.ASSET,
         targetId: "asset-123",
         fileName: "file.zip",
         filePath: "uploads/file.zip",
@@ -372,7 +367,7 @@ describe("Attachment Entity", () => {
     it("should handle fractional megabytes", () => {
       // Arrange
       const attachment = Attachment.create({
-        targetType: TargetObjectTypeEnum.Asset,
+        targetType: TargetObjectTypeEnum.ASSET,
         targetId: "asset-123",
         fileName: "file.pdf",
         filePath: "uploads/file.pdf",

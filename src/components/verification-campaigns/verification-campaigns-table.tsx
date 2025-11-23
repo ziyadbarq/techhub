@@ -80,9 +80,8 @@ export function VerificationCampaignsTable({
   const router = useRouter();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [campaignsWithProgress, setCampaignsWithProgress] = useState<
-    CampaignWithProgress[]
-  >(data);
+  const [campaignsWithProgress, setCampaignsWithProgress] =
+    useState<CampaignWithProgress[]>(data);
   const [deletingCampaign, setDeletingCampaign] =
     useState<VerificationCampaignDTO | null>(null);
 
@@ -213,9 +212,9 @@ export function VerificationCampaignsTable({
         const percentage = total > 0 ? (verified / total) * 100 : 0;
 
         return (
-          <div className="flex items-center gap-2 min-w-[150px]">
+          <div className="flex min-w-[150px] items-center gap-2">
             <Progress value={percentage} className="h-2 flex-1" />
-            <span className="text-xs text-muted-foreground whitespace-nowrap">
+            <span className="text-muted-foreground text-xs whitespace-nowrap">
               {verified}/{total}
             </span>
           </div>
@@ -242,7 +241,9 @@ export function VerificationCampaignsTable({
             </Button>
 
             {canStart && (
-              <PermissionGuard permission={PERMISSIONS.VERIFICATION_CAMPAIGNS_START}>
+              <PermissionGuard
+                permission={PERMISSIONS.VERIFICATION_CAMPAIGNS_START}
+              >
                 <Button
                   variant="ghost"
                   size="icon"
@@ -255,7 +256,9 @@ export function VerificationCampaignsTable({
             )}
 
             {canComplete && (
-              <PermissionGuard permission={PERMISSIONS.VERIFICATION_CAMPAIGNS_COMPLETE}>
+              <PermissionGuard
+                permission={PERMISSIONS.VERIFICATION_CAMPAIGNS_COMPLETE}
+              >
                 <Button
                   variant="ghost"
                   size="icon"
@@ -267,7 +270,9 @@ export function VerificationCampaignsTable({
               </PermissionGuard>
             )}
 
-            <PermissionGuard permission={PERMISSIONS.VERIFICATION_CAMPAIGNS_UPDATE}>
+            <PermissionGuard
+              permission={PERMISSIONS.VERIFICATION_CAMPAIGNS_UPDATE}
+            >
               <Button
                 variant="ghost"
                 size="icon"
@@ -279,7 +284,9 @@ export function VerificationCampaignsTable({
               </Button>
             </PermissionGuard>
 
-            <PermissionGuard permission={PERMISSIONS.VERIFICATION_CAMPAIGNS_DELETE}>
+            <PermissionGuard
+              permission={PERMISSIONS.VERIFICATION_CAMPAIGNS_DELETE}
+            >
               <Button
                 variant="ghost"
                 size="icon"
@@ -296,6 +303,7 @@ export function VerificationCampaignsTable({
     },
   ];
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: campaignsWithProgress,
     columns,
@@ -411,8 +419,8 @@ export function VerificationCampaignsTable({
             <AlertDialogTitle>Delete Campaign?</AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to delete "{deletingCampaign?.name}"? This
-              action cannot be undone and will delete all associated verification
-              items.
+              action cannot be undone and will delete all associated
+              verification items.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

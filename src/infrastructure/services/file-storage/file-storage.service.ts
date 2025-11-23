@@ -14,7 +14,10 @@
 import { injectable } from "inversify";
 import { promises as fs } from "fs";
 import path from "path";
-import type { IFileStorageService, FileEncoding } from "@/core/services";
+import { createId } from "@paralleldrive/cuid2";
+import type { IFileStorageService } from "@/core/services";
+
+type FileEncoding = "utf-8" | "binary";
 
 /**
  * Maximum file size: 10MB
@@ -24,6 +27,11 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024;
 @injectable()
 export class FileStorageService implements IFileStorageService {
   /**
+   * Base directory for uploads relative to project root
+   */
+  private readonly uploadsDir = "public/uploads";
+
+  /**
    * Project root directory
    */
   private readonly projectRoot: string;
@@ -31,6 +39,53 @@ export class FileStorageService implements IFileStorageService {
   constructor() {
     // Use process.cwd() as project root
     this.projectRoot = process.cwd();
+  }
+
+  // ========================================
+  // Upload Operations
+  // ========================================
+
+  async uploadFile(
+    file: Buffer,
+    fileName: string,
+    _mimeType: string,
+  ): Promise<string> {
+    // Enforce max size
+    if (file.length > MAX_FILE_SIZE) {
+      throw new Error(
+        `File exceeds maximum size limit (${MAX_FILE_SIZE} bytes)`,
+      );
+    }
+
+    const now = new Date();
+    const year = now.getFullYear().toString();
+    const month = (now.getMonth() + 1).toString().padStart(2, "0");
+
+    const ext = path.extname(fileName).toLowerCase();
+    if (!ext) {
+      throw new Error(`File name must have an extension: ${fileName}`);
+    }
+
+    const uniqueName = `${createId()}${ext}`;
+    const dirPath = path.join(this.uploadsDir, year, month);
+    const storagePath = path.join(dirPath, uniqueName);
+
+    if (!this.validatePath(storagePath)) {
+      throw new Error(`Invalid storage path: ${storagePath}`);
+    }
+
+    await this.ensureDir(dirPath);
+    const fullPath = this.resolveFullPath(storagePath);
+    await fs.writeFile(fullPath, file);
+
+    return storagePath;
+  }
+
+  getFileUrl(storagePath: string): string {
+    const normalizedPath = storagePath.replace(/^public\//, "");
+    return normalizedPath.startsWith("/")
+      ? normalizedPath
+      : `/${normalizedPath}`;
   }
 
   // ========================================

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { FileIcon, Download } from "lucide-react";
+import { FileIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -21,7 +21,7 @@ import {
 import { listAttachmentTypes } from "@/interface-adapters/controllers/attachment-type.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { usePermissions } from "@/hooks/use-permissions";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 export const dynamic = "force-dynamic";
 
@@ -61,7 +61,6 @@ export default function AttachmentsPage() {
 
   const { hasPermission } = usePermissions();
   const canView = hasPermission(PERMISSIONS.ATTACHMENTS_VIEW);
-  const { toast } = useToast();
 
   const loadAttachments = React.useCallback(async () => {
     if (!canView) return;
@@ -75,16 +74,12 @@ export default function AttachmentsPage() {
       if (result.success) {
         setAttachments(result.data);
       } else {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: result.error || "Failed to load attachments",
-        });
+        toast.error(result.error || "Failed to load attachments");
       }
     } finally {
       setLoading(false);
     }
-  }, [canView, targetTypeFilter, attachmentTypeFilter, toast]);
+  }, [canView, targetTypeFilter, attachmentTypeFilter]);
 
   const loadAttachmentTypes = React.useCallback(async () => {
     const result = await listAttachmentTypes();
@@ -113,23 +108,12 @@ export default function AttachmentsPage() {
         link.click();
         document.body.removeChild(link);
 
-        toast({
-          title: "Success",
-          description: "Attachment downloaded successfully",
-        });
+        toast.success("Attachment downloaded successfully");
       } else {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: result.error || "Failed to download attachment",
-        });
+        toast.error(result.error || "Failed to download attachment");
       }
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to download attachment",
-      });
+    } catch (_error) {
+      toast.error("Failed to download attachment");
     }
   };
 
@@ -140,8 +124,8 @@ export default function AttachmentsPage() {
 
   if (!canView) {
     return (
-      <div className="flex flex-col items-center justify-center h-[50vh] gap-4">
-        <FileIcon className="h-16 w-16 text-muted-foreground" />
+      <div className="flex h-[50vh] flex-col items-center justify-center gap-4">
+        <FileIcon className="text-muted-foreground h-16 w-16" />
         <h2 className="text-2xl font-semibold">Access Denied</h2>
         <p className="text-muted-foreground">
           You don't have permission to view attachments
@@ -162,9 +146,9 @@ export default function AttachmentsPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex gap-4 items-end">
-        <div className="flex-1 max-w-xs">
-          <label className="text-sm font-medium mb-2 block">
+      <div className="flex items-end gap-4">
+        <div className="max-w-xs flex-1">
+          <label className="mb-2 block text-sm font-medium">
             Filter by Entity Type
           </label>
           <Select
@@ -187,8 +171,8 @@ export default function AttachmentsPage() {
           </Select>
         </div>
 
-        <div className="flex-1 max-w-xs">
-          <label className="text-sm font-medium mb-2 block">
+        <div className="max-w-xs flex-1">
+          <label className="mb-2 block text-sm font-medium">
             Filter by Attachment Type
           </label>
           <Select

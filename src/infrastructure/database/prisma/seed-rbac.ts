@@ -257,6 +257,44 @@ const SYSTEM_ROLES = {
       // Dashboard
       PERMISSIONS.DASHBOARD_VIEW,
 
+      // Governance - Data Domains & Ownerships
+      PERMISSIONS.DATA_DOMAINS_VIEW,
+      PERMISSIONS.DATA_DOMAINS_CREATE,
+      PERMISSIONS.DATA_DOMAINS_UPDATE,
+      PERMISSIONS.DATA_DOMAINS_DELETE,
+      PERMISSIONS.DATA_DOMAINS_MANAGE,
+      PERMISSIONS.DATA_OWNERSHIPS_VIEW,
+      PERMISSIONS.DATA_OWNERSHIPS_CREATE,
+      PERMISSIONS.DATA_OWNERSHIPS_UPDATE,
+      PERMISSIONS.DATA_OWNERSHIPS_DELETE,
+      PERMISSIONS.DATA_OWNERSHIPS_MANAGE,
+
+      // Governance - Verification Campaigns & Items
+      PERMISSIONS.VERIFICATION_CAMPAIGNS_VIEW,
+      PERMISSIONS.VERIFICATION_CAMPAIGNS_CREATE,
+      PERMISSIONS.VERIFICATION_CAMPAIGNS_UPDATE,
+      PERMISSIONS.VERIFICATION_CAMPAIGNS_DELETE,
+      PERMISSIONS.VERIFICATION_CAMPAIGNS_START,
+      PERMISSIONS.VERIFICATION_CAMPAIGNS_COMPLETE,
+      PERMISSIONS.VERIFICATION_CAMPAIGNS_MANAGE,
+      PERMISSIONS.VERIFICATION_ITEMS_VIEW,
+      PERMISSIONS.VERIFICATION_ITEMS_UPDATE,
+      PERMISSIONS.VERIFICATION_ITEMS_VERIFY,
+      PERMISSIONS.VERIFICATION_ITEMS_FLAG_EXCEPTION,
+      PERMISSIONS.VERIFICATION_ITEMS_MANAGE,
+
+      // Attachments & Attachment Types
+      PERMISSIONS.ATTACHMENT_TYPES_VIEW,
+      PERMISSIONS.ATTACHMENT_TYPES_CREATE,
+      PERMISSIONS.ATTACHMENT_TYPES_UPDATE,
+      PERMISSIONS.ATTACHMENT_TYPES_DELETE,
+      PERMISSIONS.ATTACHMENT_TYPES_MANAGE,
+      PERMISSIONS.ATTACHMENTS_VIEW,
+      PERMISSIONS.ATTACHMENTS_CREATE,
+      PERMISSIONS.ATTACHMENTS_UPDATE,
+      PERMISSIONS.ATTACHMENTS_DELETE,
+      PERMISSIONS.ATTACHMENTS_MANAGE,
+
       // Settings (view only)
       PERMISSIONS.SETTINGS_VIEW,
     ],
@@ -312,6 +350,14 @@ const SYSTEM_ROLES = {
       // Service Management - Read-only
       PERMISSIONS.SERVICES_VIEW,
       PERMISSIONS.BUSINESS_PROCESSES_VIEW,
+
+      // Governance - Read-only
+      PERMISSIONS.DATA_DOMAINS_VIEW,
+      PERMISSIONS.DATA_OWNERSHIPS_VIEW,
+      PERMISSIONS.VERIFICATION_CAMPAIGNS_VIEW,
+      PERMISSIONS.VERIFICATION_ITEMS_VIEW,
+      PERMISSIONS.ATTACHMENT_TYPES_VIEW,
+      PERMISSIONS.ATTACHMENTS_VIEW,
 
       // Dashboard
       PERMISSIONS.DASHBOARD_VIEW,
@@ -607,6 +653,242 @@ const SYSTEM_PERMISSIONS = [
     displayName: "Manage Business Processes",
     description: "Full business process management access",
     resource: "business-processes",
+    action: "manage",
+  },
+
+  // Governance: Data Domains
+  {
+    name: PERMISSIONS.DATA_DOMAINS_VIEW,
+    displayName: "View Data Domains",
+    description: "View data domain catalog",
+    resource: "data-domains",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.DATA_DOMAINS_CREATE,
+    displayName: "Create Data Domains",
+    description: "Create new data domains",
+    resource: "data-domains",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.DATA_DOMAINS_UPDATE,
+    displayName: "Update Data Domains",
+    description: "Update data domain details",
+    resource: "data-domains",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.DATA_DOMAINS_DELETE,
+    displayName: "Delete Data Domains",
+    description: "Delete data domains",
+    resource: "data-domains",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.DATA_DOMAINS_MANAGE,
+    displayName: "Manage Data Domains",
+    description: "Full data domain management access",
+    resource: "data-domains",
+    action: "manage",
+  },
+
+  // Governance: Data Ownerships
+  {
+    name: PERMISSIONS.DATA_OWNERSHIPS_VIEW,
+    displayName: "View Data Ownerships",
+    description: "View data ownership assignments",
+    resource: "data-ownerships",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.DATA_OWNERSHIPS_CREATE,
+    displayName: "Create Data Ownerships",
+    description: "Assign new data ownerships",
+    resource: "data-ownerships",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.DATA_OWNERSHIPS_UPDATE,
+    displayName: "Update Data Ownerships",
+    description: "Update data ownership assignments",
+    resource: "data-ownerships",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.DATA_OWNERSHIPS_DELETE,
+    displayName: "Delete Data Ownerships",
+    description: "Remove data ownership assignments",
+    resource: "data-ownerships",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.DATA_OWNERSHIPS_MANAGE,
+    displayName: "Manage Data Ownerships",
+    description: "Full data ownership management access",
+    resource: "data-ownerships",
+    action: "manage",
+  },
+
+  // Governance: Verification Campaigns
+  {
+    name: PERMISSIONS.VERIFICATION_CAMPAIGNS_VIEW,
+    displayName: "View Verification Campaigns",
+    description: "View verification campaign list and details",
+    resource: "verification-campaigns",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.VERIFICATION_CAMPAIGNS_CREATE,
+    displayName: "Create Verification Campaigns",
+    description: "Create new verification campaigns",
+    resource: "verification-campaigns",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.VERIFICATION_CAMPAIGNS_UPDATE,
+    displayName: "Update Verification Campaigns",
+    description: "Update verification campaigns",
+    resource: "verification-campaigns",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.VERIFICATION_CAMPAIGNS_DELETE,
+    displayName: "Delete Verification Campaigns",
+    description: "Delete verification campaigns",
+    resource: "verification-campaigns",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.VERIFICATION_CAMPAIGNS_START,
+    displayName: "Start Verification Campaigns",
+    description: "Start verification campaigns",
+    resource: "verification-campaigns",
+    action: "start",
+  },
+  {
+    name: PERMISSIONS.VERIFICATION_CAMPAIGNS_COMPLETE,
+    displayName: "Complete Verification Campaigns",
+    description: "Complete verification campaigns",
+    resource: "verification-campaigns",
+    action: "complete",
+  },
+  {
+    name: PERMISSIONS.VERIFICATION_CAMPAIGNS_MANAGE,
+    displayName: "Manage Verification Campaigns",
+    description: "Full verification campaign management access",
+    resource: "verification-campaigns",
+    action: "manage",
+  },
+
+  // Governance: Verification Items
+  {
+    name: PERMISSIONS.VERIFICATION_ITEMS_VIEW,
+    displayName: "View Verification Items",
+    description: "View verification items",
+    resource: "verification-items",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.VERIFICATION_ITEMS_UPDATE,
+    displayName: "Update Verification Items",
+    description: "Update verification item assignees and metadata",
+    resource: "verification-items",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.VERIFICATION_ITEMS_VERIFY,
+    displayName: "Verify Verification Items",
+    description: "Mark verification items as verified",
+    resource: "verification-items",
+    action: "verify",
+  },
+  {
+    name: PERMISSIONS.VERIFICATION_ITEMS_FLAG_EXCEPTION,
+    displayName: "Flag Verification Item Exceptions",
+    description: "Flag verification items as exceptions",
+    resource: "verification-items",
+    action: "flag-exception",
+  },
+  {
+    name: PERMISSIONS.VERIFICATION_ITEMS_MANAGE,
+    displayName: "Manage Verification Items",
+    description: "Full verification item management access",
+    resource: "verification-items",
+    action: "manage",
+  },
+
+  // Attachments: Attachment Types
+  {
+    name: PERMISSIONS.ATTACHMENT_TYPES_VIEW,
+    displayName: "View Attachment Types",
+    description: "View attachment type definitions",
+    resource: "attachment-types",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.ATTACHMENT_TYPES_CREATE,
+    displayName: "Create Attachment Types",
+    description: "Create new attachment types",
+    resource: "attachment-types",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.ATTACHMENT_TYPES_UPDATE,
+    displayName: "Update Attachment Types",
+    description: "Update attachment type definitions",
+    resource: "attachment-types",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.ATTACHMENT_TYPES_DELETE,
+    displayName: "Delete Attachment Types",
+    description: "Delete attachment types",
+    resource: "attachment-types",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.ATTACHMENT_TYPES_MANAGE,
+    displayName: "Manage Attachment Types",
+    description: "Full attachment type management access",
+    resource: "attachment-types",
+    action: "manage",
+  },
+
+  // Attachments
+  {
+    name: PERMISSIONS.ATTACHMENTS_VIEW,
+    displayName: "View Attachments",
+    description: "View attachments",
+    resource: "attachments",
+    action: "view",
+  },
+  {
+    name: PERMISSIONS.ATTACHMENTS_CREATE,
+    displayName: "Create Attachments",
+    description: "Upload new attachments",
+    resource: "attachments",
+    action: "create",
+  },
+  {
+    name: PERMISSIONS.ATTACHMENTS_UPDATE,
+    displayName: "Update Attachments",
+    description: "Update attachment metadata",
+    resource: "attachments",
+    action: "update",
+  },
+  {
+    name: PERMISSIONS.ATTACHMENTS_DELETE,
+    displayName: "Delete Attachments",
+    description: "Delete attachments",
+    resource: "attachments",
+    action: "delete",
+  },
+  {
+    name: PERMISSIONS.ATTACHMENTS_MANAGE,
+    displayName: "Manage Attachments",
+    description: "Full attachment management access",
+    resource: "attachments",
     action: "manage",
   },
 

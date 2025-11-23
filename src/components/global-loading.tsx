@@ -16,7 +16,7 @@ export function GlobalLoading() {
 
         {/* Loading text */}
         <p className="text-muted-foreground text-sm font-medium">
-          Loading presentation...
+          Loading barq TechHub...
         </p>
       </div>
     </div>
