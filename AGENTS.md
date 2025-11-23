@@ -88,14 +88,9 @@ npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastruc
 - MDX files in `src/content/docs/` with custom components (Card, Callout, CodeBlock)
 - **IMPORTANT**: MDX plugins configured in component (NOT `next.config.ts`) for Turbopack compatibility
 
-### Roadmap (Future Features)
+### Future Enhancements
 
-- [Roadmap Index](roadmap/README.md) - Complete list of planned features by layer
-- **RBAC Enhancements**:
-  - [RBAC_ENHANCEMENT_PHASE_1.md](roadmap/RBAC_ENHANCEMENT_PHASE_1.md) - **COMPLETED** - Navigation fixes, permission grouping, enhanced UI, clone role
-  - [RBAC_ENHANCEMENT_PHASE_2.md](roadmap/RBAC_ENHANCEMENT_PHASE_2.md) - **PLANNED** - Audit log UI, bulk operations, analytics, expiration, dependencies, conflicts, hierarchy
-- **Layer 2**: Service Management, Security Patch Workflow, Multi-Currency Support
-- **Layer 3**: Schema-API Alignment completion
+- [Roadmap Index](roadmap/README.md) - Planned features and enhancements
 
 ### All Documentation
 
@@ -164,7 +159,7 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - **Navigation**: Automatically filtered based on user permissions (see `navigation.ts`)
 - **Role Management**: Clone roles with one click at `/admin/roles` (automatic permission copying)
 - **Permission Assignment**: Enhanced UI with search, collapsible groups, "Select All in Group" at `/admin/roles/[name]/permissions`
-- **See**: [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md) and [roadmap/RBAC_ENHANCEMENT_PHASE_1.md](roadmap/RBAC_ENHANCEMENT_PHASE_1.md)
+- **See**: [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md) and [RBAC_ADMIN_GUIDE.md](docs/features/RBAC_ADMIN_GUIDE.md)
 
 ### Logging
 
@@ -250,44 +245,49 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 
 **Navigation**: New "CMDB", "Contracts", and "Licenses" groups added with permission-based filtering
 
-## RBAC Admin Enhancements (Layer 1)
+## RBAC Admin Features
 
-**Phase 1 (COMPLETED 2025-11-22)**:
+The system includes comprehensive role-based access control administration:
 
-- **Permission Grouping**: 153+ permissions organized into 10 logical categories (`src/lib/rbac/permission-groups.ts`)
+**Permission Management**:
+- **Permission Grouping**: 159+ permissions organized into 10 logical categories (`src/lib/rbac/permission-groups.ts`)
 - **Enhanced UI**: Search/filter, collapsible groups, "Select All in Group" at `/admin/roles/[name]/permissions`
 - **Clone Role**: One-click role duplication with automatic permission copying
-- **Navigation Fixes**: Fixed critical 404 bug (role/permission pages now use `name` instead of `id`)
-- **Impact**: 100% navigation success, 93% reduction in permission assignment complexity, 90% time savings for role cloning
-
-**Phase 2 (PARTIALLY COMPLETED 2025-11-22)**:
-
-- ✅ **Permission Dependencies** (`src/lib/rbac/permission-dependencies.ts`):
-  - 153+ permissions mapped with dependency rules (DELETE requires VIEW, MANAGE requires CRUD, etc.)
+- **Bulk Operations**: Multi-select permissions for bulk add/remove with visual feedback
+- **Permission Dependencies** (`src/lib/rbac/permission-dependencies.ts`):
+  - Dependency rules for all permissions
   - Validation with `validatePermissionDependencies()` function
-  - UI warnings in PermissionsManager showing missing dependencies
+  - UI warnings showing missing dependencies
   - Auto-fix button to add required permissions
   - Tooltips on individual permissions showing requirements
 
-- ✅ **Role Conflict Detection** (`src/lib/rbac/role-conflicts.ts`):
-  - Segregation of duties enforcement (auditor vs admin, finance vs procurement, etc.)
-  - 3 severity levels: warning, error, critical
-  - `detectRoleConflicts()` and `validateRoleAddition()` logic
-  - RoleAssignment component shows conflicts with severity badges
-  - Critical conflicts block assignment, warnings allow override
-  - Existing conflicts highlighted in user role list
+**User Management** (`/admin/users`):
+- Advanced filtering: search, roles, verification status, date range
+- Inline role editing: Add/remove roles without navigation
+- User role history viewer: Complete audit trail
+- Bulk user role assignment with conflict detection
 
-- ✅ **Bulk Operations - Permission Assignment**:
-  - Bulk mode toggle in PermissionsManager
-  - Multi-select permissions for bulk add/remove
-  - Bulk actions bar with "Add Selected", "Remove Selected", "Clear" buttons
-  - Visual feedback with highlighted selections
-  - ~50% time savings for bulk permission operations
+**Role Analytics Dashboard** (`/admin/analytics`):
+- Role usage statistics with bar charts
+- Orphaned role detection
+- Permission usage analysis (most/least used)
+- User role distribution pie chart
+- Users with role conflicts table
 
-**Phase 2 Roadmap** (Remaining Features):
+**Role Hierarchy/Inheritance**:
+- Database schema: `parentId`, self-referential `parent`/`children` relationships
+- Domain entity: `getAllPermissions()`, `hasParentInHierarchy()` methods
+- Recursive permission resolution for inherited permissions
+- Circular dependency prevention
 
-- **Phase 2 (IN PROGRESS)**: See [roadmap/RBAC_ENHANCEMENT_PHASE_2.md](roadmap/RBAC_ENHANCEMENT_PHASE_2.md)
-  - Remaining: Enhanced audit log UI, bulk user role assignment, advanced user management, role analytics, time-based expiration background jobs, role hierarchy/inheritance
+**Role Conflict Detection** (`src/lib/rbac/role-conflicts.ts`):
+- Segregation of duties enforcement
+- 3 severity levels: warning, error, critical
+- Bidirectional conflict detection with `rolesConflict()` function
+- RoleAssignment component shows conflicts with severity badges
+- Critical conflicts block assignment, warnings allow override
+
+**Documentation**: See [RBAC Admin Guide](docs/features/RBAC_ADMIN_GUIDE.md) for complete usage guide
 
 ## Architecture Overview
 

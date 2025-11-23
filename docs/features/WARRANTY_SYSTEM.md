@@ -659,33 +659,6 @@ A: Verify user has appropriate warranty permissions:
 
 ---
 
-## Changelog
-
-### Version 1.0.0 (Current - Backend Complete)
-
-**Added**:
-
-- ✅ Complete warranty entity with business rules
-- ✅ 9 use cases (CRUD + queries + expiration check)
-- ✅ Prisma repository with 20+ methods
-- ✅ 8 server action controllers
-- ✅ RBAC with 5 permission levels
-- ✅ Background job for expiration monitoring
-- ✅ Zod validation schemas
-- ✅ Entity presenter for DTOs
-- ✅ Navigation menu integration
-- ✅ DI container bindings
-
-**Pending**:
-
-- ⏳ UI components (forms, tables, cards)
-- ⏳ Warranties CRUD pages
-- ⏳ Asset warranty integration panels
-- ⏳ Dashboard expiration widget
-- ⏳ Email notification system
-
----
-
 ## License & Credits
 
 Part of the Barq Assets CMDB/ITAM system.

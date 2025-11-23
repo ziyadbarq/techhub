@@ -93,17 +93,9 @@ npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastruc
 - MDX files in `src/content/docs/` with custom components (Card, Callout, CodeBlock)
 - **IMPORTANT**: MDX plugins configured in component (NOT `next.config.ts`) for Turbopack compatibility
 
-### Roadmap (Future Features)
+### Future Enhancements
 
-- [Roadmap Index](roadmap/README.md) - Complete list of planned features by layer
-- **RBAC Enhancements**:
-  - [RBAC_ENHANCEMENT_PHASE_1.md](roadmap/RBAC_ENHANCEMENT_PHASE_1.md) - **COMPLETED** - Navigation fixes, permission grouping, enhanced UI, clone role
-  - **RBAC_ENHANCEMENT_PHASE_2** - **COMPLETED** - Advanced user management, analytics dashboard, role hierarchy infrastructure, permission dependencies, role conflicts
-- **Layer 2**: Service Management, Security Patch Workflow, Multi-Currency Support
-  - [RBAC_ENHANCEMENT_PHASE_2.md](roadmap/RBAC_ENHANCEMENT_PHASE_2.md) - **PLANNED** - Audit log UI, bulk operations, analytics, expiration, dependencies, conflicts, hierarchy
-- **Layer 2 (Foundation)**: **COMPLETED** - Multi-Currency Support (15 currencies, SAR base, dual display, FX rate management at `/fx-rates`)
-- **Layer 2 (Future)**: Service Management, Security Patch Workflow
-- **Layer 3**: Schema-API Alignment completion
+- [Roadmap Index](roadmap/README.md) - Planned features and enhancements
 
 ### All Documentation
 
@@ -152,7 +144,7 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 
 - **Affected Components**: 9 table components (see [STACK_UPGRADES.md](docs/guides/STACK_UPGRADES.md#5-tanstack-table-v8-incompatibility))
 - **Why**: Prevents React Compiler warnings and ensures tables render correctly
-- **Temporary**: Will be removed when upgrading to TanStack Table v9 (Q2-Q3 2025)
+- **Note**: This directive will be removed when upgrading to TanStack Table v9
 - **See**: [STACK_UPGRADES.md](docs/guides/STACK_UPGRADES.md) section "TanStack Table v8 Incompatibility"
 
 ### Permissions
@@ -173,7 +165,7 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - **Navigation**: Automatically filtered based on user permissions (see `navigation.ts`)
 - **Role Management**: Clone roles with one click at `/admin/roles` (automatic permission copying)
 - **Permission Assignment**: Enhanced UI with search, collapsible groups, "Select All in Group" at `/admin/roles/[name]/permissions`
-- **See**: [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md) and [roadmap/RBAC_ENHANCEMENT_PHASE_1.md](roadmap/RBAC_ENHANCEMENT_PHASE_1.md)
+- **See**: [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md) and [RBAC_ADMIN_GUIDE.md](docs/features/RBAC_ADMIN_GUIDE.md)
 
 ### Logging
 
@@ -291,58 +283,47 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 
 **Navigation**: New "CMDB", "Contracts", "Licenses", "Governance", and "Attachments" groups added with permission-based filtering
 
-## RBAC Admin Enhancements (Layer 1)
+## RBAC Admin Features
 
-**Phase 1 (COMPLETED 2025-11-22)**:
+The system includes comprehensive role-based access control administration:
 
-- **Permission Grouping**: 153+ permissions organized into 10 logical categories (`src/lib/rbac/permission-groups.ts`)
+**Permission Management**:
+- **Permission Grouping**: 159+ permissions organized into 10 logical categories (`src/lib/rbac/permission-groups.ts`)
 - **Enhanced UI**: Search/filter, collapsible groups, "Select All in Group" at `/admin/roles/[name]/permissions`
 - **Clone Role**: One-click role duplication with automatic permission copying
-- **Navigation Fixes**: Fixed critical 404 bug (role/permission pages now use `name` instead of `id`)
-- **Impact**: 100% navigation success, 93% reduction in permission assignment complexity, 90% time savings for role cloning
-
-**Phase 2 (COMPLETED 2025-11-23)**:
-
-- ✅ **Advanced User Management** (`/admin/users`):
-  - Advanced filtering: search, roles, verification status, date range
-  - Inline role editing: Add/remove roles without navigation
-  - User role history viewer: Complete audit trail
-  - ~90% time savings for role management tasks
-
-- ✅ **Role Analytics Dashboard** (`/admin/analytics`):
-  - Role usage statistics with bar charts
-  - Orphaned role detection
-  - Permission usage analysis (most/least used)
-  - User role distribution pie chart
-  - Users with role conflicts table
-  - **Use Cases**: GetRoleUsageStatsUseCase, GetPermissionUsageStatsUseCase, GetUserRoleStatsUseCase
-
-- ✅ **Role Hierarchy/Inheritance** (Infrastructure Complete):
-  - Database schema: `parentId`, self-referential `parent`/`children` relationships
-  - Domain entity: `getAllPermissions()`, `hasParentInHierarchy()` methods
-  - Recursive permission resolution for inherited permissions
-  - Circular dependency prevention
-  - **UI Enhancement Pending**: Parent selector in RoleForm, inherited permissions display
-
-- ✅ **Permission Dependencies** (`src/lib/rbac/permission-dependencies.ts`):
-  - 153+ permissions mapped with dependency rules
+- **Permission Dependencies** (`src/lib/rbac/permission-dependencies.ts`):
+  - Dependency rules for all permissions
   - Validation with `validatePermissionDependencies()` function
-  - UI warnings in PermissionsManager showing missing dependencies
+  - UI warnings showing missing dependencies
   - Auto-fix button to add required permissions
   - Tooltips on individual permissions showing requirements
 
-- ✅ **Role Conflict Detection** (`src/lib/rbac/role-conflicts.ts`):
-  - Segregation of duties enforcement
-  - 3 severity levels: warning, error, critical
-  - Bidirectional conflict detection with `rolesConflict()` function
-  - RoleAssignment component shows conflicts with severity badges
-  - Critical conflicts block assignment, warnings allow override
+**User Management** (`/admin/users`):
+- Advanced filtering: search, roles, verification status, date range
+- Inline role editing: Add/remove roles without navigation
+- User role history viewer: Complete audit trail
+- Bulk user role assignment with conflict detection
 
-- ✅ **Bulk Operations**:
-  - Bulk permission assignment (PermissionsManager)
-  - Bulk user role assignment (BulkRoleAssignmentModal)
-  - Multi-select with conflict detection
-  - ~50% time savings for bulk operations
+**Role Analytics Dashboard** (`/admin/analytics`):
+- Role usage statistics with bar charts
+- Orphaned role detection
+- Permission usage analysis (most/least used)
+- User role distribution pie chart
+- Users with role conflicts table
+- **Use Cases**: GetRoleUsageStatsUseCase, GetPermissionUsageStatsUseCase, GetUserRoleStatsUseCase
+
+**Role Hierarchy/Inheritance**:
+- Database schema: `parentId`, self-referential `parent`/`children` relationships
+- Domain entity: `getAllPermissions()`, `hasParentInHierarchy()` methods
+- Recursive permission resolution for inherited permissions
+- Circular dependency prevention
+
+**Role Conflict Detection** (`src/lib/rbac/role-conflicts.ts`):
+- Segregation of duties enforcement
+- 3 severity levels: warning, error, critical
+- Bidirectional conflict detection with `rolesConflict()` function
+- RoleAssignment component shows conflicts with severity badges
+- Critical conflicts block assignment, warnings allow override
 
 **Documentation**: See [RBAC Admin Guide](docs/features/RBAC_ADMIN_GUIDE.md) for complete usage guide
 

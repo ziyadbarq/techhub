@@ -1273,43 +1273,6 @@ A: Ensure:
 
 ---
 
-## Changelog
-
-### Version 1.0.0 (Current - Backend Complete)
-
-**Added**:
-
-- ✅ Complete AttachmentType entity with validation rules
-- ✅ Complete Attachment entity with polymorphic support
-- ✅ 11 use cases (5 AttachmentType + 6 Attachment)
-- ✅ Prisma repositories with full CRUD
-- ✅ 11 server action controllers
-- ✅ RBAC with 10 permission levels
-- ✅ Zod validation schemas
-- ✅ Entity presenters with computed fields
-- ✅ DI container bindings
-- ✅ Polymorphic target support (23 entity types)
-- ✅ Database schema with optimized indexes
-
-**Complete**:
-
-- ✅ UI components (pages, tables, forms)
-- ✅ Attachment Types management page (`/attachment-types`)
-- ✅ Attachments management page (`/attachments`)
-- ✅ File metadata tracking
-
-**Pending (Future Enhancements)**:
-
-- ⏳ File upload service with progress tracking
-- ⏳ Cloud storage integration (S3/MinIO)
-- ⏳ File preview components
-- ⏳ Advanced search and filtering
-- ⏳ Version control system
-- ⏳ Virus scanning integration
-- ⏳ Download audit trail
-
----
-
 ## See Also
 
 - [ITAM_FEATURES.md](./ITAM_FEATURES.md) - Overview of all ITAM modules
