@@ -1,6 +1,6 @@
 # Marketing Pages & Auth-Aware Navigation
 
-**Last Updated**: 2025-11-22
+**Last Updated**: Current
 
 This guide covers the marketing homepage and authentication flow, including auth-aware navigation components.
 

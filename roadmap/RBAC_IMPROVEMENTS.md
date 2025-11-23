@@ -1,4 +1,4 @@
-# RBAC Phase 2 Corrections
+# RBAC Improvements
 
 ## Status
 
@@ -18,7 +18,7 @@ Medium
 
 ## Overview
 
-Address gaps introduced in RBAC Phase 2 to ensure segregation of duties (SoD) and permission integrity:
+Enhance RBAC system to ensure segregation of duties (SoD) and permission integrity:
 
 - Fix bidirectional role conflict detection so one-sided config entries still block conflicts.
 - Prevent bulk role assignment from bypassing conflict checks; surface per-user conflict/dependency results before applying changes.
@@ -45,20 +45,22 @@ Address gaps introduced in RBAC Phase 2 to ensure segregation of duties (SoD) an
 
 ## Implementation Checklist
 
-- Phase 1: Backend
-  - [ ] Update `role-conflicts` logic to enforce bidirectional detection and add unit coverage.
-  - [ ] Add conflict validation to `AssignRoleToUserUseCase` and bulk assignment controller; return structured results.
-  - [ ] Enforce permission dependencies in role permission assignment use case/controller with clear error payloads.
-  - [ ] Extend audit logging for blocked/partial operations.
-- Phase 2: Frontend
-  - [ ] Fix role conflict display (use role names).
-  - [ ] Add bulk assignment pre-flight conflict/dependency check with summary UI and controls (skip/block/override warnings).
-  - [ ] Gate saves in PermissionsManager on dependency resolution; expose auto-add flow.
-  - [ ] Allow same-day expiration in date pickers.
-- Phase 3: QA/Validation
-  - [ ] Unit tests: conflict detection, dependency enforcement, use cases.
-  - [ ] Integration tests: single and bulk assignment paths (success, warning, critical conflict cases).
-  - [ ] UI tests/manual: bulk assignment flows, permission save with/without deps, date picker edge cases.
+### Backend
+- [ ] Update `role-conflicts` logic to enforce bidirectional detection and add unit coverage
+- [ ] Add conflict validation to `AssignRoleToUserUseCase` and bulk assignment controller; return structured results
+- [ ] Enforce permission dependencies in role permission assignment use case/controller with clear error payloads
+- [ ] Extend audit logging for blocked/partial operations
+
+### Frontend
+- [ ] Fix role conflict display (use role names)
+- [ ] Add bulk assignment pre-flight conflict/dependency check with summary UI and controls (skip/block/override warnings)
+- [ ] Gate saves in PermissionsManager on dependency resolution; expose auto-add flow
+- [ ] Allow same-day expiration in date pickers
+
+### Testing & QA
+- [ ] Unit tests: conflict detection, dependency enforcement, use cases
+- [ ] Integration tests: single and bulk assignment paths (success, warning, critical conflict cases)
+- [ ] UI tests/manual: bulk assignment flows, permission save with/without deps, date picker edge cases
 
 ## Testing Strategy
 

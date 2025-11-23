@@ -2,7 +2,7 @@
 
 **Complete guide to Role-Based Access Control administration features**
 
-**Last Updated**: 2025-11-23
+**Last Updated**: Current
 **Feature Layer**: Layer 1 (Foundation) - RBAC & Administration
 
 ---
@@ -484,36 +484,6 @@ For issues not covered in this guide:
 - `GetRoleUsageStatsUseCase` - `src/core/use-cases/rbac/analytics/get-role-usage-stats.use-case.ts`
 - `GetPermissionUsageStatsUseCase` - `src/core/use-cases/rbac/analytics/get-permission-usage-stats.use-case.ts`
 - `GetUserRoleStatsUseCase` - `src/core/use-cases/rbac/analytics/get-user-role-stats.use-case.ts`
-
----
-
-## Version History
-
-### v2.0.0 (2025-11-23) - RBAC Enhancement Phase 2
-
-**New Features**:
-- ✅ Advanced user filtering (roles, status, date range)
-- ✅ Inline role editing with expiration support
-- ✅ User role history viewer
-- ✅ Role analytics dashboard with visualizations
-- ✅ Role hierarchy infrastructure (schema + entity)
-- ✅ Permission dependencies validation
-- ✅ Role conflict detection with SoD enforcement
-- ✅ Bulk user role assignment
-
-**Improvements**:
-- 90% time savings in role assignment tasks
-- 50% reduction in permission assignment complexity
-- Real-time conflict detection during assignments
-- Comprehensive audit trails for all operations
-
-### v1.0.0 (2025-11-22) - RBAC Enhancement Phase 1
-
-**Features**:
-- Permission grouping (10 categories, 153+ permissions)
-- Enhanced permission assignment UI
-- Role cloning functionality
-- Navigation improvements (name-based routing)
 
 ---
 

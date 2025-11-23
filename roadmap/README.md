@@ -20,14 +20,12 @@ This folder contains detailed specifications for planned features that are not y
 
 ### Layer 1 (Foundation) / RBAC & Admin
 
-- [RBAC Enhancement - Phase 2 (Partially Complete)](RBAC_ENHANCEMENT_PHASE_2.md) - **Status: Partially Complete** - ✅ 6 of 8 features complete: Enhanced audit log UI, bulk operations (permission + user role), time-based expiration, permission dependencies, role conflict detection | Remaining: Advanced user management, role analytics, role hierarchy (40-60 hours total, ~37 hours completed)
-- [RBAC Phase 2 Corrections](RBAC_PHASE2_CORRECTIONS.md) - **Status: Planned** - Fix bidirectional conflict detection, enforce SoD in bulk assignment, enforce permission dependencies server-side, UI fixes (role name comparison, same-day expiration), and audit/logging for blocked operations (8-12 hours)
+- [RBAC Improvements](RBAC_IMPROVEMENTS.md) - **Status: Planned** - Enhanced validation and enforcement: Bidirectional conflict detection, SoD enforcement in bulk assignment, server-side permission dependency validation, UI improvements (role name comparison, same-day expiration), and audit logging for blocked operations
 
 ### Layer 2 (Asset Management)
 
-- [Service Management System](SERVICE_MANAGEMENT.md) - **Status: Planned** - Comprehensive IT service catalog with ownership, infrastructure, and asset relationships (~80 services)
+- [Service Management System](SERVICE_MANAGEMENT.md) - **Status: Planned** - Comprehensive IT service catalog with ownership, infrastructure, and asset relationships
 - [Security Patch Workflow](SECURITY_PATCH_WORKFLOW.md) - **Status: Planned** - Monthly security patching with owner approval workflow and compliance tracking
-- ~~[Multi-Currency Support](../docs/features/MULTI_CURRENCY_GUIDE.md)~~ - **Status: ✅ COMPLETED (2025-11-23)** - Full implementation with 15 currencies, SAR base, dual display, exchange rate management at `/fx-rates`, and SAR aggregation in dashboard. Documentation moved to `docs/features/MULTI_CURRENCY_GUIDE.md`
 
 ### Layer 3 (Advanced ITAM)
 
@@ -72,4 +70,3 @@ When a feature is approved for implementation:
 ---
 
 **Maintained By**: Development Team
-**Last Updated**: 2025-11-22
