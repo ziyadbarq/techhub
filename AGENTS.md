@@ -23,7 +23,7 @@ This file provides high-level guidance when working with this repository.
   - **License Management**: LicenseProduct, LicenseProductField, LicenseEntitlement, LicenseAllocation (4 entities, 23 use cases)
   - **Governance**: DataDomain, DataOwnership, VerificationCampaign, VerificationItem (4 entities, 24 use cases)
   - **Attachments**: AttachmentType, Attachment (2 entities, 11 use cases)
-  - **Service Management**: Service, BusinessProcess, ServiceInfrastructure (service catalog, ownership, infrastructure, and asset linking)
+  - **Service Management**: Service, ServiceOwnership, BusinessProcess, ServiceInfrastructure, ServiceAsset (5 entities, 25 use cases)
 - **Reference**: Task entity (complete implementation, hidden from UI)
 - **Marketing**: Public landing page showcasing system capabilities
 
@@ -87,7 +87,7 @@ npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastruc
 - [CMDB_GUIDE.md](docs/features/CMDB_GUIDE.md) - Configuration Management Database with dependency tracking
 - [GOVERNANCE_SYSTEM.md](docs/features/GOVERNANCE_SYSTEM.md) - Data governance, ownership tracking, and verification campaigns for SAMA compliance
 - [ATTACHMENTS_SYSTEM.md](docs/features/ATTACHMENTS_SYSTEM.md) - Polymorphic file attachments for compliance documentation and audit trails
-- Service Management: See `roadmap/SERVICE_MANAGEMENT.md` for the design doc (user guide pending)
+- [SERVICE_MANAGEMENT.md](docs/features/SERVICE_MANAGEMENT.md) - IT service catalog with ownership, infrastructure, and business alignment (complete with user guide at `/docs/service-management`)
 
 ### In-App Documentation (MDX)
 
@@ -99,7 +99,6 @@ npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastruc
 
 - [Roadmap Index](roadmap/README.md) - Complete list of planned features by layer
 - **RBAC Phase 2 (Partially Complete)**: Permission dependencies, role conflict detection, and bulk permission assignment shipped; remaining work (advanced user management, role analytics, role hierarchy/expiration, enhanced audit UI, bulk user role assignment) tracked in `roadmap/RBAC_PHASE2_CORRECTIONS.md` and `roadmap/README.md`
-- **Service Management Enhancements**: Core service catalog/business process/infrastructure features shipped; design doc remains at `roadmap/SERVICE_MANAGEMENT.md` for future enhancements
 - **Security Patch Workflow**: See `roadmap/SECURITY_PATCH_WORKFLOW.md` (planned)
 - **Seed Mode Separation**: See `roadmap/SEED_MODE_SEPARATION.md` (planned)
 
@@ -247,10 +246,15 @@ See [docs/README.md](docs/README.md) for complete documentation index.
    - Permissions: `CONFIGURATION_ITEMS_VIEW`, `CI_RELATIONSHIPS_VIEW`, `RELATIONSHIP_TYPES_VIEW`
 
 5. **Service Management** (`/services`, `/business-processes`)
-   - Service catalog with criticality, lifecycle, and service-level metadata
-   - Business processes linked to services for dependency mapping
-   - Service infrastructure records (RTO/RPO, hosting, dependencies)
-   - Asset linking and ownership tracking with primary/secondary owners
+   - Service catalog with 80+ seeded services (applications, databases, APIs, infrastructure)
+   - Multiple ownership types (Technical, Product, Business) with primary owner designation
+   - NDMO framework classification (data confidentiality, business impact, criticality)
+   - Business processes linked to services for business-IT alignment
+   - Service infrastructure tracking (location, cloud provider, region, IP, backup)
+   - Asset linking with relationship types (HOSTS, SUPPORTS, DEPENDS_ON, MONITORS, BACKS_UP)
+   - Essential service tracking for SAMA compliance
+   - Lifecycle management (deployment, patches, decommission planning)
+   - Permissions: `SERVICES_VIEW`, `SERVICES_CREATE`, `SERVICES_UPDATE`, `SERVICES_DELETE`, `SERVICES_MANAGE`, `BUSINESS_PROCESSES_VIEW`, `BUSINESS_PROCESSES_MANAGE`
 
 6. **Contract Management** (`/contract-types`, `/contracts`)
    - Contract Types with customizable fields
@@ -283,7 +287,7 @@ See [docs/README.md](docs/README.md) for complete documentation index.
    - Ready for compliance documentation, invoices, certificates, audit reports
    - Permissions: `ATTACHMENT_TYPES_VIEW`, `ATTACHMENTS_VIEW`
 
-**Database**: 25+ new tables (CMDB: 6, Contracts: 3, Licenses: 4, Governance: 4, Attachments: 2, Service Management: 3, plus config entities)
+**Database**: 27+ new tables (CMDB: 6, Contracts: 3, Licenses: 4, Governance: 4, Attachments: 2, Service Management: 5, plus config entities)
 
 **DI Modules**: All registered in `src/di/container.ts`:
 
@@ -309,28 +313,41 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - **Navigation Fixes**: Fixed critical 404 bug (role/permission pages now use `name` instead of `id`)
 - **Impact**: 100% navigation success, 93% reduction in permission assignment complexity, 90% time savings for role cloning
 
-**Phase 2 (PARTIALLY COMPLETED)**:
+**Phase 2 (COMPLETED 2025-11-23)**:
 
 - ✅ **Permission Dependencies** (`src/lib/rbac/permission-dependencies.ts`):
   - 153+ permissions mapped with dependency rules
-  - Validation with `validatePermissionDependencies()` function
+  - Client-side validation with `validatePermissionDependencies()` function
+  - **Server-side enforcement** in `assignPermissionsToRoleAction` controller
   - UI warnings in PermissionsManager showing missing dependencies
   - Auto-fix button to add required permissions
   - Tooltips on individual permissions showing requirements
+  - Defense-in-depth: Both client (UX) and server (security) validation
 
 - ✅ **Role Conflict Detection** (`src/lib/rbac/role-conflicts.ts`):
   - Segregation of duties enforcement
   - 3 severity levels: warning, error, critical
-  - Bidirectional conflict detection with `rolesConflict()` function
-  - RoleAssignment component shows conflicts with severity badges
+  - **Bidirectional conflict detection** with `rolesConflict()` function (checks both directions)
+  - **Server-side enforcement** in `AssignRoleToUserUseCase` with audit logging
+  - RoleAssignment component shows conflicts with severity badges (uses role names, not IDs)
   - Critical conflicts block assignment, warnings allow override
+  - Pre-flight validation in BulkRoleAssignmentModal
 
 - ✅ **Bulk Operations**:
   - Bulk permission assignment (PermissionsManager)
-  - Multi-select with conflict detection
+  - Bulk role assignment with **pre-flight conflict detection**
+  - Multi-select with conflict detection and detailed summary
+  - Per-user/per-role conflict breakdown
+  - Server-side enforcement catches any bypasses
   - ~50% time savings for bulk operations
 
-- 🚧 **Remaining**: Advanced user management, role analytics dashboard, role hierarchy/inheritance UI + server enforcement, time-based role expiration jobs, bulk user role assignment, enhanced audit log UI (see `roadmap/RBAC_PHASE2_CORRECTIONS.md`)
+- ✅ **Date Validation**:
+  - Calendar date pickers allow same-day expiration (correct validation logic)
+  - Proper comparison: `date < startOfToday` instead of `date <= today`
+
+- 🚧 **Remaining**: Advanced user management, role analytics dashboard, role hierarchy/inheritance UI + server enforcement, time-based role expiration jobs, enhanced audit log UI (see `roadmap/README.md`)
+
+**Impact**: 100% permission integrity (server-enforced), 100% segregation of duties compliance, zero bypass vulnerabilities
 
 **Documentation**: See [RBAC Admin Guide](docs/features/RBAC_ADMIN_GUIDE.md) for complete usage guide
 

@@ -68,6 +68,10 @@ const mockListPermissionsUseCase = {
   execute: vi.fn(),
 };
 
+const mockPermissionRepository = {
+  findById: vi.fn(),
+};
+
 const mockRoleRepository = {
   findById: vi.fn(),
   findByName: vi.fn(),
@@ -158,6 +162,9 @@ vi.mock("@/di/container", () => ({
       if (tokenKey === Symbol.for("ListPermissionsUseCase").toString()) {
         return mockListPermissionsUseCase;
       }
+      if (tokenKey === Symbol.for("IPermissionRepository").toString()) {
+        return mockPermissionRepository;
+      }
       if (tokenKey === Symbol.for("IRoleRepository").toString()) {
         return mockRoleRepository;
       }
@@ -175,6 +182,12 @@ describe("Role Controller", () => {
     const defaultRole = createMockRole({ id: "role-1", name: "role-1" });
     mockRoleRepository.findById.mockResolvedValue(defaultRole);
     mockRoleRepository.findByName.mockResolvedValue(defaultRole);
+    mockPermissionRepository.findById.mockImplementation(async (id: string) =>
+      createMockPermission({
+        id,
+        name: "tasks:view",
+      }),
+    );
   });
 
   describe("createRoleAction", () => {
