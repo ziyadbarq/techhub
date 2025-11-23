@@ -38,4 +38,77 @@ export class PrismaUserRepository implements IUserRepository {
 
     return users;
   }
+
+  async listAll(): Promise<User[]> {
+    return this.findAll();
+  }
+
+  async count(): Promise<number> {
+    const timer = this.logger.startTimer();
+    const count = await this.prisma.user.count();
+    this.logger.timed("count", "Users counted", timer(), { count });
+    return count;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    const timer = this.logger.startTimer();
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+    this.logger.timed("findByEmail", "User fetched by email", timer(), {
+      found: !!user,
+    });
+    return user;
+  }
+
+  async findById(id: string): Promise<User | null> {
+    const timer = this.logger.startTimer();
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+    });
+    this.logger.timed("findById", "User fetched by ID", timer(), {
+      found: !!user,
+    });
+    return user;
+  }
+
+  async createDirectly(data: {
+    email: string;
+    name: string;
+    passwordHash: string;
+    emailVerified?: boolean;
+  }): Promise<User> {
+    const timer = this.logger.startTimer();
+
+    const user = await this.prisma.user.create({
+      data: {
+        email: data.email,
+        name: data.name,
+        emailVerified: data.emailVerified ?? false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        // Better Auth stores password in a separate table
+        // We'll need to create an account record as well
+      },
+    });
+
+    // Create the account record for Better Auth password storage
+    await this.prisma.account.create({
+      data: {
+        userId: user.id,
+        accountId: user.id, // Use user ID as account ID for password provider
+        providerId: "credential", // Better Auth's password provider
+        password: data.passwordHash,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    });
+
+    this.logger.timed("createDirectly", "User created directly", timer(), {
+      userId: user.id,
+      email: user.email,
+    });
+
+    return user;
+  }
 }

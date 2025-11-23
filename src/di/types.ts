@@ -49,6 +49,9 @@ export const DI_TOKENS = {
   IUserRepository: Symbol.for("IUserRepository"),
   IAuditLogRepository: Symbol.for("IAuditLogRepository"),
 
+  // System Setup Repository
+  ISystemSetupRepository: Symbol.for("ISystemSetupRepository"),
+
   // Foundation Repositories
   ILifecycleModelRepository: Symbol.for("ILifecycleModelRepository"),
   ILifecycleStateRepository: Symbol.for("ILifecycleStateRepository"),
@@ -221,6 +224,14 @@ export const DI_TOKENS = {
   GetRoleUsersUseCase: Symbol.for("GetRoleUsersUseCase"),
   CheckFirstAdminUseCase: Symbol.for("CheckFirstAdminUseCase"),
   AssignFirstAdminUseCase: Symbol.for("AssignFirstAdminUseCase"),
+
+  // System Setup Use Cases
+  CheckSystemHealthUseCase: Symbol.for("CheckSystemHealthUseCase"),
+  GetMigrationStatusUseCase: Symbol.for("GetMigrationStatusUseCase"),
+  CreateFirstUserUseCase: Symbol.for("CreateFirstUserUseCase"),
+  SeedMinimalDataUseCase: Symbol.for("SeedMinimalDataUseCase"),
+  ResetDatabaseUseCase: Symbol.for("ResetDatabaseUseCase"),
+  GetSystemInfoUseCase: Symbol.for("GetSystemInfoUseCase"),
 
   // RBAC Analytics Use Cases
   GetRoleUsageStatsUseCase: Symbol.for("GetRoleUsageStatsUseCase"),
