@@ -626,6 +626,13 @@ export const navGroups: NavGroup[] = [
         description: "System administration and settings",
         permission: PERMISSIONS.USERS_MANAGE,
       },
+      {
+        title: "RBAC Analytics",
+        href: "/admin/analytics",
+        icon: LayoutDashboard,
+        description: "Role and permission usage statistics",
+        permission: PERMISSIONS.ROLES_VIEW,
+      },
     ],
     visible: true,
     collapsible: true,

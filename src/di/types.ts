@@ -221,6 +221,11 @@ export const DI_TOKENS = {
   CheckFirstAdminUseCase: Symbol.for("CheckFirstAdminUseCase"),
   AssignFirstAdminUseCase: Symbol.for("AssignFirstAdminUseCase"),
 
+  // RBAC Analytics Use Cases
+  GetRoleUsageStatsUseCase: Symbol.for("GetRoleUsageStatsUseCase"),
+  GetPermissionUsageStatsUseCase: Symbol.for("GetPermissionUsageStatsUseCase"),
+  GetUserRoleStatsUseCase: Symbol.for("GetUserRoleStatsUseCase"),
+
   // Audit Log Use Cases
   ListAuditLogsUseCase: Symbol.for("ListAuditLogsUseCase"),
   CountAuditLogsUseCase: Symbol.for("CountAuditLogsUseCase"),

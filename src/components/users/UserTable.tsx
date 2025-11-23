@@ -26,6 +26,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BulkRoleAssignmentModal } from "@/components/users/BulkRoleAssignmentModal";
+import { InlineRoleEditor } from "@/components/users/InlineRoleEditor";
+import { UserRoleHistory } from "@/components/users/UserRoleHistory";
 
 import type { UserWithRolesDTO } from "@/interface-adapters/controllers/user-role.controller";
 
@@ -59,38 +61,6 @@ export function UserTable({
     return email[0].toUpperCase();
   };
 
-  const getRoleBadges = (roles: UserWithRolesDTO["roles"]): React.ReactNode => {
-    if (roles.length === 0) {
-      return (
-        <Badge variant="outline" className="text-muted-foreground">
-          No roles
-        </Badge>
-      );
-    }
-
-    const activeRoles = roles.filter((r) => r.isActive);
-    const expiredRoles = roles.filter((r) => !r.isActive);
-
-    return (
-      <div className="flex flex-wrap items-center gap-1">
-        {activeRoles.slice(0, 3).map((role) => (
-          <Badge key={role.id} variant="default" className="text-xs">
-            {role.roleDisplayName}
-          </Badge>
-        ))}
-        {activeRoles.length > 3 && (
-          <Badge variant="outline" className="text-xs">
-            +{activeRoles.length - 3} more
-          </Badge>
-        )}
-        {expiredRoles.length > 0 && (
-          <Badge variant="outline" className="text-muted-foreground text-xs">
-            {expiredRoles.length} expired
-          </Badge>
-        )}
-      </div>
-    );
-  };
 
   const columns: ColumnDef<UserWithRolesDTO>[] = [
     {
@@ -130,7 +100,18 @@ export function UserTable({
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Roles" />
       ),
-      cell: ({ row }) => getRoleBadges(row.original.roles),
+      cell: ({ row }) => {
+        const user = row.original;
+        return (
+          <InlineRoleEditor
+            userId={user.id}
+            userEmail={user.email}
+            roles={user.roles}
+            availableRoles={availableRoles}
+            onUpdate={onUpdate}
+          />
+        );
+      },
       enableSorting: false,
       meta: {
         label: "Roles",
@@ -197,6 +178,16 @@ export function UserTable({
                   Manage Roles
                 </Link>
               </DropdownMenuItem>
+              <UserRoleHistory
+                userId={user.id}
+                userEmail={user.email}
+                trigger={
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <Mail className="mr-2 h-4 w-4" />
+                    View Role History
+                  </DropdownMenuItem>
+                }
+              />
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {
