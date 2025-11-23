@@ -1,6 +1,6 @@
 /**
- * Assign First Admin Use Case
- * Assigns admin role to the first user (one-time setup)
+ * Assign First System Administrator Use Case
+ * Assigns system administrator role to the first user (one-time setup)
  */
 
 import { injectable, inject } from "inversify";
@@ -18,6 +18,8 @@ export interface AssignFirstAdminRequest {
     userAgent?: string;
   };
 }
+
+const SYSTEM_ADMIN_ROLE_NAME = "system-administrator";
 
 export interface AssignFirstAdminResult {
   success: boolean;
@@ -44,17 +46,22 @@ export class AssignFirstAdminUseCase {
 
     this.logger.info("Assigning first system administrator", { userId });
 
-    // Check if system-administrator role exists
-    const adminRole = await this.roleRepository.findByName("system-administrator");
+    // Check if system admin role exists
+    const adminRole = await this.roleRepository.findByName(
+      SYSTEM_ADMIN_ROLE_NAME,
+    );
     if (!adminRole) {
-      this.logger.error("System Administrator role not found - run seed data first");
+      this.logger.error(
+        "System Administrator role not found - run seed data first",
+      );
       return {
         success: false,
-        message: "System Administrator role not found. Please run database seed first.",
+        message:
+          "System Administrator role not found. Please run database seed first.",
       };
     }
 
-    // Check if system administrator already exists
+    // Check if system admin already exists
     const existingAdmins = await this.userRoleRepository.findByRoleId(
       adminRole.id,
     );
@@ -98,7 +105,7 @@ export class AssignFirstAdminUseCase {
         after: {
           userId,
           roleId: adminRole.id,
-          roleName: "system-administrator",
+          roleName: SYSTEM_ADMIN_ROLE_NAME,
         },
       },
       metadata: {
@@ -110,7 +117,7 @@ export class AssignFirstAdminUseCase {
       userAgent: metadata?.userAgent,
     });
 
-    this.logger.info("First system administrator assigned successfully", {
+    this.logger.info("First System Administrator assigned successfully", {
       userId,
       roleId: adminRole.id,
     });

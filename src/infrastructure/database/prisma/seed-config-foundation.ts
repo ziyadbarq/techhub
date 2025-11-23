@@ -286,58 +286,58 @@ export const PERSON_ROLE_ASSIGNMENTS = [
   {
     personEmail: "[email protected]",
     personName: "Ahmed Al-Mansour",
-    roleName: "admin",
+    roleName: "system-administrator",
     isPrimary: true,
   },
   {
     personEmail: "[email protected]",
     personName: "Fatima Al-Zahrani",
-    roleName: "manager",
+    roleName: "service-owner",
   },
   {
     personEmail: "[email protected]",
     personName: "Mohammed Al-Qarni",
-    roleName: "manager",
+    roleName: "it-help-desk",
   },
   {
     personEmail: "[email protected]",
     personName: "Noura Al-Rashid",
-    roleName: "manager",
+    roleName: "security-officer",
   },
   {
     personEmail: "[email protected]",
     personName: "Khalid Al-Ghamdi",
-    roleName: "editor",
+    roleName: "finance-manager",
   },
   {
     personEmail: "[email protected]",
     personName: "Sara Al-Mutairi",
-    roleName: "editor",
+    roleName: "data-steward",
   },
   {
     personEmail: "[email protected]",
     personName: "Abdullah Al-Harthi",
-    roleName: "editor",
+    roleName: "inventory-manager",
   },
   {
     personEmail: "[email protected]",
     personName: "Layla Al-Dosari",
-    roleName: "editor",
+    roleName: "asset-coordinator",
   },
   {
     personEmail: "[email protected]",
     personName: "Omar Al-Shehri",
-    roleName: "editor",
+    roleName: "it-help-desk",
   },
   {
     personEmail: "[email protected]",
     personName: "Maha Al-Otaibi",
-    roleName: "viewer",
+    roleName: "maintenance-technician",
   },
   {
     personEmail: "[email protected]",
     personName: "Faisal Al-Harbi",
-    roleName: "viewer",
+    roleName: "maintenance-technician",
   },
   {
     personEmail: "[email protected]",
@@ -352,12 +352,12 @@ export const PERSON_ROLE_ASSIGNMENTS = [
   {
     personEmail: "[email protected]",
     personName: "Aisha Al-Malki",
-    roleName: "viewer",
+    roleName: "auditor",
   },
   {
     personEmail: "[email protected]",
     personName: "Tariq Al-Shamrani",
-    roleName: "viewer",
+    roleName: "service-owner",
   },
   {
     personEmail: "[email protected]",

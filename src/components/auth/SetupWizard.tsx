@@ -2,7 +2,7 @@
 
 /**
  * Setup Wizard Component
- * Allows first user to claim admin role
+ * Allows first user to claim System Administrator role
  */
 
 import { useState } from "react";
@@ -42,7 +42,7 @@ export function SetupWizard({ user }: SetupWizardProps) {
       if (result.success) {
         if (result.data.success) {
           setIsComplete(true);
-          toast.success("Admin role assigned successfully!");
+          toast.success("System Administrator role assigned successfully!");
 
           // Wait 2 seconds then redirect
           setTimeout(() => {
@@ -50,10 +50,14 @@ export function SetupWizard({ user }: SetupWizardProps) {
             router.refresh();
           }, 2000);
         } else {
-          toast.error(result.data.message || "Failed to assign admin role");
+          toast.error(
+            result.data.message || "Failed to assign System Administrator role",
+          );
         }
       } else {
-        toast.error(result.error || "Failed to assign admin role");
+        toast.error(
+          result.error || "Failed to assign System Administrator role",
+        );
       }
     } catch (error) {
       console.error("Setup error:", error);
@@ -72,7 +76,7 @@ export function SetupWizard({ user }: SetupWizardProps) {
           </div>
           <CardTitle>Setup Complete!</CardTitle>
           <CardDescription>
-            You have been assigned the administrator role.
+            You have been assigned the System Administrator role.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -94,8 +98,8 @@ export function SetupWizard({ user }: SetupWizardProps) {
         </div>
         <CardTitle>Welcome to Your Application</CardTitle>
         <CardDescription>
-          No administrator has been set up yet. Would you like to become the
-          first admin?
+          No System Administrator has been set up yet. Would you like to become
+          the first one?
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -103,9 +107,11 @@ export function SetupWizard({ user }: SetupWizardProps) {
           <div className="flex items-start gap-3">
             <AlertCircle className="text-primary h-5 w-5" />
             <div className="flex-1 space-y-1">
-              <p className="text-sm font-medium">What is an administrator?</p>
+              <p className="text-sm font-medium">
+                What is a System Administrator?
+              </p>
               <p className="text-muted-foreground text-sm">
-                Administrators have full access to manage users, roles,
+                System Administrators have full access to manage users, roles,
                 permissions, and all system features. You will be able to assign
                 roles to other users and manage the entire application.
               </p>
@@ -149,7 +155,7 @@ export function SetupWizard({ user }: SetupWizardProps) {
           ) : (
             <>
               <Shield className="mr-2 h-4 w-4" />
-              Become Administrator
+              Become System Administrator
             </>
           )}
         </Button>

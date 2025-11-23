@@ -1,9 +1,9 @@
 #!/usr/bin/env tsx
 /**
- * Create Admin User Script
+ * Create System Administrator User Script
  *
- * Creates an admin user with email/password credentials
- * directly via Prisma and assigns the admin role.
+ * Creates a System Administrator user with email/password credentials
+ * directly via Prisma and assigns the system-administrator role.
  *
  * Default credentials:
  * - Email: admin@admin.com
@@ -36,7 +36,7 @@ async function hashPassword(password: string): Promise<string> {
 
 async function createAdminUser() {
   console.log("╔════════════════════════════════════════╗");
-  console.log("║  👤 Create Admin User                 ║");
+  console.log("║  👤 Create System Administrator User  ║");
   console.log("╚════════════════════════════════════════╝");
   console.log("");
 
@@ -46,7 +46,7 @@ async function createAdminUser() {
 
   try {
     // Check if user already exists
-    console.log("🔍 Checking if admin user already exists...");
+    console.log("🔍 Checking if System Administrator user already exists...");
     const existingUser = await prisma.user.findUnique({
       where: { email },
       include: { roles: { include: { role: true } } },
@@ -73,14 +73,14 @@ async function createAdminUser() {
       process.exit(0);
     }
 
-    // Get admin role
-    console.log("🔍 Finding admin role...");
+    // Get system admin role
+    console.log("🔍 Finding System Administrator role...");
     const adminRole = await prisma.role.findUnique({
-      where: { name: "admin" },
+      where: { name: "system-administrator" },
     });
 
     if (!adminRole) {
-      console.error("❌ Admin role not found!");
+      console.error("❌ System Administrator role not found!");
       console.log("");
       console.log("Please run the database seed first:");
       console.log("   npm run db:seed");
@@ -93,7 +93,7 @@ async function createAdminUser() {
     const hashedPassword = await hashPassword(password);
 
     // Create user and account in a transaction
-    console.log("👤 Creating admin user...");
+    console.log("👤 Creating System Administrator user...");
     const user = await prisma.user.create({
       data: {
         email,
@@ -113,8 +113,8 @@ async function createAdminUser() {
     console.log(`   ✓ User created: ${user.id}`);
     console.log(`   ✓ Account created with credentials`);
 
-    // Assign admin role
-    console.log("👑 Assigning admin role...");
+    // Assign system admin role
+    console.log("👑 Assigning System Administrator role...");
     await prisma.userRole.create({
       data: {
         userId: user.id,
@@ -122,11 +122,11 @@ async function createAdminUser() {
         createdBy: "system",
       },
     });
-    console.log(`   ✓ Admin role assigned`);
+    console.log(`   ✓ System Administrator role assigned`);
 
     console.log("");
     console.log("╔════════════════════════════════════════╗");
-    console.log("║  ✅ Admin User Created!               ║");
+    console.log("║  ✅ System Administrator User Created!║");
     console.log("╚════════════════════════════════════════╝");
     console.log("");
     console.log("Login credentials:");

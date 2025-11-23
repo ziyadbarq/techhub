@@ -2,8 +2,8 @@
  * Setup Controller - Unit Tests
  *
  * Tests for setup server actions including:
- * - Check first admin status
- * - Assign first admin role
+ * - Check first system admin status
+ * - Assign first system admin role
  * - Error handling
  * - Authentication checks
  * - Response formatting
@@ -88,7 +88,7 @@ describe("Setup Controller", () => {
       }
     });
 
-    it("should return hasAdmin=true when admin exists", async () => {
+    it("should return hasAdmin=true when system admin exists", async () => {
       // Arrange
       mockCheckFirstAdminUseCase.execute.mockResolvedValue({
         hasAdmin: true,
@@ -159,7 +159,7 @@ describe("Setup Controller", () => {
       mockGetCurrentUserId.mockResolvedValue("user-123");
       mockAssignFirstAdminUseCase.execute.mockResolvedValue({
         success: true,
-        message: "Admin role assigned successfully",
+        message: "System Administrator role assigned successfully.",
       });
 
       // Act
@@ -169,7 +169,9 @@ describe("Setup Controller", () => {
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.success).toBe(true);
-        expect(result.data.message).toBe("Admin role assigned successfully");
+        expect(result.data.message).toBe(
+          "System Administrator role assigned successfully.",
+        );
       }
     });
 
@@ -178,7 +180,7 @@ describe("Setup Controller", () => {
       mockGetCurrentUserId.mockResolvedValue("user-123");
       mockAssignFirstAdminUseCase.execute.mockResolvedValue({
         success: true,
-        message: "Admin role assigned",
+        message: "System Administrator role assigned successfully.",
       });
 
       // Act
@@ -210,7 +212,7 @@ describe("Setup Controller", () => {
       mockGetCurrentUserId.mockResolvedValue("user-123");
       mockAssignFirstAdminUseCase.execute.mockResolvedValue({
         success: false,
-        message: "Admin already exists",
+        message: "System Administrator already exists.",
       });
 
       // Act

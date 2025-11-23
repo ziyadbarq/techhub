@@ -1,11 +1,11 @@
 /**
  * Permission Groups Configuration
  *
- * Organizes 269 permissions into 14 logical groups for better UX in permission assignment UI.
+ * Organizes 270 permissions into 14 logical groups for better UX in permission assignment UI.
  * Each group contains related permissions based on functionality and domain.
  *
  * Groups:
- * 1. System & Administration (19 permissions)
+ * 1. System & Administration (20 permissions)
  * 2. Foundation Layer (50 permissions)
  * 3. Asset Management (30 permissions)
  * 4. Maintenance Management (11 permissions)
@@ -46,6 +46,7 @@ export const PERMISSION_GROUPS: PermissionGroup[] = [
       PERMISSIONS.DASHBOARD_ANALYTICS,
       PERMISSIONS.SETTINGS_VIEW,
       PERMISSIONS.SETTINGS_MANAGE,
+      PERMISSIONS.DATA_IMPORT_MANAGE,
       PERMISSIONS.USERS_VIEW,
       PERMISSIONS.USERS_CREATE,
       PERMISSIONS.USERS_UPDATE,

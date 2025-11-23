@@ -409,7 +409,8 @@ export const navGroups: NavGroup[] = [
         title: "Data Domains",
         href: "/data-domains",
         icon: FolderLock,
-        description: "Manage data classification domains (PII, Financial, etc.)",
+        description:
+          "Manage data classification domains (PII, Financial, etc.)",
         permission: PERMISSIONS.DATA_DOMAINS_VIEW,
       },
       {
@@ -635,16 +636,22 @@ export const navGroups: NavGroup[] = [
       },
       {
         title: "RBAC Analytics",
-        href: "/admin/analytics",
+        href: "/rbac-analytics",
         icon: LayoutDashboard,
         description: "Role and permission usage statistics",
         permission: PERMISSIONS.ROLES_VIEW,
+      },
+      {
+        title: "Data Import",
+        href: "/data-import",
+        icon: Database,
+        description: "Universal data importer for all entities",
+        permission: PERMISSIONS.DATA_IMPORT_MANAGE,
       },
     ],
     visible: true,
     collapsible: true,
     defaultCollapsed: false,
-    permission: PERMISSIONS.USERS_MANAGE,
   },
 
   // Documentation - Help and guides for users

@@ -41,6 +41,9 @@ export const PERMISSIONS = {
   SETTINGS_VIEW: "settings:view",
   SETTINGS_MANAGE: "settings:manage",
 
+  // Data Import
+  DATA_IMPORT_MANAGE: "data-import:manage",
+
   // Dashboard
   DASHBOARD_VIEW: "dashboard:view",
   DASHBOARD_ANALYTICS: "dashboard:analytics",

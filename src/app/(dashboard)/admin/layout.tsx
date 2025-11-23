@@ -43,7 +43,7 @@ export default async function AdminLayout({
 
   // Redirect to unauthorized page if no admin access
   if (!hasAdminAccess) {
-    redirect("/unauthorized?required=admin&path=/admin");
+    redirect("/unauthorized?required=system-administrator&path=/admin");
   }
 
   return (

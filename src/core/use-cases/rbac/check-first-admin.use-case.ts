@@ -1,6 +1,6 @@
 /**
  * Check if First Admin Exists Use Case
- * Determines if there are any users with admin role
+ * Determines if there are any users with System Administrator role
  */
 
 import { injectable, inject } from "inversify";
@@ -13,6 +13,8 @@ export interface CheckFirstAdminResult {
   adminRoleId: string | null;
 }
 
+const SYSTEM_ADMIN_ROLE_NAME = "system-administrator";
+
 @injectable()
 export class CheckFirstAdminUseCase {
   constructor(
@@ -23,8 +25,10 @@ export class CheckFirstAdminUseCase {
   ) {}
 
   async execute(): Promise<CheckFirstAdminResult> {
-    // Find system-administrator role
-    const adminRole = await this.roleRepository.findByName("system-administrator");
+    // Find system administrator role
+    const adminRole = await this.roleRepository.findByName(
+      SYSTEM_ADMIN_ROLE_NAME,
+    );
 
     if (!adminRole) {
       // System Administrator role doesn't exist - seed data not run

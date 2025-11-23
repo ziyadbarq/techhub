@@ -345,7 +345,7 @@ model Role {
 - `Role.create()` / `Role.createSystemRole()` - Factory methods
 - `addPermission()`, `removePermission()` - Manage RBAC permissions
 - `canBeDeleted()` - Check dependencies
-- `isAdmin()` - Check if admin role
+- `hasRole("system-administrator")` - Check if System Administrator role
 
 **Validation Rules**:
 

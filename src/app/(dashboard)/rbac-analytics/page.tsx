@@ -21,15 +21,22 @@ import { AnalyticsDashboardClient } from "@/components/analytics/analytics-dashb
 
 export default async function AnalyticsPage() {
   // Fetch data on the server
-  const [roleUsageResult, permissionUsageResult, userRoleStatsResult] = await Promise.all([
-    getRoleUsageStatsAction(),
-    getPermissionUsageStatsAction(),
-    getUserRoleStatsAction(),
-  ]);
+  const [roleUsageResult, permissionUsageResult, userRoleStatsResult] =
+    await Promise.all([
+      getRoleUsageStatsAction(),
+      getPermissionUsageStatsAction(),
+      getUserRoleStatsAction(),
+    ]);
 
-  const roleUsageStats = roleUsageResult.success ? roleUsageResult.data ?? [] : [];
-  const permissionUsageStats = permissionUsageResult.success ? permissionUsageResult.data ?? [] : [];
-  const userRoleStats = userRoleStatsResult.success ? userRoleStatsResult.data ?? null : null;
+  const roleUsageStats = roleUsageResult.success
+    ? (roleUsageResult.data ?? [])
+    : [];
+  const permissionUsageStats = permissionUsageResult.success
+    ? (permissionUsageResult.data ?? [])
+    : [];
+  const userRoleStats = userRoleStatsResult.success
+    ? (userRoleStatsResult.data ?? null)
+    : null;
 
   return (
     <PermissionGuard
@@ -38,9 +45,12 @@ export default async function AnalyticsPage() {
         <div className="bg-background min-h-screen">
           <div className="container mx-auto max-w-7xl px-4 py-8">
             <div className="border-destructive bg-destructive/10 rounded-lg border p-6 text-center">
-              <h1 className="text-destructive mb-2 text-2xl font-bold">Access Denied</h1>
+              <h1 className="text-destructive mb-2 text-2xl font-bold">
+                Access Denied
+              </h1>
               <p className="text-muted-foreground">
-                You do not have permission to view analytics. Please contact your administrator.
+                You do not have permission to view analytics. Please contact
+                your administrator.
               </p>
             </div>
           </div>
@@ -51,9 +61,12 @@ export default async function AnalyticsPage() {
         <div className="container mx-auto max-w-7xl px-4 py-8">
           {/* Page Header */}
           <div className="mb-8">
-            <h1 className="mb-2 text-4xl font-bold">RBAC Analytics Dashboard</h1>
+            <h1 className="mb-2 text-4xl font-bold">
+              RBAC Analytics Dashboard
+            </h1>
             <p className="text-muted-foreground text-lg">
-              Comprehensive insights into role usage, permissions, and user assignments
+              Comprehensive insights into role usage, permissions, and user
+              assignments
             </p>
           </div>
 

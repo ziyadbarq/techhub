@@ -182,7 +182,7 @@ await seedRBAC();
 **Creates**:
 
 - Permissions (all CRUD + feature-specific)
-- Roles (admin, manager, editor, viewer)
+- Roles (System Administrator, IT Help Desk, Auditor, Finance Manager, Security Officer, Service Owner, Inventory Manager, Maintenance Technician, Data Steward, Asset Coordinator, Viewer)
 - Role-Permission assignments
 
 **Key Features**:
