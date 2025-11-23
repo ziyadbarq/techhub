@@ -48,6 +48,7 @@ import {
 } from "@/interface-adapters/controllers/asset-dashboard.controller";
 import { toast } from "sonner";
 import { formatDistance } from "date-fns";
+import { formatSAR } from "@/lib/utils";
 
 const COLORS = {
   primary: "#FFCF52",
@@ -200,9 +201,9 @@ export function AssetDashboardClient() {
         />
         <SummaryCard
           title="Total Value"
-          value={`${summaryStats.currency} ${summaryStats.totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+          value={formatSAR(summaryStats.totalValue)}
           icon={<DollarSign className="h-4 w-4" />}
-          description="Total asset value"
+          description="Total asset value (in SAR)"
           color="text-green-500"
         />
         <SummaryCard

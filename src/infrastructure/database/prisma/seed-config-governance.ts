@@ -2,8 +2,6 @@
  * Governance Seed Configuration - Data Domains, Ownerships, Verification Campaigns
  */
 
-import { WarrantyCoverageType } from "@/generated/prisma/enums";
-
 // ==============================================
 // Governance: Data Domains
 // ==============================================

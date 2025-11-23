@@ -38,6 +38,7 @@ Asset management, inventory tracking, warranties, and maintenance:
 
 - [Warranty System](./features/WARRANTY_SYSTEM.md) - Complete warranty management implementation with expiration tracking
 - [Maintenance System](./features/MAINTENANCE_SYSTEM.md) - Preventive maintenance schedules and records with recurring schedules and workflow state management
+- [Multi-Currency Support](./features/MULTI_CURRENCY_GUIDE.md) - Multi-currency support with SAR base, dual currency display, and exchange rate management
 - **[MISSING]** Stock Location Management - Inventory location tracking and organization
 - **[MISSING]** Stock Movement System - Inventory movement tracking and audit trail
 - **[MISSING]** Asset Assignment System - Asset checkout/checkin and assignment tracking

@@ -8,17 +8,19 @@
  */
 
 import type { PrismaClient } from "../../../generated/prisma/client.js";
-import { FieldDataTypeEnum } from "../../../generated/prisma/client.js";
 import { SEED_CONFIG } from "./seed-config.js";
 import { logStep, logSuccess } from "./seed-utils.js";
 import {
   createLifecycleStates,
   createLifecycleTransitions,
   createVendors,
+  createVendorContacts,
   createLocations,
   createOrganizationUnits,
   createPersons,
+  createPersonRoleAssignments,
   createFieldDefinitions,
+  createExchangeRates,
 } from "./seed-foundation-factories.js";
 
 export async function seedFoundation(prisma: PrismaClient) {
@@ -59,44 +61,50 @@ export async function seedFoundation(prisma: PrismaClient) {
   logStep("🔄", "Seeding lifecycle states...");
 
   // IT Asset States - batch creation using factory
-  const [stateNew, stateReceived, stateDeployed, stateMaintenance, stateRetired] =
-    await createLifecycleStates(prisma, itAssetLifecycle.id, [
-      {
-        name: "New",
-        code: "NEW",
-        description: "Asset has been ordered but not yet received",
-        sortOrder: 1,
-        stateType: "INITIAL",
-      },
-      {
-        name: "Received",
-        code: "RECEIVED",
-        description: "Asset has been received and is being prepared for deployment",
-        sortOrder: 2,
-        stateType: "ACTIVE",
-      },
-      {
-        name: "Deployed",
-        code: "DEPLOYED",
-        description: "Asset is in active use",
-        sortOrder: 3,
-        stateType: "ACTIVE",
-      },
-      {
-        name: "Maintenance",
-        code: "MAINTENANCE",
-        description: "Asset is under maintenance or repair",
-        sortOrder: 4,
-        stateType: "ACTIVE",
-      },
-      {
-        name: "Retired",
-        code: "RETIRED",
-        description: "Asset has been retired from service",
-        sortOrder: 5,
-        stateType: "TERMINAL",
-      },
-    ]);
+  const [
+    stateNew,
+    stateReceived,
+    stateDeployed,
+    stateMaintenance,
+    stateRetired,
+  ] = await createLifecycleStates(prisma, itAssetLifecycle.id, [
+    {
+      name: "New",
+      code: "NEW",
+      description: "Asset has been ordered but not yet received",
+      sortOrder: 1,
+      stateType: "INITIAL",
+    },
+    {
+      name: "Received",
+      code: "RECEIVED",
+      description:
+        "Asset has been received and is being prepared for deployment",
+      sortOrder: 2,
+      stateType: "ACTIVE",
+    },
+    {
+      name: "Deployed",
+      code: "DEPLOYED",
+      description: "Asset is in active use",
+      sortOrder: 3,
+      stateType: "ACTIVE",
+    },
+    {
+      name: "Maintenance",
+      code: "MAINTENANCE",
+      description: "Asset is under maintenance or repair",
+      sortOrder: 4,
+      stateType: "ACTIVE",
+    },
+    {
+      name: "Retired",
+      code: "RETIRED",
+      description: "Asset has been retired from service",
+      sortOrder: 5,
+      stateType: "TERMINAL",
+    },
+  ]);
 
   // Software License States - batch creation
   await createLifecycleStates(prisma, softwareLicenseLifecycle.id, [
@@ -185,12 +193,21 @@ export async function seedFoundation(prisma: PrismaClient) {
   // ==============================================
   logStep("🏭", "Seeding vendors...");
 
-  await createVendors(prisma, SEED_CONFIG.VENDORS);
+  const vendorMap = await createVendors(prisma, SEED_CONFIG.VENDORS);
 
   logSuccess(`Created ${await prisma.vendor.count()} vendors`);
 
   // ==============================================
-  // 5. LOCATIONS (Using Factory)
+  // 5. VENDOR CONTACTS
+  // ==============================================
+  logStep("👥", "Seeding vendor contacts...");
+
+  await createVendorContacts(prisma, SEED_CONFIG.VENDOR_CONTACTS, vendorMap);
+
+  logSuccess(`Created ${await prisma.vendorContact.count()} vendor contacts`);
+
+  // ==============================================
+  // 6. LOCATIONS (Using Factory)
   // ==============================================
   logStep("📍", "Seeding locations...");
 
@@ -199,7 +216,7 @@ export async function seedFoundation(prisma: PrismaClient) {
   logSuccess(`Created ${await prisma.location.count()} locations`);
 
   // ==============================================
-  // 6. ORGANIZATION UNITS (Using Factory)
+  // 7. ORGANIZATION UNITS (Using Factory)
   // ==============================================
   logStep("🏢", "Seeding organization units...");
 
@@ -213,16 +230,33 @@ export async function seedFoundation(prisma: PrismaClient) {
   );
 
   // ==============================================
-  // 7. PERSONS (Using Factory)
+  // 8. PERSONS (Using Factory)
   // ==============================================
   logStep("👥", "Seeding persons...");
 
-  await createPersons(prisma, SEED_CONFIG.PERSONS, orgUnitMap);
+  const { emailMap: personEmailMap, nameMap: personNameMap } =
+    await createPersons(prisma, SEED_CONFIG.PERSONS, orgUnitMap);
 
   logSuccess(`Created ${await prisma.person.count()} persons`);
 
   // ==============================================
-  // 8. FIELD DEFINITIONS (Using Factory)
+  // 9. PERSON ROLE ASSIGNMENTS
+  // ==============================================
+  logStep("🎭", "Seeding person role assignments...");
+
+  await createPersonRoleAssignments(
+    prisma,
+    SEED_CONFIG.PERSON_ROLE_ASSIGNMENTS,
+    personEmailMap,
+    personNameMap,
+  );
+
+  logSuccess(
+    `Created ${await prisma.personRoleAssignment.count()} person role assignments`,
+  );
+
+  // ==============================================
+  // 10. FIELD DEFINITIONS (Using Factory)
   // ==============================================
   logStep("📋", "Seeding field definitions...");
 
@@ -249,14 +283,14 @@ export async function seedFoundation(prisma: PrismaClient) {
     {
       name: "RAM Size (GB)",
       code: "RAM_GB",
-      dataType: "NUMBER",
+      dataType: "INTEGER",
       description: "RAM size in gigabytes",
       validationRules: { min: 1, max: 1024 },
     },
     {
       name: "Storage Size (GB)",
       code: "STORAGE_GB",
-      dataType: "NUMBER",
+      dataType: "INTEGER",
       description: "Storage capacity in gigabytes",
       validationRules: { min: 1, max: 10000 },
     },
@@ -280,7 +314,18 @@ export async function seedFoundation(prisma: PrismaClient) {
     },
   ]);
 
-  logSuccess(`Created ${await prisma.fieldDefinition.count()} field definitions`);
+  logSuccess(
+    `Created ${await prisma.fieldDefinition.count()} field definitions`,
+  );
+
+  // ==============================================
+  // 11. EXCHANGE RATES
+  // ==============================================
+  logStep("💱", "Seeding exchange rates...");
+
+  await createExchangeRates(prisma, SEED_CONFIG.EXCHANGE_RATES);
+
+  logSuccess(`Created ${await prisma.exchangeRate.count()} exchange rates`);
 
   console.log("✅ Foundation layer seeding complete!");
 }

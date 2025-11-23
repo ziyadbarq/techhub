@@ -57,6 +57,7 @@ import type { VendorDTO } from "@/interface-adapters/presenters/vendor.presenter
 import type { StockLocationDTO } from "@/interface-adapters/presenters/stock-location.presenter";
 import type { LifecycleStateDTO } from "@/interface-adapters/presenters/lifecycle-state.presenter";
 import { isValidAssetCondition } from "@/core/domain/value-objects/asset-condition";
+import { SUPPORTED_CURRENCIES } from "@/lib/currencies.config";
 
 interface AssetFormProps {
   open: boolean;
@@ -124,7 +125,7 @@ export function AssetForm({
         ? new Date(asset.purchaseDate)
         : undefined,
       purchaseCost: asset?.purchaseCost ?? undefined,
-      currency: asset?.currency ?? "",
+      currency: asset?.currency ?? "SAR",
       warrantyEndDate: asset?.warrantyEndDate
         ? new Date(asset.warrantyEndDate)
         : undefined,
@@ -196,7 +197,7 @@ export function AssetForm({
         ? new Date(asset.purchaseDate)
         : undefined,
       purchaseCost: asset?.purchaseCost ?? undefined,
-      currency: asset?.currency ?? "",
+      currency: asset?.currency ?? "SAR",
       warrantyEndDate: asset?.warrantyEndDate
         ? new Date(asset.warrantyEndDate)
         : undefined,
@@ -567,19 +568,27 @@ export function AssetForm({
                   name="currency"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Currency (Optional)</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="USD"
-                          maxLength={3}
-                          {...field}
-                          onChange={(e) => {
-                            field.onChange(e.target.value.toUpperCase());
-                          }}
-                          value={field.value || ""}
-                        />
-                      </FormControl>
-                      <FormDescription>3-letter ISO code</FormDescription>
+                      <FormLabel>Currency</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value || "SAR"}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select currency" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {SUPPORTED_CURRENCIES.map((curr) => (
+                            <SelectItem key={curr.code} value={curr.code}>
+                              {curr.symbol} {curr.code} - {curr.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        Currency for purchase cost
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}

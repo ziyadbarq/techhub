@@ -27,7 +27,7 @@ This folder contains detailed specifications for planned features that are not y
 
 - [Service Management System](SERVICE_MANAGEMENT.md) - **Status: Planned** - Comprehensive IT service catalog with ownership, infrastructure, and asset relationships (~80 services)
 - [Security Patch Workflow](SECURITY_PATCH_WORKFLOW.md) - **Status: Planned** - Monthly security patching with owner approval workflow and compliance tracking
-- [Multi-Currency Support](MULTI_CURRENCY_SUPPORT.md) - **Status: Partially Completed (2025-11-22)** - ✅ Phases 1-4, 6-7 complete: FX rates CRUD UI (/fx-rates), currency utilities (15 currencies), database seeding, permissions. ⏳ Phase 5 pending: Update Asset/Warranty/Maintenance components with dual currency display
+- ~~[Multi-Currency Support](../docs/features/MULTI_CURRENCY_GUIDE.md)~~ - **Status: ✅ COMPLETED (2025-11-23)** - Full implementation with 15 currencies, SAR base, dual display, exchange rate management at `/fx-rates`, and SAR aggregation in dashboard. Documentation moved to `docs/features/MULTI_CURRENCY_GUIDE.md`
 
 ### Layer 3 (Advanced ITAM)
 

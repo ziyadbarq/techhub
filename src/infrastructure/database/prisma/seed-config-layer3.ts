@@ -2,8 +2,6 @@
  * Layer 3 ITAM Seed Configuration - Kits, CIs, Disposals, Reservations
  */
 
-import { WarrantyCoverageType } from "@/generated/prisma/enums";
-
 // ==============================================
 // Asset Kit Templates
 // ==============================================
