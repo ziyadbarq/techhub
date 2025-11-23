@@ -13,6 +13,7 @@ import {
   DATA_DOMAINS,
   DATA_OWNERSHIPS,
   VERIFICATION_CAMPAIGNS,
+  CI_CLASS_DATA,
 } from "./seed-config.js";
 import { getRelativeDate, logStep, logSuccess } from "./seed-utils.js";
 
@@ -68,15 +69,32 @@ export async function seedGovernance(prisma: PrismaClient) {
   // Fetch lookup data
   const persons = await prisma.person.findMany({});
   const orgUnits = await prisma.organizationUnit.findMany({});
+  // Ensure baseline CI classes exist (Lightweight seed when CMDB seeding is skipped)
+  for (const className of CI_CLASS_DATA) {
+    await prisma.cIClass.upsert({
+      where: { name: className },
+      update: {},
+      create: {
+        name: className,
+        code: className.toUpperCase().replace(/\s+/g, "_"),
+        isDiscoverable: false,
+      },
+    });
+  }
   const ciClasses = await prisma.cIClass.findMany({});
   const assetCategories = await prisma.assetCategory.findMany({});
+  const fallbackPerson = persons[0];
 
   let ownershipCount = 0;
   for (const ownership of DATA_OWNERSHIPS) {
     // Find the data domain
-    const domain = createdDomains.find((d) => d.code === ownership.dataDomainCode);
+    const domain = createdDomains.find(
+      (d) => d.code === ownership.dataDomainCode,
+    );
     if (!domain) {
-      console.warn(`   ⚠️  Data domain ${ownership.dataDomainCode} not found, skipping ownership`);
+      console.warn(
+        `   ⚠️  Data domain ${ownership.dataDomainCode} not found, skipping ownership`,
+      );
       continue;
     }
 
@@ -87,14 +105,20 @@ export async function seedGovernance(prisma: PrismaClient) {
     if (ownership.targetType === "CI_CLASS") {
       const ciClass = ciClasses.find((c) => c.name === ownership.ciClassName);
       if (!ciClass) {
-        console.warn(`   ⚠️  CI Class ${ownership.ciClassName} not found, skipping ownership`);
+        console.warn(
+          `   ⚠️  CI Class ${ownership.ciClassName} not found, skipping ownership`,
+        );
         continue;
       }
       ciClassId = ciClass.id;
     } else if (ownership.targetType === "ASSET_CATEGORY") {
-      const category = assetCategories.find((c) => c.code === ownership.assetCategoryCode);
+      const category = assetCategories.find(
+        (c) => c.code === ownership.assetCategoryCode,
+      );
       if (!category) {
-        console.warn(`   ⚠️  Asset Category ${ownership.assetCategoryCode} not found, skipping ownership`);
+        console.warn(
+          `   ⚠️  Asset Category ${ownership.assetCategoryCode} not found, skipping ownership`,
+        );
         continue;
       }
       assetCategoryId = category.id;
@@ -105,16 +129,23 @@ export async function seedGovernance(prisma: PrismaClient) {
     let ownerOrgUnitId: string | null = null;
 
     if (ownership.ownerType === "PERSON") {
-      const person = persons.find((p) => p.email === ownership.ownerEmail);
+      const person =
+        persons.find((p) => p.email === ownership.ownerEmail) || fallbackPerson;
       if (!person) {
-        console.warn(`   ⚠️  Person ${ownership.ownerEmail} not found, skipping ownership`);
+        console.warn(
+          `   ⚠️  Person ${ownership.ownerEmail} not found and no fallback available, skipping ownership`,
+        );
         continue;
       }
       ownerPersonId = person.id;
     } else if (ownership.ownerType === "ORG_UNIT") {
-      const orgUnit = orgUnits.find((o) => o.code === ownership.ownerOrgUnitCode);
+      const orgUnit = orgUnits.find(
+        (o) => o.code === ownership.ownerOrgUnitCode,
+      );
       if (!orgUnit) {
-        console.warn(`   ⚠️  Org Unit ${ownership.ownerOrgUnitCode} not found, skipping ownership`);
+        console.warn(
+          `   ⚠️  Org Unit ${ownership.ownerOrgUnitCode} not found, skipping ownership`,
+        );
         continue;
       }
       ownerOrgUnitId = orgUnit.id;
@@ -145,9 +176,13 @@ export async function seedGovernance(prisma: PrismaClient) {
   const campaigns = [];
   for (const campaignTemplate of VERIFICATION_CAMPAIGNS) {
     // Find creator
-    const creator = persons.find((p) => p.email === campaignTemplate.creatorEmail);
+    const creator =
+      persons.find((p) => p.email === campaignTemplate.creatorEmail) ||
+      fallbackPerson;
     if (!creator) {
-      console.warn(`   ⚠️  Creator ${campaignTemplate.creatorEmail} not found, skipping campaign`);
+      console.warn(
+        `   ⚠️  Creator ${campaignTemplate.creatorEmail} not found and no fallback available, skipping campaign`,
+      );
       continue;
     }
 
@@ -156,7 +191,9 @@ export async function seedGovernance(prisma: PrismaClient) {
         name: campaignTemplate.name,
         description: campaignTemplate.description,
         targetType: campaignTemplate.targetType,
-        scheduledStart: getRelativeDate(campaignTemplate.scheduledStartDaysFromNow),
+        scheduledStart: getRelativeDate(
+          campaignTemplate.scheduledStartDaysFromNow,
+        ),
         scheduledEnd: getRelativeDate(campaignTemplate.scheduledEndDaysFromNow),
         createdById: creator.id,
       },
@@ -188,12 +225,9 @@ export async function seedGovernance(prisma: PrismaClient) {
 
     for (const ci of configurationItems) {
       // Assign some items with different statuses
-      const statusOptions: Array<"PENDING" | "IN_PROGRESS" | "VERIFIED" | "EXCEPTION"> = [
-        "PENDING",
-        "IN_PROGRESS",
-        "VERIFIED",
-        "EXCEPTION",
-      ];
+      const statusOptions: Array<
+        "PENDING" | "IN_PROGRESS" | "VERIFIED" | "EXCEPTION"
+      > = ["PENDING", "IN_PROGRESS", "VERIFIED", "EXCEPTION"];
       const randomStatus = statusOptions[itemCount % statusOptions.length];
 
       // Find verifier (different persons)
@@ -235,11 +269,9 @@ export async function seedGovernance(prisma: PrismaClient) {
     });
 
     for (const asset of assets) {
-      const statusOptions: Array<"PENDING" | "IN_PROGRESS" | "VERIFIED" | "EXCEPTION"> = [
-        "PENDING",
-        "IN_PROGRESS",
-        "VERIFIED",
-      ];
+      const statusOptions: Array<
+        "PENDING" | "IN_PROGRESS" | "VERIFIED" | "EXCEPTION"
+      > = ["PENDING", "IN_PROGRESS", "VERIFIED"];
       const randomStatus = statusOptions[itemCount % statusOptions.length];
 
       const verifier = persons[itemCount % persons.length];
