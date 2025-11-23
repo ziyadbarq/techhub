@@ -2,8 +2,6 @@
  * System Seed Configuration - Services, Business Processes, Attachments, Exchange Rates
  */
 
-import { WarrantyCoverageType } from "@/generated/prisma/enums";
-
 // ==============================================
 // Attachment Types
 // ==============================================

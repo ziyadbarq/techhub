@@ -2,8 +2,6 @@
  * Foundation Layer Seed Configuration - Vendors, Locations, OrgUnits, Persons, Lifecycle
  */
 
-import { WarrantyCoverageType } from "@/generated/prisma/enums";
-
 // ==============================================
 // Vendor Data
 // ==============================================

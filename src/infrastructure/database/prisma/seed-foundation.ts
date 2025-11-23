@@ -8,7 +8,6 @@
  */
 
 import type { PrismaClient } from "../../../generated/prisma/client.js";
-import { FieldDataTypeEnum } from "../../../generated/prisma/client.js";
 import { SEED_CONFIG } from "./seed-config.js";
 import { logStep, logSuccess } from "./seed-utils.js";
 import {
@@ -59,44 +58,50 @@ export async function seedFoundation(prisma: PrismaClient) {
   logStep("🔄", "Seeding lifecycle states...");
 
   // IT Asset States - batch creation using factory
-  const [stateNew, stateReceived, stateDeployed, stateMaintenance, stateRetired] =
-    await createLifecycleStates(prisma, itAssetLifecycle.id, [
-      {
-        name: "New",
-        code: "NEW",
-        description: "Asset has been ordered but not yet received",
-        sortOrder: 1,
-        stateType: "INITIAL",
-      },
-      {
-        name: "Received",
-        code: "RECEIVED",
-        description: "Asset has been received and is being prepared for deployment",
-        sortOrder: 2,
-        stateType: "ACTIVE",
-      },
-      {
-        name: "Deployed",
-        code: "DEPLOYED",
-        description: "Asset is in active use",
-        sortOrder: 3,
-        stateType: "ACTIVE",
-      },
-      {
-        name: "Maintenance",
-        code: "MAINTENANCE",
-        description: "Asset is under maintenance or repair",
-        sortOrder: 4,
-        stateType: "ACTIVE",
-      },
-      {
-        name: "Retired",
-        code: "RETIRED",
-        description: "Asset has been retired from service",
-        sortOrder: 5,
-        stateType: "TERMINAL",
-      },
-    ]);
+  const [
+    stateNew,
+    stateReceived,
+    stateDeployed,
+    stateMaintenance,
+    stateRetired,
+  ] = await createLifecycleStates(prisma, itAssetLifecycle.id, [
+    {
+      name: "New",
+      code: "NEW",
+      description: "Asset has been ordered but not yet received",
+      sortOrder: 1,
+      stateType: "INITIAL",
+    },
+    {
+      name: "Received",
+      code: "RECEIVED",
+      description:
+        "Asset has been received and is being prepared for deployment",
+      sortOrder: 2,
+      stateType: "ACTIVE",
+    },
+    {
+      name: "Deployed",
+      code: "DEPLOYED",
+      description: "Asset is in active use",
+      sortOrder: 3,
+      stateType: "ACTIVE",
+    },
+    {
+      name: "Maintenance",
+      code: "MAINTENANCE",
+      description: "Asset is under maintenance or repair",
+      sortOrder: 4,
+      stateType: "ACTIVE",
+    },
+    {
+      name: "Retired",
+      code: "RETIRED",
+      description: "Asset has been retired from service",
+      sortOrder: 5,
+      stateType: "TERMINAL",
+    },
+  ]);
 
   // Software License States - batch creation
   await createLifecycleStates(prisma, softwareLicenseLifecycle.id, [
@@ -249,14 +254,14 @@ export async function seedFoundation(prisma: PrismaClient) {
     {
       name: "RAM Size (GB)",
       code: "RAM_GB",
-      dataType: "NUMBER",
+      dataType: "INTEGER",
       description: "RAM size in gigabytes",
       validationRules: { min: 1, max: 1024 },
     },
     {
       name: "Storage Size (GB)",
       code: "STORAGE_GB",
-      dataType: "NUMBER",
+      dataType: "INTEGER",
       description: "Storage capacity in gigabytes",
       validationRules: { min: 1, max: 10000 },
     },
@@ -280,7 +285,9 @@ export async function seedFoundation(prisma: PrismaClient) {
     },
   ]);
 
-  logSuccess(`Created ${await prisma.fieldDefinition.count()} field definitions`);
+  logSuccess(
+    `Created ${await prisma.fieldDefinition.count()} field definitions`,
+  );
 
   console.log("✅ Foundation layer seeding complete!");
 }
