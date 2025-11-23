@@ -91,7 +91,11 @@ export async function getAssetSummaryStatsAction(): Promise<
     // Calculate total value in SAR (convert all currencies to SAR before summing)
     let totalValueInSAR = 0;
     for (const asset of assets) {
-      if (asset.purchaseCost && asset.currency) {
+      if (!asset.purchaseCost) {
+        continue;
+      }
+
+      if (asset.currency) {
         try {
           // Convert to SAR using exchange rates
           const conversionResult = await convertCurrencyUseCase.execute({
@@ -99,10 +103,12 @@ export async function getAssetSummaryStatsAction(): Promise<
             fromCurrency: asset.currency,
           });
           totalValueInSAR += conversionResult.convertedAmount;
-        } catch (error) {
+        } catch (_error) {
           // If exchange rate not found, skip this asset's value
           // Assets with missing exchange rates are excluded from total calculation
         }
+      } else {
+        totalValueInSAR += asset.purchaseCost;
       }
     }
 
@@ -181,16 +187,20 @@ export async function getAssetsByCategoryAction(): Promise<
 
       // Convert asset cost to SAR before adding
       let costInSAR = 0;
-      if (asset.purchaseCost && asset.currency) {
-        try {
-          const conversionResult = await convertCurrencyUseCase.execute({
-            amount: asset.purchaseCost,
-            fromCurrency: asset.currency,
-          });
-          costInSAR = conversionResult.convertedAmount;
-        } catch (error) {
-          // If exchange rate not found, skip this asset's value
-          // Assets with missing exchange rates are excluded from category value calculation
+      if (asset.purchaseCost) {
+        if (asset.currency) {
+          try {
+            const conversionResult = await convertCurrencyUseCase.execute({
+              amount: asset.purchaseCost,
+              fromCurrency: asset.currency,
+            });
+            costInSAR = conversionResult.convertedAmount;
+          } catch (_error) {
+            // If exchange rate not found, skip this asset's value
+            // Assets with missing exchange rates are excluded from category value calculation
+          }
+        } else {
+          costInSAR = asset.purchaseCost;
         }
       }
 
