@@ -14,10 +14,13 @@ import {
   createLifecycleStates,
   createLifecycleTransitions,
   createVendors,
+  createVendorContacts,
   createLocations,
   createOrganizationUnits,
   createPersons,
+  createPersonRoleAssignments,
   createFieldDefinitions,
+  createExchangeRates,
 } from "./seed-foundation-factories.js";
 
 export async function seedFoundation(prisma: PrismaClient) {
@@ -190,12 +193,21 @@ export async function seedFoundation(prisma: PrismaClient) {
   // ==============================================
   logStep("🏭", "Seeding vendors...");
 
-  await createVendors(prisma, SEED_CONFIG.VENDORS);
+  const vendorMap = await createVendors(prisma, SEED_CONFIG.VENDORS);
 
   logSuccess(`Created ${await prisma.vendor.count()} vendors`);
 
   // ==============================================
-  // 5. LOCATIONS (Using Factory)
+  // 5. VENDOR CONTACTS
+  // ==============================================
+  logStep("👥", "Seeding vendor contacts...");
+
+  await createVendorContacts(prisma, SEED_CONFIG.VENDOR_CONTACTS, vendorMap);
+
+  logSuccess(`Created ${await prisma.vendorContact.count()} vendor contacts`);
+
+  // ==============================================
+  // 6. LOCATIONS (Using Factory)
   // ==============================================
   logStep("📍", "Seeding locations...");
 
@@ -204,7 +216,7 @@ export async function seedFoundation(prisma: PrismaClient) {
   logSuccess(`Created ${await prisma.location.count()} locations`);
 
   // ==============================================
-  // 6. ORGANIZATION UNITS (Using Factory)
+  // 7. ORGANIZATION UNITS (Using Factory)
   // ==============================================
   logStep("🏢", "Seeding organization units...");
 
@@ -218,16 +230,33 @@ export async function seedFoundation(prisma: PrismaClient) {
   );
 
   // ==============================================
-  // 7. PERSONS (Using Factory)
+  // 8. PERSONS (Using Factory)
   // ==============================================
   logStep("👥", "Seeding persons...");
 
-  await createPersons(prisma, SEED_CONFIG.PERSONS, orgUnitMap);
+  const { emailMap: personEmailMap, nameMap: personNameMap } =
+    await createPersons(prisma, SEED_CONFIG.PERSONS, orgUnitMap);
 
   logSuccess(`Created ${await prisma.person.count()} persons`);
 
   // ==============================================
-  // 8. FIELD DEFINITIONS (Using Factory)
+  // 9. PERSON ROLE ASSIGNMENTS
+  // ==============================================
+  logStep("🎭", "Seeding person role assignments...");
+
+  await createPersonRoleAssignments(
+    prisma,
+    SEED_CONFIG.PERSON_ROLE_ASSIGNMENTS,
+    personEmailMap,
+    personNameMap,
+  );
+
+  logSuccess(
+    `Created ${await prisma.personRoleAssignment.count()} person role assignments`,
+  );
+
+  // ==============================================
+  // 10. FIELD DEFINITIONS (Using Factory)
   // ==============================================
   logStep("📋", "Seeding field definitions...");
 
@@ -288,6 +317,15 @@ export async function seedFoundation(prisma: PrismaClient) {
   logSuccess(
     `Created ${await prisma.fieldDefinition.count()} field definitions`,
   );
+
+  // ==============================================
+  // 11. EXCHANGE RATES
+  // ==============================================
+  logStep("💱", "Seeding exchange rates...");
+
+  await createExchangeRates(prisma, SEED_CONFIG.EXCHANGE_RATES);
+
+  logSuccess(`Created ${await prisma.exchangeRate.count()} exchange rates`);
 
   console.log("✅ Foundation layer seeding complete!");
 }

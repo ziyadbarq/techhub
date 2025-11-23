@@ -104,18 +104,26 @@ export async function createVendors(
   prisma: PrismaClient,
   vendors: readonly VendorData[] | VendorData[],
 ) {
-  return prisma.vendor.createMany({
-    data: vendors.map((v) => ({
-      name: v.name,
-      code: v.code,
-      vendorType: v.type,
-      description: v.description,
-      website: v.website,
-      email: v.email,
-      phone: v.phone,
-      isActive: true,
-    })),
-  });
+  const vendorMap = new Map<string, string>();
+
+  for (const v of vendors) {
+    const created = await prisma.vendor.create({
+      data: {
+        name: v.name,
+        code: v.code,
+        vendorType: v.type,
+        description: v.description,
+        website: v.website,
+        email: v.email,
+        phone: v.phone,
+        isActive: true,
+      },
+    });
+
+    vendorMap.set(v.code, created.id);
+  }
+
+  return vendorMap;
 }
 
 // ==============================================
@@ -261,6 +269,8 @@ export async function createPersons(
   }
 
   const createdPersons = [];
+  const emailMap = new Map<string, string>();
+  const nameMap = new Map<string, string>();
   const usedEmails = new Set<string>();
 
   for (const person of persons) {
@@ -303,9 +313,14 @@ export async function createPersons(
     });
 
     createdPersons.push(created);
+    emailMap.set(email, created.id);
+    nameMap.set(
+      `${person.firstName} ${person.lastName}`.toLowerCase(),
+      created.id,
+    );
   }
 
-  return createdPersons;
+  return { createdPersons, emailMap, nameMap };
 }
 
 // ==============================================
@@ -368,5 +383,126 @@ export async function createFieldDefinitions(
       isActive: true,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     })) as any,
+  });
+}
+
+// ==============================================
+// Vendor Contacts Factory
+// ==============================================
+
+export interface VendorContactData {
+  vendorCode: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+  role?: string;
+  isPrimary?: boolean;
+}
+
+export async function createVendorContacts(
+  prisma: PrismaClient,
+  contacts: readonly VendorContactData[] | VendorContactData[],
+  vendorMap: Map<string, string>,
+) {
+  for (const contact of contacts) {
+    const vendorId = vendorMap.get(contact.vendorCode);
+    if (!vendorId) {
+      console.warn(
+        `⚠️  Vendor not found for contact ${contact.email}: ${contact.vendorCode}`,
+      );
+      continue;
+    }
+
+    await prisma.vendorContact.create({
+      data: {
+        vendor: { connect: { id: vendorId } },
+        firstName: contact.firstName,
+        lastName: contact.lastName,
+        email: contact.email,
+        phone: contact.phone ?? null,
+        role: contact.role ?? null,
+        isPrimary: contact.isPrimary ?? false,
+        isActive: true,
+      },
+    });
+  }
+}
+
+// ==============================================
+// Person Role Assignments Factory
+// ==============================================
+
+export interface PersonRoleAssignmentData {
+  personEmail: string;
+  roleName: string;
+  isPrimary?: boolean;
+  scope?: string;
+  personName?: string;
+}
+
+export async function createPersonRoleAssignments(
+  prisma: PrismaClient,
+  assignments: readonly PersonRoleAssignmentData[] | PersonRoleAssignmentData[],
+  personEmailMap: Map<string, string>,
+  personNameMap?: Map<string, string>,
+) {
+  const uniqueRoles = Array.from(
+    new Set(assignments.map((a) => a.roleName)),
+  ).filter(Boolean);
+
+  const roles = await prisma.role.findMany({
+    where: { name: { in: uniqueRoles } },
+  });
+  const roleMap = new Map(roles.map((r) => [r.name, r.id]));
+
+  for (const assignment of assignments) {
+    const personId =
+      personEmailMap.get(assignment.personEmail.toLowerCase()) ||
+      (assignment.personName
+        ? personNameMap?.get(assignment.personName.toLowerCase())
+        : undefined);
+    const roleId = roleMap.get(assignment.roleName);
+
+    if (!personId || !roleId) {
+      console.warn(
+        `⚠️  Skipping role assignment for ${assignment.personEmail} -> ${assignment.roleName} (missing person or role)`,
+      );
+      continue;
+    }
+
+    await prisma.personRoleAssignment.create({
+      data: {
+        person: { connect: { id: personId } },
+        role: { connect: { id: roleId } },
+        isPrimary: assignment.isPrimary ?? false,
+        scope: assignment.scope ?? null,
+        isActive: true,
+      },
+    });
+  }
+}
+
+// ==============================================
+// Exchange Rates Factory
+// ==============================================
+
+export interface ExchangeRateData {
+  currency: string;
+  rateToSAR: number;
+  isActive?: boolean;
+}
+
+export async function createExchangeRates(
+  prisma: PrismaClient,
+  rates: readonly ExchangeRateData[] | ExchangeRateData[],
+) {
+  await prisma.exchangeRate.createMany({
+    data: rates.map((r) => ({
+      currency: r.currency,
+      rateToSAR: r.rateToSAR,
+      isActive: r.isActive ?? true,
+    })),
+    skipDuplicates: true,
   });
 }

@@ -98,6 +98,40 @@ export const LOCATION_DATA = [
 ] as const;
 
 // ==============================================
+// Vendor Contact Data
+// ==============================================
+
+export const VENDOR_CONTACT_DATA = [
+  {
+    vendorCode: "DELL",
+    firstName: "Layth",
+    lastName: "Al-Dhahir",
+    email: "[email protected]",
+    phone: "+966-11-555-1001",
+    role: "Account Manager",
+    isPrimary: true,
+  },
+  {
+    vendorCode: "CISCO",
+    firstName: "Hussain",
+    lastName: "Al-Jaser",
+    email: "[email protected]",
+    phone: "+966-11-555-2002",
+    role: "Support Lead",
+    isPrimary: true,
+  },
+  {
+    vendorCode: "MSFT",
+    firstName: "Nasser",
+    lastName: "Al-Fahad",
+    email: "[email protected]",
+    phone: "+966-11-555-3003",
+    role: "Technical Advisor",
+    isPrimary: false,
+  },
+] as const;
+
+// ==============================================
 // Organization Unit Data
 // ==============================================
 
@@ -241,6 +275,94 @@ export const PERSON_DATA = [
     email: "[email protected]",
     title: "Infrastructure Engineer",
     orgUnitCode: "ENG",
+  },
+] as const;
+
+// ==============================================
+// Person Role Assignments
+// ==============================================
+
+export const PERSON_ROLE_ASSIGNMENTS = [
+  {
+    personEmail: "[email protected]",
+    personName: "Ahmed Al-Mansour",
+    roleName: "admin",
+    isPrimary: true,
+  },
+  {
+    personEmail: "[email protected]",
+    personName: "Fatima Al-Zahrani",
+    roleName: "manager",
+  },
+  {
+    personEmail: "[email protected]",
+    personName: "Mohammed Al-Qarni",
+    roleName: "manager",
+  },
+  {
+    personEmail: "[email protected]",
+    personName: "Noura Al-Rashid",
+    roleName: "manager",
+  },
+  {
+    personEmail: "[email protected]",
+    personName: "Khalid Al-Ghamdi",
+    roleName: "editor",
+  },
+  {
+    personEmail: "[email protected]",
+    personName: "Sara Al-Mutairi",
+    roleName: "editor",
+  },
+  {
+    personEmail: "[email protected]",
+    personName: "Abdullah Al-Harthi",
+    roleName: "editor",
+  },
+  {
+    personEmail: "[email protected]",
+    personName: "Layla Al-Dosari",
+    roleName: "editor",
+  },
+  {
+    personEmail: "[email protected]",
+    personName: "Omar Al-Shehri",
+    roleName: "editor",
+  },
+  {
+    personEmail: "[email protected]",
+    personName: "Maha Al-Otaibi",
+    roleName: "viewer",
+  },
+  {
+    personEmail: "[email protected]",
+    personName: "Faisal Al-Harbi",
+    roleName: "viewer",
+  },
+  {
+    personEmail: "[email protected]",
+    personName: "Hanan Al-Subai",
+    roleName: "viewer",
+  },
+  {
+    personEmail: "[email protected]",
+    personName: "Saud Al-Ajmi",
+    roleName: "viewer",
+  },
+  {
+    personEmail: "[email protected]",
+    personName: "Aisha Al-Malki",
+    roleName: "viewer",
+  },
+  {
+    personEmail: "[email protected]",
+    personName: "Tariq Al-Shamrani",
+    roleName: "viewer",
+  },
+  {
+    personEmail: "[email protected]",
+    personName: "Abdullah Al-Harthi",
+    roleName: "viewer",
   },
 ] as const;
 
