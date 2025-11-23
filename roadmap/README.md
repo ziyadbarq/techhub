@@ -31,7 +31,7 @@ This folder contains detailed specifications for planned features that are not y
 
 ### Layer 3 (Advanced ITAM)
 
-- [Schema-API Alignment: Phases 5-8](SCHEMA_API_ALIGNMENT_COMPLETION.md) - **Status: Planned** - Complete governance features (4 entities), attachments system (3 entities), testing & docs
+- None currently (8 modules fully implemented: Asset Disposals, Asset Kits, Asset Reservations, CMDB, Contract Management, License Management, Governance, Attachments)
 
 ### Layer 4 (Future)
 
@@ -40,6 +40,10 @@ This folder contains detailed specifications for planned features that are not y
 ### UI/UX Enhancements (Cross-cutting)
 
 - [Inline-Editable Code Fields](INLINE_EDITABLE_CODE_FIELDS.md) - **Status: Planned** - Move code/tag fields from form body to inline-editable fields in dialog titles (11 forms, 4-6 hours)
+
+### Infrastructure & Development (Cross-cutting)
+
+- [Seed Mode Separation](SEED_MODE_SEPARATION.md) - **Status: Planned** - Split database seeding into essential and full modes for faster CI/CD and cleaner testing (2-3 hours)
 
 ## Adding New Features
 
