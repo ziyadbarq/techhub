@@ -1,8 +1,24 @@
 /**
  * Permission Groups Configuration
  *
- * Organizes 153+ permissions into logical groups for better UX in permission assignment UI.
+ * Organizes 269 permissions into 14 logical groups for better UX in permission assignment UI.
  * Each group contains related permissions based on functionality and domain.
+ *
+ * Groups:
+ * 1. System & Administration (19 permissions)
+ * 2. Foundation Layer (50 permissions)
+ * 3. Asset Management (30 permissions)
+ * 4. Maintenance Management (11 permissions)
+ * 5. Inventory Management (9 permissions)
+ * 6. Asset Operations (27 permissions)
+ * 7. CMDB (27 permissions)
+ * 8. Contract Management (15 permissions)
+ * 9. License Management (22 permissions)
+ * 10. Service Management (11 permissions)
+ * 11. Governance & Compliance (23 permissions)
+ * 12. Attachments & Documents (10 permissions)
+ * 13. Exchange Rates (6 permissions)
+ * 14. Development & Testing (6 permissions)
  */
 
 import {
@@ -308,6 +324,89 @@ export const PERMISSION_GROUPS: PermissionGroup[] = [
       PERMISSIONS.LICENSE_ALLOCATIONS_DEALLOCATE,
       PERMISSIONS.LICENSE_ALLOCATIONS_REACTIVATE,
       PERMISSIONS.LICENSE_ALLOCATIONS_MANAGE,
+    ],
+  },
+  {
+    id: "service-management",
+    label: "Service Management",
+    description: "IT services, business processes, and service catalog",
+    icon: "Server",
+    permissions: [
+      PERMISSIONS.SERVICES_VIEW,
+      PERMISSIONS.SERVICES_CREATE,
+      PERMISSIONS.SERVICES_UPDATE,
+      PERMISSIONS.SERVICES_DELETE,
+      PERMISSIONS.SERVICES_RETIRE,
+      PERMISSIONS.SERVICES_MANAGE,
+      PERMISSIONS.BUSINESS_PROCESSES_VIEW,
+      PERMISSIONS.BUSINESS_PROCESSES_CREATE,
+      PERMISSIONS.BUSINESS_PROCESSES_UPDATE,
+      PERMISSIONS.BUSINESS_PROCESSES_DELETE,
+      PERMISSIONS.BUSINESS_PROCESSES_MANAGE,
+    ],
+  },
+  {
+    id: "governance",
+    label: "Governance & Compliance",
+    description:
+      "Data governance, data domains, ownerships, and verification campaigns (SAMA)",
+    icon: "Shield",
+    permissions: [
+      PERMISSIONS.DATA_DOMAINS_VIEW,
+      PERMISSIONS.DATA_DOMAINS_CREATE,
+      PERMISSIONS.DATA_DOMAINS_UPDATE,
+      PERMISSIONS.DATA_DOMAINS_DELETE,
+      PERMISSIONS.DATA_DOMAINS_MANAGE,
+      PERMISSIONS.DATA_OWNERSHIPS_VIEW,
+      PERMISSIONS.DATA_OWNERSHIPS_CREATE,
+      PERMISSIONS.DATA_OWNERSHIPS_UPDATE,
+      PERMISSIONS.DATA_OWNERSHIPS_DELETE,
+      PERMISSIONS.DATA_OWNERSHIPS_MANAGE,
+      PERMISSIONS.VERIFICATION_CAMPAIGNS_VIEW,
+      PERMISSIONS.VERIFICATION_CAMPAIGNS_CREATE,
+      PERMISSIONS.VERIFICATION_CAMPAIGNS_UPDATE,
+      PERMISSIONS.VERIFICATION_CAMPAIGNS_DELETE,
+      PERMISSIONS.VERIFICATION_CAMPAIGNS_START,
+      PERMISSIONS.VERIFICATION_CAMPAIGNS_COMPLETE,
+      PERMISSIONS.VERIFICATION_CAMPAIGNS_MANAGE,
+      PERMISSIONS.VERIFICATION_ITEMS_VIEW,
+      PERMISSIONS.VERIFICATION_ITEMS_UPDATE,
+      PERMISSIONS.VERIFICATION_ITEMS_VERIFY,
+      PERMISSIONS.VERIFICATION_ITEMS_FLAG_EXCEPTION,
+      PERMISSIONS.VERIFICATION_ITEMS_MANAGE,
+    ],
+  },
+  {
+    id: "attachments",
+    label: "Attachments & Documents",
+    description:
+      "Attachment types and file attachments for compliance documentation",
+    icon: "Paperclip",
+    permissions: [
+      PERMISSIONS.ATTACHMENT_TYPES_VIEW,
+      PERMISSIONS.ATTACHMENT_TYPES_CREATE,
+      PERMISSIONS.ATTACHMENT_TYPES_UPDATE,
+      PERMISSIONS.ATTACHMENT_TYPES_DELETE,
+      PERMISSIONS.ATTACHMENT_TYPES_MANAGE,
+      PERMISSIONS.ATTACHMENTS_VIEW,
+      PERMISSIONS.ATTACHMENTS_CREATE,
+      PERMISSIONS.ATTACHMENTS_UPDATE,
+      PERMISSIONS.ATTACHMENTS_DELETE,
+      PERMISSIONS.ATTACHMENTS_MANAGE,
+    ],
+  },
+  {
+    id: "exchange-rates",
+    label: "Exchange Rates",
+    description: "Multi-currency support and exchange rate management",
+    icon: "DollarSign",
+    permissions: [
+      PERMISSIONS.FX_RATES_VIEW,
+      PERMISSIONS.FX_RATES_CREATE,
+      PERMISSIONS.FX_RATES_UPDATE,
+      PERMISSIONS.FX_RATES_DELETE,
+      PERMISSIONS.FX_RATES_MANAGE,
+      PERMISSIONS.FX_RATES_CONVERT,
     ],
   },
   {

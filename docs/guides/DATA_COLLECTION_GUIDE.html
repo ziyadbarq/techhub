@@ -264,14 +264,13 @@ a:hover {
 
 table {
 	border-collapse: collapse;
-	display: block;
 	width: 100%;
-	overflow-x: auto;
+	border: 1px solid var(--border);
 }
 
 table > thead > tr > th {
-	text-align: left;
-	border-bottom: 1px solid var(--border);
+	text-align: center;
+	border: 1px solid var(--border);
 }
 
 table > thead > tr > th,
@@ -279,17 +278,8 @@ table > thead > tr > td,
 table > tbody > tr > th,
 table > tbody > tr > td {
 	padding: 5px 10px;
-}
-
-table > tbody > tr + tr > td {
-	border-top: 1px solid var(--border);
-}
-
-table > thead,
-table > tbody {
-	display: table;
-	width: 100%;
-	table-layout: auto;
+	text-align: center;
+	border: 1px solid var(--border);
 }
 
 table th,
@@ -467,14 +457,14 @@ blockquote {
 <li><a href="#data-collection-overview">Data Collection Overview</a></li>
 <li><a href="#step-by-step-data-collection">Step-by-Step Data Collection</a>
 <ul>
-<li><a href="#step-1-company-structure--people">Step 1: Company Structure &amp; People</a></li>
-<li><a href="#step-2-vendors--suppliers">Step 2: Vendors &amp; Suppliers</a></li>
-<li><a href="#step-3-physical-locations">Step 3: Physical Locations</a></li>
-<li><a href="#step-4-it-assets">Step 4: IT Assets</a></li>
-<li><a href="#step-5-software--licenses">Step 5: Software &amp; Licenses</a></li>
-<li><a href="#step-6-services--applications">Step 6: Services &amp; Applications</a></li>
-<li><a href="#step-7-contracts">Step 7: Contracts</a></li>
-<li><a href="#step-8-governance--compliance">Step 8: Governance &amp; Compliance</a></li>
+<li><a href="#step-1%3A-company-structure-%26-people-%F0%9F%94%B5">Step 1: Company Structure &amp; People</a></li>
+<li><a href="#step-2%3A-vendors-%26-suppliers-%F0%9F%94%B5">Step 2: Vendors &amp; Suppliers</a></li>
+<li><a href="#step-3%3A-it-assets-%F0%9F%9F%A2">Step 3: IT Assets</a></li>
+<li><a href="#step-4%3A-software-%26-licenses-%F0%9F%9F%A2">Step 4: Software &amp; Licenses</a></li>
+<li><a href="#step-5%3A-services-%26-applications-%F0%9F%9F%A2">Step 5: Services &amp; Applications</a></li>
+<li><a href="#step-6%3A-contracts-%F0%9F%9F%A2">Step 6: Contracts</a></li>
+<li><a href="#step-7%3A-governance-%26-compliance-%F0%9F%9F%A1">Step 7: Governance &amp; Compliance</a></li>
+<li><a href="#step-8%3A-additional-data-(optional)-%F0%9F%9F%A1">Step 8: Additional Data (Optional)</a></li>
 </ul>
 </li>
 <li><a href="#data-templates">Data Templates</a></li>
@@ -494,10 +484,10 @@ blockquote {
 </ul>
 <p><strong>Why are we doing this?</strong></p>
 <ul>
-<li><strong>SAMA Compliance</strong>: Meet Saudi Central Bank regulatory requirements</li>
-<li><strong>Cost Optimization</strong>: Track asset lifecycle and reduce wasteful spending</li>
-<li><strong>Risk Management</strong>: Ensure proper asset disposal, license compliance, and security</li>
-<li><strong>Operational Excellence</strong>: Know what we have, where it is, and who's using it</li>
+<li><strong>SAMA Compliance</strong>: Meet Saudi Central Bank (SAMA) regulatory requirements for IT asset tracking, data governance, and audit trails. SAMA mandates proper segregation of duties, asset ownership documentation, and verification campaigns for critical financial services infrastructure.</li>
+<li><strong>Cost Optimization</strong>: Track asset lifecycle, identify underutilized resources, and reduce wasteful spending on licenses and hardware</li>
+<li><strong>Risk Management</strong>: Ensure proper asset disposal, license compliance, security patching, and disaster recovery readiness</li>
+<li><strong>Operational Excellence</strong>: Maintain a single source of truth - know what we have, where it is, who's using it, and when it needs maintenance or renewal</li>
 </ul>
 <p><strong>Who needs to contribute?</strong></p>
 <p>Every department that owns or uses IT assets, services, or manages vendor relationships:</p>
@@ -509,6 +499,16 @@ blockquote {
 <li><strong>Security &amp; Compliance</strong>: Data classification, ownership</li>
 <li><strong>Procurement</strong>: Vendor details, purchasing history</li>
 </ul>
+<blockquote>
+<p><strong>🚀 Quick Start</strong></p>
+<ol>
+<li><strong>Foundation First</strong>: Start with Organization Units, Employees, Locations, and Vendors (🔵 Blue sections)</li>
+<li><strong>Core Assets Next</strong>: Add IT Assets, Software Licenses, and Services (🟢 Green sections)</li>
+<li><strong>Advanced Later</strong>: Contracts, Governance, and Maintenance can be phased in (🟡 Yellow sections)</li>
+<li><strong>Use Templates</strong>: Copy CSV headers from the <a href="#data-templates">Data Templates</a> section below</li>
+<li><strong>Ask Questions</strong>: Contact the TechHub team for guidance at any step</li>
+</ol>
+</blockquote>
 <hr>
 <h2 id="how-to-use-this-guide" tabindex="-1">How to Use This Guide</h2>
 <p><strong>Step-by-Step Process</strong>:</p>
@@ -1182,7 +1182,7 @@ blockquote {
 <li>❌ <strong>Serial Number</strong>: ABC123456789</li>
 <li>❌ <strong>Purchase Date</strong>: 2024-01-15</li>
 <li>❌ <strong>Purchase Cost</strong>: 5,000.00</li>
-<li>❌ <strong>Currency</strong>: SAR</li>
+<li>❌ <strong>Currency</strong>: SAR (Saudi Riyal is the base currency. All financial values default to SAR unless specified otherwise. TechHub supports 15 currencies with dual-currency display: e.g., "$100.00 (ر.س 375.00)")</li>
 <li>❌ <strong>Condition</strong>: NEW, GOOD, FAIR, POOR</li>
 <li>❌ <strong>Location</strong>: Riyadh HQ - Floor 3</li>
 <li>❌ <strong>Assigned To</strong>: Ahmed Al-Rashid</li>
@@ -1530,6 +1530,17 @@ blockquote {
 <h3 id="step-5%3A-services-%26-applications-%F0%9F%9F%A2" tabindex="-1">Step 5: Services &amp; Applications 🟢</h3>
 <p><strong>Who provides this</strong>: IT Operations, DevOps, Application Owners</p>
 <p><strong>Why it matters</strong>: Document IT service catalog, understand dependencies, support SAMA compliance</p>
+<blockquote>
+<p><strong>🏦 SAMA Essential Services</strong></p>
+<p>SAMA regulations require financial institutions to identify and protect <strong>Essential Services</strong> - systems critical to core banking and payment operations. For each service, you should mark <code>isEssential: true</code> if it supports:</p>
+<ul>
+<li>Core banking transactions (deposits, withdrawals, transfers)</li>
+<li>Payment processing (digital wallets, payment gateways, card processing)</li>
+<li>Customer authentication and identity management</li>
+<li>Regulatory reporting and compliance systems</li>
+</ul>
+<p>TechHub will help you monitor these essential services more rigorously (uptime tracking, change management, disaster recovery readiness).</p>
+</blockquote>
 <h4 id="5.1-business-processes" tabindex="-1">5.1 Business Processes</h4>
 <p><strong>What is it?</strong> Business functions that IT services support (e.g., Digital Payments, Identity Management, Core Banking)</p>
 <p><strong>Required Fields</strong>:</p>
@@ -1790,7 +1801,7 @@ blockquote {
 <li>❌ <strong>End Date</strong>: 2026-12-31</li>
 <li>❌ <strong>Auto-Renew</strong>: Yes/No</li>
 <li>❌ <strong>Total Value</strong>: 1,000,000</li>
-<li>❌ <strong>Currency</strong>: SAR</li>
+<li>❌ <strong>Currency</strong>: SAR (base currency for all financial reporting and aggregations)</li>
 <li>❌ <strong>Payment Terms</strong>: Annual, Quarterly, Monthly</li>
 <li>❌ <strong>Renewal Notice</strong>: 90 days before end date</li>
 <li>❌ <strong>SLA Terms</strong>: Service level agreements</li>
@@ -1879,6 +1890,16 @@ blockquote {
 <h3 id="step-7%3A-governance-%26-compliance-%F0%9F%9F%A1" tabindex="-1">Step 7: Governance &amp; Compliance 🟡</h3>
 <p><strong>Who provides this</strong>: Security, Compliance, Data Governance teams</p>
 <p><strong>Why it matters</strong>: SAMA compliance, data classification, ownership accountability</p>
+<blockquote>
+<p><strong>📋 SAMA Compliance Note</strong></p>
+<p>As a SAMA-regulated financial institution, Barq must demonstrate:</p>
+<ul>
+<li><strong>Clear Data Ownership</strong>: Every critical data domain must have an assigned owner responsible for data quality, access controls, and compliance</li>
+<li><strong>Regular Verification</strong>: Periodic audits (verification campaigns) to validate asset accuracy, data integrity, and ownership accountability</li>
+<li><strong>Audit Trails</strong>: All governance activities must be logged for regulatory audits</li>
+<li><strong>Segregation of Duties</strong>: Auditors, data stewards, and security officers have separate, non-overlapping responsibilities</li>
+</ul>
+</blockquote>
 <h4 id="7.1-data-domains" tabindex="-1">7.1 Data Domains</h4>
 <p><strong>What is it?</strong> Categories of data you manage (PII, Financial Data, Customer Data, etc.)</p>
 <p><strong>Example</strong>:</p>

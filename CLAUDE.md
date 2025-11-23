@@ -154,10 +154,11 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 ### Permissions
 
 - **ALWAYS** check permissions at server action layer: `await requirePermission(PERMISSIONS.CONFIGURATION_ITEMS_VIEW);`
-- **Permission Organization**: 153+ permissions organized into 10 logical groups (see `src/lib/rbac/permission-groups.ts`)
-  - System & Administration, Foundation Layer, Asset Management, Maintenance, Inventory
-  - Asset Operations, CMDB, Contract Management, License Management, Development & Testing
-  - Exchange Rates (`FX_RATES_*`) and Service Management (`SERVICES_*`, `BUSINESS_PROCESSES_*`)
+- **Permission Organization**: 269 permissions organized into 14 logical groups (see `src/lib/rbac/permission-groups.ts`)
+  - System & Administration (19), Foundation Layer (50), Asset Management (30), Maintenance Management (11)
+  - Inventory Management (9), Asset Operations (27), CMDB (27), Contract Management (15)
+  - License Management (22), Service Management (11), Governance & Compliance (23)
+  - Attachments & Documents (10), Exchange Rates (6), Development & Testing (6)
 - **Feature-Specific Permissions**: Each Layer 3 feature has its own permission set:
   - `ASSET_DISPOSALS_*` (VIEW, CREATE, UPDATE, DELETE, APPROVE, REJECT, START, COMPLETE, CANCEL, MANAGE)
   - `ASSET_KITS_*` (VIEW, CREATE, UPDATE, DELETE, CHECKOUT, RETURN, MANAGE)
@@ -306,7 +307,7 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 
 **Phase 1 (COMPLETED 2025-11-22)**:
 
-- **Permission Grouping**: 153+ permissions organized into 10 logical categories (`src/lib/rbac/permission-groups.ts`)
+- **Permission Grouping**: 269 permissions organized into 14 logical categories (`src/lib/rbac/permission-groups.ts`)
 - **Enhanced UI**: Search/filter, collapsible groups, "Select All in Group" at `/admin/roles/[name]/permissions`
 - **Clone Role**: One-click role duplication with automatic permission copying
 - **Navigation Fixes**: Fixed critical 404 bug (role/permission pages now use `name` instead of `id`)
@@ -315,7 +316,7 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 **Phase 2 (COMPLETED 2025-11-23)**:
 
 - ✅ **Permission Dependencies** (`src/lib/rbac/permission-dependencies.ts`):
-  - 153+ permissions mapped with dependency rules
+  - 269 permissions mapped with dependency rules
   - Client-side validation with `validatePermissionDependencies()` function
   - **Server-side enforcement** in `assignPermissionsToRoleAction` controller
   - UI warnings in PermissionsManager showing missing dependencies

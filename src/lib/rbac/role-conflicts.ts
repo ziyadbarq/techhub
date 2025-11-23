@@ -22,30 +22,36 @@
  * Uses role.name (not ID) for configuration
  */
 export const ROLE_CONFLICTS: Record<string, string[]> = {
-  // Auditor conflicts (segregation of duties)
-  auditor: ["administrator", "developer", "system-admin"],
+  // System Administrator conflicts
+  "system-administrator": ["auditor"],
 
-  // Administrative conflicts
-  administrator: ["auditor"],
-  "system-admin": ["auditor", "external-auditor"],
+  // Auditor conflicts (SAMA compliance - segregation of duties)
+  auditor: ["system-administrator", "finance-manager", "asset-coordinator"],
 
-  // Finance conflicts (SOD)
-  "finance-manager": ["procurement-manager", "vendor-manager"],
-  "procurement-manager": ["finance-manager", "accounts-payable"],
-  "accounts-payable": ["procurement-manager", "vendor-manager"],
+  // Finance Manager conflicts (SOD)
+  "finance-manager": ["auditor", "inventory-manager"],
 
-  // Vendor management conflicts
-  "vendor-manager": ["finance-manager", "accounts-payable", "procurement"],
+  // Asset Coordinator conflicts (recordkeeping vs. custody separation)
+  "asset-coordinator": ["inventory-manager", "auditor"],
 
+  // Inventory Manager conflicts (custody vs. recordkeeping)
+  "inventory-manager": ["finance-manager", "asset-coordinator"],
+
+  // Security Officer conflicts (governance vs. ownership)
+  "security-officer": ["service-owner"],
+
+  // Service Owner conflicts
+  "service-owner": ["security-officer"],
+
+  // Future role conflicts (placeholders for planned roles)
   // Development vs Production
-  developer: ["auditor", "production-admin", "security-auditor"],
+  developer: ["auditor", "production-admin", "security-officer"],
   "production-admin": ["developer"],
 
-  // Security oversight
-  "security-auditor": ["developer", "system-admin"],
-  "external-auditor": ["system-admin", "developer", "administrator"],
+  // External auditor
+  "external-auditor": ["system-administrator", "developer"],
 
-  // Asset management conflicts
+  // Asset management approval workflow conflicts
   "asset-approver": ["asset-requestor"],
   "disposal-approver": ["disposal-requestor"],
 };
@@ -54,25 +60,42 @@ export const ROLE_CONFLICTS: Record<string, string[]> = {
  * Conflict reason descriptions for better UX
  */
 export const CONFLICT_REASONS: Record<string, string> = {
-  "auditor:administrator": "Auditors should not have administrative privileges",
-  "auditor:developer": "Auditors should not have development access",
-  "auditor:system-admin": "Auditors require independent oversight",
-  "finance-manager:procurement-manager":
-    "Finance and procurement require segregation of duties",
-  "finance-manager:vendor-manager":
-    "Finance approval and vendor management must be separate",
-  "procurement-manager:accounts-payable":
-    "Procurement and payment processing must be segregated",
-  "accounts-payable:vendor-manager":
-    "Payment processing and vendor management must be separate",
+  // System Administrator conflicts
+  "system-administrator:auditor":
+    "Auditors require independence from system administration (SAMA compliance)",
+
+  // Auditor conflicts (SAMA compliance)
+  "auditor:finance-manager":
+    "Auditors cannot audit procurement and financial activities they perform",
+  "auditor:asset-coordinator":
+    "Auditors cannot audit asset transactions they manage",
+
+  // Finance Manager conflicts
+  "finance-manager:inventory-manager":
+    "Finance approval and inventory custody must be segregated (SAMA SOD)",
+
+  // Asset Coordinator conflicts
+  "asset-coordinator:inventory-manager":
+    "Asset recordkeeping and inventory custody must be separated (SOD)",
+
+  // Security Officer conflicts
+  "security-officer:service-owner":
+    "Security governance and service ownership require separation",
+
+  // Future role conflicts
   "developer:production-admin":
     "Development and production access should be segregated",
-  "developer:security-auditor": "Developers should not audit their own code",
+  "developer:auditor": "Developers should not audit their own code",
+  "developer:security-officer":
+    "Development and security oversight should be separate",
+  "external-auditor:system-administrator":
+    "External auditors require complete independence",
+
+  // Asset approval workflow
   "asset-approver:asset-requestor":
     "Users cannot approve their own asset requests",
   "disposal-approver:disposal-requestor":
     "Users cannot approve their own disposal requests",
-  "system-admin:external-auditor": "External auditors require independence",
 };
 
 /**
@@ -90,32 +113,57 @@ export interface ConflictConfig {
  * Configuration for conflict severity and override rules
  */
 export const CONFLICT_CONFIG: Record<string, ConflictConfig> = {
-  // Critical conflicts - no override allowed
-  "auditor:administrator": {
+  // Critical conflicts - no override allowed (SAMA compliance)
+  "system-administrator:auditor": {
     severity: "critical",
     allowOverride: false,
     requireJustification: false,
   },
-  "external-auditor:system-admin": {
+  "auditor:finance-manager": {
+    severity: "critical",
+    allowOverride: false,
+    requireJustification: false,
+  },
+  "auditor:asset-coordinator": {
+    severity: "critical",
+    allowOverride: false,
+    requireJustification: false,
+  },
+  "external-auditor:system-administrator": {
     severity: "critical",
     allowOverride: false,
     requireJustification: false,
   },
 
-  // High severity - override with justification
-  "finance-manager:procurement-manager": {
+  // High severity - override with justification (SOD)
+  "finance-manager:inventory-manager": {
     severity: "error",
     allowOverride: true,
     requireJustification: true,
   },
-  "procurement-manager:accounts-payable": {
+  "asset-coordinator:inventory-manager": {
     severity: "error",
     allowOverride: true,
     requireJustification: true,
   },
 
   // Medium severity - warning only
+  "security-officer:service-owner": {
+    severity: "warning",
+    allowOverride: true,
+    requireJustification: false,
+  },
   "developer:production-admin": {
+    severity: "warning",
+    allowOverride: true,
+    requireJustification: false,
+  },
+  "developer:auditor": {
+    severity: "warning",
+    allowOverride: true,
+    requireJustification: false,
+  },
+  "developer:security-officer": {
     severity: "warning",
     allowOverride: true,
     requireJustification: false,
