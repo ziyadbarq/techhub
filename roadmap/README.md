@@ -37,8 +37,6 @@ This folder contains detailed specifications for planned features that are not y
 
 ### Infrastructure & Development (Cross-cutting)
 
-- [Seed Mode Separation](SEED_MODE_SEPARATION.md) - **Status: Planned** - Split database seeding into essential and full modes for faster CI/CD and cleaner testing (2-3 hours)
-
 ## Adding New Features
 
 When adding a new roadmap item:

@@ -100,7 +100,6 @@ npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastruc
 - [Roadmap Index](roadmap/README.md) - Complete list of planned features by layer
 - **RBAC Phase 2 (Partially Complete)**: Permission dependencies, role conflict detection, and bulk permission assignment shipped; remaining work (advanced user management, role analytics, role hierarchy/expiration, enhanced audit UI, bulk user role assignment) tracked in `roadmap/RBAC_PHASE2_CORRECTIONS.md` and `roadmap/README.md`
 - **Security Patch Workflow**: See `roadmap/SECURITY_PATCH_WORKFLOW.md` (planned)
-- **Seed Mode Separation**: See `roadmap/SEED_MODE_SEPARATION.md` (planned)
 
 ### All Documentation
 
