@@ -17,22 +17,14 @@ import { getCurrentUserId } from "@/lib/auth/session";
 import { revalidatePath } from "next/cache";
 import type { CheckSystemHealthUseCase } from "@/core/use-cases/system-setup/check-system-health.use-case";
 import type { GetMigrationStatusUseCase } from "@/core/use-cases/system-setup/get-migration-status.use-case";
-import type { CreateFirstUserUseCase } from "@/core/use-cases/system-setup/create-first-user.use-case";
-import type { SeedMinimalDataUseCase } from "@/core/use-cases/system-setup/seed-minimal-data.use-case";
 import type { ResetDatabaseUseCase } from "@/core/use-cases/system-setup/reset-database.use-case";
 import type { GetSystemInfoUseCase } from "@/core/use-cases/system-setup/get-system-info.use-case";
 import type {
   SystemHealthCheckDto,
   MigrationStatusDto,
-  CreateFirstUserDto,
   SystemInfoDto,
 } from "@/interface-adapters/dtos/system-setup.dto";
-import { createFirstUserDtoSchema } from "@/interface-adapters/dtos/system-setup.dto";
-import type {
-  CreateFirstUserResult,
-  SeedMinimalDataResult,
-  ResetDatabaseResult,
-} from "@/core/use-cases/system-setup";
+import type { ResetDatabaseResult } from "@/core/use-cases/system-setup";
 
 /**
  * Check if first system admin setup is needed
@@ -162,67 +154,6 @@ export async function getMigrationStatusAction(): Promise<
       error,
       { function: "getMigrationStatusAction" },
       "Failed to get migration status",
-    );
-  }
-}
-
-/**
- * Create first user (system setup)
- */
-export async function createFirstUserAction(
-  data: CreateFirstUserDto,
-): Promise<ActionResponse<CreateFirstUserResult>> {
-  try {
-    // Validate input
-    const validated = createFirstUserDtoSchema.parse(data);
-
-    const container = getContainer();
-    const createFirstUser = container.get<CreateFirstUserUseCase>(
-      DI_TOKENS.CreateFirstUserUseCase,
-    );
-
-    const result = await createFirstUser.execute(validated);
-
-    if (result.success) {
-      revalidatePath("/");
-      revalidatePath("/setup");
-      revalidatePath("/login");
-    }
-
-    return result.success
-      ? { success: true as const, data: result }
-      : { success: false as const, error: result.message };
-  } catch (error) {
-    return handleControllerError(
-      error,
-      { function: "createFirstUserAction" },
-      "Failed to create first user",
-    );
-  }
-}
-
-/**
- * Seed minimal data (RBAC only)
- */
-export async function seedMinimalDataAction(): Promise<
-  ActionResponse<SeedMinimalDataResult>
-> {
-  try {
-    const container = getContainer();
-    const seedMinimalData = container.get<SeedMinimalDataUseCase>(
-      DI_TOKENS.SeedMinimalDataUseCase,
-    );
-
-    const result = await seedMinimalData.execute();
-
-    return result.success
-      ? { success: true as const, data: result }
-      : { success: false as const, error: result.message };
-  } catch (error) {
-    return handleControllerError(
-      error,
-      { function: "seedMinimalDataAction" },
-      "Failed to seed minimal data",
     );
   }
 }

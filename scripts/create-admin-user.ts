@@ -88,11 +88,54 @@ async function createAdminUser() {
       process.exit(1);
     }
 
+    // Get or create default organization unit for Person creation
+    console.log("🔍 Finding organization unit...");
+    let orgUnit = await prisma.organizationUnit.findFirst({
+      orderBy: { createdAt: "asc" },
+    });
+
+    if (!orgUnit) {
+      console.log("⚠️  No organization units found - creating default...");
+      orgUnit = await prisma.organizationUnit.create({
+        data: {
+          name: "Barq",
+          code: "BARQ",
+          level: 1, // Company level
+          unitType: "COMPANY",
+          description: "Default organization unit for Barq",
+          isActive: true,
+        },
+      });
+      console.log(
+        `   ✓ Created default organization unit: ${orgUnit.name} (${orgUnit.code})`,
+      );
+    }
+
+    // Get viewer role for Person creation
+    console.log("🔍 Finding viewer role...");
+    const viewerRole = await prisma.role.findUnique({
+      where: { name: "viewer" },
+    });
+
+    if (!viewerRole) {
+      console.error("❌ Viewer role not found!");
+      console.log("");
+      console.log("Please run the database seed first:");
+      console.log("   npm run db:seed");
+      console.log("");
+      process.exit(1);
+    }
+
     // Hash password
     console.log("🔐 Hashing password...");
     const hashedPassword = await hashPassword(password);
 
-    // Create user and account in a transaction
+    // Parse name for Person entity
+    const nameParts = name.trim().split(/\s+/);
+    const firstName = nameParts[0] || "Admin";
+    const lastName = nameParts.slice(1).join(" ") || "User";
+
+    // Create user, account, and person in a transaction
     console.log("👤 Creating System Administrator user...");
     const user = await prisma.user.create({
       data: {
@@ -101,17 +144,34 @@ async function createAdminUser() {
         emailVerified: new Date(), // Admin user has verified email - timestamp of verification
         accounts: {
           create: {
-            type: "email",
-            provider: "credential",
+            type: "oauth", // Better Auth convention: all providers use "oauth"
+            provider: "credential", // "credential" = email/password
             providerAccountId: email,
             password: hashedPassword,
           },
         },
+        person: {
+          create: {
+            firstName,
+            lastName,
+            email,
+            employeeId: "ADMIN-001",
+            title: "System Administrator",
+            department: "IT Operations",
+            orgUnitId: orgUnit.id,
+            primaryRoleId: viewerRole.id,
+            isActive: true,
+          },
+        },
+      },
+      include: {
+        person: true,
       },
     });
 
     console.log(`   ✓ User created: ${user.id}`);
     console.log(`   ✓ Account created with credentials`);
+    console.log(`   ✓ Person entity created: ${user.person?.id}`);
 
     // Assign system admin role
     console.log("👑 Assigning System Administrator role...");

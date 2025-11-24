@@ -29,10 +29,12 @@ export interface SystemHealthCheckDto {
   database: {
     connected: boolean;
     error?: string;
+    message?: string;
   };
   redis: {
     connected: boolean;
     error?: string;
+    message?: string;
   };
   environment: {
     valid: boolean;
@@ -42,6 +44,11 @@ export interface SystemHealthCheckDto {
     applied: boolean;
     pending: number;
     error?: string;
+    message?: string;
+  };
+  rbac: {
+    roles: number;
+    permissions: number;
   };
   overall: boolean;
 }

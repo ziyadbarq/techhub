@@ -4,7 +4,6 @@ import { nextCookies } from "better-auth/next-js";
 import { lastLoginMethod } from "better-auth/plugins";
 import { createAuthMiddleware } from "better-auth/api";
 import { createId } from "@paralleldrive/cuid2";
-import { Prisma } from "@/generated/prisma/client";
 import type { PrismaClient } from "@/generated/prisma/client";
 import { encryptTokens, decryptTokens } from "./encryption";
 
@@ -62,15 +61,6 @@ const authDebugLog = (
   }
 };
 
-type AdminAssignmentResult =
-  | { assigned: true; reason: "assigned" }
-  | {
-      assigned: false;
-      reason: "has-admin" | "not-first" | "missing-role";
-    };
-
-const SYSTEM_ADMIN_ROLE_NAME = "system-administrator";
-
 type PersonLinkResult =
   | { status: "already-linked"; personId: string }
   | { status: "linked-existing"; personId: string }
@@ -80,76 +70,6 @@ type PersonLinkResult =
       reason: "missing-org-unit" | "missing-viewer-role" | "conflict";
       message: string;
     };
-
-const assignAdminRoleToFirstUser = async (
-  userId: string,
-): Promise<AdminAssignmentResult> => {
-  try {
-    return await prismaWithEncryption.$transaction(
-      async (tx) => {
-        const userCount = await tx.user.count();
-        if (userCount !== 1) {
-          return { assigned: false, reason: "not-first" };
-        }
-
-        const adminRole = await tx.role.findUnique({
-          where: { name: SYSTEM_ADMIN_ROLE_NAME },
-        });
-
-        if (!adminRole) {
-          return { assigned: false, reason: "missing-role" };
-        }
-
-        const hasAdminRole = await tx.userRole.findUnique({
-          where: {
-            userId_roleId: {
-              userId,
-              roleId: adminRole.id,
-            },
-          },
-        });
-
-        if (hasAdminRole) {
-          return { assigned: false, reason: "has-admin" };
-        }
-
-        await tx.userRole.create({
-          data: {
-            id: createId(),
-            userId,
-            roleId: adminRole.id,
-            createdAt: new Date(),
-          },
-        });
-
-        await tx.auditLog.create({
-          data: {
-            id: createId(),
-            userId,
-            action: "user_role.assign",
-            entityType: "UserRole",
-            changes: {
-              role: SYSTEM_ADMIN_ROLE_NAME,
-              reason: "first-user-auto-admin",
-            },
-            createdAt: new Date(),
-          },
-        });
-
-        return { assigned: true, reason: "assigned" };
-      },
-      {
-        isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
-      },
-    );
-  } catch (error) {
-    console.error(
-      "⚠️ Failed to assign system administrator role within transaction",
-      error instanceof Error ? error : new Error(String(error)),
-    );
-    return { assigned: false, reason: "missing-role" };
-  }
-};
 
 const parseName = (name?: string | null) => {
   if (!name) return { firstName: "New", lastName: "User" };
@@ -611,8 +531,8 @@ export const auth = betterAuth({
     }),
   ],
 
-  // First-user system administrator hook
-  // Automatically assigns system administrator role to the first user who signs in
+  // Person entity linkage hook
+  // Automatically creates/links Person entity for authenticated users
   hooks: {
     after: createAuthMiddleware(async (ctx) => {
       const path = ctx.path || "";
@@ -650,20 +570,6 @@ export const auth = betterAuth({
           userId: user.id,
           personId: linkResult.personId,
         });
-      }
-
-      // Check if user already has roles
-      const result = await assignAdminRoleToFirstUser(user.id);
-
-      if (result.assigned) {
-        console.log(
-          `✅ First user ${user.id} automatically assigned admin role`,
-        );
-        return;
-      }
-
-      if (result.reason === "missing-role") {
-        console.error("⚠️ Admin role not found. Run: npm run db:seed");
       }
     }),
   },

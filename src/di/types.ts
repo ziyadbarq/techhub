@@ -228,7 +228,6 @@ export const DI_TOKENS = {
   // System Setup Use Cases
   CheckSystemHealthUseCase: Symbol.for("CheckSystemHealthUseCase"),
   GetMigrationStatusUseCase: Symbol.for("GetMigrationStatusUseCase"),
-  CreateFirstUserUseCase: Symbol.for("CreateFirstUserUseCase"),
   SeedMinimalDataUseCase: Symbol.for("SeedMinimalDataUseCase"),
   ResetDatabaseUseCase: Symbol.for("ResetDatabaseUseCase"),
   GetSystemInfoUseCase: Symbol.for("GetSystemInfoUseCase"),

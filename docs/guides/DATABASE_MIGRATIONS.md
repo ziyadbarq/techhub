@@ -349,8 +349,8 @@ npm run reset
 # Clear all caches + reset database
 npm run cache:clear:all
 
-# Assign System Administrator role to first user
-npm run db:assign-admin
+# Create admin account
+npm run admin:create
 ```
 
 ## Best Practices

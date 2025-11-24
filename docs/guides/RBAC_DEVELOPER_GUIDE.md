@@ -1342,8 +1342,8 @@ npm run db:seed
 # Reset database
 npm run reset
 
-# Assign first admin
-npm run db:assign-admin
+# Create admin account
+npm run admin:create
 
 # Open Prisma Studio
 npx prisma studio

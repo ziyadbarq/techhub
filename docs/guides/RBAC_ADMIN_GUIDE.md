@@ -58,20 +58,14 @@
 
 When you first access the application with no administrators:
 
-1. Navigate to `/setup`
-2. Click "Become Administrator"
-3. Confirm the action
-4. You'll be redirected to the admin dashboard
+1. Ensure database is seeded: `npm run db:seed`
+2. Create admin account: `npm run admin:create`
+3. Login at `/login` with credentials:
+   - Email: `admin@admin.com`
+   - Password: `admin123`
+4. You'll have full admin access immediately
 
-**Important**: This can only be done once. The first user to complete this becomes the administrator.
-
-**Alternative Setup**: If you missed the setup wizard, run:
-
-```bash
-npm run db:assign-admin
-```
-
-This will assign the admin role to the first user in the database.
+**Security Note**: Change the default admin password after first login!
 
 ### Initial Configuration
 
@@ -618,7 +612,7 @@ Some permissions imply others:
 
 1. **Check if you have admin role**:
    - Ask existing admin to check your roles
-   - Run: `npm run db:assign-admin` if you're the first user
+   - If no admin exists, create one: `npm run admin:create`
 
 2. **Verify you have required permissions**:
    - Need at least one of: `users:manage`, `roles:view`, `permissions:view`

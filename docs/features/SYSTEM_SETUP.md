@@ -3,160 +3,142 @@
 **Status**: ✅ Complete
 **Layer**: Infrastructure
 **Introduced**: November 2025
+**Updated**: November 2025 (Refactored to CLI-based setup)
 
 ## Overview
 
-The System Setup feature provides a comprehensive solution for first-time installation and ongoing system administration. It includes a multi-step wizard for initial setup and an admin dashboard for post-installation operations.
+The System Setup feature provides a streamlined solution for first-time installation and ongoing system administration. It includes a status page for health monitoring and CLI commands for initial setup.
 
 **Key Features:**
-- First-time setup wizard for zero-user installations
-- System health monitoring (database, Redis, environment, migrations)
-- RBAC data seeding (269 permissions + 10 roles)
-- First administrator account creation with Better Auth integration
+- System health status page at `/setup`
+- System health monitoring (database, Redis, migrations, RBAC)
+- CLI-based database seeding (269 permissions + 10 roles)
+- CLI-based administrator account creation
+- Admin dashboard for post-installation operations
 - Database operations (seed, reset)
 - System diagnostics and information display
-- Real-time RBAC count updates during seeding
 
-**Implementation**: Single-file MinimalWizard component for maintainability and reduced complexity.
+**Design Philosophy**: CLI-based setup for explicit control and transparency
 
 ## Architecture
 
 ### Components
 
 **Backend (Domain Layer)**
-- DTOs: `system-setup.dto.ts` - Data transfer objects for all operations
-- Use Cases: 6 use cases for setup operations
+- DTOs: `system-setup.dto.ts` - Data transfer objects for health checks and diagnostics
+- Use Cases: 4 use cases for setup operations (CheckSystemHealth, GetMigrationStatus, ResetDatabase, GetSystemInfo)
 - Repositories: `ISystemSetupRepository` for system diagnostics
-- Controllers: `setup.controller.ts` with 6 server actions
+- Controllers: `setup.controller.ts` with server actions for health checks
 
 **Frontend**
-- Public Setup Wizard: `/app/(public)/setup/page.tsx` using `MinimalWizard`
+- System Status Page: `/app/(public)/setup/page.tsx` using `SystemStatusPage`
 - Admin Dashboard: `/app/(dashboard)/admin/system-setup/page.tsx`
-- System Health API: `/app/api/system-health/route.ts`
-- 4 wizard steps (self-contained in MinimalWizard) + 3 admin panels
+- Single-file component for maintainability
+
+**CLI Scripts**
+- `npm run db:seed` - Seed database with RBAC and foundation data
+- `npm run admin:create` - Create system administrator account
 
 ### Database Schema
 
 No dedicated tables - uses existing User, Role, and Permission tables.
 
-## First-Time Setup Wizard
+## First-Time Setup Process
 
-### Access
+### Step 1: Check System Status
 
 **Route**: `/setup`
 **Visibility**: Public (no authentication required)
-**Behavior**: Auto-redirects to `/login` if users already exist
 
-### Workflow
+Navigate to `/setup` to view system health status:
 
-The wizard guides new installations through 4 sequential steps:
-
-#### Step 1: System Health Check
-
-**Purpose**: Verify all system requirements before proceeding
-
-**Checks Performed:**
+**Health Checks Displayed:**
 - ✅ **Database Connection**: PostgreSQL connectivity via Prisma
 - ✅ **Redis Connection**: Redis connectivity and ping test
-- ✅ **Environment Variables**: Required vars (DATABASE_URL, REDIS_URL, OPENAI_API_KEY)
 - ✅ **Database Migrations**: All migrations applied, no pending changes
+- ✅ **RBAC Configuration**: Roles and permissions seeded
 
-**Auto-Execution**: Health check runs automatically on step load
+**Visual Indicators:**
+- 🟢 Green checkmark: Healthy
+- 🔴 Red X: Unhealthy
+- ⏳ Spinner: Checking
 
-**Continue Condition**: All checks must pass to proceed
+### Step 2: Seed Database
 
-#### Step 2: Initialize Database
+If the RBAC Configuration check shows "unhealthy", run the database seed command:
 
-**Purpose**: Seed RBAC foundation data
+```bash
+npm run db:seed
+```
 
 **What Gets Seeded:**
-- 269 Permissions (organized into 10 logical groups)
+- 269 Permissions (organized into 14 logical groups)
 - 10 System Roles:
   - System Administrator (full access)
-  - IT Help Desk Technician
+  - IT Admin
   - Asset Manager
-  - Procurement Specialist
-  - IT Auditor
-  - Finance Officer
-  - Data Steward
-  - Service Owner
-  - Read Only User
+  - Inventory Manager
+  - Service Desk
+  - Compliance Officer
   - Contract Manager
+  - CMDB Admin
+  - Read-Only Auditor
+  - Viewer (baseline role for all users)
+- Foundation data (organization units, vendors, locations)
+- Asset categories and models
+- Sample test data (if in development mode)
 
 **Safety**: Operation is idempotent - safe to run multiple times (skips existing data)
 
-**User Action**: Click "Seed RBAC Data" button
+**Time Required**: ~5-10 seconds for RBAC data, ~30-60 seconds for full seed
 
-#### Step 3: Create Administrator
+### Step 3: Create Administrator Account
 
-**Purpose**: Create the very first user account with full permissions
+After seeding completes, create the first administrator account:
 
-**Form Fields:**
-- **Name**: Full name (minimum 2 characters)
-- **Email**: Valid email address (used for login)
-- **Password**: Strong password requirements
-  - Minimum 8 characters
-  - At least one uppercase letter
-  - At least one lowercase letter
-  - At least one number
-
-**Password Security:**
-- Hashed using Argon2 (memory-hard algorithm)
-- Configuration: 19456 KB memory, 2 iterations, 32-byte output
-- Stored in Better Auth's Account table (separate from User table)
-
-**Permissions Assignment:**
-- User assigned to "system-administrator" role
-- All 269 permissions automatically assigned to role
-- User can immediately manage all aspects of the system
-
-**Better Auth Integration:**
-- Creates User record in `user` table
-- Creates Account record in `account` table with providerId "credential"
-- Password stored securely in Account table
-
-#### Step 4: Completion
-
-**Purpose**: Confirm successful setup and guide next steps
-
-**Display:**
-- Success confirmation
-- Summary of actions completed
-- Next steps guide
-
-**Next Steps Suggested:**
-1. **Login**: Use the credentials just created
-2. **Configure Users**: Add additional users at `/admin/users`
-3. **Explore Documentation**: Read guides at `/docs`
-4. **Optional Seeding**: Run `npm run seed` for test data (Foundation + Asset layers)
-
-**Action**: "Go to Login" button navigates to `/login`
-
-### Technical Implementation
-
-**Components:**
-
-```
-src/components/setup/
-└── MinimalWizard.tsx              # Self-contained wizard (all 4 steps)
+```bash
+npm run admin:create
 ```
 
-**Architecture Decision**: Consolidated into single component for:
-- Easier state management (no prop drilling)
-- Better maintainability (all logic in one place)
-- Reduced complexity (no step coordinator needed)
-- Dynamic RBAC count updates (shared state)
+**What This Does:**
+1. Checks if `admin@admin.com` user already exists
+2. Verifies system-administrator role exists (from seeding)
+3. Finds first available organization unit
+4. Creates:
+   - User record with verified email
+   - Account record with hashed password (bcrypt, 10 rounds)
+   - Person entity (firstName, lastName, orgUnit, primaryRole)
+   - UserRole linking user to system-administrator
+5. Displays login credentials
 
-**State Management:**
-- Current step tracking
-- Completed steps array
-- Processing state (loading indicators)
-- Step-specific result data
+**Default Credentials:**
+- Email: `admin@admin.com`
+- Password: `admin123`
 
-**Progress Tracking:**
-- Visual progress bar (0% → 100%)
-- Step indicators with checkmarks
-- Back navigation (except from completion step)
+**⚠️ IMPORTANT**: Change the password after first login!
+
+**Account Type**: Uses Better Auth convention (`type: "oauth"`, `provider: "credential"`)
+
+**Person Entity**: Automatically created with:
+- First organization unit as default
+- Viewer role as primary role (permissions come from UserRole)
+- Active status
+
+### Step 4: Login
+
+Navigate to `/login` and use the credentials displayed by the script:
+- Email: `admin@admin.com`
+- Password: `admin123`
+
+After login, you will have full system access.
+
+### Step 5: Next Steps
+
+**Recommended Actions:**
+1. **Change Password**: Update admin password at `/settings`
+2. **Add Users**: Register additional users at `/register` (they'll get viewer role)
+3. **Configure Roles**: Assign roles to users at `/admin/users`
+4. **Explore Documentation**: Read guides at `/docs`
 
 ## Admin System Setup Dashboard
 
@@ -197,944 +179,300 @@ Tabbed interface with 3 panels:
 - Variant changes based on status (default/destructive)
 
 **Actions:**
-- Refresh button to manually re-check health
-- Auto-checks on initial load
+- "Refresh" button to re-run health checks
 
-**Component**: `SystemHealthPanel.tsx`
+#### Tab 2: Database Operations
 
-#### Tab 2: System Info
+**Purpose**: Administrative database operations
 
-**Purpose**: Display comprehensive system diagnostics
+**Available Operations:**
 
-**System Information:**
-- **Node.js Version**: Runtime version
-- **Platform**: Operating system (darwin, linux, win32)
-- **Environment**: Deployment mode (development, production)
+**1. Seed Database**
+- Button: "Run Database Seed"
+- Action: Executes full seeding (RBAC + Foundation + Assets + Layer 3)
+- Permission: `USERS_MANAGE`
+- Confirmation: Required before execution
+- **Note**: CLI command `npm run db:seed` is preferred
 
-**Database Statistics:**
-- **Database Size**: Total storage in bytes (formatted as KB/MB/GB)
-- **Table Count**: Number of database tables
-- **Users**: Total user accounts
-- **Roles**: System roles count
-- **Permissions**: Total RBAC permissions
-- **Org Units**: Organization units count
+**2. Reset Database (Development Only)**
+- Button: "Reset Database" (destructive variant)
+- Action: Deletes ALL data, optionally re-seeds
+- Permission: `USERS_MANAGE`
+- Confirmation: Double confirmation required
+- Safety: Disabled in production environments
+- Options:
+  - Reset only (clean slate)
+  - Reset + Reseed (fresh start with data)
 
-**Visual Design:**
-- Grid layout (3 columns on large screens)
-- Icon indicators for each metric
-- Large numbers with descriptive labels
-- Refresh button for updated counts
+#### Tab 3: System Information
 
-**Component**: `SystemInfoPanel.tsx`
+**Purpose**: Display system diagnostics and version info
 
-#### Tab 3: Database Operations
+**Information Displayed:**
+- Node.js version
+- Next.js version
+- Prisma version
+- Environment (development/production)
+- Database URL (masked)
+- Redis URL (masked)
+- Platform (OS)
+- Architecture (x64, arm64, etc.)
+- Total memory
+- Free memory
+- Uptime
 
-**Purpose**: Perform database seeding and reset operations
-
-##### Seed RBAC Data
-
-**What It Does:**
-- Seeds 269 permissions (10 logical groups)
-- Seeds 10 system roles
-- Creates role-permission assignments
-
-**Safety:**
-- Idempotent operation (safe to run multiple times)
-- Skips existing data, only creates missing items
-- Shows success feedback with counts
-
-**UI Elements:**
-- Description of what will be seeded
-- Blue info box: "Safe to run multiple times"
-- Seed button with loading state
-- Success/error alert with details
-
-##### Reset Database (Danger Zone)
-
-**What It Does:**
-- Completely wipes ALL data from database
-- Optionally reseeds RBAC data after reset
-
-**Environment Protection:**
-- ❌ **Production**: Completely disabled (safety check)
-- ✅ **Development**: Enabled with safeguards
-
-**Safety Measures:**
-- Red border and warning styling
-- Comprehensive warning message listing what will be deleted:
-  - All users and authentication data
-  - All assets, warranties, maintenance records
-  - All roles, permissions, and assignments
-  - All foundation data (org units, people, vendors)
-  - All CMDB, contracts, licenses, governance data
-- Typed confirmation required: "CONFIRM RESET"
-- Checkbox for reseed option
-
-**Confirmation Dialog:**
-- Red warning title with AlertTriangle icon
-- Explanation of irreversibility
-- Text input requiring exact match: "CONFIRM RESET"
-- Continue button disabled until correct text entered
-- Visual indication of reseed option if checked
-
-**Component**: `DatabaseOperationsPanel.tsx`
+**Format**: Grid layout with label-value pairs
 
 ## Use Cases
 
-### 1. CheckSystemHealthUseCase
+### CheckSystemHealthUseCase
 
 **Purpose**: Verify all system requirements
 
-**Dependencies:**
-- `ISystemSetupRepository`
+**Checks:**
+1. **Database**: Prisma connection test
+2. **Redis**: Connection + ping test
+3. **Environment**: Required variables present
+4. **Migrations**: All applied via introspection
+
+**Response**: HealthCheckDto with status for each component
+
+### GetMigrationStatusUseCase
+
+**Purpose**: Check Prisma migration status
+
+**Returns**:
+- List of applied migrations
+- List of pending migrations
+- Overall status (all applied / pending exists)
+
+### ResetDatabaseUseCase
+
+**Purpose**: Nuclear option for development
+
+**Safety Checks:**
+- Environment must be development
+- Requires explicit confirmation
 
 **Process:**
-1. Check database connection
-2. Check Redis connection
-3. Validate environment variables
-4. Check for pending migrations
-5. Calculate overall health status
+1. Disconnect all Prisma clients
+2. Execute `prisma migrate reset --force`
+3. Optionally run seed script
+4. Reconnect clients
 
-**Returns**: `SystemHealthCheckDto`
+### GetSystemInfoUseCase
 
-```typescript
-{
-  database: { connected: true, message: "Connected" },
-  redis: { connected: true, message: "Connected" },
-  environment: { valid: true, missing: [] },
-  migrations: { applied: true, pendingCount: 0 },
-  overall: true
-}
-```
+**Purpose**: Gather system diagnostics
 
-### 2. GetMigrationStatusUseCase
-
-**Purpose**: Get detailed migration status
-
-**Returns**: `MigrationStatusDto`
-
-```typescript
-{
-  applied: true,
-  pendingCount: 0,
-  message: "All migrations applied"
-}
-```
-
-### 3. CreateFirstUserUseCase
-
-**Purpose**: Create initial administrator account
-
-**Dependencies:**
-- `IUserRepository`
-- `IRoleRepository`
-- `IPermissionRepository`
-
-**Validation:**
-1. Check if users already exist (fail if any exist)
-2. Verify "system-administrator" role exists
-3. Validate email format and password strength
-
-**Process:**
-1. Hash password with Argon2
-2. Create User record
-3. Create Better Auth Account record
-4. Assign user to "system-administrator" role
-5. Fetch all permissions
-6. Assign all permissions to the role
-
-**Security:**
-- Argon2 hashing: `memoryCost: 19456, timeCost: 2, outputLen: 32, parallelism: 1`
-- Separate account table for credentials
-- Provider ID: "credential" (Better Auth password provider)
-
-**Returns**: `CreateFirstUserResult`
-
-```typescript
-{
-  success: true,
-  message: "First administrator account created successfully",
-  user: { id, email, name },
-  permissionsAssigned: 269
-}
-```
-
-### 4. SeedMinimalDataUseCase
-
-**Purpose**: Seed RBAC foundation data
-
-**Process:**
-1. Call `seedRBAC()` function from `seed-rbac.ts`
-2. Seeds 269 permissions across 10 groups
-3. Seeds 10 system roles
-4. Creates role-permission mappings
-
-**Returns**: `SeedMinimalDataResult`
-
-```typescript
-{
-  success: true,
-  message: "Minimal RBAC data seeded successfully",
-  details: {
-    rolesCreated: 10,
-    permissionsCreated: 269
-  }
-}
-```
-
-**Idempotency**: Uses Prisma `upsert` - safe to run multiple times
-
-### 5. ResetDatabaseUseCase
-
-**Purpose**: Completely wipe database and optionally reseed
-
-**Dependencies:**
-- `IUserRepository`
-- `IRoleRepository`
-- `IPermissionRepository`
-
-**Environment Protection:**
-```typescript
-if (process.env.NODE_ENV === "production") {
-  return { success: false, message: "Only available in development" };
-}
-```
-
-**Process:**
-1. Environment check (fail in production)
-2. Delete all users
-3. Delete all roles
-4. Delete all permissions
-5. Delete all other entities (cascade)
-6. If reseed flag: call `seedRBAC()`
-
-**Returns**: `ResetDatabaseResult`
-
-```typescript
-{
-  success: true,
-  message: "Database reset successfully",
-  reseeded: true
-}
-```
-
-### 6. GetSystemInfoUseCase
-
-**Purpose**: Gather comprehensive system diagnostics
-
-**Data Collected:**
-- Node.js version: `process.version`
-- Platform: `process.platform`
-- Environment: `process.env.NODE_ENV`
-- Database size: PostgreSQL query
-- Table count: Information schema query
-- User count: Prisma count
-- Role count: Prisma count
-- Permission count: Prisma count
-- Org unit count: Prisma count
-
-**Returns**: `SystemInfoDto`
-
-```typescript
-{
-  nodeVersion: "v20.11.0",
-  platform: "darwin",
-  environment: "development",
-  databaseSize: 12582912, // bytes
-  tableCount: 45,
-  userCount: 5,
-  roleCount: 10,
-  permissionCount: 269,
-  orgUnitCount: 8
-}
-```
-
-**PostgreSQL Queries:**
-- Database size: `SELECT pg_database_size(current_database())`
-- Table count: `SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public'`
+**Data Sources:**
+- `process.version` (Node.js)
+- `process.platform` (OS)
+- `process.arch` (architecture)
+- `os` module (memory, uptime)
+- Environment variables (versions, URLs)
 
 ## Server Actions
 
-All server actions in `src/interface-adapters/controllers/setup.controller.ts`:
+All located in `src/interface-adapters/controllers/setup.controller.ts`:
 
-### 1. checkSystemHealthAction()
+### checkSystemHealthAction()
+- Public access (no auth required)
+- Returns: SystemHealthCheckDto
+- Used by: `/setup` status page, admin dashboard
 
-**Returns**: `ActionResponse<SystemHealthCheckDto>`
+### getMigrationStatusAction()
+- Requires auth
+- Returns: MigrationStatusDto
+- Used by: Admin dashboard
 
-**Errors**: Catches and returns error message in response
+### resetDatabaseAction(reseed: boolean)
+- Requires `USERS_MANAGE` permission
+- Development only
+- Returns: ResetDatabaseResult
+- Used by: Admin dashboard
 
-### 2. getMigrationStatusAction()
-
-**Returns**: `ActionResponse<MigrationStatusDto>`
-
-### 3. createFirstUserAction(data: CreateFirstUserDto)
-
-**Validation**: Zod schema validation via `createFirstUserDtoSchema`
-
-**Returns**: `ActionResponse<CreateFirstUserResult>`
-
-**Side Effects**:
-- Revalidates paths: `/`, `/setup`, `/login`
-
-### 4. seedMinimalDataAction()
-
-**Returns**: `ActionResponse<SeedMinimalDataResult>`
-
-### 5. resetDatabaseAction(reseed: boolean)
-
-**Parameters**:
-- `reseed`: Whether to seed RBAC data after reset
-
-**Returns**: `ActionResponse<ResetDatabaseResult>`
-
-**Environment Protection**: Enforced at use case layer
-
-### 6. getSystemInfoAction()
-
-**Returns**: `ActionResponse<SystemInfoDto>`
-
-## DTOs (Data Transfer Objects)
-
-All DTOs in `src/interface-adapters/dtos/system-setup.dto.ts`:
-
-### CreateFirstUserDto
-
-```typescript
-{
-  email: string;      // Email validation
-  password: string;   // Min 8 chars, uppercase, lowercase, number
-  name: string;       // Min 2 chars
-}
-```
-
-**Zod Schema**: `createFirstUserDtoSchema`
-
-### SystemHealthCheckDto
-
-```typescript
-{
-  database: {
-    connected: boolean;
-    message: string;
-  };
-  redis: {
-    connected: boolean;
-    message: string;
-  };
-  environment: {
-    valid: boolean;
-    missing: string[];  // Missing env var names
-  };
-  migrations: {
-    applied: boolean;
-    pendingCount: number;
-  };
-  overall: boolean;    // All checks passed
-}
-```
-
-### MigrationStatusDto
-
-```typescript
-{
-  applied: boolean;
-  pendingCount: number;
-  message: string;
-}
-```
-
-### SystemInfoDto
-
-```typescript
-{
-  nodeVersion: string;
-  platform: string;
-  environment: string;
-  databaseSize: number | null;  // bytes
-  tableCount: number;
-  userCount: number;
-  roleCount: number;
-  permissionCount: number;
-  orgUnitCount: number;
-}
-```
-
-### Result Types
-
-```typescript
-interface CreateFirstUserResult {
-  success: boolean;
-  message: string;
-  user?: { id: string; email: string; name: string };
-  permissionsAssigned?: number;
-}
-
-interface SeedMinimalDataResult {
-  success: boolean;
-  message: string;
-  details?: {
-    rolesCreated: number;
-    permissionsCreated: number;
-  };
-}
-
-interface ResetDatabaseResult {
-  success: boolean;
-  message: string;
-  reseeded?: boolean;
-}
-```
-
-## Repository Interface
-
-**Interface**: `ISystemSetupRepository`
-**Implementation**: `PrismaSystemSetupRepository`
-
-### Methods
-
-```typescript
-interface ISystemSetupRepository {
-  // Connection checks
-  checkDatabaseConnection(): Promise<boolean>;
-  checkRedisConnection(): Promise<boolean>;
-
-  // Migration status
-  getPendingMigrationsCount(): Promise<number>;
-
-  // Counts
-  getUserCount(): Promise<number>;
-  getRoleCount(): Promise<number>;
-  getPermissionCount(): Promise<number>;
-  getOrgUnitCount(): Promise<number>;
-
-  // Diagnostics
-  getDatabaseSize(): Promise<number | null>;
-  getTableCount(): Promise<number>;
-}
-```
-
-### Implementation Highlights
-
-**Database Connection Check:**
-```typescript
-async checkDatabaseConnection(): Promise<boolean> {
-  try {
-    await this.prisma.$queryRaw`SELECT 1`;
-    return true;
-  } catch {
-    return false;
-  }
-}
-```
-
-**Redis Connection Check:**
-```typescript
-async checkRedisConnection(): Promise<boolean> {
-  const client = createClient({ url: process.env.REDIS_URL });
-  try {
-    await client.connect();
-    await client.ping();
-    return true;
-  } finally {
-    await client.disconnect();
-  }
-}
-```
-
-**Database Size (PostgreSQL):**
-```typescript
-async getDatabaseSize(): Promise<number | null> {
-  const result = await this.prisma.$queryRaw<Array<{ size: bigint }>>`
-    SELECT pg_database_size(current_database()) as size
-  `;
-  return Number(result[0]?.size || 0);
-}
-```
-
-## Dependency Injection
-
-**Module**: `src/di/modules/system-setup.module.ts`
-
-### Bindings
-
-```typescript
-export function bindSystemSetupDependencies(container: Container): void {
-  // Repository
-  container.bind<ISystemSetupRepository>(DI_TOKENS.ISystemSetupRepository)
-    .to(PrismaSystemSetupRepository).inSingletonScope();
-
-  // Use Cases (transient - new instance per request)
-  container.bind(DI_TOKENS.CheckSystemHealthUseCase)
-    .to(CheckSystemHealthUseCase).inTransientScope();
-
-  container.bind(DI_TOKENS.GetMigrationStatusUseCase)
-    .to(GetMigrationStatusUseCase).inTransientScope();
-
-  container.bind(DI_TOKENS.CreateFirstUserUseCase)
-    .to(CreateFirstUserUseCase).inTransientScope();
-
-  container.bind(DI_TOKENS.SeedMinimalDataUseCase)
-    .to(SeedMinimalDataUseCase).inTransientScope();
-
-  container.bind(DI_TOKENS.ResetDatabaseUseCase)
-    .to(ResetDatabaseUseCase).inTransientScope();
-
-  container.bind(DI_TOKENS.GetSystemInfoUseCase)
-    .to(GetSystemInfoUseCase).inTransientScope();
-}
-```
-
-**Registration**: Called in `src/di/container.ts` during container initialization
+### getSystemInfoAction()
+- Requires auth
+- Returns: SystemInfoDto
+- Used by: Admin dashboard
 
 ## Security Considerations
 
-### First User Creation
-
-✅ **Password Security**
-- Argon2 hashing (memory-hard, resistant to GPU attacks)
-- Configurable parameters for future-proofing
-- Separate account table (Better Auth pattern)
-
-✅ **Validation**
-- Email format validation
-- Strong password requirements (8+ chars, mixed case, numbers)
-- Name minimum length
-
-✅ **Authorization**
-- Only allowed when zero users exist
-- Prevents multiple "first user" creations
-
-### Database Reset
-
-✅ **Environment Protection**
-- Hard-coded production check
-- No override mechanism (intentional)
-
-✅ **Confirmation**
-- Typed confirmation: "CONFIRM RESET"
-- Multiple warning messages
-- Irreversibility clearly stated
-
-✅ **Permission Gating**
-- Requires `USERS_MANAGE` permission
-- Only system administrators can access
-
-### Health Checks
-
-✅ **Read-Only**
-- All health checks are non-destructive
-- No database modifications
-
-✅ **Error Handling**
-- Connection failures don't crash the app
-- Graceful fallbacks for missing data
-
-## Error Handling
-
-### Connection Errors
-
-```typescript
-try {
-  const connected = await checkDatabaseConnection();
-} catch (error) {
-  return {
-    database: {
-      connected: false,
-      message: "Failed to connect to database"
-    }
-  };
-}
-```
-
-### Validation Errors
-
-```typescript
-// Zod validation in server action
-try {
-  const validated = createFirstUserDtoSchema.parse(data);
-} catch (error) {
-  return {
-    success: false,
-    error: "Invalid input data"
-  };
-}
-```
-
-### Production Reset Attempt
-
-```typescript
-if (process.env.NODE_ENV === "production") {
-  return {
-    success: false,
-    message: "Database reset is only available in development environment"
-  };
-}
-```
-
-## UI/UX Patterns
-
-### Loading States
-
-**Pattern**: Disable buttons and show spinner during async operations
-
-```typescript
-const [isLoading, setIsLoading] = useState(false);
-
-<Button disabled={isLoading}>
-  {isLoading ? (
-    <>
-      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-      Processing...
-    </>
-  ) : (
-    "Perform Action"
-  )}
-</Button>
-```
-
-### Status Indicators
-
-**Pattern**: Color-coded icons for health status
-
-```typescript
-const getStatusIcon = (status: boolean) => {
-  return status ? (
-    <CheckCircle2 className="h-5 w-5 text-green-600" />
-  ) : (
-    <XCircle className="h-5 w-5 text-red-600" />
-  );
-};
-```
-
-### Confirmation Dialogs
-
-**Pattern**: AlertDialog with typed confirmation for destructive actions
-
-```typescript
-<AlertDialog>
-  <AlertDialogContent>
-    <Input
-      value={confirmation}
-      onChange={(e) => setConfirmation(e.target.value)}
-      placeholder="Type 'CONFIRM RESET' here"
-    />
-    <AlertDialogAction
-      disabled={confirmation !== "CONFIRM RESET"}
-      onClick={handleReset}
-    >
-      Reset Database
-    </AlertDialogAction>
-  </AlertDialogContent>
-</AlertDialog>
-```
-
-### Toast Notifications
-
-**Pattern**: Success/error feedback with sonner
-
-```typescript
-import { toast } from "sonner";
-
-// Success
-toast.success("Operation completed successfully!");
-
-// Error
-toast.error("Operation failed: " + errorMessage);
-```
-
-## Testing Scenarios
-
-### First-Time Setup Flow
-
-1. **Fresh Installation**
-   - Reset database: `npm run reset`
-   - Navigate to app root
-   - Should auto-redirect to `/setup`
-   - Follow 4-step wizard
-   - Login with created credentials
-
-2. **Health Check Failures**
-   - Stop Redis: Health check should fail
-   - Missing env vars: Should be detected
-   - Pending migrations: Should be reported
-
-3. **Invalid User Creation**
-   - Weak password: Should reject
-   - Invalid email: Should reject
-   - Duplicate email: Should reject (if users exist)
+### Public Status Page
+- **Route**: `/setup` is public (no auth required)
+- **Rationale**: Needed for initial setup before any users exist
+- **Exposure**: Only displays health status (no sensitive data)
+- **Protection**: No write operations available
 
 ### Admin Dashboard
+- **Authentication**: Required
+- **Authorization**: `USERS_MANAGE` permission enforced
+- **Operations**: All server actions check permissions
+- **Audit**: All database operations logged
 
-1. **Permission Check**
-   - Login as user without `USERS_MANAGE`
-   - Navigate to `/admin/system-setup`
-   - Should redirect to `/unauthorized`
+### Password Security
+- **Hashing**: bcrypt with 10 salt rounds
+- **Storage**: Password hash stored in Account table
+- **Better Auth**: Uses proper Account type convention (`oauth`/`credential`)
 
-2. **Health Monitoring**
-   - Access System Health tab
-   - Verify all checks pass
-   - Stop Redis, click Refresh
-   - Should show Redis failure
-
-3. **System Info**
-   - Check all metrics display
-   - Verify counts match database
-   - Create new user, refresh
-   - User count should increment
-
-4. **RBAC Seeding**
-   - Click "Seed RBAC Data"
-   - Verify success message
-   - Click again - should still succeed (idempotent)
-
-5. **Database Reset (Dev Only)**
-   - Try in production - should be blocked
-   - In dev, type wrong confirmation - button disabled
-   - Type "CONFIRM RESET" - should enable
-   - Execute reset - verify database empty
-   - Check reseed option - RBAC data should exist
-
-## Common Issues
-
-### Issue: Setup page redirects to login
-
-**Cause**: Users already exist in database
-**Solution**: This is expected behavior. Setup is only for zero-user installations.
-**Workaround**: Use `npm run reset` to wipe database if testing setup flow
-
-### Issue: Health check shows migrations pending
-
-**Cause**: Database schema out of sync
-**Solution**: Run `npx prisma migrate deploy` to apply pending migrations
-
-### Issue: Redis connection fails
-
-**Cause**: Redis server not running or wrong URL
-**Solution**:
-- Start Redis: `redis-server` (or via Homebrew services)
-- Check `REDIS_URL` in `.env.local`
-
-### Issue: Database reset button disabled in production
-
-**Cause**: Safety feature - reset only allowed in development
-**Solution**: This is intentional. Use database tools for production reset (with proper backups!)
-
-### Issue: Password validation fails
-
-**Cause**: Password doesn't meet requirements
-**Solution**: Ensure password has:
-- Minimum 8 characters
-- At least one uppercase letter
-- At least one lowercase letter
-- At least one number
+### CLI Script Security
+- **Local Only**: Scripts run on server, not exposed to web
+- **Idempotent**: Safe to run multiple times
+- **Checks**: Validates prerequisites before creating users
 
 ## Refactoring Lessons Learned
 
-### November 2025 Refactoring
+### Why CLI-Based Setup?
 
-The setup wizard underwent a major refactoring to follow DRY/SOLID principles. Key lessons:
+**Previous Approach**: Multi-step web wizard (`MinimalWizard`)
+- User form for creating first admin
+- In-browser RBAC seeding
+- Complex state management
+- Hard to debug issues
 
-#### 1. DRY Principle: Reuse Working Patterns
+**New Approach**: CLI commands + status page
+- `npm run db:seed` for database operations
+- `npm run admin:create` for admin creation
+- `/setup` shows status only (no forms)
+- Explicit, transparent, and easy to debug
 
-**Problem**: Original implementation duplicated user creation logic between setup and normal registration.
+**Benefits:**
+1. **Separation of Concerns**: Setup is an ops task, not a user task
+2. **Transparency**: CLI output shows exactly what's happening
+3. **Debugging**: Easier to troubleshoot issues with direct feedback
+4. **Consistency**: Same seeding mechanism for dev and production
+5. **Safety**: No accidental re-runs (CLI requires explicit execution)
 
-**Solution**: Refactored `CreateFirstUserUseCase` to:
-- Reuse repository patterns instead of calling Better Auth API directly
-- Delegate Person creation to Better Auth hooks (automatic via `ensurePersonLinkedToUser`)
-- Follow same flow as normal registration but with admin role assignment
+### Better Auth Hooks vs Direct Creation
 
-**Result**: Zero duplication, 100% DRY compliance.
+**Better Auth Hooks** (`ensurePersonLinkedToUser`):
+- Automatically creates Person entity on first login
+- Assigns viewer role for baseline permissions
+- Handles cross-cutting concerns (Person creation)
+- Triggered after sign-in, sign-up, OAuth callback
 
-#### 2. Component Consolidation
+**Direct Creation** (`userRepository.createDirectly`):
+- Used by CLI script for explicit control
+- Creates User + Account + Person in single operation
+- Bypasses Better Auth API (which requires Next.js request context)
+- Required for setup when no HTTP context exists
 
-**Problem**: Original setup had multiple step components causing prop drilling and state management complexity.
+**Key Pattern**: CLI creates User/Account/Person directly, Better Auth hooks handle subsequent logins
 
-**Solution**: Consolidated into single `MinimalWizard.tsx` component with:
-- All 4 steps self-contained in one file
-- Shared state eliminates prop drilling
-- Dynamic RBAC count updates across steps
-- Easier to understand and maintain
+### Account Table Pattern
 
-**Result**: ~1,500 lines of code removed, improved maintainability.
+**Critical**: Better Auth uses specific Account type convention:
+- `type: "oauth"` - ALL providers use this (not "email" or "credential")
+- `provider: "credential"` - Identifies email/password authentication
+- `provider: "microsoft"` - Identifies Microsoft OAuth
+- Changing these values breaks authentication!
 
-#### 3. Better Auth Integration Best Practices
+**Enforcement**: Repository has explicit comments warning against changes
 
-**Key Learnings**:
-- Better Auth API calls require Next.js request context (headers)
-- Use repository layer for user creation in use cases
-- Let Better Auth hooks handle cross-cutting concerns (Person creation)
-- Email verification stored as timestamp, not boolean
+## Error Handling
 
-**Account Type Field - Why "oauth" for Email/Password?**
+### Common Issues
 
-Better Auth uses `type: "oauth"` for ALL authentication providers, including email/password registration. This is **intentional design**, not a bug.
+**Issue**: "Admin role not found" when running `npm run admin:create`
+**Cause**: Database not seeded
+**Solution**: Run `npm run db:seed` first
 
-**The Reasoning**:
-- Better Auth uses a unified account model for all authentication methods
-- The `type` field indicates the authentication mechanism (OAuth flow)
-- The `provider` field specifies the actual identity provider
+**Issue**: "No organization units found" when running `npm run admin:create`
+**Cause**: Foundation data not seeded
+**Solution**: Run `npm run db:seed` first
 
-**Correct Format for Different Providers**:
-- **Email/Password**: `type: "oauth"`, `provider: "credential"`
-- **Microsoft OAuth**: `type: "oauth"`, `provider: "microsoft"`
-- **Google OAuth**: `type: "oauth"`, `provider: "google"`
-
-**IMPORTANT**: Do not change the `type` field to "email" or "credential" - it will break authentication!
-
-**Implementation**:
-```typescript
-// ✅ Correct: Use repository in use case
-await this.userRepository.createDirectly({
-  email, name, passwordHash, emailVerified: true
-});
-
-// ✅ Repository creates account with correct format
-await this.prisma.account.create({
-  data: {
-    userId: user.id,
-    type: "oauth",        // ✅ Correct - use "oauth" for all providers
-    provider: "credential", // ✅ Correct - "credential" for email/password
-    providerAccountId: user.id,
-    password: passwordHash,
-  },
-});
-
-// ❌ Wrong: Call Better Auth API from use case
-// await betterAuth.api.signUpEmail({ ... }) // No request context!
-
-// ❌ Wrong: Change type field
-// type: "email" or type: "credential" // Will break authentication!
+**Issue**: "User already exists" when running `npm run admin:create`
+**Cause**: Admin account already created
+**Solution**: Use existing credentials or delete user and re-run:
+```sql
+DELETE FROM "User" WHERE email = 'admin@admin.com';
 ```
 
-#### 4. Organization Unit Validation
+**Issue**: Setup page shows "Unhealthy" for RBAC
+**Cause**: Database not seeded
+**Solution**: Run `npm run db:seed`
 
-**Problem**: OrganizationUnit creation failed with "level must be between 1 and 10" error.
+**Issue**: Can't login with admin credentials
+**Cause**: Wrong credentials or account issue
+**Solution**: Check console output from `npm run admin:create` for correct credentials
 
-**Solution**:
-- Always include `level` field (required, 1-10 range)
-- Use enum for `unitType` instead of string literals
-- Dynamic imports for entity and enum in use cases
+## Development vs Production
 
-**Correct Pattern**:
-```typescript
-const { OrganizationUnit } = await import("@/core/domain/entities/organization-unit.entity");
-const { OrganizationUnitType } = await import("@/core/domain/value-objects/foundation-enums");
+### Development Mode
+- Reset database enabled in admin dashboard
+- Detailed error messages
+- Debug logging available (`AUTH_DEBUG_LOGS=true`)
+- Full seed data (test data included)
 
-const orgUnit = OrganizationUnit.create({
-  name: "Default Organization",
-  code: "ORG-DEFAULT",
-  unitType: OrganizationUnitType.DEPARTMENT, // ✅ Use enum
-  level: 1, // ✅ Required field
-  // ...
-});
-```
+### Production Mode
+- Reset database disabled
+- Generic error messages
+- Minimal logging
+- RBAC + Foundation data only (no test data)
 
-#### 5. Redis Connection Fix
+## Testing
 
-**Problem**: Using wrong Redis library (`redis` instead of `ioredis`).
+**Manual Testing Checklist:**
+1. Fresh database: `/setup` shows unhealthy RBAC
+2. Run `npm run db:seed`: All health checks green
+3. Run `npm run admin:create`: User created successfully
+4. Login with admin credentials: Success
+5. Navigate to `/admin/system-setup`: All checks green
+6. Run reset database (dev only): Database cleared
+7. Re-seed and create admin: Works again
 
-**Solution**: Updated to use `ioredis` consistently:
-```typescript
-import Redis from "ioredis";
-
-const client = new Redis(redisUrl);
-await client.ping();
-await client.quit(); // Not disconnect()
-```
-
-#### 6. Migration Health Check Enhancement
-
-**Problem**: Migration checks returned 0 pending when table didn't exist (misleading).
-
-**Solution**:
-- Throw error in `getPendingMigrationsCount()` if `_prisma_migrations` table missing
-- Catch error in `areMigrationsApplied()` and return `false`
-- Provides clear feedback about migration status
-
-#### 7. TypeScript Type Safety
-
-**Key Patterns**:
-- Use type guards with `ActionResponse<T>`
-- Check `result.success` before accessing `result.data` or `result.error`
-- Use enums for constants instead of string literals
-- Proper async/await with error handling
-
-**Example**:
-```typescript
-const result = await seedMinimalDataAction();
-
-if (!result.success) {
-  throw new Error(result.error); // ✅ Type-safe
-}
-
-// ✅ Now TypeScript knows result.data exists
-const { rolesCreated, permissionsCreated } = result.data.details;
-```
-
-#### 8. React Compiler & Legacy Code
-
-**Lesson**: Legacy components with eslint-disable comments cause React Compiler warnings.
-
-**Solution**:
-- Add `"use no memo"` directive to disable React Compiler for legacy code
-- Or add `/* eslint-disable react-compiler/react-compiler */` at file top
-- Better: Remove legacy code entirely (as we did)
+**Test Files:**
+- `src/interface-adapters/controllers/__tests__/setup.controller.test.ts`
+- Manual test: `scripts/create-admin-user.ts`
 
 ## Related Documentation
 
-- [RBAC_ARCHITECTURE.md](../architecture/RBAC_ARCHITECTURE.md) - RBAC system overview
-- [RBAC_DEVELOPER_GUIDE.md](../guides/RBAC_DEVELOPER_GUIDE.md) - Implementing permissions
-- [DATABASE_SEEDING.md](../guides/DATABASE_SEEDING.md) - Complete seeding guide
-- [DEVELOPER_GUIDE.md](../guides/DEVELOPER_GUIDE.md) - General development guide
-- [ARCHITECTURE.md](../architecture/ARCHITECTURE.md) - Clean Architecture patterns
-- [NEXTJS_16_GUIDE.md](../guides/NEXTJS_16_GUIDE.md) - Next.js 16 patterns and best practices
+- [RBAC Architecture](../architecture/RBAC_ARCHITECTURE.md) - Role-based access control system
+- [RBAC Admin Guide](../guides/RBAC_ADMIN_GUIDE.md) - Admin role management
+- [Database Seeding](../guides/DATABASE_SEEDING.md) - Comprehensive seed system guide
+- [Database Migrations](../guides/DATABASE_MIGRATIONS.md) - Prisma migrations workflow
+- [Developer Guide](../guides/DEVELOPER_GUIDE.md) - Development setup
 
-## Future Enhancements
+## Quick Reference
 
-Potential improvements for future iterations:
+### Initial Setup (Zero Users)
+```bash
+# 1. Check status
+# Navigate to /setup in browser
 
-1. **Setup Wizard Enhancements**
-   - Email configuration verification
-   - SMTP server testing
-   - Initial organization setup (name, logo)
-   - Timezone and locale configuration
+# 2. Seed database
+npm run db:seed
 
-2. **Admin Dashboard Additions**
-   - Cache statistics and clearing
-   - Background job monitoring
-   - API health endpoints
-   - Performance metrics
+# 3. Create admin
+npm run admin:create
 
-3. **Advanced Diagnostics**
-   - Connection pool stats
-   - Query performance metrics
-   - Slow query logs
-   - Database vacuum/optimize tools
+# 4. Login
+# Navigate to /login
+# Email: admin@admin.com
+# Password: admin123
+```
 
-4. **Backup & Restore**
-   - Database backup creation
-   - Backup scheduling
-   - Restore from backup
-   - Export/import data
+### Reset and Start Over (Development)
+```bash
+# Reset database
+npm run db:reset
 
-5. **Migration Management**
-   - View migration history
-   - Rollback capability
-   - Dry-run migrations
-   - Migration conflict detection
+# Re-seed
+npm run db:seed
 
-6. **Environment Cloning**
-   - Export configuration
-   - Import from another instance
-   - Data anonymization tools
-   - Staging environment sync
+# Create admin
+npm run admin:create
+```
 
-## Changelog
+### Add Additional Users
+```bash
+# Option 1: Register via web UI
+# Navigate to /register
+# Fill out form
+# New user gets viewer role automatically
 
-**November 2025** - Initial release
-- First-time setup wizard (4 steps)
-- Admin system setup dashboard (3 tabs)
-- 6 use cases for system operations
-- System health monitoring
-- RBAC seeding automation
-- Database reset capability (dev-only)
+# Option 2: Admin dashboard
+# Login as admin
+# Navigate to /admin/users
+# Assign roles as needed
+```

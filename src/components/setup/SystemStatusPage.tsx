@@ -1,0 +1,294 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import {
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
+  Loader2,
+  Terminal,
+} from "lucide-react";
+import { checkSystemHealthAction } from "@/interface-adapters/controllers/setup.controller";
+import type { SystemHealthCheckDto } from "@/interface-adapters/dtos/system-setup.dto";
+
+type HealthStatus = "checking" | "healthy" | "unhealthy" | "error";
+
+interface StatusItemProps {
+  label: string;
+  status: HealthStatus;
+  message?: string;
+}
+
+function StatusItem({ label, status, message }: StatusItemProps) {
+  const getIcon = () => {
+    switch (status) {
+      case "checking":
+        return (
+          <Loader2 className="text-muted-foreground h-5 w-5 animate-spin" />
+        );
+      case "healthy":
+        return <CheckCircle2 className="h-5 w-5 text-green-600" />;
+      case "unhealthy":
+        return <XCircle className="h-5 w-5 text-red-600" />;
+      case "error":
+        return <AlertCircle className="h-5 w-5 text-yellow-600" />;
+    }
+  };
+
+  const getStatusBadge = () => {
+    switch (status) {
+      case "checking":
+        return <Badge variant="secondary">Checking...</Badge>;
+      case "healthy":
+        return (
+          <Badge variant="default" className="bg-green-600">
+            Healthy
+          </Badge>
+        );
+      case "unhealthy":
+        return <Badge variant="destructive">Unhealthy</Badge>;
+      case "error":
+        return (
+          <Badge variant="secondary" className="bg-yellow-600">
+            Warning
+          </Badge>
+        );
+    }
+  };
+
+  return (
+    <div className="flex items-center justify-between border-b py-3 last:border-0">
+      <div className="flex items-center gap-3">
+        {getIcon()}
+        <div>
+          <p className="font-medium">{label}</p>
+          {message && (
+            <p className="text-muted-foreground text-sm">{message}</p>
+          )}
+        </div>
+      </div>
+      {getStatusBadge()}
+    </div>
+  );
+}
+
+interface SystemStatus {
+  database: HealthStatus;
+  redis: HealthStatus;
+  migrations: HealthStatus;
+  rbac: HealthStatus;
+  databaseMessage?: string;
+  redisMessage?: string;
+  migrationsMessage?: string;
+  rbacMessage?: string;
+}
+
+export function SystemStatusPage() {
+  const [status, setStatus] = useState<SystemStatus>({
+    database: "checking",
+    redis: "checking",
+    migrations: "checking",
+    rbac: "checking",
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const checkHealth = async () => {
+      setIsLoading(true);
+      try {
+        const response = await checkSystemHealthAction();
+
+        if (!response.success || !response.data) {
+          setStatus({
+            database: "error",
+            redis: "error",
+            migrations: "error",
+            rbac: "error",
+            databaseMessage: "Failed to check system health",
+          });
+          return;
+        }
+
+        const health = response.data as SystemHealthCheckDto;
+
+        setStatus({
+          database: health.database.connected ? "healthy" : "unhealthy",
+          redis: health.redis.connected ? "healthy" : "unhealthy",
+          migrations: health.migrations.applied ? "healthy" : "unhealthy",
+          rbac: health.rbac.roles > 0 ? "healthy" : "unhealthy",
+          databaseMessage: health.database.message,
+          redisMessage: health.redis.message,
+          migrationsMessage: health.migrations.message,
+          rbacMessage:
+            health.rbac.roles === 0
+              ? "No roles found - run database seeding"
+              : `${health.rbac.roles} roles, ${health.rbac.permissions} permissions`,
+        });
+      } catch (error) {
+        console.error("Health check failed:", error);
+        setStatus({
+          database: "error",
+          redis: "error",
+          migrations: "error",
+          rbac: "error",
+          databaseMessage: "Unexpected error during health check",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkHealth();
+  }, []);
+
+  const allHealthy =
+    !isLoading &&
+    status.database === "healthy" &&
+    status.redis === "healthy" &&
+    status.migrations === "healthy" &&
+    status.rbac === "healthy";
+
+  const needsSeeding = !isLoading && status.rbac === "unhealthy";
+
+  return (
+    <div className="from-background to-muted/20 flex min-h-screen items-center justify-center bg-gradient-to-b p-4">
+      <div className="w-full max-w-2xl space-y-6">
+        {/* Header */}
+        <div className="space-y-2 text-center">
+          <h1 className="text-3xl font-bold tracking-tight">System Setup</h1>
+          <p className="text-muted-foreground">
+            Initial setup and system health status
+          </p>
+        </div>
+
+        {/* System Health Card */}
+        <Card>
+          <CardHeader>
+            <CardTitle>System Health Check</CardTitle>
+            <CardDescription>
+              Verify that all system components are running correctly
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1">
+              <StatusItem
+                label="Database Connection"
+                status={status.database}
+                message={status.databaseMessage}
+              />
+              <StatusItem
+                label="Redis Connection"
+                status={status.redis}
+                message={status.redisMessage}
+              />
+              <StatusItem
+                label="Database Migrations"
+                status={status.migrations}
+                message={status.migrationsMessage}
+              />
+              <StatusItem
+                label="RBAC Configuration"
+                status={status.rbac}
+                message={status.rbacMessage}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Setup Instructions */}
+        {!isLoading && (
+          <>
+            {needsSeeding && (
+              <Alert>
+                <Terminal className="h-4 w-4" />
+                <AlertTitle>Database Seeding Required</AlertTitle>
+                <AlertDescription className="mt-2 space-y-2">
+                  <p>
+                    The database needs to be seeded with initial data before you
+                    can create an admin account.
+                  </p>
+                  <div className="bg-muted mt-2 rounded-md p-3 font-mono text-sm">
+                    npm run db:seed
+                  </div>
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {allHealthy && (
+              <Alert>
+                <CheckCircle2 className="h-4 w-4 text-green-600" />
+                <AlertTitle>System Ready</AlertTitle>
+                <AlertDescription className="mt-2 space-y-3">
+                  <p>
+                    All system components are healthy. You can now create an
+                    administrator account.
+                  </p>
+
+                  <div className="space-y-2">
+                    <p className="font-medium">Step 1: Create Admin Account</p>
+                    <div className="bg-muted rounded-md p-3 font-mono text-sm">
+                      npm run admin:create
+                    </div>
+                    <p className="text-muted-foreground text-sm">
+                      This will create an admin account with the following
+                      credentials:
+                      <br />
+                      Email: <code>admin@admin.com</code>
+                      <br />
+                      Password: <code>admin123</code>
+                    </p>
+                  </div>
+
+                  <div className="space-y-2 pt-2">
+                    <p className="font-medium">Step 2: Login</p>
+                    <p className="text-muted-foreground text-sm">
+                      After creating the admin account, you can login at{" "}
+                      <a href="/login" className="text-primary hover:underline">
+                        /login
+                      </a>
+                    </p>
+                  </div>
+
+                  <div className="border-t pt-2">
+                    <p className="text-muted-foreground text-sm">
+                      <strong>Note:</strong> After logging in, you can register
+                      additional users at{" "}
+                      <a
+                        href="/register"
+                        className="text-primary hover:underline"
+                      >
+                        /register
+                      </a>
+                      . New users will be assigned the viewer role by default.
+                    </p>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {!allHealthy && !needsSeeding && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>System Issues Detected</AlertTitle>
+                <AlertDescription>
+                  Please resolve the issues above before proceeding with the
+                  setup. Ensure that PostgreSQL and Redis are running and
+                  accessible.
+                </AlertDescription>
+              </Alert>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}

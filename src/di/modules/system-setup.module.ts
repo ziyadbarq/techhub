@@ -13,7 +13,6 @@ import { PrismaSystemSetupRepository } from "@/infrastructure/repositories/prism
 // Use Cases
 import { CheckSystemHealthUseCase } from "@/core/use-cases/system-setup/check-system-health.use-case";
 import { GetMigrationStatusUseCase } from "@/core/use-cases/system-setup/get-migration-status.use-case";
-import { CreateFirstUserUseCase } from "@/core/use-cases/system-setup/create-first-user.use-case";
 import { SeedMinimalDataUseCase } from "@/core/use-cases/system-setup/seed-minimal-data.use-case";
 import { ResetDatabaseUseCase } from "@/core/use-cases/system-setup/reset-database.use-case";
 import { GetSystemInfoUseCase } from "@/core/use-cases/system-setup/get-system-info.use-case";
@@ -43,11 +42,6 @@ export function bindSystemSetupDependencies(container: Container): void {
   container
     .bind(DI_TOKENS.GetMigrationStatusUseCase)
     .to(GetMigrationStatusUseCase)
-    .inTransientScope();
-
-  container
-    .bind(DI_TOKENS.CreateFirstUserUseCase)
-    .to(CreateFirstUserUseCase)
     .inTransientScope();
 
   container

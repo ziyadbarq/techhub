@@ -315,7 +315,7 @@ Full system access for platform administration and configuration.
 - User and role management (USERS_*, ROLES_*, PERMISSIONS_*)
 - System settings and configuration
 - Audit log access and export
-- **First user** automatically receives this role
+- **Created via CLI**: `npm run admin:create` (admin@admin.com / admin123)
 
 **Use Case**: IT platform administrator, system owner
 
@@ -1142,11 +1142,21 @@ System entities (created during seed):
 - **10 Roles**: `system-administrator`, `it-help-desk`, `auditor`, `finance-manager`, `security-officer`, `service-owner`, `inventory-manager`, `maintenance-technician`, `data-steward`, `asset-coordinator`
 - **269 Permissions** organized into 14 groups (see `PERMISSIONS` constant)
 
-### First User Admin Assignment
+### Admin Account Creation
 
-The first user to sign in automatically receives the `system-administrator` role via Better Auth hook.
+System administrator accounts are created via CLI command after database seeding:
 
-**See**: [docs/guides/FIRST_USER_ADMIN.md](../guides/FIRST_USER_ADMIN.md)
+```bash
+npm run admin:create
+```
+
+This creates an admin user with:
+- Email: `admin@admin.com`
+- Password: `admin123`
+- Role: `system-administrator` (all permissions)
+- Person entity automatically linked
+
+**See**: [SYSTEM_SETUP.md](../features/SYSTEM_SETUP.md) for complete setup guide
 
 ### Permission Denial Errors
 

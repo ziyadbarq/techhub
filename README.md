@@ -79,7 +79,7 @@ Complete role-based access control system:
 - **Merged Role System** - Single entity for RBAC permissions + organizational job roles
 - **Permission Enforcement** - Multi-layer checks (server actions, use cases, UI components, routes)
 - **Audit Logging** - Complete audit trail for all entity operations
-- **Session Management** - Better Auth integration with automatic first-user System Administrator assignment
+- **Session Management** - Better Auth integration with automatic Person entity creation
 
 ### Reference Implementation
 
@@ -128,17 +128,20 @@ npm install
 
 # 3. Set up environment variables
 cp .env.example .env.local
-# Edit .env.local with your DATABASE_URL and OPENAI_API_KEY
+# Edit .env.local with your DATABASE_URL, REDIS_URL, and OPENAI_API_KEY
 
 # 4. Initialize database
 npm run db:push        # Push Prisma schema to database
-npm run db:seed        # Seed prompt blocks (AI infrastructure)
+npm run db:seed        # Seed RBAC data, Foundation entities, and test data
 
-# 5. Run development server
+# 5. Create admin account
+npm run admin:create   # Creates admin@admin.com / admin123
+
+# 6. Run development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see your app!
+Open [http://localhost:3000](http://localhost:3000) and login with admin credentials!
 
 ## 📚 Project Structure
 

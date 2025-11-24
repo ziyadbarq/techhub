@@ -6,6 +6,8 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ISystemSetupRepository } from "@/core/repositories/system-setup-repository.interface";
+import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
+import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
 import type { SystemHealthCheckDto } from "@/interface-adapters/dtos/system-setup.dto";
 
 @injectable()
@@ -13,6 +15,10 @@ export class CheckSystemHealthUseCase {
   constructor(
     @inject(DI_TOKENS.ISystemSetupRepository)
     private readonly systemSetupRepository: ISystemSetupRepository,
+    @inject(DI_TOKENS.IRoleRepository)
+    private readonly roleRepository: IRoleRepository,
+    @inject(DI_TOKENS.IPermissionRepository)
+    private readonly permissionRepository: IPermissionRepository,
   ) {}
 
   async execute(): Promise<SystemHealthCheckDto> {
@@ -22,9 +28,9 @@ export class CheckSystemHealthUseCase {
     try {
       databaseConnected =
         await this.systemSetupRepository.checkDatabaseConnection();
-    } catch (error) {
+    } catch (_error) {
       databaseError =
-        error instanceof Error ? error.message : "Unknown database error";
+        _error instanceof Error ? _error.message : "Unknown database error";
     }
 
     // Check Redis connection
@@ -32,9 +38,9 @@ export class CheckSystemHealthUseCase {
     let redisError: string | undefined;
     try {
       redisConnected = await this.systemSetupRepository.checkRedisConnection();
-    } catch (error) {
+    } catch (_error) {
       redisError =
-        error instanceof Error ? error.message : "Unknown Redis error";
+        _error instanceof Error ? _error.message : "Unknown Redis error";
     }
 
     // Check environment variables
@@ -58,9 +64,9 @@ export class CheckSystemHealthUseCase {
         await this.systemSetupRepository.areMigrationsApplied();
       pendingMigrationsCount =
         await this.systemSetupRepository.getPendingMigrationsCount();
-    } catch (error) {
+    } catch (_error) {
       const errorMsg =
-        error instanceof Error ? error.message : "Unknown migrations error";
+        _error instanceof Error ? _error.message : "Unknown migrations error";
       // Simplify error message for missing migrations table
       if (
         errorMsg.includes("_prisma_migrations") &&
@@ -70,6 +76,20 @@ export class CheckSystemHealthUseCase {
       } else {
         migrationsError = errorMsg;
       }
+    }
+
+    // Check RBAC data
+    let rolesCount = 0;
+    let permissionsCount = 0;
+    try {
+      const roles = await this.roleRepository.findAll();
+      const permissions = await this.permissionRepository.findAll();
+      rolesCount = roles.length;
+      permissionsCount = permissions.length;
+    } catch (_error) {
+      // Ignore RBAC check errors - database may not be seeded yet
+      rolesCount = 0;
+      permissionsCount = 0;
     }
 
     // Overall health
@@ -83,10 +103,12 @@ export class CheckSystemHealthUseCase {
       database: {
         connected: databaseConnected,
         error: databaseError,
+        message: databaseConnected ? "Connected" : "Disconnected",
       },
       redis: {
         connected: redisConnected,
         error: redisError,
+        message: redisConnected ? "Connected" : "Disconnected",
       },
       environment: {
         valid: environmentValid,
@@ -96,6 +118,13 @@ export class CheckSystemHealthUseCase {
         applied: migrationsApplied,
         pending: pendingMigrationsCount,
         error: migrationsError,
+        message: migrationsApplied
+          ? "All migrations applied"
+          : `${pendingMigrationsCount} pending migrations`,
+      },
+      rbac: {
+        roles: rolesCount,
+        permissions: permissionsCount,
       },
       overall,
     };

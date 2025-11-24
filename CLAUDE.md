@@ -12,7 +12,7 @@ This file provides high-level guidance when working with this repository.
 
 **Current Implementation**:
 
-- **System Setup**: First-time installation wizard (`/setup`) and admin dashboard (`/admin/system-setup`) for system health, RBAC seeding, and database operations
+- **System Setup**: Status page (`/setup`) for system health monitoring and admin dashboard (`/admin/system-setup`) for database operations; CLI-based setup with `npm run admin:create`
 - **Layer 1 (Foundation)**: 12 core entities - OrganizationUnit, Person, Role, Location, Vendor, Lifecycle models, Field definitions, **ExchangeRate** (multi-currency support)
 - **Layer 2 (Asset/Inventory)**: 9 entities - Asset, AssetCategory, AssetModel, AssetAssignment, StockLocation, StockMovement, Warranty, MaintenanceSchedule, MaintenanceRecord
 - **Layer 3 (Advanced ITAM & Extensions)**: 9 modules (~31 entities)
@@ -31,14 +31,20 @@ This file provides high-level guidance when working with this repository.
 ## Quick Commands
 
 ```bash
-npm run setup    # One-command setup (install + schema + seed)
+# Initial Setup
+npm run db:seed      # Seed database (RBAC + Foundation + test data)
+npm run admin:create # Create admin account (admin@admin.com / admin123)
+
+# Development
 npm run dev      # Start dev server with Turbopack
 npm run validate # Type-check + lint + test
 
+# Build
 npm run build       # Production build
 npm run build:fast  # Fast build (skips TypeScript)
 
-npm run reset # Reset database + seed (drops all data!)
+# Database
+npm run db:reset # Reset database + seed (drops all data!)
 
 # Ad-hoc Prisma scripts (with env + correct client import)
 npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastructure/database/prisma/client.ts'; (async()=>{ /* your queries */ await prisma.$disconnect();})();"
