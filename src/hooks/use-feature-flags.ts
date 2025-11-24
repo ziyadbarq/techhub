@@ -7,6 +7,10 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import {
+  getFeatureFlagsPollInterval,
+  isFeatureFlagsPollingEnabled,
+} from "@/config/feature-flags.config";
 
 interface FeatureFlagsState {
   enabledFeatures: Set<string>;
@@ -14,13 +18,11 @@ interface FeatureFlagsState {
   error: string | null;
 }
 
-// Poll every 30 seconds to catch critical changes like maintenance mode
-const POLL_INTERVAL = 30000;
-
 /**
  * Hook to fetch and access enabled features
  * Admins get all features, regular users get only enabled ones
- * Polls every 30 seconds to detect critical changes (e.g., maintenance mode)
+ * Polling interval configurable via NEXT_PUBLIC_FEATURE_FLAGS_POLL_INTERVAL (default: 30 seconds)
+ * Set to 0 to disable polling
  */
 export function useFeatureFlags(): FeatureFlagsState {
   const router = useRouter();
@@ -76,10 +78,14 @@ export function useFeatureFlags(): FeatureFlagsState {
     // Initial fetch
     fetchFeatures();
 
-    // Poll for updates every 30 seconds
-    const pollInterval = setInterval(() => {
-      fetchFeatures();
-    }, POLL_INTERVAL);
+    // Setup polling if enabled
+    let pollInterval: NodeJS.Timeout | undefined;
+    if (isFeatureFlagsPollingEnabled()) {
+      const interval = getFeatureFlagsPollInterval();
+      pollInterval = setInterval(() => {
+        fetchFeatures();
+      }, interval);
+    }
 
     // Refetch when tab becomes visible (user returns to tab)
     const handleVisibilityChange = () => {
@@ -91,7 +97,9 @@ export function useFeatureFlags(): FeatureFlagsState {
 
     // Cleanup
     return () => {
-      clearInterval(pollInterval);
+      if (pollInterval) {
+        clearInterval(pollInterval);
+      }
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [fetchFeatures]);

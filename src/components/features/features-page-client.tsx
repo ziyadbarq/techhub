@@ -93,8 +93,10 @@ export function FeaturesPageClient() {
     new Set(["SYSTEM"]), // Open SYSTEM by default
   );
 
-  const loadFlags = async () => {
-    setIsLoading(true);
+  const loadFlags = async (silent = false) => {
+    if (!silent) {
+      setIsLoading(true);
+    }
     try {
       const result = await listFeatureFlagsAction();
 
@@ -112,6 +114,14 @@ export function FeaturesPageClient() {
           grouped[category].push(flag);
         });
 
+        // Sort flags within each category alphabetically by displayName
+        // This ensures consistent order on both initial load and silent refresh
+        (Object.keys(grouped) as CategoryType[]).forEach((category) => {
+          grouped[category].sort((a, b) =>
+            a.displayName.localeCompare(b.displayName),
+          );
+        });
+
         setGroupedFlags(grouped);
       } else {
         toast.error("Failed to load feature flags", {
@@ -127,8 +137,39 @@ export function FeaturesPageClient() {
           error instanceof Error ? error.message : "An unknown error occurred",
       });
     } finally {
-      setIsLoading(false);
+      if (!silent) {
+        setIsLoading(false);
+      }
     }
+  };
+
+  // Optimistic update - update local state immediately without loading state
+  const handleToggleSuccess = (flagId: string, newState: boolean) => {
+    setGroupedFlags((prev) => {
+      const updated: GroupedFlags = {
+        SYSTEM: [...prev.SYSTEM],
+        LAYER_1: [...prev.LAYER_1],
+        LAYER_2: [...prev.LAYER_2],
+        LAYER_3: [...prev.LAYER_3],
+      };
+
+      // Find and update the flag
+      for (const category of Object.keys(updated) as CategoryType[]) {
+        const flagIndex = updated[category].findIndex((f) => f.id === flagId);
+        if (flagIndex !== -1) {
+          updated[category][flagIndex] = {
+            ...updated[category][flagIndex],
+            isEnabled: newState,
+          };
+          break;
+        }
+      }
+
+      return updated;
+    });
+
+    // Silent background refresh to sync with server state
+    setTimeout(() => loadFlags(true), 1000);
   };
 
   useEffect(() => {
@@ -265,7 +306,7 @@ export function FeaturesPageClient() {
                     {categoryFlags.map((flag) => (
                       <div
                         key={flag.id}
-                        className="flex items-start justify-between gap-4 rounded-lg border p-4"
+                        className="flex items-start justify-between gap-4 rounded-lg border p-4 transition-all duration-200"
                       >
                         <div className="flex-1 space-y-2">
                           <div className="flex items-center gap-2">
@@ -311,7 +352,9 @@ export function FeaturesPageClient() {
                         <div className="flex items-center">
                           <FeatureFlagToggle
                             featureFlag={flag}
-                            onToggleSuccess={loadFlags}
+                            onToggleSuccess={(newState) =>
+                              handleToggleSuccess(flag.id, newState)
+                            }
                           />
                         </div>
                       </div>

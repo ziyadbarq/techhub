@@ -650,6 +650,7 @@ const result = await getLookupMapsAction([
 
 ### ❌ DON'T
 
+- **NEVER** start the dev server (`npm run dev`) or kill a running dev server (user manages this)
 - Import from `@prisma/client` (causes TypeScript errors)
 - Create new `Pool()` or `PrismaClient()` instances (exhausts connections)
 - Access `params`/`searchParams` synchronously (runtime errors in Next.js 16)

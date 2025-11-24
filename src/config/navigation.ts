@@ -130,6 +130,7 @@ export const navGroups: NavGroup[] = [
         icon: LayoutDashboard,
         description: "Asset statistics and charts",
         permission: PERMISSIONS.ASSETS_VIEW,
+        visible: false, // Hidden until analytics module is implemented
       },
       {
         title: "Reports",
@@ -137,6 +138,7 @@ export const navGroups: NavGroup[] = [
         icon: FileText,
         description: "Asset management reports",
         permission: PERMISSIONS.ASSETS_VIEW,
+        visible: false, // Hidden until reporting module is implemented
       },
       // Task entity - kept as architectural reference (hidden from UI)
       // Route still accessible at /tasks for code reference
@@ -543,6 +545,7 @@ export const navGroups: NavGroup[] = [
         description: "Manage vendor contacts",
         permission: PERMISSIONS.VENDOR_CONTACTS_VIEW,
         featureFlag: "FOUNDATION",
+        visible: false, // Hidden until vendor contacts module is implemented
       },
       {
         title: "Organization Units",

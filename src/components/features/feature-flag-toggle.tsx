@@ -26,7 +26,7 @@ import type { FeatureFlagResponseDTO } from "@/interface-adapters/dtos/feature-f
 
 interface FeatureFlagToggleProps {
   featureFlag: FeatureFlagResponseDTO;
-  onToggleSuccess: () => void;
+  onToggleSuccess: (newState: boolean) => void;
 }
 
 export function FeatureFlagToggle({
@@ -75,6 +75,8 @@ export function FeatureFlagToggle({
       if (result.success && result.data) {
         const actionText =
           result.data.action === "ENABLED" ? "enabled" : "disabled";
+        const newState = result.data.action === "ENABLED";
+
         toast.success(`Feature ${actionText} successfully`, {
           description: `${featureFlag.displayName} is now ${actionText}.`,
         });
@@ -89,7 +91,7 @@ export function FeatureFlagToggle({
           });
         }
 
-        onToggleSuccess();
+        onToggleSuccess(newState);
       } else {
         toast.error("Failed to toggle feature", {
           description: !result.success

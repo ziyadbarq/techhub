@@ -4,9 +4,10 @@ import { useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Construction } from "lucide-react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-
-// Poll every 30 seconds to detect when maintenance mode is disabled
-const POLL_INTERVAL = 30000;
+import {
+  getFeatureFlagsPollInterval,
+  isFeatureFlagsPollingEnabled,
+} from "@/config/feature-flags.config";
 
 export function MaintenancePageClient() {
   const router = useRouter();
@@ -41,10 +42,14 @@ export function MaintenancePageClient() {
     // Initial check
     checkMaintenanceStatus();
 
-    // Poll for updates every 30 seconds
-    const pollInterval = setInterval(() => {
-      checkMaintenanceStatus();
-    }, POLL_INTERVAL);
+    // Setup polling if enabled
+    let pollInterval: NodeJS.Timeout | undefined;
+    if (isFeatureFlagsPollingEnabled()) {
+      const interval = getFeatureFlagsPollInterval();
+      pollInterval = setInterval(() => {
+        checkMaintenanceStatus();
+      }, interval);
+    }
 
     // Refetch when tab becomes visible (user returns to tab)
     const handleVisibilityChange = () => {
@@ -56,7 +61,9 @@ export function MaintenancePageClient() {
 
     // Cleanup
     return () => {
-      clearInterval(pollInterval);
+      if (pollInterval) {
+        clearInterval(pollInterval);
+      }
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [checkMaintenanceStatus]);
