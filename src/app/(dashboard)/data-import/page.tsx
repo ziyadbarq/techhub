@@ -18,6 +18,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Database, FileUp, CheckCircle2, AlertCircle } from "lucide-react";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +27,12 @@ export const dynamic = "force-dynamic";
  */
 export default async function DataImportPage() {
   // Server-side permission check (security)
-  await requirePermission(PERMISSIONS.DATA_IMPORT_MANAGE);
+  try {
+    await requirePermission(PERMISSIONS.DATA_IMPORT_MANAGE);
+  } catch (error) {
+    handlePermissionRedirect(error, "/data-import");
+    throw error;
+  }
 
   return (
     <PermissionGuard permission={PERMISSIONS.DATA_IMPORT_MANAGE}>

@@ -6,11 +6,17 @@ import { VendorContactsPageClient } from "@/components/vendor-contacts/vendor-co
 import { listVendorContactsAction } from "@/interface-adapters/controllers/vendor-contact.controller";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
 export default async function VendorContactsPage() {
-  await requirePermission(PERMISSIONS.VENDOR_CONTACTS_VIEW);
+  try {
+    await requirePermission(PERMISSIONS.VENDOR_CONTACTS_VIEW);
+  } catch (error) {
+    handlePermissionRedirect(error, "/vendor-contacts");
+    throw error;
+  }
 
   const result = await listVendorContactsAction();
   const initialContacts = result.success ? result.data : [];

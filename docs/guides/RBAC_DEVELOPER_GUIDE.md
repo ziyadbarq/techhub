@@ -1429,10 +1429,26 @@ import {
   hasAll,
   hasAny,
 } from "@/lib/permissions/server";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 // Client-side hooks
 import { usePermissions } from "@/hooks/use-permissions";
 import { useRoles } from "@/components/auth/RoleGuard";
+
+### Server page redirect helper
+
+Use the shared helper so permission failures consistently redirect to `/unauthorized` with context:
+
+```typescript
+export default async function AssetPage() {
+  try {
+    await requirePermission(PERMISSIONS.ASSETS_VIEW);
+  } catch (error) {
+    handlePermissionRedirect(error, "/assets");
+    throw error;
+  }
+}
+```
 
 // UI components
 import { PermissionGuard } from "@/components/auth/PermissionGuard";

@@ -13,6 +13,7 @@ import { redirect } from "next/navigation";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { SystemSetupDashboard } from "@/components/admin/system-setup/SystemSetupDashboard";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,8 @@ export default async function AdminSystemSetupPage() {
   // For now, we'll require USERS_MANAGE as a proxy for admin access
   try {
     await requirePermission(PERMISSIONS.USERS_MANAGE);
-  } catch {
+  } catch (error) {
+    handlePermissionRedirect(error, "/admin/system-setup");
     redirect("/unauthorized");
   }
 

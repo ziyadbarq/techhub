@@ -19,6 +19,7 @@ import { AssetsByDepartmentReport } from "@/components/reports/assets-by-departm
 import { AssetValueByCategoryReport } from "@/components/reports/asset-value-by-category-report";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
@@ -43,7 +44,12 @@ function ReportSkeleton() {
 
 export default async function ReportsPage() {
   // Server-side permission check
-  await requirePermission(PERMISSIONS.DASHBOARD_ANALYTICS);
+  try {
+    await requirePermission(PERMISSIONS.DASHBOARD_ANALYTICS);
+  } catch (error) {
+    handlePermissionRedirect(error, "/reports");
+    throw error;
+  }
 
   return (
     <div className="space-y-6">

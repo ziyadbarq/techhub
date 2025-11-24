@@ -7,7 +7,7 @@
 import { redirect } from "next/navigation";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { InsufficientPermissionsError } from "@/core/domain/errors/rbac-errors";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
@@ -16,13 +16,7 @@ export default async function DocsIndexPage() {
   try {
     await requirePermission(PERMISSIONS.DASHBOARD_VIEW);
   } catch (error) {
-    if (error instanceof InsufficientPermissionsError) {
-      const params = new URLSearchParams({
-        required: error.requiredPermission,
-        path: "/docs",
-      });
-      redirect(`/unauthorized?${params.toString()}`);
-    }
+    handlePermissionRedirect(error, "/docs");
     throw error;
   }
 

@@ -6,14 +6,22 @@ import { VerificationCampaignsPageClient } from "@/components/verification-campa
 import { listVerificationCampaigns } from "@/interface-adapters/controllers/verification-campaign.controller";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
 export default async function VerificationCampaignsPage() {
-  await requirePermission(PERMISSIONS.VERIFICATION_CAMPAIGNS_VIEW);
+  try {
+    await requirePermission(PERMISSIONS.VERIFICATION_CAMPAIGNS_VIEW);
+  } catch (error) {
+    handlePermissionRedirect(error, "/verification-campaigns");
+    throw error;
+  }
 
   const result = await listVerificationCampaigns();
   const initialCampaigns = result.success ? result.data : [];
 
-  return <VerificationCampaignsPageClient initialCampaigns={initialCampaigns} />;
+  return (
+    <VerificationCampaignsPageClient initialCampaigns={initialCampaigns} />
+  );
 }

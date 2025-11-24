@@ -19,12 +19,18 @@ import { TasksPageClient } from "@/components/tasks/tasks-page-client";
 import { listTasksAction } from "@/interface-adapters/controllers/task.controller";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
 export default async function TasksPage() {
   // Require TASKS_VIEW permission
-  await requirePermission(PERMISSIONS.TASKS_VIEW);
+  try {
+    await requirePermission(PERMISSIONS.TASKS_VIEW);
+  } catch (error) {
+    handlePermissionRedirect(error, "/tasks");
+    throw error;
+  }
 
   // Fetch initial data on the server
   const result = await listTasksAction();

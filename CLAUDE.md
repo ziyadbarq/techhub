@@ -46,6 +46,11 @@ npm run build:fast  # Fast build (skips TypeScript)
 # Database
 npm run db:reset # Reset database + seed (drops all data!)
 
+# Admin Tools
+npm run roles:manage            # Interactive user role manager
+npm run roles:manage -- --dry-run  # Preview role changes without applying
+npm run roles:manage -- --help     # Show role manager help
+
 # Ad-hoc Prisma scripts (with env + correct client import)
 npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastructure/database/prisma/client.ts'; (async()=>{ /* your queries */ await prisma.$disconnect();})();"
 ```
@@ -192,6 +197,10 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - **Why**: Prevents React Compiler warnings and ensures tables render correctly
 - **Temporary**: Will be removed when upgrading to TanStack Table v9 (Q2-Q3 2025)
 - **See**: [STACK_UPGRADES.md](docs/guides/STACK_UPGRADES.md) section "TanStack Table v8 Incompatibility"
+
+### Permission Redirects
+
+- When a server page calls `requirePermission`, wrap it with try/catch and call `handlePermissionRedirect(error, "/route")` before rethrowing so denied users are sent to `/unauthorized` with the required permission noted.
 
 ### Permissions
 
@@ -529,6 +538,27 @@ const result = await getLookupMapsAction([
 - 🚧 **Remaining**: Advanced user management, role analytics dashboard, role hierarchy/inheritance UI + server enforcement, time-based role expiration jobs, enhanced audit log UI (see `roadmap/README.md`)
 
 **Impact**: 100% permission integrity (server-enforced), 100% segregation of duties compliance, zero bypass vulnerabilities
+
+**CLI Role Manager** (`scripts/manage-user-roles.ts`):
+
+- **Modern Stack**: Built with @inquirer/prompts v8 (ESM API), chalk v5, Prisma v7
+- **Interactive CLI**: Search users, view current roles, add/remove roles with multi-select
+- **Conflict Detection**: Real-time validation with severity levels (warning/error/critical)
+  - Critical conflicts block assignment (e.g., system-administrator ↔ auditor for SAMA compliance)
+  - Error conflicts block assignment (e.g., finance-manager ↔ inventory-manager for SOD)
+  - Warning conflicts allow override with confirmation
+- **Temporary Assignments**: Optional expiration dates for time-limited roles
+- **Dry-Run Mode**: Preview changes without applying (`--dry-run` flag)
+- **Audit Trail**: All changes logged to AuditLog table with metadata
+- **Safety Features**: Transaction-based operations, duplicate detection, user confirmations
+- **macOS/zsh Compatible**: Fully tested with macOS Terminal.app, iTerm2, and VS Code terminal
+- **Usage**:
+  ```bash
+  npm run roles:manage              # Interactive mode
+  npm run roles:manage -- --dry-run # Preview changes
+  npm run roles:manage -- --help    # Show help
+  ```
+- **Use Cases**: Bulk role assignment, troubleshooting access issues, temporary access grants, role audits
 
 **Documentation**: See [RBAC Admin Guide](docs/features/RBAC_ADMIN_GUIDE.md) for complete usage guide
 

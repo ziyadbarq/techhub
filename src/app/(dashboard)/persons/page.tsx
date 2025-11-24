@@ -6,11 +6,17 @@ import { PersonsPageClient } from "@/components/persons/persons-page-client";
 import { listPersonsAction } from "@/interface-adapters/controllers/person.controller";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
 export default async function PersonsPage() {
-  await requirePermission(PERMISSIONS.PERSONS_VIEW);
+  try {
+    await requirePermission(PERMISSIONS.PERSONS_VIEW);
+  } catch (error) {
+    handlePermissionRedirect(error, "/persons");
+    throw error;
+  }
 
   const result = await listPersonsAction();
   const initialPersons = result.success ? result.data : [];

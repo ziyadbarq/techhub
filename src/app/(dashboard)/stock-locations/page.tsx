@@ -7,11 +7,17 @@ import { StockLocationsPageClient } from "@/components/stock-locations/stock-loc
 import { listStockLocationsAction } from "@/interface-adapters/controllers/stock-location.controller";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
 export default async function StockLocationsPage() {
-  await requirePermission(PERMISSIONS.STOCK_LOCATIONS_VIEW);
+  try {
+    await requirePermission(PERMISSIONS.STOCK_LOCATIONS_VIEW);
+  } catch (error) {
+    handlePermissionRedirect(error, "/stock-locations");
+    throw error;
+  }
 
   const result = await listStockLocationsAction();
   const initialStockLocations = result.success ? result.data : [];

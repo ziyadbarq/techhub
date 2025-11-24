@@ -8,6 +8,7 @@ import { AssetDashboardClient } from "@/components/dashboard/asset-dashboard-cli
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
@@ -64,7 +65,12 @@ function LoadingSkeleton() {
 
 export default async function AssetDashboardPage() {
   // Server-side permission check
-  await requirePermission(PERMISSIONS.DASHBOARD_ANALYTICS);
+  try {
+    await requirePermission(PERMISSIONS.DASHBOARD_ANALYTICS);
+  } catch (error) {
+    handlePermissionRedirect(error, "/analytics");
+    throw error;
+  }
 
   return (
     <div className="space-y-6">

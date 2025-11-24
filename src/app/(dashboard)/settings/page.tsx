@@ -15,7 +15,7 @@ import { SettingsForm } from "@/components/settings/settings-form";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { InsufficientPermissionsError } from "@/core/domain/errors/rbac-errors";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
@@ -23,13 +23,7 @@ export default async function SettingsPage() {
   try {
     await requirePermission(PERMISSIONS.SETTINGS_VIEW);
   } catch (error) {
-    if (error instanceof InsufficientPermissionsError) {
-      const params = new URLSearchParams({
-        required: error.requiredPermission,
-        path: "/settings",
-      });
-      redirect(`/unauthorized?${params.toString()}`);
-    }
+    handlePermissionRedirect(error, "/settings");
     throw error;
   }
 

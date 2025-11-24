@@ -6,11 +6,17 @@ import { ConfigurationItemsPageClient } from "@/components/configuration-items/c
 import { listConfigurationItemsAction } from "@/interface-adapters/controllers/configuration-item.controller";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
 export default async function ConfigurationItemsPage() {
-  await requirePermission(PERMISSIONS.CONFIGURATION_ITEMS_VIEW);
+  try {
+    await requirePermission(PERMISSIONS.CONFIGURATION_ITEMS_VIEW);
+  } catch (error) {
+    handlePermissionRedirect(error, "/configuration-items");
+    throw error;
+  }
 
   const result = await listConfigurationItemsAction();
   const initialItems = result.success ? result.data : [];

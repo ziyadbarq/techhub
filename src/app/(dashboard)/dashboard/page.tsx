@@ -12,8 +12,7 @@ import { QuickActionsWidget } from "@/components/dashboard/widgets/quick-actions
 import { ExpiringWarrantiesWidget } from "@/components/warranties/expiring-warranties-widget";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { InsufficientPermissionsError } from "@/core/domain/errors/rbac-errors";
-import { redirect } from "next/navigation";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
@@ -21,13 +20,7 @@ export default async function DashboardPage() {
   try {
     await requirePermission(PERMISSIONS.DASHBOARD_VIEW);
   } catch (error) {
-    if (error instanceof InsufficientPermissionsError) {
-      const params = new URLSearchParams({
-        required: error.requiredPermission,
-        path: "/dashboard",
-      });
-      redirect(`/unauthorized?${params.toString()}`);
-    }
+    handlePermissionRedirect(error, "/dashboard");
     throw error;
   }
   return (
