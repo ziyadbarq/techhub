@@ -171,7 +171,7 @@ export class TemplateGenerator {
           return "john.doe@barq.com";
         }
         if (field.name.toLowerCase().includes("name")) {
-          return "John Doe";
+          return "Name";
         }
         if (field.name.toLowerCase().includes("phone")) {
           return "+966501234567";

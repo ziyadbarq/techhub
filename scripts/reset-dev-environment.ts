@@ -4,7 +4,7 @@
  *
  * This script completely resets the local development environment:
  * - Clears build and cache directories (.next, coverage)
- * - Resets database schema and re-seeds with default data
+ * - Resets database schema
  *
  * WARNING: This operation is DESTRUCTIVE and cannot be undone!
  *
@@ -205,7 +205,7 @@ async function reset() {
   console.log("╚════════════════════════════════════════╝");
   console.log("");
   console.log("Your development environment has been reset.");
-  console.log("Database seeding will run next...");
+  console.log("Run `npm run db:seed` if you want to re-seed the database.");
   console.log("");
 }
 

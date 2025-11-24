@@ -6,7 +6,7 @@
  */
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Activity, Database, Info, Settings } from "lucide-react";
+import { Activity, Database, Info } from "lucide-react";
 import { SystemHealthPanel } from "./panels/SystemHealthPanel";
 import { SystemInfoPanel } from "./panels/SystemInfoPanel";
 import { DatabaseOperationsPanel } from "./panels/DatabaseOperationsPanel";

@@ -43,9 +43,9 @@ const prismaInstance =
   (new PrismaClient({
     adapter,
     log:
-      process.env.NODE_ENV === "development"
+      process.env.PRISMA_VERBOSE_LOGS === "true"
         ? ["query", "error", "warn"]
-        : ["error"],
+        : ["error", "warn"],
   }) as PrismaClient<Prisma.LogLevel>);
 
 export const prisma: PrismaClient<Prisma.LogLevel> = prismaInstance;
@@ -54,9 +54,7 @@ if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prismaInstance;
 }
 
-const shouldLogVerbosePrisma =
-  process.env.PRISMA_VERBOSE_LOGS === "true" ||
-  process.env.NODE_ENV !== "production";
+const shouldLogVerbosePrisma = process.env.PRISMA_VERBOSE_LOGS === "true";
 
 const sanitizeParams = (params?: string) => {
   if (!params) return params;

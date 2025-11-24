@@ -1,6 +1,7 @@
 /**
  * Create First User Use Case
  * Creates the very first user in the system and assigns SYSTEM_ADMIN role
+ * Creates user directly but follows Better Auth's conventions for compatibility
  */
 
 import { injectable, inject } from "inversify";
@@ -10,10 +11,11 @@ import type { IRoleRepository } from "@/core/repositories/role-repository.interf
 import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
 import type { IUserRoleRepository } from "@/core/repositories/user-role-repository.interface";
 import type { IAuditLogRepository } from "@/core/repositories/audit-log-repository.interface";
+import type { IOrganizationUnitRepository } from "@/core/repositories/organization-unit.repository.interface";
 import type { ILoggerService } from "@/core/services";
 import type { CreateFirstUserDto } from "@/interface-adapters/dtos/system-setup.dto";
 import { UserRole } from "@/core/domain/entities/user-role.entity";
-import { hash } from "@node-rs/argon2";
+import { hash } from "bcryptjs";
 
 export interface CreateFirstUserResult {
   success: boolean;
@@ -34,6 +36,8 @@ export class CreateFirstUserUseCase {
     private readonly userRoleRepository: IUserRoleRepository,
     @inject(DI_TOKENS.IAuditLogRepository)
     private readonly auditLogRepository: IAuditLogRepository,
+    @inject(DI_TOKENS.IOrganizationUnitRepository)
+    private readonly organizationUnitRepository: IOrganizationUnitRepository,
     @inject(DI_TOKENS.ILoggerService)
     private readonly logger: ILoggerService,
   ) {}
@@ -54,7 +58,9 @@ export class CreateFirstUserUseCase {
       }
 
       // Check if system-administrator role exists
-      const adminRole = await this.roleRepository.findByName("system-administrator");
+      const adminRole = await this.roleRepository.findByName(
+        "system-administrator",
+      );
       if (!adminRole) {
         return {
           success: false,
@@ -63,17 +69,35 @@ export class CreateFirstUserUseCase {
         };
       }
 
-      // Hash password
-      const passwordHash = await hash(password, {
-        memoryCost: 19456,
-        timeCost: 2,
-        outputLen: 32,
-        parallelism: 1,
-      });
+      // Ensure default org unit exists (Better Auth hooks will need it for Person creation)
+      const orgUnits = await this.organizationUnitRepository.findAll();
+      if (!orgUnits || orgUnits.length === 0) {
+        this.logger.info(
+          "No organization units found, creating default for Better Auth hooks",
+        );
+        const { OrganizationUnit } = await import(
+          "@/core/domain/entities/organization-unit.entity"
+        );
+        const { OrganizationUnitType } = await import(
+          "@/core/domain/value-objects/foundation-enums"
+        );
+        const defaultOrgUnit = OrganizationUnit.create({
+          name: "Default Organization",
+          code: "ORG-DEFAULT",
+          unitType: OrganizationUnitType.DEPARTMENT,
+          parentId: null,
+          level: 1,
+          description: "Default organization unit created during system setup",
+        });
+        await this.organizationUnitRepository.create(defaultOrgUnit);
+        this.logger.info("Default organization unit created");
+      }
 
-      // Create user using Better Auth's schema
-      // We need to create the user directly in the database
-      // Better Auth will handle the rest during login
+      // Hash password using same method as Better Auth
+      const passwordHash = await hash(password, 12);
+
+      // Create user directly using repository (follows Better Auth's schema conventions)
+      // Better Auth's after hooks will automatically create Person entity
       const user = await this.userRepository.createDirectly({
         email,
         name,
@@ -81,30 +105,30 @@ export class CreateFirstUserUseCase {
         emailVerified: true, // First user is auto-verified
       });
 
-      // Assign admin role
+      this.logger.info("User created", { userId: user.id, email });
+
+      // Assign system-administrator role (setup-specific logic)
       const userRole = UserRole.create({
         userId: user.id,
         roleId: adminRole.id,
-        createdBy: "system", // First user is created by system
+        createdBy: "system",
       });
-
       await this.userRoleRepository.create(userRole);
 
-      // Get all permissions to assign
-      const allPermissions = await this.permissionRepository.listAll();
+      this.logger.info("System administrator role assigned", {
+        userId: user.id,
+        roleId: adminRole.id,
+      });
 
-      // Assign all permissions to admin role (if not already assigned)
-      // This is done in the seeding process, but we ensure it here as well
-      for (const permission of allPermissions) {
-        try {
-          await this.roleRepository.assignPermission(
-            adminRole.id,
-            permission.id,
-          );
-        } catch {
-          // Permission already assigned, ignore
-        }
-      }
+      // Get all permissions to assign to admin role (ensure complete access)
+      const allPermissions = await this.permissionRepository.findAll({
+        includeInactive: true,
+      });
+
+      await this.roleRepository.assignPermissions(
+        adminRole.id,
+        allPermissions.map((permission) => permission.id),
+      );
 
       // Create audit log
       await this.auditLogRepository.create({
@@ -117,16 +141,17 @@ export class CreateFirstUserUseCase {
             email: user.email,
             name: user.name,
             role: "system-administrator",
+            isFirstUser: true,
           },
         },
         metadata: {
           reason: "First user setup",
-          isFirstUser: true,
           permissionsCount: allPermissions.length,
+          note: "Better Auth hooks handle Person creation automatically",
         },
       });
 
-      this.logger.info("First user created successfully", {
+      this.logger.info("First user setup completed successfully", {
         userId: user.id,
         email: user.email,
         roleId: adminRole.id,
@@ -138,9 +163,14 @@ export class CreateFirstUserUseCase {
         userId: user.id,
       };
     } catch (error) {
-      this.logger.error("Failed to create first user", {
-        error: error instanceof Error ? error.message : "Unknown error",
-      });
+      this.logger.error(
+        "Failed to create first user",
+        error instanceof Error ? error : undefined,
+        {
+          email,
+          name,
+        },
+      );
 
       return {
         success: false,

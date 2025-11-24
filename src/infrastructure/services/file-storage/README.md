@@ -111,14 +111,14 @@ if (!isValid) {
 // Extract frontmatter
 const content = `---
 title: My Document
-author: John Doe
+author: Name
 tags: [ai, markdown]
 ---
 
 # Slide 1`;
 
 const frontmatter = extractFrontmatter(content);
-// { title: 'My Document', author: 'John Doe', tags: ['ai', 'markdown'] }
+// { title: 'My Document', author: 'Name', tags: ['ai', 'markdown'] }
 
 // Update frontmatter
 const updated = updateFrontmatter(content, {

@@ -89,12 +89,12 @@ export function validateMarkdown(content: string): boolean {
  * ```typescript
  * const content = `---
  * title: My Document
- * author: John Doe
+ * author: Name
  * ---
  * # Content here`;
  *
  * const frontmatter = extractFrontmatter(content);
- * // { title: 'My Document', author: 'John Doe' }
+ * // { title: 'My Document', author: 'Name' }
  * ```
  */
 export function extractFrontmatter(content: string): Frontmatter {
@@ -353,7 +353,7 @@ export function removeFrontmatter(content: string): string {
  * ```typescript
  * const withFrontmatter = addFrontmatter(content, {
  *   title: 'My Document',
- *   author: 'John Doe'
+ *   author: 'Name'
  * });
  * ```
  */

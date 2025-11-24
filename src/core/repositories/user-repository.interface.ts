@@ -46,4 +46,9 @@ export interface IUserRepository {
     passwordHash: string;
     emailVerified?: boolean;
   }): Promise<User>;
+
+  /**
+   * Update user's email verification status
+   */
+  updateEmailVerification(userId: string, verified: boolean): Promise<User>;
 }

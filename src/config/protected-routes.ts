@@ -216,6 +216,7 @@ export const PUBLIC_ROUTES = [
   "/unauthorized",
   "/api/auth",
   "/setup",
+  "/setup1",
 ] as const;
 
 /**

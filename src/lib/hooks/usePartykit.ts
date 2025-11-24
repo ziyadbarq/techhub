@@ -20,7 +20,7 @@
  *     party: 'task-collaboration',
  *     participant: {
  *       id: 'user-123',
- *       name: 'John Doe',
+ *       name: 'Name',
  *     },
  *     onMessage: (message) => {
  *       console.log('Received:', message);

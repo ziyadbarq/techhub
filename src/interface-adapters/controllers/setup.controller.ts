@@ -189,10 +189,9 @@ export async function createFirstUserAction(
       revalidatePath("/login");
     }
 
-    return {
-      success: result.success,
-      data: result,
-    };
+    return result.success
+      ? { success: true as const, data: result }
+      : { success: false as const, error: result.message };
   } catch (error) {
     return handleControllerError(
       error,
@@ -216,10 +215,9 @@ export async function seedMinimalDataAction(): Promise<
 
     const result = await seedMinimalData.execute();
 
-    return {
-      success: result.success,
-      data: result,
-    };
+    return result.success
+      ? { success: true as const, data: result }
+      : { success: false as const, error: result.message };
   } catch (error) {
     return handleControllerError(
       error,
@@ -247,10 +245,9 @@ export async function resetDatabaseAction(
       revalidatePath("/");
     }
 
-    return {
-      success: result.success,
-      data: result,
-    };
+    return result.success
+      ? { success: true as const, data: result }
+      : { success: false as const, error: result.message };
   } catch (error) {
     return handleControllerError(
       error,

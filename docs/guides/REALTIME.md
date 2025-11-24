@@ -256,7 +256,7 @@ function CollaborativeComponent() {
     party: "task-collaboration",
     participant: {
       id: "user-456",
-      name: "John Doe",
+      name: "Name",
       metadata: { color: "#3b82f6" },
     },
     onMessage: (message: RealtimeMessage) => {

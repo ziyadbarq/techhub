@@ -31,8 +31,7 @@ export class CheckSystemHealthUseCase {
     let redisConnected = false;
     let redisError: string | undefined;
     try {
-      redisConnected =
-        await this.systemSetupRepository.checkRedisConnection();
+      redisConnected = await this.systemSetupRepository.checkRedisConnection();
     } catch (error) {
       redisError =
         error instanceof Error ? error.message : "Unknown Redis error";
@@ -42,10 +41,10 @@ export class CheckSystemHealthUseCase {
     const requiredEnvVars = [
       "DATABASE_URL",
       "REDIS_URL",
-      "BETTER_AUTH_SECRET",
+      "AUTH_SECRET", // Changed from BETTER_AUTH_SECRET
       "BETTER_AUTH_URL",
     ];
-    const missingEnvVars = requiredEnvVars.filter(
+    const missingEnvVars: string[] = requiredEnvVars.filter(
       (varName) => !process.env[varName],
     );
     const environmentValid = missingEnvVars.length === 0;
@@ -60,8 +59,17 @@ export class CheckSystemHealthUseCase {
       pendingMigrationsCount =
         await this.systemSetupRepository.getPendingMigrationsCount();
     } catch (error) {
-      migrationsError =
+      const errorMsg =
         error instanceof Error ? error.message : "Unknown migrations error";
+      // Simplify error message for missing migrations table
+      if (
+        errorMsg.includes("_prisma_migrations") &&
+        errorMsg.includes("does not exist")
+      ) {
+        migrationsError = "Migrations not yet applied. Run: npm run db:migrate";
+      } else {
+        migrationsError = errorMsg;
+      }
     }
 
     // Overall health

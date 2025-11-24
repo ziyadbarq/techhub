@@ -7,7 +7,7 @@ import type { PrismaClient } from "@/generated/prisma";
 import { DI_TOKENS } from "@/di/types";
 import type { ISystemSetupRepository } from "@/core/repositories/system-setup-repository.interface";
 import { createRepositoryLogger } from "./repository-logger";
-import { createClient } from "redis";
+import Redis from "ioredis";
 
 @injectable()
 export class PrismaSystemSetupRepository implements ISystemSetupRepository {
@@ -54,10 +54,9 @@ export class PrismaSystemSetupRepository implements ISystemSetupRepository {
     }
 
     try {
-      const client = createClient({ url: redisUrl });
-      await client.connect();
+      const client = new Redis(redisUrl);
       await client.ping();
-      await client.disconnect();
+      await client.quit();
       this.logger.timed(
         "checkRedisConnection",
         "Redis connection check passed",
@@ -103,13 +102,19 @@ export class PrismaSystemSetupRepository implements ISystemSetupRepository {
           error: error instanceof Error ? error.message : "Unknown error",
         },
       );
-      return 0;
+      // If the table doesn't exist, we need to throw so areMigrationsApplied knows
+      throw error;
     }
   }
 
   async areMigrationsApplied(): Promise<boolean> {
-    const pendingCount = await this.getPendingMigrationsCount();
-    return pendingCount === 0;
+    try {
+      const pendingCount = await this.getPendingMigrationsCount();
+      return pendingCount === 0;
+    } catch (_error) {
+      // If we can't query the migrations table, migrations haven't been applied
+      return false;
+    }
   }
 
   async getAppliedMigrations(): Promise<string[]> {
@@ -262,11 +267,7 @@ export class PrismaSystemSetupRepository implements ISystemSetupRepository {
       `;
 
       if (result.length === 0) {
-        this.logger.timed(
-          "getLastMigration",
-          "No migrations found",
-          timer(),
-        );
+        this.logger.timed("getLastMigration", "No migrations found", timer());
         return null;
       }
 

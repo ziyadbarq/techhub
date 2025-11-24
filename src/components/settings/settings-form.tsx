@@ -192,7 +192,7 @@ export function SettingsForm({ user }: SettingsFormProps) {
                     <FormLabel>Name</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="John Doe"
+                        placeholder="Name"
                         disabled={isLoading}
                         {...field}
                       />

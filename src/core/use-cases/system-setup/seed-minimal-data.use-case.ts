@@ -35,21 +35,25 @@ export class SeedMinimalDataUseCase {
 
       return {
         success: true,
-        message: "Minimal RBAC data seeded successfully (269 permissions, 10 roles)",
+        message:
+          "Minimal RBAC data seeded successfully (269 permissions, 10 roles)",
         details: {
           rolesCreated: 10, // 10 system roles as defined in seed-rbac-roles.ts
           permissionsCreated: 269, // All permissions from permission-groups.ts
         },
       };
     } catch (error) {
-      this.logger.error("Failed to seed minimal data", {
-        error: error instanceof Error ? error.message : "Unknown error",
-      });
+      this.logger.error(
+        "Failed to seed minimal data",
+        error instanceof Error ? error : undefined,
+      );
 
       return {
         success: false,
         message:
-          error instanceof Error ? error.message : "Failed to seed minimal data",
+          error instanceof Error
+            ? error.message
+            : "Failed to seed minimal data",
       };
     }
   }

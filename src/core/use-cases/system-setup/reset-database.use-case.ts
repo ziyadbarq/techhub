@@ -66,9 +66,11 @@ export class ResetDatabaseUseCase {
           : "Database reset successfully. Run 'npm run seed' for full test data.",
       };
     } catch (error) {
-      this.logger.error("Failed to reset database", {
-        error: error instanceof Error ? error.message : "Unknown error",
-      });
+      this.logger.error(
+        "Failed to reset database",
+        error instanceof Error ? error : undefined,
+        { reseed },
+      );
 
       return {
         success: false,

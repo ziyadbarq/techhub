@@ -243,7 +243,7 @@ export default function AdminDashboardPage() {
   const recentActivities: ActivityItem[] = [
     {
       id: "1",
-      user: "John Doe",
+      user: "Name",
       action: "created role",
       target: "Content Editor",
       timestamp: "5 minutes ago",

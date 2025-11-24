@@ -39,7 +39,7 @@
     "type-check": "tsc --noEmit",
     "type-check:watch": "tsc --noEmit --watch",
     "type-check:staged": "bash scripts/type-check-staged.sh",
-    "reset": "dotenv -e .env.local -- tsx scripts/reset-dev-environment.ts && npm run db:seed",
+    "reset": "dotenv -e .env.local -- tsx scripts/reset-dev-environment.ts",
     "prepare": "husky"
   },
   "dependencies": {

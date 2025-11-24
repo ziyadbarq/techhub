@@ -106,7 +106,7 @@ export function RegisterForm() {
               <FormControl>
                 <Input
                   type="text"
-                  placeholder="John Doe"
+                  placeholder="Name"
                   autoComplete="name"
                   disabled={isLoading}
                   {...field}

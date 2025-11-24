@@ -7,7 +7,7 @@
 
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
-import { SYSTEM_PERMISSIONS } from "./seed-rbac-permissions.js";
+import { SYSTEM_PERMISSIONS } from "./seed-rbac-permissions";
 
 /**
  * Role definition shape

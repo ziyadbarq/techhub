@@ -84,7 +84,7 @@ export interface IRealtimeService {
    * ```typescript
    * await realtimeService.connect('task-123', {
    *   id: 'user-456',
-   *   metadata: { name: 'John Doe', avatar: '/avatar.jpg' }
+   *   metadata: { name: 'Name', avatar: '/avatar.jpg' }
    * });
    * ```
    */

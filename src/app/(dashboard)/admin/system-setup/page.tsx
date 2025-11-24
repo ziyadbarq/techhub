@@ -10,7 +10,7 @@
  */
 
 import { redirect } from "next/navigation";
-import { requirePermission } from "@/lib/auth/rbac";
+import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { SystemSetupDashboard } from "@/components/admin/system-setup/SystemSetupDashboard";
 

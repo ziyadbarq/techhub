@@ -84,7 +84,7 @@ export class PrismaUserRepository implements IUserRepository {
       data: {
         email: data.email,
         name: data.name,
-        emailVerified: data.emailVerified ?? false,
+        emailVerified: data.emailVerified ? new Date() : undefined,
         createdAt: new Date(),
         updatedAt: new Date(),
         // Better Auth stores password in a separate table
@@ -93,11 +93,13 @@ export class PrismaUserRepository implements IUserRepository {
     });
 
     // Create the account record for Better Auth password storage
+    // IMPORTANT: Must match Better Auth's credential provider format
     await this.prisma.account.create({
       data: {
         userId: user.id,
-        accountId: user.id, // Use user ID as account ID for password provider
-        providerId: "credential", // Better Auth's password provider
+        type: "oauth", // Better Auth uses "oauth" type for credential provider
+        provider: "credential", // Must be "credential" not "email"
+        providerAccountId: user.id, // Use user ID, not email
         password: data.passwordHash,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -108,6 +110,33 @@ export class PrismaUserRepository implements IUserRepository {
       userId: user.id,
       email: user.email,
     });
+
+    return user;
+  }
+
+  async updateEmailVerification(
+    userId: string,
+    verified: boolean,
+  ): Promise<User> {
+    const timer = this.logger.startTimer();
+
+    const user = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        emailVerified: verified ? new Date() : null,
+        updatedAt: new Date(),
+      },
+    });
+
+    this.logger.timed(
+      "updateEmailVerification",
+      "Email verification status updated",
+      timer(),
+      {
+        userId,
+        verified,
+      },
+    );
 
     return user;
   }

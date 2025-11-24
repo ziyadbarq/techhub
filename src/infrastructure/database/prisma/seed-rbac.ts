@@ -10,11 +10,11 @@
  * Can accept a Prisma client instance or use the singleton for standalone execution
  */
 
-import type { PrismaClient } from "../../../generated/prisma/client.js";
-import { prisma as prismaSingleton } from "./client.js";
-import { logSection, logStep, logSuccess, logWarning } from "./seed-utils.js";
-import { SYSTEM_PERMISSIONS } from "./seed-rbac-permissions.js";
-import { SYSTEM_ROLES } from "./seed-rbac-roles.js";
+import type { PrismaClient } from "@/generated/prisma";
+import { prisma as prismaSingleton } from "./client";
+import { logSection, logStep, logSuccess, logWarning } from "./seed-utils";
+import { SYSTEM_PERMISSIONS } from "./seed-rbac-permissions";
+import { SYSTEM_ROLES } from "./seed-rbac-roles";
 
 /**
  * Main seed function

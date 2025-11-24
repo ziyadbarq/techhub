@@ -29,6 +29,14 @@ import type { ListPersonsUseCase } from "@/core/use-cases/foundation/person/list
  * Build lookup map from entities
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+function normalizeLookupKey(value: string): string {
+  return value
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, "_")
+    .replace(/[^A-Z0-9_-]/g, "");
+}
+
 function buildLookupMap(
   entities: any[],
   entityName: string,
@@ -41,7 +49,8 @@ function buildLookupMap(
 
   for (const entity of entities) {
     const lookupValue = String(entity[lookupField] || "");
-    entries.set(lookupValue.toLowerCase(), entity.id);
+    const normalizedLookupValue = normalizeLookupKey(lookupValue);
+    entries.set(normalizedLookupValue, entity.id);
     reverseEntries.set(entity.id, lookupValue);
     allValues.push(lookupValue);
   }
@@ -240,7 +249,8 @@ export async function validateLookupValueAction(
       "name", // Use name as default display field
     );
 
-    const id = lookupMap.entries.get(value.toLowerCase());
+    const normalizedValue = normalizeLookupKey(value);
+    const id = lookupMap.entries.get(normalizedValue);
 
     return {
       success: true,
