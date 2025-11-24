@@ -362,3 +362,13 @@ export type PromptComposition = Prisma.PromptCompositionModel
  * 
  */
 export type PromptCompositionBlock = Prisma.PromptCompositionBlockModel
+/**
+ * Model FeatureFlag
+ * 
+ */
+export type FeatureFlag = Prisma.FeatureFlagModel
+/**
+ * Model FeatureFlagAuditLog
+ * 
+ */
+export type FeatureFlagAuditLog = Prisma.FeatureFlagAuditLogModel

@@ -316,3 +316,21 @@ export const AssetRelationship = {
 } as const
 
 export type AssetRelationship = (typeof AssetRelationship)[keyof typeof AssetRelationship]
+
+
+export const FeatureFlagCategory = {
+  SYSTEM: 'SYSTEM',
+  LAYER_1: 'LAYER_1',
+  LAYER_2: 'LAYER_2',
+  LAYER_3: 'LAYER_3'
+} as const
+
+export type FeatureFlagCategory = (typeof FeatureFlagCategory)[keyof typeof FeatureFlagCategory]
+
+
+export const FeatureFlagAction = {
+  ENABLED: 'ENABLED',
+  DISABLED: 'DISABLED'
+} as const
+
+export type FeatureFlagAction = (typeof FeatureFlagAction)[keyof typeof FeatureFlagAction]

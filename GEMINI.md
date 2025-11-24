@@ -245,6 +245,53 @@ export default async function EntityPage() {
 
 **See**: [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md) for complete patterns, examples, and security details
 
+### Feature Flags
+
+Master toggle system for enabling/disabling major modules at runtime:
+
+- **Dual-Layer Security**: Feature flags (system-level) + RBAC permissions (user-level)
+- **Pattern**: Check feature flag FIRST, then permission check
+- **Admin Bypass**: System administrators see all features regardless of flag state
+- **Coarse-Grained**: Module-level toggles (CONTRACTS, LICENSES, CMDB), not per-route
+- **Dependency Enforcement**: Features can depend on others (e.g., SERVICES requires CMDB + FOUNDATION)
+- **Default State**: All features disabled by default - admin must manually enable
+- **Maintenance Mode**: Global killswitch (MAINTENANCE_MODE) disables all features for non-admins
+- **Route Protection**: Add `requireFeature()` before `requirePermission()` in page components
+- **Navigation Filtering**: Add `featureFlag` property to nav items (auto-filtered with permissions)
+- **Admin UI**: `/admin/features` - toggle features, view dependencies, audit logs
+- **Permission**: `FEATURE_FLAGS_MANAGE` (system-administrator only)
+- **Caching**: Redis cache (5-min TTL) with manual invalidation after toggle
+
+**Pattern**:
+```typescript
+// page.tsx (server component)
+export const dynamic = "force-dynamic";
+
+export default async function ContractsPage() {
+  // Step 1: Feature flag check (system-level) - FIRST
+  await requireFeature("CONTRACTS");
+
+  // Step 2: Permission check (user-level) - SECOND
+  try {
+    await requirePermission(PERMISSIONS.CONTRACTS_VIEW);
+  } catch (error) {
+    handlePermissionRedirect(error, "/contracts");
+    throw error;
+  }
+
+  return <ContractsPageClient />;
+}
+```
+
+**Client-side**:
+```typescript
+import { useIsFeatureEnabled } from "@/hooks/use-feature-flags";
+
+const isContractsEnabled = useIsFeatureEnabled("CONTRACTS");
+```
+
+**See**: [FEATURE_FLAGS.md](docs/features/FEATURE_FLAGS.md) for complete guide, architecture, and 18 feature definitions
+
 ### Better Auth Integration
 
 - **Use repository layer** for user creation in use cases (NOT Better Auth API)

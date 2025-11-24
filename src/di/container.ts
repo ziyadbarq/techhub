@@ -29,6 +29,7 @@ import { bindCodeGeneratorDependencies } from "./modules/code-generator.module";
 import { bindDatabaseDependencies } from "./modules/database.module";
 import { bindRBACDependencies } from "./modules/rbac.module";
 import { bindSystemSetupDependencies } from "./modules/system-setup.module";
+import { bindFeatureFlagsDependencies } from "./modules/feature-flags.module";
 import { bindFoundationDependencies } from "./modules/foundation.module";
 import { bindAssetDependencies } from "./modules/asset.module";
 import { bindInventoryDependencies } from "./modules/inventory.module";
@@ -113,6 +114,9 @@ function createContainer(): Container {
 
   // Bind System Setup dependencies (health checks, migration status, seeding)
   bindSystemSetupDependencies(newContainer);
+
+  // Bind Feature Flags dependencies (feature flags management)
+  bindFeatureFlagsDependencies(newContainer);
 
   // Bind Foundation dependencies (lifecycle, vendor, organization, location, person)
   bindFoundationDependencies(newContainer);

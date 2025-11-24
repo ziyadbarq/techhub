@@ -10,10 +10,13 @@ import {
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { requireFeature } from "@/lib/features/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function AssetKitsPage() {
+  await requireFeature("ASSET_KITS");
+
   try {
     await requirePermission(PERMISSIONS.ASSET_KITS_VIEW);
   } catch (error) {

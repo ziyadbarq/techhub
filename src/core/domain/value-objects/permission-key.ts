@@ -44,6 +44,9 @@ export const PERMISSIONS = {
   // Data Import
   DATA_IMPORT_MANAGE: "data-import:manage",
 
+  // Feature Flags
+  FEATURE_FLAGS_MANAGE: "feature-flags:manage",
+
   // Dashboard
   DASHBOARD_VIEW: "dashboard:view",
   DASHBOARD_ANALYTICS: "dashboard:analytics",

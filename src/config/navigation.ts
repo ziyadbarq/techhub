@@ -82,6 +82,8 @@ export interface NavItem {
   visible?: boolean;
   /** Required permission to view this item */
   permission?: PermissionKey;
+  /** Required feature flag to view this item */
+  featureFlag?: string;
   /** Child navigation items (for nested navigation) */
   children?: NavItem[];
   /** Whether children are expanded by default */
@@ -162,6 +164,7 @@ export const navGroups: NavGroup[] = [
         icon: Package,
         description: "Manage assets",
         permission: PERMISSIONS.ASSETS_VIEW,
+        featureFlag: "ASSETS",
       },
       {
         title: "Asset Categories",
@@ -169,6 +172,7 @@ export const navGroups: NavGroup[] = [
         icon: Package,
         description: "Manage asset categories",
         permission: PERMISSIONS.ASSET_CATEGORIES_VIEW,
+        featureFlag: "ASSETS",
       },
       {
         title: "Asset Models",
@@ -176,6 +180,7 @@ export const navGroups: NavGroup[] = [
         icon: Package,
         description: "Manage asset models",
         permission: PERMISSIONS.ASSET_MODELS_VIEW,
+        featureFlag: "ASSETS",
       },
       {
         title: "Asset Assignments",
@@ -183,6 +188,7 @@ export const navGroups: NavGroup[] = [
         icon: UserCheck,
         description: "Manage asset assignments",
         permission: PERMISSIONS.ASSET_ASSIGNMENTS_VIEW,
+        featureFlag: "ASSETS",
       },
       {
         title: "Warranties",
@@ -190,6 +196,7 @@ export const navGroups: NavGroup[] = [
         icon: Shield,
         description: "Manage asset warranties",
         permission: PERMISSIONS.WARRANTIES_VIEW,
+        featureFlag: "WARRANTIES",
       },
     ],
     visible: true,
@@ -208,6 +215,7 @@ export const navGroups: NavGroup[] = [
         icon: Boxes,
         description: "Predefined asset bundles and checkouts",
         permission: PERMISSIONS.ASSET_KITS_VIEW,
+        featureFlag: "ASSET_KITS",
       },
       {
         title: "Reservations",
@@ -215,6 +223,7 @@ export const navGroups: NavGroup[] = [
         icon: CalendarClock,
         description: "Asset reservations and availability",
         permission: PERMISSIONS.ASSET_RESERVATIONS_VIEW,
+        featureFlag: "ASSET_RESERVATIONS",
       },
       {
         title: "Disposals",
@@ -222,6 +231,7 @@ export const navGroups: NavGroup[] = [
         icon: Trash2,
         description: "Asset disposal workflow",
         permission: PERMISSIONS.ASSET_DISPOSALS_VIEW,
+        featureFlag: "ASSET_DISPOSALS",
       },
     ],
     visible: true,
@@ -240,6 +250,7 @@ export const navGroups: NavGroup[] = [
         icon: Warehouse,
         description: "Manage stock locations and warehouses",
         permission: PERMISSIONS.STOCK_LOCATIONS_VIEW,
+        featureFlag: "INVENTORY",
       },
       {
         title: "Stock Movements",
@@ -247,6 +258,7 @@ export const navGroups: NavGroup[] = [
         icon: TrendingUp,
         description: "Track inventory movements",
         permission: PERMISSIONS.STOCK_MOVEMENTS_VIEW,
+        featureFlag: "INVENTORY",
       },
     ],
     visible: true,
@@ -265,6 +277,7 @@ export const navGroups: NavGroup[] = [
         icon: Wrench,
         description: "Preventive maintenance schedules",
         permission: PERMISSIONS.MAINTENANCE_SCHEDULES_VIEW,
+        featureFlag: "MAINTENANCE",
       },
       {
         title: "Records",
@@ -272,6 +285,7 @@ export const navGroups: NavGroup[] = [
         icon: ClipboardList,
         description: "Maintenance history and work logs",
         permission: PERMISSIONS.MAINTENANCE_RECORDS_VIEW,
+        featureFlag: "MAINTENANCE",
       },
     ],
     visible: true,
@@ -290,6 +304,7 @@ export const navGroups: NavGroup[] = [
         icon: Database,
         description: "Configuration item class definitions",
         permission: PERMISSIONS.CI_CLASSES_VIEW,
+        featureFlag: "CMDB",
       },
       {
         title: "Configuration Items",
@@ -297,6 +312,7 @@ export const navGroups: NavGroup[] = [
         icon: Database,
         description: "Manage configuration items",
         permission: PERMISSIONS.CONFIGURATION_ITEMS_VIEW,
+        featureFlag: "CMDB",
       },
       {
         title: "CI Relationships",
@@ -304,6 +320,7 @@ export const navGroups: NavGroup[] = [
         icon: GitBranch,
         description: "Manage CI dependencies and relationships",
         permission: PERMISSIONS.CI_RELATIONSHIPS_VIEW,
+        featureFlag: "CMDB",
       },
       {
         title: "Relationship Types",
@@ -311,6 +328,7 @@ export const navGroups: NavGroup[] = [
         icon: ArrowRightLeft,
         description: "Define relationship types",
         permission: PERMISSIONS.RELATIONSHIP_TYPES_VIEW,
+        featureFlag: "CMDB",
       },
     ],
     visible: true,
@@ -329,6 +347,7 @@ export const navGroups: NavGroup[] = [
         icon: Server,
         description: "IT services and application catalog",
         permission: PERMISSIONS.SERVICES_VIEW,
+        featureFlag: "SERVICES",
       },
       {
         title: "Business Processes",
@@ -336,6 +355,7 @@ export const navGroups: NavGroup[] = [
         icon: GitPullRequest,
         description: "Business processes linked to services",
         permission: PERMISSIONS.BUSINESS_PROCESSES_VIEW,
+        featureFlag: "SERVICES",
       },
     ],
     visible: true,
@@ -354,6 +374,7 @@ export const navGroups: NavGroup[] = [
         icon: FileKey,
         description: "Manage contract types and templates",
         permission: PERMISSIONS.CONTRACT_TYPES_VIEW,
+        featureFlag: "CONTRACTS",
       },
       {
         title: "Contracts",
@@ -361,6 +382,7 @@ export const navGroups: NavGroup[] = [
         icon: FileSignature,
         description: "Manage vendor and service contracts",
         permission: PERMISSIONS.CONTRACTS_VIEW,
+        featureFlag: "CONTRACTS",
       },
     ],
     visible: true,
@@ -379,6 +401,7 @@ export const navGroups: NavGroup[] = [
         icon: Key,
         description: "Manage software license products",
         permission: PERMISSIONS.LICENSE_PRODUCTS_VIEW,
+        featureFlag: "LICENSES",
       },
       {
         title: "License Entitlements",
@@ -386,6 +409,7 @@ export const navGroups: NavGroup[] = [
         icon: Award,
         description: "Manage purchased license entitlements",
         permission: PERMISSIONS.LICENSE_ENTITLEMENTS_VIEW,
+        featureFlag: "LICENSES",
       },
       {
         title: "License Allocations",
@@ -393,6 +417,7 @@ export const navGroups: NavGroup[] = [
         icon: UserSquare2,
         description: "Track license allocations to users and assets",
         permission: PERMISSIONS.LICENSE_ALLOCATIONS_VIEW,
+        featureFlag: "LICENSES",
       },
     ],
     visible: true,
@@ -412,6 +437,7 @@ export const navGroups: NavGroup[] = [
         description:
           "Manage data classification domains (PII, Financial, etc.)",
         permission: PERMISSIONS.DATA_DOMAINS_VIEW,
+        featureFlag: "GOVERNANCE",
       },
       {
         title: "Data Ownerships",
@@ -419,6 +445,7 @@ export const navGroups: NavGroup[] = [
         icon: Users,
         description: "Assign data ownership for compliance",
         permission: PERMISSIONS.DATA_OWNERSHIPS_VIEW,
+        featureFlag: "GOVERNANCE",
       },
       {
         title: "Verification Campaigns",
@@ -426,6 +453,7 @@ export const navGroups: NavGroup[] = [
         icon: CheckCircle2,
         description: "Schedule and track compliance verification campaigns",
         permission: PERMISSIONS.VERIFICATION_CAMPAIGNS_VIEW,
+        featureFlag: "GOVERNANCE",
       },
     ],
     visible: true,
@@ -444,6 +472,7 @@ export const navGroups: NavGroup[] = [
         icon: FileType,
         description: "Configure attachment types and validation rules",
         permission: PERMISSIONS.ATTACHMENT_TYPES_VIEW,
+        featureFlag: "ATTACHMENTS",
       },
       {
         title: "All Attachments",
@@ -451,6 +480,7 @@ export const navGroups: NavGroup[] = [
         icon: Paperclip,
         description: "View all attachments across entities",
         permission: PERMISSIONS.ATTACHMENTS_VIEW,
+        featureFlag: "ATTACHMENTS",
       },
     ],
     visible: true,
@@ -469,6 +499,7 @@ export const navGroups: NavGroup[] = [
         icon: GitBranch,
         description: "Manage lifecycle models",
         permission: PERMISSIONS.LIFECYCLE_MODELS_VIEW,
+        featureFlag: "FOUNDATION",
       },
       {
         title: "States",
@@ -476,6 +507,7 @@ export const navGroups: NavGroup[] = [
         icon: Activity,
         description: "Manage lifecycle states",
         permission: PERMISSIONS.LIFECYCLE_STATES_VIEW,
+        featureFlag: "FOUNDATION",
       },
       {
         title: "Transitions",
@@ -483,6 +515,7 @@ export const navGroups: NavGroup[] = [
         icon: ArrowRightLeft,
         description: "Manage state transitions",
         permission: PERMISSIONS.LIFECYCLE_TRANSITIONS_VIEW,
+        featureFlag: "FOUNDATION",
       },
     ],
     visible: true,
@@ -501,6 +534,7 @@ export const navGroups: NavGroup[] = [
         icon: Package,
         description: "Manage vendors",
         permission: PERMISSIONS.VENDORS_VIEW,
+        featureFlag: "FOUNDATION",
       },
       {
         title: "Vendor Contacts",
@@ -508,6 +542,7 @@ export const navGroups: NavGroup[] = [
         icon: ContactRound,
         description: "Manage vendor contacts",
         permission: PERMISSIONS.VENDOR_CONTACTS_VIEW,
+        featureFlag: "FOUNDATION",
       },
       {
         title: "Organization Units",
@@ -515,6 +550,7 @@ export const navGroups: NavGroup[] = [
         icon: Building2,
         description: "Organization structure",
         permission: PERMISSIONS.ORGANIZATION_UNITS_VIEW,
+        featureFlag: "FOUNDATION",
       },
       {
         title: "Locations",
@@ -522,6 +558,7 @@ export const navGroups: NavGroup[] = [
         icon: MapPin,
         description: "Manage locations",
         permission: PERMISSIONS.LOCATIONS_VIEW,
+        featureFlag: "FOUNDATION",
       },
       {
         title: "Persons",
@@ -529,6 +566,7 @@ export const navGroups: NavGroup[] = [
         icon: UserCircle,
         description: "Manage persons",
         permission: PERMISSIONS.PERSONS_VIEW,
+        featureFlag: "FOUNDATION",
       },
       {
         title: "Role Assignments",
@@ -536,6 +574,7 @@ export const navGroups: NavGroup[] = [
         icon: UserCog,
         description: "Manage person role assignments",
         permission: PERMISSIONS.PERSON_ROLE_ASSIGNMENTS_VIEW,
+        featureFlag: "FOUNDATION",
       },
     ],
     visible: true,
@@ -554,6 +593,7 @@ export const navGroups: NavGroup[] = [
         icon: Settings2,
         description: "Manage custom field definitions",
         permission: PERMISSIONS.FIELD_DEFINITIONS_VIEW,
+        featureFlag: "FOUNDATION",
       },
       {
         title: "FX Rates",
@@ -561,6 +601,7 @@ export const navGroups: NavGroup[] = [
         icon: TrendingUp,
         description: "Manage exchange rates for multi-currency support",
         permission: PERMISSIONS.FX_RATES_VIEW,
+        featureFlag: "FX_RATES",
       },
     ],
     visible: true,
@@ -647,6 +688,14 @@ export const navGroups: NavGroup[] = [
         icon: Database,
         description: "Universal data importer for all entities",
         permission: PERMISSIONS.DATA_IMPORT_MANAGE,
+        featureFlag: "DATA_IMPORT",
+      },
+      {
+        title: "Feature Flags",
+        href: "/admin/features",
+        icon: Settings2,
+        description: "Manage feature flags and system capabilities",
+        permission: PERMISSIONS.FEATURE_FLAGS_MANAGE,
       },
     ],
     visible: true,
@@ -684,23 +733,36 @@ export const navGroups: NavGroup[] = [
         description: "RBAC and user management",
       },
     ],
-    visible: true,
+    visible: false,
     collapsible: true,
     defaultCollapsed: false,
   },
 ];
 
 /**
- * Check if item should be visible based on permissions
+ * Check if item should be visible based on permissions and feature flags
  * @param item - Navigation item to check
  * @param userPermissions - Array of user's permissions
+ * @param enabledFeatures - Set of enabled feature names (optional)
  */
 function checkItemPermission(
   item: NavItem,
   userPermissions: PermissionKey[],
+  enabledFeatures?: Set<string>,
 ): boolean {
-  if (!item.permission) return true;
-  return userPermissions.includes(item.permission);
+  // Check permission (if specified)
+  if (item.permission && !userPermissions.includes(item.permission)) {
+    return false;
+  }
+
+  // Check feature flag (if specified and enabledFeatures provided)
+  if (item.featureFlag && enabledFeatures) {
+    if (!enabledFeatures.has(item.featureFlag)) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 /**
@@ -717,22 +779,29 @@ function checkGroupPermission(
 }
 
 /**
- * Filter items recursively based on visibility and permissions
+ * Filter items recursively based on visibility, permissions, and feature flags
  * @param items - Navigation items to filter
  * @param userPermissions - Array of user's permissions
+ * @param enabledFeatures - Set of enabled feature names (optional)
  */
 function filterItems(
   items: NavItem[],
   userPermissions: PermissionKey[],
+  enabledFeatures?: Set<string>,
 ): NavItem[] {
   return items
     .filter(
       (item) =>
-        item.visible !== false && checkItemPermission(item, userPermissions),
+        item.visible !== false &&
+        checkItemPermission(item, userPermissions, enabledFeatures),
     )
     .map((item) => {
       if (item.children) {
-        const filteredChildren = filterItems(item.children, userPermissions);
+        const filteredChildren = filterItems(
+          item.children,
+          userPermissions,
+          enabledFeatures,
+        );
         return {
           ...item,
           children: filteredChildren.length > 0 ? filteredChildren : undefined,
@@ -744,20 +813,24 @@ function filterItems(
 
 /**
  * Get visible navigation groups
- * Filters based on visibility, permissions, and removes empty groups
+ * Filters based on visibility, permissions, feature flags, and removes empty groups
  *
  * @param userPermissions - Array of user's permissions
  * @param options - Configuration options
  * @param options.showUnauthenticated - If true, shows all navigation (for unauthenticated/loading state)
+ * @param options.enabledFeatures - Set of enabled feature names (for feature flag filtering)
  *
  * Behavior:
  * - If showUnauthenticated=true: Show all navigation (unauthenticated state)
  * - If userPermissions is empty array: Show nothing (user has no permissions)
- * - Otherwise: Filter by permissions
+ * - Otherwise: Filter by permissions and feature flags
  */
 export const getVisibleNavGroups = (
   userPermissions: PermissionKey[],
-  options: { showUnauthenticated?: boolean } = {},
+  options: {
+    showUnauthenticated?: boolean;
+    enabledFeatures?: Set<string>;
+  } = {},
 ): NavGroup[] => {
   // If explicitly showing unauthenticated state, return all navigation
   if (options.showUnauthenticated) {
@@ -770,7 +843,7 @@ export const getVisibleNavGroups = (
     return [];
   }
 
-  // Filter by permissions
+  // Filter by permissions and feature flags
   return navGroups
     .filter(
       (group) =>
@@ -778,7 +851,7 @@ export const getVisibleNavGroups = (
     )
     .map((group) => ({
       ...group,
-      items: filterItems(group.items, userPermissions),
+      items: filterItems(group.items, userPermissions, options.enabledFeatures),
     }))
     .filter((group) => group.items.length > 0); // Remove empty groups
 };
@@ -826,7 +899,10 @@ export const getAllNavItems = (): NavItem[] => {
  */
 export const getVisibleNavItems = (
   userPermissions: PermissionKey[],
-  options: { showUnauthenticated?: boolean } = {},
+  options: {
+    showUnauthenticated?: boolean;
+    enabledFeatures?: Set<string>;
+  } = {},
 ): NavItem[] => {
   if (options.showUnauthenticated) {
     return navItems.filter((item) => item.visible !== false);
@@ -838,7 +914,8 @@ export const getVisibleNavItems = (
 
   return navItems.filter(
     (item) =>
-      item.visible !== false && checkItemPermission(item, userPermissions),
+      item.visible !== false &&
+      checkItemPermission(item, userPermissions, options.enabledFeatures),
   );
 };
 

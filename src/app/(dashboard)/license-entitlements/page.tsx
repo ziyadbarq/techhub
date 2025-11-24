@@ -4,12 +4,15 @@
 
 import { LicenseEntitlementsPageClient } from "@/components/license-entitlements/license-entitlements-page-client";
 import { requirePermission } from "@/lib/permissions/server";
+import { requireFeature } from "@/lib/features/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
 export default async function LicenseEntitlementsPage() {
+  await requireFeature("LICENSES");
+
   try {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_VIEW);
   } catch (error) {

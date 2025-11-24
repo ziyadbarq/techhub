@@ -24,6 +24,7 @@ import { globalSearchAction } from "@/interface-adapters/controllers/search.cont
 import type { SearchResultDTO } from "@/interface-adapters/dtos/search.dto";
 import { getVisibleNavGroups, type NavItem } from "@/config/navigation";
 import { usePermissions } from "@/hooks/use-permissions";
+import { useFeatureFlags } from "@/hooks/use-feature-flags";
 
 // Entity type icons mapping
 const ENTITY_ICONS = {
@@ -66,6 +67,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
     isError: permissionsError,
     hasNoPermissions,
   } = usePermissions();
+  const { enabledFeatures, isLoading: featuresLoading } = useFeatureFlags();
   const [query, setQuery] = React.useState("");
   const [results, setResults] = React.useState<SearchResultDTO[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -131,9 +133,14 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
     setResults([]);
   };
 
-  // Visible navigation items filtered by permissions and query
+  // Visible navigation items filtered by permissions, feature flags, and query
   const visibleNavItems = React.useMemo(() => {
-    if (permissionsLoading || permissionsError || hasNoPermissions) {
+    if (
+      permissionsLoading ||
+      featuresLoading ||
+      permissionsError ||
+      hasNoPermissions
+    ) {
       return [];
     }
 
@@ -146,10 +153,17 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
         return [rest];
       });
 
-    return getVisibleNavGroups(permissions).flatMap((group) =>
-      flattenItems(group.items),
+    return getVisibleNavGroups(permissions, { enabledFeatures }).flatMap(
+      (group) => flattenItems(group.items),
     );
-  }, [permissions, permissionsLoading, permissionsError, hasNoPermissions]);
+  }, [
+    permissions,
+    enabledFeatures,
+    permissionsLoading,
+    featuresLoading,
+    permissionsError,
+    hasNoPermissions,
+  ]);
 
   const navigationResults = React.useMemo(() => {
     if (!trimmedQuery) return [];

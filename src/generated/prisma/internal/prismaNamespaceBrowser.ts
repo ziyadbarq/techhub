@@ -119,7 +119,9 @@ export const ModelName = {
   Task: 'Task',
   PromptBlock: 'PromptBlock',
   PromptComposition: 'PromptComposition',
-  PromptCompositionBlock: 'PromptCompositionBlock'
+  PromptCompositionBlock: 'PromptCompositionBlock',
+  FeatureFlag: 'FeatureFlag',
+  FeatureFlagAuditLog: 'FeatureFlagAuditLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1315,6 +1317,35 @@ export const PromptCompositionBlockScalarFieldEnum = {
 } as const
 
 export type PromptCompositionBlockScalarFieldEnum = (typeof PromptCompositionBlockScalarFieldEnum)[keyof typeof PromptCompositionBlockScalarFieldEnum]
+
+
+export const FeatureFlagScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  displayName: 'displayName',
+  description: 'description',
+  category: 'category',
+  isEnabled: 'isEnabled',
+  isSystem: 'isSystem',
+  dependsOn: 'dependsOn',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FeatureFlagScalarFieldEnum = (typeof FeatureFlagScalarFieldEnum)[keyof typeof FeatureFlagScalarFieldEnum]
+
+
+export const FeatureFlagAuditLogScalarFieldEnum = {
+  id: 'id',
+  featureName: 'featureName',
+  action: 'action',
+  userId: 'userId',
+  userEmail: 'userEmail',
+  reason: 'reason',
+  createdAt: 'createdAt'
+} as const
+
+export type FeatureFlagAuditLogScalarFieldEnum = (typeof FeatureFlagAuditLogScalarFieldEnum)[keyof typeof FeatureFlagAuditLogScalarFieldEnum]
 
 
 export const SortOrder = {

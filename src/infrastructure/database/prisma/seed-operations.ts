@@ -15,6 +15,10 @@ import {
  * Order is critical to respect foreign key constraints
  */
 export async function performFullCleanup(prisma: PrismaClient): Promise<void> {
+  // Feature flags cleanup (no foreign keys)
+  await prisma.featureFlagAuditLog.deleteMany({});
+  await prisma.featureFlag.deleteMany({});
+
   // Service Management cleanup
   await prisma.serviceAsset.deleteMany({});
   await prisma.serviceInfrastructure.deleteMany({});

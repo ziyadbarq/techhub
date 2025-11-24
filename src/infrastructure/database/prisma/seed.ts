@@ -17,6 +17,7 @@
 import { prisma } from "./client.js";
 import { seedPrompts } from "./seed-prompts.js";
 import { seedRBAC } from "./seed-rbac.js";
+import { seedFeatureFlags } from "./seed-features.js";
 import { seedFoundation } from "./seed-foundation.js";
 import { seedAssets } from "./seed-assets.js";
 import { seedWarrantiesMaintenance } from "./seed-warranties-maintenance.js";
@@ -56,6 +57,10 @@ async function main() {
 
     // 1. Seed RBAC (roles, permissions, assignments)
     await seedRBAC();
+    console.log("");
+
+    // 1.5. Seed Feature Flags (all disabled by default)
+    await seedFeatureFlags(prisma);
     console.log("");
 
     // 2. Seed Foundation (lifecycle, vendors, org units, locations, persons, fields)
@@ -117,6 +122,7 @@ async function main() {
     console.log("\nSeeded data summary:");
     console.log("  Layer 0: RBAC System");
     console.log("    ✓ Roles, permissions, and role-permission assignments");
+    console.log("    ✓ Feature flags (19 features, default: disabled)");
     console.log("  Layer 1: Foundation");
     console.log(
       "    ✓ Lifecycle, vendors, org units, locations, persons, fields",

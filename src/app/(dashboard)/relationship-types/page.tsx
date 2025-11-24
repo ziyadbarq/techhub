@@ -7,10 +7,13 @@ import { listRelationshipTypesAction } from "@/interface-adapters/controllers/re
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { requireFeature } from "@/lib/features/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function RelationshipTypesPage() {
+  await requireFeature("CMDB");
+
   try {
     await requirePermission(PERMISSIONS.RELATIONSHIP_TYPES_VIEW);
   } catch (error) {

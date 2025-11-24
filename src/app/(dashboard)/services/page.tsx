@@ -11,10 +11,13 @@ import { ServicesTable } from "@/components/services/services-table";
 import { listServicesAction } from "@/interface-adapters/controllers/service.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { hasPermission } from "@/lib/permissions/server";
+import { requireFeature } from "@/lib/features/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function ServicesPage() {
+  await requireFeature("SERVICES");
+
   const canCreate = await hasPermission(PERMISSIONS.SERVICES_CREATE);
   const result = await listServicesAction();
 

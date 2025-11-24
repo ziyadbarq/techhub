@@ -7,6 +7,7 @@ import { Header } from "@/components/layout/Header";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { GlobalLoading } from "@/components/global-loading";
 import { CommandPaletteProvider } from "@/components/search/command-palette-provider";
+import { FeatureFlagsChecker } from "@/components/features/feature-flags-checker";
 
 export function DashboardLayoutClient({ children }: { children: ReactNode }) {
   const [isMounted, setIsMounted] = useState(false);
@@ -33,6 +34,7 @@ export function DashboardLayoutClient({ children }: { children: ReactNode }) {
 
   return (
     <ErrorBoundary>
+      <FeatureFlagsChecker />
       <CommandPaletteProvider>
         <div className="bg-background relative flex min-h-screen">
           {/* Sidebar - Manages its own responsive state */}

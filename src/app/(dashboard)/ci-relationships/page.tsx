@@ -7,10 +7,13 @@ import { listCIRelationshipsAction } from "@/interface-adapters/controllers/ci-r
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { requireFeature } from "@/lib/features/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function CIRelationshipsPage() {
+  await requireFeature("CMDB");
+
   try {
     await requirePermission(PERMISSIONS.CI_RELATIONSHIPS_VIEW);
   } catch (error) {

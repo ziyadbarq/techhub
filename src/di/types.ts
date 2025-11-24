@@ -52,6 +52,9 @@ export const DI_TOKENS = {
   // System Setup Repository
   ISystemSetupRepository: Symbol.for("ISystemSetupRepository"),
 
+  // Feature Flags Repository
+  IFeatureFlagRepository: Symbol.for("IFeatureFlagRepository"),
+
   // Foundation Repositories
   ILifecycleModelRepository: Symbol.for("ILifecycleModelRepository"),
   ILifecycleStateRepository: Symbol.for("ILifecycleStateRepository"),
@@ -231,6 +234,12 @@ export const DI_TOKENS = {
   SeedMinimalDataUseCase: Symbol.for("SeedMinimalDataUseCase"),
   ResetDatabaseUseCase: Symbol.for("ResetDatabaseUseCase"),
   GetSystemInfoUseCase: Symbol.for("GetSystemInfoUseCase"),
+
+  // Feature Flags Use Cases
+  ListFeatureFlagsUseCase: Symbol.for("ListFeatureFlagsUseCase"),
+  GetFeatureFlagUseCase: Symbol.for("GetFeatureFlagUseCase"),
+  ToggleFeatureFlagUseCase: Symbol.for("ToggleFeatureFlagUseCase"),
+  CheckFeatureEnabledUseCase: Symbol.for("CheckFeatureEnabledUseCase"),
 
   // RBAC Analytics Use Cases
   GetRoleUsageStatsUseCase: Symbol.for("GetRoleUsageStatsUseCase"),

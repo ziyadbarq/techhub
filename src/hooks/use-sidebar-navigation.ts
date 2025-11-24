@@ -10,6 +10,7 @@ import {
 import { useBadgeUpdates } from "./use-badge-updates";
 import { useLocalStorage } from "./use-local-storage";
 import { usePermissions } from "./use-permissions";
+import { useFeatureFlags } from "./use-feature-flags";
 
 type SidebarGroupState = Record<string, boolean>;
 type SidebarItemState = Record<string, boolean>;
@@ -75,10 +76,12 @@ export function useSidebarNavigation() {
     hasNoPermissions,
   } = usePermissions();
 
+  const { enabledFeatures, isLoading: featuresLoading } = useFeatureFlags();
+
   // Determine navigation visibility
   const navGroups = React.useMemo(() => {
-    // If still loading or error fetching permissions, show nothing (keep loading state in UI)
-    if (permissionsLoading || permissionsError) {
+    // If still loading permissions/features or error fetching, show nothing (keep loading state in UI)
+    if (permissionsLoading || featuresLoading || permissionsError) {
       return [];
     }
 
@@ -87,9 +90,16 @@ export function useSidebarNavigation() {
       return [];
     }
 
-    // Filter navigation by actual permissions
-    return getVisibleNavGroups(permissions);
-  }, [permissions, permissionsLoading, permissionsError, hasNoPermissions]);
+    // Filter navigation by both permissions AND feature flags
+    return getVisibleNavGroups(permissions, { enabledFeatures });
+  }, [
+    permissions,
+    enabledFeatures,
+    permissionsLoading,
+    featuresLoading,
+    permissionsError,
+    hasNoPermissions,
+  ]);
 
   const [collapsedGroups, setCollapsedGroups] =
     useLocalStorage<SidebarGroupState>(

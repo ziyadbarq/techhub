@@ -7,10 +7,13 @@ import { listAssetDisposalsAction } from "@/interface-adapters/controllers/asset
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { requireFeature } from "@/lib/features/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function AssetDisposalsPage() {
+  await requireFeature("ASSET_DISPOSALS");
+
   try {
     await requirePermission(PERMISSIONS.ASSET_DISPOSALS_VIEW);
   } catch (error) {
