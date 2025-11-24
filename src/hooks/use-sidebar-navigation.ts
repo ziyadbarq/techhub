@@ -68,11 +68,28 @@ function buildItemStates(
 }
 
 export function useSidebarNavigation() {
-  const { permissions, isLoading: permissionsLoading } = usePermissions();
-  const navGroups = React.useMemo(
-    () => getVisibleNavGroups(permissions),
-    [permissions],
-  );
+  const {
+    permissions,
+    isLoading: permissionsLoading,
+    isError: permissionsError,
+    hasNoPermissions,
+  } = usePermissions();
+
+  // Determine navigation visibility
+  const navGroups = React.useMemo(() => {
+    // If still loading or error fetching permissions, show nothing (keep loading state in UI)
+    if (permissionsLoading || permissionsError) {
+      return [];
+    }
+
+    // If user has no permissions, show nothing (empty navigation)
+    if (hasNoPermissions) {
+      return [];
+    }
+
+    // Filter navigation by actual permissions
+    return getVisibleNavGroups(permissions);
+  }, [permissions, permissionsLoading, permissionsError, hasNoPermissions]);
 
   const [collapsedGroups, setCollapsedGroups] =
     useLocalStorage<SidebarGroupState>(
@@ -126,6 +143,8 @@ export function useSidebarNavigation() {
   return {
     navGroups,
     permissionsLoading,
+    permissionsError,
+    hasNoPermissions,
     collapsedGroups,
     expandedItems,
     toggleGroup,

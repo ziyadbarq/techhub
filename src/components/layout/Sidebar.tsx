@@ -93,6 +93,8 @@ function SidebarComponent({ className }: SidebarProps) {
   const {
     navGroups,
     permissionsLoading,
+    permissionsError,
+    hasNoPermissions,
     collapsedGroups,
     expandedItems,
     toggleGroup,
@@ -292,6 +294,18 @@ function SidebarComponent({ className }: SidebarProps) {
               <div className="flex items-center justify-center py-8">
                 <div className="text-muted-foreground text-sm">
                   Loading navigation...
+                </div>
+              </div>
+            ) : permissionsError ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="text-muted-foreground text-sm">
+                  Navigation unavailable. Please refresh or contact an admin.
+                </div>
+              </div>
+            ) : hasNoPermissions ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="text-muted-foreground text-sm">
+                  No permissions assigned to your account yet.
                 </div>
               </div>
             ) : (

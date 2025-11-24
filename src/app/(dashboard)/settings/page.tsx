@@ -9,14 +9,30 @@
 
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
+import { requirePermission } from "@/lib/permissions/server";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { SettingsForm } from "@/components/settings/settings-form";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { InsufficientPermissionsError } from "@/core/domain/errors/rbac-errors";
 
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
+  try {
+    await requirePermission(PERMISSIONS.SETTINGS_VIEW);
+  } catch (error) {
+    if (error instanceof InsufficientPermissionsError) {
+      const params = new URLSearchParams({
+        required: error.requiredPermission,
+        path: "/settings",
+      });
+      redirect(`/unauthorized?${params.toString()}`);
+    }
+    throw error;
+  }
+
   const { user } = await getSession();
 
   if (!user) {

@@ -745,16 +745,32 @@ function filterItems(
 /**
  * Get visible navigation groups
  * Filters based on visibility, permissions, and removes empty groups
- * @param userPermissions - Array of user's permissions (optional - shows all if not provided)
+ *
+ * @param userPermissions - Array of user's permissions
+ * @param options - Configuration options
+ * @param options.showUnauthenticated - If true, shows all navigation (for unauthenticated/loading state)
+ *
+ * Behavior:
+ * - If showUnauthenticated=true: Show all navigation (unauthenticated state)
+ * - If userPermissions is empty array: Show nothing (user has no permissions)
+ * - Otherwise: Filter by permissions
  */
 export const getVisibleNavGroups = (
-  userPermissions: PermissionKey[] = [],
+  userPermissions: PermissionKey[],
+  options: { showUnauthenticated?: boolean } = {},
 ): NavGroup[] => {
-  // If no permissions provided, show all navigation (for initial render or logged out state)
-  if (userPermissions.length === 0) {
+  // If explicitly showing unauthenticated state, return all navigation
+  if (options.showUnauthenticated) {
     return navGroups.filter((group) => group.visible !== false);
   }
 
+  // If empty permissions array (user loaded but has no permissions), show nothing
+  // This prevents "show everything" behavior for users with zero permissions
+  if (userPermissions.length === 0) {
+    return [];
+  }
+
+  // Filter by permissions
   return navGroups
     .filter(
       (group) =>
@@ -803,14 +819,23 @@ export const getAllNavItems = (): NavItem[] => {
 /**
  * Get visible navigation items (flat)
  * Filters out items where visible is explicitly set to false
- * @param userPermissions - Array of user's permissions (optional)
+ *
+ * @param userPermissions - Array of user's permissions
+ * @param options - Configuration options
+ * @param options.showUnauthenticated - If true, shows all navigation (for unauthenticated/loading state)
  */
 export const getVisibleNavItems = (
-  userPermissions: PermissionKey[] = [],
+  userPermissions: PermissionKey[],
+  options: { showUnauthenticated?: boolean } = {},
 ): NavItem[] => {
-  if (userPermissions.length === 0) {
+  if (options.showUnauthenticated) {
     return navItems.filter((item) => item.visible !== false);
   }
+
+  if (userPermissions.length === 0) {
+    return [];
+  }
+
   return navItems.filter(
     (item) =>
       item.visible !== false && checkItemPermission(item, userPermissions),

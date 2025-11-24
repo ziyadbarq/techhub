@@ -1,9 +1,10 @@
 /**
  * Dynamic MDX Documentation Page
  * Renders MDX content from src/content/docs/
+ * Requires authentication (any authenticated user with DASHBOARD_VIEW can access)
  */
 
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import {
   getDocContent,
@@ -20,6 +21,9 @@ import rehypeSlug from "rehype-slug";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import { Clock } from "lucide-react";
 import { logger } from "@/lib/logger";
+import { requirePermission } from "@/lib/permissions/server";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { InsufficientPermissionsError } from "@/core/domain/errors/rbac-errors";
 
 export const dynamic = "force-dynamic";
 
@@ -61,6 +65,21 @@ export async function generateMetadata({ params }: DocPageProps) {
  * Documentation page component
  */
 export default async function DocPage({ params }: DocPageProps) {
+  // Require DASHBOARD_VIEW permission - docs available to all authenticated users with minimal permissions
+  try {
+    await requirePermission(PERMISSIONS.DASHBOARD_VIEW);
+  } catch (error) {
+    if (error instanceof InsufficientPermissionsError) {
+      const { slug } = await params;
+      const paramsObj = new URLSearchParams({
+        required: error.requiredPermission,
+        path: `/docs/${slug}`,
+      });
+      redirect(`/unauthorized?${paramsObj.toString()}`);
+    }
+    throw error;
+  }
+
   const { slug } = await params;
   const scopedLogger = logger.scope("DocPage");
 

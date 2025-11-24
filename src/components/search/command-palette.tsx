@@ -60,7 +60,12 @@ interface CommandPaletteProps {
 
 export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const router = useRouter();
-  const { permissions } = usePermissions();
+  const {
+    permissions,
+    isLoading: permissionsLoading,
+    isError: permissionsError,
+    hasNoPermissions,
+  } = usePermissions();
   const [query, setQuery] = React.useState("");
   const [results, setResults] = React.useState<SearchResultDTO[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -128,6 +133,10 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
   // Visible navigation items filtered by permissions and query
   const visibleNavItems = React.useMemo(() => {
+    if (permissionsLoading || permissionsError || hasNoPermissions) {
+      return [];
+    }
+
     const flattenItems = (items: NavItem[]): NavItem[] =>
       items.flatMap((item) => {
         const { children, ...rest } = item;
@@ -140,7 +149,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
     return getVisibleNavGroups(permissions).flatMap((group) =>
       flattenItems(group.items),
     );
-  }, [permissions]);
+  }, [permissions, permissionsLoading, permissionsError, hasNoPermissions]);
 
   const navigationResults = React.useMemo(() => {
     if (!trimmedQuery) return [];
