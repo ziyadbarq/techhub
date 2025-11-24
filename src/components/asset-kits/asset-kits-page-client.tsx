@@ -12,10 +12,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { AssetKitDTO } from "@/interface-adapters/dtos/generated/asset-kit.dto";
 import type { AssetKitCheckoutDTO } from "@/interface-adapters/dtos/generated/asset-kit-checkout.dto";
-import {
-  listAssetKitsAction,
-  listKitCheckoutsAction,
-} from "@/interface-adapters/controllers/asset-kit.controller";
+import { listAssetKitsAction } from "@/interface-adapters/controllers/asset-kit.controller";
+import { listKitCheckoutsAction } from "@/interface-adapters/controllers/asset-kit-checkout.controller";
 import { AssetKitsTable } from "./asset-kits-table";
 import { KitCheckoutsTable } from "./kit-checkouts-table";
 import { KitForm } from "./kit-form";

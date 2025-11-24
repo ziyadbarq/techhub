@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import type { z } from "zod";
-import { createKitCheckoutAction } from "@/interface-adapters/controllers/asset-kit.controller";
+import { createKitCheckoutAction } from "@/interface-adapters/controllers/asset-kit-checkout.controller";
 import { CreateKitCheckoutDTO } from "@/interface-adapters/dtos/generated/asset-kit-checkout.dto";
 import { listAssetKitsAction } from "@/interface-adapters/controllers/asset-kit.controller";
 import { listPersonsAction } from "@/interface-adapters/controllers/person.controller";

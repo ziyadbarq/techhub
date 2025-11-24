@@ -45,7 +45,7 @@ import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
 import {
   linkServiceToAssetAction,
   unlinkServiceFromAssetAction,
-} from "@/interface-adapters/controllers/service.controller";
+} from "@/interface-adapters/controllers/service-asset.controller";
 import { AssetRelationship } from "@/generated/prisma/enums";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { usePermissions } from "@/hooks/use-permissions";

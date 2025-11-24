@@ -36,7 +36,7 @@ import type { ServiceInfrastructureDTO } from "@/interface-adapters/presenters/s
 import {
   createServiceInfrastructureAction,
   updateServiceInfrastructureAction,
-} from "@/interface-adapters/controllers/service.controller";
+} from "@/interface-adapters/controllers/service-infrastructure.controller";
 import {
   CreateServiceInfrastructureSchema,
   type CreateServiceInfrastructureDTO,

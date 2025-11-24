@@ -185,7 +185,9 @@ CMDB ← NEW GROUP
 **Controllers**:
 
 - `src/interface-adapters/controllers/asset-disposal.controller.ts`
-- `src/interface-adapters/controllers/asset-kit.controller.ts`
+- `src/interface-adapters/controllers/asset-kit.controller.ts` (Core kit CRUD)
+- `src/interface-adapters/controllers/asset-kit-item.controller.ts` (Kit item management)
+- `src/interface-adapters/controllers/asset-kit-checkout.controller.ts` (Checkout operations)
 - `src/interface-adapters/controllers/asset-reservation.controller.ts`
 - `src/interface-adapters/controllers/configuration-item.controller.ts`
 - `src/interface-adapters/controllers/ci-relationship.controller.ts`

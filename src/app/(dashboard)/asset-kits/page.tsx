@@ -3,10 +3,8 @@
  */
 
 import { AssetKitsPageClient } from "@/components/asset-kits/asset-kits-page-client";
-import {
-  listAssetKitsAction,
-  listKitCheckoutsAction,
-} from "@/interface-adapters/controllers/asset-kit.controller";
+import { listAssetKitsAction } from "@/interface-adapters/controllers/asset-kit.controller";
+import { listKitCheckoutsAction } from "@/interface-adapters/controllers/asset-kit-checkout.controller";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";

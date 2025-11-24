@@ -697,6 +697,264 @@ async function main() {
 
 ---
 
+## Pattern 5: Controller Refactoring (Domain Separation)
+
+### Problem
+
+Large controller files (600+ lines) handling multiple domain responsibilities:
+- Mixed CRUD operations across different sub-domains
+- Difficult to navigate and maintain
+- Violates Single Responsibility Principle
+- Unclear boundaries between related but distinct features
+
+### Solution
+
+Split controllers by domain responsibility, aligning with use case structure following SOLID principles.
+
+### Real-World Example
+
+**Before Refactoring**:
+- `service.controller.ts` - 739 lines, 20 methods across 4 domains
+- `asset-kit.controller.ts` - 643 lines, 18 methods across 3 domains
+
+**After Refactoring**:
+
+Service Controller Split (1 → 4 controllers):
+1. `service.controller.ts` - Core CRUD (9 methods, ~330 lines)
+2. `service-ownership.controller.ts` - Ownership management (4 methods, ~170 lines)
+3. `service-infrastructure.controller.ts` - Infrastructure details (3 methods, ~150 lines)
+4. `service-asset.controller.ts` - Asset relationships (4 methods, ~150 lines)
+
+Asset Kit Controller Split (1 → 3 controllers):
+1. `asset-kit.controller.ts` - Core kit CRUD (5 methods, ~185 lines)
+2. `asset-kit-item.controller.ts` - Kit item management (3 methods, ~130 lines)
+3. `asset-kit-checkout.controller.ts` - Checkout operations (10 methods, ~370 lines)
+
+### Implementation Steps
+
+#### 1. Identify Domain Boundaries
+
+Analyze the controller to find logical groupings:
+
+```typescript
+// service.controller.ts (BEFORE)
+// ==================== Service Management ====================
+export async function createServiceAction(...) { }
+export async function getServiceAction(...) { }
+export async function listServicesAction(...) { }
+// ... 6 more service methods
+
+// ==================== Service Ownership ====================
+export async function addServiceOwnerAction(...) { }
+export async function removeServiceOwnerAction(...) { }
+// ... 2 more ownership methods
+
+// ==================== Service Infrastructure ====================
+export async function createServiceInfrastructureAction(...) { }
+// ... 2 more infrastructure methods
+
+// ==================== Service Asset Linking ====================
+export async function linkServiceToAssetAction(...) { }
+// ... 3 more asset methods
+```
+
+**Key Indicators**:
+- Comment separators marking sections
+- Methods grouped by feature area
+- Distinct import blocks per section
+- Separate use case directories
+
+#### 2. Create New Controller Files
+
+For each domain, create a focused controller:
+
+```typescript
+// service-ownership.controller.ts (AFTER)
+"use server";
+
+import { revalidatePath } from "next/cache";
+import type { z } from "zod";
+import { getContainer } from "@/di/container";
+import { DI_TOKENS } from "@/di/types";
+import type { ActionResponse } from "./types";
+import { handleControllerError } from "./error-handler";
+import {
+  AddServiceOwnerSchema,
+  RemoveServiceOwnerSchema,
+  SetPrimaryOwnerSchema,
+} from "../dtos/generated/service.dto";
+import {
+  presentServiceOwnerList,
+  type ServiceOwnerDTO,
+} from "../presenters/service.presenter";
+import type {
+  AddServiceOwnerUseCase,
+  RemoveServiceOwnerUseCase,
+  SetPrimaryOwnerUseCase,
+  GetServiceOwnersUseCase,
+} from "@/core/use-cases/service-ownership";
+import { requirePermission } from "@/lib/permissions/server";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+export async function addServiceOwnerAction(
+  data: z.infer<typeof AddServiceOwnerSchema>,
+): Promise<ActionResponse<void>> {
+  try {
+    await requirePermission(PERMISSIONS.SERVICES_MANAGE);
+    // ... implementation
+  } catch (error) {
+    return handleControllerError(error, { function: "addServiceOwnerAction" }, "Failed to add service owner");
+  }
+}
+
+// ... 3 more ownership methods
+```
+
+#### 3. Update Original Controller
+
+Keep only core CRUD operations in the original file:
+
+```typescript
+// service.controller.ts (AFTER - core operations only)
+"use server";
+
+import { revalidatePath } from "next/cache";
+import type { z } from "zod";
+import { getContainer } from "@/di/container";
+import { DI_TOKENS } from "@/di/types";
+import type { ActionResponse } from "./types";
+import { handleControllerError } from "./error-handler";
+import { CreateServiceSchema, UpdateServiceSchema } from "../dtos/generated/service.dto";
+import { presentService, presentServiceList, type ServiceDTO } from "../presenters/service.presenter";
+import type {
+  CreateServiceUseCase,
+  GetServiceUseCase,
+  ListServicesUseCase,
+  UpdateServiceUseCase,
+  DeleteServiceUseCase,
+  SearchServicesUseCase,
+  GetEssentialServicesUseCase,
+  GetRetiringServicesUseCase,
+  RetireServiceUseCase,
+} from "@/core/use-cases/service";
+import { requirePermission } from "@/lib/permissions/server";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+// ==================== Service Management ====================
+
+export async function createServiceAction(...) { }
+export async function getServiceAction(...) { }
+export async function listServicesAction(...) { }
+export async function updateServiceAction(...) { }
+export async function deleteServiceAction(...) { }
+export async function searchServicesAction(...) { }
+export async function getEssentialServicesAction(...) { }
+export async function getRetiringServicesAction(...) { }
+export async function retireServiceAction(...) { }
+```
+
+#### 4. Update Imports in Client Code
+
+Update all files importing from the original controller:
+
+```typescript
+// BEFORE
+import {
+  getServiceAction,
+  getServiceOwnersAction,
+  getServiceInfrastructureAction,
+  getServiceAssetsAction,
+} from "@/interface-adapters/controllers/service.controller";
+
+// AFTER
+import { getServiceAction } from "@/interface-adapters/controllers/service.controller";
+import { getServiceOwnersAction } from "@/interface-adapters/controllers/service-ownership.controller";
+import { getServiceInfrastructureAction } from "@/interface-adapters/controllers/service-infrastructure.controller";
+import { getServiceAssetsAction } from "@/interface-adapters/controllers/service-asset.controller";
+```
+
+Files updated in this refactoring:
+- `src/app/(dashboard)/services/[id]/page.tsx`
+- `src/components/services/service-asset-linker.tsx`
+- `src/components/services/service-infrastructure-form.tsx`
+- `src/components/services/service-owners-manager.tsx`
+
+#### 5. Validate the Refactoring
+
+```bash
+# Run full validation suite
+npm run validate
+
+# Verify type-checking passes
+npm run type-check
+
+# Verify all tests pass
+npm run test
+
+# Verify no import errors
+npm run lint
+```
+
+### Decision Criteria
+
+Split a controller when:
+
+1. **File size > 500 lines** with clear section markers
+2. **Multiple domain responsibilities** (ownership, infrastructure, relationships)
+3. **Aligned with use case structure** (separate use case directories exist)
+4. **Clear boundaries** between feature areas
+5. **Different permission requirements** per domain
+
+### Benefits
+
+- **Single Responsibility**: Each controller has one focused domain
+- **Easier Navigation**: ~150-200 lines per file vs 600-700 lines
+- **Better Testability**: Smaller, focused test suites
+- **Open/Closed Principle**: Extend without modifying other domains
+- **Interface Segregation**: Import only needed actions
+- **Aligned Architecture**: Matches use case directory structure
+- **No Breaking Changes**: All exports remain unchanged
+
+### Tradeoffs
+
+**Pros**:
+- Improved maintainability and clarity
+- Faster navigation and comprehension
+- Reduced merge conflicts (different domains, different files)
+- Better code organization
+
+**Cons**:
+- More files to manage (4 instead of 1)
+- Slightly more import statements in client code
+- Initial refactoring effort
+
+### Verification
+
+After refactoring, verify:
+
+```bash
+# 1. All TypeScript errors resolved
+npm run type-check
+# ✅ No errors
+
+# 2. All imports updated correctly
+npm run lint
+# ✅ No import errors
+
+# 3. All tests pass
+npm run test
+# ✅ 799/800 tests passed (1 pre-existing flaky test)
+
+# 4. Git diff shows clean split
+git diff --stat
+# service.controller.ts              | 410 ----
+# service-ownership.controller.ts    | 170 ++++
+# service-infrastructure.controller.ts | 150 ++++
+# service-asset.controller.ts        | 150 ++++
+```
+
+---
+
 ## Additional Refactoring Guidelines
 
 ### Code Smells to Watch For
@@ -734,3 +992,5 @@ Avoid refactoring when:
 - [DATABASE_SEEDING.md](DATABASE_SEEDING.md) - Module extraction example (seed system)
 - [UNIVERSAL_DATA_IMPORTER.md](../../roadmap/UNIVERSAL_DATA_IMPORTER.md) - Builder pattern example (field builders)
 - [RBAC_DEVELOPER_GUIDE.md](RBAC_DEVELOPER_GUIDE.md) - Helper functions example (permission dependencies)
+- [SERVICE_MANAGEMENT.md](../features/SERVICE_MANAGEMENT.md) - Controller refactoring example (service controllers)
+- [ITAM_FEATURES.md](../features/ITAM_FEATURES.md) - Controller refactoring example (asset-kit controllers)

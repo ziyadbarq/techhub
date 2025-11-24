@@ -6,12 +6,10 @@ import * as React from "react";
 import { notFound } from "next/navigation";
 
 import { ServiceDetailView } from "@/components/services/service-detail-view";
-import {
-  getServiceAction,
-  getServiceOwnersAction,
-  getServiceInfrastructureAction,
-  getServiceAssetsAction,
-} from "@/interface-adapters/controllers/service.controller";
+import { getServiceAction } from "@/interface-adapters/controllers/service.controller";
+import { getServiceOwnersAction } from "@/interface-adapters/controllers/service-ownership.controller";
+import { getServiceInfrastructureAction } from "@/interface-adapters/controllers/service-infrastructure.controller";
+import { getServiceAssetsAction } from "@/interface-adapters/controllers/service-asset.controller";
 
 export const dynamic = "force-dynamic";
 

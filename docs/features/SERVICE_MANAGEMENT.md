@@ -510,9 +510,12 @@ export function presentService(service: Service, enrichment?: {...}): ServiceDTO
 
 ### Controllers (Server Actions)
 
+All controllers are server actions with permission checks, organized by domain responsibility following SOLID principles.
+
+#### Service Controller
 **Location**: `src/interface-adapters/controllers/service.controller.ts`
 
-All controllers are server actions with permission checks.
+Core CRUD operations for services.
 
 ```typescript
 export async function createServiceAction(data: CreateServiceDTO): Promise<ActionResponse<ServiceDTO>>
@@ -520,9 +523,45 @@ export async function getServiceAction(id: string): Promise<ActionResponse<Servi
 export async function listServicesAction(): Promise<ActionResponse<ServiceDTO[]>>
 export async function updateServiceAction(id: string, data: UpdateServiceDTO): Promise<ActionResponse<ServiceDTO>>
 export async function deleteServiceAction(id: string): Promise<ActionResponse<void>>
+export async function searchServicesAction(query: string): Promise<ActionResponse<ServiceDTO[]>>
+export async function getEssentialServicesAction(): Promise<ActionResponse<ServiceDTO[]>>
+export async function getRetiringServicesAction(daysThreshold?: number): Promise<ActionResponse<ServiceDTO[]>>
+export async function retireServiceAction(id: string, reason?: string): Promise<ActionResponse<ServiceDTO>>
+```
+
+#### Service Ownership Controller
+**Location**: `src/interface-adapters/controllers/service-ownership.controller.ts`
+
+Manages service ownership relationships.
+
+```typescript
 export async function addServiceOwnerAction(data: AddServiceOwnerDTO): Promise<ActionResponse<void>>
-export async function removeServiceOwnerAction(serviceId: string, ownerId: string): Promise<ActionResponse<void>>
-// ... additional actions
+export async function removeServiceOwnerAction(serviceId: string, personId: string, ownershipType: OwnershipType): Promise<ActionResponse<void>>
+export async function setServicePrimaryOwnerAction(data: SetPrimaryOwnerDTO): Promise<ActionResponse<void>>
+export async function getServiceOwnersAction(serviceId: string): Promise<ActionResponse<ServiceOwnerDTO[]>>
+```
+
+#### Service Infrastructure Controller
+**Location**: `src/interface-adapters/controllers/service-infrastructure.controller.ts`
+
+Manages service infrastructure details.
+
+```typescript
+export async function createServiceInfrastructureAction(data: CreateServiceInfrastructureDTO): Promise<ActionResponse<ServiceInfrastructureDTO>>
+export async function updateServiceInfrastructureAction(id: string, data: UpdateServiceInfrastructureDTO): Promise<ActionResponse<ServiceInfrastructureDTO>>
+export async function getServiceInfrastructureAction(serviceId: string): Promise<ActionResponse<ServiceInfrastructureDTO | null>>
+```
+
+#### Service Asset Controller
+**Location**: `src/interface-adapters/controllers/service-asset.controller.ts`
+
+Manages service-to-asset relationships.
+
+```typescript
+export async function linkServiceToAssetAction(data: LinkServiceToAssetDTO): Promise<ActionResponse<void>>
+export async function unlinkServiceFromAssetAction(id: string): Promise<ActionResponse<void>>
+export async function getServiceAssetsAction(serviceId: string): Promise<ActionResponse<ServiceAssetDTO[]>>
+export async function getAssetServicesAction(assetId: string): Promise<ActionResponse<ServiceAssetDTO[]>>
 ```
 
 ## UI Components

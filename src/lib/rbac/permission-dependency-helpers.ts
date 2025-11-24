@@ -13,6 +13,25 @@
  */
 
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+function resolvePermission(
+  name: string,
+  optional = false,
+): PermissionKey | undefined {
+  const key = name as keyof typeof PERMISSIONS;
+  const value = PERMISSIONS[key];
+
+  if (!value) {
+    if (optional) {
+      return undefined;
+    }
+
+    throw new Error(`Unknown permission key: ${name}`);
+  }
+
+  return value as PermissionKey;
+}
 
 /**
  * Generates standard CRUD dependencies for an entity
@@ -37,11 +56,11 @@ import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
 export function generateCRUDDependencies(
   prefix: string,
 ): Partial<Record<PermissionKey, PermissionKey[]>> {
-  const VIEW = `${prefix}_VIEW` as PermissionKey;
-  const CREATE = `${prefix}_CREATE` as PermissionKey;
-  const UPDATE = `${prefix}_UPDATE` as PermissionKey;
-  const DELETE = `${prefix}_DELETE` as PermissionKey;
-  const MANAGE = `${prefix}_MANAGE` as PermissionKey;
+  const VIEW = resolvePermission(`${prefix}_VIEW`)!;
+  const CREATE = resolvePermission(`${prefix}_CREATE`)!;
+  const UPDATE = resolvePermission(`${prefix}_UPDATE`)!;
+  const DELETE = resolvePermission(`${prefix}_DELETE`)!;
+  const MANAGE = resolvePermission(`${prefix}_MANAGE`)!;
 
   return {
     [UPDATE]: [VIEW],
@@ -72,13 +91,24 @@ export function generateActionDependencies(
   actions: string[],
   requiresUpdate = true,
 ): Partial<Record<PermissionKey, PermissionKey[]>> {
-  const VIEW = `${prefix}_VIEW` as PermissionKey;
-  const UPDATE = `${prefix}_UPDATE` as PermissionKey;
+  const VIEW = resolvePermission(`${prefix}_VIEW`);
+  const UPDATE = requiresUpdate
+    ? resolvePermission(`${prefix}_UPDATE`, true)
+    : undefined;
+
+  if (!VIEW) {
+    return {};
+  }
 
   return actions.reduce(
     (acc, action) => {
-      const actionKey = `${prefix}_${action}` as PermissionKey;
-      acc[actionKey] = requiresUpdate ? [VIEW, UPDATE] : [VIEW];
+      const actionKey = resolvePermission(`${prefix}_${action}`, true);
+      if (!actionKey) {
+        return acc;
+      }
+
+      acc[actionKey] =
+        requiresUpdate && UPDATE ? ([VIEW, UPDATE] as PermissionKey[]) : [VIEW];
       return acc;
     },
     {} as Partial<Record<PermissionKey, PermissionKey[]>>,
