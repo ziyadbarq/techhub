@@ -44,7 +44,7 @@ export function MarketingNav() {
           href="/"
           className="flex items-center transition-opacity hover:opacity-80"
         >
-          <Logo className="h-8 w-auto" />
+          <Logo className="h-8 w-auto" priority />
         </Link>
 
         {/* Right Side: Theme Toggle + Enter Button */}

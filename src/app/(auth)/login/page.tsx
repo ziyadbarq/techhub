@@ -98,7 +98,7 @@ export default function LoginPage() {
             href="/"
             className="inline-block transition-opacity hover:opacity-80"
           >
-            <Logo className="h-10 w-auto" />
+            <Logo className="h-10 w-auto" priority />
           </Link>
         </div>
 
@@ -177,7 +177,7 @@ export default function LoginPage() {
               href="/"
               className="inline-block transition-opacity hover:opacity-80"
             >
-              <Logo className="h-10 w-auto" />
+              <Logo className="h-10 w-auto" priority />
             </Link>
           </div>
 

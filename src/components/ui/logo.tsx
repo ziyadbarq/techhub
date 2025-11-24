@@ -120,6 +120,7 @@ export function Logo({
         width={width}
         height={height}
         priority={priority}
+        loading={priority ? "eager" : undefined}
         onError={() => useFallback && setError(true)}
         className="object-contain"
         style={{ width: "auto", height: "auto" }}
