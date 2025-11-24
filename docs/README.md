@@ -25,6 +25,7 @@ Technical documentation for system architecture and design decisions:
 Developer-facing documentation for building with the assets app:
 
 - [Developer Guide](./guides/DEVELOPER_GUIDE.md) - Comprehensive development guide and best practices
+- [Refactoring Patterns](./guides/REFACTORING_PATTERNS.md) - Proven refactoring patterns for maintaining clean, maintainable code (component, configuration, logic, and module extraction)
 
 ### Data Migration & Initial Setup
 
@@ -55,18 +56,17 @@ Asset management, inventory tracking, warranties, and maintenance:
 
 Advanced IT Asset Management features:
 
+- [Layer 3 Overview](./features/LAYER3_OVERVIEW.md) - Comprehensive overview of all 9 Layer 3 modules with features, routes, permissions, and database implementation
 - [ITAM Features Overview](./features/ITAM_FEATURES.md) - Complete guide to all advanced ITAM modules
 - [Asset Disposals](./features/ASSET_DISPOSALS.md) - Multi-step disposal workflow with approval chain and PDF certificate generation
 - [Asset Kits](./features/ASSET_KITS.md) - Predefined asset bundles with checkout tracking
 - [Asset Reservations](./features/ASSET_RESERVATIONS.md) - Future asset reservations with conflict detection and automated background jobs
 - [CMDB Guide](./features/CMDB_GUIDE.md) - Configuration Management Database with dependency tracking
-- **[MISSING]** Contract Management - Contract types, contract lifecycle, and polymorphic asset/CI linking
-- **[MISSING]** License Management - License products, entitlements, allocations, and compliance tracking
+- Contract Management - Contract types, contract lifecycle, and polymorphic asset/CI linking (see [Layer 3 Overview](./features/LAYER3_OVERVIEW.md#6-contract-management))
+- License Management - License products, entitlements, allocations, and compliance tracking (see [Layer 3 Overview](./features/LAYER3_OVERVIEW.md#7-license-management))
 - [Governance System](./features/GOVERNANCE_SYSTEM.md) - Data governance, ownership tracking, and verification campaigns for SAMA compliance
 - [Attachments System](./features/ATTACHMENTS_SYSTEM.md) - Polymorphic file attachments for compliance documentation and audit trails
-- **[MISSING]** Service Management - Service catalog, service-to-asset mapping, and infrastructure dependencies
-- **[MISSING]** Business Process Management - Business process definitions and workflow orchestration
-- **[MISSING]** Task Management System - Task tracking, reminders, and workflow state management (reference implementation)
+- [Service Management](./features/SERVICE_MANAGEMENT.md) - IT service catalog with ownership, infrastructure tracking, and business process alignment
 
 ### Global Features
 

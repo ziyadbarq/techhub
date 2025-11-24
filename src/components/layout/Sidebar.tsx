@@ -19,6 +19,12 @@
  * - ✅ Performance optimized (debounced resize, memoized navigation)
  * - ✅ Barq theme integration
  *
+ * Refactored Architecture:
+ * - Main component: Pure composition (~150 lines)
+ * - Extracted hooks: use-sidebar-state, use-sidebar-keyboard, use-nav-item-state
+ * - Extracted components: SidebarHeader, SidebarFooter, MobileControls, NavigationContent, SidebarSpacer
+ * - Sub-components: NavigationGroup, CollapsibleGroupHeader, NestedNavItem, BadgePill (kept inline)
+ *
  * Usage:
  * ```tsx
  * import { Sidebar } from "@/components/layout/Sidebar";
@@ -38,28 +44,10 @@
 
 import * as React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
-import {
-  Menu,
-  X,
-  ChevronLeft,
-  ChevronDown,
-  ChevronRight,
-  Sparkles,
-} from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
-import { BRANDING } from "@/config/branding";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import {
   isNavItemActive,
   isNavItemSection,
@@ -67,11 +55,21 @@ import {
   type NavItem,
   type NavGroup,
 } from "@/config/navigation";
-import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useFocusTrap } from "@/hooks/use-focus-trap";
 import { usePlatform, getModifierKey } from "@/hooks/use-platform";
 import { useSidebarNavigation } from "@/hooks/use-sidebar-navigation";
-import { debounce } from "@/lib/utils/debounce";
+import { useSidebarState } from "@/hooks/use-sidebar-state";
+import { useSidebarKeyboard } from "@/hooks/use-sidebar-keyboard";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { SidebarHeader } from "./sidebar/SidebarHeader";
+import { SidebarFooter } from "./sidebar/SidebarFooter";
+import { MobileControls } from "./sidebar/MobileControls";
+import { NavigationContent } from "./sidebar/NavigationContent";
+import { SidebarSpacer } from "./sidebar/SidebarSpacer";
 
 interface SidebarProps {
   className?: string;
@@ -80,15 +78,16 @@ interface SidebarProps {
 function SidebarComponent({ className }: SidebarProps) {
   const pathname = usePathname();
   const sidebarRef = React.useRef<HTMLElement>(null);
-  const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
-  // State management with safe localStorage
-  const [isCollapsed, setIsCollapsed] = useLocalStorage(
-    "sidebar-collapsed",
-    false,
-  );
-  const [isMobileOpen, setIsMobileOpen] = React.useState(false);
+  // Hooks for state management
+  const {
+    isCollapsed,
+    isMobileOpen,
+    toggleCollapse,
+    toggleMobile,
+    setIsMobileOpen,
+  } = useSidebarState();
 
   const {
     navGroups,
@@ -114,91 +113,20 @@ function SidebarComponent({ className }: SidebarProps) {
   const platform = usePlatform();
   const shortcutKey = getModifierKey(platform);
 
-  // Auto-collapse on tablet screens (only if no user preference exists)
-  React.useEffect(() => {
-    // Check if user has set a preference
-    const hasPreference = localStorage.getItem("sidebar-collapsed") !== null;
-
-    if (!hasPreference) {
-      const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
-      setIsCollapsed(isTablet);
-    }
-
-    // Debounced resize handler to prevent performance issues
-    const handleResize = debounce(() => {
-      const hasPreference = localStorage.getItem("sidebar-collapsed") !== null;
-      if (!hasPreference) {
-        const isTablet = window.innerWidth >= 768 && window.innerWidth < 1024;
-        setIsCollapsed(isTablet);
-      }
-    }, 150);
-
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      handleResize.cancel(); // Cancel any pending debounced calls
-    };
-  }, [setIsCollapsed]);
-
   // Keyboard shortcuts
-  React.useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Ctrl/Cmd + B to toggle sidebar
-      if ((e.ctrlKey || e.metaKey) && e.key === "b") {
-        e.preventDefault();
-        setIsCollapsed((prev) => !prev);
-      }
-
-      // ESC to close mobile menu
-      if (e.key === "Escape" && isMobileOpen) {
-        setIsMobileOpen(false);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isMobileOpen, setIsCollapsed]);
-
-  // Close mobile menu when route changes
-  React.useEffect(() => {
-    setIsMobileOpen(false);
-  }, [pathname]);
-
-  const toggleCollapse = () => setIsCollapsed((prev) => !prev);
-  const toggleMobile = () => setIsMobileOpen((prev) => !prev);
+  useSidebarKeyboard({
+    isMobileOpen,
+    onToggleCollapse: toggleCollapse,
+    onCloseMobile: () => setIsMobileOpen(false),
+  });
 
   return (
     <>
-      {/* Mobile Menu Button */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className={cn(
-          "fixed top-4 z-50 h-12 w-12 transition-all duration-300 md:hidden",
-          isMobileOpen ? "left-[232px]" : "left-4",
-        )}
-        onClick={toggleMobile}
-        aria-label={isMobileOpen ? "Close menu" : "Open menu"}
-        aria-expanded={isMobileOpen}
-      >
-        {isMobileOpen ? (
-          <X className="h-5 w-5" />
-        ) : (
-          <Menu className="h-5 w-5" />
-        )}
-        <span className="sr-only">
-          {isMobileOpen ? "Close menu" : "Open menu"}
-        </span>
-      </Button>
-
-      {/* Mobile Overlay */}
-      {isMobileOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm md:hidden"
-          onClick={toggleMobile}
-          aria-hidden="true"
-        />
-      )}
+      {/* Mobile Controls: Button + Overlay */}
+      <MobileControls
+        isMobileOpen={isMobileOpen}
+        onToggleMobile={toggleMobile}
+      />
 
       {/* Sidebar */}
       <aside
@@ -212,172 +140,37 @@ function SidebarComponent({ className }: SidebarProps) {
           className,
         )}
       >
-        {/* Header / Logo Area */}
-        <div
-          className="relative flex h-16 items-center border-b px-4"
-          role="banner"
-          aria-label="Site header"
-        >
-          <div className="flex items-center gap-2">
-            <Link
-              href="/"
-              className="hover:text-sidebar-accent-foreground flex items-center gap-2 font-semibold transition-colors"
-              aria-label={`${BRANDING.app.name} Home`}
-            >
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center">
-                {mounted ? (
-                  <Image
-                    src={BRANDING.logos.icon.default}
-                    alt={`${BRANDING.app.name} Logo`}
-                    width={32}
-                    height={32}
-                    className={cn(
-                      "h-8 w-8 object-contain transition-all",
-                      resolvedTheme === "dark" && "brightness-0 invert",
-                    )}
-                    priority
-                  />
-                ) : (
-                  <div className="h-8 w-8" />
-                )}
-              </div>
-              <AnimatePresence mode="wait">
-                {!isCollapsed && (
-                  <motion.span
-                    key="app-name"
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: "auto" }}
-                    exit={{ opacity: 0, width: 0 }}
-                    transition={{ duration: 0.2, ease: "easeInOut" }}
-                    className="overflow-hidden text-lg whitespace-nowrap"
-                  >
-                    {BRANDING.app.name}
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </Link>
-          </div>
+        {/* Header: Logo + Collapse Button */}
+        <SidebarHeader
+          isCollapsed={isCollapsed}
+          onToggleCollapse={toggleCollapse}
+          shortcutKey={shortcutKey}
+          mounted={mounted}
+        />
 
-          {/* Collapse Toggle Button (Desktop only) */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className={cn(
-              "border-border/40 hover:border-border hover:bg-sidebar-accent bg-background absolute top-1/2 z-[100] hidden -translate-y-1/2 border shadow-md transition-all duration-200 md:flex",
-              isCollapsed ? "-right-4 size-7 rounded-full" : "right-2",
-            )}
-            onClick={toggleCollapse}
-            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            aria-expanded={!isCollapsed}
-            title={`${isCollapsed ? "Expand" : "Collapse"} sidebar (${shortcutKey}+B)`}
-          >
-            <ChevronLeft
-              className={cn(
-                "transition-transform duration-200",
-                isCollapsed ? "h-3 w-3 rotate-180" : "h-4 w-4",
-              )}
-            />
-            <span className="sr-only">
-              {isCollapsed ? "Expand" : "Collapse"} sidebar
-            </span>
-          </Button>
-        </div>
+        {/* Navigation: Groups + Items */}
+        <NavigationContent
+          navGroups={navGroups}
+          permissionsLoading={permissionsLoading}
+          permissionsError={permissionsError}
+          hasNoPermissions={hasNoPermissions}
+          isCollapsed={isCollapsed}
+          collapsedGroups={collapsedGroups}
+          expandedItems={expandedItems}
+          pathname={pathname ?? "/"}
+          onToggleGroup={toggleGroup}
+          onToggleItem={toggleItem}
+          getBadgeValue={getBadgeValue}
+          onItemClick={() => setIsMobileOpen(false)}
+          NavigationGroupComponent={NavigationGroup}
+        />
 
-        {/* Navigation */}
-        <ScrollArea
-          className="flex-1 px-3 py-4"
-          role="region"
-          aria-label="Navigation menu"
-        >
-          <nav className="flex flex-col gap-6">
-            {permissionsLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="text-muted-foreground text-sm">
-                  Loading navigation...
-                </div>
-              </div>
-            ) : permissionsError ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="text-muted-foreground text-sm">
-                  Navigation unavailable. Please refresh or contact an admin.
-                </div>
-              </div>
-            ) : hasNoPermissions ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="text-muted-foreground text-sm">
-                  No permissions assigned to your account yet.
-                </div>
-              </div>
-            ) : (
-              <TooltipProvider delayDuration={100}>
-                {navGroups.map((group) => (
-                  <NavigationGroup
-                    key={group.id}
-                    group={group}
-                    isCollapsed={isCollapsed}
-                    isGroupCollapsed={collapsedGroups[group.id] ?? false}
-                    expandedItems={expandedItems}
-                    pathname={pathname ?? "/"}
-                    onToggleGroup={toggleGroup}
-                    onToggleItem={toggleItem}
-                    getBadgeValue={getBadgeValue}
-                    onItemClick={() => setIsMobileOpen(false)}
-                  />
-                ))}
-              </TooltipProvider>
-            )}
-          </nav>
-        </ScrollArea>
-
-        {/* Footer */}
-        <div
-          className="border-t p-4"
-          role="contentinfo"
-          aria-label="Site information"
-        >
-          <TooltipProvider>
-            {!isCollapsed ? (
-              <div className="space-y-2">
-                <div className="bg-barq-light-blue/20 dark:bg-barq-light-blue/10 border-barq-light-blue/30 dark:border-barq-light-blue/20 hover:bg-barq-light-blue/30 dark:hover:bg-barq-light-blue/15 flex items-center gap-2.5 rounded-lg border p-2.5 transition-all">
-                  <div className="bg-barq-yellow flex h-7 w-7 items-center justify-center rounded-md shadow-sm">
-                    <Sparkles className="text-barq-black h-4 w-4" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-muted-foreground text-xs font-medium">
-                      Powered by
-                    </p>
-                    <p className="text-foreground text-sm font-bold">
-                      {BRANDING.ai.name}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex justify-center">
-                    <div className="bg-barq-yellow flex h-7 w-7 items-center justify-center rounded-md shadow-sm transition-transform hover:scale-110">
-                      <Sparkles className="text-barq-black h-4 w-4" />
-                    </div>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  <p className="font-medium">{BRANDING.ai.tagline}</p>
-                </TooltipContent>
-              </Tooltip>
-            )}
-          </TooltipProvider>
-        </div>
+        {/* Footer: AI Branding */}
+        <SidebarFooter isCollapsed={isCollapsed} />
       </aside>
 
       {/* Spacer for main content */}
-      <div
-        className={cn(
-          "hidden transition-all duration-300 md:block",
-          isCollapsed ? "w-16" : "w-64",
-        )}
-        aria-hidden="true"
-      />
+      <SidebarSpacer isCollapsed={isCollapsed} />
     </>
   );
 }
@@ -385,6 +178,12 @@ function SidebarComponent({ className }: SidebarProps) {
 // Export memoized version for performance optimization
 export const Sidebar = React.memo(SidebarComponent);
 Sidebar.displayName = "Sidebar";
+
+/**
+ * ============================================================================
+ * Sub-Components (Kept inline for now - can be extracted if needed)
+ * ============================================================================
+ */
 
 /**
  * Collapsible Navigation Group Component

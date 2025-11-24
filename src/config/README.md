@@ -6,10 +6,19 @@ Centralized application configuration files for easy maintenance and updates.
 
 ```
 src/config/
-├── branding.ts      # Branding, logos, taglines, and company info
-├── navigation.ts    # Navigation menu items and groups configuration
-├── index.ts         # Barrel export file
-└── README.md        # This file
+├── branding.ts              # Branding, logos, taglines, and company info
+├── navigation.ts            # Navigation aggregator and API
+├── navigation.types.ts      # Navigation type definitions
+├── navigation.utils.ts      # Navigation utilities and helpers
+├── navigation-groups/       # Domain-separated navigation groups
+│   ├── main.ts              # Main navigation
+│   ├── assets.ts            # Asset management groups
+│   ├── itam.ts              # CMDB, services, maintenance
+│   ├── compliance.ts        # Contracts, licenses, governance, attachments
+│   ├── foundation.ts        # Lifecycle, organization, configuration
+│   └── system.ts            # System settings, admin, documentation
+├── index.ts                 # Barrel export file
+└── README.md                # This file
 ```
 
 ## 🎨 Branding Configuration
@@ -369,11 +378,21 @@ import { BRANDING } from "@/config/branding";
 
 ## 🧭 Navigation Configuration
 
-The navigation configuration provides a single source of truth for all navigation items and groups in the application.
+The navigation configuration provides a single source of truth for all navigation items and groups in the application. Navigation is organized into modular files for better maintainability.
 
-### Location
+### Architecture
 
-[`src/config/navigation.ts`](./navigation.ts)
+- **Main API**: [`navigation.ts`](./navigation.ts) - Aggregator and public API
+- **Types**: [`navigation.types.ts`](./navigation.types.ts) - Type definitions
+- **Utilities**: [`navigation.utils.ts`](./navigation.utils.ts) - Filtering and helpers
+- **Groups**: [`navigation-groups/*.ts`](./navigation-groups/) - Domain-separated navigation data
+
+This modular structure provides:
+- ✅ **Single Responsibility**: Each file has one clear purpose
+- ✅ **Easy Navigation**: Find any group in ~5 seconds
+- ✅ **Reduced Git Conflicts**: Smaller, focused files
+- ✅ **Better Testability**: Can test utilities independently
+- ✅ **Backward Compatible**: All existing imports work unchanged
 
 ### Quick Start
 
@@ -411,43 +430,47 @@ interface NavGroup {
 
 ### Adding Navigation Groups
 
-Edit [`navigation.ts`](./navigation.ts):
+Create or edit a file in [`navigation-groups/`](./navigation-groups/):
 
 ```typescript
-import { Home, Settings, Users } from "lucide-react";
+// src/config/navigation-groups/settings.ts
+import { Settings, Users } from "lucide-react";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import type { NavGroup } from "../navigation.types";
 
-export const navGroups: NavGroup[] = [
-  {
-    id: "main",
-    title: "Main",
-    items: [
-      {
-        title: "Dashboard",
-        href: "/",
-        icon: Home,
-        description: "Overview and statistics",
-      },
-    ],
-    visible: true,
-  },
-  {
-    id: "settings",
-    title: "Settings",
-    items: [
-      {
-        title: "Account",
-        href: "/settings",
-        icon: Settings,
-      },
-      {
-        title: "Team",
-        href: "/team",
-        icon: Users,
-        badge: "3", // Number of team members
-      },
-    ],
-    visible: true,
-  },
+export const settingsNavGroup: NavGroup = {
+  id: "settings",
+  title: "Settings",
+  items: [
+    {
+      title: "Account",
+      href: "/settings",
+      icon: Settings,
+      permission: PERMISSIONS.SETTINGS_VIEW,
+    },
+    {
+      title: "Team",
+      href: "/team",
+      icon: Users,
+      badge: "3", // Number of team members
+      permission: PERMISSIONS.TEAM_VIEW,
+    },
+  ],
+  visible: true,
+  collapsible: true,
+  defaultCollapsed: false,
+};
+```
+
+Then import and add to the main aggregator in [`navigation.ts`](./navigation.ts):
+
+```typescript
+// src/config/navigation.ts
+import { settingsNavGroup } from "./navigation-groups/settings";
+
+export const navGroups = [
+  // ... other groups
+  settingsNavGroup,
 ];
 ```
 

@@ -50,26 +50,25 @@ Navigation items are organized into logical groups that can be collapsed/expande
 **Configuration:**
 
 ```typescript
-// src/config/navigation.ts
-export const navGroups: NavGroup[] = [
-  {
-    id: "main",
-    title: "Main",
-    collapsible: false, // Always expanded
-    items: [
-      /* ... */
-    ],
-  },
-  {
-    id: "content",
-    title: "Content",
-    collapsible: true, // Can be collapsed
-    defaultCollapsed: false, // Starts expanded
-    items: [
-      /* ... */
-    ],
-  },
-];
+// src/config/navigation-groups/main.ts (or any group file)
+export const mainNavGroup: NavGroup = {
+  id: "main",
+  title: "Main",
+  collapsible: false, // Always expanded
+  items: [
+    /* ... */
+  ],
+};
+
+export const contentNavGroup: NavGroup = {
+  id: "content",
+  title: "Content",
+  collapsible: true, // Can be collapsed
+  defaultCollapsed: false, // Starts expanded
+  items: [
+    /* ... */
+  ],
+};
 ```
 
 **User Experience:**
@@ -379,7 +378,18 @@ useEffect(() => {
 
 ### Navigation Configuration
 
-All navigation is configured in `src/config/navigation.ts`.
+Navigation is organized into modular files for better maintainability:
+
+- **Main**: `src/config/navigation.ts` - Aggregator and API
+- **Types**: `src/config/navigation.types.ts` - Type definitions
+- **Utilities**: `src/config/navigation.utils.ts` - Filtering and helper functions
+- **Groups**: `src/config/navigation-groups/*.ts` - Domain-separated navigation groups
+  - `main.ts` - Main navigation
+  - `assets.ts` - Asset management groups
+  - `itam.ts` - CMDB, services, maintenance
+  - `compliance.ts` - Contracts, licenses, governance, attachments
+  - `foundation.ts` - Lifecycle, organization, configuration
+  - `system.ts` - System settings, admin, documentation
 
 **NavItem Interface:**
 
@@ -432,6 +442,27 @@ For backwards compatibility, flat navigation is still exported:
 // Flat array of all nav items (for breadcrumbs, search, etc.)
 export const navItems: NavItem[];
 ```
+
+### Sidebar Component Architecture
+
+The Sidebar component follows a modular architecture for better maintainability:
+
+**Main Component**: `src/components/layout/Sidebar.tsx`
+- Pure composition (~150 lines)
+- Orchestrates hooks and sub-components
+- Inline sub-components: NavigationGroup, CollapsibleGroupHeader, NestedNavItem, BadgePill
+
+**Extracted Hooks**:
+- `use-sidebar-state.ts` - Collapse + mobile state management
+- `use-sidebar-keyboard.ts` - Keyboard shortcuts (Cmd/Ctrl+B, ESC)
+- `use-nav-item-state.ts` - Active detection + badge resolution
+
+**Extracted Components** (`src/components/layout/sidebar/`):
+- `SidebarHeader.tsx` - Logo + collapse button
+- `SidebarFooter.tsx` - AI branding
+- `MobileControls.tsx` - Mobile menu button + overlay
+- `NavigationContent.tsx` - Navigation rendering with states
+- `SidebarSpacer.tsx` - Layout spacer
 
 ## Usage Examples
 

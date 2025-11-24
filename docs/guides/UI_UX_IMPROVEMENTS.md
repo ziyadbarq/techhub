@@ -54,7 +54,7 @@ Flattened the settings structure by moving the 5 settings categories to a dedica
 
 **Files Changed:**
 
-- [src/config/navigation.ts](../../src/config/navigation.ts) - Added "System Settings" group with 5 items
+- [src/config/navigation-groups/system.ts](../../src/config/navigation-groups/system.ts) - Added "System Settings" group with 5 items
 - [src/components/admin/AdminNav.tsx](../../src/components/admin/AdminNav.tsx) - Removed "System Settings" tab (reduced from 6 to 5 tabs)
 - New standalone pages created:
   - [src/app/(dashboard)/settings/platform/page.tsx](<../../src/app/(dashboard)/settings/platform/page.tsx>)
