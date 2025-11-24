@@ -720,12 +720,52 @@ Latest Node.js type definitions with improved type coverage.
 - ✅ Build successful
 - ✅ Documentation updated
 
+## Additional Notes
+
+### Redis Library: ioredis
+
+**Status**: Using `ioredis` (NOT `redis` package)
+
+**Reason**: Better TypeScript support, simpler API, consistent with project patterns
+
+**Usage Pattern**:
+```typescript
+import Redis from "ioredis";
+
+const client = new Redis(redisUrl);
+await client.ping();
+await client.quit(); // NOT disconnect()
+```
+
+**Migration from `redis` package**:
+```typescript
+// ❌ Old (redis package)
+import { createClient } from "redis";
+const client = createClient({ url: redisUrl });
+await client.connect();
+await client.ping();
+await client.disconnect();
+
+// ✅ New (ioredis)
+import Redis from "ioredis";
+const client = new Redis(redisUrl);
+await client.ping();
+await client.quit();
+```
+
+**Benefits**:
+- No need for explicit `connect()` call
+- Better error handling
+- Consistent with Redis cluster patterns
+- Simpler connection lifecycle
+
 ## Related Documentation
 
 - [Prisma Guide](PRISMA_GUIDE.md) - Complete Prisma 7 patterns
 - [Next.js 16 Guide](NEXTJS_16_GUIDE.md) - Next.js 16 migration and patterns
 - [Developer Guide](DEVELOPER_GUIDE.md) - Complete development guide
 - [Architecture Guide](../architecture/ARCHITECTURE.md) - Clean Architecture patterns
+- [System Setup Guide](../features/SYSTEM_SETUP.md) - Setup wizard with refactoring lessons
 
 ## Summary
 

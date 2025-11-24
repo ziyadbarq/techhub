@@ -2307,7 +2307,14 @@ A: Yes, but you'll need to refactor `src/di/` and update all `@injectable()` dec
 
 **Q: How do I add or customize authentication?**
 
-A: Better Auth is already integrated (`src/lib/auth/better-auth.ts`). Extend that configuration (providers, hooks, session fields) and reuse the helpers in `src/lib/auth/session.ts`/`src/lib/auth/assign-first-admin.ts`. When adding new auth flows, keep the layering pattern: Better Auth → interface adapters (API routes) → DI-powered use cases.
+A: Better Auth is already integrated (`src/lib/auth/better-auth.ts`). Extend that configuration (providers, hooks, session fields) and reuse the helpers in `src/lib/auth/session.ts`. When adding new auth flows, keep the layering pattern: Better Auth → interface adapters (API routes) → DI-powered use cases.
+
+**Important Best Practices:**
+- Use repository layer for user creation in use cases (NOT Better Auth API directly)
+- Better Auth API calls require Next.js request context - only use in API routes
+- Let Better Auth hooks handle cross-cutting concerns (e.g., Person entity creation)
+- Account format for credential provider: `type: "oauth"`, `provider: "credential"`
+- See [SYSTEM_SETUP.md](../features/SYSTEM_SETUP.md#refactoring-lessons-learned) for detailed patterns
 
 ---
 

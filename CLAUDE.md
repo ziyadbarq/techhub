@@ -211,6 +211,15 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - **Permission Assignment**: Enhanced UI with search, collapsible groups, "Select All in Group" at `/admin/roles/[name]/permissions`
 - **See**: [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md) and `roadmap/README.md` (RBAC section)
 
+### Better Auth Integration
+
+- **Use repository layer** for user creation in use cases (NOT Better Auth API)
+- **Better Auth API** requires Next.js request context - only use in API routes
+- **Let hooks handle** cross-cutting concerns (e.g., Person entity creation via `ensurePersonLinkedToUser`)
+- **Account format**: `type: "oauth"`, `provider: "credential"` for credential provider
+- **Password storage**: Store hash in Account table via repository method
+- **See**: [SYSTEM_SETUP.md](docs/features/SYSTEM_SETUP.md#refactoring-lessons-learned) for detailed patterns
+
 ### Logging
 
 - **NEVER** use `console.log` - use DI logger: `@inject(DI_TOKENS.ILoggerService) private logger: ILoggerService`
@@ -223,7 +232,8 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - **Factories**: Type-safe builders in `seed-factories.ts` (WarrantyFactory, MaintenanceScheduleFactory, etc.)
 - **Utilities**: Shared helpers in `seed-utils.ts` (date utils, code generation, Prisma relation helpers)
 - **IMPORTANT**: Cleanup only in `seed.ts` main orchestrator (proper dependency order)
-- **See**: [DATABASE_SEEDING.md](docs/guides/DATABASE_SEEDING.md) for complete guide
+- **Redis**: Use `ioredis` package (NOT `redis`) - simpler lifecycle with `quit()` instead of `disconnect()`
+- **See**: [DATABASE_SEEDING.md](docs/guides/DATABASE_SEEDING.md) for complete guide, [STACK_UPGRADES.md](docs/guides/STACK_UPGRADES.md#additional-notes) for Redis migration
 
 ### Barrel Exports
 

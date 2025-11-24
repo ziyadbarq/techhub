@@ -10,11 +10,14 @@ The System Setup feature provides a comprehensive solution for first-time instal
 
 **Key Features:**
 - First-time setup wizard for zero-user installations
-- System health monitoring (database, Redis, environment)
+- System health monitoring (database, Redis, environment, migrations)
 - RBAC data seeding (269 permissions + 10 roles)
-- First administrator account creation
+- First administrator account creation with Better Auth integration
 - Database operations (seed, reset)
 - System diagnostics and information display
+- Real-time RBAC count updates during seeding
+
+**Implementation**: Single-file MinimalWizard component for maintainability and reduced complexity.
 
 ## Architecture
 
@@ -27,9 +30,10 @@ The System Setup feature provides a comprehensive solution for first-time instal
 - Controllers: `setup.controller.ts` with 6 server actions
 
 **Frontend**
-- Public Setup Wizard: `/app/(public)/setup/page.tsx`
+- Public Setup Wizard: `/app/(public)/setup/page.tsx` using `MinimalWizard`
 - Admin Dashboard: `/app/(dashboard)/admin/system-setup/page.tsx`
-- 4 wizard steps + 3 admin panels
+- System Health API: `/app/api/system-health/route.ts`
+- 4 wizard steps (self-contained in MinimalWizard) + 3 admin panels
 
 ### Database Schema
 
@@ -134,13 +138,14 @@ The wizard guides new installations through 4 sequential steps:
 
 ```
 src/components/setup/
-├── SystemSetupWizard.tsx          # Main wizard coordinator
-└── steps/
-    ├── SystemHealthStep.tsx       # Step 1: Health checks
-    ├── SeedDataStep.tsx           # Step 2: RBAC seeding
-    ├── CreateUserStep.tsx         # Step 3: Admin creation
-    └── CompletionStep.tsx         # Step 4: Success screen
+└── MinimalWizard.tsx              # Self-contained wizard (all 4 steps)
 ```
+
+**Architecture Decision**: Consolidated into single component for:
+- Easier state management (no prop drilling)
+- Better maintainability (all logic in one place)
+- Reduced complexity (no step coordinator needed)
+- Dynamic RBAC count updates (shared state)
 
 **State Management:**
 - Current step tracking
@@ -923,6 +928,129 @@ toast.error("Operation failed: " + errorMessage);
 - At least one lowercase letter
 - At least one number
 
+## Refactoring Lessons Learned
+
+### November 2025 Refactoring
+
+The setup wizard underwent a major refactoring to follow DRY/SOLID principles. Key lessons:
+
+#### 1. DRY Principle: Reuse Working Patterns
+
+**Problem**: Original implementation duplicated user creation logic between setup and normal registration.
+
+**Solution**: Refactored `CreateFirstUserUseCase` to:
+- Reuse repository patterns instead of calling Better Auth API directly
+- Delegate Person creation to Better Auth hooks (automatic via `ensurePersonLinkedToUser`)
+- Follow same flow as normal registration but with admin role assignment
+
+**Result**: Zero duplication, 100% DRY compliance.
+
+#### 2. Component Consolidation
+
+**Problem**: Original setup had multiple step components causing prop drilling and state management complexity.
+
+**Solution**: Consolidated into single `MinimalWizard.tsx` component with:
+- All 4 steps self-contained in one file
+- Shared state eliminates prop drilling
+- Dynamic RBAC count updates across steps
+- Easier to understand and maintain
+
+**Result**: ~1,500 lines of code removed, improved maintainability.
+
+#### 3. Better Auth Integration Best Practices
+
+**Key Learnings**:
+- Better Auth API calls require Next.js request context (headers)
+- Use repository layer for user creation in use cases
+- Let Better Auth hooks handle cross-cutting concerns (Person creation)
+- Account format must be: `type: "oauth"`, `provider: "credential"`
+- Email verification stored as timestamp, not boolean
+
+**Implementation**:
+```typescript
+// ✅ Correct: Use repository in use case
+await this.userRepository.createDirectly({
+  email, name, passwordHash, emailVerified: true
+});
+
+// ❌ Wrong: Call Better Auth API from use case
+// await betterAuth.api.signUpEmail({ ... }) // No request context!
+```
+
+#### 4. Organization Unit Validation
+
+**Problem**: OrganizationUnit creation failed with "level must be between 1 and 10" error.
+
+**Solution**:
+- Always include `level` field (required, 1-10 range)
+- Use enum for `unitType` instead of string literals
+- Dynamic imports for entity and enum in use cases
+
+**Correct Pattern**:
+```typescript
+const { OrganizationUnit } = await import("@/core/domain/entities/organization-unit.entity");
+const { OrganizationUnitType } = await import("@/core/domain/value-objects/foundation-enums");
+
+const orgUnit = OrganizationUnit.create({
+  name: "Default Organization",
+  code: "ORG-DEFAULT",
+  unitType: OrganizationUnitType.DEPARTMENT, // ✅ Use enum
+  level: 1, // ✅ Required field
+  // ...
+});
+```
+
+#### 5. Redis Connection Fix
+
+**Problem**: Using wrong Redis library (`redis` instead of `ioredis`).
+
+**Solution**: Updated to use `ioredis` consistently:
+```typescript
+import Redis from "ioredis";
+
+const client = new Redis(redisUrl);
+await client.ping();
+await client.quit(); // Not disconnect()
+```
+
+#### 6. Migration Health Check Enhancement
+
+**Problem**: Migration checks returned 0 pending when table didn't exist (misleading).
+
+**Solution**:
+- Throw error in `getPendingMigrationsCount()` if `_prisma_migrations` table missing
+- Catch error in `areMigrationsApplied()` and return `false`
+- Provides clear feedback about migration status
+
+#### 7. TypeScript Type Safety
+
+**Key Patterns**:
+- Use type guards with `ActionResponse<T>`
+- Check `result.success` before accessing `result.data` or `result.error`
+- Use enums for constants instead of string literals
+- Proper async/await with error handling
+
+**Example**:
+```typescript
+const result = await seedMinimalDataAction();
+
+if (!result.success) {
+  throw new Error(result.error); // ✅ Type-safe
+}
+
+// ✅ Now TypeScript knows result.data exists
+const { rolesCreated, permissionsCreated } = result.data.details;
+```
+
+#### 8. React Compiler & Legacy Code
+
+**Lesson**: Legacy components with eslint-disable comments cause React Compiler warnings.
+
+**Solution**:
+- Add `"use no memo"` directive to disable React Compiler for legacy code
+- Or add `/* eslint-disable react-compiler/react-compiler */` at file top
+- Better: Remove legacy code entirely (as we did)
+
 ## Related Documentation
 
 - [RBAC_ARCHITECTURE.md](../architecture/RBAC_ARCHITECTURE.md) - RBAC system overview
@@ -930,6 +1058,7 @@ toast.error("Operation failed: " + errorMessage);
 - [DATABASE_SEEDING.md](../guides/DATABASE_SEEDING.md) - Complete seeding guide
 - [DEVELOPER_GUIDE.md](../guides/DEVELOPER_GUIDE.md) - General development guide
 - [ARCHITECTURE.md](../architecture/ARCHITECTURE.md) - Clean Architecture patterns
+- [NEXTJS_16_GUIDE.md](../guides/NEXTJS_16_GUIDE.md) - Next.js 16 patterns and best practices
 
 ## Future Enhancements
 
