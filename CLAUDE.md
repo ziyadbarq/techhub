@@ -217,6 +217,25 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - **Permission Assignment**: Enhanced UI with search, collapsible groups, "Select All in Group" at `/admin/roles/[name]/permissions`
 - **See**: [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md) and `roadmap/README.md` (RBAC section)
 
+### Route Protection & Security
+
+**CRITICAL**: All protected routes **MUST** have server-side permission checks. Client-side checks (hooks, guards) can be bypassed.
+
+**Required pattern**:
+```typescript
+// page.tsx (server component)
+export const dynamic = "force-dynamic";
+
+export default async function EntityPage() {
+  await requirePermission(PERMISSIONS.ENTITY_VIEW); // Server-side (security)
+  return <EntityPageClient />; // Client component (UX only)
+}
+```
+
+**Defense in depth**: (1) Server component `requirePermission()`, (2) Server actions `requirePermission()`, (3) Client hooks/guards (UX only)
+
+**See**: [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md) for complete patterns, examples, and security details
+
 ### Better Auth Integration
 
 - **Use repository layer** for user creation in use cases (NOT Better Auth API)
@@ -537,7 +556,12 @@ const result = await getLookupMapsAction([
 - Await async request APIs (`params`, `cookies()`, etc.)
 - Use `import type` for type-only imports
 - Use Sonner toast: `import { toast } from "sonner";`
-- Check permissions in server actions
+- **ALWAYS** add server-side permission checks to protected routes (`await requirePermission()` in page.tsx)
+- Add `export const dynamic = "force-dynamic"` to all protected pages
+- Check permissions in server actions (defense in depth)
+- Extract client logic to `*-page-client.tsx` when page needs server-side checks
+- Register new routes in `protected-routes.ts` configuration
+- Test new protected routes with viewer account to verify access denial
 - Create barrel exports (`index.ts`) for new use case modules
 - Use DI logger (not `console.log`)
 - Validate at boundaries
@@ -555,7 +579,9 @@ const result = await getLookupMapsAction([
 - Use shadcn useToast hook (use Sonner toast instead)
 - Create `middleware.ts` (use existing `proxy.ts` instead - Next.js 16 convention)
 - Use `withMDX` wrapper in next.config.ts (breaks Turbopack serialization)
-- Skip permission checks
+- **NEVER** rely solely on client-side permission checks (`usePermissions()`, `PermissionGuard` alone)
+- **NEVER** create protected routes without server-side `requirePermission()` checks
+- Skip permission checks in server actions
 - Forget barrel exports for use case modules (breaks pre-commit)
 - Use `console.log` in server code
 - Bypass architecture layers

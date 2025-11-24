@@ -236,10 +236,77 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
 };
 ```
 
-### Method 2: Server Component Check
+### Method 2: Server Component Check (REQUIRED)
+
+**CRITICAL SECURITY REQUIREMENT**: All protected routes **MUST** implement server-side permission checks using this method. Client-side checks (Method 3) can be bypassed and are NOT secure.
 
 **Location**: `src/app/projects/page.tsx`
 
+**Pattern 1: Simple Server Check**
+```typescript
+import { requirePermission } from "@/lib/permissions/server";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { ProjectsPageClient } from "@/components/projects/projects-page-client";
+
+export const dynamic = "force-dynamic";
+
+export default async function ProjectsPage() {
+  // Server-side permission check (security boundary)
+  await requirePermission(PERMISSIONS.PROJECTS_VIEW);
+
+  return <ProjectsPageClient />;
+}
+```
+
+**Pattern 2: Server Check + Data Fetching**
+```typescript
+import { requirePermission } from "@/lib/permissions/server";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { getProjectsAction } from "@/interface-adapters/controllers/project.controller";
+
+export const dynamic = "force-dynamic";
+
+export default async function ProjectsPage() {
+  // Server-side permission check (security boundary)
+  await requirePermission(PERMISSIONS.PROJECTS_VIEW);
+
+  // Fetch data on server (after permission check)
+  const projectsResult = await getProjectsAction();
+  const projects = projectsResult.success ? projectsResult.data : [];
+
+  return <ProjectsList projects={projects} />;
+}
+```
+
+**Pattern 3: Server Check with PermissionGuard (Defense in Depth)**
+```typescript
+import { requirePermission } from "@/lib/permissions/server";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { PermissionGuard } from "@/components/auth/PermissionGuard";
+import { ProjectsPageClient } from "@/components/projects/projects-page-client";
+
+export const dynamic = "force-dynamic";
+
+export default async function ProjectsPage() {
+  // Server-side permission check (security boundary)
+  await requirePermission(PERMISSIONS.PROJECTS_VIEW);
+
+  // Client-side guard (UX enhancement)
+  return (
+    <PermissionGuard permission={PERMISSIONS.PROJECTS_VIEW}>
+      <ProjectsPageClient />
+    </PermissionGuard>
+  );
+}
+```
+
+**IMPORTANT Notes**:
+- `requirePermission()` throws an error and redirects to `/unauthorized` if user lacks permission
+- Always use `export const dynamic = "force-dynamic"` to prevent static generation
+- Extract client logic to `*-page-client.tsx` components when needed
+- Server-side checks cannot be bypassed by disabling JavaScript or manipulating client code
+
+**Old Pattern (DEPRECATED - DO NOT USE)**:
 ```typescript
 import { redirect } from "next/navigation";
 import { hasPermission } from "@/lib/permissions/server";
@@ -263,12 +330,39 @@ export default async function ProjectsPage() {
 }
 ```
 
-### Method 3: Page-Level Permission Guard
+### Method 3: Client-Side Permission Guard (UX ONLY - NOT SECURE)
 
+**⚠️ WARNING**: This method is **NOT SECURE** when used alone. Client-side checks can be bypassed by disabling JavaScript, manipulating client code, or calling API routes directly. **ALWAYS** use Method 2 (server-side checks) in combination with this method.
+
+**Use Case**: UX enhancement only - hide UI elements, show permission denied messages, improve user experience.
+
+**Correct Usage (with server-side check)**:
 ```typescript
+import { requirePermission } from "@/lib/permissions/server";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
+export const dynamic = "force-dynamic";
+
+export default async function ProjectsPage() {
+  // REQUIRED: Server-side permission check (security)
+  await requirePermission(PERMISSIONS.PROJECTS_VIEW);
+
+  // OPTIONAL: Client-side guard (UX)
+  return (
+    <PermissionGuard
+      permission={PERMISSIONS.PROJECTS_VIEW}
+      fallback={<UnauthorizedPage />}
+    >
+      <ProjectsList />
+    </PermissionGuard>
+  );
+}
+```
+
+**❌ WRONG Usage (INSECURE - DO NOT USE)**:
+```typescript
+// This is NOT secure - can be bypassed!
 export default function ProjectsPage() {
   return (
     <PermissionGuard
@@ -280,6 +374,14 @@ export default function ProjectsPage() {
   );
 }
 ```
+
+**Security Note**: `PermissionGuard` is a React component that runs in the browser. It can be bypassed by:
+- Disabling JavaScript
+- Modifying client-side code in browser dev tools
+- Calling server actions directly via API
+- Extracting data from Next.js page props
+
+**Best Practice**: Use `PermissionGuard` **only** for UX improvements (hiding buttons, showing messages), never as the primary security mechanism.
 
 ---
 
@@ -419,6 +521,10 @@ export async function viewProjectAnalyticsAction(
 ---
 
 ## Protecting UI Components
+
+**🎨 UX Enhancement Only**: The components and hooks described in this section are for **user experience improvements** (hiding buttons, showing messages). They are **NOT** security mechanisms and can be bypassed. Always enforce permissions on the server (see "Protecting Routes" and "Protecting Server Actions" sections).
+
+**Security Reminder**: Client-side permission checks run in the browser and can be manipulated. Use them to improve UX, not to enforce security.
 
 ### Component-Level Guards
 
@@ -708,6 +814,14 @@ export async function viewArchivedDocumentAction(
 ---
 
 ## Client-Side Hooks
+
+**🎨 UX Enhancement Only**: These hooks are for **client-side UI logic** (showing/hiding elements, conditional rendering). They are **NOT** security mechanisms and can be bypassed. Always enforce permissions on the server.
+
+**Security Reminder**:
+- Hook results can be manipulated in browser dev tools
+- Use hooks to improve UX, not to enforce security
+- Always add `await requirePermission()` in server components and server actions
+- Never trust client-side permission checks for security decisions
 
 ### usePermissions Hook
 

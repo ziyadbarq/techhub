@@ -2277,11 +2277,122 @@ container
   .inSingletonScope();
 ```
 
-8. **Create Controller** - Similar to Task controller
+8. **Create Controller** (`note.controller.ts`):
 
-9. **Create Components** - Similar to Task components
+```typescript
+"use server";
 
-10. **Add Route** - Create `app/notes/page.tsx`
+import { requirePermission } from "@/lib/permissions/server";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+export async function createNoteAction(data: CreateNoteDTO) {
+  // CRITICAL: Always check permissions in server actions
+  await requirePermission(PERMISSIONS.NOTES_CREATE);
+
+  // ... use case execution
+}
+
+export async function listNotesAction() {
+  await requirePermission(PERMISSIONS.NOTES_VIEW);
+  // ... use case execution
+}
+
+// ... other actions with permission checks
+```
+
+9. **Add Permissions** (`permission-key.ts`):
+
+```typescript
+export const PERMISSIONS = {
+  // ... existing permissions
+
+  // Notes
+  NOTES_VIEW: "notes:view",
+  NOTES_CREATE: "notes:create",
+  NOTES_UPDATE: "notes:update",
+  NOTES_DELETE: "notes:delete",
+  NOTES_MANAGE: "notes:manage",
+} as const;
+```
+
+10. **Register Permissions** (`seed-rbac.ts`) - Add permission definitions to seed
+
+11. **Add Route Protection** (`app/notes/page.tsx`):
+
+**CRITICAL SECURITY PATTERN**:
+```typescript
+import { requirePermission } from "@/lib/permissions/server";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { NotesPageClient } from "@/components/notes/notes-page-client";
+
+// Required for auth/session pages
+export const dynamic = "force-dynamic";
+
+export default async function NotesPage() {
+  // CRITICAL: Server-side permission check (security boundary)
+  await requirePermission(PERMISSIONS.NOTES_VIEW);
+
+  return <NotesPageClient />;
+}
+```
+
+12. **Register Route** (`protected-routes.ts`):
+
+```typescript
+export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
+  // ... existing routes
+
+  "/notes": {
+    requiredPermissions: [PERMISSIONS.NOTES_VIEW],
+    description: "Note list",
+  },
+  "/notes/new": {
+    requiredPermissions: [PERMISSIONS.NOTES_CREATE],
+    description: "Create new note",
+  },
+  "/notes/[id]": {
+    requiredPermissions: [PERMISSIONS.NOTES_VIEW],
+    description: "View note details",
+  },
+};
+```
+
+13. **Create Components** (`notes-page-client.tsx`):
+
+```typescript
+"use client";
+
+import { usePermissions } from "@/hooks/use-permissions";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+export function NotesPageClient() {
+  // Client-side check for UX only (NOT security)
+  const { hasPermission } = usePermissions();
+  const canCreate = hasPermission(PERMISSIONS.NOTES_CREATE);
+
+  return (
+    <div>
+      {canCreate && <CreateNoteButton />}
+      <NotesList />
+    </div>
+  );
+}
+```
+
+**Security Checklist**:
+- [x] Add `await requirePermission()` in all server actions
+- [x] Add `await requirePermission()` in page.tsx (server component)
+- [x] Add `export const dynamic = "force-dynamic"` to page.tsx
+- [x] Extract client logic to `*-page-client.tsx`
+- [x] Register route in `protected-routes.ts`
+- [x] Test with viewer account to verify access denial
+
+**Common Security Mistakes to Avoid**:
+- ❌ Relying only on `usePermissions()` hook (can be bypassed)
+- ❌ Relying only on `PermissionGuard` component (can be bypassed)
+- ❌ Forgetting `export const dynamic = "force-dynamic"`
+- ❌ Not checking permissions in server actions
+- ✅ Always use server-side `requirePermission()` checks
 
 ---
 

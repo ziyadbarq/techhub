@@ -12,6 +12,7 @@ This file provides high-level guidance when working with this repository.
 
 **Current Implementation**:
 
+- **System Setup**: Status page (`/setup`) for system health monitoring and admin dashboard (`/admin/system-setup`) for database operations; CLI-based setup with `npm run admin:create`
 - **Layer 1 (Foundation)**: 12 core entities - OrganizationUnit, Person, Role, Location, Vendor, Lifecycle models, Field definitions, **ExchangeRate** (multi-currency support)
 - **Layer 2 (Asset/Inventory)**: 9 entities - Asset, AssetCategory, AssetModel, AssetAssignment, StockLocation, StockMovement, Warranty, MaintenanceSchedule, MaintenanceRecord
 - **Layer 3 (Advanced ITAM & Extensions)**: 9 modules (~31 entities)
@@ -30,14 +31,20 @@ This file provides high-level guidance when working with this repository.
 ## Quick Commands
 
 ```bash
-npm run setup    # One-command setup (install + schema + seed)
+# Initial Setup
+npm run db:seed      # Seed database (RBAC + Foundation + test data)
+npm run admin:create # Create admin account (admin@admin.com / admin123)
+
+# Development
 npm run dev      # Start dev server with Turbopack
 npm run validate # Type-check + lint + test
 
+# Build
 npm run build       # Production build
 npm run build:fast  # Fast build (skips TypeScript)
 
-npm run reset # Reset database + seed (drops all data!)
+# Database
+npm run db:reset # Reset database + seed (drops all data!)
 
 # Ad-hoc Prisma scripts (with env + correct client import)
 npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastructure/database/prisma/client.ts'; (async()=>{ /* your queries */ await prisma.$disconnect();})();"
@@ -62,6 +69,7 @@ npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastruc
 
 ### Development Guides
 
+- [SYSTEM_SETUP.md](docs/features/SYSTEM_SETUP.md) - First-time installation wizard and admin dashboard for system health monitoring
 - [ENTITY_REFERENCE.md](docs/guides/ENTITY_REFERENCE.md) - Entity quick reference, validation standards
 - [CODE_GENERATION.md](docs/guides/CODE_GENERATION.md) - Auto-generation of codes/tags for entities with manual override
 - [FOUNDATION_LAYER.md](docs/guides/FOUNDATION_LAYER.md) - Foundation entities user guide
@@ -209,6 +217,39 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - **Permission Assignment**: Enhanced UI with search, collapsible groups, "Select All in Group" at `/admin/roles/[name]/permissions`
 - **See**: [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md) and `roadmap/README.md` (RBAC section)
 
+### Route Protection & Security
+
+**CRITICAL**: All protected routes **MUST** have server-side permission checks. Client-side checks (hooks, guards) can be bypassed.
+
+**Required pattern**:
+```typescript
+// page.tsx (server component)
+export const dynamic = "force-dynamic";
+
+export default async function EntityPage() {
+  await requirePermission(PERMISSIONS.ENTITY_VIEW); // Server-side (security)
+  return <EntityPageClient />; // Client component (UX only)
+}
+```
+
+**Defense in depth**: (1) Server component `requirePermission()`, (2) Server actions `requirePermission()`, (3) Client hooks/guards (UX only)
+
+**See**: [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md) for complete patterns, examples, and security details
+
+### Better Auth Integration
+
+- **Use repository layer** for user creation in use cases (NOT Better Auth API)
+- **Better Auth API** requires Next.js request context - only use in API routes
+- **Let hooks handle** cross-cutting concerns (e.g., Person entity creation via `ensurePersonLinkedToUser`)
+- **Account type field**: Better Auth uses `type: "oauth"` for ALL authentication providers, including email/password
+  - **Why "oauth" for email/password?** Better Auth uses a unified account model where `type` indicates the authentication mechanism (OAuth flow), while `provider` specifies the actual identity source
+  - **Email/Password**: `type: "oauth"`, `provider: "credential"`
+  - **Microsoft OAuth**: `type: "oauth"`, `provider: "microsoft"`
+  - **Google OAuth**: `type: "oauth"`, `provider: "google"`
+  - **IMPORTANT**: This is intentional design, not a bug - do not change the type field
+- **Password storage**: Store hash in Account table via repository method
+- **See**: [SYSTEM_SETUP.md](docs/features/SYSTEM_SETUP.md#refactoring-lessons-learned) for detailed patterns
+
 ### Logging
 
 - **NEVER** use `console.log` - use DI logger: `@inject(DI_TOKENS.ILoggerService) private logger: ILoggerService`
@@ -221,7 +262,8 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - **Factories**: Type-safe builders in `seed-factories.ts` (WarrantyFactory, MaintenanceScheduleFactory, etc.)
 - **Utilities**: Shared helpers in `seed-utils.ts` (date utils, code generation, Prisma relation helpers)
 - **IMPORTANT**: Cleanup only in `seed.ts` main orchestrator (proper dependency order)
-- **See**: [DATABASE_SEEDING.md](docs/guides/DATABASE_SEEDING.md) for complete guide
+- **Redis**: Use `ioredis` package (NOT `redis`) - simpler lifecycle with `quit()` instead of `disconnect()`
+- **See**: [DATABASE_SEEDING.md](docs/guides/DATABASE_SEEDING.md) for complete guide, [STACK_UPGRADES.md](docs/guides/STACK_UPGRADES.md#additional-notes) for Redis migration
 
 ### Barrel Exports
 
@@ -514,7 +556,12 @@ const result = await getLookupMapsAction([
 - Await async request APIs (`params`, `cookies()`, etc.)
 - Use `import type` for type-only imports
 - Use Sonner toast: `import { toast } from "sonner";`
-- Check permissions in server actions
+- **ALWAYS** add server-side permission checks to protected routes (`await requirePermission()` in page.tsx)
+- Add `export const dynamic = "force-dynamic"` to all protected pages
+- Check permissions in server actions (defense in depth)
+- Extract client logic to `*-page-client.tsx` when page needs server-side checks
+- Register new routes in `protected-routes.ts` configuration
+- Test new protected routes with viewer account to verify access denial
 - Create barrel exports (`index.ts`) for new use case modules
 - Use DI logger (not `console.log`)
 - Validate at boundaries
@@ -532,7 +579,9 @@ const result = await getLookupMapsAction([
 - Use shadcn useToast hook (use Sonner toast instead)
 - Create `middleware.ts` (use existing `proxy.ts` instead - Next.js 16 convention)
 - Use `withMDX` wrapper in next.config.ts (breaks Turbopack serialization)
-- Skip permission checks
+- **NEVER** rely solely on client-side permission checks (`usePermissions()`, `PermissionGuard` alone)
+- **NEVER** create protected routes without server-side `requirePermission()` checks
+- Skip permission checks in server actions
 - Forget barrel exports for use case modules (breaks pre-commit)
 - Use `console.log` in server code
 - Bypass architecture layers
