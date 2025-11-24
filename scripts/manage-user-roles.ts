@@ -18,7 +18,7 @@
 
 import "reflect-metadata";
 import { prisma, pool } from "../src/infrastructure/database/prisma/client.js";
-import { select, checkbox, confirm } from "@inquirer/prompts";
+import { select, checkbox, confirm, input } from "@inquirer/prompts";
 import chalk from "chalk";
 import { createId as cuid } from "@paralleldrive/cuid2";
 import {
@@ -185,6 +185,7 @@ async function selectUser(): Promise<UserWithRoles | null> {
       orderBy: {
         email: "asc",
       },
+      take: 5,
     });
 
     if (users.length === 0) {
@@ -193,15 +194,27 @@ async function selectUser(): Promise<UserWithRoles | null> {
     }
 
     // Prompt for user selection with modern select API
-    const selectedEmail = await select({
+    const choices = users.map((u) => ({
+      name: `${u.email}${u.name ? chalk.gray(` (${u.name})`) : ""}`,
+      value: u.email,
+    }));
+    choices.push({ name: "Search by email", value: "search" });
+
+    const selectedValue = await select({
       message: "Select user:",
-      choices: users.map((u) => ({
-        name: `${u.email}${u.name ? chalk.gray(` (${u.name})`) : ""}`,
-        value: u.email,
-      })),
+      choices,
       pageSize: 15,
       loop: false,
     });
+
+    let selectedEmail: string;
+    if (selectedValue === "search") {
+      selectedEmail = await input({
+        message: "Enter user email:",
+      });
+    } else {
+      selectedEmail = selectedValue;
+    }
 
     // Fetch user with roles
     const user = await prisma.user.findUnique({
@@ -315,6 +328,45 @@ function checkRoleConflicts(
 
     if (roleConflicts.length > 0) {
       conflicts.set(newRole, roleConflicts);
+    }
+  }
+
+  // Check conflicts between new roles themselves
+  for (let i = 0; i < newRoles.length; i++) {
+    for (let j = i + 1; j < newRoles.length; j++) {
+      const roleA = newRoles[i];
+      const roleB = newRoles[j];
+      if (rolesConflict(roleA, roleB)) {
+        const reason =
+          CONFLICT_REASONS[`${roleA}:${roleB}`] ||
+          CONFLICT_REASONS[`${roleB}:${roleA}`] ||
+          "Roles conflict due to separation of duties";
+
+        const conflictConfig =
+          CONFLICT_CONFIG[`${roleA}:${roleB}`] ||
+          CONFLICT_CONFIG[`${roleB}:${roleA}`];
+        const severity = conflictConfig?.severity || "error";
+
+        // Add to roleA's conflicts
+        if (!conflicts.has(roleA)) {
+          conflicts.set(roleA, []);
+        }
+        conflicts.get(roleA)!.push({
+          conflictingRole: roleB,
+          reason,
+          severity,
+        });
+
+        // Add to roleB's conflicts
+        if (!conflicts.has(roleB)) {
+          conflicts.set(roleB, []);
+        }
+        conflicts.get(roleB)!.push({
+          conflictingRole: roleA,
+          reason,
+          severity,
+        });
+      }
     }
   }
 
