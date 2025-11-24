@@ -93,12 +93,15 @@ export class PrismaUserRepository implements IUserRepository {
     });
 
     // Create the account record for Better Auth password storage
-    // IMPORTANT: Must match Better Auth's credential provider format
+    // IMPORTANT: Better Auth uses "oauth" type for ALL providers, including email/password
+    // This is intentional design - the "type" field indicates the auth mechanism (OAuth flow),
+    // while "provider" specifies the identity source ("credential" for email/password).
+    // DO NOT change type to "email" or "credential" - it will break authentication!
     await this.prisma.account.create({
       data: {
         userId: user.id,
-        type: "oauth", // Better Auth uses "oauth" type for credential provider
-        provider: "credential", // Must be "credential" not "email"
+        type: "oauth", // ✅ Correct - ALL providers use "oauth" type
+        provider: "credential", // ✅ Correct - "credential" for email/password auth
         providerAccountId: user.id, // Use user ID, not email
         password: data.passwordHash,
         createdAt: new Date(),

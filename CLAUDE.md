@@ -216,7 +216,12 @@ See [docs/README.md](docs/README.md) for complete documentation index.
 - **Use repository layer** for user creation in use cases (NOT Better Auth API)
 - **Better Auth API** requires Next.js request context - only use in API routes
 - **Let hooks handle** cross-cutting concerns (e.g., Person entity creation via `ensurePersonLinkedToUser`)
-- **Account format**: `type: "oauth"`, `provider: "credential"` for credential provider
+- **Account type field**: Better Auth uses `type: "oauth"` for ALL authentication providers, including email/password
+  - **Why "oauth" for email/password?** Better Auth uses a unified account model where `type` indicates the authentication mechanism (OAuth flow), while `provider` specifies the actual identity source
+  - **Email/Password**: `type: "oauth"`, `provider: "credential"`
+  - **Microsoft OAuth**: `type: "oauth"`, `provider: "microsoft"`
+  - **Google OAuth**: `type: "oauth"`, `provider: "google"`
+  - **IMPORTANT**: This is intentional design, not a bug - do not change the type field
 - **Password storage**: Store hash in Account table via repository method
 - **See**: [SYSTEM_SETUP.md](docs/features/SYSTEM_SETUP.md#refactoring-lessons-learned) for detailed patterns
 

@@ -963,8 +963,23 @@ The setup wizard underwent a major refactoring to follow DRY/SOLID principles. K
 - Better Auth API calls require Next.js request context (headers)
 - Use repository layer for user creation in use cases
 - Let Better Auth hooks handle cross-cutting concerns (Person creation)
-- Account format must be: `type: "oauth"`, `provider: "credential"`
 - Email verification stored as timestamp, not boolean
+
+**Account Type Field - Why "oauth" for Email/Password?**
+
+Better Auth uses `type: "oauth"` for ALL authentication providers, including email/password registration. This is **intentional design**, not a bug.
+
+**The Reasoning**:
+- Better Auth uses a unified account model for all authentication methods
+- The `type` field indicates the authentication mechanism (OAuth flow)
+- The `provider` field specifies the actual identity provider
+
+**Correct Format for Different Providers**:
+- **Email/Password**: `type: "oauth"`, `provider: "credential"`
+- **Microsoft OAuth**: `type: "oauth"`, `provider: "microsoft"`
+- **Google OAuth**: `type: "oauth"`, `provider: "google"`
+
+**IMPORTANT**: Do not change the `type` field to "email" or "credential" - it will break authentication!
 
 **Implementation**:
 ```typescript
@@ -973,8 +988,22 @@ await this.userRepository.createDirectly({
   email, name, passwordHash, emailVerified: true
 });
 
+// ✅ Repository creates account with correct format
+await this.prisma.account.create({
+  data: {
+    userId: user.id,
+    type: "oauth",        // ✅ Correct - use "oauth" for all providers
+    provider: "credential", // ✅ Correct - "credential" for email/password
+    providerAccountId: user.id,
+    password: passwordHash,
+  },
+});
+
 // ❌ Wrong: Call Better Auth API from use case
 // await betterAuth.api.signUpEmail({ ... }) // No request context!
+
+// ❌ Wrong: Change type field
+// type: "email" or type: "credential" // Will break authentication!
 ```
 
 #### 4. Organization Unit Validation
