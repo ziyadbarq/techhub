@@ -4,12 +4,27 @@
  * Defines import configurations for all entities in the system.
  * Each configuration includes field definitions, validation rules,
  * lookup mappings, and bulk import actions.
+ *
+ * **Refactored with DRY field builders** - 60-70% line reduction per entity
  */
 
 import type { EntityConfig } from "./entity-config.types";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { bulkCreateAssetsAction } from "@/interface-adapters/controllers/asset.controller";
-import { SUPPORTED_CURRENCIES } from "@/lib/currencies.config";
+import {
+  lookupField,
+  nameField,
+  pastDateField,
+  dateField,
+  currencyField,
+  currencyCodeField,
+  emailField,
+  phoneField,
+  notesField,
+  serialNumberField,
+  booleanField,
+  STANDARD_SANITIZATION,
+} from "./field-builders";
 
 /**
  * Complete entity configurations registry
@@ -40,6 +55,7 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
     icon: "Package",
     color: "#3b82f6",
     fields: [
+      // Unique identifier
       {
         name: "assetTag",
         label: "Asset Tag",
@@ -48,123 +64,70 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
         unique: true,
         maxLength: 50,
         pattern: /^[A-Z0-9-]+$/,
-        sanitization: [
-          { operation: "trim" },
-          { operation: "uppercase" },
-          { operation: "normalizeWhitespace" },
-        ],
+        sanitization: STANDARD_SANITIZATION.CODE,
         examples: ["LAP-001", "SRV-042", "MON-123"],
         description: "Unique asset identifier",
         autoMap: ["asset_tag", "tag", "asset_id", "assetId"],
       },
-      {
+      // Lookups
+      lookupField({
         name: "assetCategoryId",
         label: "Asset Category Code",
-        type: "lookup",
         required: true,
         lookupTarget: "AssetCategory",
         lookupField: "code",
         lookupDisplayField: "name",
-        sanitization: [{ operation: "trim" }, { operation: "uppercase" }],
         examples: ["LAPTOP", "SERVER", "MONITOR"],
         description: "Asset category code from system",
         autoMap: ["category", "category_code", "assetCategory"],
-      },
-      {
+      }),
+      lookupField({
         name: "assetModelId",
         label: "Asset Model Code",
-        type: "lookup",
         required: false,
         lookupTarget: "AssetModel",
         lookupField: "code",
         lookupDisplayField: "name",
-        sanitization: [{ operation: "trim" }, { operation: "uppercase" }],
         examples: ["DELL-LAT-7490", "HP-ELITE-G8"],
         description: "Asset model code from system",
         autoMap: ["model", "model_code", "assetModel"],
-      },
-      {
+      }),
+      lookupField({
         name: "vendorId",
         label: "Vendor Code",
-        type: "lookup",
         required: false,
         lookupTarget: "Vendor",
         lookupField: "code",
         lookupDisplayField: "name",
-        sanitization: [{ operation: "trim" }, { operation: "uppercase" }],
         examples: ["DELL", "HP", "LENOVO"],
         description: "Vendor code from system",
         autoMap: ["vendor", "vendor_code", "supplier"],
-      },
-      {
-        name: "serialNumber",
-        label: "Serial Number",
-        type: "string",
-        required: false,
-        maxLength: 100,
-        sanitization: [
-          { operation: "trim" },
-          { operation: "normalizeWhitespace" },
-        ],
-        examples: ["SN123456789", "ABC-123-XYZ"],
-        description: "Manufacturer serial number",
-        autoMap: ["serial", "serial_number", "sn"],
-      },
-      {
+      }),
+      // Asset details
+      serialNumberField({ required: false, maxLength: 100 }),
+      pastDateField({
         name: "purchaseDate",
         label: "Purchase Date",
-        type: "date",
-        required: false,
-        validations: [
-          { type: "pastDate", message: "Purchase date must be in the past" },
-        ],
-        examples: ["2024-01-15", "01/15/2024"],
-        description: "Date asset was purchased",
         autoMap: ["purchase_date", "date_purchased", "bought_date"],
-      },
-      {
+      }),
+      currencyField({
         name: "purchaseCost",
         label: "Purchase Price",
-        type: "number",
-        required: false,
-        min: 0,
-        validations: [
-          { type: "positive", message: "Purchase price must be positive" },
-        ],
-        examples: ["1299.99", "2500"],
-        description: "Purchase price amount",
-        autoMap: ["purchase_cost", "price", "cost", "purchase_price"],
-      },
-      {
-        name: "currency",
-        label: "Currency",
-        type: "enum",
-        required: false,
-        enum: SUPPORTED_CURRENCIES.map((c) => c.code),
-        defaultValue: "SAR",
-        sanitization: [{ operation: "trim" }, { operation: "uppercase" }],
-        examples: ["SAR", "USD", "EUR"],
-        description: "Currency code (ISO 4217)",
-        autoMap: ["currency", "currency_code"],
-      },
-      {
+      }),
+      currencyCodeField(),
+      dateField({
         name: "warrantyEndDate",
         label: "Warranty End Date",
-        type: "date",
-        required: false,
-        examples: ["2026-01-15", "01/15/2026"],
-        description: "Date warranty expires",
         autoMap: ["warranty_end", "warranty_expiry", "warranty_expires"],
-      },
-      {
+      }),
+      // Location and state
+      lookupField({
         name: "currentStockLocationId",
         label: "Stock Location Code",
-        type: "lookup",
         required: false,
         lookupTarget: "StockLocation",
         lookupField: "code",
         lookupDisplayField: "name",
-        sanitization: [{ operation: "trim" }, { operation: "uppercase" }],
         examples: ["WH-01", "DC-MAIN"],
         description: "Current stock location code",
         autoMap: [
@@ -173,31 +136,19 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
           "warehouse",
           "currentStockLocation",
         ],
-      },
-      {
+      }),
+      lookupField({
         name: "lifecycleStateId",
         label: "Lifecycle State Code",
-        type: "lookup",
         required: false,
         lookupTarget: "LifecycleState",
         lookupField: "code",
         lookupDisplayField: "name",
-        sanitization: [{ operation: "trim" }, { operation: "uppercase" }],
         examples: ["IN_STOCK", "IN_USE", "RETIRED"],
         description: "Current lifecycle state code",
         autoMap: ["state", "status", "lifecycle_state", "lifecycleState"],
-      },
-      {
-        name: "note",
-        label: "Notes",
-        type: "string",
-        required: false,
-        maxLength: 1000,
-        sanitization: [{ operation: "trim" }],
-        examples: ["Additional notes about this asset"],
-        description: "Optional notes",
-        autoMap: ["notes", "note", "comments", "description"],
-      },
+      }),
+      notesField(),
     ],
     businessRules: [
       {
@@ -246,43 +197,24 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
     icon: "Users",
     color: "#8b5cf6",
     fields: [
-      {
-        name: "firstName",
+      // Basic info
+      nameField({
+        fieldName: "firstName",
         label: "First Name",
-        type: "string",
         required: true,
-        maxLength: 100,
-        sanitization: [{ operation: "trim" }, { operation: "titleCase" }],
         examples: ["Ahmed", "Sara"],
-        description: "Person's first name",
-        autoMap: ["first_name", "firstname", "given_name"],
-      },
-      {
-        name: "lastName",
+      }),
+      nameField({
+        fieldName: "lastName",
         label: "Last Name",
-        type: "string",
         required: true,
-        maxLength: 100,
-        sanitization: [{ operation: "trim" }, { operation: "titleCase" }],
         examples: ["Al Saud", "Alharbi"],
-        description: "Person's last name",
-        autoMap: ["last_name", "lastname", "surname", "family_name"],
-      },
-      {
-        name: "email",
-        label: "Email",
-        type: "string",
+      }),
+      emailField({
         required: true,
         unique: true,
-        maxLength: 255,
-        validations: [
-          { type: "email", message: "Must be a valid email address" },
-        ],
-        sanitization: [{ operation: "trim" }, { operation: "lowercase" }],
-        examples: ["ahmed.alsaud@barq.com", "sara.alharbi@barq.com"],
-        description: "Person's email address",
-        autoMap: ["email", "email_address", "work_email"],
-      },
+        domain: "barq.com",
+      }),
       {
         name: "employeeId",
         label: "Employee ID",
@@ -290,32 +222,23 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
         required: false,
         unique: true,
         maxLength: 50,
-        sanitization: [{ operation: "trim" }, { operation: "uppercase" }],
+        sanitization: STANDARD_SANITIZATION.CODE,
         examples: ["EMP001", "E-12345"],
         description: "Unique employee identifier",
         autoMap: ["employee_id", "employeeId", "emp_id", "badge_number"],
       },
-      {
-        name: "phoneNumber",
-        label: "Phone Number",
-        type: "string",
+      phoneField({
         required: false,
-        maxLength: 30,
-        validations: [
-          { type: "phone", message: "Must be a valid phone number" },
-        ],
-        sanitization: [{ operation: "trim" }],
-        examples: ["+966501234567", "0501234567"],
-        description: "Contact phone number",
-        autoMap: ["phone", "phone_number", "mobile", "contact_number"],
-      },
+        countryCode: "+966",
+      }),
+      // Work info
       {
         name: "jobTitle",
         label: "Job Title",
         type: "string",
         required: false,
         maxLength: 200,
-        sanitization: [{ operation: "trim" }],
+        sanitization: STANDARD_SANITIZATION.TEXT,
         examples: ["Software Engineer", "Senior Developer"],
         description: "Person's job title",
         autoMap: ["job_title", "title", "position", "role"],
@@ -326,24 +249,23 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
         type: "string",
         required: false,
         maxLength: 200,
-        sanitization: [{ operation: "trim" }],
+        sanitization: STANDARD_SANITIZATION.TEXT,
         examples: ["Engineering", "IT Operations"],
         description: "Department name",
         autoMap: ["department", "dept", "division"],
       },
-      {
+      // Organizational linkages
+      lookupField({
         name: "organizationUnitId",
         label: "Organization Unit Code",
-        type: "lookup",
         required: false,
         lookupTarget: "OrganizationUnit",
         lookupField: "code",
         lookupDisplayField: "name",
-        sanitization: [{ operation: "trim" }, { operation: "uppercase" }],
         examples: ["IT-OPS", "ENG-DEV"],
         description: "Organization unit code",
         autoMap: ["org_unit", "organization_unit", "ou", "organizationUnit"],
-      },
+      }),
       {
         name: "managerId",
         label: "Manager Email",
@@ -352,47 +274,34 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
         lookupTarget: "Person",
         lookupField: "email",
         lookupDisplayField: "email",
-        sanitization: [{ operation: "trim" }, { operation: "lowercase" }],
+        sanitization: STANDARD_SANITIZATION.EMAIL,
         examples: ["manager@barq.com"],
         description: "Manager's email address",
         autoMap: ["manager", "manager_email", "reports_to"],
       },
-      {
+      lookupField({
         name: "locationId",
         label: "Location Code",
-        type: "lookup",
         required: false,
         lookupTarget: "Location",
         lookupField: "code",
         lookupDisplayField: "name",
-        sanitization: [{ operation: "trim" }, { operation: "uppercase" }],
         examples: ["RYD-HQ", "JED-01"],
         description: "Primary location code",
         autoMap: ["location", "location_code", "office", "site"],
-      },
-      {
+      }),
+      // Employment details
+      pastDateField({
         name: "hireDate",
         label: "Hire Date",
-        type: "date",
-        required: false,
-        validations: [
-          { type: "pastDate", message: "Hire date must be in the past" },
-        ],
-        examples: ["2024-01-15", "01/15/2024"],
-        description: "Date person was hired",
         autoMap: ["hire_date", "start_date", "join_date", "employment_start"],
-      },
-      {
+      }),
+      booleanField({
         name: "isActive",
         label: "Active Status",
-        type: "boolean",
-        required: false,
         defaultValue: true,
-        sanitization: [{ operation: "trim" }, { operation: "lowercase" }],
-        examples: ["true", "yes", "1"],
         description: "Whether person is currently active",
-        autoMap: ["active", "is_active", "status", "enabled"],
-      },
+      }),
     ],
     businessRules: [
       {

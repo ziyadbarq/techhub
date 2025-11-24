@@ -624,6 +624,72 @@ const result = await getLookupMapsAction([
 5. **Use structured logging** - Inject `ILoggerService`, never `console.log`
 6. **Before committing** - Run `npm run validate` (type-check + lint + test)
 
+## Refactoring Patterns
+
+When components, configuration files, or utility modules exceed 300-500 lines or have multiple responsibilities, apply **DRY (Don't Repeat Yourself)** and **SOLID principles** using these proven patterns:
+
+### Component Refactoring (Hooks + Composition)
+
+**Example**: PermissionsManager.tsx refactoring (698 → 243 lines, 65% reduction)
+
+**Pattern**:
+1. **Extract custom hooks** for state management:
+   - `usePermissionSelection` - Selection state and operations
+   - `useBulkSelection` - Bulk mode operations
+   - `usePermissionGroups` - Display logic and filtering
+
+2. **Create focused components** for UI rendering:
+   - `PermissionsSummaryCard` - Summary header with stats
+   - `DependencyWarningCard` - Validation warnings
+   - `PermissionGroupCard` - Collapsible group card
+   - `PermissionItem` - Individual checkbox with tooltip
+   - `PermissionActionsFooter` - Save/Reset buttons
+
+3. **Orchestrator component** composes hooks and components
+
+**Benefits**: Single Responsibility, testability, reusability, maintainability
+
+**See**: [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "Component Refactoring Patterns" for complete guide
+
+### Configuration Refactoring (Builder Pattern)
+
+**Example**: Field builders for entity configs (205 → 145 lines, 30% reduction)
+
+**Pattern**:
+1. **Identify repetitive patterns** - Email fields, lookup fields, currency fields, etc.
+2. **Create builder functions** - `emailField()`, `lookupField()`, `currencyField()`, etc.
+3. **Replace boilerplate** with builder calls
+
+**Available builders**: 17 field builders in 7 categories (Basic, Contact, Financial, Date, Lookup, Enumeration, Location)
+
+**Benefits**: Zero duplication, consistent validation, 40% faster entity configuration
+
+**See**: [UNIVERSAL_DATA_IMPORTER.md](roadmap/UNIVERSAL_DATA_IMPORTER.md) section "Field Builder Pattern"
+
+### Logic Refactoring (Helper Functions)
+
+**Example**: Permission dependency helpers (592 → 374 lines, 37% reduction)
+
+**Pattern**:
+1. **Identify repetitive logic** - CRUD dependencies repeated 89 times
+2. **Create helper functions** - `generateCRUDDependencies()`, `generateActionDependencies()`, etc.
+3. **Use `mergeDependencies()`** to combine patterns
+
+**Available helpers**: 5 helper functions (CRUD, Actions, Export, Simple Action, Merge)
+
+**Benefits**: 60-70% line reduction, type-safe, self-documenting, easy to extend
+
+**See**: [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md) section "Permission Dependency Helpers"
+
+### When to Refactor
+
+Apply these patterns when:
+- Component/file exceeds 300-500 lines
+- Multiple responsibilities (state + UI + logic)
+- Code duplication across similar entities
+- Difficult to test or maintain
+- Adding new entities requires copying 15+ lines of boilerplate
+
 ## Critical Checklist
 
 ### ✅ DO

@@ -1231,6 +1231,413 @@ declare module "react" {
 
 **See**: [global.d.ts](../../global.d.ts) for implementation.
 
+### Component Refactoring Patterns
+
+**When to refactor large components**:
+
+- Component exceeds 300-500 lines
+- Multiple responsibilities (state management, UI rendering, business logic)
+- Difficult to test or maintain
+- Code duplication across similar components
+
+**Best Practice Pattern: Hooks + Components Composition**
+
+The PermissionsManager component refactoring demonstrates the recommended pattern:
+
+**Before**: Monolithic component (698 lines)
+- All state management inline
+- All UI rendering in one file
+- Difficult to test individual concerns
+
+**After**: Composed architecture (243 lines)
+- 3 custom hooks (state management)
+- 5 focused components (UI rendering)
+- Easy to test and maintain
+
+#### Custom Hooks Pattern
+
+Extract stateful logic into custom hooks following Single Responsibility Principle:
+
+**1. State Management Hook** ([use-permission-selection.ts](../../src/hooks/use-permission-selection.ts)):
+
+```typescript
+export function usePermissionSelection({
+  initialPermissions,
+}: UsePermissionSelectionOptions) {
+  const [selectedPermissions, setSelectedPermissions] = useState<Set<string>>(
+    new Set(initialPermissions),
+  );
+
+  const originalPermissions = useMemo(
+    () => new Set(initialPermissions),
+    [initialPermissions],
+  );
+
+  const togglePermission = useCallback((permissionName: string) => {
+    setSelectedPermissions((prev) => {
+      const next = new Set(prev);
+      if (next.has(permissionName)) {
+        next.delete(permissionName);
+      } else {
+        next.add(permissionName);
+      }
+      return next;
+    });
+  }, []);
+
+  const hasChanges = useCallback(() => {
+    if (selectedPermissions.size !== originalPermissions.size) return true;
+    for (const perm of selectedPermissions) {
+      if (!originalPermissions.has(perm)) return true;
+    }
+    return false;
+  }, [selectedPermissions, originalPermissions]);
+
+  const reset = useCallback(() => {
+    setSelectedPermissions(new Set(originalPermissions));
+  }, [originalPermissions]);
+
+  return {
+    selectedPermissions,
+    setSelectedPermissions,
+    togglePermission,
+    hasChanges,
+    reset,
+  };
+}
+```
+
+**Benefits**:
+- Isolated state logic (easy to test)
+- Reusable across components
+- Clear interface (inputs/outputs)
+- Performance optimized with `useCallback` and `useMemo`
+
+**2. Feature-Specific Hook** ([use-bulk-selection.ts](../../src/hooks/use-bulk-selection.ts)):
+
+```typescript
+export function useBulkSelection() {
+  const [bulkMode, setBulkMode] = useState(false);
+  const [bulkSelection, setBulkSelection] = useState<Set<string>>(new Set());
+
+  const toggleBulkMode = useCallback(() => {
+    setBulkMode((prev) => !prev);
+    if (bulkMode) {
+      setBulkSelection(new Set());
+    }
+  }, [bulkMode]);
+
+  const addBulk = useCallback(
+    (
+      targetSet: Set<string>,
+      setTarget: React.Dispatch<React.SetStateAction<Set<string>>>,
+    ) => {
+      setTarget((prev) => {
+        const next = new Set(prev);
+        bulkSelection.forEach((perm) => next.add(perm));
+        return next;
+      });
+      const count = bulkSelection.size;
+      setBulkSelection(new Set());
+      toast.success(`Added ${count} permissions`);
+    },
+    [bulkSelection],
+  );
+
+  return {
+    bulkMode,
+    bulkSelection,
+    setBulkSelection,
+    toggleBulkMode,
+    addBulk,
+    // ... more methods
+  };
+}
+```
+
+**3. Display Logic Hook** ([use-permission-groups.ts](../../src/hooks/use-permission-groups.ts)):
+
+```typescript
+export function usePermissionGroups({
+  allPermissions,
+  searchQuery,
+  selectedPermissions,
+}: UsePermissionGroupsOptions) {
+  const permissionMap = useMemo(() => {
+    const map = new Map<string, PermissionDTO>();
+    allPermissions.forEach((perm) => map.set(perm.name, perm));
+    return map;
+  }, [allPermissions]);
+
+  const filteredGroups = useMemo(() => {
+    if (!searchQuery.trim()) return groupedPermissions;
+    const query = searchQuery.toLowerCase();
+    return groupedPermissions
+      .map((group) => ({
+        ...group,
+        permissions: group.permissions.filter(
+          (perm) =>
+            perm.name.toLowerCase().includes(query) ||
+            perm.displayName.toLowerCase().includes(query)
+        ),
+      }))
+      .filter((group) => group.permissions.length > 0);
+  }, [searchQuery]);
+
+  const getGroupStats = useCallback(
+    (groupId: string) => {
+      const group = filteredGroups.find((g) => g.id === groupId);
+      if (!group) return { selectedCount: 0, isFullySelected: false, isPartiallySelected: false };
+
+      const selectedCount = group.permissions.filter((p) =>
+        selectedPermissions.has(p.name)
+      ).length;
+      const totalCount = group.permissions.length;
+
+      return {
+        selectedCount,
+        isFullySelected: selectedCount === totalCount && totalCount > 0,
+        isPartiallySelected: selectedCount > 0 && selectedCount < totalCount,
+      };
+    },
+    [filteredGroups, selectedPermissions]
+  );
+
+  return {
+    permissionMap,
+    filteredGroups,
+    getGroupStats,
+    // ... more methods
+  };
+}
+```
+
+#### Component Composition Pattern
+
+Break large components into smaller, focused components:
+
+**1. Summary Component** ([PermissionsSummaryCard.tsx](../../src/components/roles/PermissionsSummaryCard.tsx)):
+
+```typescript
+interface PermissionsSummaryCardProps {
+  currentPermissionsCount: number;
+  selectedPermissionsCount: number;
+  allPermissionsCount: number;
+  hasChanges: boolean;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+  bulkMode: boolean;
+  onBulkModeChange: () => void;
+  // ... more props
+}
+
+export function PermissionsSummaryCard({
+  currentPermissionsCount,
+  selectedPermissionsCount,
+  hasChanges,
+  searchQuery,
+  onSearchChange,
+}: PermissionsSummaryCardProps) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Permissions</CardTitle>
+        <CardDescription>
+          {currentPermissionsCount} of {allPermissionsCount} permissions assigned
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Input
+          placeholder="Search permissions..."
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+        />
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+**2. Group Component** ([PermissionGroupCard.tsx](../../src/components/roles/PermissionGroupCard.tsx)):
+
+```typescript
+interface PermissionGroupCardProps {
+  group: PermissionGroup;
+  isExpanded: boolean;
+  onToggleExpand: () => void;
+  selectedPermissions: Set<string>;
+  onTogglePermission: (permissionName: string) => void;
+  // ... more props
+}
+
+export function PermissionGroupCard({
+  group,
+  isExpanded,
+  onToggleExpand,
+  selectedPermissions,
+  onTogglePermission,
+}: PermissionGroupCardProps) {
+  return (
+    <Card>
+      <Collapsible open={isExpanded} onOpenChange={onToggleExpand}>
+        <CardHeader className="cursor-pointer" onClick={onToggleExpand}>
+          <CardTitle>{group.label}</CardTitle>
+          <CardDescription>{group.description}</CardDescription>
+        </CardHeader>
+        <CollapsibleContent>
+          <CardContent>
+            {group.permissions.map((permission) => (
+              <PermissionItem
+                key={permission.id}
+                permission={permission}
+                isSelected={selectedPermissions.has(permission.name)}
+                onToggle={() => onTogglePermission(permission.name)}
+              />
+            ))}
+          </CardContent>
+        </CollapsibleContent>
+      </Collapsible>
+    </Card>
+  );
+}
+```
+
+**3. Item Component** ([PermissionItem.tsx](../../src/components/roles/PermissionItem.tsx)):
+
+```typescript
+interface PermissionItemProps {
+  permission: PermissionDTO;
+  isSelected: boolean;
+  onToggle: () => void;
+  dependencies: PermissionKey[];
+  // ... more props
+}
+
+export function PermissionItem({
+  permission,
+  isSelected,
+  onToggle,
+  dependencies,
+}: PermissionItemProps) {
+  return (
+    <div className="flex items-center gap-3">
+      <Checkbox checked={isSelected} onCheckedChange={onToggle} />
+      <div className="flex-1">
+        <div className="font-medium">{permission.displayName}</div>
+        <div className="text-sm text-muted-foreground">
+          {permission.description}
+        </div>
+        {dependencies.length > 0 && (
+          <div className="text-xs text-muted-foreground mt-1">
+            Requires: {dependencies.join(", ")}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+```
+
+#### Orchestrator Component Pattern
+
+The main component becomes a thin orchestrator that composes hooks and components:
+
+```typescript
+export function PermissionsManager({ role, allPermissions, isSystemRole }) {
+  const router = useRouter();
+  const [isSaving, setIsSaving] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Hook 1: Permission selection state
+  const {
+    selectedPermissions,
+    togglePermission,
+    hasChanges,
+    reset,
+  } = usePermissionSelection({ initialPermissions: role.permissions ?? [] });
+
+  // Hook 2: Bulk selection mode
+  const {
+    bulkMode,
+    bulkSelection,
+    toggleBulkMode,
+    addBulk,
+    removeBulk,
+  } = useBulkSelection();
+
+  // Hook 3: Permission groups display logic
+  const {
+    permissionMap,
+    filteredGroups,
+    expandedGroups,
+    toggleGroup,
+    getGroupStats,
+  } = usePermissionGroups({
+    allPermissions,
+    searchQuery,
+    selectedPermissions,
+    bulkSelection,
+    bulkMode,
+  });
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      // Save logic
+      router.refresh();
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <PermissionsSummaryCard
+        currentPermissionsCount={role.permissions?.length ?? 0}
+        selectedPermissionsCount={selectedPermissions.size}
+        hasChanges={hasChanges()}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        bulkMode={bulkMode}
+        onBulkModeChange={toggleBulkMode}
+      />
+
+      <div className="space-y-4">
+        {filteredGroups.map((group) => (
+          <PermissionGroupCard
+            key={group.id}
+            group={group}
+            isExpanded={expandedGroups.has(group.id)}
+            onToggleExpand={() => toggleGroup(group.id)}
+            selectedPermissions={selectedPermissions}
+            onTogglePermission={togglePermission}
+          />
+        ))}
+      </div>
+
+      <PermissionActionsFooter
+        hasChanges={hasChanges()}
+        isSystemRole={isSystemRole}
+        isSaving={isSaving}
+        onSave={handleSave}
+        onReset={reset}
+      />
+    </div>
+  );
+}
+```
+
+**Key Benefits**:
+
+1. **Single Responsibility**: Each hook and component has one clear purpose
+2. **Testability**: Test hooks and components independently
+3. **Reusability**: Hooks can be used in other components
+4. **Maintainability**: Easy to locate and modify specific concerns
+5. **Performance**: Memoization and callbacks prevent unnecessary re-renders
+6. **Readability**: Clear separation of concerns
+
+**Result**: 698 lines → 243 lines (65% reduction) with improved maintainability
+
 ---
 
 ## 11. Dependency Injection
