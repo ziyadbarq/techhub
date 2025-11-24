@@ -17,12 +17,14 @@ export async function seedAttachments(prisma: PrismaClient) {
   // Seed attachment types
   console.log("   Creating attachment types...");
   for (const attachmentType of ATTACHMENT_TYPES) {
+    const allowedExtensions = [...attachmentType.allowedExtensions];
+
     await prisma.attachmentType.upsert({
       where: { code: attachmentType.code },
       update: {
         name: attachmentType.name,
         description: attachmentType.description,
-        allowedExtensions: attachmentType.allowedExtensions,
+        allowedExtensions,
         maxFileSizeMB: attachmentType.maxFileSizeMB,
         isActive: attachmentType.isActive,
       },
@@ -30,7 +32,7 @@ export async function seedAttachments(prisma: PrismaClient) {
         name: attachmentType.name,
         code: attachmentType.code,
         description: attachmentType.description,
-        allowedExtensions: attachmentType.allowedExtensions,
+        allowedExtensions,
         maxFileSizeMB: attachmentType.maxFileSizeMB,
         isActive: attachmentType.isActive,
       },

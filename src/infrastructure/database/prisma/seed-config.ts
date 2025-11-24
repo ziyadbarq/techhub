@@ -75,8 +75,8 @@ export * from "./seed-config-layer3.js";
 // Governance
 export * from "./seed-config-governance.js";
 
-// System & Services
-export * from "./seed-config-system.js";
+// System & Services (split into multiple domain files)
+export * from "./seed-config-system/index.js";
 
 // ==============================================
 // Aggregate Configuration (Legacy Compat)
@@ -121,7 +121,7 @@ import {
   SERVICE_DATA,
   BUSINESS_PROCESS_DATA,
   EXCHANGE_RATE_DATA,
-} from "./seed-config-system.js";
+} from "./seed-config-system/index.js";
 
 /**
  * Aggregate configuration object

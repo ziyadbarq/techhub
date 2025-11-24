@@ -82,7 +82,15 @@ src/infrastructure/database/prisma/
 │   ├── seed-config-assets.ts        # Asset layer data
 │   ├── seed-config-layer3.ts        # Layer 3 ITAM data
 │   ├── seed-config-governance.ts    # Governance data
-│   └── seed-config-system.ts        # System/services data
+│   └── seed-config-system/          # System/services data (split into 7 files)
+│       ├── index.ts                 #   Barrel export
+│       ├── seed-config-attachment-types.ts
+│       ├── seed-config-services-banking.ts
+│       ├── seed-config-services-security.ts
+│       ├── seed-config-services-compliance.ts
+│       ├── seed-config-services-infrastructure.ts
+│       ├── seed-config-business-processes.ts
+│       └── seed-config-exchange-rates.ts
 │
 ├── Utilities & Factories
 │   ├── seed-utils.ts                # Shared utilities
@@ -474,7 +482,7 @@ const scheduled = MaintenanceRecordFactory.createScheduled(
 - **seed-config-assets.ts**: Asset layer data (categories, models, warranties, etc.)
 - **seed-config-layer3.ts**: Layer 3 ITAM data (kits, disposals, CIs, etc.)
 - **seed-config-governance.ts**: Governance data (domains, ownerships, campaigns)
-- **seed-config-system.ts**: System data (services, attachments, exchange rates)
+- **seed-config-system/**: System data (services, attachments, exchange rates) - split into 7 domain files
 
 **Benefits**:
 - **95% reduction** in main config file (3,056 → 154 lines)
@@ -572,7 +580,7 @@ export * from "./seed-config-foundation.js";
 export * from "./seed-config-assets.js";
 export * from "./seed-config-layer3.js";
 export * from "./seed-config-governance.js";
-export * from "./seed-config-system.js";
+export * from "./seed-config-system/index.js";
 
 // Aggregate configuration (backward compatibility)
 export const SEED_CONFIG = {
@@ -660,19 +668,37 @@ Governance configuration data.
 import { DATA_DOMAINS } from "./seed-config-governance.js";
 ```
 
-#### seed-config-system.ts (2,080 lines)
+#### seed-config-system/ (7 domain files, ~200-1000 lines each)
 
-System and service configuration data.
+System and service configuration data, split into focused modules for better maintainability.
+
+**Directory Structure**:
+- `seed-config-attachment-types.ts` (~90 lines): File attachment type definitions
+- `seed-config-services-banking.ts` (~160 lines): Core banking services (wallet, payments, accounting, merchant)
+- `seed-config-services-security.ts` (~230 lines): Authentication, identity, security tools
+- `seed-config-services-compliance.ts` (~150 lines): Fraud detection, AML, KYC, SAMA reporting
+- `seed-config-services-infrastructure.ts` (~1000 lines): Infrastructure, APIs, databases, monitoring, etc.
+- `seed-config-business-processes.ts` (~170 lines): Business process definitions
+- `seed-config-exchange-rates.ts` (~25 lines): Multi-currency exchange rates (14 currencies)
+- `index.ts`: Barrel export combining all services
 
 **Exports**:
-- `SERVICE_DATA`: Service catalog entries
+- `SERVICE_DATA`: Combined service catalog entries (from all service files)
+- `BANKING_SERVICES`, `SECURITY_SERVICES`, `COMPLIANCE_SERVICES`, `INFRASTRUCTURE_SERVICES`: Individual service arrays
 - `BUSINESS_PROCESS_DATA`: Business process definitions
 - `ATTACHMENT_TYPES`: File attachment type definitions
-- `EXCHANGE_RATE_DATA`: Multi-currency exchange rates (14 currencies)
+- `EXCHANGE_RATE_DATA`: Multi-currency exchange rates
 
 ```typescript
-import { EXCHANGE_RATE_DATA, SERVICE_DATA } from "./seed-config-system.js";
+import { EXCHANGE_RATE_DATA, SERVICE_DATA } from "./seed-config-system/index.js";
+// Or import specific service categories:
+import { BANKING_SERVICES, SECURITY_SERVICES } from "./seed-config-system/index.js";
 ```
+
+**Refactoring Benefits**:
+- **90% reduction** in file size per domain (2,079 → ~25-1000 lines per file)
+- Easy to locate and update specific service categories
+- Follows Single Responsibility Principle
 
 ---
 
@@ -709,10 +735,17 @@ export const ADVANCED_ITAM_DATA = [...] as const;
 export const GOVERNANCE_DATA = [...] as const;
 ```
 
-**System/Services** (`seed-config-system.ts`):
+**System/Services** (`seed-config-system/`):
 ```typescript
-// Add to seed-config-system.ts for services, business processes, etc.
-export const SERVICE_DATA = [...] as const;
+// Add to appropriate file based on service category:
+// - seed-config-services-banking.ts for banking services
+// - seed-config-services-security.ts for security/auth services
+// - seed-config-services-compliance.ts for compliance services
+// - seed-config-services-infrastructure.ts for infra/API/monitoring services
+// - seed-config-business-processes.ts for business processes
+// - seed-config-attachment-types.ts for attachment types
+// - seed-config-exchange-rates.ts for exchange rates
+export const NEW_SERVICE_DATA = [...] as const;
 ```
 
 Then add to the main barrel export in `seed-config.ts`:
