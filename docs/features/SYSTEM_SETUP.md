@@ -13,7 +13,7 @@ The System Setup feature provides a streamlined solution for first-time installa
 - System health status page at `/setup`
 - System health monitoring (database, Redis, migrations, RBAC)
 - CLI-based database seeding (269 permissions + 10 roles)
-- CLI-based administrator account creation
+- UI-based administrator account creation (Better Auth) with manual promotion to system-administrator role
 - Admin dashboard for post-installation operations
 - Database operations (seed, reset)
 - System diagnostics and information display
@@ -37,7 +37,7 @@ The System Setup feature provides a streamlined solution for first-time installa
 
 **CLI Scripts**
 - `npm run db:seed` - Seed database with RBAC and foundation data
-- `npm run admin:create` - Create system administrator account
+- `npm run db:studio` - Open Prisma Studio (use to promote first admin)
 
 ### Database Schema
 
@@ -94,48 +94,32 @@ npm run db:seed
 
 ### Step 3: Create Administrator Account
 
-After seeding completes, create the first administrator account:
+After seeding completes, create the first administrator account through the UI and promote it to the `system-administrator` role.
+
+1. Visit `/register` and create the initial user (Better Auth handles password hashing).
+2. Promote that user to the `system-administrator` role using Prisma Studio or SQL.
+
+**Promote via Prisma Studio**
 
 ```bash
-npm run admin:create
+npm run db:studio
 ```
 
-**What This Does:**
-1. Checks if `admin@admin.com` user already exists
-2. Verifies system-administrator role exists (from seeding)
-3. Finds first available organization unit
-4. Creates:
-   - User record with verified email
-   - Account record with hashed password (bcrypt, 10 rounds)
-   - Person entity (firstName, lastName, orgUnit, primaryRole)
-   - UserRole linking user to system-administrator
-5. Displays login credentials
+- Open the `user_roles` table.
+- Add a row linking your new user's `id` to the `system-administrator` role `id` (set `createdBy` to `system` or your email).
 
-**Default Credentials:**
-- Email: `admin@admin.com`
-- Password: `admin123`
-
-**⚠️ IMPORTANT**: Change the password after first login!
-
-**Account Type**: Uses Better Auth convention (`type: "oauth"`, `provider: "credential"`)
-
-**Person Entity**: Automatically created with:
-- First organization unit as default
-- Viewer role as primary role (permissions come from UserRole)
-- Active status
+**⚠️ IMPORTANT**: Use a strong password when registering the first admin.
 
 ### Step 4: Login
 
-Navigate to `/login` and use the credentials displayed by the script:
-- Email: `admin@admin.com`
-- Password: `admin123`
+Navigate to `/login` and sign in with the newly registered admin credentials.
 
 After login, you will have full system access.
 
 ### Step 5: Next Steps
 
 **Recommended Actions:**
-1. **Change Password**: Update admin password at `/settings`
+1. **Rotate Password**: Update admin password at `/settings` after promotion
 2. **Add Users**: Register additional users at `/register` (they'll get viewer role)
 3. **Configure Roles**: Assign roles to users at `/admin/users`
 4. **Explore Documentation**: Read guides at `/docs`
@@ -311,18 +295,28 @@ All located in `src/interface-adapters/controllers/setup.controller.ts`:
 - **Audit**: All database operations logged
 
 ### Password Security
-- **Hashing**: bcrypt with 10 salt rounds
-- **Storage**: Password hash stored in Account table
-- **Better Auth**: Uses proper Account type convention (`oauth`/`credential`)
+- **Hashing**: Handled by Better Auth (do not generate hashes manually)
+- **Storage**: Password hash stored in the Account table by Better Auth
+- **Recommendation**: Create users through Better Auth flows (/register, auth actions) to avoid invalid hashes
 
-### CLI Script Security
-- **Local Only**: Scripts run on server, not exposed to web
-- **Idempotent**: Safe to run multiple times
-- **Checks**: Validates prerequisites before creating users
+### Setup Approach
+
+**Current Approach**: CLI for data seeding + UI for account creation
+- `npm run db:seed` for database operations
+- `/setup` shows status only (no forms)
+- `/register` creates the first account; promote to `system-administrator` via Prisma Studio/SQL
+- Explicit, transparent, and easy to debug
+
+**Benefits:**
+1. **Separation of Concerns**: Seeding is an ops task; account creation stays in Better Auth
+2. **Transparency**: CLI output shows exactly what's happening
+3. **Debugging**: Easier to troubleshoot issues with direct feedback
+4. **Consistency**: Same seeding mechanism for dev and production
+5. **Safety**: No manual password hashing or ad-hoc scripts
 
 ## Refactoring Lessons Learned
 
-### Why CLI-Based Setup?
+### Why CLI + UI?
 
 **Previous Approach**: Multi-step web wizard (`MinimalWizard`)
 - User form for creating first admin
@@ -330,18 +324,17 @@ All located in `src/interface-adapters/controllers/setup.controller.ts`:
 - Complex state management
 - Hard to debug issues
 
-**New Approach**: CLI commands + status page
+**Current Approach**: CLI seeding + UI registration
 - `npm run db:seed` for database operations
-- `npm run admin:create` for admin creation
 - `/setup` shows status only (no forms)
-- Explicit, transparent, and easy to debug
+- `/register` leverages Better Auth hashing and validation
 
 **Benefits:**
-1. **Separation of Concerns**: Setup is an ops task, not a user task
+1. **Separation of Concerns**: Data seeding is an ops task; account creation lives in Better Auth UI
 2. **Transparency**: CLI output shows exactly what's happening
 3. **Debugging**: Easier to troubleshoot issues with direct feedback
 4. **Consistency**: Same seeding mechanism for dev and production
-5. **Safety**: No accidental re-runs (CLI requires explicit execution)
+5. **Safety**: No accidental re-runs or manual hashing
 
 ### Better Auth Hooks vs Direct Creation
 
@@ -351,13 +344,10 @@ All located in `src/interface-adapters/controllers/setup.controller.ts`:
 - Handles cross-cutting concerns (Person creation)
 - Triggered after sign-in, sign-up, OAuth callback
 
-**Direct Creation** (`userRepository.createDirectly`):
-- Used by CLI script for explicit control
-- Creates User + Account + Person in single operation
-- Bypasses Better Auth API (which requires Next.js request context)
-- Required for setup when no HTTP context exists
+**Direct Creation**:
+- Deprecated for admin bootstrapping; use Better Auth flows to ensure correct hashing and middleware execution
 
-**Key Pattern**: CLI creates User/Account/Person directly, Better Auth hooks handle subsequent logins
+**Key Pattern**: Better Auth handles user creation; hooks handle Person linkage on first authentication
 
 ### Account Table Pattern
 
@@ -373,28 +363,21 @@ All located in `src/interface-adapters/controllers/setup.controller.ts`:
 
 ### Common Issues
 
-**Issue**: "Admin role not found" when running `npm run admin:create`
+**Issue**: "Admin role not found" when promoting first user
 **Cause**: Database not seeded
 **Solution**: Run `npm run db:seed` first
-
-**Issue**: "No organization units found" when running `npm run admin:create`
-**Cause**: Foundation data not seeded
-**Solution**: Run `npm run db:seed` first
-
-**Issue**: "User already exists" when running `npm run admin:create`
-**Cause**: Admin account already created
-**Solution**: Use existing credentials or delete user and re-run:
-```sql
-DELETE FROM "User" WHERE email = 'admin@admin.com';
-```
 
 **Issue**: Setup page shows "Unhealthy" for RBAC
 **Cause**: Database not seeded
 **Solution**: Run `npm run db:seed`
 
 **Issue**: Can't login with admin credentials
-**Cause**: Wrong credentials or account issue
-**Solution**: Check console output from `npm run admin:create` for correct credentials
+**Cause**: Account created outside Better Auth (invalid hash) or wrong password
+**Solution**: Register via `/register` to let Better Auth hash the password
+
+**Issue**: First user lacks admin access
+**Cause**: User not linked to `system-administrator` role
+**Solution**: Add entry to `user_roles` linking the user to the role via Prisma Studio or SQL
 
 ## Development vs Production
 
@@ -415,15 +398,16 @@ DELETE FROM "User" WHERE email = 'admin@admin.com';
 **Manual Testing Checklist:**
 1. Fresh database: `/setup` shows unhealthy RBAC
 2. Run `npm run db:seed`: All health checks green
-3. Run `npm run admin:create`: User created successfully
-4. Login with admin credentials: Success
-5. Navigate to `/admin/system-setup`: All checks green
-6. Run reset database (dev only): Database cleared
-7. Re-seed and create admin: Works again
+3. Register account at `/register`: Account created successfully
+4. Promote that user to `system-administrator` via Prisma Studio/SQL
+5. Login with admin credentials: Success
+6. Navigate to `/admin/system-setup`: All checks green
+7. Run reset database (dev only): Database cleared
+8. Re-seed and promote admin: Works again
 
 **Test Files:**
 - `src/interface-adapters/controllers/__tests__/setup.controller.test.ts`
-- Manual test: `scripts/create-admin-user.ts`
+- Manual test: `/setup` + `/register` + Prisma Studio promotion
 
 ## Related Documentation
 
@@ -444,12 +428,11 @@ DELETE FROM "User" WHERE email = 'admin@admin.com';
 npm run db:seed
 
 # 3. Create admin
-npm run admin:create
+# Visit /register to create the first account
+# Promote to system-administrator via Prisma Studio (npm run db:studio) or SQL
 
 # 4. Login
-# Navigate to /login
-# Email: admin@admin.com
-# Password: admin123
+# Navigate to /login with the new admin credentials
 ```
 
 ### Reset and Start Over (Development)
@@ -460,8 +443,8 @@ npm run db:reset
 # Re-seed
 npm run db:seed
 
-# Create admin
-npm run admin:create
+# Re-create admin
+# Visit /register then promote to system-administrator via Prisma Studio/SQL
 ```
 
 ### Add Additional Users

@@ -229,32 +229,44 @@ export function SystemStatusPage() {
                 <AlertTitle>System Ready</AlertTitle>
                 <AlertDescription className="mt-2 space-y-3">
                   <p>
-                    All system components are healthy. You can now create an
-                    administrator account.
+                    All system components are healthy. Create your administrator
+                    account via the UI.
                   </p>
 
                   <div className="space-y-2">
-                    <p className="font-medium">Step 1: Create Admin Account</p>
-                    <div className="bg-muted rounded-md p-3 font-mono text-sm">
-                      npm run admin:create
-                    </div>
+                    <p className="font-medium">Step 1: Register</p>
                     <p className="text-muted-foreground text-sm">
-                      This will create an admin account with the following
-                      credentials:
-                      <br />
-                      Email: <code>admin@admin.com</code>
-                      <br />
-                      Password: <code>admin123</code>
+                      Visit{" "}
+                      <a
+                        href="/register"
+                        className="text-primary hover:underline"
+                      >
+                        /register
+                      </a>{" "}
+                      and create the initial user. Better Auth will handle
+                      password hashing.
                     </p>
                   </div>
 
                   <div className="space-y-2 pt-2">
-                    <p className="font-medium">Step 2: Login</p>
+                    <p className="font-medium">
+                      Step 2: Promote to System Administrator
+                    </p>
                     <p className="text-muted-foreground text-sm">
-                      After creating the admin account, you can login at{" "}
+                      Use Prisma Studio (<code>npm run db:studio</code>) or SQL
+                      to add that user to the <code>system-administrator</code>{" "}
+                      role in the <code>UserRole</code> table.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2 pt-2">
+                    <p className="font-medium">Step 3: Login</p>
+                    <p className="text-muted-foreground text-sm">
+                      Sign in at{" "}
                       <a href="/login" className="text-primary hover:underline">
                         /login
-                      </a>
+                      </a>{" "}
+                      with the new admin credentials.
                     </p>
                   </div>
 

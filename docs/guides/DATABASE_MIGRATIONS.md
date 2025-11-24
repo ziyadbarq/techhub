@@ -350,7 +350,7 @@ npm run reset
 npm run cache:clear:all
 
 # Create admin account
-npm run admin:create
+# Visit /register then promote to system-administrator via Prisma Studio/SQL
 ```
 
 ## Best Practices

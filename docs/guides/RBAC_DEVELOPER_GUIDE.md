@@ -1457,8 +1457,8 @@ npm run db:seed
 npm run reset
 
 # Create admin account
-npm run admin:create
+# Visit /register then promote to system-administrator via Prisma Studio (npm run db:studio)
 
 # Open Prisma Studio
-npx prisma studio
+npm run db:studio
 ```

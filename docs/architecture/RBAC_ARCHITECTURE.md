@@ -315,7 +315,7 @@ Full system access for platform administration and configuration.
 - User and role management (USERS_*, ROLES_*, PERMISSIONS_*)
 - System settings and configuration
 - Audit log access and export
-- **Created via CLI**: `npm run admin:create` (admin@admin.com / admin123)
+- **Created via UI**: Register at `/register`, then promote to `system-administrator` via Prisma Studio/SQL
 
 **Use Case**: IT platform administrator, system owner
 
@@ -1144,19 +1144,12 @@ System entities (created during seed):
 
 ### Admin Account Creation
 
-System administrator accounts are created via CLI command after database seeding:
+System administrator accounts are created via Better Auth after database seeding:
 
-```bash
-npm run admin:create
-```
+1. Register the first user at `/register` (Better Auth handles password hashing).
+2. Promote that user to the `system-administrator` role via Prisma Studio (`npm run db:studio`) or SQL.
 
-This creates an admin user with:
-- Email: `admin@admin.com`
-- Password: `admin123`
-- Role: `system-administrator` (all permissions)
-- Person entity automatically linked
-
-**See**: [SYSTEM_SETUP.md](../features/SYSTEM_SETUP.md) for complete setup guide
+**See**: [SYSTEM_SETUP.md](../features/SYSTEM_SETUP.md) for the complete setup guide
 
 ### Permission Denial Errors
 

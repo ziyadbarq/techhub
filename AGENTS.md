@@ -12,7 +12,7 @@ This file provides high-level guidance when working with this repository.
 
 **Current Implementation**:
 
-- **System Setup**: Status page (`/setup`) for system health monitoring and admin dashboard (`/admin/system-setup`) for database operations; CLI-based setup with `npm run admin:create`
+- **System Setup**: Status page (`/setup`) for system health monitoring and admin dashboard (`/admin/system-setup`) for database operations; first admin is created via the `/register` UI and promoted to system-administrator via Prisma Studio/SQL (see docs/features/SYSTEM_SETUP.md)
 - **Layer 1 (Foundation)**: 12 core entities - OrganizationUnit, Person, Role, Location, Vendor, Lifecycle models, Field definitions, **ExchangeRate** (multi-currency support)
 - **Layer 2 (Asset/Inventory)**: 9 entities - Asset, AssetCategory, AssetModel, AssetAssignment, StockLocation, StockMovement, Warranty, MaintenanceSchedule, MaintenanceRecord
 - **Layer 3 (Advanced ITAM & Extensions)**: 9 modules (~31 entities)
@@ -33,7 +33,7 @@ This file provides high-level guidance when working with this repository.
 ```bash
 # Initial Setup
 npm run db:seed      # Seed database (RBAC + Foundation + test data)
-npm run admin:create # Create admin account (admin@admin.com / admin123)
+# Create first admin via /register, then assign system-administrator role via Prisma Studio or SQL
 
 # Development
 npm run dev      # Start dev server with Turbopack

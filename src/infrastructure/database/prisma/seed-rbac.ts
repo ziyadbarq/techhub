@@ -116,13 +116,17 @@ async function seedRBAC(prismaClient?: PrismaClient) {
     console.log(`   - ${SYSTEM_PERMISSIONS.length} permissions created`);
     console.log(`   - ${Object.keys(SYSTEM_ROLES).length} roles created`);
     console.log("\nCreate Admin Account:");
-    console.log("   Run: npm run admin:create");
-    console.log("   This creates an admin user (admin@admin.com / admin123)");
+    console.log(
+      "   Register a user via /register, then promote to system-administrator via Prisma Studio or SQL",
+    );
     console.log("\nNext steps:");
-    console.log("   1. Create admin account: npm run admin:create");
-    console.log("   2. Login at /login with admin credentials");
-    console.log("   3. Register additional users at /register");
-    console.log("   4. Assign roles via admin UI (/admin/users)");
+    console.log("   1. Register first user at /register");
+    console.log(
+      "   2. Promote that user to the system-administrator role in the UserRole table",
+    );
+    console.log("   3. Login at /login with the new admin account");
+    console.log("   4. Register additional users at /register");
+    console.log("   5. Assign roles via admin UI (/admin/users)");
   } catch (error) {
     console.error("❌ RBAC seed failed:", error);
     throw error;

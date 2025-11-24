@@ -134,14 +134,15 @@ cp .env.example .env.local
 npm run db:push        # Push Prisma schema to database
 npm run db:seed        # Seed RBAC data, Foundation entities, and test data
 
-# 5. Create admin account
-npm run admin:create   # Creates admin@admin.com / admin123
+# 5. Create first admin
+# Visit http://localhost:3000/register to create an account,
+# then assign the system-administrator role via Prisma Studio or SQL (see docs/features/SYSTEM_SETUP.md)
 
 # 6. Run development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) and login with admin credentials!
+Open [http://localhost:3000](http://localhost:3000) and login with your admin account!
 
 ## 📚 Project Structure
 

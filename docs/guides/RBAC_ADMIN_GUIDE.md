@@ -59,13 +59,11 @@
 When you first access the application with no administrators:
 
 1. Ensure database is seeded: `npm run db:seed`
-2. Create admin account: `npm run admin:create`
-3. Login at `/login` with credentials:
-   - Email: `admin@admin.com`
-   - Password: `admin123`
-4. You'll have full admin access immediately
+2. Register first account at `/register` (Better Auth handles hashing)
+3. Promote that user to the `system-administrator` role via Prisma Studio (`npm run db:studio`) or SQL
+4. Login at `/login` with the new credentials
 
-**Security Note**: Change the default admin password after first login!
+**Security Note**: Use a strong password for the first admin and rotate it after initial login.
 
 ### Initial Configuration
 
@@ -612,7 +610,7 @@ Some permissions imply others:
 
 1. **Check if you have admin role**:
    - Ask existing admin to check your roles
-   - If no admin exists, create one: `npm run admin:create`
+   - If no admin exists, register via `/register` and promote that user to `system-administrator` in Prisma Studio/SQL
 
 2. **Verify you have required permissions**:
    - Need at least one of: `users:manage`, `roles:view`, `permissions:view`
