@@ -24,12 +24,21 @@
 export const ROLE_CONFLICTS: Record<string, string[]> = {
   // System Administrator conflicts
   "system-administrator": ["auditor"],
+  administrator: ["auditor"],
+  "system-admin": ["auditor"],
 
   // Auditor conflicts (SAMA compliance - segregation of duties)
-  auditor: ["system-administrator", "finance-manager", "asset-coordinator"],
+  auditor: [
+    "system-administrator",
+    "administrator",
+    "system-admin",
+    "finance-manager",
+    "asset-coordinator",
+  ],
 
   // Finance Manager conflicts (SOD)
-  "finance-manager": ["auditor", "inventory-manager"],
+  "finance-manager": ["auditor", "inventory-manager", "procurement-manager"],
+  "procurement-manager": ["finance-manager"],
 
   // Asset Coordinator conflicts (recordkeeping vs. custody separation)
   "asset-coordinator": ["inventory-manager", "auditor"],
@@ -63,6 +72,10 @@ export const CONFLICT_REASONS: Record<string, string> = {
   // System Administrator conflicts
   "system-administrator:auditor":
     "Auditors require independence from system administration (SAMA compliance)",
+  "auditor:administrator":
+    "Auditors require independence from system administration (SAMA compliance)",
+  "auditor:system-admin":
+    "Auditors require independence from system administration (SAMA compliance)",
 
   // Auditor conflicts (SAMA compliance)
   "auditor:finance-manager":
@@ -73,6 +86,10 @@ export const CONFLICT_REASONS: Record<string, string> = {
   // Finance Manager conflicts
   "finance-manager:inventory-manager":
     "Finance approval and inventory custody must be segregated (SAMA SOD)",
+  "finance-manager:procurement-manager":
+    "Finance approval and procurement execution must be segregated (SAMA SOD)",
+  "procurement-manager:finance-manager":
+    "Procurement execution and finance approval must be segregated (SAMA SOD)",
 
   // Asset Coordinator conflicts
   "asset-coordinator:inventory-manager":
@@ -119,6 +136,16 @@ export const CONFLICT_CONFIG: Record<string, ConflictConfig> = {
     allowOverride: false,
     requireJustification: false,
   },
+  "auditor:administrator": {
+    severity: "critical",
+    allowOverride: false,
+    requireJustification: false,
+  },
+  "auditor:system-admin": {
+    severity: "critical",
+    allowOverride: false,
+    requireJustification: false,
+  },
   "auditor:finance-manager": {
     severity: "critical",
     allowOverride: false,
@@ -137,6 +164,11 @@ export const CONFLICT_CONFIG: Record<string, ConflictConfig> = {
 
   // High severity - override with justification (SOD)
   "finance-manager:inventory-manager": {
+    severity: "error",
+    allowOverride: true,
+    requireJustification: true,
+  },
+  "finance-manager:procurement-manager": {
     severity: "error",
     allowOverride: true,
     requireJustification: true,

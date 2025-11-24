@@ -782,8 +782,8 @@ await vendorRepository.create(vendor);
 ```typescript
 const contact = VendorContact.create({
   vendorId: vendor.id,
-  fullName: "John Smith",
-  email: "john.smith@dell.com",
+  fullName: "Ahmed Al Saud",
+  email: "ahmed.alsaud@dell.com",
   phone: "+1-555-0123",
   role: "Account Manager",
   isPrimary: true,
@@ -873,8 +873,8 @@ class VendorContact {
 ```typescript
 const primaryContact = VendorContact.create({
   vendorId: dellVendorId,
-  fullName: "Jane Doe",
-  email: "jane.doe@dell.com",
+  fullName: "Fatimah AlHarbi",
+  email: "fatimah.alharbi@dell.com",
   phone: "+1-555-0456",
   role: "Senior Account Manager",
   isPrimary: true,
@@ -888,8 +888,8 @@ await vendorContactRepository.create(primaryContact);
 ```typescript
 const techContact = VendorContact.create({
   vendorId: dellVendorId,
-  fullName: "Mike Johnson",
-  email: "mike.johnson@dell.com",
+  fullName: "Yousef Alqahtani",
+  email: "yousef.alqahtani@dell.com",
   phone: "+1-555-0789",
   role: "Technical Support Lead",
   isPrimary: false,

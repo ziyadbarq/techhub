@@ -129,7 +129,7 @@ export function PersonForm({
                       First Name <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="John" maxLength={100} {...field} />
+                      <Input placeholder="Ahmed" maxLength={100} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -161,7 +161,7 @@ export function PersonForm({
                       Last Name <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Doe" maxLength={100} {...field} />
+                      <Input placeholder="Al Saud" maxLength={100} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

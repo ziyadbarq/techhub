@@ -243,7 +243,7 @@ export default function AdminDashboardPage() {
   const recentActivities: ActivityItem[] = [
     {
       id: "1",
-      user: "Name",
+      user: "Aisha Alhazmi",
       action: "created role",
       target: "Content Editor",
       timestamp: "5 minutes ago",
@@ -251,7 +251,7 @@ export default function AdminDashboardPage() {
     },
     {
       id: "2",
-      user: "Sarah Smith",
+      user: "Sara Almutairi",
       action: "updated permissions for",
       target: "Moderator",
       timestamp: "1 hour ago",
@@ -259,7 +259,7 @@ export default function AdminDashboardPage() {
     },
     {
       id: "3",
-      user: "Mike Johnson",
+      user: "Yousef Alqahtani",
       action: "assigned role",
       target: "Admin to user@example.com",
       timestamp: "2 hours ago",

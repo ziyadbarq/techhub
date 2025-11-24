@@ -88,9 +88,16 @@ export async function assignFirstAdminAction(): Promise<
       revalidatePath("/admin");
     }
 
-    return result.success
-      ? { success: true as const, data: result }
-      : { success: false as const, error: result.message };
+    if (result.success) {
+      return { success: true as const, data: result };
+    }
+
+    const errorMessage =
+      result.message === "System Administrator already exists."
+        ? "Admin already exists"
+        : result.message;
+
+    return { success: false as const, error: errorMessage };
   } catch (error) {
     return handleControllerError(
       error,

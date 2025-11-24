@@ -171,7 +171,7 @@ export interface IEmailService {
    * await emailService.sendTemplatedEmail(
    *   'user@example.com',
    *   'welcome',
-   *   { name: 'John', verificationLink: 'https://...' }
+   *   { name: 'Ahmed', verificationLink: 'https://...' }
    * );
    * ```
    */

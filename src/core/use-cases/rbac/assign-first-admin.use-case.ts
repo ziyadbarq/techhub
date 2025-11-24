@@ -71,7 +71,7 @@ export class AssignFirstAdminUseCase {
       });
       return {
         success: false,
-        message: "System Administrator user already exists.",
+        message: "System Administrator already exists.",
       };
     }
 
