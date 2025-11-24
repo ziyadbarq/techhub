@@ -204,6 +204,70 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
     requiredPermissions: [PERMISSIONS.USERS_MANAGE],
     description: "Team role management",
   },
+
+  // ============================================================================
+  // LAYER 3 ENTITY ROUTES
+  // ============================================================================
+
+  "/attachment-types": {
+    requiredPermissions: [PERMISSIONS.ATTACHMENT_TYPES_VIEW],
+    description: "Attachment type management",
+  },
+
+  "/attachments": {
+    requiredPermissions: [PERMISSIONS.ATTACHMENTS_VIEW],
+    description: "Attachment management across all entities",
+  },
+
+  "/business-processes": {
+    requiredPermissions: [PERMISSIONS.BUSINESS_PROCESSES_VIEW],
+    description: "Business process management",
+  },
+
+  "/contract-types": {
+    requiredPermissions: [PERMISSIONS.CONTRACT_TYPES_VIEW],
+    description: "Contract type management",
+  },
+
+  "/contracts": {
+    requiredPermissions: [PERMISSIONS.CONTRACTS_VIEW],
+    description: "Contract management",
+  },
+
+  "/data-domains": {
+    requiredPermissions: [PERMISSIONS.DATA_DOMAINS_VIEW],
+    description: "Data domain management for governance",
+  },
+
+  "/data-ownerships": {
+    requiredPermissions: [PERMISSIONS.DATA_OWNERSHIPS_VIEW],
+    description: "Data ownership assignment management",
+  },
+
+  "/license-allocations": {
+    requiredPermissions: [PERMISSIONS.LICENSE_ALLOCATIONS_VIEW],
+    description: "License allocation tracking",
+  },
+
+  "/license-entitlements": {
+    requiredPermissions: [PERMISSIONS.LICENSE_ENTITLEMENTS_VIEW],
+    description: "License entitlement management",
+  },
+
+  "/license-products": {
+    requiredPermissions: [PERMISSIONS.LICENSE_PRODUCTS_VIEW],
+    description: "License product management",
+  },
+
+  "/data-import": {
+    requiredPermissions: [PERMISSIONS.DATA_IMPORT_MANAGE],
+    description: "Universal data importer",
+  },
+
+  "/rbac-analytics": {
+    requiredPermissions: [PERMISSIONS.ROLES_VIEW],
+    description: "RBAC analytics dashboard",
+  },
 };
 
 /**

@@ -8,6 +8,7 @@
 import { Suspense } from "react";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { requirePermission } from "@/lib/permissions/server";
 import { DataImportWizard } from "@/components/data-import/DataImportWizard";
 import {
   Card,
@@ -18,10 +19,15 @@ import {
 } from "@/components/ui/card";
 import { Database, FileUp, CheckCircle2, AlertCircle } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 /**
  * Server component - handles permission checks and layout
  */
 export default async function DataImportPage() {
+  // Server-side permission check (security)
+  await requirePermission(PERMISSIONS.DATA_IMPORT_MANAGE);
+
   return (
     <PermissionGuard permission={PERMISSIONS.DATA_IMPORT_MANAGE}>
       <div className="container mx-auto space-y-6 py-6">

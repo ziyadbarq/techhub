@@ -6,6 +6,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { AssetDashboardClient } from "@/components/dashboard/asset-dashboard-client";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { requirePermission } from "@/lib/permissions/server";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 export const dynamic = "force-dynamic";
 
@@ -60,7 +62,10 @@ function LoadingSkeleton() {
   );
 }
 
-export default function AssetDashboardPage() {
+export default async function AssetDashboardPage() {
+  // Server-side permission check
+  await requirePermission(PERMISSIONS.DASHBOARD_ANALYTICS);
+
   return (
     <div className="space-y-6">
       {/* Page Header */}

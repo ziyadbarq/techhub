@@ -17,6 +17,8 @@ import { AssetsWithoutWarrantyReport } from "@/components/reports/assets-without
 import { UnassignedAssetsReport } from "@/components/reports/unassigned-assets-report";
 import { AssetsByDepartmentReport } from "@/components/reports/assets-by-department-report";
 import { AssetValueByCategoryReport } from "@/components/reports/asset-value-by-category-report";
+import { requirePermission } from "@/lib/permissions/server";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 export const dynamic = "force-dynamic";
 
@@ -39,7 +41,10 @@ function ReportSkeleton() {
   );
 }
 
-export default function ReportsPage() {
+export default async function ReportsPage() {
+  // Server-side permission check
+  await requirePermission(PERMISSIONS.DASHBOARD_ANALYTICS);
+
   return (
     <div className="space-y-6">
       {/* Page Header */}

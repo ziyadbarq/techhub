@@ -12,6 +12,7 @@
 
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { requirePermission } from "@/lib/permissions/server";
 import {
   getRoleUsageStatsAction,
   getPermissionUsageStatsAction,
@@ -19,7 +20,12 @@ import {
 } from "@/interface-adapters/controllers/rbac-analytics.controller";
 import { AnalyticsDashboardClient } from "@/components/analytics/analytics-dashboard-client";
 
+export const dynamic = "force-dynamic";
+
 export default async function AnalyticsPage() {
+  // Server-side permission check (security)
+  await requirePermission(PERMISSIONS.ROLES_VIEW);
+
   // Fetch data on the server
   const [roleUsageResult, permissionUsageResult, userRoleStatsResult] =
     await Promise.all([
