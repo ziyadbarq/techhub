@@ -566,7 +566,9 @@ export async function getAssetServicesAction(assetId: string): Promise<ActionRes
 
 ## UI Components
 
-### ServicesTable
+### Core Components
+
+#### ServicesTable
 
 **Location**: `src/components/services/services-table.tsx`
 
@@ -577,7 +579,7 @@ export async function getAssetServicesAction(assetId: string): Promise<ActionRes
 - Essential Service indicator
 - Actions: View, Edit, Delete, Manage Owners
 
-### ServiceForm
+#### ServiceForm
 
 **Location**: `src/components/services/service-form.tsx`
 
@@ -588,9 +590,18 @@ export async function getAssetServicesAction(assetId: string): Promise<ActionRes
 - GitLab URL validation
 - JSON editors for SLA details and metadata
 
-### ServiceDetailView
+**Reusable components available** (see [service-form-fields.tsx](../../src/components/services/service-form-fields.tsx)):
+- `EnumSelectField` - Select with enum values and auto-formatting
+- `DateField` - Date input with proper value handling
+- `CheckboxField` - Checkbox with label and description
+- `TextareaField` - Textarea with null/undefined handling
+- `TextField` - Text input with type support (email, URL, number)
+
+#### ServiceDetailView
 
 **Location**: `src/components/services/service-detail-view.tsx`
+
+**Architecture**: Refactored using DRY/SOLID principles (see [REFACTORING_PATTERNS.md](../guides/REFACTORING_PATTERNS.md#pattern-7-reusable-component-library))
 
 **Features**:
 - Tabs: Overview, Owners, Infrastructure, Assets, History
@@ -598,6 +609,29 @@ export async function getAssetServicesAction(assetId: string): Promise<ActionRes
 - Owners: Grouped by type (Technical, Product, Business) with primary indicator
 - Infrastructure: Location, cloud details, IP/hostname, backup status
 - Assets: Linked assets with relationship type
+
+**Extracted Components**:
+- **[service-detail-fields.tsx](../../src/components/services/service-detail-fields.tsx)** - Reusable display components:
+  - `DetailField` - Standard key-value display
+  - `DetailDateField` - Formatted date display
+  - `DetailLinkField` - Clickable links with fallback
+  - `ConditionalDetailField` - Only renders if value exists
+- **[service-action-dialogs.tsx](../../src/components/services/service-action-dialogs.tsx)** - Unified dialog:
+  - `ServiceActionDialog` - Configuration-driven delete/retire dialogs
+
+**Extracted Hooks**:
+- **[use-service-actions.ts](../../src/hooks/use-service-actions.ts)** - State management for service actions (delete, retire)
+
+**Extracted Utilities**:
+- **[service-display-utils.ts](../../src/lib/services/service-display-utils.ts)** - Pure utility functions:
+  - `getStatusBadgeVariant()` - Badge variant for service status
+  - `getCriticalityBadgeVariant()` - Badge variant for criticality level
+  - `groupOwnersByType()` - Group owners by ownership type
+  - `formatServiceDate()` - Format date strings
+  - `formatServiceDateTime()` - Format datetime strings
+  - `formatEnumValue()` - Format SCREAMING_SNAKE_CASE to readable text
+
+**Metrics**: Reduced from 617 lines to 443 lines (28% reduction) through component extraction
 
 ### ServiceOwnersManager
 

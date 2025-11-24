@@ -955,6 +955,668 @@ git diff --stat
 
 ---
 
+## Pattern 6: Strategy Pattern for Validation
+
+### Problem
+
+Large validation classes with massive switch statements:
+- 123-line switch statement with 15+ validation rule types
+- Repeated error handling patterns
+- Difficult to add new validation rules
+- Violates Open/Closed Principle
+
+### Solution
+
+Extract validation rules into strategy pattern with handler registry.
+
+### Implementation Steps
+
+#### 1. Create Strategy Interface
+
+Define a common interface for all validation handlers:
+
+```typescript
+// field-validation-rules.ts
+
+type ValidationRuleHandler = (
+  value: any,
+  rule: ValidationRule,
+  label: string
+) => string | null; // Returns error message or null if valid
+```
+
+#### 2. Implement Rule Handlers
+
+Create individual handlers for each validation type:
+
+```typescript
+const emailHandler: ValidationRuleHandler = (value, rule, label) => {
+  if (!isValidEmail(String(value))) {
+    return rule.message || `${label} must be a valid email address`;
+  }
+  return null;
+};
+
+const urlHandler: ValidationRuleHandler = (value, rule, label) => {
+  if (!isValidURL(String(value))) {
+    return rule.message || `${label} must be a valid URL`;
+  }
+  return null;
+};
+
+// ... 13 more handlers
+```
+
+#### 3. Create Handler Registry
+
+Use a registry pattern for easy lookup and extension:
+
+```typescript
+const RULE_HANDLERS: Record<string, ValidationRuleHandler> = {
+  email: emailHandler,
+  url: urlHandler,
+  phone: phoneHandler,
+  alphanumeric: alphanumericHandler,
+  numeric: numericHandler,
+  positive: positiveHandler,
+  negative: negativeHandler,
+  integer: integerHandler,
+  pastDate: pastDateHandler,
+  futureDate: futureDateHandler,
+  pattern: patternHandler,
+  minLength: minLengthHandler,
+  maxLength: maxLengthHandler,
+  min: minHandler,
+  max: maxHandler,
+};
+```
+
+#### 4. Implement Main Validation Function
+
+Replace switch statement with registry lookup:
+
+```typescript
+export function validateRule(
+  value: any,
+  rule: ValidationRule,
+  fieldLabel?: string,
+): RuleValidationResult {
+  const errors: string[] = [];
+  const label = fieldLabel || "Value";
+
+  // Get the appropriate handler for this rule type
+  const handler = RULE_HANDLERS[rule.type];
+
+  // If no handler exists, skip it
+  if (!handler) {
+    return { valid: true, errors: [] };
+  }
+
+  // Execute the handler and collect any error message
+  const error = handler(value, rule, label);
+  if (error) {
+    errors.push(error);
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+  };
+}
+```
+
+#### 5. Enable Extension
+
+Provide a registration function for custom rules:
+
+```typescript
+export function registerRuleHandler(
+  ruleType: string,
+  handler: ValidationRuleHandler,
+): void {
+  RULE_HANDLERS[ruleType] = handler;
+}
+```
+
+### Supporting Patterns
+
+#### Extract Format Validators
+
+Move reusable validation logic into pure functions:
+
+```typescript
+// format-validators.ts
+
+export function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+export function isValidURL(url: string): boolean {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function isValidPhone(phone: string): boolean {
+  const cleaned = phone.replace(/[\s\-().]/g, "");
+  return /^\+?\d{8,15}$/.test(cleaned);
+}
+
+// Export as registry too
+export const formatValidators = {
+  email: isValidEmail,
+  url: isValidURL,
+  phone: isValidPhone,
+  // ...
+} as const;
+```
+
+#### Extract String Matching Utilities
+
+Separate fuzzy matching algorithms:
+
+```typescript
+// string-matching.ts
+
+export function findClosestMatch(
+  input: string,
+  candidates: string[],
+): { match: string; similarity: number } | null {
+  if (candidates.length === 0) return null;
+
+  let closestMatch = candidates[0];
+  let minDistance = levenshteinDistance(
+    input.toLowerCase(),
+    closestMatch.toLowerCase(),
+  );
+
+  for (const value of candidates.slice(1)) {
+    const distance = levenshteinDistance(
+      input.toLowerCase(),
+      value.toLowerCase(),
+    );
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestMatch = value;
+    }
+  }
+
+  // Calculate similarity percentage
+  const maxLength = Math.max(input.length, closestMatch.length);
+  const similarity = Math.round(
+    ((maxLength - minDistance) / maxLength) * 100,
+  );
+
+  return { match: closestMatch, similarity };
+}
+
+function levenshteinDistance(str1: string, str2: string): number {
+  // ... implementation
+}
+```
+
+### Benefits
+
+- **Open/Closed Principle**: Add new rules without modifying core code
+- **Single Responsibility**: Each handler does one thing
+- **Easy Testing**: Test handlers in isolation
+- **Extensible**: Register custom rules at runtime
+- **Type Safety**: TypeScript ensures handler contract
+- **Zero Switch Statements**: Registry pattern eliminates conditionals
+
+### Real-World Example
+
+**Universal Field Validator refactoring**:
+- **Before**: 661 lines with 123-line switch statement
+- **After**:
+  - Main validator: 416 lines (37% reduction)
+  - Strategy handlers: 280 lines (field-validation-rules.ts)
+  - Format validators: 80 lines (format-validators.ts)
+  - String matching: 100 lines (string-matching.ts)
+- **Result**: Modular, extensible, testable validation system
+
+---
+
+## Pattern 7: Reusable Component Library
+
+### Problem
+
+React components with repetitive patterns:
+- Same field display code repeated 20+ times
+- Same form field patterns repeated 13+ times
+- Duplicate dialog logic
+- Mixed state management and UI rendering
+- 600+ line components
+
+### Solution
+
+Create a library of focused, reusable components with custom hooks for state management.
+
+### Implementation Steps
+
+#### 1. Extract Display Components
+
+Create generic components for common display patterns:
+
+```typescript
+// service-detail-fields.tsx
+
+interface DetailFieldProps {
+  label: string;
+  value: string | number | null | undefined;
+  fallback?: string;
+  formatValue?: (value: string | number) => string;
+  className?: string;
+}
+
+export function DetailField({
+  label,
+  value,
+  fallback = "—",
+  formatValue,
+  className,
+}: DetailFieldProps) {
+  const displayValue =
+    value !== null && value !== undefined
+      ? formatValue ? formatValue(value) : String(value)
+      : fallback;
+
+  return (
+    <div className={className}>
+      <p className="text-muted-foreground text-sm font-medium">{label}</p>
+      <p className="text-sm">{displayValue}</p>
+    </div>
+  );
+}
+
+export function DetailDateField({
+  label,
+  date,
+  fallback = "—",
+}: { label: string; date: string | null; fallback?: string }) {
+  return (
+    <DetailField
+      label={label}
+      value={date ? format(new Date(date), "MMM d, yyyy") : undefined}
+      fallback={fallback}
+    />
+  );
+}
+
+export function ConditionalDetailField({
+  label,
+  value,
+  className,
+}: DetailFieldProps & { show?: boolean }) {
+  // Only render if value exists
+  if (!value) return null;
+  return <DetailField label={label} value={value} className={className} />;
+}
+```
+
+**Usage**:
+
+```typescript
+// BEFORE: 10 lines per field
+<div>
+  <p className="text-muted-foreground text-sm font-medium">Service Type</p>
+  <p className="text-sm">{service.serviceType.replace(/_/g, " ")}</p>
+</div>
+
+// AFTER: 3 lines per field
+<DetailField
+  label="Service Type"
+  value={service.serviceType}
+  formatValue={formatEnumValue}
+/>
+```
+
+#### 2. Extract Form Field Components
+
+Create generic form field wrappers:
+
+```typescript
+// service-form-fields.tsx
+
+export function EnumSelectField<TFieldValues extends FieldValues>({
+  control,
+  name,
+  label,
+  enumValues,
+  required,
+  formatValue = formatEnumValue,
+}: EnumSelectFieldProps<TFieldValues>) {
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>{label} {required && "*"}</FormLabel>
+          <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <FormControl>
+              <SelectTrigger>
+                <SelectValue placeholder={`Select ${label.toLowerCase()}`} />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent>
+              {Object.values(enumValues).map((value) => (
+                <SelectItem key={value} value={value}>
+                  {formatValue(value)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+
+export function DateField<TFieldValues extends FieldValues>({
+  control,
+  name,
+  label,
+  description,
+}: DateFieldProps<TFieldValues>) {
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>{label}</FormLabel>
+          <FormControl>
+            <Input
+              type="date"
+              {...field}
+              value={typeof field.value === "string" ? field.value : ""}
+            />
+          </FormControl>
+          {description && <FormDescription>{description}</FormDescription>}
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+```
+
+#### 3. Extract Custom Hooks
+
+Separate state management from UI:
+
+```typescript
+// use-service-actions.ts
+
+export function useServiceActions(service: ServiceDTO) {
+  const router = useRouter();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [retireDialogOpen, setRetireDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isRetiring, setIsRetiring] = useState(false);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      const result = await deleteServiceAction(service.id);
+      if (result.success) {
+        toast.success("Service deleted successfully");
+        router.push("/services");
+      }
+    } finally {
+      setIsDeleting(false);
+      setDeleteDialogOpen(false);
+    }
+  };
+
+  const handleRetire = async () => {
+    // Similar implementation
+  };
+
+  return {
+    deleteDialog: { open: deleteDialogOpen, setOpen: setDeleteDialogOpen },
+    retireDialog: { open: retireDialogOpen, setOpen: setRetireDialogOpen },
+    isDeleting,
+    isRetiring,
+    handleDelete,
+    handleRetire,
+  };
+}
+```
+
+#### 4. Create Configuration-Driven Components
+
+Use configuration objects to eliminate duplicate component code:
+
+```typescript
+// service-action-dialogs.tsx
+
+const ACTION_CONFIG: Record<ServiceActionType, {
+  title: string;
+  getDescription: (name: string) => string;
+  buttonText: string;
+  processingText: string;
+  buttonClass: string;
+}> = {
+  delete: {
+    title: "Delete Service?",
+    getDescription: (name) => `This will permanently delete service "${name}".`,
+    buttonText: "Delete",
+    processingText: "Deleting...",
+    buttonClass: "bg-destructive text-destructive-foreground",
+  },
+  retire: {
+    title: "Retire Service?",
+    getDescription: (name) => `This will mark service "${name}" as RETIRED.`,
+    buttonText: "Retire",
+    processingText: "Retiring...",
+    buttonClass: "bg-orange-600 text-white",
+  },
+};
+
+export function ServiceActionDialog({
+  actionType,
+  serviceName,
+  isProcessing,
+  onConfirm,
+  ...dialogProps
+}: ServiceActionDialogProps) {
+  const config = ACTION_CONFIG[actionType];
+
+  return (
+    <AlertDialog {...dialogProps}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{config.title}</AlertDialogTitle>
+          <AlertDialogDescription>
+            {config.getDescription(serviceName)}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm} className={config.buttonClass}>
+            {isProcessing ? config.processingText : config.buttonText}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+```
+
+#### 5. Extract Utility Functions
+
+Pure functions for data transformation and formatting:
+
+```typescript
+// service-display-utils.ts
+
+export function getStatusBadgeVariant(status: ServiceStatus): BadgeVariant {
+  switch (status) {
+    case "PRODUCTION": return "default";
+    case "RETIRED": return "secondary";
+    case "UAT": return "outline";
+    default: return "outline";
+  }
+}
+
+export function groupOwnersByType(
+  owners: ServiceOwnerDTO[],
+): Record<string, ServiceOwnerDTO[]> {
+  const grouped = { TECHNICAL: [], PRODUCT: [], BUSINESS: [] };
+  owners.forEach((owner) => {
+    if (grouped[owner.ownershipType]) {
+      grouped[owner.ownershipType].push(owner);
+    }
+  });
+  return grouped;
+}
+
+export function formatServiceDate(
+  date: string | null | undefined,
+  fallback: string = "—",
+): string {
+  return date ? format(new Date(date), "MMM d, yyyy") : fallback;
+}
+```
+
+#### 6. Refactor Main Component
+
+Use extracted hooks, components, and utilities:
+
+```typescript
+// service-detail-view.tsx (AFTER)
+
+export function ServiceDetailView({ service, owners }: Props) {
+  const router = useRouter();
+  const { hasPermission } = usePermissions();
+
+  // Extracted hook handles all action state
+  const {
+    deleteDialog,
+    retireDialog,
+    isDeleting,
+    isRetiring,
+    handleDelete,
+    handleRetire,
+  } = useServiceActions(service);
+
+  // Extracted utility function
+  const groupedOwners = groupOwnersByType(owners);
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex justify-between">
+        <h1>{service.name}</h1>
+        <div className="flex gap-2">
+          <Button onClick={() => router.push(`/services/${service.id}/edit`)}>
+            Edit
+          </Button>
+          <Button onClick={() => retireDialog.setOpen(true)}>Retire</Button>
+          <Button onClick={() => deleteDialog.setOpen(true)}>Delete</Button>
+        </div>
+      </div>
+
+      {/* Content with reusable components */}
+      <Card>
+        <CardContent className="grid grid-cols-2 gap-4">
+          <DetailField
+            label="Service Type"
+            value={service.serviceType}
+            formatValue={formatEnumValue}
+          />
+          <DetailDateField
+            label="Deployment Date"
+            date={service.deploymentDate}
+          />
+          <ConditionalDetailField
+            label="Description"
+            value={service.description}
+            className="col-span-2"
+          />
+        </CardContent>
+      </Card>
+
+      {/* Configuration-driven dialogs */}
+      <ServiceActionDialog
+        open={deleteDialog.open}
+        onOpenChange={deleteDialog.setOpen}
+        serviceName={service.name}
+        actionType="delete"
+        isProcessing={isDeleting}
+        onConfirm={handleDelete}
+      />
+
+      <ServiceActionDialog
+        open={retireDialog.open}
+        onOpenChange={retireDialog.setOpen}
+        serviceName={service.name}
+        actionType="retire"
+        isProcessing={isRetiring}
+        onConfirm={handleRetire}
+      />
+    </div>
+  );
+}
+```
+
+### Component Library Structure
+
+```
+src/
+├── hooks/
+│   ├── use-service-actions.ts         # State management hook
+│   └── use-service-form.ts            # Form state hook
+├── lib/
+│   └── services/
+│       └── service-display-utils.ts   # Pure utility functions
+└── components/
+    └── services/
+        ├── service-action-dialogs.tsx # Unified dialog component
+        ├── service-detail-fields.tsx  # Display field components
+        └── service-form-fields.tsx    # Form field components
+```
+
+### Benefits
+
+- **Massive Reduction**: 28-37% reduction in main component lines
+- **Reusability**: Components used across multiple views/forms
+- **Consistency**: Same styling and behavior everywhere
+- **Testability**: Test components and hooks in isolation
+- **Maintainability**: Changes localized to specific components
+- **Type Safety**: Full TypeScript support with generics
+- **Composition**: Build complex UIs from simple parts
+
+### Real-World Example
+
+**Service Detail View refactoring**:
+- **Before**: 617 lines mixing state, display patterns, and dialogs
+- **After**:
+  - Main component: 443 lines (28% reduction)
+  - Extracted components:
+    - `use-service-actions.ts`: 140 lines (hook)
+    - `service-action-dialogs.tsx`: 130 lines (dialog)
+    - `service-detail-fields.tsx`: 220 lines (display components)
+    - `service-display-utils.ts`: 158 lines (utilities)
+- **Reusability**: Components applicable to 6+ other service-related files
+- **Estimated future savings**: 800-1,000 lines when applied across module
+
+**Key Metrics**:
+- Eliminated 20+ field display pattern repetitions
+- Eliminated 2 duplicate dialog implementations
+- Extracted 90+ lines of utility logic
+- Created 5 reusable display components
+- Created 5 reusable form field components
+
+---
+
 ## Additional Refactoring Guidelines
 
 ### Code Smells to Watch For

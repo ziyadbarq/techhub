@@ -1,5 +1,7 @@
 /**
  * Service Form Component
+ *
+ * Refactored to use extracted form field components for better maintainability and DRY compliance.
  */
 
 "use client";
@@ -12,27 +14,19 @@ import type { z } from "zod";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+// Extracted reusable form field components
+import {
+  TextField,
+  TextareaField,
+  DateField,
+  EnumSelectField,
+  CheckboxField,
+  NullableSelectField,
+} from "./service-form-fields";
 
 import type {
   ServiceDTO,
@@ -166,106 +160,44 @@ export function ServiceForm({
                 <CardTitle>Basic Information</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <FormField
+                <TextField
                   control={form.control}
                   name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Service Name *</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="e.g., Customer Portal API"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Service Name"
+                  placeholder="e.g., Customer Portal API"
+                  required
                 />
 
-                <FormField
+                <EnumSelectField
                   control={form.control}
                   name="serviceType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Service Type *</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select service type" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.values(ServiceType).map((type) => (
-                            <SelectItem key={type} value={type}>
-                              {type.replace(/_/g, " ")}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Service Type"
+                  enumValues={ServiceType}
+                  required
                 />
 
-                <FormField
+                <TextareaField
                   control={form.control}
                   name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Describe the service..."
-                          rows={3}
-                          {...field}
-                          value={field.value || ""}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Description"
+                  placeholder="Describe the service..."
+                  rows={3}
                 />
 
-                <FormField
+                <TextareaField
                   control={form.control}
                   name="businessPurpose"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Business Purpose</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="What business need does this service fulfill?"
-                          rows={3}
-                          {...field}
-                          value={field.value || ""}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Business Purpose"
+                  placeholder="What business need does this service fulfill?"
+                  rows={3}
                 />
 
-                <FormField
+                <TextField
                   control={form.control}
                   name="gitlabRepoUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>GitLab Repository URL</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="url"
-                          placeholder="https://gitlab.com/..."
-                          {...field}
-                          value={field.value || ""}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="GitLab Repository URL"
+                  type="url"
+                  placeholder="https://gitlab.com/..."
                 />
               </CardContent>
             </Card>
@@ -278,109 +210,35 @@ export function ServiceForm({
                 <CardTitle>Service Classification</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <FormField
+                <EnumSelectField
                   control={form.control}
                   name="dataConfidentiality"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Data Confidentiality *</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select confidentiality level" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.values(DataConfidentiality).map((level) => (
-                            <SelectItem key={level} value={level}>
-                              {level}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Data Confidentiality"
+                  enumValues={DataConfidentiality}
+                  required
                 />
 
-                <FormField
+                <EnumSelectField
                   control={form.control}
                   name="businessImpactLevel"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Business Impact Level *</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select impact level" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.values(BusinessImpactLevel).map((level) => (
-                            <SelectItem key={level} value={level}>
-                              {level}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Business Impact Level"
+                  enumValues={BusinessImpactLevel}
+                  required
                 />
 
-                <FormField
+                <EnumSelectField
                   control={form.control}
                   name="criticality"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Criticality *</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select criticality" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.values(CriticalityLevel).map((level) => (
-                            <SelectItem key={level} value={level}>
-                              {level}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Criticality"
+                  enumValues={CriticalityLevel}
+                  required
                 />
 
-                <FormField
+                <CheckboxField
                   control={form.control}
                   name="isEssentialService"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>Essential Service</FormLabel>
-                        <FormDescription>
-                          Mark this service as essential for business operations
-                        </FormDescription>
-                      </div>
-                    </FormItem>
-                  )}
+                  label="Essential Service"
+                  description="Mark this service as essential for business operations"
                 />
               </CardContent>
             </Card>
@@ -393,98 +251,32 @@ export function ServiceForm({
                 <CardTitle>Lifecycle Management</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <FormField
+                <DateField
                   control={form.control}
                   name="deploymentDate"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Deployment Date</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="date"
-                          {...field}
-                          value={
-                            typeof field.value === "string" ? field.value : ""
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Deployment Date"
                 />
 
-                <FormField
+                <EnumSelectField
                   control={form.control}
                   name="currentStatus"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Current Status *</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select status" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {Object.values(ServiceStatus).map((status) => (
-                            <SelectItem key={status} value={status}>
-                              {status}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Current Status"
+                  enumValues={ServiceStatus}
+                  required
                 />
 
-                <FormField
+                <DateField
                   control={form.control}
                   name="lastPatchDate"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Patch Date</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="date"
-                          {...field}
-                          value={
-                            typeof field.value === "string" ? field.value : ""
-                          }
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        When was this service last patched or updated?
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Last Patch Date"
+                  description="When was this service last patched or updated?"
                 />
 
-                <FormField
+                <DateField
                   control={form.control}
                   name="plannedDecommissionDate"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Planned Decommission Date</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="date"
-                          {...field}
-                          value={
-                            typeof field.value === "string" ? field.value : ""
-                          }
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        When is this service planned to be retired?
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Planned Decommission Date"
+                  description="When is this service planned to be retired?"
                 />
               </CardContent>
             </Card>
@@ -497,109 +289,40 @@ export function ServiceForm({
                 <CardTitle>Governance & Compliance</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <FormField
+                <NullableSelectField
                   control={form.control}
                   name="vendorId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Vendor</FormLabel>
-                      <Select
-                        onValueChange={(value) =>
-                          field.onChange(value === "none" ? null : value)
-                        }
-                        value={field.value ?? "none"}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select vendor (optional)" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="none">No vendor</SelectItem>
-                          {vendors.map((vendor) => (
-                            <SelectItem key={vendor.id} value={vendor.id}>
-                              {vendor.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Vendor"
+                  options={vendors.map((v) => ({ id: v.id, label: v.name }))}
+                  placeholder="Select vendor (optional)"
+                  noneLabel="No vendor"
                 />
 
-                <FormField
+                <NullableSelectField
                   control={form.control}
                   name="businessProcessId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Business Process</FormLabel>
-                      <Select
-                        onValueChange={(value) =>
-                          field.onChange(value === "none" ? null : value)
-                        }
-                        value={field.value ?? "none"}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select business process (optional)" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="none">
-                            No business process
-                          </SelectItem>
-                          {businessProcesses.map((process) => (
-                            <SelectItem key={process.id} value={process.id}>
-                              {process.name} ({process.code})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Business Process"
+                  options={businessProcesses.map((p) => ({
+                    id: p.id,
+                    label: `${p.name} (${p.code})`,
+                  }))}
+                  placeholder="Select business process (optional)"
+                  noneLabel="No business process"
                 />
 
-                <FormField
+                <CheckboxField
                   control={form.control}
                   name="isInCentralRegister"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>In Central Register</FormLabel>
-                        <FormDescription>
-                          Is this service registered in the central service
-                          registry?
-                        </FormDescription>
-                      </div>
-                    </FormItem>
-                  )}
+                  label="In Central Register"
+                  description="Is this service registered in the central service registry?"
                 />
 
-                <FormField
+                <TextareaField
                   control={form.control}
                   name="complianceNotes"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Compliance Notes</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Any compliance or regulatory notes..."
-                          rows={4}
-                          {...field}
-                          value={field.value || ""}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Compliance Notes"
+                  placeholder="Any compliance or regulatory notes..."
+                  rows={4}
                 />
               </CardContent>
             </Card>

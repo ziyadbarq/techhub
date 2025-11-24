@@ -6,17 +6,17 @@
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable no-useless-escape */
 
-import { isValid, parseISO, isFuture, isPast } from "date-fns";
 import type {
   EntityFieldConfig,
   FieldType,
   FieldValidationResult,
   ValidationError,
-  ValidationRule,
   LookupMap,
 } from "./entity-config.types";
+import { isValidDate } from "./format-validators";
+import { findClosestMatch } from "./string-matching";
+import { validateRule as validateCustomRule } from "./field-validation-rules";
 
 /**
  * Main validator class for field validation
@@ -136,7 +136,7 @@ export class UniversalFieldValidator {
     // Custom validation rules
     if (field.validations && field.validations.length > 0) {
       for (const rule of field.validations) {
-        const ruleResult = this.validateRule(value, rule, field.label);
+        const ruleResult = validateCustomRule(value, rule, field.label);
         if (!ruleResult.valid) {
           if (rule.severity === "warning") {
             warnings.push(...ruleResult.errors);
@@ -215,7 +215,7 @@ export class UniversalFieldValidator {
 
       case "date":
       case "datetime":
-        if (!this.isValidDate(value)) {
+        if (!isValidDate(value)) {
           errors.push("Must be a valid date (YYYY-MM-DD)");
         }
         break;
@@ -333,260 +333,13 @@ export class UniversalFieldValidator {
       );
 
       // Find closest match for suggestion
-      const closest = this.findClosestMatch(value, lookupMap.allValues);
+      const closest = findClosestMatch(value, lookupMap.allValues);
       if (closest && closest.similarity > 70) {
         warnings.push(`Did you mean '${closest.match}'?`);
       }
     }
 
     return { valid: errors.length === 0, errors, warnings };
-  }
-
-  /**
-   * Validate custom validation rule
-   */
-  private validateRule(
-    value: any,
-    rule: ValidationRule,
-    fieldLabel?: string,
-  ): { valid: boolean; errors: string[] } {
-    const errors: string[] = [];
-    const label = fieldLabel || "Value";
-
-    switch (rule.type) {
-      case "email":
-        if (!this.isValidEmail(String(value))) {
-          errors.push(rule.message || `${label} must be a valid email address`);
-        }
-        break;
-
-      case "url":
-        if (!this.isValidURL(String(value))) {
-          errors.push(rule.message || `${label} must be a valid URL`);
-        }
-        break;
-
-      case "phone":
-        if (!this.isValidPhone(String(value))) {
-          errors.push(rule.message || `${label} must be a valid phone number`);
-        }
-        break;
-
-      case "alphanumeric":
-        if (!/^[a-zA-Z0-9]+$/.test(String(value))) {
-          errors.push(rule.message || `${label} must be alphanumeric`);
-        }
-        break;
-
-      case "numeric":
-        if (!/^\d+$/.test(String(value))) {
-          errors.push(rule.message || `${label} must be numeric`);
-        }
-        break;
-
-      case "positive":
-        if (Number(value) <= 0) {
-          errors.push(rule.message || `${label} must be positive`);
-        }
-        break;
-
-      case "negative":
-        if (Number(value) >= 0) {
-          errors.push(rule.message || `${label} must be negative`);
-        }
-        break;
-
-      case "integer":
-        if (!Number.isInteger(Number(value))) {
-          errors.push(rule.message || `${label} must be an integer`);
-        }
-        break;
-
-      case "pastDate":
-        if (this.isValidDate(value)) {
-          const date = new Date(value);
-          if (!isPast(date)) {
-            errors.push(rule.message || `${label} must be in the past`);
-          }
-        }
-        break;
-
-      case "futureDate":
-        if (this.isValidDate(value)) {
-          const date = new Date(value);
-          if (!isFuture(date)) {
-            errors.push(rule.message || `${label} must be in the future`);
-          }
-        }
-        break;
-
-      case "pattern":
-        if (
-          rule.value &&
-          typeof rule.value === "string" &&
-          !new RegExp(rule.value).test(String(value))
-        ) {
-          errors.push(rule.message || `${label} has an invalid format`);
-        }
-        break;
-
-      case "minLength":
-        if (
-          rule.value &&
-          typeof rule.value === "number" &&
-          String(value).length < rule.value
-        ) {
-          errors.push(
-            rule.message ||
-              `${label} must be at least ${rule.value} characters`,
-          );
-        }
-        break;
-
-      case "maxLength":
-        if (
-          rule.value &&
-          typeof rule.value === "number" &&
-          String(value).length > rule.value
-        ) {
-          errors.push(
-            rule.message || `${label} must be at most ${rule.value} characters`,
-          );
-        }
-        break;
-
-      case "min":
-        if (
-          rule.value &&
-          typeof rule.value === "number" &&
-          Number(value) < rule.value
-        ) {
-          errors.push(
-            rule.message || `${label} must be at least ${rule.value}`,
-          );
-        }
-        break;
-
-      case "max":
-        if (
-          rule.value &&
-          typeof rule.value === "number" &&
-          Number(value) > rule.value
-        ) {
-          errors.push(rule.message || `${label} must be at most ${rule.value}`);
-        }
-        break;
-    }
-
-    return { valid: errors.length === 0, errors };
-  }
-
-  /**
-   * Validate email format
-   */
-  private isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-
-  /**
-   * Validate URL format
-   */
-  private isValidURL(url: string): boolean {
-    try {
-      new URL(url);
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  /**
-   * Validate phone number format
-   */
-  private isValidPhone(phone: string): boolean {
-    // Remove common separators
-    const cleaned = phone.replace(/[\s\-\(\)\.]/g, "");
-    // Check if remaining characters are digits (and optionally starts with +)
-    return /^\+?\d{8,15}$/.test(cleaned);
-  }
-
-  /**
-   * Validate date
-   */
-  private isValidDate(value: any): boolean {
-    if (!value) return false;
-
-    // Try parsing as ISO date
-    const date = typeof value === "string" ? parseISO(value) : new Date(value);
-    return isValid(date);
-  }
-
-  /**
-   * Find closest match using Levenshtein distance
-   */
-  private findClosestMatch(
-    input: string,
-    validValues: string[],
-  ): { match: string; similarity: number } | null {
-    if (validValues.length === 0) return null;
-
-    let closestMatch = validValues[0];
-    let minDistance = this.levenshteinDistance(
-      input.toLowerCase(),
-      closestMatch.toLowerCase(),
-    );
-
-    for (const value of validValues.slice(1)) {
-      const distance = this.levenshteinDistance(
-        input.toLowerCase(),
-        value.toLowerCase(),
-      );
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestMatch = value;
-      }
-    }
-
-    // Calculate similarity percentage
-    const maxLength = Math.max(input.length, closestMatch.length);
-    const similarity = Math.round(
-      ((maxLength - minDistance) / maxLength) * 100,
-    );
-
-    return { match: closestMatch, similarity };
-  }
-
-  /**
-   * Calculate Levenshtein distance between two strings
-   */
-  private levenshteinDistance(str1: string, str2: string): number {
-    const matrix: number[][] = [];
-
-    // Initialize first column and row
-    for (let i = 0; i <= str2.length; i++) {
-      matrix[i] = [i];
-    }
-    for (let j = 0; j <= str1.length; j++) {
-      matrix[0][j] = j;
-    }
-
-    // Fill in the rest of the matrix
-    for (let i = 1; i <= str2.length; i++) {
-      for (let j = 1; j <= str1.length; j++) {
-        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
-          matrix[i][j] = matrix[i - 1][j - 1];
-        } else {
-          matrix[i][j] = Math.min(
-            matrix[i - 1][j - 1] + 1, // substitution
-            matrix[i][j - 1] + 1, // insertion
-            matrix[i - 1][j] + 1, // deletion
-          );
-        }
-      }
-    }
-
-    return matrix[str2.length][str1.length];
   }
 
   /**
