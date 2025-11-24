@@ -14,7 +14,7 @@ import {
   AssetDisposalFactory,
   AssetKitFactory,
   AssetReservationFactory,
-} from "./seed-factories.js";
+} from "./seed-factories/index.js";
 import {
   DISPOSAL_TYPES,
   DISPOSAL_STATUSES,

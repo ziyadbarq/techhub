@@ -21,7 +21,7 @@ Comprehensive guide to the database seeding system in Barq Assets ITAM applicati
 The seed system populates the database with comprehensive, realistic test data following enterprise ITAM best practices. The system is designed with DRY (Don't Repeat Yourself) and SOLID principles using:
 
 - **Domain-Split Configuration**: Test data organized by domain in 5 config modules
-- **Factory Pattern**: Type-safe entity builders in `seed-factories.ts` and `seed-foundation-factories.ts`
+- **Factory Pattern**: Type-safe entity builders in `seed-factories/` (8 domain factories) and `seed-foundation-factories.ts`
 - **Shared Utilities**: Common helpers in `seed-utils.ts`
 - **Layered Architecture**: Seeds respect domain layer dependencies
 - **Idempotent Design**: Cleanup handled centrally for safe re-seeding
@@ -94,13 +94,28 @@ src/infrastructure/database/prisma/
 │
 ├── Utilities & Factories
 │   ├── seed-utils.ts                # Shared utilities
-│   ├── seed-factories.ts            # Asset/maintenance factories
-│   └── seed-foundation-factories.ts # Foundation layer factories
+│   ├── seed-foundation-factories.ts # Foundation layer factories
+│   └── seed-factories/              # Asset/maintenance factories (split into 8 files)
+│       ├── index.ts                 #   Barrel export
+│       ├── seed-factory-asset.ts
+│       ├── seed-factory-warranty.ts
+│       ├── seed-factory-maintenance-schedule.ts
+│       ├── seed-factory-maintenance-record.ts
+│       ├── seed-factory-asset-disposal.ts
+│       ├── seed-factory-asset-kit.ts
+│       ├── seed-factory-asset-reservation.ts
+│       └── seed-factory-configuration-item.ts
 │
 ├── Seeders (by Domain)
 │   ├── seed-rbac.ts                 # RBAC permissions & roles
 │   ├── seed-rbac-permissions.ts     # Permission definitions
-│   ├── seed-rbac-roles.ts           # Role definitions
+│   └── seed-rbac-roles/             # Role definitions (split into 4 categories)
+│       ├── index.ts                 #   Barrel export
+│       ├── types.ts                 #   RoleDefinition interface
+│       ├── seed-rbac-roles-admin.ts
+│       ├── seed-rbac-roles-financial.ts
+│       ├── seed-rbac-roles-technical.ts
+│       └── seed-rbac-roles-specialized.ts
 │   ├── seed-foundation.ts           # Foundation layer
 │   ├── seed-assets.ts               # Asset layer
 │   ├── seed-warranties-maintenance.ts # Warranties & maintenance
@@ -401,9 +416,35 @@ const person = pickRandom(persons);
 const cost = randomInt(500, 5000);
 ```
 
-### seed-factories.ts
+### seed-factories/ (8 Factory Files)
 
-Type-safe entity builders using Factory pattern.
+Type-safe entity builders using Factory pattern, split into focused modules for better maintainability.
+
+**Directory Structure**:
+- `seed-factory-asset.ts` (~110 lines): AssetFactory with batch creation support
+- `seed-factory-warranty.ts` (~100 lines): WarrantyFactory with date calculations
+- `seed-factory-maintenance-schedule.ts` (~150 lines): MaintenanceScheduleFactory with recurring schedules
+- `seed-factory-maintenance-record.ts` (~120 lines): MaintenanceRecordFactory with completed/scheduled patterns
+- `seed-factory-asset-disposal.ts` (~70 lines): AssetDisposalFactory for multi-step disposal workflow
+- `seed-factory-asset-kit.ts` (~80 lines): AssetKitFactory with kit item creation
+- `seed-factory-asset-reservation.ts` (~80 lines): AssetReservationFactory with future booking support
+- `seed-factory-configuration-item.ts` (~70 lines): ConfigurationItemFactory for CMDB
+- `index.ts`: Barrel export combining all factories
+
+**Import Pattern**:
+```typescript
+// Import specific factories
+import { WarrantyFactory, AssetFactory } from "./seed-factories/index.js";
+
+// Or use the aggregate factories object (backward compatibility)
+import { factories } from "./seed-factories/index.js";
+const { Warranty, Asset } = factories;
+```
+
+**Refactoring Benefits**:
+- **90% reduction** in file size per factory (784 → ~70-150 lines per file)
+- Easy to locate and update specific factory logic
+- Follows Single Responsibility Principle
 
 #### WarrantyFactory
 
@@ -761,10 +802,10 @@ export const SEED_CONFIG = {
 
 ### 2. Create Factory (Optional)
 
-For **complex entities**, create class-based factories in `seed-factories.ts`:
+For **complex entities**, create class-based factories in `seed-factories/` directory:
 
 ```typescript
-// seed-factories.ts
+// seed-factories/seed-factory-new-entity.ts
 export interface NewEntityFactoryOptions {
   name: string;
   code: string;
@@ -826,7 +867,7 @@ export async function createNewEntities(
 ```typescript
 // Existing seed file or new seed-new-entities.ts
 import { NEW_ENTITY_DATA } from "./seed-config-foundation.js"; // or appropriate domain file
-import { createNewEntities } from "./seed-foundation-factories.js"; // or NewEntityFactory from seed-factories.ts
+import { createNewEntities } from "./seed-foundation-factories.js"; // or NewEntityFactory from seed-factories/
 import { logStep, logSuccess } from "./seed-utils.js";
 
 export async function seedNewEntities(prisma: PrismaClient) {

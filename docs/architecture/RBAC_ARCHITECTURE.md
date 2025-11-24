@@ -182,7 +182,7 @@ export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
 
 The system includes **11 system roles** designed for enterprise IT asset management and SAMA compliance (one full-access role + ten functional/read-only roles):
 
-**Location**: `src/infrastructure/database/prisma/seed-rbac-roles.ts`
+**Location**: `src/infrastructure/database/prisma/seed-rbac-roles/` (split into 4 category files for better maintainability)
 
 ```typescript
 const SYSTEM_ROLES = {
@@ -256,7 +256,11 @@ const SYSTEM_ROLES = {
 };
 ```
 
-**See full permission lists**: `src/infrastructure/database/prisma/seed-rbac-roles.ts`
+**See full permission lists**: `src/infrastructure/database/prisma/seed-rbac-roles/` directory:
+- `seed-rbac-roles-admin.ts`: system-administrator, viewer, auditor (3 roles)
+- `seed-rbac-roles-financial.ts`: finance-manager, inventory-manager (2 roles)
+- `seed-rbac-roles-technical.ts`: it-help-desk, maintenance-technician, asset-coordinator (3 roles)
+- `seed-rbac-roles-specialized.ts`: security-officer, service-owner, data-steward (3 roles)
 
 ### Role Comparison Matrix
 

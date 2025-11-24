@@ -23,7 +23,7 @@ import {
   WarrantyFactory,
   MaintenanceScheduleFactory,
   MaintenanceRecordFactory,
-} from "./seed-factories.js";
+} from "./seed-factories/index.js";
 
 export async function seedWarrantiesMaintenance(prisma: PrismaClient) {
   logSection("Warranties & Maintenance");
