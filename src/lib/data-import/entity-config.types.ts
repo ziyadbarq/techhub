@@ -116,6 +116,7 @@ export interface EntityFieldConfig {
   type: FieldType;
   required: boolean;
   unique?: boolean; // Must be unique across all records
+  autoGenerate?: boolean; // System auto-generates value if not provided
 
   // Validation rules
   validations?: ValidationRule[];

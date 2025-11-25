@@ -93,6 +93,7 @@ export function codeField(config: {
     type: "string",
     required: false,
     unique: true,
+    autoGenerate: true,
     maxLength: config.maxLength ?? 50,
     pattern: config.pattern ?? /^[A-Z0-9-_]+$/,
     sanitization: [
@@ -101,7 +102,7 @@ export function codeField(config: {
       { operation: "normalizeWhitespace" },
     ],
     examples: config.examples,
-    description: `Unique ${config.entityName.toLowerCase()} identifier`,
+    description: `Unique ${config.entityName.toLowerCase()} identifier (auto-generated if not provided)`,
     autoMap: ["code", "identifier", `${config.entityName.toLowerCase()}_code`],
   };
 }

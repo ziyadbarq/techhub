@@ -4,6 +4,7 @@ This document tracks significant user interface and user experience improvements
 
 ## Table of Contents
 
+- [SearchableSelect Component (2025-11)](#searchableselect-component-2025-11)
 - [Settings Navigation Restructure (2025-01)](#settings-navigation-restructure-2025-01)
 
 ---
@@ -189,4 +190,82 @@ When making UI/UX improvements:
 
 ## Changelog
 
+- **2025-11-26**: SearchableSelect Component - Added searchable dropdown for large option lists with filtering and limited visible results
 - **2025-01-22**: Settings Navigation Restructure - Flattened admin settings from nested tabs to dedicated sidebar group
+
+---
+
+## SearchableSelect Component (2025-11)
+
+### Problem
+
+Standard Select dropdowns with many options (categories, models, vendors, employees, etc.) created poor UX:
+
+- **Overwhelming Lists**: 50+ items with no way to filter
+- **Slow Selection**: Scrolling through long lists to find specific item
+- **No Search**: Users couldn't type to filter options
+- **Inconsistent Experience**: Some forms had search, others didn't
+
+### Solution
+
+Created a reusable `SearchableSelect` component using Popover + Command pattern:
+
+**Features:**
+- Real-time search/filter as user types
+- Limited visible results (default 5) to prevent overwhelming UI
+- "X more results. Type to search..." indicator when more items exist
+- Full keyboard navigation support
+- Consistent styling with existing Select component
+
+### Implementation
+
+**New Component**: `src/components/ui/searchable-select.tsx`
+
+```tsx
+import { SearchableSelect, type SearchableSelectOption } from "@/components/ui/searchable-select";
+
+// Memoize options for performance
+const options: SearchableSelectOption[] = useMemo(
+  () => items.map((item) => ({ value: item.id, label: item.name })),
+  [items]
+);
+
+<SearchableSelect
+  options={options}
+  value={selectedValue}
+  onValueChange={setSelectedValue}
+  placeholder="Select..."
+  searchPlaceholder="Search..."
+  emptyMessage="No results"
+  maxVisibleItems={5}
+/>
+```
+
+**Forms Updated:**
+- `asset-form.tsx` - 5 dropdowns (categories, models, vendors, stock locations, lifecycle states)
+- `assign-asset-wizard.tsx` - 2 dropdowns (employees, stock locations)
+- `service-owners-manager.tsx` - 1 dropdown (persons)
+- `return-asset-wizard.tsx` - 1 dropdown (stock locations)
+- `Step4FieldMapper.tsx` - Column mapping dropdown
+
+### Benefits
+
+✅ **Faster Selection** - Find items by typing instead of scrolling
+✅ **Better Mobile UX** - Limited visible items fit small screens
+✅ **Consistent Pattern** - Same component across all forms
+✅ **Scalable** - Works with 5 or 5000 options
+✅ **Accessible** - Full keyboard navigation
+✅ **Type-Safe** - Strongly typed props and options
+
+### Usage Guidelines
+
+| Use `SearchableSelect` when: | Use standard `Select` when: |
+|------------------------------|---------------------------|
+| Options > 10 items | Static list < 10 items |
+| Dynamic/growing lists | Fixed enum values |
+| Entity lookups | Status/type selections |
+| User input forms | Simple toggles |
+
+### Related Documentation
+
+- [UI Components Guide](./UI_COMPONENTS.md) - Complete SearchableSelect API reference

@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -20,12 +20,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
 import {
   Form,
   FormControl,
@@ -73,6 +70,27 @@ export function AssignAssetWizard({
   const [persons, setPersons] = useState<PersonDTO[]>([]);
   const [stockLocations, setStockLocations] = useState<StockLocationDTO[]>([]);
   const [loadingData, setLoadingData] = useState(false);
+
+  // Memoized options for searchable dropdowns
+  const personOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      persons.map((p) => ({
+        value: p.id,
+        label: `${p.firstName} ${p.lastName}${p.employeeId ? ` (${p.employeeId})` : ""}`,
+      })),
+    [persons],
+  );
+
+  const stockLocationOptions: SearchableSelectOption[] = useMemo(
+    () => [
+      { value: NONE_OPTION_VALUE, label: "No Location" },
+      ...stockLocations.map((l) => ({
+        value: l.id,
+        label: `${l.name} (${l.code})`,
+      })),
+    ],
+    [stockLocations],
+  );
 
   const form = useForm<AssignAssetFormValues>({
     resolver: zodResolver(AssignAssetSchema),
@@ -201,27 +219,15 @@ export function AssignAssetWizard({
                         <FormLabel>
                           Employee <span className="text-destructive">*</span>
                         </FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
+                        <SearchableSelect
+                          options={personOptions}
                           value={field.value}
+                          onValueChange={field.onChange}
+                          placeholder="Select an employee..."
+                          searchPlaceholder="Search employees..."
+                          emptyMessage="No employees found"
                           disabled={loadingData}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select an employee" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {persons.map((person) => (
-                              <SelectItem key={person.id} value={person.id}>
-                                {person.firstName} {person.lastName}
-                                {person.employeeId
-                                  ? ` (${person.employeeId})`
-                                  : ""}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        />
                         <FormDescription>
                           Choose the employee to assign this asset to
                         </FormDescription>
@@ -237,31 +243,19 @@ export function AssignAssetWizard({
                     render={({ field }) => (
                       <FormItem className="mt-4">
                         <FormLabel>From Stock Location</FormLabel>
-                        <Select
+                        <SearchableSelect
+                          options={stockLocationOptions}
+                          value={field.value ?? NONE_OPTION_VALUE}
                           onValueChange={(value) =>
                             field.onChange(
                               value === NONE_OPTION_VALUE ? null : value,
                             )
                           }
-                          value={field.value ?? undefined}
+                          placeholder="Select source location..."
+                          searchPlaceholder="Search locations..."
+                          emptyMessage="No locations found"
                           disabled={loadingData}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select source location" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value={NONE_OPTION_VALUE}>
-                              No Location
-                            </SelectItem>
-                            {stockLocations.map((location) => (
-                              <SelectItem key={location.id} value={location.id}>
-                                {location.name} ({location.code})
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        />
                         <FormDescription>
                           Current location of the asset (optional)
                         </FormDescription>

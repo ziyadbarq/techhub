@@ -226,7 +226,7 @@ fields: [
 
 | Builder | Purpose | Example |
 |---------|---------|---------|
-| `codeField(config?)` | Unique identifier codes | `codeField({ required: true, maxLength: 20 })` |
+| `codeField(config?)` | Unique identifier codes (auto-generated if not provided) | `codeField({ maxLength: 20 })` |
 | `serialNumberField(config?)` | Serial numbers | `serialNumberField({ required: false })` |
 | `nameField(config?)` | Names (person, org, etc.) | `nameField({ required: true, maxLength: 100 })` |
 | `descriptionField(config?)` | Long text descriptions | `descriptionField({ maxLength: 1000 })` |

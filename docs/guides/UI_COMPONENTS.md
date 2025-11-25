@@ -322,6 +322,73 @@ import {
 />;
 ```
 
+### SearchableSelect Component
+
+For dropdowns with many options (>10 items), use the `SearchableSelect` component which provides search/filter functionality and limits visible results:
+
+```tsx
+import {
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
+
+// Define options (memoize to prevent re-renders)
+const categoryOptions: SearchableSelectOption[] = useMemo(
+  () =>
+    categories.map((c) => ({
+      value: c.id,
+      label: `${c.name} (${c.code})`,
+    })),
+  [categories]
+);
+
+// Use with React Hook Form
+<FormField
+  control={form.control}
+  name="categoryId"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Category</FormLabel>
+      <SearchableSelect
+        options={categoryOptions}
+        value={field.value || undefined}
+        onValueChange={field.onChange}
+        placeholder="Select a category..."
+        searchPlaceholder="Search categories..."
+        emptyMessage="No categories found"
+        maxVisibleItems={5}
+        disabled={loading}
+      />
+      <FormMessage />
+    </FormItem>
+  )}
+/>;
+```
+
+#### SearchableSelect Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `options` | `SearchableSelectOption[]` | **required** | Array of options with value/label |
+| `value` | `string` | `undefined` | Selected value |
+| `onValueChange` | `(value: string) => void` | **required** | Selection change callback |
+| `placeholder` | `string` | `"Select..."` | Trigger button placeholder |
+| `searchPlaceholder` | `string` | `"Search..."` | Search input placeholder |
+| `emptyMessage` | `string` | `"No results found"` | Empty state message |
+| `maxVisibleItems` | `number` | `5` | Max visible items before "X more" |
+| `disabled` | `boolean` | `false` | Disabled state |
+| `className` | `string` | `undefined` | Additional CSS classes |
+
+#### When to Use SearchableSelect vs Select
+
+| Scenario | Component |
+|----------|-----------|
+| Static list with <10 items | `Select` |
+| Dynamic list that may grow | `SearchableSelect` |
+| Entity lookups (persons, assets, etc.) | `SearchableSelect` |
+| Enum values (status, type) | `Select` |
+| User-facing forms with many options | `SearchableSelect` |
+
 ### Textarea Fields
 
 ```tsx

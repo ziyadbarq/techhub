@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -20,12 +20,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
 import {
   Form,
   FormControl,
@@ -68,6 +65,16 @@ export function ReturnAssetWizard({
 }: ReturnAssetWizardProps) {
   const [stockLocations, setStockLocations] = useState<StockLocationDTO[]>([]);
   const [loadingData, setLoadingData] = useState(false);
+
+  // Memoized options for searchable dropdown
+  const stockLocationOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      stockLocations.map((l) => ({
+        value: l.id,
+        label: `${l.name} (${l.code})${l.description ? ` - ${l.description}` : ""}`,
+      })),
+    [stockLocations],
+  );
 
   const form = useForm<ReturnAssetFormValues>({
     resolver: zodResolver(ReturnAssetSchema),
@@ -185,30 +192,15 @@ export function ReturnAssetWizard({
                         Return Location{" "}
                         <span className="text-destructive">*</span>
                       </FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
+                      <SearchableSelect
+                        options={stockLocationOptions}
                         value={field.value}
+                        onValueChange={field.onChange}
+                        placeholder="Select a stock location..."
+                        searchPlaceholder="Search locations..."
+                        emptyMessage="No locations found"
                         disabled={loadingData}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a stock location" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {stockLocations.map((location) => (
-                            <SelectItem key={location.id} value={location.id}>
-                              {location.name} ({location.code})
-                              {location.description && (
-                                <span className="text-muted-foreground text-xs">
-                                  {" "}
-                                  - {location.description}
-                                </span>
-                              )}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      />
                       <FormDescription>
                         Select the stock location where the asset will be
                         returned

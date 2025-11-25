@@ -19,6 +19,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import {
@@ -176,6 +180,16 @@ export function ServiceOwnersManager({
     );
   });
 
+  // Memoized options for searchable dropdown
+  const personOptions: SearchableSelectOption[] = React.useMemo(
+    () =>
+      availablePersons.map((p) => ({
+        value: p.id,
+        label: `${p.firstName} ${p.lastName} (${p.email})`,
+      })),
+    [availablePersons],
+  );
+
   return (
     <div className="space-y-6">
       {/* Add Owner Section */}
@@ -188,21 +202,14 @@ export function ServiceOwnersManager({
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Person</Label>
-                <Select
+                <SearchableSelect
+                  options={personOptions}
                   value={selectedPersonId}
                   onValueChange={setSelectedPersonId}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select person" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {availablePersons.map((person) => (
-                      <SelectItem key={person.id} value={person.id}>
-                        {person.firstName} {person.lastName} ({person.email})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  placeholder="Select person..."
+                  searchPlaceholder="Search persons..."
+                  emptyMessage="No persons available"
+                />
               </div>
 
               <div className="space-y-2">

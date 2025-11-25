@@ -28,12 +28,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
@@ -50,6 +47,7 @@ import {
   ChevronRight,
   Wand2,
   ExternalLink,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -223,6 +221,19 @@ export function Step4FieldMapper({
    * Can continue?
    */
   const canContinue = unmappedRequiredFields.length === 0;
+
+  /**
+   * Column options for SearchableSelect
+   */
+  const columnOptions: SearchableSelectOption[] = useMemo(() => {
+    return [
+      { value: "__unmapped__", label: "Not mapped" },
+      ...parsedFile.columns.map((col) => ({
+        value: col,
+        label: col,
+      })),
+    ];
+  }, [parsedFile.columns]);
 
   /**
    * Get field info
@@ -425,28 +436,17 @@ export function Step4FieldMapper({
 
                     {/* Mapping Selector */}
                     <div className="w-64">
-                      <Select
+                      <SearchableSelect
+                        options={columnOptions}
                         value={mappedColumn}
                         onValueChange={(value) =>
                           handleFieldChange(field.name, value)
                         }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select column..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="__unmapped__">
-                            <span className="text-muted-foreground">
-                              Not mapped
-                            </span>
-                          </SelectItem>
-                          {parsedFile.columns.map((col) => (
-                            <SelectItem key={col} value={col}>
-                              {col}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        placeholder="Select column..."
+                        searchPlaceholder="Search columns..."
+                        emptyMessage="No matching columns"
+                        maxVisibleItems={5}
+                      />
                     </div>
                   </div>
                   {field.type === "lookup" ? (
@@ -483,7 +483,10 @@ export function Step4FieldMapper({
               Optional Fields ({entity.fields.filter((f) => !f.required).length}
               )
             </CardTitle>
-            <CardDescription>These fields can be left unmapped</CardDescription>
+            <CardDescription>
+              These fields can be left unmapped. Auto-generated fields will be
+              filled automatically if not provided.
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {entity.fields
@@ -499,6 +502,8 @@ export function Step4FieldMapper({
                       <div className="flex-shrink-0">
                         {isMapped ? (
                           <CheckCircle2 className="h-5 w-5 text-green-600" />
+                        ) : field.autoGenerate ? (
+                          <Sparkles className="h-5 w-5 text-blue-500" />
                         ) : (
                           <div className="border-muted h-5 w-5 rounded-full border-2" />
                         )}
@@ -508,9 +513,18 @@ export function Step4FieldMapper({
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           <span className="font-medium">{field.label}</span>
-                          <Badge variant="secondary" className="text-xs">
-                            Optional
-                          </Badge>
+                          {field.autoGenerate ? (
+                            <Badge
+                              variant="outline"
+                              className="border-blue-200 bg-blue-50 text-xs text-blue-700"
+                            >
+                              Auto-generated
+                            </Badge>
+                          ) : (
+                            <Badge variant="secondary" className="text-xs">
+                              Optional
+                            </Badge>
+                          )}
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger>
@@ -550,28 +564,17 @@ export function Step4FieldMapper({
 
                       {/* Mapping Selector */}
                       <div className="w-64">
-                        <Select
+                        <SearchableSelect
+                          options={columnOptions}
                           value={mappedColumn}
                           onValueChange={(value) =>
                             handleFieldChange(field.name, value)
                           }
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select column..." />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="__unmapped__">
-                              <span className="text-muted-foreground">
-                                Not mapped
-                              </span>
-                            </SelectItem>
-                            {parsedFile.columns.map((col) => (
-                              <SelectItem key={col} value={col}>
-                                {col}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                          placeholder="Select column..."
+                          searchPlaceholder="Search columns..."
+                          emptyMessage="No matching columns"
+                          maxVisibleItems={5}
+                        />
                       </div>
                     </div>
                     {field.type === "lookup" ? (

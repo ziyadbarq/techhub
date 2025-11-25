@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
@@ -27,6 +27,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
 import {
   Form,
   FormControl,
@@ -94,6 +98,60 @@ export function AssetForm({
     [],
   );
   const [loading, setLoading] = useState(true);
+
+  // Memoized options for searchable dropdowns
+  const categoryOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      categories.map((c) => ({
+        value: c.id,
+        label: `${c.name} (${c.code})`,
+      })),
+    [categories],
+  );
+
+  const modelOptions: SearchableSelectOption[] = useMemo(
+    () => [
+      { value: NONE_OPTION_VALUE, label: "None" },
+      ...models.map((m) => ({
+        value: m.id,
+        label: `${m.name} (${m.code})`,
+      })),
+    ],
+    [models],
+  );
+
+  const vendorOptions: SearchableSelectOption[] = useMemo(
+    () => [
+      { value: NONE_OPTION_VALUE, label: "None" },
+      ...vendors.map((v) => ({
+        value: v.id,
+        label: `${v.name} (${v.code})`,
+      })),
+    ],
+    [vendors],
+  );
+
+  const stockLocationOptions: SearchableSelectOption[] = useMemo(
+    () => [
+      { value: NONE_OPTION_VALUE, label: "None" },
+      ...stockLocations.map((l) => ({
+        value: l.id,
+        label: l.name,
+      })),
+    ],
+    [stockLocations],
+  );
+
+  const lifecycleStateOptions: SearchableSelectOption[] = useMemo(
+    () => [
+      { value: NONE_OPTION_VALUE, label: "None" },
+      ...lifecycleStates.map((s) => ({
+        value: s.id,
+        label: s.name,
+      })),
+    ],
+    [lifecycleStates],
+  );
 
   // Focus the first field when dialog opens
   useEffect(() => {
@@ -261,24 +319,15 @@ export function AssetForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Asset Category</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
+                    <SearchableSelect
+                      options={categoryOptions}
                       value={field.value || undefined}
+                      onValueChange={field.onChange}
+                      placeholder="Select a category..."
+                      searchPlaceholder="Search categories..."
+                      emptyMessage="No categories found"
                       disabled={loading}
-                    >
-                      <FormControl>
-                        <SelectTrigger tabIndex={1}>
-                          <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.name} ({category.code})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    />
                     <FormDescription>
                       The category this asset belongs to
                     </FormDescription>
@@ -294,29 +343,19 @@ export function AssetForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Asset Model (Optional)</FormLabel>
-                    <Select
+                    <SearchableSelect
+                      options={modelOptions}
+                      value={field.value ?? NONE_OPTION_VALUE}
                       onValueChange={(value) =>
                         field.onChange(
                           value === NONE_OPTION_VALUE ? null : value,
                         )
                       }
-                      value={field.value ?? undefined}
+                      placeholder="Select a model..."
+                      searchPlaceholder="Search models..."
+                      emptyMessage="No models found"
                       disabled={loading}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a model" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
-                        {models.map((model) => (
-                          <SelectItem key={model.id} value={model.id}>
-                            {model.name} ({model.code})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    />
                     <FormDescription>
                       Specific model/make of this asset
                     </FormDescription>
@@ -332,29 +371,19 @@ export function AssetForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Vendor (Optional)</FormLabel>
-                    <Select
+                    <SearchableSelect
+                      options={vendorOptions}
+                      value={field.value ?? NONE_OPTION_VALUE}
                       onValueChange={(value) =>
                         field.onChange(
                           value === NONE_OPTION_VALUE ? null : value,
                         )
                       }
-                      value={field.value ?? undefined}
+                      placeholder="Select a vendor..."
+                      searchPlaceholder="Search vendors..."
+                      emptyMessage="No vendors found"
                       disabled={loading}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a vendor" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
-                        {vendors.map((vendor) => (
-                          <SelectItem key={vendor.id} value={vendor.id}>
-                            {vendor.name} ({vendor.code})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    />
                     <FormDescription>
                       The supplier or manufacturer
                     </FormDescription>
@@ -370,29 +399,19 @@ export function AssetForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Stock Location (Optional)</FormLabel>
-                    <Select
+                    <SearchableSelect
+                      options={stockLocationOptions}
+                      value={field.value ?? NONE_OPTION_VALUE}
                       onValueChange={(value) =>
                         field.onChange(
                           value === NONE_OPTION_VALUE ? null : value,
                         )
                       }
-                      value={field.value ?? undefined}
+                      placeholder="Select a location..."
+                      searchPlaceholder="Search locations..."
+                      emptyMessage="No locations found"
                       disabled={loading}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a location" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
-                        {stockLocations.map((location) => (
-                          <SelectItem key={location.id} value={location.id}>
-                            {location.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    />
                     <FormDescription>
                       Current physical location of the asset
                     </FormDescription>
@@ -408,29 +427,19 @@ export function AssetForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Lifecycle State (Optional)</FormLabel>
-                    <Select
+                    <SearchableSelect
+                      options={lifecycleStateOptions}
+                      value={field.value ?? NONE_OPTION_VALUE}
                       onValueChange={(value) =>
                         field.onChange(
                           value === NONE_OPTION_VALUE ? null : value,
                         )
                       }
-                      value={field.value ?? undefined}
+                      placeholder="Select a state..."
+                      searchPlaceholder="Search states..."
+                      emptyMessage="No states found"
                       disabled={loading}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a state" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
-                        {lifecycleStates.map((state) => (
-                          <SelectItem key={state.id} value={state.id}>
-                            {state.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    />
                     <FormDescription>
                       Current lifecycle state of the asset
                     </FormDescription>
