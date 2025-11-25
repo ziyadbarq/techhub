@@ -59,6 +59,9 @@ export default function LoginPage() {
     );
   }
 
+  // Authentication method controls via environment variables
+  const isMSAuthEnabled = process.env.NEXT_PUBLIC_ENABLE_MS_AUTH !== "false";
+
   const handleMicrosoftLogin = async () => {
     await authClient.signIn.social({
       provider: "microsoft",
@@ -222,6 +225,7 @@ export default function LoginPage() {
               className="w-full"
               size="lg"
               variant="outline"
+              disabled={!isMSAuthEnabled}
             >
               <svg
                 className="mr-2 h-5 w-5"
@@ -235,6 +239,13 @@ export default function LoginPage() {
               </svg>
               Continue with Microsoft
             </Button>
+
+            {/* Disabled Microsoft Button Tooltip */}
+            {!isMSAuthEnabled && (
+              <p className="text-muted-foreground text-center text-xs">
+                Microsoft authentication is currently disabled
+              </p>
+            )}
 
             {/* Footer */}
             <div className="space-y-4 pt-4">

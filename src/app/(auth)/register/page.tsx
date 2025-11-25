@@ -10,6 +10,7 @@ import { Logo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { Shield, Users, Lock, ShieldCheck, Moon, Sun } from "lucide-react";
 import { RegisterForm } from "@/components/auth/RegisterForm";
+import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
@@ -57,6 +58,18 @@ export default function RegisterPage() {
       </div>
     );
   }
+
+  // Authentication method controls via environment variables
+  const isEmailRegistrationEnabled =
+    process.env.NEXT_PUBLIC_ENABLE_EMAIL_REGISTRATION !== "false";
+  const isMSAuthEnabled = process.env.NEXT_PUBLIC_ENABLE_MS_AUTH !== "false";
+
+  const handleMicrosoftLogin = async () => {
+    await authClient.signIn.social({
+      provider: "microsoft",
+      callbackURL: "/dashboard",
+    });
+  };
 
   return (
     <div className="relative flex min-h-screen">
@@ -178,7 +191,59 @@ export default function RegisterPage() {
 
           {/* Registration Form */}
           <div className="space-y-6">
-            <RegisterForm />
+            {/* Email/Password Registration Form */}
+            {isEmailRegistrationEnabled ? (
+              <RegisterForm />
+            ) : (
+              <div className="bg-muted/50 rounded-lg border p-6 text-center">
+                <Shield className="text-barq-yellow mx-auto mb-3 h-10 w-10" />
+                <p className="text-muted-foreground text-sm">
+                  Email registration is currently disabled
+                </p>
+              </div>
+            )}
+
+            {/* Separator - Only show when both email and OAuth are enabled */}
+            {isEmailRegistrationEnabled && isMSAuthEnabled && (
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <Separator />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background text-muted-foreground px-2">
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Microsoft OAuth Button */}
+            <Button
+              onClick={handleMicrosoftLogin}
+              className="w-full"
+              size="lg"
+              variant="outline"
+              disabled={!isMSAuthEnabled}
+            >
+              <svg
+                className="mr-2 h-5 w-5"
+                viewBox="0 0 21 21"
+                fill="currentColor"
+              >
+                <rect x="1" y="1" width="9" height="9" fill="#F25022" />
+                <rect x="1" y="11" width="9" height="9" fill="#00A4EF" />
+                <rect x="11" y="1" width="9" height="9" fill="#7FBA00" />
+                <rect x="11" y="11" width="9" height="9" fill="#FFB900" />
+              </svg>
+              Continue with Microsoft
+            </Button>
+
+            {/* Disabled Microsoft Button Tooltip */}
+            {!isMSAuthEnabled && (
+              <p className="text-muted-foreground text-center text-xs">
+                Microsoft authentication is currently disabled
+              </p>
+            )}
 
             {/* Footer */}
             <div className="space-y-4 pt-4">

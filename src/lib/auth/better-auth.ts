@@ -468,6 +468,9 @@ export const auth = betterAuth({
     },
   },
 
+  // Email/Password authentication (always enabled to allow login)
+  // Registration is controlled via UI (NEXT_PUBLIC_ENABLE_EMAIL_REGISTRATION)
+  // This ensures existing users can still log in even when registration is disabled
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
