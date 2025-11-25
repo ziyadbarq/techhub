@@ -91,7 +91,7 @@ export function codeField(config: {
     name: "code",
     label: `${config.entityName} Code`,
     type: "string",
-    required: true,
+    required: false,
     unique: true,
     maxLength: config.maxLength ?? 50,
     pattern: config.pattern ?? /^[A-Z0-9-_]+$/,

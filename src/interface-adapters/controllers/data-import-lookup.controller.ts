@@ -24,6 +24,7 @@ import type { ListLifecycleStatesUseCase } from "@/core/use-cases/foundation/lif
 import type { ListOrganizationUnitsUseCase } from "@/core/use-cases/foundation/organization-unit";
 import type { ListLocationsUseCase } from "@/core/use-cases/foundation/location";
 import type { ListPersonsUseCase } from "@/core/use-cases/foundation/person/list-persons.use-case";
+import type { ListRolesUseCase } from "@/core/use-cases/rbac/list-roles.use-case";
 
 /**
  * Build lookup map from entities
@@ -135,6 +136,14 @@ async function getLookupMapForEntity(
     case "Person": {
       const useCase = container.get<ListPersonsUseCase>(
         DI_TOKENS.ListPersonsUseCase,
+      );
+      const entities = await useCase.execute();
+      return buildLookupMap(entities, entityName, lookupField, displayField);
+    }
+
+    case "Role": {
+      const useCase = container.get<ListRolesUseCase>(
+        DI_TOKENS.ListRolesUseCase,
       );
       const entities = await useCase.execute();
       return buildLookupMap(entities, entityName, lookupField, displayField);

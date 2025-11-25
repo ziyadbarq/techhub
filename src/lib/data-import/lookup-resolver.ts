@@ -23,6 +23,17 @@ export type LookupStrategy = "exact" | "fuzzy" | "create" | "fail";
  */
 export class LookupResolver {
   /**
+   * Normalize lookup keys (trim, uppercase, replace spaces with underscores, strip invalid chars)
+   */
+  private normalizeLookupKey(value: string): string {
+    return value
+      .trim()
+      .toUpperCase()
+      .replace(/\s+/g, "_")
+      .replace(/[^A-Z0-9_-]/g, "");
+  }
+
+  /**
    * Build lookup map from database records
    */
   buildLookupMap(
@@ -62,6 +73,14 @@ export class LookupResolver {
     lookupMap: LookupMap,
     strategy: LookupStrategy = "exact",
   ): string | null {
+    const normalizedValue = this.normalizeLookupKey(value);
+
+    // Try normalized match (matches the way lookup maps are built)
+    const normalizedMatch = lookupMap.entries.get(normalizedValue);
+    if (normalizedMatch) {
+      return normalizedMatch;
+    }
+
     // Try exact match first
     const exactMatch = lookupMap.entries.get(value);
     if (exactMatch) {

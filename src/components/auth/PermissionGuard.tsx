@@ -19,19 +19,14 @@ export function PermissionGuard({
   permission,
   children,
   fallback = null,
-  loading = null,
 }: PermissionGuardProps) {
   const { hasPermission, isLoading } = usePermissions();
-
+  const granted = hasPermission(permission);
+  // During loading, keep rendering children to avoid unmount/reset flicker after initial grant.
   if (isLoading) {
-    return <>{loading}</>;
+    return <>{children}</>;
   }
-
-  if (!hasPermission(permission)) {
-    return <>{fallback}</>;
-  }
-
-  return <>{children}</>;
+  return <>{granted ? children : fallback}</>;
 }
 
 /**

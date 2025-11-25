@@ -148,6 +148,17 @@ export function Step3FileUpload({
 
   return (
     <div className="space-y-6">
+      {/* Actions (top) */}
+      <div className="flex items-center justify-between">
+        <Button variant="outline" onClick={onBack}>
+          Back
+        </Button>
+        <Button onClick={handleContinue} disabled={!parsedFile}>
+          Continue
+          <ChevronRight className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
+
       {/* Template Download */}
       <Card>
         <CardHeader>
@@ -155,24 +166,26 @@ export function Step3FileUpload({
             Download Template (Optional)
           </CardTitle>
           <CardDescription>
-            Get a pre-formatted template with all required fields and examples
+            Get a pre-formatted template with examples and lookup hints
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={() => handleDownloadTemplate("csv")}
-          >
-            <Download className="mr-2 h-4 w-4" />
-            Download CSV Template
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => handleDownloadTemplate("xlsx")}
-          >
-            <Download className="mr-2 h-4 w-4" />
-            Download Excel Template
-          </Button>
+        <CardContent className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => handleDownloadTemplate("csv")}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Download CSV Template
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => handleDownloadTemplate("xlsx")}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Download Excel Template
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
@@ -328,17 +341,6 @@ export function Step3FileUpload({
           </div>
         </CardContent>
       </Card>
-
-      {/* Actions */}
-      <div className="flex justify-between">
-        <Button variant="outline" onClick={onBack}>
-          Back
-        </Button>
-        <Button onClick={handleContinue} disabled={!parsedFile}>
-          Continue
-          <ChevronRight className="ml-2 h-4 w-4" />
-        </Button>
-      </div>
     </div>
   );
 }

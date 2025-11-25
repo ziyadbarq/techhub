@@ -69,12 +69,24 @@ export function Step2ImportSettings({
   const [stopOnFirstError, setStopOnFirstError] = useState(false);
   const [maxErrorsBeforeAbort, setMaxErrorsBeforeAbort] = useState(100);
   const [autoDetectDateFormat, setAutoDetectDateFormat] = useState(true);
-  const [dateFormat, setDateFormat] = useState<string>("");
+  const [dateFormat, setDateFormat] = useState<string>("YYYY-MM-DD");
 
   /**
    * Handle continue
    */
   const handleContinue = () => {
+    const safeBatchSize = Math.min(Math.max(batchSize, 1), entity.maxBatchSize);
+    const safeMaxErrorsBeforeAbort = Math.min(
+      Math.max(maxErrorsBeforeAbort, 1),
+      1000,
+    );
+    const resolvedDateFormat = autoDetectDateFormat
+      ? undefined
+      : dateFormat || "YYYY-MM-DD";
+
+    setBatchSize(safeBatchSize);
+    setMaxErrorsBeforeAbort(safeMaxErrorsBeforeAbort);
+
     const settings: ImportSettings = {
       duplicateStrategy,
       uniqueFields: entity.uniqueFields,
@@ -84,11 +96,11 @@ export function Step2ImportSettings({
       autoFixCommonErrors,
       dryRun,
       strictValidation,
-      batchSize,
+      batchSize: safeBatchSize,
       maxParallelBatches,
       stopOnFirstError,
-      maxErrorsBeforeAbort,
-      dateFormat: autoDetectDateFormat ? undefined : dateFormat,
+      maxErrorsBeforeAbort: safeMaxErrorsBeforeAbort,
+      dateFormat: resolvedDateFormat,
       autoDetectDateFormat,
     };
 
@@ -97,6 +109,17 @@ export function Step2ImportSettings({
 
   return (
     <div className="space-y-6">
+      {/* Actions (top) */}
+      <div className="flex items-center justify-between">
+        <Button variant="outline" onClick={onBack}>
+          Back
+        </Button>
+        <Button onClick={handleContinue}>
+          Continue
+          <ChevronRight className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
+
       {/* Entity Info */}
       <Card>
         <CardHeader>
@@ -300,7 +323,11 @@ export function Step2ImportSettings({
               max={entity.maxBatchSize}
               value={batchSize}
               onChange={(e) =>
-                setBatchSize(parseInt(e.target.value) || entity.maxBatchSize)
+                setBatchSize(() => {
+                  const next = parseInt(e.target.value, 10);
+                  if (Number.isNaN(next)) return entity.maxBatchSize;
+                  return Math.min(Math.max(next, 1), entity.maxBatchSize);
+                })
               }
             />
             <p className="text-muted-foreground text-sm">
@@ -362,7 +389,11 @@ export function Step2ImportSettings({
                   max={1000}
                   value={maxErrorsBeforeAbort}
                   onChange={(e) =>
-                    setMaxErrorsBeforeAbort(parseInt(e.target.value) || 100)
+                    setMaxErrorsBeforeAbort(() => {
+                      const next = parseInt(e.target.value, 10);
+                      if (Number.isNaN(next)) return 100;
+                      return Math.min(Math.max(next, 1), 1000);
+                    })
                   }
                 />
                 <p className="text-muted-foreground text-sm">
@@ -418,9 +449,6 @@ export function Step2ImportSettings({
 
       {/* Actions */}
       <div className="flex justify-end gap-2">
-        <Button variant="outline" onClick={onBack}>
-          Back
-        </Button>
         <Button onClick={handleContinue}>
           Continue
           <ChevronRight className="ml-2 h-4 w-4" />

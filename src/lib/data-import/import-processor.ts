@@ -30,6 +30,19 @@ import { lookupResolver } from "./lookup-resolver";
  */
 export class ImportProcessor {
   /**
+   * Detects and removes template instruction rows (second row in generated templates)
+   */
+  private isTemplateInstructionRow(row: Record<string, any>): boolean {
+    const values = Object.values(row)
+      .filter((v) => v !== undefined && v !== null && String(v).trim() !== "")
+      .map((v) => String(v).trim().toLowerCase());
+
+    if (values.length === 0) return false;
+
+    // Template instruction rows start with "Type: ..."
+    return values.every((val) => val.startsWith("type:"));
+  }
+  /**
    * Parse uploaded file (CSV or Excel)
    */
   async parseFile(file: File): Promise<ParsedFile> {
@@ -56,7 +69,9 @@ export class ImportProcessor {
         skipEmptyLines: true,
         transformHeader: (header) => header.replace("*", "").trim(),
         complete: (results) => {
-          const rows = results.data;
+          const rows = results.data.filter(
+            (row) => !this.isTemplateInstructionRow(row),
+          );
           const columns = results.meta.fields || [];
 
           resolve({
@@ -119,15 +134,19 @@ export class ImportProcessor {
             col.replace("*", "").trim(),
           );
 
+          const filteredRows = cleanRows.filter(
+            (row) => !this.isTemplateInstructionRow(row),
+          );
+
           resolve({
             fileName: file.name,
             fileSize: file.size,
             mimeType: file.type,
-            rowCount: cleanRows.length,
+            rowCount: filteredRows.length,
             columnCount: cleanColumns.length,
             columns: cleanColumns,
-            rows: cleanRows,
-            preview: cleanRows.slice(0, 5),
+            rows: filteredRows,
+            preview: filteredRows.slice(0, 5),
             parseErrors: [],
           });
         } catch (error) {
@@ -312,15 +331,53 @@ export class ImportProcessor {
       const batch = validRows.slice(batchStart, batchEnd);
 
       try {
-        // Resolve lookups
-        const resolvedBatch = batch.map((row) =>
-          lookupResolver.resolveRowLookups(
-            row.data,
-            entityConfig.fields,
-            lookupMaps,
-            "fuzzy",
-          ),
-        );
+        // Resolve lookups and fail fast on missing lookups
+        const resolvedBatch: Array<Record<string, any>> = [];
+
+        for (const row of batch) {
+          const resolvedRow = { ...row.data };
+          let hasMissingLookup = false;
+
+          for (const field of entityConfig.fields) {
+            if (field.type !== "lookup" || !field.lookupTarget) {
+              continue;
+            }
+
+            const value = row.data[field.name];
+            if (!value) continue;
+
+            const lookupMap =
+              lookupMaps.get(field.name) ?? lookupMaps.get(field.lookupTarget);
+            const resolvedId = lookupMap
+              ? lookupResolver.resolve(String(value), lookupMap, "fuzzy")
+              : null;
+
+            if (!resolvedId) {
+              hasMissingLookup = true;
+              failureCount += 1;
+              failedRows.push({
+                rowNumber: row.rowNumber,
+                field: field.name,
+                message: `Lookup not found for ${field.label || field.name}: ${value}`,
+                originalValue: value,
+              });
+              recentActivity.push({
+                timestamp: new Date(),
+                type: "error",
+                message: `Row ${row.rowNumber} skipped: missing ${field.label || field.name} '${value}'`,
+                rowNumber: row.rowNumber,
+              });
+              break;
+            }
+
+            resolvedRow[field.name] = resolvedId;
+            resolvedRow[`${field.name}_original`] = value;
+          }
+
+          if (!hasMissingLookup) {
+            resolvedBatch.push(resolvedRow);
+          }
+        }
 
         // Call bulk create action
         const result = await entityConfig.bulkCreateAction(resolvedBatch);
@@ -341,6 +398,85 @@ export class ImportProcessor {
           }
           if (result.data.failed) {
             failedRows.push(...result.data.failed);
+          }
+          if (result.data.failures) {
+            const failures = result.data.failures as Array<Record<string, any>>;
+
+            const duplicateFailures: Array<Record<string, any>> = [];
+            const otherFailures: Array<Record<string, any>> = [];
+
+            for (const failure of failures) {
+              const message =
+                (failure.error as string) || (failure.message as string) || "";
+              if (
+                settings.duplicateStrategy === "skip" &&
+                message.toLowerCase().includes("already exists")
+              ) {
+                duplicateFailures.push(failure);
+              } else {
+                otherFailures.push(failure);
+              }
+            }
+
+            if (duplicateFailures.length > 0) {
+              skipCount += duplicateFailures.length;
+              failureCount = Math.max(
+                0,
+                failureCount - duplicateFailures.length,
+              );
+              skippedRows.push(
+                ...duplicateFailures.map((failure) => ({
+                  rowNumber:
+                    typeof failure.index === "number"
+                      ? failure.index + 1
+                      : (failure.rowNumber ?? 0),
+                  field: (failure.field ||
+                    failure.email ||
+                    failure.code ||
+                    failure.name ||
+                    failure.assetTag ||
+                    "") as string,
+                  message: "Skipped duplicate (already exists)",
+                  originalValue:
+                    (failure.value as string | number | undefined) ??
+                    (failure.email as string | undefined) ??
+                    (failure.code as string | undefined) ??
+                    (failure.name as string | undefined) ??
+                    (failure.assetTag as string | undefined) ??
+                    undefined,
+                })),
+              );
+            }
+
+            if (otherFailures.length > 0) {
+              failedRows.push(
+                ...otherFailures.map((failure: Record<string, any>) => ({
+                  rowNumber:
+                    typeof failure.index === "number"
+                      ? failure.index + 1
+                      : (failure.rowNumber ?? 0),
+                  field: (failure.field ||
+                    failure.assetTag ||
+                    failure.code ||
+                    failure.email ||
+                    failure.name ||
+                    failure.movementType ||
+                    failure.currency ||
+                    "") as string,
+                  message:
+                    (failure.error as string) ||
+                    (failure.message as string) ||
+                    "Import failure",
+                  originalValue:
+                    (failure.value as string | number | undefined) ??
+                    (failure.assetTag as string | undefined) ??
+                    (failure.code as string | undefined) ??
+                    (failure.email as string | undefined) ??
+                    (failure.name as string | undefined) ??
+                    undefined,
+                })),
+              );
+            }
           }
 
           // Add activity

@@ -130,7 +130,8 @@ export class TemplateGenerator {
 
     // Lookup values
     if (field.type === "lookup" && field.lookupTarget) {
-      const lookupMap = lookupMaps.get(field.lookupTarget);
+      const lookupMap =
+        lookupMaps.get(field.name) ?? lookupMaps.get(field.lookupTarget);
       if (lookupMap && lookupMap.allValues.length > 0) {
         const values = lookupMap.allValues.slice(0, 5).join(", ");
         parts.push(
@@ -199,7 +200,8 @@ export class TemplateGenerator {
 
       case "lookup":
         if (field.lookupTarget) {
-          const lookupMap = lookupMaps.get(field.lookupTarget);
+          const lookupMap =
+            lookupMaps.get(field.name) ?? lookupMaps.get(field.lookupTarget);
           if (lookupMap && lookupMap.allValues.length > 0) {
             return lookupMap.allValues[0];
           }

@@ -13,7 +13,7 @@
  * 7. Final Results
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import type {
   EntityConfig,
   ImportSettings,
@@ -30,9 +30,7 @@ import { Step4FieldMapper } from "./Step4FieldMapper";
 import { Step5ValidationResults } from "./Step5ValidationResults";
 import { Step6ImportProgress } from "./Step6ImportProgress";
 import { Step7Results } from "./Step7Results";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { ChevronLeft } from "lucide-react";
 
 /**
  * Wizard step type
@@ -45,6 +43,16 @@ type WizardStep =
   | "validation"
   | "import"
   | "results";
+
+const STEP_ORDER: WizardStep[] = [
+  "entity-select",
+  "settings",
+  "upload",
+  "mapping",
+  "validation",
+  "import",
+  "results",
+];
 
 /**
  * Wizard state
@@ -67,6 +75,7 @@ interface WizardState {
  * Main wizard component
  */
 export function DataImportWizard() {
+  const wizardRef = useRef<HTMLDivElement>(null);
   const [state, setState] = useState<WizardState>({
     currentStep: "entity-select",
     selectedEntity: null,
@@ -178,18 +187,9 @@ export function DataImportWizard() {
    * Go back to previous step
    */
   const handleBack = useCallback(() => {
-    const stepOrder: WizardStep[] = [
-      "entity-select",
-      "settings",
-      "upload",
-      "mapping",
-      "validation",
-      "import",
-      "results",
-    ];
-    const currentIndex = stepOrder.indexOf(state.currentStep);
+    const currentIndex = STEP_ORDER.indexOf(state.currentStep);
     if (currentIndex > 0) {
-      goToStep(stepOrder[currentIndex - 1]);
+      goToStep(STEP_ORDER[currentIndex - 1]);
     }
   }, [state.currentStep, goToStep]);
 
@@ -205,6 +205,10 @@ export function DataImportWizard() {
     import: 71,
     results: 100,
   }[state.currentStep];
+
+  const currentStepIndex = Math.max(STEP_ORDER.indexOf(state.currentStep), 0);
+  const stepNumber = currentStepIndex + 1;
+  const totalSteps = STEP_ORDER.length;
 
   /**
    * Get step label
@@ -222,18 +226,25 @@ export function DataImportWizard() {
   /**
    * Can go back?
    */
-  const canGoBack =
-    state.currentStep !== "entity-select" &&
-    state.currentStep !== "import" &&
-    state.currentStep !== "results";
+  /**
+   * Always bring the wizard back to the top when changing steps
+   */
+  useEffect(() => {
+    wizardRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, [state.currentStep]);
 
   return (
-    <div className="space-y-6">
+    <div ref={wizardRef} className="space-y-6">
       {/* Progress Bar */}
       <div className="space-y-2">
         <div className="flex items-center justify-between text-sm">
           <span className="font-medium">{stepLabel}</span>
-          <span className="text-muted-foreground">{progressPercentage}%</span>
+          <span className="text-muted-foreground">
+            Step {stepNumber} of {totalSteps}
+          </span>
         </div>
         <Progress value={progressPercentage} className="h-2" />
       </div>
@@ -267,6 +278,7 @@ export function DataImportWizard() {
             <Step4FieldMapper
               entity={state.selectedEntity}
               parsedFile={state.parsedFile}
+              lookupMaps={state.lookupMaps}
               onColumnsMapped={handleColumnsMapped}
               onBack={handleBack}
             />
@@ -309,19 +321,6 @@ export function DataImportWizard() {
           />
         )}
       </div>
-
-      {/* Navigation */}
-      {canGoBack && (
-        <div className="flex justify-between border-t pt-4">
-          <Button variant="outline" onClick={handleBack}>
-            <ChevronLeft className="mr-2 h-4 w-4" />
-            Back
-          </Button>
-          <div className="text-muted-foreground text-sm">
-            Step {progressPercentage / 14 + 1} of 7
-          </div>
-        </div>
-      )}
     </div>
   );
 }

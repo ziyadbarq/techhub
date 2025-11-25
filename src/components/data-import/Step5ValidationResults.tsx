@@ -247,6 +247,19 @@ export function Step5ValidationResults({
 
   return (
     <div className="space-y-6">
+      {/* Actions (top) */}
+      <div className="flex items-center justify-between">
+        <Button variant="outline" onClick={onBack}>
+          Back
+        </Button>
+        <Button onClick={handleContinue} disabled={validRows.length === 0}>
+          {invalidRows.length > 0
+            ? `Import ${validRows.length} Valid Rows`
+            : "Continue to Import"}
+          <ChevronRight className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
+
       {/* Summary */}
       <Card>
         <CardHeader>
@@ -415,17 +428,6 @@ export function Step5ValidationResults({
       )}
 
       {/* Actions */}
-      <div className="flex justify-between">
-        <Button variant="outline" onClick={onBack}>
-          Back
-        </Button>
-        <Button onClick={handleContinue} disabled={validRows.length === 0}>
-          {invalidRows.length > 0
-            ? `Import ${validRows.length} Valid Rows`
-            : "Continue to Import"}
-          <ChevronRight className="ml-2 h-4 w-4" />
-        </Button>
-      </div>
     </div>
   );
 }

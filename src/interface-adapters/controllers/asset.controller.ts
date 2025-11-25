@@ -24,6 +24,7 @@ import type {
   UpdateAssetUseCase,
   DeleteAssetUseCase,
 } from "@/core/use-cases/asset/asset";
+import type { ILoggerService } from "@/core/services";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import type { Asset } from "@/core/domain/entities/asset.entity";
 import type { ListAssetCategoriesUseCase } from "@/core/use-cases/asset/asset-category";
@@ -418,9 +419,16 @@ export async function bulkCreateAssetsAction(
     await requirePermission(PERMISSIONS.ASSETS_CREATE);
 
     const container = getContainer();
+    const logger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
     const useCase = container.get<CreateAssetUseCase>(
       DI_TOKENS.CreateAssetUseCase,
     );
+
+    const log = logger.child({
+      controller: "asset.bulkCreate",
+      rows: assetsData.length,
+    });
+    log.info("Bulk asset import started");
 
     const results = {
       successCount: 0,
@@ -466,6 +474,12 @@ export async function bulkCreateAssetsAction(
     }
 
     revalidatePath("/assets");
+
+    log.info("Bulk asset import completed", {
+      successCount: results.successCount,
+      failureCount: results.failureCount,
+      sampleFailure: results.failures[0],
+    });
 
     return {
       success: true,

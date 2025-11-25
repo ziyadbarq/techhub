@@ -16,6 +16,7 @@ import type {
   EntityConfig,
   ParsedFile,
   ColumnMapping,
+  LookupMap,
 } from "@/lib/data-import/entity-config.types";
 import { importProcessor } from "@/lib/data-import/import-processor";
 import { Button } from "@/components/ui/button";
@@ -48,12 +49,15 @@ import {
   Info,
   ChevronRight,
   Wand2,
+  ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
+import Link from "next/link";
 
 interface Props {
   entity: EntityConfig;
   parsedFile: ParsedFile;
+  lookupMaps: Map<string, LookupMap>;
   onColumnsMapped: (mappings: ColumnMapping[]) => void;
   onBack: () => void;
 }
@@ -61,6 +65,7 @@ interface Props {
 export function Step4FieldMapper({
   entity,
   parsedFile,
+  lookupMaps,
   onColumnsMapped,
   onBack,
 }: Props) {
@@ -236,8 +241,50 @@ export function Step4FieldMapper({
     return "__unmapped__";
   };
 
+  /**
+   * Get sample lookup values (first 10) for a lookup field
+   */
+  const getLookupSamples = (fieldName: string): string[] => {
+    const field = getFieldInfo(fieldName);
+    if (!field || field.type !== "lookup" || !field.lookupTarget) return [];
+
+    const map =
+      lookupMaps.get(field.name) ?? lookupMaps.get(field.lookupTarget);
+    if (!map || !map.allValues || map.allValues.length === 0) return [];
+
+    return map.allValues.slice(0, 5);
+  };
+
+  /**
+   * Get management link for lookup target (if available)
+   */
+  const getLookupLink = (fieldName: string): string | null => {
+    const field = getFieldInfo(fieldName);
+    if (!field || field.type !== "lookup" || !field.lookupTarget) return null;
+
+    const linkMap: Record<string, string> = {
+      OrganizationUnit: "/organization-units",
+      Role: "/admin/roles",
+      Location: "/locations",
+      Person: "/persons",
+    };
+
+    return linkMap[field.lookupTarget] ?? null;
+  };
+
   return (
     <div className="space-y-6">
+      {/* Actions (top) */}
+      <div className="flex items-center justify-between">
+        <Button variant="outline" onClick={onBack}>
+          Back
+        </Button>
+        <Button onClick={handleContinue} disabled={!canContinue}>
+          Continue to Validation
+          <ChevronRight className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
+
       {/* Summary */}
       <Card>
         <CardHeader>
@@ -321,109 +368,14 @@ export function Step4FieldMapper({
               const isMapped = mappedColumn !== "__unmapped__";
 
               return (
-                <div
-                  key={field.name}
-                  className="flex items-center gap-3 rounded-lg border p-3"
-                >
-                  {/* Status Icon */}
-                  <div className="flex-shrink-0">
-                    {isMapped ? (
-                      <CheckCircle2 className="h-5 w-5 text-green-600" />
-                    ) : (
-                      <XCircle className="h-5 w-5 text-red-600" />
-                    )}
-                  </div>
-
-                  {/* Field Info */}
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">{field.label}</span>
-                      <Badge variant="destructive" className="text-xs">
-                        Required
-                      </Badge>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Info className="text-muted-foreground h-4 w-4" />
-                          </TooltipTrigger>
-                          <TooltipContent className="max-w-sm">
-                            <div className="space-y-1">
-                              <p className="font-medium">{field.description}</p>
-                              <p className="text-xs">Type: {field.type}</p>
-                              {field.examples && field.examples.length > 0 && (
-                                <p className="text-xs">
-                                  Examples: {field.examples.join(", ")}
-                                </p>
-                              )}
-                            </div>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                    <p className="text-muted-foreground truncate text-sm">
-                      {field.name}
-                    </p>
-                  </div>
-
-                  {/* Mapping Selector */}
-                  <div className="w-64">
-                    <Select
-                      value={mappedColumn}
-                      onValueChange={(value) =>
-                        handleFieldChange(field.name, value)
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select column..." />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="__unmapped__">
-                          <span className="text-muted-foreground">
-                            Not mapped
-                          </span>
-                        </SelectItem>
-                        {parsedFile.columns.map((col) => (
-                          <SelectItem key={col} value={col}>
-                            {col}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              );
-            })}
-        </CardContent>
-      </Card>
-
-      {/* Optional Fields */}
-      {entity.fields.filter((f) => !f.required).length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">
-              Optional Fields ({entity.fields.filter((f) => !f.required).length}
-              )
-            </CardTitle>
-            <CardDescription>These fields can be left unmapped</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {entity.fields
-              .filter((f) => !f.required)
-              .map((field) => {
-                const mappedColumn = getMappedColumn(field.name);
-                const isMapped = mappedColumn !== "__unmapped__";
-
-                return (
-                  <div
-                    key={field.name}
-                    className="flex items-center gap-3 rounded-lg border p-3"
-                  >
+                <div key={field.name} className="space-y-2">
+                  <div className="flex items-center gap-3 rounded-lg border p-3">
                     {/* Status Icon */}
                     <div className="flex-shrink-0">
                       {isMapped ? (
                         <CheckCircle2 className="h-5 w-5 text-green-600" />
                       ) : (
-                        <div className="border-muted h-5 w-5 rounded-full border-2" />
+                        <XCircle className="h-5 w-5 text-red-600" />
                       )}
                     </div>
 
@@ -431,8 +383,8 @@ export function Step4FieldMapper({
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{field.label}</span>
-                        <Badge variant="secondary" className="text-xs">
-                          Optional
+                        <Badge variant="destructive" className="text-xs">
+                          Required
                         </Badge>
                         <TooltipProvider>
                           <Tooltip>
@@ -456,8 +408,18 @@ export function Step4FieldMapper({
                           </Tooltip>
                         </TooltipProvider>
                       </div>
-                      <p className="text-muted-foreground truncate text-sm">
-                        {field.name}
+                      <p className="text-muted-foreground flex items-center gap-2 truncate text-sm">
+                        <span>{field.name}</span>
+                        {getLookupLink(field.name) ? (
+                          <Link
+                            href={getLookupLink(field.name)!}
+                            target="_blank"
+                            className="text-primary inline-flex items-center gap-1 text-xs hover:underline"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5" />
+                            Manage values
+                          </Link>
+                        ) : null}
                       </p>
                     </div>
 
@@ -486,6 +448,152 @@ export function Step4FieldMapper({
                         </SelectContent>
                       </Select>
                     </div>
+                  </div>
+                  {field.type === "lookup" ? (
+                    <div className="text-muted-foreground ml-12 flex flex-wrap items-center gap-2 text-xs">
+                      {getLookupSamples(field.name).length > 0 ? (
+                        <>
+                          <span>Sample values:</span>
+                          {getLookupSamples(field.name).map((val, idx) => (
+                            <Badge
+                              key={`${field.name}-${val || idx}`}
+                              variant="outline"
+                              className="bg-muted/50"
+                            >
+                              {val || "–"}
+                            </Badge>
+                          ))}
+                        </>
+                      ) : (
+                        <span>No sample values found</span>
+                      )}
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
+        </CardContent>
+      </Card>
+
+      {/* Optional Fields */}
+      {entity.fields.filter((f) => !f.required).length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">
+              Optional Fields ({entity.fields.filter((f) => !f.required).length}
+              )
+            </CardTitle>
+            <CardDescription>These fields can be left unmapped</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {entity.fields
+              .filter((f) => !f.required)
+              .map((field) => {
+                const mappedColumn = getMappedColumn(field.name);
+                const isMapped = mappedColumn !== "__unmapped__";
+
+                return (
+                  <div key={field.name} className="space-y-2">
+                    <div className="flex items-center gap-3 rounded-lg border p-3">
+                      {/* Status Icon */}
+                      <div className="flex-shrink-0">
+                        {isMapped ? (
+                          <CheckCircle2 className="h-5 w-5 text-green-600" />
+                        ) : (
+                          <div className="border-muted h-5 w-5 rounded-full border-2" />
+                        )}
+                      </div>
+
+                      {/* Field Info */}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{field.label}</span>
+                          <Badge variant="secondary" className="text-xs">
+                            Optional
+                          </Badge>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Info className="text-muted-foreground h-4 w-4" />
+                              </TooltipTrigger>
+                              <TooltipContent className="max-w-sm">
+                                <div className="space-y-1">
+                                  <p className="font-medium">
+                                    {field.description}
+                                  </p>
+                                  <p className="text-xs">Type: {field.type}</p>
+                                  {field.examples &&
+                                    field.examples.length > 0 && (
+                                      <p className="text-xs">
+                                        Examples: {field.examples.join(", ")}
+                                      </p>
+                                    )}
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
+                        <p className="text-muted-foreground flex items-center gap-2 truncate text-sm">
+                          <span>{field.name}</span>
+                          {getLookupLink(field.name) ? (
+                            <Link
+                              href={getLookupLink(field.name)!}
+                              target="_blank"
+                              className="text-primary inline-flex items-center gap-1 text-xs hover:underline"
+                            >
+                              <ExternalLink className="h-3.5 w-3.5" />
+                              Manage values
+                            </Link>
+                          ) : null}
+                        </p>
+                      </div>
+
+                      {/* Mapping Selector */}
+                      <div className="w-64">
+                        <Select
+                          value={mappedColumn}
+                          onValueChange={(value) =>
+                            handleFieldChange(field.name, value)
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select column..." />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="__unmapped__">
+                              <span className="text-muted-foreground">
+                                Not mapped
+                              </span>
+                            </SelectItem>
+                            {parsedFile.columns.map((col) => (
+                              <SelectItem key={col} value={col}>
+                                {col}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                    {field.type === "lookup" ? (
+                      <div className="text-muted-foreground ml-12 flex flex-wrap items-center gap-2 text-xs">
+                        {getLookupSamples(field.name).length > 0 ? (
+                          <>
+                            <span>Sample values:</span>
+                            {getLookupSamples(field.name).map((val, idx) => (
+                              <Badge
+                                key={`${field.name}-${val || idx}`}
+                                variant="outline"
+                                className="bg-muted/50"
+                              >
+                                {val || "–"}
+                              </Badge>
+                            ))}
+                          </>
+                        ) : (
+                          <span>No sample values found</span>
+                        )}
+                      </div>
+                    ) : null}
                   </div>
                 );
               })}
@@ -521,15 +629,6 @@ export function Step4FieldMapper({
       )}
 
       {/* Actions */}
-      <div className="flex justify-between">
-        <Button variant="outline" onClick={onBack}>
-          Back
-        </Button>
-        <Button onClick={handleContinue} disabled={!canContinue}>
-          Continue to Validation
-          <ChevronRight className="ml-2 h-4 w-4" />
-        </Button>
-      </div>
     </div>
   );
 }
