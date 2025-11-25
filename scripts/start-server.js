@@ -13,8 +13,14 @@
 
 import { spawn } from "child_process";
 import { createRequire } from "module";
+import { config as loadEnv } from "dotenv";
 
 const require = createRequire(import.meta.url);
+
+// Load environment variables from local files so validation reflects Next.js runtime
+loadEnv({ path: ".env.production" });
+loadEnv({ path: ".env.local" });
+loadEnv();
 
 // Server process reference
 let serverProcess = null;

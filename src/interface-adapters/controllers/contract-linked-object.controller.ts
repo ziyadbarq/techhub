@@ -28,6 +28,7 @@ import {
 } from "@/interface-adapters/presenters/contract-linked-object.presenter";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import type { BulkCreateResult } from "./types";
 
 /**
  * Create a new contract linked object
@@ -218,6 +219,61 @@ export async function deleteContractLinkedObject(
         error instanceof Error
           ? error.message
           : "Failed to delete contract linked object",
+    };
+  }
+}
+
+/**
+ * Bulk create contract linked objects
+ * Processes multiple contract linked objects sequentially, tracking failures
+ */
+export async function bulkCreateContractLinkedObjectsAction(
+  items: CreateContractLinkedObjectDTO[],
+): Promise<BulkCreateResult> {
+  try {
+    await requirePermission(PERMISSIONS.CONTRACT_LINKED_OBJECTS_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateContractLinkedObjectUseCase>(
+      DI_TOKENS.CreateContractLinkedObjectUseCase,
+    );
+
+    const results: BulkCreateResult = {
+      success: true,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
+
+    // Process contract linked objects sequentially to avoid overwhelming the database
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      try {
+        const validated = CreateContractLinkedObjectSchema.parse(item);
+
+        await useCase.execute(validated);
+
+        results.successCount++;
+      } catch (error) {
+        results.success = false;
+        results.errorCount++;
+        results.errors.push({
+          index: i,
+          name: item.contractId,
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/contract-linked-objects");
+
+    return results;
+  } catch (_error) {
+    return {
+      success: false,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
     };
   }
 }

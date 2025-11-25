@@ -1,16 +1,23 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { handleControllerError } from "./error-handler";
-import type { ActionResponse } from "./types";
-import type { CIRelationshipDTO } from "@/interface-adapters/dtos/generated/ci-relationship.dto";
+import type { ActionResponse, BulkCreateResult } from "./types";
+import type {
+  CIRelationshipDTO,
+  CreateCIRelationshipDTO,
+} from "@/interface-adapters/dtos/generated/ci-relationship.dto";
+import { CreateCIRelationshipSchema } from "@/interface-adapters/dtos/generated/ci-relationship.dto";
 import { CIRelationshipPresenter } from "@/interface-adapters/presenters/ci-relationship.presenter";
 import type { CreateCIRelationshipUseCase } from "@/core/use-cases/cmdb/ci-relationship/create-ci-relationship.use-case";
 import type { GetCIRelationshipUseCase } from "@/core/use-cases/cmdb/ci-relationship/get-ci-relationship.use-case";
 import type { ListCIRelationshipsUseCase } from "@/core/use-cases/cmdb/ci-relationship/list-ci-relationships.use-case";
 import type { UpdateCIRelationshipUseCase } from "@/core/use-cases/cmdb/ci-relationship/update-ci-relationship.use-case";
 import type { DeleteCIRelationshipUseCase } from "@/core/use-cases/cmdb/ci-relationship/delete-ci-relationship.use-case";
+import { requirePermission } from "@/lib/permissions/server";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 export async function createCIRelationshipAction(
   fromCiId: string,
@@ -136,5 +143,62 @@ export async function deleteCIRelationshipAction(
       { function: "deleteCIRelationshipAction" },
       "Failed to delete CI relationship",
     );
+  }
+}
+
+export async function bulkCreateCIRelationshipsAction(
+  items: CreateCIRelationshipDTO[],
+): Promise<BulkCreateResult> {
+  try {
+    await requirePermission(PERMISSIONS.CI_RELATIONSHIPS_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateCIRelationshipUseCase>(
+      DI_TOKENS.CreateCIRelationshipUseCase,
+    );
+
+    const errors: Array<{ index: number; name: string; error: string }> = [];
+    let successCount = 0;
+
+    // Process items sequentially to avoid overwhelming the database
+    for (let i = 0; i < items.length; i++) {
+      const itemData = items[i];
+      try {
+        const validated = CreateCIRelationshipSchema.parse(itemData);
+
+        await useCase.execute({
+          fromCiId: validated.fromCiId,
+          toCiId: validated.toCiId,
+          relationshipTypeId: validated.relationshipTypeId,
+          validFrom: validated.validFrom ?? undefined,
+          validTo: validated.validTo ?? undefined,
+          note: validated.note ?? undefined,
+        });
+
+        successCount++;
+      } catch (error) {
+        errors.push({
+          index: i,
+          name: itemData.fromCiId || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/ci-relationships");
+
+    return {
+      success: errors.length === 0,
+      successCount,
+      errorCount: errors.length,
+      errors,
+    };
+  } catch (_error) {
+    return {
+      success: false,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
   }
 }

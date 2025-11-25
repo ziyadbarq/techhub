@@ -1,9 +1,10 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { handleControllerError } from "./error-handler";
-import type { ActionResponse } from "./types";
+import type { ActionResponse, BulkCreateResult } from "./types";
 import type {
   RelationshipTypeDTO,
   CreateRelationshipTypeDTO,
@@ -15,6 +16,8 @@ import type { GetRelationshipTypeUseCase } from "@/core/use-cases/cmdb/relations
 import type { ListRelationshipTypesUseCase } from "@/core/use-cases/cmdb/relationship-type/list-relationship-types.use-case";
 import type { UpdateRelationshipTypeUseCase } from "@/core/use-cases/cmdb/relationship-type/update-relationship-type.use-case";
 import type { DeleteRelationshipTypeUseCase } from "@/core/use-cases/cmdb/relationship-type/delete-relationship-type.use-case";
+import { requirePermission } from "@/lib/permissions/server";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 export async function createRelationshipTypeAction(
   data: CreateRelationshipTypeDTO,
@@ -124,5 +127,50 @@ export async function deleteRelationshipTypeAction(
       { function: "deleteRelationshipTypeAction" },
       "Failed to delete relationship type",
     );
+  }
+}
+
+export async function bulkCreateRelationshipTypesAction(
+  items: CreateRelationshipTypeDTO[],
+): Promise<BulkCreateResult> {
+  try {
+    await requirePermission(PERMISSIONS.RELATIONSHIP_TYPES_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateRelationshipTypeUseCase>(
+      DI_TOKENS.CreateRelationshipTypeUseCase,
+    );
+
+    const errors: Array<{ index: number; name: string; error: string }> = [];
+    let successCount = 0;
+
+    for (let i = 0; i < items.length; i++) {
+      try {
+        await useCase.execute(items[i]);
+        successCount++;
+      } catch (error) {
+        errors.push({
+          index: i + 1,
+          name: items[i].name,
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/relationship-types");
+
+    return {
+      success: errors.length === 0,
+      successCount,
+      errorCount: errors.length,
+      errors,
+    };
+  } catch (_error) {
+    return {
+      success: false,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
   }
 }

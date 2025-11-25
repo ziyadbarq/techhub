@@ -8,7 +8,7 @@
 import { revalidatePath } from "next/cache";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
-import type { ActionResponse } from "./types";
+import type { ActionResponse, BulkCreateResult } from "./types";
 import { handleControllerError } from "./error-handler";
 import {
   CreateCIClassSchema,
@@ -181,5 +181,64 @@ export async function deleteCIClassAction(
       { function: "deleteCIClassAction", id },
       "Failed to delete CI class",
     );
+  }
+}
+
+export async function bulkCreateCIClassesAction(
+  items: CreateCIClassDTO[],
+): Promise<BulkCreateResult> {
+  try {
+    await requirePermission(PERMISSIONS.CI_CLASSES_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateCIClassUseCase>(
+      DI_TOKENS.CreateCIClassUseCase,
+    );
+
+    const result: BulkCreateResult = {
+      success: true,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
+
+    // Process items sequentially
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      try {
+        const validated = CreateCIClassSchema.parse(item);
+
+        await useCase.execute({
+          name: validated.name,
+          code: validated.code,
+          parentClassId: validated.parentClassId,
+          description: validated.description,
+          lifecycleModelId: validated.lifecycleModelId,
+          defaultCriticality: validated.defaultCriticality,
+          defaultEnvironment: validated.defaultEnvironment,
+          isDiscoverable: validated.isDiscoverable,
+        });
+
+        result.successCount++;
+      } catch (error) {
+        result.errorCount++;
+        result.errors.push({
+          index: i,
+          name: item.name || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/ci-classes");
+
+    return result;
+  } catch (_error) {
+    return {
+      success: false,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
   }
 }

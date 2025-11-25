@@ -10,7 +10,7 @@ import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import type { ActionResponse } from "./types";
+import type { ActionResponse, BulkCreateResult } from "./types";
 import {
   CreateCIClassFieldSchema,
   UpdateCIClassFieldSchema,
@@ -194,6 +194,63 @@ export async function deleteCIClassFieldAction(
         error instanceof Error
           ? error.message
           : "Failed to delete CI class field",
+    };
+  }
+}
+
+/**
+ * Bulk create CI class fields
+ */
+export async function bulkCreateCIClassFieldsAction(
+  items: CreateCIClassFieldDTO[],
+): Promise<BulkCreateResult> {
+  try {
+    await requirePermission(PERMISSIONS.CI_CLASS_FIELDS_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateCIClassFieldUseCase>(
+      DI_TOKENS.CreateCIClassFieldUseCase,
+    );
+
+    const results: BulkCreateResult = {
+      success: true,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
+
+    // Process items sequentially to avoid overwhelming the database
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      try {
+        const validated = CreateCIClassFieldSchema.parse(item);
+
+        await useCase.execute(validated);
+
+        results.successCount++;
+      } catch (error) {
+        results.errorCount++;
+        results.errors.push({
+          index: i,
+          name: item.ciClassId || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    // Set overall success status based on whether there were any errors
+    results.success = results.errorCount === 0;
+
+    revalidatePath("/ci-classes");
+    revalidatePath("/ci-class-fields");
+
+    return results;
+  } catch (_error) {
+    return {
+      success: false,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
     };
   }
 }

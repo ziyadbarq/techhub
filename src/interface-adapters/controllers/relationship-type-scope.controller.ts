@@ -10,7 +10,7 @@ import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import type { ActionResponse } from "./types";
+import type { ActionResponse, BulkCreateResult } from "./types";
 import {
   CreateRelationshipTypeScopeSchema,
   UpdateRelationshipTypeScopeSchema,
@@ -197,6 +197,62 @@ export async function deleteRelationshipTypeScopeAction(
         error instanceof Error
           ? error.message
           : "Failed to delete relationship type scope",
+    };
+  }
+}
+
+/**
+ * Bulk create relationship type scopes
+ */
+export async function bulkCreateRelationshipTypeScopesAction(
+  items: CreateRelationshipTypeScopeDTO[],
+): Promise<BulkCreateResult> {
+  try {
+    await requirePermission(PERMISSIONS.RELATIONSHIP_TYPE_SCOPES_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateRelationshipTypeScopeUseCase>(
+      DI_TOKENS.CreateRelationshipTypeScopeUseCase,
+    );
+
+    const results: BulkCreateResult = {
+      success: true,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
+
+    // Process items sequentially to avoid overwhelming the database
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      try {
+        const validated = CreateRelationshipTypeScopeSchema.parse(item);
+
+        await useCase.execute(validated);
+
+        results.successCount++;
+      } catch (error) {
+        results.errorCount++;
+        results.errors.push({
+          index: i,
+          name: item.relationshipTypeId || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    // Set overall success status based on whether there were any errors
+    results.success = results.errorCount === 0;
+
+    revalidatePath("/relationship-type-scopes");
+
+    return results;
+  } catch (_error) {
+    return {
+      success: false,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
     };
   }
 }

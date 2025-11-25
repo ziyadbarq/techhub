@@ -9,6 +9,7 @@ import { resolve } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import type { BulkCreateResult } from "./types";
 import type {
   CreateLicenseAllocationDTO,
   UpdateLicenseAllocationDTO,
@@ -293,6 +294,67 @@ export async function reactivateLicenseAllocation(
         error instanceof Error
           ? error.message
           : "Failed to reactivate license allocation",
+    };
+  }
+}
+
+/**
+ * Bulk create license allocations
+ */
+export async function bulkCreateLicenseAllocationsAction(
+  items: CreateLicenseAllocationDTO[],
+): Promise<BulkCreateResult> {
+  try {
+    await requirePermission(PERMISSIONS.LICENSE_ALLOCATIONS_CREATE);
+
+    const useCase = resolve<CreateLicenseAllocationUseCase>(
+      DI_TOKENS.CreateLicenseAllocationUseCase,
+    );
+
+    const results: BulkCreateResult = {
+      success: true,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
+
+    // Process items sequentially to avoid overwhelming the database
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      try {
+        const validated = CreateLicenseAllocationSchema.parse(item);
+
+        await useCase.execute({
+          licenseEntitlementId: validated.licenseEntitlementId,
+          targetType: validated.targetType,
+          targetId: validated.targetId,
+          allocatedQuantity: validated.allocatedQuantity,
+          note: validated.note,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.errorCount++;
+        results.errors.push({
+          index: i,
+          name: item.licenseEntitlementId || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    // Set overall success status based on whether there were any errors
+    results.success = results.errorCount === 0;
+
+    revalidatePath("/license-allocations");
+
+    return results;
+  } catch (_error) {
+    return {
+      success: false,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
     };
   }
 }

@@ -31,6 +31,16 @@ import { bulkCreateWarrantiesAction } from "@/interface-adapters/controllers/war
 import { bulkCreateMaintenanceSchedulesAction } from "@/interface-adapters/controllers/maintenance-schedule.controller";
 import { bulkCreateMaintenanceRecordsAction } from "@/interface-adapters/controllers/maintenance-record.controller";
 import { bulkCreateStockMovementsAction } from "@/interface-adapters/controllers/stock-movement.controller";
+import { bulkCreateCIRelationshipsAction } from "@/interface-adapters/controllers/ci-relationship.controller";
+import { bulkCreateRelationshipTypesAction } from "@/interface-adapters/controllers/relationship-type.controller";
+import { bulkCreateCIClassesAction } from "@/interface-adapters/controllers/ci-class.controller";
+import { bulkCreateCIClassFieldsAction } from "@/interface-adapters/controllers/ci-class-field.controller";
+import { bulkCreateRelationshipTypeScopesAction } from "@/interface-adapters/controllers/relationship-type-scope.controller";
+import { bulkCreateContractTypesAction } from "@/interface-adapters/controllers/contract-type.controller";
+import { bulkCreateContractLinkedObjectsAction } from "@/interface-adapters/controllers/contract-linked-object.controller";
+import { bulkCreateLicenseProductFieldsAction } from "@/interface-adapters/controllers/license-product-field.controller";
+import { bulkCreateLicenseEntitlementsAction } from "@/interface-adapters/controllers/license-entitlement.controller";
+import { bulkCreateLicenseAllocationsAction } from "@/interface-adapters/controllers/license-allocation.controller";
 import {
   lookupField,
   nameField,
@@ -2171,6 +2181,691 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
 - For TRANSFER: Provide both From and To Stock Locations
 - For ADJUSTMENT: Provide relevant location and reason
 - Performed By must be a valid user email
+    `.trim(),
+  },
+
+  // ========================================
+  // CI_RELATIONSHIP
+  // ========================================
+  CI_RELATIONSHIP: {
+    key: "CI_RELATIONSHIP",
+    name: "CI Relationships",
+    tableName: "CIRelationship",
+    description: "Relationships between Configuration Items",
+    category: "CMDB",
+    permission: PERMISSIONS.CI_RELATIONSHIPS_CREATE,
+    viewPermission: PERMISSIONS.CI_RELATIONSHIPS_VIEW,
+    uniqueFields: [],
+    requiredFields: ["fromCiId", "toCiId", "relationshipTypeId"],
+    lookupFields: ["fromCiId", "toCiId", "relationshipTypeId"],
+    maxBatchSize: 100,
+    bulkCreateAction: bulkCreateCIRelationshipsAction,
+    icon: "Network",
+    color: "#8b5cf6",
+    fields: [
+      lookupField({
+        name: "fromCiId",
+        label: "From CI Code",
+        required: true,
+        lookupTarget: "ConfigurationItem",
+        lookupField: "code",
+        lookupDisplayField: "name",
+        examples: ["SRV-WEB-01", "DB-PROD-01"],
+        description: "Source Configuration Item",
+      }),
+      lookupField({
+        name: "toCiId",
+        label: "To CI Code",
+        required: true,
+        lookupTarget: "ConfigurationItem",
+        lookupField: "code",
+        lookupDisplayField: "name",
+        examples: ["SRV-APP-01", "STORAGE-01"],
+        description: "Target Configuration Item",
+      }),
+      lookupField({
+        name: "relationshipTypeId",
+        label: "Relationship Type Code",
+        required: true,
+        lookupTarget: "RelationshipType",
+        lookupField: "code",
+        lookupDisplayField: "name",
+        examples: ["DEPENDS_ON", "HOSTS", "CONNECTED_TO"],
+        description: "Type of relationship",
+      }),
+      dateField({
+        name: "validFrom",
+        label: "Valid From",
+        required: false,
+        autoMap: ["valid_from", "start_date", "effective_from"],
+      }),
+      dateField({
+        name: "validTo",
+        label: "Valid To",
+        required: false,
+        autoMap: ["valid_to", "end_date", "effective_to"],
+      }),
+      notesField({ maxLength: 1000 }),
+    ],
+    templateInstructions: `
+**Important Notes:**
+- From CI and To CI must exist in the ConfigurationItem table
+- Relationship Type must be defined and valid for the CI classes
+- Valid From/To dates define the relationship timeframe
+- Leave Valid To empty for ongoing relationships
+    `.trim(),
+  },
+
+  // ========================================
+  // RELATIONSHIP_TYPE
+  // ========================================
+  RELATIONSHIP_TYPE: {
+    key: "RELATIONSHIP_TYPE",
+    name: "Relationship Types",
+    tableName: "RelationshipType",
+    description: "Types of relationships between CIs",
+    category: "CMDB",
+    permission: PERMISSIONS.RELATIONSHIP_TYPES_CREATE,
+    viewPermission: PERMISSIONS.RELATIONSHIP_TYPES_VIEW,
+    uniqueFields: ["code"],
+    requiredFields: ["name"],
+    lookupFields: [],
+    maxBatchSize: 100,
+    bulkCreateAction: bulkCreateRelationshipTypesAction,
+    icon: "GitBranch",
+    color: "#10b981",
+    fields: [
+      nameField({
+        fieldName: "name",
+        label: "Name",
+        maxLength: 100,
+        examples: ["Depends On", "Hosts", "Connected To"],
+      }),
+      codeField({
+        entityName: "Relationship Type",
+        examples: ["DEPENDS_ON", "HOSTS", "CONNECTED_TO"],
+      }),
+      descriptionField({ maxLength: 500 }),
+      enumField({
+        name: "direction",
+        label: "Direction",
+        required: true,
+        enum: ["UNIDIRECTIONAL", "BIDIRECTIONAL"],
+        defaultValue: "UNIDIRECTIONAL",
+        description: "Relationship directionality",
+      }),
+      booleanField({
+        name: "isImpacting",
+        label: "Is Impacting",
+        defaultValue: false,
+        description: "Does this relationship affect CI availability?",
+      }),
+    ],
+    templateInstructions: `
+**Important Notes:**
+- Code is auto-generated from name if not provided (uppercase with underscores)
+- UNIDIRECTIONAL: One-way relationship (A → B)
+- BIDIRECTIONAL: Two-way relationship (A ↔ B)
+- Is Impacting: Mark true if failure of one CI affects the other
+    `.trim(),
+  },
+
+  // ========================================
+  // CI_CLASS
+  // ========================================
+  CI_CLASS: {
+    key: "CI_CLASS",
+    name: "CI Classes",
+    tableName: "CIClass",
+    description: "Configuration Item class definitions",
+    category: "CMDB",
+    permission: PERMISSIONS.CI_CLASSES_CREATE,
+    viewPermission: PERMISSIONS.CI_CLASSES_VIEW,
+    uniqueFields: ["code"],
+    requiredFields: ["name"],
+    lookupFields: ["parentClassId", "lifecycleModelId"],
+    maxBatchSize: 100,
+    bulkCreateAction: bulkCreateCIClassesAction,
+    icon: "Boxes",
+    color: "#3b82f6",
+    fields: [
+      nameField({
+        fieldName: "name",
+        label: "Name",
+        maxLength: 200,
+        examples: ["Server", "Database", "Network Device"],
+      }),
+      codeField({
+        entityName: "CI Class",
+        examples: ["SERVER", "DATABASE", "NETWORK-DEVICE"],
+      }),
+      lookupField({
+        name: "parentClassId",
+        label: "Parent Class Code",
+        required: false,
+        lookupTarget: "CIClass",
+        lookupField: "code",
+        lookupDisplayField: "name",
+        examples: ["HARDWARE", "SOFTWARE"],
+        description: "Parent class for inheritance",
+      }),
+      descriptionField({ maxLength: 5000 }),
+      lookupField({
+        name: "lifecycleModelId",
+        label: "Lifecycle Model Code",
+        required: false,
+        lookupTarget: "LifecycleModel",
+        lookupField: "code",
+        lookupDisplayField: "name",
+        examples: ["HARDWARE-STD", "SOFTWARE-STD"],
+        description: "Lifecycle model for CIs of this class",
+      }),
+      enumField({
+        name: "defaultCriticality",
+        label: "Default Criticality",
+        required: false,
+        enum: ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+        description: "Default criticality level for CIs",
+      }),
+      enumField({
+        name: "defaultEnvironment",
+        label: "Default Environment",
+        required: false,
+        enum: ["PROD", "UAT", "DEV", "DR", "TEST", "OTHER"],
+        description: "Default environment type",
+      }),
+      booleanField({
+        name: "isDiscoverable",
+        label: "Is Discoverable",
+        defaultValue: false,
+        description: "Can CIs be auto-discovered?",
+      }),
+    ],
+    templateInstructions: `
+**Important Notes:**
+- Code is auto-generated from name if not provided
+- Parent Class enables inheritance of fields and behavior
+- Lifecycle Model defines valid states for CIs of this class
+- Criticality: LOW (minimal impact) to CRITICAL (business-critical)
+- Environment: PROD (production), UAT (user acceptance), DEV (development), DR (disaster recovery), TEST, OTHER
+    `.trim(),
+  },
+
+  // ========================================
+  // CI_CLASS_FIELD
+  // ========================================
+  CI_CLASS_FIELD: {
+    key: "CI_CLASS_FIELD",
+    name: "CI Class Fields",
+    tableName: "CIClassField",
+    description: "Custom fields for CI classes",
+    category: "CMDB",
+    permission: PERMISSIONS.CI_CLASS_FIELDS_CREATE,
+    viewPermission: PERMISSIONS.CI_CLASS_FIELDS_VIEW,
+    uniqueFields: [],
+    requiredFields: ["ciClassId", "fieldDefinitionId"],
+    lookupFields: ["ciClassId", "fieldDefinitionId"],
+    maxBatchSize: 100,
+    bulkCreateAction: bulkCreateCIClassFieldsAction,
+    icon: "ListTree",
+    color: "#f59e0b",
+    fields: [
+      lookupField({
+        name: "ciClassId",
+        label: "CI Class Code",
+        required: true,
+        lookupTarget: "CIClass",
+        lookupField: "code",
+        lookupDisplayField: "name",
+        examples: ["SERVER", "DATABASE"],
+        description: "CI class to add field to",
+      }),
+      lookupField({
+        name: "fieldDefinitionId",
+        label: "Field Definition Name",
+        required: true,
+        lookupTarget: "CustomFieldDefinition",
+        lookupField: "name",
+        lookupDisplayField: "label",
+        examples: ["cpu_cores", "memory_gb"],
+        description: "Custom field definition",
+      }),
+      booleanField({
+        name: "isRequired",
+        label: "Is Required",
+        defaultValue: false,
+        description: "Is field required for CIs of this class?",
+      }),
+      booleanField({
+        name: "isUnique",
+        label: "Is Unique",
+        defaultValue: false,
+        description: "Must field value be unique?",
+      }),
+      booleanField({
+        name: "isVisible",
+        label: "Is Visible",
+        defaultValue: true,
+        description: "Show field in UI?",
+      }),
+      {
+        name: "uiOrder",
+        label: "UI Order",
+        type: "number",
+        required: false,
+        min: 0,
+        defaultValue: 0,
+        examples: ["0", "10", "100"],
+        description: "Display order in UI (lower = first)",
+        autoMap: ["ui_order", "display_order", "sort_order"],
+      },
+      notesField({ maxLength: 5000 }),
+    ],
+    templateInstructions: `
+**Important Notes:**
+- CI Class and Field Definition must exist
+- UI Order determines field display sequence (0 = first)
+- Default Value is JSON format
+- Leave Default Value empty if not needed
+    `.trim(),
+  },
+
+  // ========================================
+  // RELATIONSHIP_TYPE_SCOPE
+  // ========================================
+  RELATIONSHIP_TYPE_SCOPE: {
+    key: "RELATIONSHIP_TYPE_SCOPE",
+    name: "Relationship Type Scopes",
+    tableName: "RelationshipTypeScope",
+    description: "Valid relationship type scopes between CI classes",
+    category: "CMDB",
+    permission: PERMISSIONS.RELATIONSHIP_TYPE_SCOPES_CREATE,
+    viewPermission: PERMISSIONS.RELATIONSHIP_TYPE_SCOPES_VIEW,
+    uniqueFields: [],
+    requiredFields: ["relationshipTypeId", "fromCiClassId", "toCiClassId"],
+    lookupFields: ["relationshipTypeId", "fromCiClassId", "toCiClassId"],
+    maxBatchSize: 100,
+    bulkCreateAction: bulkCreateRelationshipTypeScopesAction,
+    icon: "Filter",
+    color: "#8b5cf6",
+    fields: [
+      lookupField({
+        name: "relationshipTypeId",
+        label: "Relationship Type Code",
+        required: true,
+        lookupTarget: "RelationshipType",
+        lookupField: "code",
+        lookupDisplayField: "name",
+        examples: ["DEPENDS_ON", "HOSTS"],
+        description: "Relationship type",
+      }),
+      lookupField({
+        name: "fromCiClassId",
+        label: "From CI Class Code",
+        required: true,
+        lookupTarget: "CIClass",
+        lookupField: "code",
+        lookupDisplayField: "name",
+        examples: ["SERVER", "APPLICATION"],
+        description: "Source CI class",
+      }),
+      lookupField({
+        name: "toCiClassId",
+        label: "To CI Class Code",
+        required: true,
+        lookupTarget: "CIClass",
+        lookupField: "code",
+        lookupDisplayField: "name",
+        examples: ["DATABASE", "SERVER"],
+        description: "Target CI class",
+      }),
+      notesField({ maxLength: 5000 }),
+    ],
+    templateInstructions: `
+**Important Notes:**
+- Defines which CI classes can have specific relationship types
+- Example: "HOSTS" relationship from SERVER to APPLICATION
+- All referenced CI classes and relationship types must exist
+    `.trim(),
+  },
+
+  // ========================================
+  // CONTRACT_TYPE
+  // ========================================
+  CONTRACT_TYPE: {
+    key: "CONTRACT_TYPE",
+    name: "Contract Types",
+    tableName: "ContractType",
+    description: "Types of contracts",
+    category: "CONTRACTS",
+    permission: PERMISSIONS.CONTRACT_TYPES_CREATE,
+    viewPermission: PERMISSIONS.CONTRACT_TYPES_VIEW,
+    uniqueFields: ["code"],
+    requiredFields: ["name"],
+    lookupFields: [],
+    maxBatchSize: 100,
+    bulkCreateAction: bulkCreateContractTypesAction,
+    icon: "FileText",
+    color: "#3b82f6",
+    fields: [
+      nameField({
+        fieldName: "name",
+        label: "Name",
+        maxLength: 100,
+        examples: ["Software License", "Support Agreement", "Lease Agreement"],
+      }),
+      codeField({
+        entityName: "Contract Type",
+        examples: ["SW-LICENSE", "SUPPORT", "LEASE"],
+      }),
+      descriptionField({ maxLength: 500 }),
+      booleanField({
+        name: "isActive",
+        label: "Active",
+        defaultValue: true,
+        description: "Is contract type currently active?",
+      }),
+    ],
+    templateInstructions: `
+**Important Notes:**
+- Code is auto-generated from name if not provided
+- Examples: Software License, Support Agreement, Maintenance Contract, Lease Agreement
+    `.trim(),
+  },
+
+  // ========================================
+  // CONTRACT_LINKED_OBJECT
+  // ========================================
+  CONTRACT_LINKED_OBJECT: {
+    key: "CONTRACT_LINKED_OBJECT",
+    name: "Contract Linked Objects",
+    tableName: "ContractLinkedObject",
+    description: "Objects linked to contracts",
+    category: "CONTRACTS",
+    permission: PERMISSIONS.CONTRACT_LINKED_OBJECTS_CREATE,
+    viewPermission: PERMISSIONS.CONTRACT_LINKED_OBJECTS_VIEW,
+    uniqueFields: [],
+    requiredFields: ["contractId", "targetType", "targetId"],
+    lookupFields: ["contractId"],
+    maxBatchSize: 100,
+    bulkCreateAction: bulkCreateContractLinkedObjectsAction,
+    icon: "Link",
+    color: "#10b981",
+    fields: [
+      lookupField({
+        name: "contractId",
+        label: "Contract Reference",
+        required: true,
+        lookupTarget: "Contract",
+        lookupField: "referenceNumber",
+        lookupDisplayField: "title",
+        examples: ["CONT-2024-001", "SW-LIC-123"],
+        description: "Contract to link to",
+      }),
+      enumField({
+        name: "targetType",
+        label: "Target Type",
+        required: true,
+        enum: ["CONFIGURATION_ITEM", "ASSET", "LICENSE_ENTITLEMENT"],
+        description: "Type of linked object",
+      }),
+      {
+        name: "targetId",
+        label: "Target ID",
+        type: "string",
+        required: true,
+        examples: [
+          "12345678-1234-1234-1234-123456789012",
+          "ci-uuid",
+          "asset-uuid",
+        ],
+        description:
+          "UUID of the target object (CI, Asset, or License Entitlement)",
+        autoMap: ["target_id", "object_id", "linked_id"],
+      },
+      notesField({ maxLength: 2000 }),
+    ],
+    templateInstructions: `
+**Important Notes:**
+- Contract must exist in system
+- Target Type: CONFIGURATION_ITEM, ASSET, or LICENSE_ENTITLEMENT
+- Target ID must be a valid UUID of the target object
+- Links contracts to CIs, Assets, or License Entitlements
+    `.trim(),
+  },
+
+  // ========================================
+  // LICENSE_PRODUCT_FIELD
+  // ========================================
+  LICENSE_PRODUCT_FIELD: {
+    key: "LICENSE_PRODUCT_FIELD",
+    name: "License Product Fields",
+    tableName: "LicenseProductField",
+    description: "Custom fields for license products",
+    category: "LICENSES",
+    permission: PERMISSIONS.LICENSE_PRODUCT_FIELDS_CREATE,
+    viewPermission: PERMISSIONS.LICENSE_PRODUCT_FIELDS_VIEW,
+    uniqueFields: [],
+    requiredFields: ["licenseProductId", "fieldDefinitionId"],
+    lookupFields: ["licenseProductId", "fieldDefinitionId"],
+    maxBatchSize: 100,
+    bulkCreateAction: bulkCreateLicenseProductFieldsAction,
+    icon: "ListTree",
+    color: "#f59e0b",
+    fields: [
+      lookupField({
+        name: "licenseProductId",
+        label: "License Product Code",
+        required: true,
+        lookupTarget: "LicenseProduct",
+        lookupField: "productCode",
+        lookupDisplayField: "productName",
+        examples: ["MSFT-SQL-STD", "ADOBE-CC"],
+        description: "License product to add field to",
+      }),
+      lookupField({
+        name: "fieldDefinitionId",
+        label: "Field Definition Name",
+        required: true,
+        lookupTarget: "CustomFieldDefinition",
+        lookupField: "name",
+        lookupDisplayField: "label",
+        examples: ["activation_key", "license_server"],
+        description: "Custom field definition",
+      }),
+      booleanField({
+        name: "isRequired",
+        label: "Is Required",
+        defaultValue: false,
+        description: "Is field required for this product?",
+      }),
+      booleanField({
+        name: "isVisible",
+        label: "Is Visible",
+        defaultValue: true,
+        description: "Show field in UI?",
+      }),
+      {
+        name: "uiOrder",
+        label: "UI Order",
+        type: "number",
+        required: false,
+        min: 0,
+        defaultValue: 0,
+        examples: ["0", "10", "100"],
+        description: "Display order in UI",
+        autoMap: ["ui_order", "display_order", "sort_order"],
+      },
+    ],
+    templateInstructions: `
+**Important Notes:**
+- License Product and Field Definition must exist
+- UI Order determines field display sequence (0 = first)
+- Default Value is JSON format
+    `.trim(),
+  },
+
+  // ========================================
+  // LICENSE_ENTITLEMENT
+  // ========================================
+  LICENSE_ENTITLEMENT: {
+    key: "LICENSE_ENTITLEMENT",
+    name: "License Entitlements",
+    tableName: "LicenseEntitlement",
+    description: "Purchased license entitlements",
+    category: "LICENSES",
+    permission: PERMISSIONS.LICENSE_ENTITLEMENTS_CREATE,
+    viewPermission: PERMISSIONS.LICENSE_ENTITLEMENTS_VIEW,
+    uniqueFields: [],
+    requiredFields: ["licenseProductId", "purchasedQuantity", "effectiveStart"],
+    lookupFields: ["licenseProductId", "contractId"],
+    maxBatchSize: 100,
+    bulkCreateAction: bulkCreateLicenseEntitlementsAction,
+    icon: "Key",
+    color: "#8b5cf6",
+    fields: [
+      lookupField({
+        name: "licenseProductId",
+        label: "License Product Code",
+        required: true,
+        lookupTarget: "LicenseProduct",
+        lookupField: "productCode",
+        lookupDisplayField: "productName",
+        examples: ["MSFT-SQL-STD", "ADOBE-CC"],
+        description: "Licensed product",
+      }),
+      lookupField({
+        name: "contractId",
+        label: "Contract Reference",
+        required: false,
+        lookupTarget: "Contract",
+        lookupField: "referenceNumber",
+        lookupDisplayField: "title",
+        examples: ["CONT-2024-001"],
+        description: "Associated contract (optional)",
+      }),
+      {
+        name: "purchasedQuantity",
+        label: "Purchased Quantity",
+        type: "number",
+        required: true,
+        min: 1,
+        examples: ["10", "100", "1000"],
+        description: "Number of licenses purchased",
+        autoMap: ["purchased_quantity", "quantity", "count", "licenses"],
+      },
+      dateField({
+        name: "effectiveStart",
+        label: "Effective Start",
+        required: true,
+        autoMap: ["effective_start", "start_date", "valid_from"],
+      }),
+      dateField({
+        name: "effectiveEnd",
+        label: "Effective End",
+        required: false,
+        autoMap: ["effective_end", "end_date", "valid_to", "expiry_date"],
+      }),
+      notesField({ maxLength: 5000 }),
+    ],
+    businessRules: [
+      {
+        name: "effectiveEndAfterStart",
+        description: "Effective end must be after start",
+        validate: (row: Record<string, unknown>) => {
+          if (row.effectiveEnd && row.effectiveStart) {
+            const start = new Date(row.effectiveStart as string);
+            const end = new Date(row.effectiveEnd as string);
+            return end > start;
+          }
+          return true;
+        },
+        message: "Effective end date must be after effective start date",
+        severity: "error",
+      },
+    ],
+    templateInstructions: `
+**Important Notes:**
+- License Product must exist in system
+- Purchased Quantity must be a positive integer
+- Effective Start is the license activation date
+- Leave Effective End empty for perpetual licenses
+- Effective End must be after Effective Start
+    `.trim(),
+  },
+
+  // ========================================
+  // LICENSE_ALLOCATION
+  // ========================================
+  LICENSE_ALLOCATION: {
+    key: "LICENSE_ALLOCATION",
+    name: "License Allocations",
+    tableName: "LicenseAllocation",
+    description: "License allocations to persons/CIs/assets",
+    category: "LICENSES",
+    permission: PERMISSIONS.LICENSE_ALLOCATIONS_CREATE,
+    viewPermission: PERMISSIONS.LICENSE_ALLOCATIONS_VIEW,
+    uniqueFields: [],
+    requiredFields: [
+      "licenseEntitlementId",
+      "targetType",
+      "targetId",
+      "allocatedQuantity",
+    ],
+    lookupFields: ["licenseEntitlementId"],
+    maxBatchSize: 100,
+    bulkCreateAction: bulkCreateLicenseAllocationsAction,
+    icon: "UserCheck",
+    color: "#10b981",
+    fields: [
+      {
+        name: "licenseEntitlementId",
+        label: "License Entitlement ID",
+        type: "string",
+        required: true,
+        examples: ["12345678-1234-1234-1234-123456789012"],
+        description:
+          "License entitlement ID (UUID) - lookup not supported, use UUID directly",
+        autoMap: ["license_entitlement_id", "entitlement_id", "license_id"],
+      },
+      enumField({
+        name: "targetType",
+        label: "Target Type",
+        required: true,
+        enum: ["PERSON", "CI", "ASSET"],
+        description: "Type of allocation target",
+      }),
+      {
+        name: "targetId",
+        label: "Target ID",
+        type: "string",
+        required: true,
+        examples: ["12345678-1234-1234-1234-123456789012"],
+        description: "UUID of target (Person, CI, or Asset)",
+        autoMap: ["target_id", "allocated_to", "user_id"],
+      },
+      {
+        name: "allocatedQuantity",
+        label: "Allocated Quantity",
+        type: "number",
+        required: true,
+        min: 1,
+        examples: ["1", "5", "10"],
+        description: "Number of licenses allocated",
+        autoMap: ["allocated_quantity", "quantity", "count"],
+      },
+      notesField({ maxLength: 5000 }),
+    ],
+    templateInstructions: `
+**Important Notes:**
+- License Entitlement ID must be a valid UUID
+- Target Type: PERSON (user), CI (configuration item), or ASSET (hardware/software)
+- Target ID must be a valid UUID of the target object
+- Allocated Quantity cannot exceed available entitlement
+- Examples:
+  - PERSON: Allocate Microsoft Office to john.doe@barq.com
+  - CI: Allocate SQL Server to database server CI
+  - ASSET: Allocate Adobe CC to laptop asset
     `.trim(),
   },
 };

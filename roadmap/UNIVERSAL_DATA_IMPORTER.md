@@ -1,9 +1,9 @@
 # Universal Data Importer - Remaining Work
 
-**Status**: Core + Phase 2B Complete (32% Entity Coverage)
+**Status**: Core + Phase 2C Complete (47% Entity Coverage)
 **Priority**: Medium
 **Complexity**: Medium (Core Complete) / Small-Medium (Extensions)
-**Estimated Effort**: 2-3 days for remaining 45 entity configurations
+**Estimated Effort**: 2-3 days for remaining 35 entity configurations
 
 ## Overview
 
@@ -35,7 +35,7 @@ A universal data importer admin page that supports importing CSV/Excel data into
 - ✅ Permission system integration (DATA_IMPORT_MANAGE)
 - ✅ Admin navigation integration
 
-**Currently Functional For** (21/66 entities - 32% complete):
+**Currently Functional For** (31/66 entities - 47% complete):
 
 **Foundation Layer:**
 - ✅ OrganizationUnit (9 fields, fully configured)
@@ -62,12 +62,22 @@ A universal data importer admin page that supports importing CSV/Excel data into
 
 **CMDB:**
 - ✅ ConfigurationItem (11 fields, fully configured)
+- ✅ CIRelationship (6 fields, fully configured)
+- ✅ RelationshipType (5 fields, fully configured)
+- ✅ CIClass (8 fields, fully configured)
+- ✅ CIClassField (7 fields, fully configured)
+- ✅ RelationshipTypeScope (4 fields, fully configured)
 
 **Contracts:**
 - ✅ Contract (10 fields, fully configured)
+- ✅ ContractType (4 fields, fully configured)
+- ✅ ContractLinkedObject (4 fields, fully configured)
 
 **Licenses:**
 - ✅ LicenseProduct (6 fields, fully configured)
+- ✅ LicenseProductField (5 fields, fully configured)
+- ✅ LicenseEntitlement (6 fields, fully configured)
+- ✅ LicenseAllocation (5 fields, fully configured)
 
 **Services:**
 - ✅ Service (13 fields, fully configured)
@@ -76,7 +86,7 @@ A universal data importer admin page that supports importing CSV/Excel data into
 
 ### 1. Complete Entity Configurations (Medium Priority)
 
-**Objective**: Configure remaining 45 entities for import support (21/66 complete)
+**Objective**: Configure remaining 35 entities for import support (31/66 complete)
 
 **Entity Categories Pending**:
 
@@ -84,22 +94,6 @@ A universal data importer admin page that supports importing CSV/Excel data into
 - Tag (note: may be just string array field, verify if separate entity)
 - AuditLog (read-only, skip import)
 - SystemSetting (key-value, special handling)
-
-#### CMDB Layer (5 entities remaining)
-- CIRelationship (7 fields)
-- RelationshipType (8 fields)
-- CIClass (6 fields)
-- CIClassField (9 fields)
-- RelationshipTypeScope (5 fields)
-
-#### Contract Management (2 entities remaining)
-- ContractType (6 fields)
-- ContractLinkedObject (5 fields)
-
-#### License Management (3 entities remaining)
-- LicenseProductField (7 fields)
-- LicenseEntitlement (9 fields)
-- LicenseAllocation (8 fields)
 
 #### Asset Operations (3 entities)
 - AssetDisposal (12 fields)
@@ -132,7 +126,7 @@ A universal data importer admin page that supports importing CSV/Excel data into
 - [ ] Create or verify bulk create action exists
 - [ ] Test with sample data
 
-**Estimated Effort**: 15-20 minutes per entity = ~11-15 hours total (45 entities remaining)
+**Estimated Effort**: 15-20 minutes per entity = ~9-12 hours total (35 entities remaining)
 
 ---
 

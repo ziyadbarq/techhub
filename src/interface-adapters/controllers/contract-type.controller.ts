@@ -27,6 +27,7 @@ import {
 } from "@/interface-adapters/presenters/contract-type.presenter";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import type { BulkCreateResult } from "./types";
 
 /**
  * Create a new contract type
@@ -206,6 +207,62 @@ export async function deleteContractType(
         error instanceof Error
           ? error.message
           : "Failed to delete contract type",
+    };
+  }
+}
+
+/**
+ * Bulk create contract types
+ */
+export async function bulkCreateContractTypesAction(
+  items: CreateContractTypeDTO[],
+): Promise<BulkCreateResult> {
+  try {
+    await requirePermission(PERMISSIONS.CONTRACT_TYPES_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateContractTypeUseCase>(
+      DI_TOKENS.CreateContractTypeUseCase,
+    );
+
+    const results: BulkCreateResult = {
+      success: true,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
+
+    // Process items sequentially to avoid overwhelming the database
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      try {
+        const validatedData = CreateContractTypeSchema.parse(item);
+
+        await useCase.execute(validatedData);
+
+        results.successCount++;
+      } catch (error) {
+        results.errorCount++;
+        results.errors.push({
+          index: i,
+          name: item.name || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    // Set overall success status based on whether there were any errors
+    results.success = results.errorCount === 0;
+
+    revalidatePath("/contract-types");
+
+    return results;
+  } catch (_error) {
+    return {
+      success: false,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
     };
   }
 }

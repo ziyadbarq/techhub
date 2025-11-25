@@ -24,6 +24,7 @@ import type { GetLicenseEntitlementUseCase } from "@/core/use-cases/license-enti
 import type { ListLicenseEntitlementsUseCase } from "@/core/use-cases/license-entitlement/list-license-entitlements.use-case";
 import type { UpdateLicenseEntitlementUseCase } from "@/core/use-cases/license-entitlement/update-license-entitlement.use-case";
 import type { DeleteLicenseEntitlementUseCase } from "@/core/use-cases/license-entitlement/delete-license-entitlement.use-case";
+import type { BulkCreateResult } from "./types";
 
 /**
  * Create a new license entitlement
@@ -214,6 +215,68 @@ export async function deleteLicenseEntitlement(
         error instanceof Error
           ? error.message
           : "Failed to delete license entitlement",
+    };
+  }
+}
+
+/**
+ * Bulk create license entitlements
+ */
+export async function bulkCreateLicenseEntitlementsAction(
+  items: CreateLicenseEntitlementDTO[],
+): Promise<BulkCreateResult> {
+  try {
+    await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_CREATE);
+
+    const useCase = resolve<CreateLicenseEntitlementUseCase>(
+      DI_TOKENS.CreateLicenseEntitlementUseCase,
+    );
+
+    const results: BulkCreateResult = {
+      success: true,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
+
+    // Process items sequentially
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      try {
+        const validated = CreateLicenseEntitlementSchema.parse(item);
+
+        await useCase.execute({
+          licenseProductId: validated.licenseProductId,
+          contractId: validated.contractId,
+          purchasedQuantity: validated.purchasedQuantity,
+          effectiveStart: validated.effectiveStart,
+          effectiveEnd: validated.effectiveEnd,
+          allowedScope: validated.allowedScope,
+          note: validated.note,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.errorCount++;
+        results.errors.push({
+          index: i,
+          name: item.licenseProductId,
+          error:
+            error instanceof Error ? error.message : "Unknown error occurred",
+        });
+      }
+    }
+
+    revalidatePath("/license-entitlements");
+
+    return results;
+  } catch (error) {
+    console.error("Error bulk creating license entitlements:", error);
+    return {
+      success: false,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
     };
   }
 }

@@ -27,6 +27,7 @@ import {
 } from "@/interface-adapters/presenters/license-product-field.presenter";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import type { BulkCreateResult } from "./types";
 
 /**
  * Create a new license product field
@@ -209,6 +210,70 @@ export async function deleteLicenseProductField(
         error instanceof Error
           ? error.message
           : "Failed to delete license product field",
+    };
+  }
+}
+
+/**
+ * Bulk create license product fields
+ *
+ * @param items - Array of license product field creation data
+ * @returns BulkCreateResult containing success count, error count, and error details
+ */
+export async function bulkCreateLicenseProductFieldsAction(
+  items: CreateLicenseProductFieldDTO[],
+): Promise<BulkCreateResult> {
+  try {
+    await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateLicenseProductFieldUseCase>(
+      DI_TOKENS.CreateLicenseProductFieldUseCase,
+    );
+
+    const results: BulkCreateResult = {
+      success: true,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
+
+    // Process items sequentially
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      try {
+        const validated = CreateLicenseProductFieldSchema.parse(item);
+
+        await useCase.execute({
+          licenseProductId: validated.licenseProductId,
+          fieldDefinitionId: validated.fieldDefinitionId,
+          isRequired: validated.isRequired ?? false,
+          isVisible: validated.isVisible ?? true,
+          uiOrder: validated.uiOrder ?? 0,
+          defaultValue: validated.defaultValue ?? undefined,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.errorCount++;
+        results.success = false;
+        results.errors.push({
+          index: i,
+          name: item.licenseProductId,
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/license-product-fields");
+
+    return results;
+  } catch (_error) {
+    return {
+      success: false,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
     };
   }
 }
