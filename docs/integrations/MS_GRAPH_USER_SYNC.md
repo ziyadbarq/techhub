@@ -1,7 +1,7 @@
 # Microsoft Graph User Sync - Integration Guide
 
 > **Target File**: `docs/integrations/MS_GRAPH_USER_SYNC.md`
-> **Last Updated**: 2025-01-25
+> **Last Updated**: 2025-11-26
 > **Tested With**: Barq tenant (1000+ users)
 
 ---
@@ -9,15 +9,20 @@
 ## Table of Contents
 
 1. [Tech Stack Summary](#tech-stack-summary)
-2. [Azure AD App Registration](#azure-ad-app-registration)
-3. [Database Schema](#database-schema)
-4. [Microsoft Graph API](#microsoft-graph-api-integration)
-5. [Graph Response Schema](#graph-api-response-schema)
-6. [Field Mapping](#field-mapping)
-7. [TypeScript Implementation](#typescript-implementation)
-8. [Sync Strategies](#sync-strategies)
-9. [Error Handling](#error-handling)
-10. [Environment Variables](#environment-variables)
+2. [Implementation Checklist](#implementation-checklist)
+3. [NPM Dependencies](#npm-dependencies)
+4. [Schema Migration](#schema-migration)
+5. [Azure AD App Registration](#azure-ad-app-registration)
+6. [Database Schema](#database-schema)
+7. [Microsoft Graph API](#microsoft-graph-api-integration)
+8. [Graph Response Schema](#graph-api-response-schema)
+9. [Field Mapping](#field-mapping)
+10. [TypeScript Implementation](#typescript-implementation)
+11. [DI Registration](#di-registration)
+12. [Sync Strategies](#sync-strategies)
+13. [Error Handling](#error-handling)
+14. [Environment Variables](#environment-variables)
+15. [Existing Data Backfill](#existing-data-backfill)
 
 ---
 
@@ -36,6 +41,187 @@
 - Cookie-based sessions (7-day expiry, 1-day refresh, 5-minute cache)
 
 **Authorization**: Custom RBAC system with 269 permissions across 14 groups. Server-side enforcement via `requirePermission()` in server components/actions; feature flags via `requireFeature()`.
+
+---
+
+## Implementation Checklist
+
+Before the sync feature can work, complete these tasks:
+
+### Phase 1: Infrastructure Setup
+
+- [ ] **Install NPM dependencies** (see [NPM Dependencies](#npm-dependencies))
+- [ ] **Run schema migration** (see [Schema Migration](#schema-migration))
+- [ ] **Create Azure AD App Registration** (see [Azure AD App Registration](#azure-ad-app-registration))
+- [ ] **Add environment variables** (see [Environment Variables](#environment-variables))
+
+### Phase 2: Code Implementation
+
+- [ ] Create `src/lib/schemas/graph-user.schema.ts` - Zod validation schemas
+- [ ] Create `src/infrastructure/services/microsoft-graph.service.ts` - Graph API client
+- [ ] Create `src/use-cases/person/sync-users-from-graph.use-case.ts` - Sync logic
+- [ ] Create `src/infrastructure/jobs/user-sync.job.ts` - BullMQ job
+- [ ] Register service in DI container (see [DI Registration](#di-registration))
+- [ ] Add `PERSON_SYNC` permission to RBAC
+
+### Phase 3: API & Testing
+
+- [ ] Create `src/app/api/admin/sync-users/route.ts` - Manual trigger endpoint
+- [ ] Create `scripts/sync-users.ts` - CLI script for manual sync
+- [ ] Backfill existing Person records (see [Existing Data Backfill](#existing-data-backfill))
+- [ ] Test sync with small batch first
+
+---
+
+## NPM Dependencies
+
+Install required packages:
+
+```bash
+npm install @azure/identity @microsoft/microsoft-graph-client
+```
+
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `@azure/identity` | `^4.x` | Azure AD authentication (Client Credentials Flow) |
+| `@microsoft/microsoft-graph-client` | `^3.x` | Microsoft Graph API client |
+
+> **Note**: These packages are only needed for the sync job (server-side). They should NOT be imported in client components.
+
+---
+
+## Schema Migration
+
+### Required Changes to Person Model
+
+**Current schema** (in `schema.prisma`):
+```prisma
+model Person {
+  // ... existing fields
+  email           String    @unique  // ❌ Currently unique
+  // ... no azureAdId field
+  // ... no office field
+}
+```
+
+**Required schema**:
+```prisma
+model Person {
+  // ... existing fields
+  azureAdId       String?   @unique  // ✅ ADD: Immutable MS Graph ID
+  email           String              // ✅ CHANGE: Remove @unique (emails can change)
+  office          String?             // ✅ ADD: Office location from MS Graph
+  // ... rest of fields
+}
+```
+
+### Migration Steps
+
+**Step 1: Add new fields (safe)**
+
+```bash
+# Add azureAdId and office fields first (nullable, no constraints)
+npx dotenv -e .env.local -- prisma db push
+```
+
+Add to schema.prisma:
+```prisma
+model Person {
+  id              String    @id @default(cuid())
+  azureAdId       String?   @unique       // ⭐ NEW: Immutable MS Graph ID
+  userId          String?   @unique
+  firstName       String
+  lastName        String
+  middleName      String?
+  email           String    @unique       // Keep unique for now
+  phone           String?
+  mobile          String?
+  employeeId      String?   @unique
+  orgUnitId       String
+  primaryRoleId   String
+  managerId       String?
+  title           String?
+  office          String?                 // ⭐ NEW: Office location
+  locationId      String?
+  department      String?
+  // ... rest unchanged
+}
+```
+
+**Step 2: Backfill azureAdId for existing users** (see [Existing Data Backfill](#existing-data-backfill))
+
+**Step 3: Remove email unique constraint** (after backfill)
+
+> **✅ Decision: Option A** - Remove `@unique` from email, rely on `azureAdId` as source of truth.
+>
+> **Rationale**: Emails can change in Azure AD (marriage, company rebranding, typo fixes). Using `azureAdId` as the immutable identity key ensures proper record matching even when emails change.
+
+Update schema to remove `@unique` from email:
+```prisma
+email           String    // No @unique - emails can change, azureAdId is source of truth
+```
+
+**Final Person model after migration:**
+```prisma
+model Person {
+  id              String    @id @default(cuid())
+  azureAdId       String?   @unique       // ⭐ Source of truth for MS Graph sync
+  userId          String?   @unique
+  firstName       String
+  lastName        String
+  middleName      String?
+  email           String                  // ✅ No @unique - can change in AD
+  phone           String?
+  mobile          String?
+  employeeId      String?   @unique
+  orgUnitId       String
+  primaryRoleId   String
+  managerId       String?
+  title           String?
+  office          String?                 // Office location from MS Graph
+  locationId      String?
+  department      String?
+  hireDate        DateTime?
+  terminationDate DateTime?
+  isActive        Boolean   @default(true)
+  metadata        Json?
+  deletedAt       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations (unchanged)
+  // ...
+
+  @@index([azureAdId])
+  @@index([userId])
+  @@index([email])        // Keep index for lookups, just not unique
+  @@index([employeeId])
+  @@index([orgUnitId])
+  @@index([primaryRoleId])
+  @@index([managerId])
+  @@index([isActive])
+  @@map("persons")
+}
+```
+
+### Migration Command Sequence
+
+```bash
+# 1. Add azureAdId and office fields (keep email @unique temporarily)
+# Edit schema.prisma, then:
+npm run db:push
+npm run db:generate
+
+# 2. Run backfill script to populate azureAdId for existing persons
+npx dotenv -e .env.local -- npx tsx scripts/backfill-azure-ad-ids.ts
+
+# 3. Remove @unique from email in schema.prisma, then:
+npm run db:push
+npm run db:generate
+
+# 4. Verify migration
+npx dotenv -e .env.local -- prisma studio
+```
 
 ---
 
@@ -819,14 +1005,108 @@ export class SyncUsersFromGraphUseCase {
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
+---
+
+## DI Registration
+
+Register the Microsoft Graph service and sync use case in the InversifyJS container.
+
+### Service Interface
+
+```typescript
+// src/core/services/microsoft-graph.service.interface.ts
+
+import type { GraphUser } from '@/lib/schemas/graph-user.schema';
+
+export interface IMicrosoftGraphService {
+  fetchAllUsers(options?: {
+    includeDisabled?: boolean;
+    includeGuests?: boolean;
+  }): Promise<GraphUser[]>;
+
+  fetchUserManager(userId: string): Promise<{ id: string } | null>;
+
+  fetchAllManagers(userIds: string[]): Promise<Map<string, string>>;
+}
+
+export const IMicrosoftGraphService = Symbol.for('IMicrosoftGraphService');
+```
+
+### DI Token Registration
+
+```typescript
+// src/infrastructure/di/tokens.ts
+
+export const DI_TOKENS = {
+  // ... existing tokens
+  IMicrosoftGraphService: Symbol.for('IMicrosoftGraphService'),
+  SyncUsersFromGraphUseCase: Symbol.for('SyncUsersFromGraphUseCase'),
+};
+```
+
+### Container Bindings
+
+```typescript
+// src/infrastructure/di/container.ts
+
+import { MicrosoftGraphService } from '@/infrastructure/services/microsoft-graph.service';
+import { SyncUsersFromGraphUseCase } from '@/use-cases/person/sync-users-from-graph.use-case';
+import { DI_TOKENS } from './tokens';
+
+// Add to container configuration:
+container
+  .bind<IMicrosoftGraphService>(DI_TOKENS.IMicrosoftGraphService)
+  .to(MicrosoftGraphService)
+  .inSingletonScope();
+
+container
+  .bind<SyncUsersFromGraphUseCase>(DI_TOKENS.SyncUsersFromGraphUseCase)
+  .to(SyncUsersFromGraphUseCase)
+  .inRequestScope();
+```
+
+### RBAC Permission
+
+Add new permission for sync operations:
+
+```typescript
+// src/lib/rbac/permissions.ts
+
+export const PERMISSIONS = {
+  // ... existing permissions
+  PERSON_SYNC: 'person.sync',  // Trigger user sync from MS Graph
+};
+```
+
+```typescript
+// src/lib/rbac/permission-groups.ts
+
+export const PERMISSION_GROUPS = {
+  // ... existing groups
+  PERSON: {
+    // ... existing person permissions
+    PERSON_SYNC: {
+      name: 'person.sync',
+      displayName: 'Sync Users from Microsoft Graph',
+      description: 'Trigger synchronization of users from Microsoft Entra ID',
+      resource: 'person',
+      action: 'sync',
+    },
+  },
+};
+```
+
+---
+
 ### BullMQ Job Definition
 
 ```typescript
 // src/infrastructure/jobs/user-sync.job.ts
 
 import { Queue, Worker, Job } from 'bullmq';
-import { container } from '@/infrastructure/di/container';
-import { SyncUsersFromGraphUseCase } from '@/use-cases/sync-users-from-graph.use-case';
+import { getContainer } from '@/infrastructure/di/container';
+import { DI_TOKENS } from '@/infrastructure/di/tokens';
+import type { SyncUsersFromGraphUseCase } from '@/use-cases/person/sync-users-from-graph.use-case';
 
 const QUEUE_NAME = 'user-sync';
 
@@ -853,7 +1133,8 @@ export const userSyncWorker = new Worker(
   async (job: Job) => {
     console.log(`Starting user sync job ${job.id}`);
 
-    const useCase = container.get(SyncUsersFromGraphUseCase);
+    const container = getContainer();
+    const useCase = container.get<SyncUsersFromGraphUseCase>(DI_TOKENS.SyncUsersFromGraphUseCase);
     const result = await useCase.execute();
 
     console.log('Sync completed:', result);
@@ -1058,3 +1339,149 @@ npx tsx scripts/check-sync-status.ts
 - Error rate > 5%
 - Sync takes > 30 minutes
 - No sync completed in 48 hours
+
+---
+
+## Existing Data Backfill
+
+If you have existing Person records without `azureAdId`, you need to backfill them before the sync can work properly.
+
+### Strategy
+
+1. **Match existing persons to Graph users by email**
+2. **Set their `azureAdId` from the matched Graph user**
+3. **Run normal sync for any remaining users**
+
+### Backfill Script
+
+```typescript
+// scripts/backfill-azure-ad-ids.ts
+
+import { prisma } from '@/infrastructure/database/prisma/client';
+import { MicrosoftGraphService } from '@/infrastructure/services/microsoft-graph.service';
+
+async function backfillAzureAdIds() {
+  const graphService = new MicrosoftGraphService();
+
+  console.log('Fetching all users from Microsoft Graph...');
+  const graphUsers = await graphService.fetchAllUsers({ includeDisabled: true });
+  console.log(`Fetched ${graphUsers.length} Graph users`);
+
+  // Build email -> azureAdId lookup map
+  const emailToAzureId = new Map<string, string>();
+  for (const user of graphUsers) {
+    const email = (user.mail || user.userPrincipalName).toLowerCase();
+    emailToAzureId.set(email, user.id);
+  }
+
+  // Find all persons without azureAdId
+  const personsWithoutAzureId = await prisma.person.findMany({
+    where: { azureAdId: null },
+    select: { id: true, email: true, firstName: true, lastName: true },
+  });
+
+  console.log(`Found ${personsWithoutAzureId.length} persons without azureAdId`);
+
+  let matched = 0;
+  let unmatched = 0;
+  const unmatchedPersons: Array<{ id: string; email: string; name: string }> = [];
+
+  for (const person of personsWithoutAzureId) {
+    const normalizedEmail = person.email.toLowerCase();
+    const azureAdId = emailToAzureId.get(normalizedEmail);
+
+    if (azureAdId) {
+      await prisma.person.update({
+        where: { id: person.id },
+        data: { azureAdId },
+      });
+      matched++;
+      console.log(`✅ Matched: ${person.email} -> ${azureAdId}`);
+    } else {
+      unmatched++;
+      unmatchedPersons.push({
+        id: person.id,
+        email: person.email,
+        name: `${person.firstName} ${person.lastName}`,
+      });
+      console.log(`❌ No match: ${person.email}`);
+    }
+  }
+
+  console.log('\n--- Summary ---');
+  console.log(`Matched: ${matched}`);
+  console.log(`Unmatched: ${unmatched}`);
+
+  if (unmatchedPersons.length > 0) {
+    console.log('\nUnmatched persons (may be local-only or terminated):');
+    for (const p of unmatchedPersons) {
+      console.log(`  - ${p.name} <${p.email}>`);
+    }
+  }
+
+  await prisma.$disconnect();
+}
+
+backfillAzureAdIds().catch(console.error);
+```
+
+### Run Backfill
+
+```bash
+npx dotenv -e .env.local -- npx tsx scripts/backfill-azure-ad-ids.ts
+```
+
+### Handling Unmatched Records
+
+Persons without a Graph match may be:
+
+| Scenario | Action |
+|----------|--------|
+| **Terminated employees** | Leave as-is (no `azureAdId`), won't be affected by sync |
+| **Local-only test users** | Leave as-is or delete if not needed |
+| **Email mismatch** | Manually set `azureAdId` via Prisma Studio |
+| **External contractors** | Leave as-is if not in AD, or add to AD |
+
+> **Note**: Persons with `azureAdId = null` will NOT be touched by the sync job. The sync only updates/deactivates records that have an `azureAdId`.
+
+---
+
+## Summary: Files to Create
+
+| File | Purpose |
+|------|---------|
+| `src/lib/schemas/graph-user.schema.ts` | Zod validation schemas |
+| `src/core/services/microsoft-graph.service.interface.ts` | Service interface |
+| `src/infrastructure/services/microsoft-graph.service.ts` | Graph API client |
+| `src/use-cases/person/sync-users-from-graph.use-case.ts` | Sync business logic |
+| `src/infrastructure/jobs/user-sync.job.ts` | BullMQ job definition |
+| `src/app/api/admin/sync-users/route.ts` | Manual trigger API |
+| `scripts/backfill-azure-ad-ids.ts` | One-time backfill script |
+| `scripts/sync-users.ts` | CLI sync trigger |
+
+---
+
+## Quick Start Checklist
+
+```bash
+# 1. Install dependencies
+npm install @azure/identity @microsoft/microsoft-graph-client
+
+# 2. Update schema and migrate
+# Edit schema.prisma to add azureAdId and office fields
+npm run db:push
+npm run db:generate
+
+# 3. Set environment variables in .env.local
+# MICROSOFT_CLIENT_ID, MICROSOFT_CLIENT_SECRET, MICROSOFT_TENANT_ID
+
+# 4. Create the service and use case files (copy from this doc)
+
+# 5. Backfill existing users
+npx dotenv -e .env.local -- npx tsx scripts/backfill-azure-ad-ids.ts
+
+# 6. Test sync manually
+npx dotenv -e .env.local -- npx tsx scripts/sync-users.ts
+
+# 7. Schedule daily job (in worker startup)
+```
