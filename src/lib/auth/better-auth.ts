@@ -540,36 +540,71 @@ export const auth = betterAuth({
     after: createAuthMiddleware(async (ctx) => {
       const path = ctx.path || "";
 
+      authDebugLog("info", "Better Auth hook fired", {
+        path,
+        hasNewSession: !!ctx.context.newSession,
+        hasUser: !!ctx.context.newSession?.user,
+      });
+
       // Only process authentication events
       if (
         !path.includes("/sign-in") &&
         !path.includes("/sign-up") &&
         !path.includes("/callback")
       ) {
+        authDebugLog("info", "Skipping hook - path not an auth event", {
+          path,
+        });
         return;
       }
 
       // Get user from context
       const user = ctx.context.newSession?.user;
-      if (!user?.id) return;
+      if (!user?.id) {
+        authDebugLog("warn", "Skipping hook - no user in newSession context", {
+          path,
+        });
+        return;
+      }
+
+      authDebugLog("info", "Processing person linkage for user", {
+        userId: user.id,
+        userEmail: user.email,
+      });
 
       const linkResult = await ensurePersonLinkedToUser(user);
+
       if (linkResult.status === "blocked") {
         console.error(
           "⚠️ Failed to auto-link user to person",
           linkResult.message,
           linkResult.reason,
+          {
+            userId: user.id,
+            userEmail: user.email,
+          },
         );
         return;
       }
 
       if (linkResult.status === "created") {
+        console.log(
+          `✅ Person created and linked for user ${user.email} (Person ID: ${linkResult.personId})`,
+        );
         authDebugLog("info", "Person created and linked for user", {
           userId: user.id,
           personId: linkResult.personId,
         });
       } else if (linkResult.status === "linked-existing") {
+        console.log(
+          `✅ Person linked for user ${user.email} (Person ID: ${linkResult.personId})`,
+        );
         authDebugLog("info", "Person linked for user", {
+          userId: user.id,
+          personId: linkResult.personId,
+        });
+      } else if (linkResult.status === "already-linked") {
+        authDebugLog("info", "Person already linked for user", {
           userId: user.id,
           personId: linkResult.personId,
         });

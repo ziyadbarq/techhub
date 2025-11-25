@@ -228,6 +228,10 @@ export const DI_TOKENS = {
   CheckFirstAdminUseCase: Symbol.for("CheckFirstAdminUseCase"),
   AssignFirstAdminUseCase: Symbol.for("AssignFirstAdminUseCase"),
 
+  // User Provisioning Use Cases
+  CreateUserForPersonUseCase: Symbol.for("CreateUserForPersonUseCase"),
+  ResetUserPasswordUseCase: Symbol.for("ResetUserPasswordUseCase"),
+
   // System Setup Use Cases
   CheckSystemHealthUseCase: Symbol.for("CheckSystemHealthUseCase"),
   GetMigrationStatusUseCase: Symbol.for("GetMigrationStatusUseCase"),

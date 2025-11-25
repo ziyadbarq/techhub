@@ -28,6 +28,7 @@ import { bindFileStorageDependencies } from "./modules/file-storage.module";
 import { bindCodeGeneratorDependencies } from "./modules/code-generator.module";
 import { bindDatabaseDependencies } from "./modules/database.module";
 import { bindRBACDependencies } from "./modules/rbac.module";
+import { bindUserProvisioningDependencies } from "./modules/user-provisioning.module";
 import { bindSystemSetupDependencies } from "./modules/system-setup.module";
 import { bindFeatureFlagsDependencies } from "./modules/feature-flags.module";
 import { bindFoundationDependencies } from "./modules/foundation.module";
@@ -111,6 +112,9 @@ function createContainer(): Container {
 
   // Bind RBAC dependencies (role, permission, user-role management)
   bindRBACDependencies(newContainer);
+
+  // Bind User Provisioning dependencies (admin user account creation, password reset)
+  bindUserProvisioningDependencies(newContainer);
 
   // Bind System Setup dependencies (health checks, migration status, seeding)
   bindSystemSetupDependencies(newContainer);

@@ -51,4 +51,10 @@ export interface IUserRepository {
    * Update user's email verification status
    */
   updateEmailVerification(userId: string, verified: boolean): Promise<User>;
+
+  /**
+   * Update user's password (admin password reset)
+   * Updates the password hash in the Account table
+   */
+  updatePassword(userId: string, passwordHash: string): Promise<void>;
 }

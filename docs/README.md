@@ -104,7 +104,8 @@ Cross-cutting features and utilities:
 #### Authentication & Security
 
 - [RBAC Developer Guide](./guides/RBAC_DEVELOPER_GUIDE.md) - Implementing permissions and protecting routes/actions/UI
-- [RBAC Admin Guide](./guides/RBAC_ADMIN_GUIDE.md) - Managing roles, permissions, and user access
+- [RBAC Admin Guide](./features/RBAC_ADMIN_GUIDE.md) - Managing roles, permissions, and user access
+- [User Provisioning System](./features/USER_PROVISIONING.md) - Admin user account creation, secure password generation, and password reset for employees
 - **[MISSING]** Permission Groups & Dependencies - Permission organization, dependency validation, and auto-fix features
 - **[MISSING]** Role Conflict Detection - Segregation of duties enforcement and conflict resolution
 - **[MISSING]** Role Cloning - One-click role duplication with permission copying

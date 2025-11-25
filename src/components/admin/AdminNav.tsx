@@ -29,7 +29,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Shield, Key, Users, FileText, Settings, Database } from "lucide-react";
+import {
+  Shield,
+  Key,
+  Users,
+  FileText,
+  Settings,
+  Database,
+  UserPlus,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePermissions } from "@/hooks/use-permissions";
 import {
@@ -76,6 +84,13 @@ const adminNavItems: AdminNavItem[] = [
     icon: Users,
     description: "Manage users",
     permission: PERMISSIONS.USERS_VIEW,
+  },
+  {
+    title: "User Provisioning",
+    href: "/admin/user-provisioning",
+    icon: UserPlus,
+    description: "Create user accounts for employees",
+    permission: PERMISSIONS.USERS_MANAGE,
   },
   {
     title: "Data Import",

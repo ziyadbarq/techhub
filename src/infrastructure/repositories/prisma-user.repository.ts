@@ -143,4 +143,48 @@ export class PrismaUserRepository implements IUserRepository {
 
     return user;
   }
+
+  async updatePassword(userId: string, passwordHash: string): Promise<void> {
+    const timer = this.logger.startTimer();
+
+    // Find the credential account for this user
+    const account = await this.prisma.account.findFirst({
+      where: {
+        userId,
+        provider: "credential",
+      },
+    });
+
+    if (!account) {
+      throw new Error(
+        `No credential account found for user ${userId}. User may be using OAuth login only.`,
+      );
+    }
+
+    // Update the password hash
+    await this.prisma.account.update({
+      where: { id: account.id },
+      data: {
+        password: passwordHash,
+        updatedAt: new Date(),
+      },
+    });
+
+    // Invalidate all existing sessions to force re-login with new password
+    await this.prisma.session.deleteMany({
+      where: { userId },
+    });
+
+    this.logger.timed(
+      "updatePassword",
+      "Password updated successfully",
+      timer(),
+      {
+        userId,
+        sessionsClearedCount: await this.prisma.session.count({
+          where: { userId },
+        }),
+      },
+    );
+  }
 }

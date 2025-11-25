@@ -9,7 +9,7 @@
 
 import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Shield, Mail, Users } from "lucide-react";
+import { MoreHorizontal, Shield, Mail, Users, KeyRound } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
 
@@ -28,6 +28,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { BulkRoleAssignmentModal } from "@/components/users/BulkRoleAssignmentModal";
 import { InlineRoleEditor } from "@/components/users/InlineRoleEditor";
 import { UserRoleHistory } from "@/components/users/UserRoleHistory";
+import { PasswordResetDialog } from "@/components/user-provisioning/PasswordResetDialog";
 
 import type { UserWithRolesDTO } from "@/interface-adapters/controllers/user-role.controller";
 
@@ -48,6 +49,10 @@ export function UserTable({
     [],
   );
   const [bulkModalOpen, setBulkModalOpen] = React.useState(false);
+  const [passwordResetUser, setPasswordResetUser] = React.useState<{
+    id: string;
+    email: string;
+  } | null>(null);
 
   const getInitials = (name: string | null, email: string): string => {
     if (name) {
@@ -60,7 +65,6 @@ export function UserTable({
     }
     return email[0].toUpperCase();
   };
-
 
   const columns: ColumnDef<UserWithRolesDTO>[] = [
     {
@@ -168,7 +172,7 @@ export function UserTable({
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" forceMount>
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem asChild>
                 <Link
@@ -188,6 +192,15 @@ export function UserTable({
                   </DropdownMenuItem>
                 }
               />
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onSelect={() =>
+                  setPasswordResetUser({ id: user.id, email: user.email })
+                }
+              >
+                <KeyRound className="mr-2 h-4 w-4" />
+                Reset Password
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {
@@ -243,6 +256,21 @@ export function UserTable({
           onUpdate?.();
         }}
       />
+
+      {passwordResetUser ? (
+        <PasswordResetDialog
+          userId={passwordResetUser.id}
+          userEmail={passwordResetUser.email}
+          trigger={null}
+          open
+          onOpenChange={(open) => {
+            if (!open) {
+              setPasswordResetUser(null);
+              onUpdate?.();
+            }
+          }}
+        />
+      ) : null}
     </>
   );
 }
