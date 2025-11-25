@@ -54,3 +54,5 @@ src/infrastructure/database/prisma/*.db-wal
 
 # AI debug artifacts
 /.ai-debug/
+
+/local

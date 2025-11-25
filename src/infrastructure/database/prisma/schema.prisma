@@ -260,6 +260,7 @@ model OrganizationUnit {
 // Organizational people (different from Better Auth User)
 model Person {
   id              String    @id @default(cuid())
+  azureAdId       String?   @unique // Immutable MS Graph ID - source of truth for user sync
   userId          String?   @unique // Optional link to Better Auth User
   firstName       String
   lastName        String
@@ -272,6 +273,7 @@ model Person {
   primaryRoleId   String
   managerId       String?
   title           String?
+  office          String?            // Office location from MS Graph (e.g., "Riyadh HQ", "India Office")
   locationId      String?
   department      String?
   hireDate        DateTime?
@@ -312,6 +314,7 @@ model Person {
   serviceOwnerships             ServiceOwnership[]
 
   // Indexes
+  @@index([azureAdId])
   @@index([userId])
   @@index([email])
   @@index([employeeId])

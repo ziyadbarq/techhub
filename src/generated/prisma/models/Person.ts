@@ -26,6 +26,7 @@ export type AggregatePerson = {
 
 export type PersonMinAggregateOutputType = {
   id: string | null
+  azureAdId: string | null
   userId: string | null
   firstName: string | null
   lastName: string | null
@@ -38,6 +39,7 @@ export type PersonMinAggregateOutputType = {
   primaryRoleId: string | null
   managerId: string | null
   title: string | null
+  office: string | null
   locationId: string | null
   department: string | null
   hireDate: Date | null
@@ -50,6 +52,7 @@ export type PersonMinAggregateOutputType = {
 
 export type PersonMaxAggregateOutputType = {
   id: string | null
+  azureAdId: string | null
   userId: string | null
   firstName: string | null
   lastName: string | null
@@ -62,6 +65,7 @@ export type PersonMaxAggregateOutputType = {
   primaryRoleId: string | null
   managerId: string | null
   title: string | null
+  office: string | null
   locationId: string | null
   department: string | null
   hireDate: Date | null
@@ -74,6 +78,7 @@ export type PersonMaxAggregateOutputType = {
 
 export type PersonCountAggregateOutputType = {
   id: number
+  azureAdId: number
   userId: number
   firstName: number
   lastName: number
@@ -86,6 +91,7 @@ export type PersonCountAggregateOutputType = {
   primaryRoleId: number
   managerId: number
   title: number
+  office: number
   locationId: number
   department: number
   hireDate: number
@@ -101,6 +107,7 @@ export type PersonCountAggregateOutputType = {
 
 export type PersonMinAggregateInputType = {
   id?: true
+  azureAdId?: true
   userId?: true
   firstName?: true
   lastName?: true
@@ -113,6 +120,7 @@ export type PersonMinAggregateInputType = {
   primaryRoleId?: true
   managerId?: true
   title?: true
+  office?: true
   locationId?: true
   department?: true
   hireDate?: true
@@ -125,6 +133,7 @@ export type PersonMinAggregateInputType = {
 
 export type PersonMaxAggregateInputType = {
   id?: true
+  azureAdId?: true
   userId?: true
   firstName?: true
   lastName?: true
@@ -137,6 +146,7 @@ export type PersonMaxAggregateInputType = {
   primaryRoleId?: true
   managerId?: true
   title?: true
+  office?: true
   locationId?: true
   department?: true
   hireDate?: true
@@ -149,6 +159,7 @@ export type PersonMaxAggregateInputType = {
 
 export type PersonCountAggregateInputType = {
   id?: true
+  azureAdId?: true
   userId?: true
   firstName?: true
   lastName?: true
@@ -161,6 +172,7 @@ export type PersonCountAggregateInputType = {
   primaryRoleId?: true
   managerId?: true
   title?: true
+  office?: true
   locationId?: true
   department?: true
   hireDate?: true
@@ -247,6 +259,7 @@ export type PersonGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 
 export type PersonGroupByOutputType = {
   id: string
+  azureAdId: string | null
   userId: string | null
   firstName: string
   lastName: string
@@ -259,6 +272,7 @@ export type PersonGroupByOutputType = {
   primaryRoleId: string
   managerId: string | null
   title: string | null
+  office: string | null
   locationId: string | null
   department: string | null
   hireDate: Date | null
@@ -293,6 +307,7 @@ export type PersonWhereInput = {
   OR?: Prisma.PersonWhereInput[]
   NOT?: Prisma.PersonWhereInput | Prisma.PersonWhereInput[]
   id?: Prisma.StringFilter<"Person"> | string
+  azureAdId?: Prisma.StringNullableFilter<"Person"> | string | null
   userId?: Prisma.StringNullableFilter<"Person"> | string | null
   firstName?: Prisma.StringFilter<"Person"> | string
   lastName?: Prisma.StringFilter<"Person"> | string
@@ -305,6 +320,7 @@ export type PersonWhereInput = {
   primaryRoleId?: Prisma.StringFilter<"Person"> | string
   managerId?: Prisma.StringNullableFilter<"Person"> | string | null
   title?: Prisma.StringNullableFilter<"Person"> | string | null
+  office?: Prisma.StringNullableFilter<"Person"> | string | null
   locationId?: Prisma.StringNullableFilter<"Person"> | string | null
   department?: Prisma.StringNullableFilter<"Person"> | string | null
   hireDate?: Prisma.DateTimeNullableFilter<"Person"> | Date | string | null
@@ -345,6 +361,7 @@ export type PersonWhereInput = {
 
 export type PersonOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  azureAdId?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
@@ -357,6 +374,7 @@ export type PersonOrderByWithRelationInput = {
   primaryRoleId?: Prisma.SortOrder
   managerId?: Prisma.SortOrderInput | Prisma.SortOrder
   title?: Prisma.SortOrderInput | Prisma.SortOrder
+  office?: Prisma.SortOrderInput | Prisma.SortOrder
   locationId?: Prisma.SortOrderInput | Prisma.SortOrder
   department?: Prisma.SortOrderInput | Prisma.SortOrder
   hireDate?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -397,6 +415,7 @@ export type PersonOrderByWithRelationInput = {
 
 export type PersonWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  azureAdId?: string
   userId?: string
   email?: string
   employeeId?: string
@@ -412,6 +431,7 @@ export type PersonWhereUniqueInput = Prisma.AtLeast<{
   primaryRoleId?: Prisma.StringFilter<"Person"> | string
   managerId?: Prisma.StringNullableFilter<"Person"> | string | null
   title?: Prisma.StringNullableFilter<"Person"> | string | null
+  office?: Prisma.StringNullableFilter<"Person"> | string | null
   locationId?: Prisma.StringNullableFilter<"Person"> | string | null
   department?: Prisma.StringNullableFilter<"Person"> | string | null
   hireDate?: Prisma.DateTimeNullableFilter<"Person"> | Date | string | null
@@ -448,10 +468,11 @@ export type PersonWhereUniqueInput = Prisma.AtLeast<{
   reservationsConfirmed?: Prisma.AssetReservationListRelationFilter
   reservationsCancelled?: Prisma.AssetReservationListRelationFilter
   serviceOwnerships?: Prisma.ServiceOwnershipListRelationFilter
-}, "id" | "userId" | "email" | "employeeId">
+}, "id" | "azureAdId" | "userId" | "email" | "employeeId">
 
 export type PersonOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  azureAdId?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
@@ -464,6 +485,7 @@ export type PersonOrderByWithAggregationInput = {
   primaryRoleId?: Prisma.SortOrder
   managerId?: Prisma.SortOrderInput | Prisma.SortOrder
   title?: Prisma.SortOrderInput | Prisma.SortOrder
+  office?: Prisma.SortOrderInput | Prisma.SortOrder
   locationId?: Prisma.SortOrderInput | Prisma.SortOrder
   department?: Prisma.SortOrderInput | Prisma.SortOrder
   hireDate?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -483,6 +505,7 @@ export type PersonScalarWhereWithAggregatesInput = {
   OR?: Prisma.PersonScalarWhereWithAggregatesInput[]
   NOT?: Prisma.PersonScalarWhereWithAggregatesInput | Prisma.PersonScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Person"> | string
+  azureAdId?: Prisma.StringNullableWithAggregatesFilter<"Person"> | string | null
   userId?: Prisma.StringNullableWithAggregatesFilter<"Person"> | string | null
   firstName?: Prisma.StringWithAggregatesFilter<"Person"> | string
   lastName?: Prisma.StringWithAggregatesFilter<"Person"> | string
@@ -495,6 +518,7 @@ export type PersonScalarWhereWithAggregatesInput = {
   primaryRoleId?: Prisma.StringWithAggregatesFilter<"Person"> | string
   managerId?: Prisma.StringNullableWithAggregatesFilter<"Person"> | string | null
   title?: Prisma.StringNullableWithAggregatesFilter<"Person"> | string | null
+  office?: Prisma.StringNullableWithAggregatesFilter<"Person"> | string | null
   locationId?: Prisma.StringNullableWithAggregatesFilter<"Person"> | string | null
   department?: Prisma.StringNullableWithAggregatesFilter<"Person"> | string | null
   hireDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Person"> | Date | string | null
@@ -508,6 +532,7 @@ export type PersonScalarWhereWithAggregatesInput = {
 
 export type PersonCreateInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -516,6 +541,7 @@ export type PersonCreateInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -555,6 +581,7 @@ export type PersonCreateInput = {
 
 export type PersonUncheckedCreateInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -567,6 +594,7 @@ export type PersonUncheckedCreateInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -602,6 +630,7 @@ export type PersonUncheckedCreateInput = {
 
 export type PersonUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -610,6 +639,7 @@ export type PersonUpdateInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -649,6 +679,7 @@ export type PersonUpdateInput = {
 
 export type PersonUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -661,6 +692,7 @@ export type PersonUncheckedUpdateInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -696,6 +728,7 @@ export type PersonUncheckedUpdateInput = {
 
 export type PersonCreateManyInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -708,6 +741,7 @@ export type PersonCreateManyInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -721,6 +755,7 @@ export type PersonCreateManyInput = {
 
 export type PersonUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -729,6 +764,7 @@ export type PersonUpdateManyMutationInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -741,6 +777,7 @@ export type PersonUpdateManyMutationInput = {
 
 export type PersonUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -753,6 +790,7 @@ export type PersonUncheckedUpdateManyInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -781,6 +819,7 @@ export type PersonOrderByRelationAggregateInput = {
 
 export type PersonCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  azureAdId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
@@ -793,6 +832,7 @@ export type PersonCountOrderByAggregateInput = {
   primaryRoleId?: Prisma.SortOrder
   managerId?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  office?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
   department?: Prisma.SortOrder
   hireDate?: Prisma.SortOrder
@@ -806,6 +846,7 @@ export type PersonCountOrderByAggregateInput = {
 
 export type PersonMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  azureAdId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
@@ -818,6 +859,7 @@ export type PersonMaxOrderByAggregateInput = {
   primaryRoleId?: Prisma.SortOrder
   managerId?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  office?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
   department?: Prisma.SortOrder
   hireDate?: Prisma.SortOrder
@@ -830,6 +872,7 @@ export type PersonMaxOrderByAggregateInput = {
 
 export type PersonMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  azureAdId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
@@ -842,6 +885,7 @@ export type PersonMinOrderByAggregateInput = {
   primaryRoleId?: Prisma.SortOrder
   managerId?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  office?: Prisma.SortOrder
   locationId?: Prisma.SortOrder
   department?: Prisma.SortOrder
   hireDate?: Prisma.SortOrder
@@ -1389,6 +1433,7 @@ export type PersonUpdateOneRequiredWithoutAttachmentsNestedInput = {
 
 export type PersonCreateWithoutUserInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -1397,6 +1442,7 @@ export type PersonCreateWithoutUserInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -1435,6 +1481,7 @@ export type PersonCreateWithoutUserInput = {
 
 export type PersonUncheckedCreateWithoutUserInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -1446,6 +1493,7 @@ export type PersonUncheckedCreateWithoutUserInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -1497,6 +1545,7 @@ export type PersonUpdateToOneWithWhereWithoutUserInput = {
 
 export type PersonUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1505,6 +1554,7 @@ export type PersonUpdateWithoutUserInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1543,6 +1593,7 @@ export type PersonUpdateWithoutUserInput = {
 
 export type PersonUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1554,6 +1605,7 @@ export type PersonUncheckedUpdateWithoutUserInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1589,6 +1641,7 @@ export type PersonUncheckedUpdateWithoutUserInput = {
 
 export type PersonCreateWithoutPrimaryRoleInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -1597,6 +1650,7 @@ export type PersonCreateWithoutPrimaryRoleInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -1635,6 +1689,7 @@ export type PersonCreateWithoutPrimaryRoleInput = {
 
 export type PersonUncheckedCreateWithoutPrimaryRoleInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -1646,6 +1701,7 @@ export type PersonUncheckedCreateWithoutPrimaryRoleInput = {
   orgUnitId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -1710,6 +1766,7 @@ export type PersonScalarWhereInput = {
   OR?: Prisma.PersonScalarWhereInput[]
   NOT?: Prisma.PersonScalarWhereInput | Prisma.PersonScalarWhereInput[]
   id?: Prisma.StringFilter<"Person"> | string
+  azureAdId?: Prisma.StringNullableFilter<"Person"> | string | null
   userId?: Prisma.StringNullableFilter<"Person"> | string | null
   firstName?: Prisma.StringFilter<"Person"> | string
   lastName?: Prisma.StringFilter<"Person"> | string
@@ -1722,6 +1779,7 @@ export type PersonScalarWhereInput = {
   primaryRoleId?: Prisma.StringFilter<"Person"> | string
   managerId?: Prisma.StringNullableFilter<"Person"> | string | null
   title?: Prisma.StringNullableFilter<"Person"> | string | null
+  office?: Prisma.StringNullableFilter<"Person"> | string | null
   locationId?: Prisma.StringNullableFilter<"Person"> | string | null
   department?: Prisma.StringNullableFilter<"Person"> | string | null
   hireDate?: Prisma.DateTimeNullableFilter<"Person"> | Date | string | null
@@ -1735,6 +1793,7 @@ export type PersonScalarWhereInput = {
 
 export type PersonCreateWithoutManagedOrgUnitsInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -1743,6 +1802,7 @@ export type PersonCreateWithoutManagedOrgUnitsInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -1781,6 +1841,7 @@ export type PersonCreateWithoutManagedOrgUnitsInput = {
 
 export type PersonUncheckedCreateWithoutManagedOrgUnitsInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -1793,6 +1854,7 @@ export type PersonUncheckedCreateWithoutManagedOrgUnitsInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -1832,6 +1894,7 @@ export type PersonCreateOrConnectWithoutManagedOrgUnitsInput = {
 
 export type PersonCreateWithoutOrgUnitInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -1840,6 +1903,7 @@ export type PersonCreateWithoutOrgUnitInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -1878,6 +1942,7 @@ export type PersonCreateWithoutOrgUnitInput = {
 
 export type PersonUncheckedCreateWithoutOrgUnitInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -1889,6 +1954,7 @@ export type PersonUncheckedCreateWithoutOrgUnitInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -1945,6 +2011,7 @@ export type PersonUpdateToOneWithWhereWithoutManagedOrgUnitsInput = {
 
 export type PersonUpdateWithoutManagedOrgUnitsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1953,6 +2020,7 @@ export type PersonUpdateWithoutManagedOrgUnitsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1991,6 +2059,7 @@ export type PersonUpdateWithoutManagedOrgUnitsInput = {
 
 export type PersonUncheckedUpdateWithoutManagedOrgUnitsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2003,6 +2072,7 @@ export type PersonUncheckedUpdateWithoutManagedOrgUnitsInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2053,6 +2123,7 @@ export type PersonUpdateManyWithWhereWithoutOrgUnitInput = {
 
 export type PersonCreateWithoutDirectReportsInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -2061,6 +2132,7 @@ export type PersonCreateWithoutDirectReportsInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -2099,6 +2171,7 @@ export type PersonCreateWithoutDirectReportsInput = {
 
 export type PersonUncheckedCreateWithoutDirectReportsInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -2111,6 +2184,7 @@ export type PersonUncheckedCreateWithoutDirectReportsInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -2150,6 +2224,7 @@ export type PersonCreateOrConnectWithoutDirectReportsInput = {
 
 export type PersonCreateWithoutManagerInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -2158,6 +2233,7 @@ export type PersonCreateWithoutManagerInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -2196,6 +2272,7 @@ export type PersonCreateWithoutManagerInput = {
 
 export type PersonUncheckedCreateWithoutManagerInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -2207,6 +2284,7 @@ export type PersonUncheckedCreateWithoutManagerInput = {
   orgUnitId: string
   primaryRoleId: string
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -2263,6 +2341,7 @@ export type PersonUpdateToOneWithWhereWithoutDirectReportsInput = {
 
 export type PersonUpdateWithoutDirectReportsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2271,6 +2350,7 @@ export type PersonUpdateWithoutDirectReportsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2309,6 +2389,7 @@ export type PersonUpdateWithoutDirectReportsInput = {
 
 export type PersonUncheckedUpdateWithoutDirectReportsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2321,6 +2402,7 @@ export type PersonUncheckedUpdateWithoutDirectReportsInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2371,6 +2453,7 @@ export type PersonUpdateManyWithWhereWithoutManagerInput = {
 
 export type PersonCreateWithoutRoleAssignmentsInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -2379,6 +2462,7 @@ export type PersonCreateWithoutRoleAssignmentsInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -2417,6 +2501,7 @@ export type PersonCreateWithoutRoleAssignmentsInput = {
 
 export type PersonUncheckedCreateWithoutRoleAssignmentsInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -2429,6 +2514,7 @@ export type PersonUncheckedCreateWithoutRoleAssignmentsInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -2479,6 +2565,7 @@ export type PersonUpdateToOneWithWhereWithoutRoleAssignmentsInput = {
 
 export type PersonUpdateWithoutRoleAssignmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2487,6 +2574,7 @@ export type PersonUpdateWithoutRoleAssignmentsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2525,6 +2613,7 @@ export type PersonUpdateWithoutRoleAssignmentsInput = {
 
 export type PersonUncheckedUpdateWithoutRoleAssignmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2537,6 +2626,7 @@ export type PersonUncheckedUpdateWithoutRoleAssignmentsInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2571,6 +2661,7 @@ export type PersonUncheckedUpdateWithoutRoleAssignmentsInput = {
 
 export type PersonCreateWithoutLocationInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -2579,6 +2670,7 @@ export type PersonCreateWithoutLocationInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -2617,6 +2709,7 @@ export type PersonCreateWithoutLocationInput = {
 
 export type PersonUncheckedCreateWithoutLocationInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -2629,6 +2722,7 @@ export type PersonUncheckedCreateWithoutLocationInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -2689,6 +2783,7 @@ export type PersonUpdateManyWithWhereWithoutLocationInput = {
 
 export type PersonCreateWithoutConfigurationItemsInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -2697,6 +2792,7 @@ export type PersonCreateWithoutConfigurationItemsInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -2735,6 +2831,7 @@ export type PersonCreateWithoutConfigurationItemsInput = {
 
 export type PersonUncheckedCreateWithoutConfigurationItemsInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -2747,6 +2844,7 @@ export type PersonUncheckedCreateWithoutConfigurationItemsInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -2797,6 +2895,7 @@ export type PersonUpdateToOneWithWhereWithoutConfigurationItemsInput = {
 
 export type PersonUpdateWithoutConfigurationItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2805,6 +2904,7 @@ export type PersonUpdateWithoutConfigurationItemsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2843,6 +2943,7 @@ export type PersonUpdateWithoutConfigurationItemsInput = {
 
 export type PersonUncheckedUpdateWithoutConfigurationItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2855,6 +2956,7 @@ export type PersonUncheckedUpdateWithoutConfigurationItemsInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2889,6 +2991,7 @@ export type PersonUncheckedUpdateWithoutConfigurationItemsInput = {
 
 export type PersonCreateWithoutStockMovementsInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -2897,6 +3000,7 @@ export type PersonCreateWithoutStockMovementsInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -2935,6 +3039,7 @@ export type PersonCreateWithoutStockMovementsInput = {
 
 export type PersonUncheckedCreateWithoutStockMovementsInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -2947,6 +3052,7 @@ export type PersonUncheckedCreateWithoutStockMovementsInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -2997,6 +3103,7 @@ export type PersonUpdateToOneWithWhereWithoutStockMovementsInput = {
 
 export type PersonUpdateWithoutStockMovementsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3005,6 +3112,7 @@ export type PersonUpdateWithoutStockMovementsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3043,6 +3151,7 @@ export type PersonUpdateWithoutStockMovementsInput = {
 
 export type PersonUncheckedUpdateWithoutStockMovementsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3055,6 +3164,7 @@ export type PersonUncheckedUpdateWithoutStockMovementsInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3089,6 +3199,7 @@ export type PersonUncheckedUpdateWithoutStockMovementsInput = {
 
 export type PersonCreateWithoutAssignedMaintenanceSchedulesInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -3097,6 +3208,7 @@ export type PersonCreateWithoutAssignedMaintenanceSchedulesInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -3135,6 +3247,7 @@ export type PersonCreateWithoutAssignedMaintenanceSchedulesInput = {
 
 export type PersonUncheckedCreateWithoutAssignedMaintenanceSchedulesInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -3147,6 +3260,7 @@ export type PersonUncheckedCreateWithoutAssignedMaintenanceSchedulesInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -3197,6 +3311,7 @@ export type PersonUpdateToOneWithWhereWithoutAssignedMaintenanceSchedulesInput =
 
 export type PersonUpdateWithoutAssignedMaintenanceSchedulesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3205,6 +3320,7 @@ export type PersonUpdateWithoutAssignedMaintenanceSchedulesInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3243,6 +3359,7 @@ export type PersonUpdateWithoutAssignedMaintenanceSchedulesInput = {
 
 export type PersonUncheckedUpdateWithoutAssignedMaintenanceSchedulesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3255,6 +3372,7 @@ export type PersonUncheckedUpdateWithoutAssignedMaintenanceSchedulesInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3289,6 +3407,7 @@ export type PersonUncheckedUpdateWithoutAssignedMaintenanceSchedulesInput = {
 
 export type PersonCreateWithoutPerformedMaintenanceRecordsInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -3297,6 +3416,7 @@ export type PersonCreateWithoutPerformedMaintenanceRecordsInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -3335,6 +3455,7 @@ export type PersonCreateWithoutPerformedMaintenanceRecordsInput = {
 
 export type PersonUncheckedCreateWithoutPerformedMaintenanceRecordsInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -3347,6 +3468,7 @@ export type PersonUncheckedCreateWithoutPerformedMaintenanceRecordsInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -3397,6 +3519,7 @@ export type PersonUpdateToOneWithWhereWithoutPerformedMaintenanceRecordsInput = 
 
 export type PersonUpdateWithoutPerformedMaintenanceRecordsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3405,6 +3528,7 @@ export type PersonUpdateWithoutPerformedMaintenanceRecordsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3443,6 +3567,7 @@ export type PersonUpdateWithoutPerformedMaintenanceRecordsInput = {
 
 export type PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3455,6 +3580,7 @@ export type PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3489,6 +3615,7 @@ export type PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput = {
 
 export type PersonCreateWithoutInitiatedDisposalsInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -3497,6 +3624,7 @@ export type PersonCreateWithoutInitiatedDisposalsInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -3535,6 +3663,7 @@ export type PersonCreateWithoutInitiatedDisposalsInput = {
 
 export type PersonUncheckedCreateWithoutInitiatedDisposalsInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -3547,6 +3676,7 @@ export type PersonUncheckedCreateWithoutInitiatedDisposalsInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -3586,6 +3716,7 @@ export type PersonCreateOrConnectWithoutInitiatedDisposalsInput = {
 
 export type PersonCreateWithoutApprovedDisposalsInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -3594,6 +3725,7 @@ export type PersonCreateWithoutApprovedDisposalsInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -3632,6 +3764,7 @@ export type PersonCreateWithoutApprovedDisposalsInput = {
 
 export type PersonUncheckedCreateWithoutApprovedDisposalsInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -3644,6 +3777,7 @@ export type PersonUncheckedCreateWithoutApprovedDisposalsInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -3694,6 +3828,7 @@ export type PersonUpdateToOneWithWhereWithoutInitiatedDisposalsInput = {
 
 export type PersonUpdateWithoutInitiatedDisposalsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3702,6 +3837,7 @@ export type PersonUpdateWithoutInitiatedDisposalsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3740,6 +3876,7 @@ export type PersonUpdateWithoutInitiatedDisposalsInput = {
 
 export type PersonUncheckedUpdateWithoutInitiatedDisposalsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3752,6 +3889,7 @@ export type PersonUncheckedUpdateWithoutInitiatedDisposalsInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3797,6 +3935,7 @@ export type PersonUpdateToOneWithWhereWithoutApprovedDisposalsInput = {
 
 export type PersonUpdateWithoutApprovedDisposalsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3805,6 +3944,7 @@ export type PersonUpdateWithoutApprovedDisposalsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3843,6 +3983,7 @@ export type PersonUpdateWithoutApprovedDisposalsInput = {
 
 export type PersonUncheckedUpdateWithoutApprovedDisposalsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3855,6 +3996,7 @@ export type PersonUncheckedUpdateWithoutApprovedDisposalsInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3889,6 +4031,7 @@ export type PersonUncheckedUpdateWithoutApprovedDisposalsInput = {
 
 export type PersonCreateWithoutDisposalApprovalsInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -3897,6 +4040,7 @@ export type PersonCreateWithoutDisposalApprovalsInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -3935,6 +4079,7 @@ export type PersonCreateWithoutDisposalApprovalsInput = {
 
 export type PersonUncheckedCreateWithoutDisposalApprovalsInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -3947,6 +4092,7 @@ export type PersonUncheckedCreateWithoutDisposalApprovalsInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -3997,6 +4143,7 @@ export type PersonUpdateToOneWithWhereWithoutDisposalApprovalsInput = {
 
 export type PersonUpdateWithoutDisposalApprovalsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4005,6 +4152,7 @@ export type PersonUpdateWithoutDisposalApprovalsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4043,6 +4191,7 @@ export type PersonUpdateWithoutDisposalApprovalsInput = {
 
 export type PersonUncheckedUpdateWithoutDisposalApprovalsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -4055,6 +4204,7 @@ export type PersonUncheckedUpdateWithoutDisposalApprovalsInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4089,6 +4239,7 @@ export type PersonUncheckedUpdateWithoutDisposalApprovalsInput = {
 
 export type PersonCreateWithoutUploadedDisposalDocumentsInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -4097,6 +4248,7 @@ export type PersonCreateWithoutUploadedDisposalDocumentsInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -4135,6 +4287,7 @@ export type PersonCreateWithoutUploadedDisposalDocumentsInput = {
 
 export type PersonUncheckedCreateWithoutUploadedDisposalDocumentsInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -4147,6 +4300,7 @@ export type PersonUncheckedCreateWithoutUploadedDisposalDocumentsInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -4197,6 +4351,7 @@ export type PersonUpdateToOneWithWhereWithoutUploadedDisposalDocumentsInput = {
 
 export type PersonUpdateWithoutUploadedDisposalDocumentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4205,6 +4360,7 @@ export type PersonUpdateWithoutUploadedDisposalDocumentsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4243,6 +4399,7 @@ export type PersonUpdateWithoutUploadedDisposalDocumentsInput = {
 
 export type PersonUncheckedUpdateWithoutUploadedDisposalDocumentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -4255,6 +4412,7 @@ export type PersonUncheckedUpdateWithoutUploadedDisposalDocumentsInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4289,6 +4447,7 @@ export type PersonUncheckedUpdateWithoutUploadedDisposalDocumentsInput = {
 
 export type PersonCreateWithoutKitCheckoutsInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -4297,6 +4456,7 @@ export type PersonCreateWithoutKitCheckoutsInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -4335,6 +4495,7 @@ export type PersonCreateWithoutKitCheckoutsInput = {
 
 export type PersonUncheckedCreateWithoutKitCheckoutsInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -4347,6 +4508,7 @@ export type PersonUncheckedCreateWithoutKitCheckoutsInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -4397,6 +4559,7 @@ export type PersonUpdateToOneWithWhereWithoutKitCheckoutsInput = {
 
 export type PersonUpdateWithoutKitCheckoutsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4405,6 +4568,7 @@ export type PersonUpdateWithoutKitCheckoutsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4443,6 +4607,7 @@ export type PersonUpdateWithoutKitCheckoutsInput = {
 
 export type PersonUncheckedUpdateWithoutKitCheckoutsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -4455,6 +4620,7 @@ export type PersonUncheckedUpdateWithoutKitCheckoutsInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4489,6 +4655,7 @@ export type PersonUncheckedUpdateWithoutKitCheckoutsInput = {
 
 export type PersonCreateWithoutReservationsForInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -4497,6 +4664,7 @@ export type PersonCreateWithoutReservationsForInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -4535,6 +4703,7 @@ export type PersonCreateWithoutReservationsForInput = {
 
 export type PersonUncheckedCreateWithoutReservationsForInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -4547,6 +4716,7 @@ export type PersonUncheckedCreateWithoutReservationsForInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -4586,6 +4756,7 @@ export type PersonCreateOrConnectWithoutReservationsForInput = {
 
 export type PersonCreateWithoutReservationsCreatedInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -4594,6 +4765,7 @@ export type PersonCreateWithoutReservationsCreatedInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -4632,6 +4804,7 @@ export type PersonCreateWithoutReservationsCreatedInput = {
 
 export type PersonUncheckedCreateWithoutReservationsCreatedInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -4644,6 +4817,7 @@ export type PersonUncheckedCreateWithoutReservationsCreatedInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -4683,6 +4857,7 @@ export type PersonCreateOrConnectWithoutReservationsCreatedInput = {
 
 export type PersonCreateWithoutReservationsConfirmedInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -4691,6 +4866,7 @@ export type PersonCreateWithoutReservationsConfirmedInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -4729,6 +4905,7 @@ export type PersonCreateWithoutReservationsConfirmedInput = {
 
 export type PersonUncheckedCreateWithoutReservationsConfirmedInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -4741,6 +4918,7 @@ export type PersonUncheckedCreateWithoutReservationsConfirmedInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -4780,6 +4958,7 @@ export type PersonCreateOrConnectWithoutReservationsConfirmedInput = {
 
 export type PersonCreateWithoutReservationsCancelledInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -4788,6 +4967,7 @@ export type PersonCreateWithoutReservationsCancelledInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -4826,6 +5006,7 @@ export type PersonCreateWithoutReservationsCancelledInput = {
 
 export type PersonUncheckedCreateWithoutReservationsCancelledInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -4838,6 +5019,7 @@ export type PersonUncheckedCreateWithoutReservationsCancelledInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -4888,6 +5070,7 @@ export type PersonUpdateToOneWithWhereWithoutReservationsForInput = {
 
 export type PersonUpdateWithoutReservationsForInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4896,6 +5079,7 @@ export type PersonUpdateWithoutReservationsForInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4934,6 +5118,7 @@ export type PersonUpdateWithoutReservationsForInput = {
 
 export type PersonUncheckedUpdateWithoutReservationsForInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -4946,6 +5131,7 @@ export type PersonUncheckedUpdateWithoutReservationsForInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4991,6 +5177,7 @@ export type PersonUpdateToOneWithWhereWithoutReservationsCreatedInput = {
 
 export type PersonUpdateWithoutReservationsCreatedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4999,6 +5186,7 @@ export type PersonUpdateWithoutReservationsCreatedInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5037,6 +5225,7 @@ export type PersonUpdateWithoutReservationsCreatedInput = {
 
 export type PersonUncheckedUpdateWithoutReservationsCreatedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -5049,6 +5238,7 @@ export type PersonUncheckedUpdateWithoutReservationsCreatedInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5094,6 +5284,7 @@ export type PersonUpdateToOneWithWhereWithoutReservationsConfirmedInput = {
 
 export type PersonUpdateWithoutReservationsConfirmedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5102,6 +5293,7 @@ export type PersonUpdateWithoutReservationsConfirmedInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5140,6 +5332,7 @@ export type PersonUpdateWithoutReservationsConfirmedInput = {
 
 export type PersonUncheckedUpdateWithoutReservationsConfirmedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -5152,6 +5345,7 @@ export type PersonUncheckedUpdateWithoutReservationsConfirmedInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5197,6 +5391,7 @@ export type PersonUpdateToOneWithWhereWithoutReservationsCancelledInput = {
 
 export type PersonUpdateWithoutReservationsCancelledInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5205,6 +5400,7 @@ export type PersonUpdateWithoutReservationsCancelledInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5243,6 +5439,7 @@ export type PersonUpdateWithoutReservationsCancelledInput = {
 
 export type PersonUncheckedUpdateWithoutReservationsCancelledInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -5255,6 +5452,7 @@ export type PersonUncheckedUpdateWithoutReservationsCancelledInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5289,6 +5487,7 @@ export type PersonUncheckedUpdateWithoutReservationsCancelledInput = {
 
 export type PersonCreateWithoutServiceOwnershipsInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -5297,6 +5496,7 @@ export type PersonCreateWithoutServiceOwnershipsInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -5335,6 +5535,7 @@ export type PersonCreateWithoutServiceOwnershipsInput = {
 
 export type PersonUncheckedCreateWithoutServiceOwnershipsInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -5347,6 +5548,7 @@ export type PersonUncheckedCreateWithoutServiceOwnershipsInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -5397,6 +5599,7 @@ export type PersonUpdateToOneWithWhereWithoutServiceOwnershipsInput = {
 
 export type PersonUpdateWithoutServiceOwnershipsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5405,6 +5608,7 @@ export type PersonUpdateWithoutServiceOwnershipsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5443,6 +5647,7 @@ export type PersonUpdateWithoutServiceOwnershipsInput = {
 
 export type PersonUncheckedUpdateWithoutServiceOwnershipsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -5455,6 +5660,7 @@ export type PersonUncheckedUpdateWithoutServiceOwnershipsInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5489,6 +5695,7 @@ export type PersonUncheckedUpdateWithoutServiceOwnershipsInput = {
 
 export type PersonCreateWithoutDataOwnershipsInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -5497,6 +5704,7 @@ export type PersonCreateWithoutDataOwnershipsInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -5535,6 +5743,7 @@ export type PersonCreateWithoutDataOwnershipsInput = {
 
 export type PersonUncheckedCreateWithoutDataOwnershipsInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -5547,6 +5756,7 @@ export type PersonUncheckedCreateWithoutDataOwnershipsInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -5597,6 +5807,7 @@ export type PersonUpdateToOneWithWhereWithoutDataOwnershipsInput = {
 
 export type PersonUpdateWithoutDataOwnershipsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5605,6 +5816,7 @@ export type PersonUpdateWithoutDataOwnershipsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5643,6 +5855,7 @@ export type PersonUpdateWithoutDataOwnershipsInput = {
 
 export type PersonUncheckedUpdateWithoutDataOwnershipsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -5655,6 +5868,7 @@ export type PersonUncheckedUpdateWithoutDataOwnershipsInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5689,6 +5903,7 @@ export type PersonUncheckedUpdateWithoutDataOwnershipsInput = {
 
 export type PersonCreateWithoutVerificationCampaignsInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -5697,6 +5912,7 @@ export type PersonCreateWithoutVerificationCampaignsInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -5735,6 +5951,7 @@ export type PersonCreateWithoutVerificationCampaignsInput = {
 
 export type PersonUncheckedCreateWithoutVerificationCampaignsInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -5747,6 +5964,7 @@ export type PersonUncheckedCreateWithoutVerificationCampaignsInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -5797,6 +6015,7 @@ export type PersonUpdateToOneWithWhereWithoutVerificationCampaignsInput = {
 
 export type PersonUpdateWithoutVerificationCampaignsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5805,6 +6024,7 @@ export type PersonUpdateWithoutVerificationCampaignsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5843,6 +6063,7 @@ export type PersonUpdateWithoutVerificationCampaignsInput = {
 
 export type PersonUncheckedUpdateWithoutVerificationCampaignsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -5855,6 +6076,7 @@ export type PersonUncheckedUpdateWithoutVerificationCampaignsInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -5889,6 +6111,7 @@ export type PersonUncheckedUpdateWithoutVerificationCampaignsInput = {
 
 export type PersonCreateWithoutVerificationItemsInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -5897,6 +6120,7 @@ export type PersonCreateWithoutVerificationItemsInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -5935,6 +6159,7 @@ export type PersonCreateWithoutVerificationItemsInput = {
 
 export type PersonUncheckedCreateWithoutVerificationItemsInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -5947,6 +6172,7 @@ export type PersonUncheckedCreateWithoutVerificationItemsInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -5997,6 +6223,7 @@ export type PersonUpdateToOneWithWhereWithoutVerificationItemsInput = {
 
 export type PersonUpdateWithoutVerificationItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6005,6 +6232,7 @@ export type PersonUpdateWithoutVerificationItemsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6043,6 +6271,7 @@ export type PersonUpdateWithoutVerificationItemsInput = {
 
 export type PersonUncheckedUpdateWithoutVerificationItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -6055,6 +6284,7 @@ export type PersonUncheckedUpdateWithoutVerificationItemsInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6089,6 +6319,7 @@ export type PersonUncheckedUpdateWithoutVerificationItemsInput = {
 
 export type PersonCreateWithoutAuditLogsChangedInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -6097,6 +6328,7 @@ export type PersonCreateWithoutAuditLogsChangedInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -6135,6 +6367,7 @@ export type PersonCreateWithoutAuditLogsChangedInput = {
 
 export type PersonUncheckedCreateWithoutAuditLogsChangedInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -6147,6 +6380,7 @@ export type PersonUncheckedCreateWithoutAuditLogsChangedInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -6197,6 +6431,7 @@ export type PersonUpdateToOneWithWhereWithoutAuditLogsChangedInput = {
 
 export type PersonUpdateWithoutAuditLogsChangedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6205,6 +6440,7 @@ export type PersonUpdateWithoutAuditLogsChangedInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6243,6 +6479,7 @@ export type PersonUpdateWithoutAuditLogsChangedInput = {
 
 export type PersonUncheckedUpdateWithoutAuditLogsChangedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -6255,6 +6492,7 @@ export type PersonUncheckedUpdateWithoutAuditLogsChangedInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6289,6 +6527,7 @@ export type PersonUncheckedUpdateWithoutAuditLogsChangedInput = {
 
 export type PersonCreateWithoutAttachmentsInput = {
   id?: string
+  azureAdId?: string | null
   firstName: string
   lastName: string
   middleName?: string | null
@@ -6297,6 +6536,7 @@ export type PersonCreateWithoutAttachmentsInput = {
   mobile?: string | null
   employeeId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -6335,6 +6575,7 @@ export type PersonCreateWithoutAttachmentsInput = {
 
 export type PersonUncheckedCreateWithoutAttachmentsInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -6347,6 +6588,7 @@ export type PersonUncheckedCreateWithoutAttachmentsInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -6397,6 +6639,7 @@ export type PersonUpdateToOneWithWhereWithoutAttachmentsInput = {
 
 export type PersonUpdateWithoutAttachmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6405,6 +6648,7 @@ export type PersonUpdateWithoutAttachmentsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6443,6 +6687,7 @@ export type PersonUpdateWithoutAttachmentsInput = {
 
 export type PersonUncheckedUpdateWithoutAttachmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -6455,6 +6700,7 @@ export type PersonUncheckedUpdateWithoutAttachmentsInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6489,6 +6735,7 @@ export type PersonUncheckedUpdateWithoutAttachmentsInput = {
 
 export type PersonCreateManyPrimaryRoleInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -6500,6 +6747,7 @@ export type PersonCreateManyPrimaryRoleInput = {
   orgUnitId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -6513,6 +6761,7 @@ export type PersonCreateManyPrimaryRoleInput = {
 
 export type PersonUpdateWithoutPrimaryRoleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6521,6 +6770,7 @@ export type PersonUpdateWithoutPrimaryRoleInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6559,6 +6809,7 @@ export type PersonUpdateWithoutPrimaryRoleInput = {
 
 export type PersonUncheckedUpdateWithoutPrimaryRoleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -6570,6 +6821,7 @@ export type PersonUncheckedUpdateWithoutPrimaryRoleInput = {
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6605,6 +6857,7 @@ export type PersonUncheckedUpdateWithoutPrimaryRoleInput = {
 
 export type PersonUncheckedUpdateManyWithoutPrimaryRoleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -6616,6 +6869,7 @@ export type PersonUncheckedUpdateManyWithoutPrimaryRoleInput = {
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6629,6 +6883,7 @@ export type PersonUncheckedUpdateManyWithoutPrimaryRoleInput = {
 
 export type PersonCreateManyOrgUnitInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -6640,6 +6895,7 @@ export type PersonCreateManyOrgUnitInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -6653,6 +6909,7 @@ export type PersonCreateManyOrgUnitInput = {
 
 export type PersonUpdateWithoutOrgUnitInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6661,6 +6918,7 @@ export type PersonUpdateWithoutOrgUnitInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6699,6 +6957,7 @@ export type PersonUpdateWithoutOrgUnitInput = {
 
 export type PersonUncheckedUpdateWithoutOrgUnitInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -6710,6 +6969,7 @@ export type PersonUncheckedUpdateWithoutOrgUnitInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6745,6 +7005,7 @@ export type PersonUncheckedUpdateWithoutOrgUnitInput = {
 
 export type PersonUncheckedUpdateManyWithoutOrgUnitInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -6756,6 +7017,7 @@ export type PersonUncheckedUpdateManyWithoutOrgUnitInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6769,6 +7031,7 @@ export type PersonUncheckedUpdateManyWithoutOrgUnitInput = {
 
 export type PersonCreateManyManagerInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -6780,6 +7043,7 @@ export type PersonCreateManyManagerInput = {
   orgUnitId: string
   primaryRoleId: string
   title?: string | null
+  office?: string | null
   locationId?: string | null
   department?: string | null
   hireDate?: Date | string | null
@@ -6793,6 +7057,7 @@ export type PersonCreateManyManagerInput = {
 
 export type PersonUpdateWithoutManagerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6801,6 +7066,7 @@ export type PersonUpdateWithoutManagerInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6839,6 +7105,7 @@ export type PersonUpdateWithoutManagerInput = {
 
 export type PersonUncheckedUpdateWithoutManagerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -6850,6 +7117,7 @@ export type PersonUncheckedUpdateWithoutManagerInput = {
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6885,6 +7153,7 @@ export type PersonUncheckedUpdateWithoutManagerInput = {
 
 export type PersonUncheckedUpdateManyWithoutManagerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -6896,6 +7165,7 @@ export type PersonUncheckedUpdateManyWithoutManagerInput = {
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6909,6 +7179,7 @@ export type PersonUncheckedUpdateManyWithoutManagerInput = {
 
 export type PersonCreateManyLocationInput = {
   id?: string
+  azureAdId?: string | null
   userId?: string | null
   firstName: string
   lastName: string
@@ -6921,6 +7192,7 @@ export type PersonCreateManyLocationInput = {
   primaryRoleId: string
   managerId?: string | null
   title?: string | null
+  office?: string | null
   department?: string | null
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
@@ -6933,6 +7205,7 @@ export type PersonCreateManyLocationInput = {
 
 export type PersonUpdateWithoutLocationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6941,6 +7214,7 @@ export type PersonUpdateWithoutLocationInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -6979,6 +7253,7 @@ export type PersonUpdateWithoutLocationInput = {
 
 export type PersonUncheckedUpdateWithoutLocationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -6991,6 +7266,7 @@ export type PersonUncheckedUpdateWithoutLocationInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -7025,6 +7301,7 @@ export type PersonUncheckedUpdateWithoutLocationInput = {
 
 export type PersonUncheckedUpdateManyWithoutLocationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -7037,6 +7314,7 @@ export type PersonUncheckedUpdateManyWithoutLocationInput = {
   primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -7269,6 +7547,7 @@ export type PersonCountOutputTypeCountServiceOwnershipsArgs<ExtArgs extends runt
 
 export type PersonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  azureAdId?: boolean
   userId?: boolean
   firstName?: boolean
   lastName?: boolean
@@ -7281,6 +7560,7 @@ export type PersonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   primaryRoleId?: boolean
   managerId?: boolean
   title?: boolean
+  office?: boolean
   locationId?: boolean
   department?: boolean
   hireDate?: boolean
@@ -7322,6 +7602,7 @@ export type PersonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
 
 export type PersonSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  azureAdId?: boolean
   userId?: boolean
   firstName?: boolean
   lastName?: boolean
@@ -7334,6 +7615,7 @@ export type PersonSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   primaryRoleId?: boolean
   managerId?: boolean
   title?: boolean
+  office?: boolean
   locationId?: boolean
   department?: boolean
   hireDate?: boolean
@@ -7352,6 +7634,7 @@ export type PersonSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
 
 export type PersonSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  azureAdId?: boolean
   userId?: boolean
   firstName?: boolean
   lastName?: boolean
@@ -7364,6 +7647,7 @@ export type PersonSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   primaryRoleId?: boolean
   managerId?: boolean
   title?: boolean
+  office?: boolean
   locationId?: boolean
   department?: boolean
   hireDate?: boolean
@@ -7382,6 +7666,7 @@ export type PersonSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
 
 export type PersonSelectScalar = {
   id?: boolean
+  azureAdId?: boolean
   userId?: boolean
   firstName?: boolean
   lastName?: boolean
@@ -7394,6 +7679,7 @@ export type PersonSelectScalar = {
   primaryRoleId?: boolean
   managerId?: boolean
   title?: boolean
+  office?: boolean
   locationId?: boolean
   department?: boolean
   hireDate?: boolean
@@ -7405,7 +7691,7 @@ export type PersonSelectScalar = {
   updatedAt?: boolean
 }
 
-export type PersonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "firstName" | "lastName" | "middleName" | "email" | "phone" | "mobile" | "employeeId" | "orgUnitId" | "primaryRoleId" | "managerId" | "title" | "locationId" | "department" | "hireDate" | "terminationDate" | "isActive" | "metadata" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["person"]>
+export type PersonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "azureAdId" | "userId" | "firstName" | "lastName" | "middleName" | "email" | "phone" | "mobile" | "employeeId" | "orgUnitId" | "primaryRoleId" | "managerId" | "title" | "office" | "locationId" | "department" | "hireDate" | "terminationDate" | "isActive" | "metadata" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["person"]>
 export type PersonInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Person$userArgs<ExtArgs>
   orgUnit?: boolean | Prisma.OrganizationUnitDefaultArgs<ExtArgs>
@@ -7484,6 +7770,7 @@ export type $PersonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    azureAdId: string | null
     userId: string | null
     firstName: string
     lastName: string
@@ -7496,6 +7783,7 @@ export type $PersonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     primaryRoleId: string
     managerId: string | null
     title: string | null
+    office: string | null
     locationId: string | null
     department: string | null
     hireDate: Date | null
@@ -7956,6 +8244,7 @@ export interface Prisma__PersonClient<T, Null = never, ExtArgs extends runtime.T
  */
 export interface PersonFieldRefs {
   readonly id: Prisma.FieldRef<"Person", 'String'>
+  readonly azureAdId: Prisma.FieldRef<"Person", 'String'>
   readonly userId: Prisma.FieldRef<"Person", 'String'>
   readonly firstName: Prisma.FieldRef<"Person", 'String'>
   readonly lastName: Prisma.FieldRef<"Person", 'String'>
@@ -7968,6 +8257,7 @@ export interface PersonFieldRefs {
   readonly primaryRoleId: Prisma.FieldRef<"Person", 'String'>
   readonly managerId: Prisma.FieldRef<"Person", 'String'>
   readonly title: Prisma.FieldRef<"Person", 'String'>
+  readonly office: Prisma.FieldRef<"Person", 'String'>
   readonly locationId: Prisma.FieldRef<"Person", 'String'>
   readonly department: Prisma.FieldRef<"Person", 'String'>
   readonly hireDate: Prisma.FieldRef<"Person", 'DateTime'>

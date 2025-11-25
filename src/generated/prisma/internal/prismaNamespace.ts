@@ -5933,6 +5933,7 @@ export type OrganizationUnitScalarFieldEnum = (typeof OrganizationUnitScalarFiel
 
 export const PersonScalarFieldEnum = {
   id: 'id',
+  azureAdId: 'azureAdId',
   userId: 'userId',
   firstName: 'firstName',
   lastName: 'lastName',
@@ -5945,6 +5946,7 @@ export const PersonScalarFieldEnum = {
   primaryRoleId: 'primaryRoleId',
   managerId: 'managerId',
   title: 'title',
+  office: 'office',
   locationId: 'locationId',
   department: 'department',
   hireDate: 'hireDate',

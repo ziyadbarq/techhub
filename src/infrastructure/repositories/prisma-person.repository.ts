@@ -3,6 +3,7 @@
  */
 
 import { inject, injectable } from "inversify";
+import { Prisma } from "@/generated/prisma";
 import type { PrismaClient } from "@/generated/prisma";
 import type { Person as PrismaPerson } from "@/generated/prisma";
 
@@ -26,6 +27,7 @@ export class PrismaPersonRepository implements IPersonRepository {
     try {
       const created = await this.prisma.person.create({
         data: {
+          azureAdId: person.azureAdId,
           firstName: person.firstName,
           lastName: person.lastName,
           middleName: person.middleName,
@@ -35,10 +37,17 @@ export class PrismaPersonRepository implements IPersonRepository {
           primaryRoleId: person.primaryRoleId,
           managerId: person.managerId,
           title: person.title,
+          office: person.office,
           phone: person.phone,
           mobile: person.mobile,
+          locationId: person.locationId,
+          department: person.department,
+          hireDate: person.hireDate,
+          terminationDate: person.terminationDate,
           isActive: person.isActive,
           userId: person.userId,
+          metadata:
+            (person.metadata as Prisma.InputJsonValue) ?? Prisma.JsonNull,
         },
       });
 
@@ -58,6 +67,32 @@ export class PrismaPersonRepository implements IPersonRepository {
     });
 
     return person ? this.toDomain(person) : null;
+  }
+
+  async findByAzureAdId(azureAdId: string): Promise<Person | null> {
+    const person = await this.prisma.person.findUnique({
+      where: { azureAdId },
+    });
+
+    return person ? this.toDomain(person) : null;
+  }
+
+  async findAllWithAzureAdId(): Promise<Person[]> {
+    const persons = await this.prisma.person.findMany({
+      where: { azureAdId: { not: null } },
+      orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
+    });
+
+    return persons.map((p: PrismaPerson) => this.toDomain(p));
+  }
+
+  async findAllWithoutAzureAdId(): Promise<Person[]> {
+    const persons = await this.prisma.person.findMany({
+      where: { azureAdId: null },
+      orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
+    });
+
+    return persons.map((p: PrismaPerson) => this.toDomain(p));
   }
 
   async findByEmail(email: string): Promise<Person | null> {
@@ -224,6 +259,7 @@ export class PrismaPersonRepository implements IPersonRepository {
       const updated = await this.prisma.person.update({
         where: { id: person.id },
         data: {
+          azureAdId: person.azureAdId,
           firstName: person.firstName,
           lastName: person.lastName,
           middleName: person.middleName,
@@ -233,10 +269,17 @@ export class PrismaPersonRepository implements IPersonRepository {
           primaryRoleId: person.primaryRoleId,
           managerId: person.managerId,
           title: person.title,
+          office: person.office,
           phone: person.phone,
           mobile: person.mobile,
+          locationId: person.locationId,
+          department: person.department,
+          hireDate: person.hireDate,
+          terminationDate: person.terminationDate,
           isActive: person.isActive,
           userId: person.userId,
+          metadata:
+            (person.metadata as Prisma.InputJsonValue) ?? Prisma.JsonNull,
           updatedAt: person.updatedAt,
         },
       });
@@ -308,6 +351,7 @@ export class PrismaPersonRepository implements IPersonRepository {
   private toDomain(prismaPerson: PrismaPerson): Person {
     return Person.reconstitute({
       id: prismaPerson.id,
+      azureAdId: prismaPerson.azureAdId,
       userId: prismaPerson.userId,
       firstName: prismaPerson.firstName,
       lastName: prismaPerson.lastName,
@@ -320,6 +364,7 @@ export class PrismaPersonRepository implements IPersonRepository {
       primaryRoleId: prismaPerson.primaryRoleId,
       managerId: prismaPerson.managerId,
       title: prismaPerson.title,
+      office: prismaPerson.office,
       locationId: prismaPerson.locationId,
       department: prismaPerson.department,
       hireDate: prismaPerson.hireDate,

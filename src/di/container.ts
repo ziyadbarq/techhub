@@ -21,6 +21,7 @@
 import "reflect-metadata";
 import { Container } from "inversify";
 import { logger } from "@/lib/logger";
+import { markContainerInitialized, resetLoggerState } from "@/lib/logger-state";
 
 // Import module binding functions
 import { bindLoggerDependencies } from "./modules/logger.module";
@@ -32,6 +33,7 @@ import { bindUserProvisioningDependencies } from "./modules/user-provisioning.mo
 import { bindSystemSetupDependencies } from "./modules/system-setup.module";
 import { bindFeatureFlagsDependencies } from "./modules/feature-flags.module";
 import { bindFoundationDependencies } from "./modules/foundation.module";
+import { bindMicrosoftGraphDependencies } from "./modules/ms-graph.module";
 import { bindAssetDependencies } from "./modules/asset.module";
 import { bindInventoryDependencies } from "./modules/inventory.module";
 import { bindCMDBDependencies } from "./modules/cmdb.module";
@@ -124,6 +126,9 @@ function createContainer(): Container {
 
   // Bind Foundation dependencies (lifecycle, vendor, organization, location, person)
   bindFoundationDependencies(newContainer);
+
+  // Bind Microsoft Graph dependencies (user sync from Azure AD)
+  bindMicrosoftGraphDependencies(newContainer);
 
   // Bind CMDB dependencies (CIs, relationships)
   bindCMDBDependencies(newContainer);
@@ -224,9 +229,8 @@ export function initContainer(): Container {
 
     // Mark container as initialized so logger can start using DI
     // This must happen after createContainer() completes to avoid circular dependency
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { markContainerInitialized } = require("@/lib/logger");
-    markContainerInitialized();
+    // Pass the getter function so logger can access container without require()
+    markContainerInitialized(() => container!);
 
     scopedLogger.debug("initContainer", "Container initialized successfully");
 
@@ -301,8 +305,6 @@ export function resetContainer(): void {
     container = null;
 
     // Reset logger's container initialization flag
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { resetLoggerState } = require("@/lib/logger");
     resetLoggerState();
   }
 }

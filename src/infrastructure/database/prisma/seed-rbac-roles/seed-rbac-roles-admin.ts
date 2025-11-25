@@ -72,9 +72,10 @@ export const ADMIN_ROLES: Record<string, RoleDefinition> = {
       PERMISSIONS.VERIFICATION_ITEMS_VERIFY,
       PERMISSIONS.VERIFICATION_ITEMS_FLAG_EXCEPTION,
 
-      // Foundation - Read-only
+      // Foundation - Read-only + User Sync
       PERMISSIONS.ORGANIZATION_UNITS_VIEW,
       PERMISSIONS.PERSONS_VIEW,
+      PERMISSIONS.PERSONS_SYNC, // Trigger Microsoft Graph user sync for compliance
       PERMISSIONS.PERSON_ROLE_ASSIGNMENTS_VIEW,
       PERMISSIONS.LOCATIONS_VIEW,
       PERMISSIONS.VENDORS_VIEW,

@@ -64,6 +64,7 @@ export const PERMISSIONS = {
   PERSONS_UPDATE: "persons:update",
   PERSONS_DELETE: "persons:delete",
   PERSONS_MANAGE: "persons:manage",
+  PERSONS_SYNC: "persons:sync", // Trigger user sync from Microsoft Graph
 
   // Foundation: Person Role Assignments
   PERSON_ROLES_VIEW: "person-roles:view",

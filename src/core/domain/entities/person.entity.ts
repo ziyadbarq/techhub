@@ -5,6 +5,7 @@
 
 export interface PersonProps {
   id: string;
+  azureAdId: string | null; // Immutable MS Graph ID - source of truth for user sync
   userId: string | null; // Optional link to Better Auth User
   firstName: string;
   lastName: string;
@@ -17,6 +18,7 @@ export interface PersonProps {
   primaryRoleId: string;
   managerId: string | null;
   title: string | null;
+  office: string | null; // Office location from MS Graph (e.g., "Riyadh HQ")
   locationId: string | null;
   department: string | null;
   hireDate: Date | null;
@@ -28,6 +30,7 @@ export interface PersonProps {
 }
 
 export interface CreatePersonProps {
+  azureAdId?: string | null;
   userId?: string | null;
   firstName: string;
   lastName: string;
@@ -40,6 +43,7 @@ export interface CreatePersonProps {
   primaryRoleId: string;
   managerId?: string | null;
   title?: string | null;
+  office?: string | null;
   locationId?: string | null;
   department?: string | null;
   hireDate?: Date | null;
@@ -61,6 +65,7 @@ export class Person {
 
     return new Person({
       id: "",
+      azureAdId: props.azureAdId || null,
       userId: props.userId || null,
       firstName: props.firstName.trim(),
       lastName: props.lastName.trim(),
@@ -73,6 +78,7 @@ export class Person {
       primaryRoleId: props.primaryRoleId,
       managerId: props.managerId || null,
       title: props.title?.trim() || null,
+      office: props.office?.trim() || null,
       locationId: props.locationId || null,
       department: props.department?.trim() || null,
       hireDate: props.hireDate || null,
@@ -100,10 +106,12 @@ export class Person {
     primaryRoleId?: string;
     managerId?: string | null;
     title?: string | null;
+    office?: string | null;
     locationId?: string | null;
     department?: string | null;
     hireDate?: Date | null;
     terminationDate?: Date | null;
+    isActive?: boolean;
     metadata?: Record<string, unknown> | null;
   }): void {
     if (props.firstName !== undefined) {
@@ -155,6 +163,10 @@ export class Person {
       this.props.title = props.title?.trim() || null;
     }
 
+    if (props.office !== undefined) {
+      this.props.office = props.office?.trim() || null;
+    }
+
     if (props.locationId !== undefined) {
       this.props.locationId = props.locationId;
     }
@@ -169,6 +181,10 @@ export class Person {
 
     if (props.terminationDate !== undefined) {
       this.props.terminationDate = props.terminationDate;
+    }
+
+    if (props.isActive !== undefined) {
+      this.props.isActive = props.isActive;
     }
 
     if (props.metadata !== undefined) {
@@ -263,6 +279,9 @@ export class Person {
   get id(): string {
     return this.props.id;
   }
+  get azureAdId(): string | null {
+    return this.props.azureAdId;
+  }
   get userId(): string | null {
     return this.props.userId;
   }
@@ -303,6 +322,9 @@ export class Person {
   }
   get title(): string | null {
     return this.props.title;
+  }
+  get office(): string | null {
+    return this.props.office;
   }
   get locationId(): string | null {
     return this.props.locationId;

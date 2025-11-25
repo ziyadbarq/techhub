@@ -17,6 +17,24 @@ export interface IPersonRepository {
   findById(id: string): Promise<Person | null>;
 
   /**
+   * Find person by Azure AD ID (Microsoft Graph ID)
+   * Used for user sync from Microsoft Entra ID
+   */
+  findByAzureAdId(azureAdId: string): Promise<Person | null>;
+
+  /**
+   * Find all persons that have been synced from Azure AD
+   * (i.e., have a non-null azureAdId)
+   */
+  findAllWithAzureAdId(): Promise<Person[]>;
+
+  /**
+   * Find all persons without Azure AD ID
+   * Used for backfill operations
+   */
+  findAllWithoutAzureAdId(): Promise<Person[]>;
+
+  /**
    * Find person by email
    */
   findByEmail(email: string): Promise<Person | null>;

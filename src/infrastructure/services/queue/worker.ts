@@ -30,6 +30,7 @@ import {
   handleActivateReadyReservations,
   handleCompleteExpiredReservations,
   handleSendReservationReminders,
+  handleUserSyncFromGraph,
 } from "./handlers";
 
 /**
@@ -132,6 +133,12 @@ function createMaintenanceWorker(): BaseWorker {
   worker.registerHandler(
     RESERVATION_JOBS.SEND_REMINDERS,
     handleSendReservationReminders,
+  );
+
+  // Register Microsoft Graph user sync handler
+  worker.registerHandler(
+    MAINTENANCE_JOBS.USER_SYNC_FROM_GRAPH,
+    handleUserSyncFromGraph,
   );
 
   /**

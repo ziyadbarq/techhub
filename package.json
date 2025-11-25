@@ -40,9 +40,12 @@
     "type-check:staged": "bash scripts/type-check-staged.sh",
     "reset": "dotenv -e .env.local -- tsx scripts/reset-dev-environment.ts",
     "roles:manage": "dotenv -e .env.local -- tsx scripts/manage-user-roles.ts",
+    "sync:users": "dotenv -e .env.local -- tsx scripts/sync-users-from-graph.ts",
+    "backfill:azure-ids": "dotenv -e .env.local -- tsx scripts/backfill-azure-ad-ids.ts",
     "prepare": "husky"
   },
   "dependencies": {
+    "@azure/identity": "^4.13.0",
     "@bull-board/api": "^6.14.2",
     "@bull-board/ui": "^6.14.2",
     "@hookform/resolvers": "^5.2.2",
@@ -53,6 +56,7 @@
     "@inquirer/select": "^5.0.1",
     "@mdx-js/loader": "^3.1.1",
     "@mdx-js/react": "^3.1.1",
+    "@microsoft/microsoft-graph-client": "^3.0.7",
     "@next/mdx": "^16.0.3",
     "@paralleldrive/cuid2": "^3.0.4",
     "@prisma/adapter-pg": "7.0.0",

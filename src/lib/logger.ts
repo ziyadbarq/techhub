@@ -19,6 +19,16 @@
  */
 
 import type { ILoggerService } from "@/core/services";
+import { DI_TOKENS } from "@/di/types";
+import {
+  isContainerInitialized,
+  getContainerFromState,
+  markContainerInitialized,
+  resetLoggerState,
+} from "./logger-state";
+
+// Re-export for backward compatibility
+export { markContainerInitialized, resetLoggerState };
 
 /**
  * LogContext for backward compatibility with old logger API
@@ -138,7 +148,6 @@ function createClientLogger(
  * to avoid circular dependency (container needs logger, logger needs container).
  */
 let cachedLogger: ILoggerService | null = null;
-let containerInitialized = false;
 
 function getLogger(): ILoggerService {
   // Check if we're on the client side
@@ -146,17 +155,13 @@ function getLogger(): ILoggerService {
     return createClientLogger();
   }
 
-  // Server-side: use DI container (lazy import to avoid bundling in client)
-  if (!cachedLogger && containerInitialized) {
+  // Server-side: use DI container via state reference (avoids require() which doesn't work in ESM)
+  if (!cachedLogger && isContainerInitialized()) {
     try {
-      // Dynamic require to avoid bundling in client
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { getContainer } = require("@/di/container");
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { DI_TOKENS } = require("@/di/types");
-      const container = getContainer();
-      // Use type assertion since dynamic require() doesn't preserve types
-      cachedLogger = container.get(DI_TOKENS.ILoggerService) as ILoggerService;
+      const container = getContainerFromState();
+      if (container) {
+        cachedLogger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
+      }
     } catch (_error) {
       // Fallback to console logger if DI container initialization fails
       // This can happen during build time or in edge cases
@@ -170,21 +175,10 @@ function getLogger(): ILoggerService {
 }
 
 /**
- * Mark container as initialized so logger can start using DI
- * This should be called after container initialization is complete
+ * Clear cached logger (called by resetLoggerState in logger-state.ts indirectly)
+ * This is needed when the container is reset to force re-fetch from DI
  */
-export function markContainerInitialized(): void {
-  containerInitialized = true;
-  // Clear cached logger so it will be re-fetched from DI container on next use
-  cachedLogger = null;
-}
-
-/**
- * Reset logger state (for testing)
- * This should be called when the DI container is reset
- */
-export function resetLoggerState(): void {
-  containerInitialized = false;
+export function clearCachedLogger(): void {
   cachedLogger = null;
 }
 

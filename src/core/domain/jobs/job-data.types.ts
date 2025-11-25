@@ -120,3 +120,45 @@ export interface HealthCheckJobData extends BaseJobData {
   checks: ("database" | "redis" | "api")[];
   notifyOnFailure: boolean;
 }
+
+// ========================================
+// User Sync Jobs
+// ========================================
+
+/**
+ * Data for Microsoft Graph user sync job
+ */
+export interface UserSyncFromGraphJobData extends BaseJobData {
+  /**
+   * Include disabled users in sync
+   * @default false
+   */
+  includeDisabled?: boolean;
+
+  /**
+   * Include guest/external users in sync
+   * @default false
+   */
+  includeGuests?: boolean;
+
+  /**
+   * Default organization unit ID for new users
+   */
+  defaultOrgUnitId: string;
+
+  /**
+   * Default primary role ID for new users
+   */
+  defaultPrimaryRoleId: string;
+
+  /**
+   * Whether to deactivate users not found in Graph
+   * @default true
+   */
+  deactivateMissing?: boolean;
+
+  /**
+   * User who triggered the sync (for audit logging)
+   */
+  triggeredBy?: string;
+}

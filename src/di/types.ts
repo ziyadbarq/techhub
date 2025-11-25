@@ -320,6 +320,7 @@ export const DI_TOKENS = {
   DeletePersonWithConfirmationUseCase: Symbol.for(
     "DeletePersonWithConfirmationUseCase",
   ),
+  SyncUsersFromGraphUseCase: Symbol.for("SyncUsersFromGraphUseCase"),
 
   // Foundation: Person Role Assignment Use Cases
   CreatePersonRoleAssignmentUseCase: Symbol.for(

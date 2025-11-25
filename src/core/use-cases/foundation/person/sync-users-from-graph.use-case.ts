@@ -1,0 +1,329 @@
+/**
+ * Sync Users from Microsoft Graph Use Case
+ *
+ * Orchestrates user synchronization from Microsoft Entra ID (Azure AD)
+ * via Microsoft Graph API. Handles:
+ * - Full sync of all users
+ * - Manager relationship linking (2-pass)
+ * - Deactivation of removed users
+ *
+ * Identity Strategy:
+ * - Uses azureAdId (immutable GUID) as source of truth for matching
+ * - Email can change (marriage, rebranding) but azureAdId never changes
+ * - Persons without azureAdId are not affected by sync
+ */
+
+import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { ILoggerService } from "@/core/services/logger.service.interface";
+import { IMicrosoftGraphService } from "@/core/services/microsoft-graph.service.interface";
+import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
+import type { IOrganizationUnitRepository } from "@/core/repositories/organization-unit.repository.interface";
+import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
+import { Person } from "@/core/domain/entities/person.entity";
+import {
+  transformGraphUserToPerson,
+  type SyncResult,
+  type FetchUsersOptions,
+} from "@/lib/schemas/graph-user.schema";
+
+/**
+ * Options for the sync operation
+ */
+export interface SyncUsersOptions extends FetchUsersOptions {
+  /**
+   * Default organization unit ID for new users
+   * If not provided, uses the first org unit
+   */
+  defaultOrgUnitId?: string;
+
+  /**
+   * Default primary role ID for new users
+   * If not provided, uses "viewer" role
+   */
+  defaultPrimaryRoleId?: string;
+
+  /**
+   * Skip manager linking pass
+   * Useful for faster initial sync
+   */
+  skipManagerLinking?: boolean;
+
+  /**
+   * Deactivate users not found in Microsoft Graph
+   * @default true
+   */
+  deactivateMissing?: boolean;
+
+  /**
+   * Dry run - don't actually make changes
+   */
+  dryRun?: boolean;
+}
+
+@injectable()
+export class SyncUsersFromGraphUseCase {
+  private readonly logger: ILoggerService;
+
+  constructor(
+    @inject(DI_TOKENS.ILoggerService) logger: ILoggerService,
+    @inject(DI_TOKENS.IPersonRepository)
+    private readonly personRepository: IPersonRepository,
+    @inject(DI_TOKENS.IOrganizationUnitRepository)
+    private readonly orgUnitRepository: IOrganizationUnitRepository,
+    @inject(DI_TOKENS.IRoleRepository)
+    private readonly roleRepository: IRoleRepository,
+    @inject(IMicrosoftGraphService)
+    private readonly graphService: IMicrosoftGraphService,
+  ) {
+    this.logger = logger.child({ useCase: "SyncUsersFromGraphUseCase" });
+  }
+
+  /**
+   * Execute user sync from Microsoft Graph
+   */
+  async execute(options?: SyncUsersOptions): Promise<SyncResult> {
+    const result: SyncResult = {
+      created: 0,
+      updated: 0,
+      deactivated: 0,
+      errors: [],
+    };
+
+    this.logger.info("Starting user sync from Microsoft Graph", { options });
+
+    try {
+      // Get default IDs for required fields
+      const { orgUnitId, roleId } = await this.getDefaultIds(options);
+
+      // Pass 1: Fetch and sync all users
+      this.logger.info("Pass 1: Fetching users from Microsoft Graph");
+      const graphUsers = await this.graphService.fetchAllUsers({
+        includeDisabled: options?.includeDisabled,
+        includeGuests: options?.includeGuests,
+      });
+      this.logger.info("Fetched users from Graph", {
+        count: graphUsers.length,
+      });
+
+      // Process each user
+      for (const graphUser of graphUsers) {
+        try {
+          const personData = transformGraphUserToPerson(graphUser, {
+            orgUnitId,
+            primaryRoleId: roleId,
+          });
+
+          // Find existing person by azureAdId (NOT by email!)
+          const existingPerson = await this.personRepository.findByAzureAdId(
+            personData.azureAdId,
+          );
+
+          if (existingPerson) {
+            // Update existing person (including email which may have changed)
+            if (!options?.dryRun) {
+              existingPerson.update({
+                firstName: personData.firstName,
+                lastName: personData.lastName,
+                email: personData.email, // Email CAN change!
+                phone: personData.phone,
+                mobile: personData.mobile,
+                employeeId: personData.employeeId,
+                title: personData.title,
+                department: personData.department,
+                office: personData.office,
+                isActive: personData.isActive,
+                hireDate: personData.hireDate,
+              });
+              await this.personRepository.update(existingPerson);
+            }
+            result.updated++;
+          } else {
+            // Create new person
+            if (!options?.dryRun) {
+              const newPerson = Person.create({
+                azureAdId: personData.azureAdId,
+                firstName: personData.firstName,
+                lastName: personData.lastName,
+                email: personData.email,
+                phone: personData.phone,
+                mobile: personData.mobile,
+                employeeId: personData.employeeId,
+                title: personData.title,
+                department: personData.department,
+                office: personData.office,
+                hireDate: personData.hireDate,
+                orgUnitId: personData.orgUnitId,
+                primaryRoleId: personData.primaryRoleId,
+              });
+              await this.personRepository.create(newPerson);
+            }
+            result.created++;
+          }
+        } catch (error) {
+          result.errors.push({
+            azureAdId: graphUser.id,
+            email: graphUser.mail || graphUser.userPrincipalName,
+            error: error instanceof Error ? error.message : String(error),
+          });
+          this.logger.warn("Failed to sync user", {
+            azureAdId: graphUser.id,
+            error: error instanceof Error ? error.message : String(error),
+          });
+        }
+      }
+
+      // Pass 2: Link managers (using azureAdId for lookups)
+      if (!options?.skipManagerLinking) {
+        this.logger.info("Pass 2: Linking managers");
+        await this.linkManagers(
+          graphUsers.map((u) => u.id),
+          options?.dryRun,
+        );
+      }
+
+      // Pass 3: Deactivate users no longer in Graph
+      if (options?.deactivateMissing !== false) {
+        this.logger.info("Pass 3: Deactivating removed users");
+        const deactivatedCount = await this.deactivateRemovedUsers(
+          graphUsers.map((u) => u.id),
+          options?.dryRun,
+        );
+        result.deactivated = deactivatedCount;
+      }
+
+      this.logger.info("User sync completed", {
+        created: result.created,
+        updated: result.updated,
+        deactivated: result.deactivated,
+        errors: result.errors.length,
+      });
+      return result;
+    } catch (error) {
+      this.logger.error(
+        "User sync failed",
+        error instanceof Error ? error : new Error(String(error)),
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Get default organization unit and role IDs
+   */
+  private async getDefaultIds(options?: SyncUsersOptions): Promise<{
+    orgUnitId: string;
+    roleId: string;
+  }> {
+    // Get org unit ID
+    let orgUnitId = options?.defaultOrgUnitId;
+    if (!orgUnitId) {
+      // Fall back to first org unit
+      const allOrgUnits = await this.orgUnitRepository.findAll({ take: 1 });
+      if (allOrgUnits.length > 0) {
+        orgUnitId = allOrgUnits[0].id;
+      } else {
+        throw new Error(
+          "No organization units found. Please create at least one organization unit before syncing.",
+        );
+      }
+    }
+
+    // Get role ID
+    let roleId = options?.defaultPrimaryRoleId;
+    if (!roleId) {
+      // Try to find viewer role
+      const viewerRole = await this.roleRepository.findByName("viewer");
+      if (viewerRole) {
+        roleId = viewerRole.id;
+      } else {
+        // Fall back to first role
+        const allRoles = await this.roleRepository.findAll({
+          includeInactive: false,
+        });
+        if (allRoles.length > 0) {
+          roleId = allRoles[0].id;
+        } else {
+          throw new Error(
+            "No roles found. Please create at least one role before syncing.",
+          );
+        }
+      }
+    }
+
+    return { orgUnitId, roleId };
+  }
+
+  /**
+   * Link managers using Azure AD IDs
+   */
+  private async linkManagers(
+    graphUserIds: string[],
+    dryRun?: boolean,
+  ): Promise<void> {
+    const managerMap = await this.graphService.fetchAllManagers(graphUserIds);
+
+    let linkedCount = 0;
+    for (const [userAzureId, managerAzureId] of managerMap) {
+      try {
+        // Find both person and manager by their Azure AD IDs
+        const person = await this.personRepository.findByAzureAdId(userAzureId);
+        const manager =
+          await this.personRepository.findByAzureAdId(managerAzureId);
+
+        if (person && manager && person.managerId !== manager.id) {
+          if (!dryRun) {
+            person.update({ managerId: manager.id });
+            await this.personRepository.update(person);
+          }
+          linkedCount++;
+        }
+      } catch (error) {
+        this.logger.warn("Failed to link manager", {
+          userAzureId,
+          managerAzureId,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
+
+    this.logger.info("Manager linking completed", { linkedCount });
+  }
+
+  /**
+   * Deactivate persons no longer in Graph
+   */
+  private async deactivateRemovedUsers(
+    currentGraphIds: string[],
+    dryRun?: boolean,
+  ): Promise<number> {
+    const graphIdSet = new Set(currentGraphIds);
+
+    // Get all persons that have been synced from Graph (have azureAdId)
+    const syncedPersons = await this.personRepository.findAllWithAzureAdId();
+
+    let deactivatedCount = 0;
+    for (const person of syncedPersons) {
+      // If person has azureAdId but is not in current Graph data, deactivate
+      if (
+        person.azureAdId &&
+        !graphIdSet.has(person.azureAdId) &&
+        person.isActive
+      ) {
+        if (!dryRun) {
+          person.update({
+            isActive: false,
+            terminationDate: new Date(),
+          });
+          await this.personRepository.update(person);
+        }
+        deactivatedCount++;
+      }
+    }
+
+    this.logger.info("Deactivation completed", {
+      deactivatedCount,
+    });
+    return deactivatedCount;
+  }
+}

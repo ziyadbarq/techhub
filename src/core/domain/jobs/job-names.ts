@@ -31,6 +31,7 @@ export const MAINTENANCE_JOBS = {
   DATA_EXPORT: "data-export",
   HEALTH_CHECK: "health-check",
   WARRANTY_EXPIRATION_CHECK: "warranty-expiration-check",
+  USER_SYNC_FROM_GRAPH: "user-sync-from-graph",
 } as const;
 
 /**

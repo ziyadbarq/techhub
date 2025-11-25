@@ -76,3 +76,11 @@ export type {
   ICodeGeneratorService,
   CodeGenerationOptions,
 } from "./code-generator.service.interface";
+
+// Microsoft Graph Service
+export type { IMicrosoftGraphService } from "./microsoft-graph.service.interface";
+export type {
+  FetchUsersOptions,
+  GraphUser,
+  GraphManagerResponse,
+} from "@/lib/schemas/graph-user.schema";

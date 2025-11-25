@@ -11,3 +11,4 @@ export { handleWarrantyExpirationCheck } from "./warranty-expiration-check.handl
 export { handleActivateReadyReservations } from "./activate-ready-reservations.handler";
 export { handleCompleteExpiredReservations } from "./complete-expired-reservations.handler";
 export { handleSendReservationReminders } from "./send-reservation-reminders.handler";
+export { handleUserSyncFromGraph } from "./user-sync-from-graph.handler";
