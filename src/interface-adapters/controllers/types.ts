@@ -18,3 +18,19 @@ export type ActionResponse<T> =
       success: false;
       error: string;
     };
+
+/**
+ * BulkCreateResult type
+ *
+ * Response type for bulk create operations.
+ */
+export type BulkCreateResult = {
+  success: boolean;
+  successCount: number;
+  errorCount: number;
+  errors: Array<{
+    index: number;
+    name: string;
+    error: string;
+  }>;
+};

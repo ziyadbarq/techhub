@@ -8,7 +8,7 @@
 import { revalidatePath } from "next/cache";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
-import type { ActionResponse } from "./types";
+import type { ActionResponse, BulkCreateResult } from "./types";
 import { handleControllerError } from "./error-handler";
 import {
   CreateLifecycleStateSchema,
@@ -194,5 +194,67 @@ export async function deleteLifecycleStateAction(
       { function: "deleteLifecycleStateAction" },
       "Failed to delete lifecycle state",
     );
+  }
+}
+
+/**
+ * Bulk create lifecycle states
+ */
+export async function bulkCreateLifecycleStatesAction(
+  items: CreateLifecycleStateDTO[],
+): Promise<BulkCreateResult> {
+  try {
+    await requirePermission(PERMISSIONS.LIFECYCLE_STATES_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateLifecycleStateUseCase>(
+      DI_TOKENS.CreateLifecycleStateUseCase,
+    );
+
+    const result: BulkCreateResult = {
+      success: true,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
+
+    // Process items sequentially
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      try {
+        const validated = CreateLifecycleStateSchema.parse(item);
+
+        await useCase.execute({
+          name: validated.name,
+          code: validated.name.toUpperCase().replace(/\s+/g, "_"),
+          description: validated.description ?? undefined,
+          lifecycleModelId: validated.modelId,
+          stateType: validated.stateType,
+          metadata: validated.metadata ?? undefined,
+        });
+
+        result.successCount++;
+      } catch (error) {
+        result.errorCount++;
+        result.errors.push({
+          index: i,
+          name: item.name || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    result.success = result.errorCount === 0;
+
+    revalidatePath("/lifecycle-states");
+
+    return result;
+  } catch (_error) {
+    return {
+      success: false,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
   }
 }

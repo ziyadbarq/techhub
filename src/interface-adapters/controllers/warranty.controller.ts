@@ -31,6 +31,7 @@ import type {
   GetActiveWarrantyForAssetUseCase,
   ListExpiringWarrantiesUseCase,
 } from "@/core/use-cases/asset/warranty";
+import type { BulkCreateResult } from "./types";
 import type { Warranty } from "@/core/domain/entities/warranty.entity";
 import type { ListAssetsUseCase } from "@/core/use-cases/asset/asset";
 import type { ListVendorsUseCase } from "@/core/use-cases/foundation/vendor";
@@ -380,5 +381,72 @@ export async function listExpiringWarrantiesAction(
       { function: "listExpiringWarrantiesAction", days },
       "Failed to list expiring warranties",
     );
+  }
+}
+
+export async function bulkCreateWarrantiesAction(
+  items: CreateWarrantyDTO[],
+): Promise<BulkCreateResult> {
+  try {
+    await requirePermission(PERMISSIONS.WARRANTIES_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateWarrantyUseCase>(
+      DI_TOKENS.CreateWarrantyUseCase,
+    );
+
+    const results = {
+      success: true,
+      successCount: 0,
+      errorCount: 0,
+      errors: [] as Array<{
+        index: number;
+        name: string;
+        error: string;
+      }>,
+    };
+
+    // Process items sequentially to avoid overwhelming the database
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      try {
+        const validated = CreateWarrantySchema.parse(item);
+
+        await useCase.execute({
+          assetId: validated.assetId,
+          vendorId: validated.vendorId ?? undefined,
+          coverageType: validated.coverageType ?? undefined,
+          coverageDetails: validated.coverageDetails ?? undefined,
+          policyReference: validated.policyReference ?? undefined,
+          slaDetails: validated.slaDetails ?? undefined,
+          startDate: validated.startDate,
+          endDate: validated.endDate,
+          cost: validated.cost ?? undefined,
+          currency: validated.currency ?? undefined,
+          note: validated.note ?? undefined,
+          metadata: validated.metadata ?? undefined,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.errorCount++;
+        results.errors.push({
+          index: i,
+          name: item.assetId || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/warranties");
+
+    return results;
+  } catch (_error) {
+    return {
+      success: false,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
   }
 }

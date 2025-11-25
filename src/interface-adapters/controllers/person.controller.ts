@@ -214,3 +214,75 @@ export async function deletePersonAction(
     );
   }
 }
+
+export async function bulkCreatePersonsAction(
+  personsData: CreatePersonDTO[],
+): Promise<
+  ActionResponse<{
+    successCount: number;
+    failureCount: number;
+    failures: Array<{ index: number; email: string; error: string }>;
+  }>
+> {
+  try {
+    await requirePermission(PERMISSIONS.PERSONS_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreatePersonUseCase>(
+      DI_TOKENS.CreatePersonUseCase,
+    );
+
+    const results = {
+      successCount: 0,
+      failureCount: 0,
+      failures: [] as Array<{ index: number; email: string; error: string }>,
+    };
+
+    // Process persons sequentially to avoid overwhelming the database
+    for (let i = 0; i < personsData.length; i++) {
+      const personData = personsData[i];
+      try {
+        const validated = CreatePersonSchema.parse(personData);
+
+        await useCase.execute({
+          firstName: validated.firstName,
+          lastName: validated.lastName,
+          middleName: validated.middleName ?? undefined,
+          email: validated.email,
+          phone: validated.phone ?? undefined,
+          mobile: validated.mobile ?? undefined,
+          employeeId: validated.employeeId ?? undefined,
+          orgUnitId: validated.organizationUnitId,
+          primaryRoleId: validated.primaryRoleId,
+          locationId: validated.locationId ?? undefined,
+          managerId: validated.managerId ?? undefined,
+          title: validated.title ?? undefined,
+          department: validated.department ?? undefined,
+          hireDate: validated.hireDate ?? undefined,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.failureCount++;
+        results.failures.push({
+          index: i,
+          email: personData.email || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/persons");
+
+    return {
+      success: true,
+      data: results,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "bulkCreatePersonsAction" },
+      "Failed to bulk create persons",
+    );
+  }
+}

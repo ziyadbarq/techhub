@@ -222,3 +222,80 @@ export async function deleteVendorAction(
     );
   }
 }
+
+export async function bulkCreateVendorsAction(
+  vendorsData: CreateVendorDTO[],
+): Promise<
+  ActionResponse<{
+    successCount: number;
+    failureCount: number;
+    failures: Array<{ index: number; code: string; error: string }>;
+  }>
+> {
+  try {
+    await requirePermission(PERMISSIONS.VENDORS_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateVendorUseCase>(
+      DI_TOKENS.CreateVendorUseCase,
+    );
+
+    const results = {
+      successCount: 0,
+      failureCount: 0,
+      failures: [] as Array<{ index: number; code: string; error: string }>,
+    };
+
+    // Process vendors sequentially to avoid overwhelming the database
+    for (let i = 0; i < vendorsData.length; i++) {
+      const vendorData = vendorsData[i];
+      try {
+        const validated = CreateVendorSchema.parse(vendorData);
+
+        await useCase.execute({
+          name: validated.name,
+          code: validated.code,
+          legalName: validated.legalName ?? undefined,
+          description: validated.description ?? undefined,
+          vendorType: validated.vendorType,
+          website: validated.website ?? undefined,
+          email: validated.email ?? undefined,
+          phone: validated.phone ?? undefined,
+          address: validated.address ?? undefined,
+          city: validated.city ?? undefined,
+          state: validated.state ?? undefined,
+          country: validated.country ?? undefined,
+          postalCode: validated.postalCode ?? undefined,
+          taxId: validated.taxId ?? undefined,
+          paymentTerms: validated.paymentTerms ?? undefined,
+          isPreferred: validated.isPreferred ?? false,
+          tags: validated.tags ?? [],
+          note: validated.note ?? undefined,
+          metadata: validated.metadata ?? undefined,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.failureCount++;
+        results.failures.push({
+          index: i,
+          code: vendorData.code || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/vendors");
+
+    return {
+      success: true,
+      data: results,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "bulkCreateVendorsAction" },
+      "Failed to bulk create vendors",
+    );
+  }
+}

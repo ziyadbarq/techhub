@@ -201,3 +201,68 @@ export async function deleteAssetModelAction(
     );
   }
 }
+
+export async function bulkCreateAssetModelsAction(
+  itemsData: CreateAssetModelDTO[],
+): Promise<
+  ActionResponse<{
+    successCount: number;
+    failureCount: number;
+    failures: Array<{ index: number; code: string; error: string }>;
+  }>
+> {
+  try {
+    await requirePermission(PERMISSIONS.ASSET_MODELS_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateAssetModelUseCase>(
+      DI_TOKENS.CreateAssetModelUseCase,
+    );
+
+    const results = {
+      successCount: 0,
+      failureCount: 0,
+      failures: [] as Array<{ index: number; code: string; error: string }>,
+    };
+
+    // Process asset models sequentially to avoid overwhelming the database
+    for (let i = 0; i < itemsData.length; i++) {
+      const itemData = itemsData[i];
+      try {
+        const validated = CreateAssetModelSchema.parse(itemData);
+
+        await useCase.execute({
+          name: validated.name,
+          code: validated.code,
+          description: validated.description ?? undefined,
+          assetCategoryId: validated.assetCategoryId,
+          vendorId: validated.vendorId,
+          defaultWarrantyMonths: validated.defaultWarrantyMonths ?? undefined,
+          defaultAttributes: validated.defaultAttributes ?? undefined,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.failureCount++;
+        results.failures.push({
+          index: i,
+          code: itemData.code || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/asset-models");
+
+    return {
+      success: true,
+      data: results,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "bulkCreateAssetModelsAction" },
+      "Failed to bulk create asset models",
+    );
+  }
+}

@@ -5,7 +5,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getContainer } from "@/di/container";
+import { getContainer, resolve } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
@@ -173,6 +173,75 @@ export async function deleteStockMovementAction(
       error,
       { function: "deleteStockMovementAction", id },
       "Failed to delete stock movement",
+    );
+  }
+}
+
+export async function bulkCreateStockMovementsAction(
+  items: CreateStockMovementDTO[],
+): Promise<
+  ActionResponse<{
+    successCount: number;
+    failureCount: number;
+    failures: Array<{ index: number; movementType: string; error: string }>;
+  }>
+> {
+  try {
+    await requirePermission(PERMISSIONS.STOCK_MOVEMENTS_CREATE);
+
+    const useCase = resolve<CreateStockMovementUseCase>(
+      DI_TOKENS.CreateStockMovementUseCase,
+    );
+
+    const results = {
+      successCount: 0,
+      failureCount: 0,
+      failures: [] as Array<{
+        index: number;
+        movementType: string;
+        error: string;
+      }>,
+    };
+
+    // Process items sequentially to avoid overwhelming the database
+    for (let i = 0; i < items.length; i++) {
+      const itemData = items[i];
+      try {
+        const validated = CreateStockMovementSchema.parse(itemData);
+
+        await useCase.execute({
+          movementType: validated.movementType,
+          stockLocationFromId: validated.stockLocationFromId ?? undefined,
+          stockLocationToId: validated.stockLocationToId ?? undefined,
+          assetId: validated.assetId ?? undefined,
+          quantity: validated.quantity,
+          reason: validated.reason ?? undefined,
+          performedById: validated.performedById,
+          occurredAt: validated.occurredAt,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.failureCount++;
+        results.failures.push({
+          index: i,
+          movementType: itemData.movementType || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/stock-movements");
+
+    return {
+      success: true,
+      data: results,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "bulkCreateStockMovementsAction" },
+      "Failed to bulk create stock movements",
     );
   }
 }

@@ -1,14 +1,18 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { handleControllerError } from "./error-handler";
+import { requirePermission } from "@/lib/permissions/server";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { ActionResponse } from "./types";
 import type {
   ConfigurationItemDTO,
   CreateConfigurationItemDTO,
   UpdateConfigurationItemDTO,
 } from "@/interface-adapters/dtos/generated/configuration-item.dto";
+import { CreateConfigurationItemSchema } from "@/interface-adapters/dtos/generated/configuration-item.dto";
 import { ConfigurationItemPresenter } from "@/interface-adapters/presenters/configuration-item.presenter";
 import type {
   CriticalityEnum,
@@ -131,6 +135,91 @@ export async function deleteConfigurationItemAction(
       error,
       { function: "deleteConfigurationItemAction" },
       "Failed to delete configuration item",
+    );
+  }
+}
+
+/**
+ * Bulk create configuration items
+ * Processes multiple configuration items sequentially, tracking failures
+ */
+export async function bulkCreateConfigurationItemsAction(
+  itemsData: CreateConfigurationItemDTO[],
+): Promise<
+  ActionResponse<{
+    successCount: number;
+    failureCount: number;
+    failures: Array<{
+      index: number;
+      ciKey?: string;
+      name: string;
+      error: string;
+    }>;
+  }>
+> {
+  try {
+    await requirePermission(PERMISSIONS.CONFIGURATION_ITEMS_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateConfigurationItemUseCase>(
+      DI_TOKENS.CreateConfigurationItemUseCase,
+    );
+
+    const results = {
+      successCount: 0,
+      failureCount: 0,
+      failures: [] as Array<{
+        index: number;
+        ciKey?: string;
+        name: string;
+        error: string;
+      }>,
+    };
+
+    // Process items sequentially to avoid overwhelming the database
+    for (let i = 0; i < itemsData.length; i++) {
+      const itemData = itemsData[i];
+      try {
+        const validated = CreateConfigurationItemSchema.parse(itemData);
+
+        await useCase.execute({
+          name: validated.name,
+          ciClassId: validated.ciClassId,
+          lifecycleStateId: validated.lifecycleStateId ?? undefined,
+          criticality: validated.criticality ?? undefined,
+          environment: validated.environment ?? undefined,
+          primaryOwnerPersonId: validated.primaryOwnerPersonId ?? undefined,
+          primaryOwnerOrgUnitId: validated.primaryOwnerOrgUnitId ?? undefined,
+          locationId: validated.locationId ?? undefined,
+          linkedAssetId: validated.linkedAssetId ?? undefined,
+          ciKey: validated.ciKey ?? undefined,
+          description: validated.description ?? undefined,
+          attributes: validated.attributes ?? undefined,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.failureCount++;
+        results.failures.push({
+          index: i,
+          ciKey: itemData.ciKey || undefined,
+          name: itemData.name || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/configuration-items");
+
+    return {
+      success: true,
+      data: results,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "bulkCreateConfigurationItemsAction" },
+      "Failed to bulk create configuration items",
     );
   }
 }

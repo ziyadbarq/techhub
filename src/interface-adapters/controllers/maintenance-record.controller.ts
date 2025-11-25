@@ -44,6 +44,7 @@ import type { ListMaintenanceSchedulesUseCase } from "@/core/use-cases/maintenan
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import type { BulkCreateResult } from "./types";
 
 /**
  * Enrich maintenance records with asset, person, and schedule display data
@@ -542,5 +543,75 @@ export async function cancelMaintenanceAction(
       { function: "cancelMaintenanceAction" },
       "Failed to cancel maintenance",
     );
+  }
+}
+
+/**
+ * Bulk create maintenance records
+ *
+ * @param items - Array of maintenance record data
+ * @returns BulkCreateResult with success count and errors
+ */
+export async function bulkCreateMaintenanceRecordsAction(
+  items: CreateMaintenanceRecordDTO[],
+): Promise<BulkCreateResult> {
+  try {
+    await requirePermission(PERMISSIONS.MAINTENANCE_RECORDS_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateMaintenanceRecordUseCase>(
+      DI_TOKENS.CreateMaintenanceRecordUseCase,
+    );
+
+    const results: BulkCreateResult = {
+      success: true,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
+
+    // Process maintenance records sequentially to avoid overwhelming the database
+    for (let i = 0; i < items.length; i++) {
+      const itemData = items[i];
+      try {
+        const validated = CreateMaintenanceRecordSchema.parse(itemData);
+
+        await useCase.execute({
+          assetId: validated.assetId,
+          maintenanceScheduleId: validated.maintenanceScheduleId ?? undefined,
+          title: validated.title,
+          description: validated.description ?? undefined,
+          scheduledDate: validated.scheduledDate,
+          completedDate: validated.completedDate ?? undefined,
+          performedById: validated.performedById ?? undefined,
+          status: validated.status as MaintenanceStatus,
+          notes: validated.notes ?? undefined,
+          cost: validated.cost ?? undefined,
+          partsUsed: validated.partsUsed ?? undefined,
+          nextMaintenanceDate: validated.nextMaintenanceDate ?? undefined,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.errorCount++;
+        results.success = false;
+        results.errors.push({
+          index: i,
+          name: itemData.title || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/maintenance-records");
+
+    return results;
+  } catch (_error) {
+    return {
+      success: false,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
   }
 }

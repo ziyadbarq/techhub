@@ -642,6 +642,113 @@ export function urlField(config: {
 }
 
 /**
+ * Creates a description field (for long text descriptions)
+ *
+ * @param config - Description field configuration
+ * @returns Complete EntityFieldConfig for description
+ *
+ * @example
+ * descriptionField({
+ *   maxLength: 1000,
+ *   required: false,
+ * })
+ */
+export function descriptionField(config?: {
+  name?: string;
+  label?: string;
+  maxLength?: number;
+  required?: boolean;
+}): EntityFieldConfig {
+  return {
+    name: config?.name ?? "description",
+    label: config?.label ?? "Description",
+    type: "string",
+    required: config?.required ?? false,
+    maxLength: config?.maxLength ?? 1000,
+    sanitization: [{ operation: "trim" }],
+    examples: ["Detailed description here..."],
+    description: config?.label ?? "Description",
+    autoMap: ["description", "desc", "details"],
+  };
+}
+
+/**
+ * Creates an address field
+ *
+ * @param config - Address field configuration
+ * @returns Complete EntityFieldConfig for address
+ *
+ * @example
+ * addressField({ maxLength: 500 })
+ */
+export function addressField(config?: {
+  maxLength?: number;
+  required?: boolean;
+}): EntityFieldConfig {
+  return {
+    name: "address",
+    label: "Address",
+    type: "string",
+    required: config?.required ?? false,
+    maxLength: config?.maxLength ?? 500,
+    sanitization: [{ operation: "trim" }],
+    examples: ["123 Main St, Suite 100", "Building 5, Floor 2"],
+    description: "Physical address",
+    autoMap: ["address", "street_address", "full_address"],
+  };
+}
+
+/**
+ * Creates a city field
+ *
+ * @param config - City field configuration
+ * @returns Complete EntityFieldConfig for city
+ *
+ * @example
+ * cityField({ required: false })
+ */
+export function cityField(config?: { required?: boolean }): EntityFieldConfig {
+  return {
+    name: "city",
+    label: "City",
+    type: "string",
+    required: config?.required ?? false,
+    maxLength: 100,
+    sanitization: [{ operation: "trim" }, { operation: "titleCase" }],
+    examples: ["Riyadh", "Jeddah", "Dammam"],
+    description: "City name",
+    autoMap: ["city", "town"],
+  };
+}
+
+/**
+ * Creates a country field
+ *
+ * @param config - Country field configuration
+ * @returns Complete EntityFieldConfig for country
+ *
+ * @example
+ * countryField({ required: false, defaultValue: "SA" })
+ */
+export function countryField(config?: {
+  required?: boolean;
+  defaultValue?: string;
+}): EntityFieldConfig {
+  return {
+    name: "country",
+    label: "Country",
+    type: "string",
+    required: config?.required ?? false,
+    maxLength: 100,
+    defaultValue: config?.defaultValue,
+    sanitization: [{ operation: "trim" }, { operation: "titleCase" }],
+    examples: ["Saudi Arabia", "United Arab Emirates", "SA"],
+    description: "Country name or code",
+    autoMap: ["country", "country_code", "nation"],
+  };
+}
+
+/**
  * Standard sanitization rules
  */
 export const STANDARD_SANITIZATION: Record<string, SanitizationRule[]> = {

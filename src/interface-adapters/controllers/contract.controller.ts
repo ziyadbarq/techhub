@@ -8,6 +8,8 @@
 import { revalidatePath } from "next/cache";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
+import { handleControllerError } from "./error-handler";
+import type { ActionResponse } from "./types";
 import type {
   CreateContractUseCase,
   GetContractUseCase,
@@ -204,5 +206,90 @@ export async function deleteContract(
       error:
         error instanceof Error ? error.message : "Failed to delete contract",
     };
+  }
+}
+
+/**
+ * Bulk create contracts
+ * Processes multiple contracts sequentially, tracking failures
+ */
+export async function bulkCreateContractsAction(
+  itemsData: CreateContractDTO[],
+): Promise<
+  ActionResponse<{
+    successCount: number;
+    failureCount: number;
+    failures: Array<{
+      index: number;
+      contractNumber?: string;
+      name: string;
+      error: string;
+    }>;
+  }>
+> {
+  try {
+    await requirePermission(PERMISSIONS.CONTRACTS_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateContractUseCase>(
+      DI_TOKENS.CreateContractUseCase,
+    );
+
+    const results = {
+      successCount: 0,
+      failureCount: 0,
+      failures: [] as Array<{
+        index: number;
+        contractNumber?: string;
+        name: string;
+        error: string;
+      }>,
+    };
+
+    // Process contracts sequentially to avoid overwhelming the database
+    for (let i = 0; i < itemsData.length; i++) {
+      const contractData = itemsData[i];
+      try {
+        const validated = CreateContractSchema.parse(contractData);
+
+        await useCase.execute({
+          contractTypeId: validated.contractTypeId,
+          vendorId: validated.vendorId,
+          name: validated.name,
+          contractNumber: validated.contractNumber ?? undefined,
+          startDate: validated.startDate,
+          endDate: validated.endDate ?? undefined,
+          autoRenew: validated.autoRenew ?? undefined,
+          renewalTerms: validated.renewalTerms ?? undefined,
+          slaDefinition: validated.slaDefinition ?? undefined,
+          totalValue: validated.totalValue ?? undefined,
+          currency: validated.currency ?? undefined,
+          note: validated.note ?? undefined,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.failureCount++;
+        results.failures.push({
+          index: i,
+          contractNumber: contractData.contractNumber || undefined,
+          name: contractData.name || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/contracts");
+
+    return {
+      success: true,
+      data: results,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "bulkCreateContractsAction" },
+      "Failed to bulk create contracts",
+    );
   }
 }

@@ -7,7 +7,7 @@
 import { revalidatePath } from "next/cache";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
-import type { ActionResponse } from "./types";
+import type { ActionResponse, BulkCreateResult } from "./types";
 import { handleControllerError } from "./error-handler";
 import {
   CreateAssetAssignmentSchema,
@@ -260,5 +260,63 @@ export async function deleteAssetAssignmentAction(
       { function: "deleteAssetAssignmentAction", id },
       "Failed to delete asset assignment",
     );
+  }
+}
+
+export async function bulkCreateAssetAssignmentsAction(
+  items: CreateAssetAssignmentDTO[],
+): Promise<BulkCreateResult> {
+  try {
+    await requirePermission(PERMISSIONS.ASSET_ASSIGNMENTS_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateAssetAssignmentUseCase>(
+      DI_TOKENS.CreateAssetAssignmentUseCase,
+    );
+
+    const errors: Array<{ index: number; name: string; error: string }> = [];
+    let successCount = 0;
+
+    // Process items sequentially to avoid overwhelming the database
+    for (let i = 0; i < items.length; i++) {
+      const itemData = items[i];
+      try {
+        const validated = CreateAssetAssignmentSchema.parse(itemData);
+
+        await useCase.execute({
+          assetId: validated.assetId,
+          assigneeType: validated.assigneeType,
+          assigneeId: validated.assigneeId,
+          startDate: validated.startDate,
+          endDate: validated.endDate ?? undefined,
+          isPrimary: validated.isPrimary,
+          note: validated.note ?? undefined,
+        });
+
+        successCount++;
+      } catch (error) {
+        errors.push({
+          index: i,
+          name: itemData.assetId || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/asset-assignments");
+
+    return {
+      success: errors.length === 0,
+      successCount,
+      errorCount: errors.length,
+      errors,
+    };
+  } catch (_error) {
+    return {
+      success: false,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
   }
 }

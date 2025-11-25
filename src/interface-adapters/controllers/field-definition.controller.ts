@@ -31,6 +31,7 @@ import type {
 } from "@/core/use-cases/foundation/field-definition";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import type { BulkCreateResult } from "./types";
 
 export async function createFieldDefinitionAction(
   data: CreateFieldDefinitionDTO,
@@ -203,5 +204,70 @@ export async function deleteFieldDefinitionAction(
       { function: "deleteFieldDefinitionAction" },
       "Failed to delete field definition",
     );
+  }
+}
+
+export async function bulkCreateFieldDefinitionsAction(
+  items: CreateFieldDefinitionDTO[],
+): Promise<BulkCreateResult> {
+  try {
+    await requirePermission(PERMISSIONS.FIELD_DEFINITIONS_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateFieldDefinitionUseCase>(
+      DI_TOKENS.CreateFieldDefinitionUseCase,
+    );
+
+    const results: BulkCreateResult = {
+      success: true,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
+
+    // Process items sequentially to avoid overwhelming the database
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      try {
+        const validated = CreateFieldDefinitionSchema.parse(item);
+
+        await useCase.execute({
+          name: validated.name,
+          label: validated.label,
+          description: validated.description ?? undefined,
+          dataType: validated.dataType,
+          entityType: validated.entityType,
+          isRequired: validated.isRequired ?? false,
+          isUnique: validated.isUnique ?? false,
+          defaultValue: validated.defaultValue ?? undefined,
+          validationRules: validated.validationRules ?? undefined,
+          displayOrder: validated.displayOrder ?? 0,
+          metadata: validated.metadata ?? undefined,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.errorCount++;
+        results.errors.push({
+          index: i,
+          name: item.name || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    // Set overall success status based on whether there were any errors
+    results.success = results.errorCount === 0;
+
+    revalidatePath("/field-definitions");
+
+    return results;
+  } catch (_error) {
+    return {
+      success: false,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
   }
 }

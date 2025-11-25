@@ -203,3 +203,70 @@ export async function deleteOrganizationUnitAction(
     );
   }
 }
+
+export async function bulkCreateOrganizationUnitsAction(
+  itemsData: CreateOrganizationUnitDTO[],
+): Promise<
+  ActionResponse<{
+    successCount: number;
+    failureCount: number;
+    failures: Array<{ index: number; code: string; error: string }>;
+  }>
+> {
+  try {
+    await requirePermission(PERMISSIONS.ORGANIZATION_UNITS_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateOrganizationUnitUseCase>(
+      DI_TOKENS.CreateOrganizationUnitUseCase,
+    );
+
+    const results = {
+      successCount: 0,
+      failureCount: 0,
+      failures: [] as Array<{ index: number; code: string; error: string }>,
+    };
+
+    // Process organization units sequentially to avoid overwhelming the database
+    for (let i = 0; i < itemsData.length; i++) {
+      const itemData = itemsData[i];
+      try {
+        const validated = CreateOrganizationUnitSchema.parse(itemData);
+
+        await useCase.execute({
+          name: validated.name,
+          code: validated.code,
+          description: validated.description ?? undefined,
+          unitType: validated.unitType,
+          level: validated.level ?? 0,
+          parentId: validated.parentId ?? undefined,
+          managerId: validated.managerId ?? undefined,
+          costCenter: validated.costCenter ?? undefined,
+          metadata: validated.metadata ?? undefined,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.failureCount++;
+        results.failures.push({
+          index: i,
+          code: itemData.code || itemData.name || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/organization-units");
+
+    return {
+      success: true,
+      data: results,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "bulkCreateOrganizationUnitsAction" },
+      "Failed to bulk create organization units",
+    );
+  }
+}

@@ -15,6 +15,7 @@ import { handleControllerError } from "./error-handler";
 import {
   CreateServiceSchema,
   UpdateServiceSchema,
+  type CreateServiceDTO,
 } from "../dtos/generated/service.dto";
 import {
   presentService,
@@ -324,6 +325,84 @@ export async function retireServiceAction(
       error,
       { function: "retireServiceAction", id },
       "Failed to retire service",
+    );
+  }
+}
+
+export async function bulkCreateServicesAction(
+  itemsData: CreateServiceDTO[],
+): Promise<
+  ActionResponse<{
+    successCount: number;
+    failureCount: number;
+    failures: Array<{ index: number; name: string; error: string }>;
+  }>
+> {
+  try {
+    await requirePermission(PERMISSIONS.SERVICES_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateServiceUseCase>(
+      DI_TOKENS.CreateServiceUseCase,
+    );
+
+    const results = {
+      successCount: 0,
+      failureCount: 0,
+      failures: [] as Array<{ index: number; name: string; error: string }>,
+    };
+
+    // Process services sequentially to avoid overwhelming the database
+    for (let i = 0; i < itemsData.length; i++) {
+      const serviceData = itemsData[i];
+      try {
+        const validated = CreateServiceSchema.parse(serviceData);
+
+        await useCase.execute({
+          name: validated.name,
+          serviceType: validated.serviceType,
+          description: validated.description ?? undefined,
+          businessPurpose: validated.businessPurpose ?? undefined,
+          gitlabRepoUrl: validated.gitlabRepoUrl ?? undefined,
+          dataConfidentiality: validated.dataConfidentiality,
+          businessImpactLevel: validated.businessImpactLevel,
+          criticality: validated.criticality,
+          isEssentialService: validated.isEssentialService,
+          deploymentDate: validated.deploymentDate ?? undefined,
+          currentStatus: validated.currentStatus,
+          lastPatchDate: validated.lastPatchDate ?? undefined,
+          plannedDecommissionDate:
+            validated.plannedDecommissionDate ?? undefined,
+          vendorId: validated.vendorId ?? undefined,
+          slaDetails: validated.slaDetails ?? undefined,
+          businessProcessId: validated.businessProcessId ?? undefined,
+          isInCentralRegister: validated.isInCentralRegister,
+          complianceNotes: validated.complianceNotes ?? undefined,
+          metadata: validated.metadata ?? undefined,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.failureCount++;
+        results.failures.push({
+          index: i,
+          name: serviceData.name || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/services");
+
+    return {
+      success: true,
+      data: results,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "bulkCreateServicesAction" },
+      "Failed to bulk create services",
     );
   }
 }

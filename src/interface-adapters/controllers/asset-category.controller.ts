@@ -198,3 +198,66 @@ export async function deleteAssetCategoryAction(
     );
   }
 }
+
+export async function bulkCreateAssetCategoriesAction(
+  categoriesData: CreateAssetCategoryDTO[],
+): Promise<
+  ActionResponse<{
+    successCount: number;
+    failureCount: number;
+    failures: Array<{ index: number; code: string; error: string }>;
+  }>
+> {
+  try {
+    await requirePermission(PERMISSIONS.ASSET_CATEGORIES_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateAssetCategoryUseCase>(
+      DI_TOKENS.CreateAssetCategoryUseCase,
+    );
+
+    const results = {
+      successCount: 0,
+      failureCount: 0,
+      failures: [] as Array<{ index: number; code: string; error: string }>,
+    };
+
+    // Process asset categories sequentially to avoid overwhelming the database
+    for (let i = 0; i < categoriesData.length; i++) {
+      const categoryData = categoriesData[i];
+      try {
+        const validated = CreateAssetCategorySchema.parse(categoryData);
+
+        await useCase.execute({
+          name: validated.name,
+          code: validated.code,
+          description: validated.description ?? undefined,
+          lifecycleModelId: validated.lifecycleModelId ?? undefined,
+          isConsumable: validated.isConsumable ?? undefined,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.failureCount++;
+        results.failures.push({
+          index: i,
+          code: categoryData.code || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/asset-categories");
+
+    return {
+      success: true,
+      data: results,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "bulkCreateAssetCategoriesAction" },
+      "Failed to bulk create asset categories",
+    );
+  }
+}

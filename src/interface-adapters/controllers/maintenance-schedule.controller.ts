@@ -35,6 +35,7 @@ import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { ScheduleType } from "@/core/domain/value-objects/schedule-type";
 import type { MaintenancePriority } from "@/core/domain/value-objects/maintenance-priority";
+import type { BulkCreateResult } from "./types";
 
 /**
  * Enrich maintenance schedules with asset and person display data
@@ -336,5 +337,76 @@ export async function listMaintenanceSchedulesAction(
       { function: "listMaintenanceSchedulesAction" },
       "Failed to list maintenance schedules",
     );
+  }
+}
+
+/**
+ * Bulk create maintenance schedules
+ *
+ * @param items - Array of maintenance schedule creation data
+ * @returns BulkCreateResult containing success count, error count, and error details
+ */
+export async function bulkCreateMaintenanceSchedulesAction(
+  items: CreateMaintenanceScheduleDTO[],
+): Promise<BulkCreateResult> {
+  try {
+    await requirePermission(PERMISSIONS.MAINTENANCE_SCHEDULES_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateMaintenanceScheduleUseCase>(
+      DI_TOKENS.CreateMaintenanceScheduleUseCase,
+    );
+
+    const results: BulkCreateResult = {
+      success: true,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
+
+    // Process items sequentially
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      try {
+        const validated = CreateMaintenanceScheduleSchema.parse(item);
+
+        await useCase.execute({
+          assetId: validated.assetId,
+          title: validated.title,
+          description: validated.description ?? undefined,
+          scheduleType: validated.scheduleType as ScheduleType,
+          intervalValue: validated.intervalValue,
+          startDate: validated.startDate,
+          nextDueDate: validated.nextDueDate,
+          isActive: validated.isActive,
+          assignedToId: validated.assignedToId ?? undefined,
+          estimatedDurationMinutes:
+            validated.estimatedDurationMinutes ?? undefined,
+          priority: (validated.priority as MaintenancePriority) ?? undefined,
+          instructions: validated.instructions ?? undefined,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.errorCount++;
+        results.success = false;
+        results.errors.push({
+          index: i,
+          name: item.title,
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/maintenance-schedules");
+
+    return results;
+  } catch (_error) {
+    return {
+      success: false,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
   }
 }

@@ -212,3 +212,74 @@ export async function deleteLocationAction(
     );
   }
 }
+
+export async function bulkCreateLocationsAction(
+  itemsData: CreateLocationDTO[],
+): Promise<
+  ActionResponse<{
+    successCount: number;
+    failureCount: number;
+    failures: Array<{ index: number; code: string; error: string }>;
+  }>
+> {
+  try {
+    await requirePermission(PERMISSIONS.LOCATIONS_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateLocationUseCase>(
+      DI_TOKENS.CreateLocationUseCase,
+    );
+
+    const results = {
+      successCount: 0,
+      failureCount: 0,
+      failures: [] as Array<{ index: number; code: string; error: string }>,
+    };
+
+    // Process locations sequentially to avoid overwhelming the database
+    for (let i = 0; i < itemsData.length; i++) {
+      const itemData = itemsData[i];
+      try {
+        const validated = CreateLocationSchema.parse(itemData);
+
+        await useCase.execute({
+          name: validated.name,
+          code: validated.code,
+          description: validated.description ?? undefined,
+          locationType: validated.locationType,
+          parentId: validated.parentId ?? undefined,
+          address: validated.address ?? undefined,
+          city: validated.city ?? undefined,
+          state: validated.state ?? undefined,
+          country: validated.country ?? undefined,
+          postalCode: validated.postalCode ?? undefined,
+          latitude: validated.latitude ?? undefined,
+          longitude: validated.longitude ?? undefined,
+          metadata: validated.metadata ?? undefined,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.failureCount++;
+        results.failures.push({
+          index: i,
+          code: itemData.code || itemData.name || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/locations");
+
+    return {
+      success: true,
+      data: results,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "bulkCreateLocationsAction" },
+      "Failed to bulk create locations",
+    );
+  }
+}

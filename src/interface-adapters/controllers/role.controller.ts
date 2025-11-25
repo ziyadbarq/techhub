@@ -18,7 +18,7 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
-import type { ActionResponse } from "./types";
+import type { ActionResponse, BulkCreateResult } from "./types";
 import { handleControllerError } from "./error-handler";
 import {
   CreateRoleSchema,
@@ -432,5 +432,76 @@ export async function listPermissionsAction(): Promise<
       { function: "listPermissionsAction" },
       "Failed to list permissions",
     );
+  }
+}
+
+/**
+ * Bulk create roles
+ *
+ * Creates multiple roles sequentially to avoid database overwhelm.
+ * Tracks errors per item and returns summary with details.
+ */
+export async function bulkCreateRolesAction(
+  items: CreateRoleDTO[],
+): Promise<BulkCreateResult> {
+  try {
+    await requirePermission(PERMISSIONS.ROLES_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateRoleUseCase>(
+      DI_TOKENS.CreateRoleUseCase,
+    );
+
+    const userId = await getCurrentUserId();
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+    const metadata = await getRequestMetadata();
+
+    const errors: Array<{ index: number; name: string; error: string }> = [];
+    let successCount = 0;
+
+    for (let i = 0; i < items.length; i++) {
+      try {
+        const validated = CreateRoleSchema.parse({
+          ...items[i],
+          isActive: items[i].isActive ?? true,
+        });
+
+        await useCase.execute({
+          name: validated.name,
+          displayName: validated.displayName,
+          description: validated.description ?? undefined,
+          isSystem: false,
+          createdBy: userId,
+          ipAddress: metadata.ipAddress,
+          userAgent: metadata.userAgent,
+        });
+
+        successCount++;
+      } catch (error) {
+        errors.push({
+          index: i + 1,
+          name: items[i].name,
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/admin/roles");
+
+    return {
+      success: errors.length === 0,
+      successCount,
+      errorCount: errors.length,
+      errors,
+    };
+  } catch (_error) {
+    return {
+      success: false,
+      successCount: 0,
+      errorCount: 0,
+      errors: [],
+    };
   }
 }

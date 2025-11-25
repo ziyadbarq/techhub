@@ -112,7 +112,6 @@ export async function getExchangeRateAction(
 
     const exchangeRate = await useCase.execute(currency, onlyActive);
 
-
     return {
       success: true,
       data: presentExchangeRate(exchangeRate),
@@ -215,6 +214,67 @@ export async function convertCurrencyAction(
       error,
       { function: "convertCurrencyAction" },
       "Failed to convert currency",
+    );
+  }
+}
+
+export async function bulkCreateExchangeRatesAction(
+  items: CreateExchangeRateDTO[],
+): Promise<
+  ActionResponse<{
+    successCount: number;
+    failureCount: number;
+    failures: Array<{ index: number; currency: string; error: string }>;
+  }>
+> {
+  try {
+    await requirePermission(PERMISSIONS.FX_RATES_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateExchangeRateUseCase>(
+      DI_TOKENS.CreateExchangeRateUseCase,
+    );
+
+    const results = {
+      successCount: 0,
+      failureCount: 0,
+      failures: [] as Array<{ index: number; currency: string; error: string }>,
+    };
+
+    // Process exchange rates sequentially to avoid overwhelming the database
+    for (let i = 0; i < items.length; i++) {
+      const itemData = items[i];
+      try {
+        const validated = CreateExchangeRateSchema.parse(itemData);
+
+        await useCase.execute({
+          currency: validated.currency,
+          rateToSAR: validated.rateToSAR,
+          isActive: validated.isActive,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.failureCount++;
+        results.failures.push({
+          index: i,
+          currency: itemData.currency || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/exchange-rates");
+
+    return {
+      success: true,
+      data: results,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "bulkCreateExchangeRatesAction" },
+      "Failed to bulk create exchange rates",
     );
   }
 }

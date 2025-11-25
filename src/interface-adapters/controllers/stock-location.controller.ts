@@ -195,3 +195,65 @@ export async function deleteStockLocationAction(
     );
   }
 }
+
+export async function bulkCreateStockLocationsAction(
+  itemsData: CreateStockLocationDTO[],
+): Promise<
+  ActionResponse<{
+    successCount: number;
+    failureCount: number;
+    failures: Array<{ index: number; code: string; error: string }>;
+  }>
+> {
+  try {
+    await requirePermission(PERMISSIONS.STOCK_LOCATIONS_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateStockLocationUseCase>(
+      DI_TOKENS.CreateStockLocationUseCase,
+    );
+
+    const results = {
+      successCount: 0,
+      failureCount: 0,
+      failures: [] as Array<{ index: number; code: string; error: string }>,
+    };
+
+    // Process stock locations sequentially to avoid overwhelming the database
+    for (let i = 0; i < itemsData.length; i++) {
+      const itemData = itemsData[i];
+      try {
+        const validated = CreateStockLocationSchema.parse(itemData);
+
+        await useCase.execute({
+          name: validated.name,
+          code: validated.code,
+          locationId: validated.locationId ?? undefined,
+          description: validated.description ?? undefined,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.failureCount++;
+        results.failures.push({
+          index: i,
+          code: itemData.code || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/stock-locations");
+
+    return {
+      success: true,
+      data: results,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "bulkCreateStockLocationsAction" },
+      "Failed to bulk create stock locations",
+    );
+  }
+}

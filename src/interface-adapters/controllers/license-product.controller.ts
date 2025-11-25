@@ -8,6 +8,8 @@
 import { revalidatePath } from "next/cache";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
+import type { ActionResponse } from "./types";
+import { handleControllerError } from "./error-handler";
 import type {
   CreateLicenseProductUseCase,
   GetLicenseProductUseCase,
@@ -210,5 +212,72 @@ export async function deleteLicenseProduct(
           ? error.message
           : "Failed to delete license product",
     };
+  }
+}
+
+/**
+ * Bulk create license products
+ */
+export async function bulkCreateLicenseProductsAction(
+  itemsData: CreateLicenseProductDTO[],
+): Promise<
+  ActionResponse<{
+    successCount: number;
+    failureCount: number;
+    failures: Array<{ index: number; code: string; error: string }>;
+  }>
+> {
+  try {
+    await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_CREATE);
+
+    const container = getContainer();
+    const useCase = container.get<CreateLicenseProductUseCase>(
+      DI_TOKENS.CreateLicenseProductUseCase,
+    );
+
+    const results = {
+      successCount: 0,
+      failureCount: 0,
+      failures: [] as Array<{ index: number; code: string; error: string }>,
+    };
+
+    // Process license products sequentially to avoid overwhelming the database
+    for (let i = 0; i < itemsData.length; i++) {
+      const licenseProductData = itemsData[i];
+      try {
+        const validated = CreateLicenseProductSchema.parse(licenseProductData);
+
+        await useCase.execute({
+          name: validated.name,
+          code: validated.code ?? undefined,
+          vendorId: validated.vendorId,
+          metricType: validated.metricType,
+          description: validated.description ?? undefined,
+          lifecycleModelId: validated.lifecycleModelId ?? undefined,
+        });
+
+        results.successCount++;
+      } catch (error) {
+        results.failureCount++;
+        results.failures.push({
+          index: i,
+          code: licenseProductData.code || "Unknown",
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/license-products");
+
+    return {
+      success: true,
+      data: results,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "bulkCreateLicenseProductsAction" },
+      "Failed to bulk create license products",
+    );
   }
 }
