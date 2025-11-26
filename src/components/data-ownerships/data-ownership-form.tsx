@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -16,12 +17,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -91,6 +89,52 @@ export function DataOwnershipForm({
     getInitialOwnerType(),
   );
 
+  // Memoized options for searchable selects
+  const dataDomainOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      dataDomains.map((domain) => ({
+        value: domain.id,
+        label: domain.name,
+      })),
+    [dataDomains],
+  );
+
+  const ciClassOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      ciClasses.map((ciClass) => ({
+        value: ciClass.id,
+        label: ciClass.name,
+      })),
+    [ciClasses],
+  );
+
+  const assetCategoryOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      assetCategories.map((category) => ({
+        value: category.id,
+        label: category.name,
+      })),
+    [assetCategories],
+  );
+
+  const personOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      persons.map((person) => ({
+        value: person.id,
+        label: `${person.firstName} ${person.lastName}`,
+      })),
+    [persons],
+  );
+
+  const orgUnitOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      organizationUnits.map((orgUnit) => ({
+        value: orgUnit.id,
+        label: orgUnit.name,
+      })),
+    [organizationUnits],
+  );
+
   const form = useForm<CreateDataOwnershipDTO | UpdateDataOwnershipDTO>({
     resolver: zodResolver(
       isEditing ? UpdateDataOwnershipSchema : CreateDataOwnershipSchema,
@@ -129,11 +173,16 @@ export function DataOwnershipForm({
     }
   };
 
-  const onSubmit = async (data: CreateDataOwnershipDTO | UpdateDataOwnershipDTO) => {
+  const onSubmit = async (
+    data: CreateDataOwnershipDTO | UpdateDataOwnershipDTO,
+  ) => {
     setIsSubmitting(true);
     try {
       const result = isEditing
-        ? await updateDataOwnership(dataOwnership.id, data as UpdateDataOwnershipDTO)
+        ? await updateDataOwnership(
+            dataOwnership.id,
+            data as UpdateDataOwnershipDTO,
+          )
         : await createDataOwnership(data as CreateDataOwnershipDTO);
 
       if (result.success) {
@@ -145,7 +194,9 @@ export function DataOwnershipForm({
         toast.error(result.error);
       }
     } catch (_error) {
-      toast.error(`Failed to ${isEditing ? "update" : "create"} data ownership`);
+      toast.error(
+        `Failed to ${isEditing ? "update" : "create"} data ownership`,
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -161,20 +212,15 @@ export function DataOwnershipForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Data Domain *</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a data domain" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {dataDomains.map((domain) => (
-                    <SelectItem key={domain.id} value={domain.id}>
-                      {domain.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FormControl>
+                <SearchableSelect
+                  options={dataDomainOptions}
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  placeholder="Select a data domain"
+                  searchPlaceholder="Search data domains..."
+                />
+              </FormControl>
               <FormDescription>
                 The data classification domain for this ownership
               </FormDescription>
@@ -216,23 +262,15 @@ export function DataOwnershipForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>CI Class *</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value || ""}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a CI class" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {ciClasses.map((ciClass) => (
-                        <SelectItem key={ciClass.id} value={ciClass.id}>
-                          {ciClass.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      options={ciClassOptions}
+                      value={field.value || ""}
+                      onValueChange={field.onChange}
+                      placeholder="Select a CI class"
+                      searchPlaceholder="Search CI classes..."
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -246,23 +284,15 @@ export function DataOwnershipForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Asset Category *</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value || ""}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select an asset category" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {assetCategories.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      options={assetCategoryOptions}
+                      value={field.value || ""}
+                      onValueChange={field.onChange}
+                      placeholder="Select an asset category"
+                      searchPlaceholder="Search asset categories..."
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -304,23 +334,15 @@ export function DataOwnershipForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Person</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value || ""}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a person" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {persons.map((person) => (
-                        <SelectItem key={person.id} value={person.id}>
-                          {person.firstName} {person.lastName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      options={personOptions}
+                      value={field.value || ""}
+                      onValueChange={field.onChange}
+                      placeholder="Select a person"
+                      searchPlaceholder="Search persons..."
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -334,23 +356,15 @@ export function DataOwnershipForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Organization Unit</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value || ""}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select an organization unit" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {organizationUnits.map((orgUnit) => (
-                        <SelectItem key={orgUnit.id} value={orgUnit.id}>
-                          {orgUnit.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      options={orgUnitOptions}
+                      value={field.value || ""}
+                      onValueChange={field.onChange}
+                      placeholder="Select an organization unit"
+                      searchPlaceholder="Search organization units..."
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

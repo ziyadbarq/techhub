@@ -216,6 +216,8 @@ Created a reusable `SearchableSelect` component using Popover + Command pattern:
 - "X more results. Type to search..." indicator when more items exist
 - Full keyboard navigation support
 - Consistent styling with existing Select component
+- Nullable pattern support via `__none__` sentinel value
+- Form field wrappers (`SearchableSelectField`, `NullableSearchableSelectField`) for cleaner code
 
 ### Implementation
 
@@ -241,12 +243,38 @@ const options: SearchableSelectOption[] = useMemo(
 />
 ```
 
-**Forms Updated:**
+**Forms Updated (Complete List):**
+
+*Core Asset Management:*
 - `asset-form.tsx` - 5 dropdowns (categories, models, vendors, stock locations, lifecycle states)
+- `asset-model-form.tsx` - 3 dropdowns (categories, vendors, asset types)
 - `assign-asset-wizard.tsx` - 2 dropdowns (employees, stock locations)
-- `service-owners-manager.tsx` - 1 dropdown (persons)
 - `return-asset-wizard.tsx` - 1 dropdown (stock locations)
+- `checkout-form.tsx` - 2 dropdowns (kits, persons)
+- `reservation-form.tsx` - 3 dropdowns (assets, reserved by person/org unit)
+- `disposal-form.tsx` - 3 dropdowns (assets, handled by person, lifecycle states)
+- `warranty-form.tsx` - 2 dropdowns (assets, vendors)
+
+*CMDB & Services:*
+- `ci-class-form.tsx` - 1 dropdown (parent CI class)
+- `configuration-item-form.tsx` - 3 dropdowns (CI classes, locations, lifecycle states)
+- `service-owners-manager.tsx` - 1 dropdown (persons)
+
+*Governance & Contracts:*
+- `data-ownership-form.tsx` - 5 dropdowns (data domains, CI classes, asset categories, owner person/org unit)
+- `contract-form.tsx` - 4 dropdowns (contract types, vendors, currencies, persons)
+- `license-entitlement-form.tsx` - 2 dropdowns (license products, vendors)
+
+*Stock & Location:*
+- `stock-movement-form.tsx` - 2 dropdowns (assets, stock locations)
+
+*Filters & Search:*
+- `audit-log-filters.tsx` - 2 filters (actions, entity types)
+- `attachments-page-client.tsx` - 2 filters (target types, attachment types)
 - `Step4FieldMapper.tsx` - Column mapping dropdown
+
+**Form Field Wrappers Added:**
+- `form-fields.tsx` - `SearchableSelectField` and `NullableSearchableSelectField` wrappers for cleaner form code
 
 ### Benefits
 

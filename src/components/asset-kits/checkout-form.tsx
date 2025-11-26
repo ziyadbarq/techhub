@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -18,12 +18,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
 import {
   Form,
   FormControl,
@@ -59,6 +56,25 @@ export function CheckoutForm({
   const [kits, setKits] = useState<AssetKitDTO[]>([]);
   const [persons, setPersons] = useState<PersonDTO[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Memoized options for searchable selects
+  const kitOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      kits.map((kit) => ({
+        value: kit.id,
+        label: `${kit.name} (${kit.code})`,
+      })),
+    [kits],
+  );
+
+  const personOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      persons.map((person) => ({
+        value: person.id,
+        label: `${person.firstName} ${person.lastName} (${person.email})`,
+      })),
+    [persons],
+  );
 
   const form = useForm<CheckoutFormValues, undefined, CheckoutFormOutput>({
     resolver: zodResolver(CreateKitCheckoutDTO),
@@ -135,24 +151,16 @@ export function CheckoutForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Kit</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    disabled={loading}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a kit" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {kits.map((kit) => (
-                        <SelectItem key={kit.id} value={kit.id}>
-                          {kit.name} ({kit.code})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      options={kitOptions}
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      placeholder="Select a kit"
+                      searchPlaceholder="Search kits..."
+                      disabled={loading}
+                    />
+                  </FormControl>
                   <FormDescription>The kit to check out</FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -166,24 +174,21 @@ export function CheckoutForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Person</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value || ""}
-                    disabled={loading}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a person" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {persons.map((person) => (
-                        <SelectItem key={person.id} value={person.id}>
-                          {person.firstName} {person.lastName} ({person.email})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      options={[
+                        { value: "__none__", label: "No Person" },
+                        ...personOptions,
+                      ]}
+                      value={field.value ?? "__none__"}
+                      onValueChange={(value) =>
+                        field.onChange(value === "__none__" ? undefined : value)
+                      }
+                      placeholder="Select a person"
+                      searchPlaceholder="Search persons..."
+                      disabled={loading}
+                    />
+                  </FormControl>
                   <FormDescription>Who is checking out the kit</FormDescription>
                   <FormMessage />
                 </FormItem>

@@ -15,16 +15,20 @@ import {
 } from "../dtos/generated/employee-directory.dto";
 import {
   presentEmployeesDirectory,
-  buildOrgHierarchy,
-  getReportingChain,
+  presentEmployeeDirectory,
   type EmployeeDirectoryDTO,
-  type OrgHierarchyNodeDTO,
 } from "../presenters/employee-directory.presenter";
-import type { ListEmployeeDirectoryUseCase } from "@/core/use-cases/foundation/employee-directory";
+import type {
+  ListEmployeeDirectoryUseCase,
+  GetReportingChainUseCase,
+  GetDirectReportsUseCase,
+  GetRootEmployeesUseCase,
+} from "@/core/use-cases/foundation/employee-directory";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { IOrganizationUnitRepository } from "@/core/repositories/organization-unit.repository.interface";
 import type { ILocationRepository } from "@/core/repositories/location.repository.interface";
+import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 
 /**
  * List employees for directory with optional filters
@@ -74,35 +78,73 @@ export async function listEmployeeDirectoryAction(
 }
 
 /**
- * Get organization hierarchy grouped by department heads
+ * Get root employees for org chart initial load
+ * Returns employees without a manager or with inactive manager
  */
-export async function getOrgHierarchyAction(): Promise<
-  ActionResponse<OrgHierarchyNodeDTO[]>
+export async function getRootEmployeesAction(): Promise<
+  ActionResponse<{ employees: EmployeeDirectoryDTO[] }>
 > {
   try {
     await requirePermission(PERMISSIONS.PERSONS_VIEW);
 
     const container = getContainer();
-    const useCase = container.get<ListEmployeeDirectoryUseCase>(
-      DI_TOKENS.ListEmployeeDirectoryUseCase,
+    const useCase = container.get<GetRootEmployeesUseCase>(
+      DI_TOKENS.GetRootEmployeesUseCase,
     );
 
-    // Get all active employees
-    const result = await useCase.execute({ isActive: true });
-    const employees = presentEmployeesDirectory(result.employees);
-
-    // Build hierarchy from flat list
-    const hierarchy = buildOrgHierarchy(employees);
+    const result = await useCase.execute();
+    const employees = result.rootEmployees.map((r) =>
+      presentEmployeeDirectory(r),
+    );
 
     return {
       success: true,
-      data: hierarchy,
+      data: { employees },
     };
   } catch (error) {
     return handleControllerError(
       error,
-      { function: "getOrgHierarchyAction" },
-      "Failed to get organization hierarchy",
+      { function: "getRootEmployeesAction" },
+      "Failed to get root employees",
+    );
+  }
+}
+
+/**
+ * Get direct reports for a manager (lazy loading for org chart)
+ */
+export async function getDirectReportsAction(
+  managerId: string,
+): Promise<ActionResponse<{ directReports: EmployeeDirectoryDTO[] }>> {
+  try {
+    await requirePermission(PERMISSIONS.PERSONS_VIEW);
+
+    if (!managerId) {
+      return {
+        success: false,
+        error: "Manager ID is required",
+      };
+    }
+
+    const container = getContainer();
+    const useCase = container.get<GetDirectReportsUseCase>(
+      DI_TOKENS.GetDirectReportsUseCase,
+    );
+
+    const result = await useCase.execute({ managerId });
+    const directReports = result.directReports.map((r) =>
+      presentEmployeeDirectory(r),
+    );
+
+    return {
+      success: true,
+      data: { directReports },
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getDirectReportsAction" },
+      "Failed to get direct reports",
     );
   }
 }
@@ -110,6 +152,7 @@ export async function getOrgHierarchyAction(): Promise<
 /**
  * Get reporting chain for a specific employee
  * Returns the chain from CEO/top down to (but not including) the selected employee
+ * Uses efficient recursive CTE query instead of fetching all employees
  */
 export async function getReportingChainAction(
   personId: string,
@@ -125,27 +168,17 @@ export async function getReportingChainAction(
     }
 
     const container = getContainer();
-    const useCase = container.get<ListEmployeeDirectoryUseCase>(
-      DI_TOKENS.ListEmployeeDirectoryUseCase,
+    const useCase = container.get<GetReportingChainUseCase>(
+      DI_TOKENS.GetReportingChainUseCase,
     );
 
-    // Get all active employees to build the chain
-    const result = await useCase.execute({ isActive: true });
-    const employees = presentEmployeesDirectory(result.employees);
+    // Use efficient recursive CTE to get just the chain
+    const result = await useCase.execute({
+      personId,
+      excludeTarget: true, // Exclude the target employee, only return managers above
+    });
 
-    // Get the full reporting chain
-    const fullChain = getReportingChain(personId, employees);
-
-    if (fullChain.length === 0) {
-      return {
-        success: false,
-        error: "Employee not found",
-      };
-    }
-
-    // Remove the selected employee from the chain (last element)
-    // We only want the managers above them
-    const chain = fullChain.slice(0, -1);
+    const chain = result.chain.map((r) => presentEmployeeDirectory(r));
 
     return {
       success: true,
@@ -162,6 +195,7 @@ export async function getReportingChainAction(
 
 /**
  * Get filter options (departments and locations)
+ * Only returns org units and locations that have active employees assigned
  */
 export async function getDirectoryFilterOptionsAction(): Promise<
   ActionResponse<{
@@ -174,13 +208,24 @@ export async function getDirectoryFilterOptionsAction(): Promise<
 
     const container = getContainer();
 
-    // Get organization units (departments)
+    // Get person repository to check which org units/locations have employees
+    const personRepo = container.get<IPersonRepository>(
+      DI_TOKENS.IPersonRepository,
+    );
+
+    // Get counts by org unit and location
+    const [orgUnitCounts, locationCounts] = await Promise.all([
+      personRepo.countByOrgUnits(),
+      personRepo.countByLocations(),
+    ]);
+
+    // Get organization units (departments) - filter to only those with employees
     const orgUnitRepo = container.get<IOrganizationUnitRepository>(
       DI_TOKENS.IOrganizationUnitRepository,
     );
     const orgUnits = await orgUnitRepo.findAll();
 
-    // Get locations
+    // Get locations - filter to only those with employees
     const locationRepo = container.get<ILocationRepository>(
       DI_TOKENS.ILocationRepository,
     );
@@ -189,16 +234,20 @@ export async function getDirectoryFilterOptionsAction(): Promise<
     return {
       success: true,
       data: {
-        departments: orgUnits.map((ou) => ({
-          id: ou.id,
-          name: ou.name,
-          code: ou.code,
-        })),
-        locations: locations.map((loc) => ({
-          id: loc.id,
-          name: loc.name,
-          city: loc.city,
-        })),
+        departments: orgUnits
+          .filter((ou) => orgUnitCounts.has(ou.id))
+          .map((ou) => ({
+            id: ou.id,
+            name: ou.name,
+            code: ou.code,
+          })),
+        locations: locations
+          .filter((loc) => locationCounts.has(loc.id))
+          .map((loc) => ({
+            id: loc.id,
+            name: loc.name,
+            city: loc.city,
+          })),
       },
     };
   } catch (error) {

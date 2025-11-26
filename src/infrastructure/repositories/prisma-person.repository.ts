@@ -503,4 +503,229 @@ export class PrismaPersonRepository implements IPersonRepository {
 
     return map;
   }
+
+  async countByLocations(): Promise<Map<string, number>> {
+    const counts = await this.prisma.person.groupBy({
+      by: ["locationId"],
+      where: { isActive: true, locationId: { not: null } },
+      _count: { id: true },
+    });
+
+    const map = new Map<string, number>();
+    counts.forEach((c) => {
+      if (c.locationId) {
+        map.set(c.locationId, c._count.id);
+      }
+    });
+
+    return map;
+  }
+
+  /**
+   * Find reporting chain using recursive CTE
+   * Returns chain from top (CEO) down to the specified person
+   */
+  async findReportingChain(
+    personId: string,
+  ): Promise<PersonWithDirectoryRelations[]> {
+    const timer = this.logger.startTimer();
+
+    try {
+      // Use recursive CTE to traverse up the manager hierarchy
+      // Note: IDs are CUIDs (text strings), not native UUIDs, so no ::uuid cast
+      const chainIds = await this.prisma.$queryRaw<Array<{ id: string }>>`
+        WITH RECURSIVE reporting_chain AS (
+          -- Base case: start with the target person
+          SELECT id, "managerId", 0 AS depth
+          FROM persons
+          WHERE id = ${personId} AND "isActive" = true
+
+          UNION ALL
+
+          -- Recursive case: get the manager of each person
+          SELECT p.id, p."managerId", rc.depth + 1
+          FROM persons p
+          INNER JOIN reporting_chain rc ON p.id = rc."managerId"
+          WHERE p."isActive" = true
+        )
+        SELECT id FROM reporting_chain
+        ORDER BY depth DESC
+      `;
+
+      if (chainIds.length === 0) {
+        return [];
+      }
+
+      // Fetch full person data with relations for the chain
+      const persons = await this.prisma.person.findMany({
+        where: {
+          id: { in: chainIds.map((c) => c.id) },
+        },
+        include: {
+          orgUnit: {
+            select: { id: true, name: true, code: true },
+          },
+          location: {
+            select: { id: true, name: true, city: true },
+          },
+          manager: {
+            select: { id: true, firstName: true, lastName: true },
+          },
+          _count: {
+            select: { directReports: true },
+          },
+        },
+      });
+
+      // Create a map for ordering
+      const personMap = new Map(persons.map((p) => [p.id, p]));
+
+      // Return in correct order (from top to target)
+      const orderedResults = chainIds
+        .map((c) => personMap.get(c.id))
+        .filter((p): p is NonNullable<typeof p> => p !== undefined)
+        .map((p) => ({
+          person: this.toDomain(p),
+          orgUnit: p.orgUnit,
+          location: p.location,
+          manager: p.manager,
+          directReportsCount: p._count.directReports,
+        }));
+
+      this.logger.timed(
+        "findReportingChain",
+        `Found ${orderedResults.length} persons in chain`,
+        timer(),
+        { personId },
+      );
+
+      return orderedResults;
+    } catch (error) {
+      this.logger.error(
+        "findReportingChain",
+        "Failed to fetch reporting chain",
+        error,
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Find direct reports for a manager with directory relations
+   * Used for lazy loading in org chart
+   */
+  async findDirectReportsForDirectory(
+    managerId: string,
+  ): Promise<PersonWithDirectoryRelations[]> {
+    const timer = this.logger.startTimer();
+
+    try {
+      const persons = await this.prisma.person.findMany({
+        where: {
+          managerId,
+          isActive: true,
+        },
+        include: {
+          orgUnit: {
+            select: { id: true, name: true, code: true },
+          },
+          location: {
+            select: { id: true, name: true, city: true },
+          },
+          manager: {
+            select: { id: true, firstName: true, lastName: true },
+          },
+          _count: {
+            select: { directReports: true },
+          },
+        },
+        orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
+      });
+
+      this.logger.timed(
+        "findDirectReportsForDirectory",
+        `Found ${persons.length} direct reports`,
+        timer(),
+        { managerId },
+      );
+
+      return persons.map((p) => ({
+        person: this.toDomain(p),
+        orgUnit: p.orgUnit,
+        location: p.location,
+        manager: p.manager,
+        directReportsCount: p._count.directReports,
+      }));
+    } catch (error) {
+      this.logger.error(
+        "findDirectReportsForDirectory",
+        "Failed to fetch direct reports",
+        error,
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Find root employees (those without a manager or whose manager is inactive)
+   * Used for org chart initial load
+   */
+  async findRootEmployeesForDirectory(): Promise<
+    PersonWithDirectoryRelations[]
+  > {
+    const timer = this.logger.startTimer();
+
+    try {
+      // Find employees who either have no manager or whose manager is not active
+      const persons = await this.prisma.person.findMany({
+        where: {
+          isActive: true,
+          OR: [
+            { managerId: null },
+            {
+              manager: {
+                isActive: false,
+              },
+            },
+          ],
+        },
+        include: {
+          orgUnit: {
+            select: { id: true, name: true, code: true },
+          },
+          location: {
+            select: { id: true, name: true, city: true },
+          },
+          manager: {
+            select: { id: true, firstName: true, lastName: true },
+          },
+          _count: {
+            select: { directReports: true },
+          },
+        },
+        orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
+      });
+
+      this.logger.timed(
+        "findRootEmployeesForDirectory",
+        `Found ${persons.length} root employees`,
+        timer(),
+      );
+
+      return persons.map((p) => ({
+        person: this.toDomain(p),
+        orgUnit: p.orgUnit,
+        location: p.location,
+        manager: p.manager,
+        directReportsCount: p._count.directReports,
+      }));
+    } catch (error) {
+      this.logger.error(
+        "findRootEmployeesForDirectory",
+        "Failed to fetch root employees",
+        error,
+      );
+      throw error;
+    }
+  }
 }

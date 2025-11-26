@@ -19,12 +19,14 @@ import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { IMicrosoftGraphService } from "@/core/services/microsoft-graph.service.interface";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import type { IOrganizationUnitRepository } from "@/core/repositories/organization-unit.repository.interface";
+import type { ILocationRepository } from "@/core/repositories/location.repository.interface";
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import { Person } from "@/core/domain/entities/person.entity";
 import {
   transformGraphUserToPerson,
   type SyncResult,
   type FetchUsersOptions,
+  type TransformGraphUserOptions,
 } from "@/lib/schemas/graph-user.schema";
 
 /**
@@ -71,6 +73,8 @@ export class SyncUsersFromGraphUseCase {
     private readonly personRepository: IPersonRepository,
     @inject(DI_TOKENS.IOrganizationUnitRepository)
     private readonly orgUnitRepository: IOrganizationUnitRepository,
+    @inject(DI_TOKENS.ILocationRepository)
+    private readonly locationRepository: ILocationRepository,
     @inject(DI_TOKENS.IRoleRepository)
     private readonly roleRepository: IRoleRepository,
     @inject(IMicrosoftGraphService)
@@ -93,8 +97,8 @@ export class SyncUsersFromGraphUseCase {
     this.logger.info("Starting user sync from Microsoft Graph", { options });
 
     try {
-      // Get default org unit ID and build role map for automatic assignment
-      const { orgUnitId, roleMap } = await this.getDefaultIds(options);
+      // Build transform options with org unit, location, and role maps
+      const transformOptions = await this.buildTransformOptions(options);
 
       // Pass 1: Fetch and sync all users
       this.logger.info("Pass 1: Fetching users from Microsoft Graph");
@@ -109,11 +113,11 @@ export class SyncUsersFromGraphUseCase {
       // Process each user
       for (const graphUser of graphUsers) {
         try {
-          // Transform Graph user to Person data with automatic role assignment
-          const personData = transformGraphUserToPerson(graphUser, {
-            orgUnitId,
-            roleMap, // Pass role map for automatic role assignment
-          });
+          // Transform Graph user to Person data with automatic org unit, location, and role assignment
+          const personData = transformGraphUserToPerson(
+            graphUser,
+            transformOptions,
+          );
 
           // Find existing person by azureAdId (NOT by email!)
           const existingPerson = await this.personRepository.findByAzureAdId(
@@ -121,7 +125,7 @@ export class SyncUsersFromGraphUseCase {
           );
 
           if (existingPerson) {
-            // Update existing person (including email which may have changed)
+            // Update existing person (including email, org unit, location which may change)
             if (!options?.dryRun) {
               existingPerson.update({
                 firstName: personData.firstName,
@@ -135,6 +139,10 @@ export class SyncUsersFromGraphUseCase {
                 office: personData.office,
                 isActive: personData.isActive,
                 hireDate: personData.hireDate,
+                // Update org unit based on department mapping
+                orgUnitId: personData.orgUnitId,
+                // Update location based on office mapping
+                locationId: personData.locationId,
               });
               await this.personRepository.update(existingPerson);
             }
@@ -155,6 +163,7 @@ export class SyncUsersFromGraphUseCase {
                 office: personData.office,
                 hireDate: personData.hireDate,
                 orgUnitId: personData.orgUnitId,
+                locationId: personData.locationId,
                 primaryRoleId: personData.primaryRoleId,
               });
               await this.personRepository.create(newPerson);
@@ -210,34 +219,53 @@ export class SyncUsersFromGraphUseCase {
   }
 
   /**
-   * Get default organization unit ID and build role map for automatic assignment
+   * Build transform options: maps for org units, locations, and roles
    */
-  private async getDefaultIds(options?: SyncUsersOptions): Promise<{
-    orgUnitId: string;
-    roleMap: Map<string, string>;
-  }> {
-    // Get org unit ID
-    let orgUnitId = options?.defaultOrgUnitId;
-    if (!orgUnitId) {
-      // Try to find BARQ root org unit first
-      const barqOrgUnit = await this.orgUnitRepository.findByCode("BARQ");
-      if (barqOrgUnit) {
-        orgUnitId = barqOrgUnit.id;
-      } else {
-        // Fall back to first org unit
-        const allOrgUnits = await this.orgUnitRepository.findAll({ take: 1 });
-        if (allOrgUnits.length > 0) {
-          orgUnitId = allOrgUnits[0].id;
-        } else {
-          throw new Error(
-            "No organization units found. Please create at least one organization unit before syncing.",
-          );
-        }
+  private async buildTransformOptions(
+    options?: SyncUsersOptions,
+  ): Promise<TransformGraphUserOptions> {
+    // Get all org units and build code → ID map
+    const allOrgUnits = await this.orgUnitRepository.findAll();
+    if (allOrgUnits.length === 0) {
+      throw new Error(
+        "No organization units found. Please create at least one organization unit before syncing.",
+      );
+    }
+
+    const orgUnitCodeToIdMap = new Map<string, string>();
+    let defaultOrgUnitId = options?.defaultOrgUnitId;
+
+    for (const orgUnit of allOrgUnits) {
+      if (orgUnit.code) {
+        orgUnitCodeToIdMap.set(orgUnit.code, orgUnit.id);
+      }
+      // Track default org unit ID (first one found if not specified)
+      if (!defaultOrgUnitId) {
+        defaultOrgUnitId = orgUnit.id;
       }
     }
 
+    this.logger.info("Built org unit code to ID map", {
+      orgUnitCount: orgUnitCodeToIdMap.size,
+      codes: Array.from(orgUnitCodeToIdMap.keys()),
+    });
+
+    // Get all locations and build code → ID map
+    const allLocations = await this.locationRepository.findAll();
+    const locationCodeToIdMap = new Map<string, string>();
+
+    for (const location of allLocations) {
+      if (location.code) {
+        locationCodeToIdMap.set(location.code, location.id);
+      }
+    }
+
+    this.logger.info("Built location code to ID map", {
+      locationCount: locationCodeToIdMap.size,
+      codes: Array.from(locationCodeToIdMap.keys()),
+    });
+
     // Build role map: roleName → roleId
-    // This is used for automatic role assignment based on department/title
     const roleMap = new Map<string, string>();
     const allRoles = await this.roleRepository.findAll({
       includeInactive: false,
@@ -258,7 +286,12 @@ export class SyncUsersFromGraphUseCase {
       roles: Array.from(roleMap.keys()),
     });
 
-    return { orgUnitId, roleMap };
+    return {
+      defaultOrgUnitId: defaultOrgUnitId!,
+      roleMap,
+      orgUnitCodeToIdMap,
+      locationCodeToIdMap,
+    };
   }
 
   /**

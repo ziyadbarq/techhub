@@ -115,7 +115,22 @@ export interface PersonSyncInput {
   isActive: boolean;
   hireDate: Date | null;
   orgUnitId: string;
+  locationId: string | null;
   primaryRoleId: string;
+}
+
+/**
+ * Options for transforming Graph user to Person
+ */
+export interface TransformGraphUserOptions {
+  /** Default org unit ID (fallback if department not mapped) */
+  defaultOrgUnitId: string;
+  /** Map of role names to role IDs */
+  roleMap: Map<string, string>;
+  /** Map of org unit codes to org unit IDs (e.g., "ENG" -> "clxyz123") */
+  orgUnitCodeToIdMap: Map<string, string>;
+  /** Map of location codes to location IDs (e.g., "RUH-HQ" -> "clxyz456") */
+  locationCodeToIdMap: Map<string, string>;
 }
 
 /**
@@ -158,18 +173,18 @@ export function isInternalUser(user: GraphUser): boolean {
  *
  * Features:
  * - Normalizes department and office values (handles typos, variations)
+ * - Maps normalized department code to actual org unit ID
+ * - Maps normalized office code to actual location ID
  * - Automatically assigns role based on department and job title
- * - Stores raw department/office for reference, uses normalized codes internally
+ * - Stores raw department for reference
  *
  * @param graphUser - Validated Graph user data
- * @param defaults - Default values for required fields
- * @param defaults.orgUnitId - Default organization unit ID
- * @param defaults.roleMap - Map of role names to role IDs (for automatic assignment)
+ * @param options - Transform options with maps for lookups
  * @returns Data ready for Person upsert
  */
 export function transformGraphUserToPerson(
   graphUser: GraphUser,
-  defaults: { orgUnitId: string; roleMap: Map<string, string> },
+  options: TransformGraphUserOptions,
 ): PersonSyncInput {
   // Extract name parts with fallbacks
   const nameParts = graphUser.displayName.split(" ");
@@ -188,6 +203,18 @@ export function transformGraphUserToPerson(
   const normalizedDeptCode = normalizeDepartment(graphUser.department);
   const normalizedOfficeCode = normalizeOffice(graphUser.officeLocation);
 
+  // Look up org unit ID from normalized department code
+  // Falls back to default org unit if no match
+  const orgUnitId = normalizedDeptCode
+    ? (options.orgUnitCodeToIdMap.get(normalizedDeptCode) ??
+      options.defaultOrgUnitId)
+    : options.defaultOrgUnitId;
+
+  // Look up location ID from normalized office code
+  const locationId = normalizedOfficeCode
+    ? (options.locationCodeToIdMap.get(normalizedOfficeCode) ?? null)
+    : null;
+
   // Determine role based on department and title
   const roleName = determineRoleFromDeptTitle(
     normalizedDeptCode,
@@ -196,10 +223,10 @@ export function transformGraphUserToPerson(
 
   // Get role ID from map, fallback to viewer
   const primaryRoleId =
-    defaults.roleMap.get(roleName) ||
-    defaults.roleMap.get("viewer") ||
+    options.roleMap.get(roleName) ||
+    options.roleMap.get("viewer") ||
     // Last resort: just use the first role ID in the map
-    Array.from(defaults.roleMap.values())[0];
+    Array.from(options.roleMap.values())[0];
 
   return {
     azureAdId: graphUser.id, // Immutable source of truth
@@ -210,14 +237,16 @@ export function transformGraphUserToPerson(
     mobile: graphUser.mobilePhone,
     employeeId: graphUser.employeeId,
     title: graphUser.jobTitle,
-    // Store raw department/office for display, but use normalized codes internally
+    // Store raw department for display
     department: graphUser.department,
-    office: normalizedOfficeCode, // Use normalized office code for location matching
+    // Store raw office location for display
+    office: graphUser.officeLocation,
     isActive: graphUser.accountEnabled,
     hireDate: graphUser.employeeHireDate
       ? new Date(graphUser.employeeHireDate)
       : null,
-    orgUnitId: defaults.orgUnitId,
+    orgUnitId,
+    locationId,
     primaryRoleId,
   };
 }

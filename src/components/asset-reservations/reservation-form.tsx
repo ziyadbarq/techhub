@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -19,12 +19,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
 import {
   Form,
   FormControl,
@@ -63,6 +60,34 @@ export function ReservationForm({
   const [persons, setPersons] = useState<PersonDTO[]>([]);
   const [orgUnits, setOrgUnits] = useState<OrganizationUnitDTO[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Memoized options for searchable selects
+  const assetOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      assets.map((asset) => ({
+        value: asset.id,
+        label: `${asset.assetTag} - ${asset.serialNumber || "No S/N"}`,
+      })),
+    [assets],
+  );
+
+  const personOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      persons.map((person) => ({
+        value: person.id,
+        label: `${person.firstName} ${person.lastName} (${person.email})`,
+      })),
+    [persons],
+  );
+
+  const orgUnitOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      orgUnits.map((unit) => ({
+        value: unit.id,
+        label: `${unit.name} (${unit.code})`,
+      })),
+    [orgUnits],
+  );
 
   const form = useForm<ReservationFormValues, undefined, ReservationFormOutput>(
     {
@@ -148,24 +173,16 @@ export function ReservationForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Asset</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    disabled={loading}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select an asset" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {assets.map((asset) => (
-                        <SelectItem key={asset.id} value={asset.id}>
-                          {asset.assetTag} - {asset.serialNumber || "No S/N"}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      options={assetOptions}
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      placeholder="Select an asset"
+                      searchPlaceholder="Search assets..."
+                      disabled={loading}
+                    />
+                  </FormControl>
                   <FormDescription>The asset to reserve</FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -179,24 +196,21 @@ export function ReservationForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Reserved By (Person)</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value || ""}
-                    disabled={loading}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a person" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {persons.map((person) => (
-                        <SelectItem key={person.id} value={person.id}>
-                          {person.firstName} {person.lastName} ({person.email})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      options={[
+                        { value: "__none__", label: "No Person" },
+                        ...personOptions,
+                      ]}
+                      value={field.value ?? "__none__"}
+                      onValueChange={(value) =>
+                        field.onChange(value === "__none__" ? undefined : value)
+                      }
+                      placeholder="Select a person"
+                      searchPlaceholder="Search persons..."
+                      disabled={loading}
+                    />
+                  </FormControl>
                   <FormDescription>Who is reserving the asset</FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -210,24 +224,21 @@ export function ReservationForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Reserved By (Org Unit)</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value || ""}
-                    disabled={loading}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select an org unit" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {orgUnits.map((unit) => (
-                        <SelectItem key={unit.id} value={unit.id}>
-                          {unit.name} ({unit.code})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      options={[
+                        { value: "__none__", label: "No Org Unit" },
+                        ...orgUnitOptions,
+                      ]}
+                      value={field.value ?? "__none__"}
+                      onValueChange={(value) =>
+                        field.onChange(value === "__none__" ? undefined : value)
+                      }
+                      placeholder="Select an org unit"
+                      searchPlaceholder="Search org units..."
+                      disabled={loading}
+                    />
+                  </FormControl>
                   <FormDescription>
                     The organizational unit making the reservation
                   </FormDescription>

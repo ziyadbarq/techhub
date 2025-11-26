@@ -85,6 +85,9 @@ export function DirectoryPageClient({
   // Track if this is initial mount
   const isInitialMount = useRef(true);
 
+  // Ref for scrolling to chart view
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+
   // Reload when filters change
   useEffect(() => {
     // Skip initial mount since we have initialEmployees
@@ -156,6 +159,19 @@ export function DirectoryPageClient({
     },
     [],
   );
+
+  // Auto-scroll to chart when switching to orgchart view
+  useEffect(() => {
+    if (activeView === "orgchart" && chartContainerRef.current) {
+      // Small delay to allow content to render
+      setTimeout(() => {
+        chartContainerRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 100);
+    }
+  }, [activeView]);
 
   return (
     <div className="space-y-6">
@@ -248,7 +264,11 @@ export function DirectoryPageClient({
           />
         </TabsContent>
 
-        <TabsContent value="orgchart" className="space-y-4">
+        <TabsContent
+          value="orgchart"
+          className="space-y-4"
+          ref={chartContainerRef}
+        >
           <OrgChartView
             employees={employees}
             isLoading={isLoading}

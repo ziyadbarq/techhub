@@ -54,17 +54,18 @@ export function OrganizationUnitsPageClient({
             {units.length} unit{units.length !== 1 ? "s" : ""}
           </p>
         </div>
-        <PermissionGuard permission={PERMISSIONS.ORGANIZATION_UNITS_CREATE}>
-          <Button
-            onClick={() => setIsFormOpen(true)}
-            className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90 gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            New Unit
-          </Button>
-        </PermissionGuard>
+        <div className="flex items-center gap-2">
+          <PermissionGuard permission={PERMISSIONS.ORGANIZATION_UNITS_CREATE}>
+            <Button
+              onClick={() => setIsFormOpen(true)}
+              className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90 gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              New Unit
+            </Button>
+          </PermissionGuard>
+        </div>
       </div>
-
       <OrganizationUnitsTable
         data={units}
         loading={isLoading}

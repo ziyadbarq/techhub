@@ -182,7 +182,8 @@ function ChainCard({ member, isFirst, isLast, level }: ChainCardProps) {
     <Card
       className={cn(
         "hover:bg-muted/50 relative transition-colors",
-        isFirst && "border-amber-500/50 bg-amber-500/5",
+        isFirst &&
+          "border-amber-500/50 bg-amber-500/5 dark:border-amber-400/50 dark:bg-amber-400/10",
       )}
     >
       <div className="flex items-center gap-3 p-3">
@@ -206,7 +207,7 @@ function ChainCard({ member, isFirst, isLast, level }: ChainCardProps) {
             {isFirst && (
               <Badge
                 variant="outline"
-                className="shrink-0 border-amber-500/50 text-xs text-amber-600"
+                className="shrink-0 border-amber-500/50 text-xs text-amber-600 dark:border-amber-400/50 dark:text-amber-400"
               >
                 Top
               </Badge>

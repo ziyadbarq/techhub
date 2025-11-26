@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -25,6 +25,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
 import {
   Form,
   FormControl,
@@ -146,6 +150,25 @@ export function CIClassForm({
     }
   }, [ciClass?.id, isEditing]);
 
+  // Memoized options for searchable selects
+  const parentClassOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      parentClasses.map((cls) => ({
+        value: cls.id,
+        label: `${cls.name} (${cls.code})`,
+      })),
+    [parentClasses],
+  );
+
+  const lifecycleModelOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      lifecycleModels.map((model) => ({
+        value: model.id,
+        label: model.name,
+      })),
+    [lifecycleModels],
+  );
+
   // Focus the first field when dialog opens
   useEffect(() => {
     if (open && !loading) {
@@ -254,31 +277,26 @@ export function CIClassForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Parent Class (Optional)</FormLabel>
-                    <Select
-                      onValueChange={(value) =>
-                        field.onChange(
-                          value === NONE_OPTION_VALUE ? null : value,
-                        )
-                      }
-                      value={field.value ?? NONE_OPTION_VALUE}
-                      disabled={loading}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="None (root class)" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={NONE_OPTION_VALUE}>
-                          None (root class)
-                        </SelectItem>
-                        {parentClasses.map((cls) => (
-                          <SelectItem key={cls.id} value={cls.id}>
-                            {cls.name} ({cls.code})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <SearchableSelect
+                        options={[
+                          {
+                            value: NONE_OPTION_VALUE,
+                            label: "None (root class)",
+                          },
+                          ...parentClassOptions,
+                        ]}
+                        value={field.value ?? NONE_OPTION_VALUE}
+                        onValueChange={(value) =>
+                          field.onChange(
+                            value === NONE_OPTION_VALUE ? null : value,
+                          )
+                        }
+                        placeholder="Select parent class..."
+                        searchPlaceholder="Search classes..."
+                        disabled={loading}
+                      />
+                    </FormControl>
                     <FormDescription>Hierarchical parent class</FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -315,29 +333,23 @@ export function CIClassForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Lifecycle Model (Optional)</FormLabel>
-                    <Select
-                      onValueChange={(value) =>
-                        field.onChange(
-                          value === NONE_OPTION_VALUE ? null : value,
-                        )
-                      }
-                      value={field.value ?? NONE_OPTION_VALUE}
-                      disabled={loading}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="None" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
-                        {lifecycleModels.map((model) => (
-                          <SelectItem key={model.id} value={model.id}>
-                            {model.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <SearchableSelect
+                        options={[
+                          { value: NONE_OPTION_VALUE, label: "None" },
+                          ...lifecycleModelOptions,
+                        ]}
+                        value={field.value ?? NONE_OPTION_VALUE}
+                        onValueChange={(value) =>
+                          field.onChange(
+                            value === NONE_OPTION_VALUE ? null : value,
+                          )
+                        }
+                        placeholder="Select lifecycle model..."
+                        searchPlaceholder="Search models..."
+                        disabled={loading}
+                      />
+                    </FormControl>
                     <FormDescription>
                       Default lifecycle model for CIs of this class
                     </FormDescription>

@@ -349,6 +349,91 @@
 }
 
 /* ============================================
+   XYFLOW (REACT FLOW) THEME OVERRIDES
+   ============================================
+   Theme-aware styling for org chart visualization
+   ============================================ */
+@layer components {
+  /* XYFlow canvas background */
+  .react-flow {
+    background-color: hsl(var(--background));
+  }
+
+  /* Custom Controls styling */
+  .react-flow-controls-custom {
+    bottom: 1rem !important;
+    left: 1rem !important;
+    background-color: hsl(var(--card)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    overflow: hidden !important;
+  }
+
+  .react-flow-controls-custom button {
+    background-color: hsl(var(--card)) !important;
+    border: none !important;
+    border-bottom: 1px solid hsl(var(--border)) !important;
+    width: 32px !important;
+    height: 32px !important;
+    padding: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .react-flow-controls-custom button:last-child {
+    border-bottom: none !important;
+  }
+
+  .react-flow-controls-custom button:hover {
+    background-color: hsl(var(--accent)) !important;
+  }
+
+  .react-flow-controls-custom button svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .react-flow-controls-custom button svg,
+  .react-flow-controls-custom button svg path {
+    fill: hsl(var(--foreground)) !important;
+  }
+
+  /* Dark mode explicit override for controls */
+  .dark .react-flow-controls-custom button svg,
+  .dark .react-flow-controls-custom button svg path {
+    fill: #fafafa !important;
+  }
+
+  /* Custom MiniMap styling */
+  .react-flow-minimap-custom {
+    bottom: 1rem !important;
+    right: 1rem !important;
+    background-color: hsl(var(--card)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+    border-radius: var(--radius) !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  /* XYFlow background dots */
+  .react-flow__background pattern circle {
+    fill: hsl(var(--muted-foreground) / 0.2);
+  }
+
+  /* Dark mode - more visible dots */
+  .dark .react-flow__background pattern circle {
+    fill: hsl(var(--muted-foreground) / 0.15);
+  }
+
+  /* XYFlow attribution hiding (pro option) */
+  .react-flow__attribution {
+    display: none;
+  }
+}
+
+/* ============================================
    SYNTAX HIGHLIGHTING (highlight.js)
    ============================================
    Code block syntax highlighting theme

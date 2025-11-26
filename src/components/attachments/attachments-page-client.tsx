@@ -5,12 +5,9 @@ import { FileIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
 import { AttachmentsTable } from "@/components/attachments/attachments-table";
 import type { AttachmentDTO } from "@/interface-adapters/presenters/attachment.presenter";
 import type { AttachmentTypeDTO } from "@/interface-adapters/presenters/attachment-type.presenter";
@@ -59,6 +56,29 @@ export function AttachmentsPageClient() {
 
   const { hasPermission } = usePermissions();
   const canView = hasPermission(PERMISSIONS.ATTACHMENTS_VIEW);
+
+  // Memoized options for searchable selects
+  const targetTypeOptions: SearchableSelectOption[] = React.useMemo(
+    () => [
+      { value: "all", label: "All entity types" },
+      ...TARGET_TYPES.map((type) => ({
+        value: type.value,
+        label: type.label,
+      })),
+    ],
+    [],
+  );
+
+  const attachmentTypeOptions: SearchableSelectOption[] = React.useMemo(
+    () => [
+      { value: "all", label: "All attachment types" },
+      ...attachmentTypes.map((type) => ({
+        value: type.id,
+        label: type.name,
+      })),
+    ],
+    [attachmentTypes],
+  );
 
   const loadAttachments = React.useCallback(async () => {
     if (!canView) return;
@@ -149,48 +169,30 @@ export function AttachmentsPageClient() {
           <label className="mb-2 block text-sm font-medium">
             Filter by Entity Type
           </label>
-          <Select
+          <SearchableSelect
+            options={targetTypeOptions}
             value={targetTypeFilter || "all"}
             onValueChange={(value) =>
               setTargetTypeFilter(value === "all" ? undefined : value)
             }
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="All entity types" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All entity types</SelectItem>
-              {TARGET_TYPES.map((type) => (
-                <SelectItem key={type.value} value={type.value}>
-                  {type.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            placeholder="All entity types"
+            searchPlaceholder="Search entity types..."
+          />
         </div>
 
         <div className="max-w-xs flex-1">
           <label className="mb-2 block text-sm font-medium">
             Filter by Attachment Type
           </label>
-          <Select
+          <SearchableSelect
+            options={attachmentTypeOptions}
             value={attachmentTypeFilter || "all"}
             onValueChange={(value) =>
               setAttachmentTypeFilter(value === "all" ? undefined : value)
             }
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="All attachment types" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All attachment types</SelectItem>
-              {attachmentTypes.map((type) => (
-                <SelectItem key={type.id} value={type.id}>
-                  {type.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            placeholder="All attachment types"
+            searchPlaceholder="Search attachment types..."
+          />
         </div>
 
         {(targetTypeFilter || attachmentTypeFilter) && (

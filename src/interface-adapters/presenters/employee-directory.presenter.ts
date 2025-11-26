@@ -37,16 +37,6 @@ export interface EmployeeDirectoryDTO {
 }
 
 /**
- * DTO for organization hierarchy (used in org chart view)
- */
-export interface OrgHierarchyNodeDTO {
-  employee: EmployeeDirectoryDTO;
-  directReports: OrgHierarchyNodeDTO[];
-  reportCount: number;
-  depth: number;
-}
-
-/**
  * Raw data structure from Prisma query with includes
  */
 export interface PersonWithRelations {
@@ -131,69 +121,6 @@ export function presentEmployeesDirectory(
   return data.map(presentEmployeeDirectory);
 }
 
-/**
- * Build org hierarchy from flat employee list
- * Groups by department heads and builds tree structure
- */
-export function buildOrgHierarchy(
-  employees: EmployeeDirectoryDTO[],
-): OrgHierarchyNodeDTO[] {
-  // Create a map for quick lookup
-  const employeeMap = new Map<string, EmployeeDirectoryDTO>();
-  employees.forEach((emp) => employeeMap.set(emp.id, emp));
-
-  // Find department heads (employees without manager or with manager not in the list)
-  const departmentHeads = employees.filter((emp) => {
-    if (!emp.managerId) return true;
-    // If manager is not in the active employee list, treat as department head
-    return !employeeMap.has(emp.managerId);
-  });
-
-  // Build tree recursively
-  function buildNode(
-    employee: EmployeeDirectoryDTO,
-    depth: number,
-  ): OrgHierarchyNodeDTO {
-    const directReports = employees
-      .filter((emp) => emp.managerId === employee.id)
-      .map((emp) => buildNode(emp, depth + 1));
-
-    // Count all reports recursively
-    const reportCount = directReports.reduce(
-      (sum, node) => sum + 1 + node.reportCount,
-      0,
-    );
-
-    return {
-      employee,
-      directReports,
-      reportCount,
-      depth,
-    };
-  }
-
-  return departmentHeads.map((head) => buildNode(head, 0));
-}
-
-/**
- * Get reporting chain for a specific employee (upward path to top)
- */
-export function getReportingChain(
-  employeeId: string,
-  employees: EmployeeDirectoryDTO[],
-): EmployeeDirectoryDTO[] {
-  const employeeMap = new Map<string, EmployeeDirectoryDTO>();
-  employees.forEach((emp) => employeeMap.set(emp.id, emp));
-
-  const chain: EmployeeDirectoryDTO[] = [];
-  let current = employeeMap.get(employeeId);
-
-  while (current) {
-    chain.unshift(current);
-    current = current.managerId
-      ? employeeMap.get(current.managerId)
-      : undefined;
-  }
-
-  return chain;
-}
+// NOTE: buildOrgHierarchy and getReportingChain functions have been moved to use cases:
+// - GetReportingChainUseCase: Uses efficient recursive CTE for chain fetching
+// - GetRootEmployeesUseCase + GetDirectReportsUseCase: For lazy loading org chart

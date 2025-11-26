@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
@@ -35,6 +35,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
 import {
   Form,
   FormControl,
@@ -132,6 +136,25 @@ export function WarrantyForm({
     }
   }, [open]);
 
+  // Memoized options for searchable selects
+  const assetOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      assets.map((asset) => ({
+        value: asset.id,
+        label: asset.assetTag,
+      })),
+    [assets],
+  );
+
+  const vendorOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      vendors.map((vendor) => ({
+        value: vendor.id,
+        label: vendor.name,
+      })),
+    [vendors],
+  );
+
   // Reset form when warranty changes
   useEffect(() => {
     form.reset({
@@ -205,24 +228,16 @@ export function WarrantyForm({
                   <FormLabel>
                     Asset <span className="text-destructive">*</span>
                   </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    disabled={loadingData || isEditing} // Can't change asset when editing
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select an asset" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {assets.map((asset) => (
-                        <SelectItem key={asset.id} value={asset.id}>
-                          {asset.assetTag}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      options={assetOptions}
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      placeholder="Select an asset"
+                      searchPlaceholder="Search assets..."
+                      disabled={loadingData || isEditing}
+                    />
+                  </FormControl>
                   {isEditing && (
                     <FormDescription>
                       Asset cannot be changed after creation
@@ -240,27 +255,21 @@ export function WarrantyForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Vendor</FormLabel>
-                  <Select
-                    onValueChange={(value) =>
-                      field.onChange(value === "none" ? null : value)
-                    }
-                    value={field.value || "none"}
-                    disabled={loadingData}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a vendor (optional)" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="none">No Vendor</SelectItem>
-                      {vendors.map((vendor) => (
-                        <SelectItem key={vendor.id} value={vendor.id}>
-                          {vendor.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      options={[
+                        { value: "__none__", label: "No Vendor" },
+                        ...vendorOptions,
+                      ]}
+                      value={field.value ?? "__none__"}
+                      onValueChange={(value) =>
+                        field.onChange(value === "__none__" ? null : value)
+                      }
+                      placeholder="Select a vendor (optional)"
+                      searchPlaceholder="Search vendors..."
+                      disabled={loadingData}
+                    />
+                  </FormControl>
                   <FormDescription>
                     Warranty provider or manufacturer
                   </FormDescription>

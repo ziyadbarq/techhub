@@ -15,12 +15,9 @@ import { CalendarIcon, Filter, X } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -72,6 +69,29 @@ export function AuditLogFiltersComponent({
       !!filters.endDate
     );
   }, [filters]);
+
+  // Memoized options for searchable selects
+  const actionOptions: SearchableSelectOption[] = React.useMemo(
+    () => [
+      { value: "all", label: "All Actions" },
+      ...actions.map((action) => ({
+        value: action,
+        label: action,
+      })),
+    ],
+    [actions],
+  );
+
+  const entityTypeOptions: SearchableSelectOption[] = React.useMemo(
+    () => [
+      { value: "all", label: "All Entities" },
+      ...entityTypes.map((type) => ({
+        value: type,
+        label: type,
+      })),
+    ],
+    [entityTypes],
+  );
 
   const handleApplyFilters = () => {
     const updatedFilters: AuditLogFilters = {
@@ -156,7 +176,8 @@ export function AuditLogFiltersComponent({
             {/* Action Type Filter */}
             <div className="space-y-2">
               <Label htmlFor="action">Action Type</Label>
-              <Select
+              <SearchableSelect
+                options={actionOptions}
                 value={localFilters.action || "all"}
                 onValueChange={(value) =>
                   handleLocalFilterChange(
@@ -164,25 +185,16 @@ export function AuditLogFiltersComponent({
                     value === "all" ? undefined : value,
                   )
                 }
-              >
-                <SelectTrigger id="action">
-                  <SelectValue placeholder="Select action type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Actions</SelectItem>
-                  {actions.map((action) => (
-                    <SelectItem key={action} value={action}>
-                      {action}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                placeholder="Select action type"
+                searchPlaceholder="Search actions..."
+              />
             </div>
 
             {/* Entity Type Filter */}
             <div className="space-y-2">
               <Label htmlFor="entityType">Entity Type</Label>
-              <Select
+              <SearchableSelect
+                options={entityTypeOptions}
                 value={localFilters.entityType || "all"}
                 onValueChange={(value) =>
                   handleLocalFilterChange(
@@ -190,19 +202,9 @@ export function AuditLogFiltersComponent({
                     value === "all" ? undefined : value,
                   )
                 }
-              >
-                <SelectTrigger id="entityType">
-                  <SelectValue placeholder="Select entity type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Entities</SelectItem>
-                  {entityTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                placeholder="Select entity type"
+                searchPlaceholder="Search entity types..."
+              />
             </div>
 
             {/* Date Range Filters */}

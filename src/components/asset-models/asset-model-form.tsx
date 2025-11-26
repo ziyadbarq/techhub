@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
@@ -21,12 +21,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
 import {
   Form,
   FormControl,
@@ -126,6 +123,25 @@ export function AssetModelForm({
     }
   };
 
+  // Memoized options for searchable selects
+  const categoryOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      categories.map((category) => ({
+        value: category.id,
+        label: `${category.name} (${category.code})`,
+      })),
+    [categories],
+  );
+
+  const vendorOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      vendors.map((vendor) => ({
+        value: vendor.id,
+        label: `${vendor.name} (${vendor.code})`,
+      })),
+    [vendors],
+  );
+
   useEffect(() => {
     form.reset({
       name: assetModel?.name ?? "",
@@ -191,166 +207,150 @@ export function AssetModelForm({
           </DialogHeader>
 
           <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="HP LaserJet Pro 400"
-                      tabIndex={1}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Display name for this asset model
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="assetCategoryId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Asset Category</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    disabled={loading}
-                  >
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a category" />
-                      </SelectTrigger>
+                      <Input
+                        placeholder="HP LaserJet Pro 400"
+                        tabIndex={1}
+                        {...field}
+                      />
                     </FormControl>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name} ({category.code})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    The category this model belongs to
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormDescription>
+                      Display name for this asset model
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="vendorId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Vendor</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    disabled={loading}
-                  >
+              <FormField
+                control={form.control}
+                name="assetCategoryId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Asset Category</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a vendor" />
-                      </SelectTrigger>
+                      <SearchableSelect
+                        options={categoryOptions}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        placeholder="Select a category"
+                        searchPlaceholder="Search categories..."
+                        disabled={loading}
+                      />
                     </FormControl>
-                    <SelectContent>
-                      {vendors.map((vendor) => (
-                        <SelectItem key={vendor.id} value={vendor.id}>
-                          {vendor.name} ({vendor.code})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    The manufacturer or supplier
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormDescription>
+                      The category this model belongs to
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="defaultWarrantyMonths"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Default Warranty (Months)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="12"
-                      {...field}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        field.onChange(
-                          value === "" ? undefined : Number(value),
-                        );
-                      }}
-                      value={field.value ?? ""}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Default warranty period in months (0-120, max 10 years)
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="vendorId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Vendor</FormLabel>
+                    <FormControl>
+                      <SearchableSelect
+                        options={vendorOptions}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        placeholder="Select a vendor"
+                        searchPlaceholder="Search vendors..."
+                        disabled={loading}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      The manufacturer or supplier
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Professional color laser printer with duplex printing"
-                      className="resize-none"
-                      {...field}
-                      value={field.value || ""}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Optional description of this model
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="defaultWarrantyMonths"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Default Warranty (Months)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="12"
+                        {...field}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(
+                            value === "" ? undefined : Number(value),
+                          );
+                        }}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Default warranty period in months (0-120, max 10 years)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={form.formState.isSubmitting || loading}
-                className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
-              >
-                {form.formState.isSubmitting
-                  ? isEditing
-                    ? "Updating..."
-                    : "Creating..."
-                  : isEditing
-                    ? "Update"
-                    : "Create"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Professional color laser printer with duplex printing"
+                        className="resize-none"
+                        {...field}
+                        value={field.value || ""}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Optional description of this model
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onOpenChange(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={form.formState.isSubmitting || loading}
+                  className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
+                >
+                  {form.formState.isSubmitting
+                    ? isEditing
+                      ? "Updating..."
+                      : "Creating..."
+                    : isEditing
+                      ? "Update"
+                      : "Create"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
         </FormProvider>
       </DialogContent>
     </Dialog>

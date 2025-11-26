@@ -324,6 +324,9 @@ export const DI_TOKENS = {
 
   // Foundation: Employee Directory Use Cases
   ListEmployeeDirectoryUseCase: Symbol.for("ListEmployeeDirectoryUseCase"),
+  GetReportingChainUseCase: Symbol.for("GetReportingChainUseCase"),
+  GetDirectReportsUseCase: Symbol.for("GetDirectReportsUseCase"),
+  GetRootEmployeesUseCase: Symbol.for("GetRootEmployeesUseCase"),
 
   // Foundation: Person Role Assignment Use Cases
   CreatePersonRoleAssignmentUseCase: Symbol.for(

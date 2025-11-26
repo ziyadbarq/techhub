@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
@@ -35,6 +35,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
 import {
   Form,
   FormControl,
@@ -141,6 +145,25 @@ export function StockMovementForm({
     }
   }, [movementType, form]);
 
+  // Memoized options for searchable selects
+  const stockLocationOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      stockLocations.map((location) => ({
+        value: location.id,
+        label: `${location.name} (${location.code})`,
+      })),
+    [stockLocations],
+  );
+
+  const assetOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      assets.map((asset) => ({
+        value: asset.id,
+        label: `${asset.assetTag} - ${asset.serialNumber || "No SN"}`,
+      })),
+    [assets],
+  );
+
   const onSubmit = async (data: CreateStockMovementDTO) => {
     try {
       const result = await createStockMovementAction(data);
@@ -230,27 +253,21 @@ export function StockMovementForm({
                     <FormLabel>
                       Source Location {movementType === "TRANSFER" && "*"}
                     </FormLabel>
-                    <Select
-                      onValueChange={(value) =>
-                        field.onChange(value === "none" ? null : value)
-                      }
-                      value={field.value || "none"}
-                      disabled={loadingData}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select source location" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="none">No Location</SelectItem>
-                        {stockLocations.map((location) => (
-                          <SelectItem key={location.id} value={location.id}>
-                            {location.name} ({location.code})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <SearchableSelect
+                        options={[
+                          { value: "__none__", label: "No Location" },
+                          ...stockLocationOptions,
+                        ]}
+                        value={field.value ?? "__none__"}
+                        onValueChange={(value) =>
+                          field.onChange(value === "__none__" ? null : value)
+                        }
+                        placeholder="Select source location"
+                        searchPlaceholder="Search locations..."
+                        disabled={loadingData}
+                      />
+                    </FormControl>
                     <FormDescription>
                       Location where items are being removed from
                     </FormDescription>
@@ -270,27 +287,21 @@ export function StockMovementForm({
                       Destination Location{" "}
                       <span className="text-destructive">*</span>
                     </FormLabel>
-                    <Select
-                      onValueChange={(value) =>
-                        field.onChange(value === "none" ? null : value)
-                      }
-                      value={field.value || "none"}
-                      disabled={loadingData}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select destination location" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="none">No Location</SelectItem>
-                        {stockLocations.map((location) => (
-                          <SelectItem key={location.id} value={location.id}>
-                            {location.name} ({location.code})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <FormControl>
+                      <SearchableSelect
+                        options={[
+                          { value: "__none__", label: "No Location" },
+                          ...stockLocationOptions,
+                        ]}
+                        value={field.value ?? "__none__"}
+                        onValueChange={(value) =>
+                          field.onChange(value === "__none__" ? null : value)
+                        }
+                        placeholder="Select destination location"
+                        searchPlaceholder="Search locations..."
+                        disabled={loadingData}
+                      />
+                    </FormControl>
                     <FormDescription>
                       Location where items are being added to
                     </FormDescription>
@@ -306,27 +317,21 @@ export function StockMovementForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Asset (Optional)</FormLabel>
-                  <Select
-                    onValueChange={(value) =>
-                      field.onChange(value === "none" ? null : value)
-                    }
-                    value={field.value || "none"}
-                    disabled={loadingData}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select an asset (optional)" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="none">No Asset</SelectItem>
-                      {assets.map((asset) => (
-                        <SelectItem key={asset.id} value={asset.id}>
-                          {asset.assetTag} - {asset.serialNumber || "No SN"}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      options={[
+                        { value: "__none__", label: "No Asset" },
+                        ...assetOptions,
+                      ]}
+                      value={field.value ?? "__none__"}
+                      onValueChange={(value) =>
+                        field.onChange(value === "__none__" ? null : value)
+                      }
+                      placeholder="Select an asset (optional)"
+                      searchPlaceholder="Search assets..."
+                      disabled={loadingData}
+                    />
+                  </FormControl>
                   <FormDescription>
                     Link to a specific asset if this movement relates to one
                   </FormDescription>

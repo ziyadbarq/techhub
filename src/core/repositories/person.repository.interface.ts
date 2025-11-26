@@ -172,6 +172,32 @@ export interface IPersonRepository {
    * Count employees by org unit for directory stats
    */
   countByOrgUnits(): Promise<Map<string, number>>;
+
+  /**
+   * Count employees by location for directory stats
+   */
+  countByLocations(): Promise<Map<string, number>>;
+
+  /**
+   * Find reporting chain for a person using recursive CTE
+   * Returns the chain from the top (CEO) down to the specified person
+   * Efficient upward traversal using PostgreSQL WITH RECURSIVE
+   */
+  findReportingChain(personId: string): Promise<PersonWithDirectoryRelations[]>;
+
+  /**
+   * Find direct reports for a manager with directory relations
+   * Used for lazy loading in org chart
+   */
+  findDirectReportsForDirectory(
+    managerId: string,
+  ): Promise<PersonWithDirectoryRelations[]>;
+
+  /**
+   * Find root employees (those without a manager or whose manager is inactive/not in system)
+   * Used for org chart initial load
+   */
+  findRootEmployeesForDirectory(): Promise<PersonWithDirectoryRelations[]>;
 }
 
 /**

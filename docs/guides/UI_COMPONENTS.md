@@ -288,7 +288,9 @@ const onSubmit = handleFormSubmit(createUserAction, {
 });
 ```
 
-### Select Fields
+### Select Fields (Enum Values Only)
+
+> **Note**: Use this basic Select only for **enum values** (status, type, etc.) with **fewer than 10 static options**. For entity lookups (persons, assets, categories, vendors, etc.) or any list that may grow, use [SearchableSelect](#searchableselect-component) instead.
 
 ```tsx
 import {
@@ -299,6 +301,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+// Good: Static enum with few options
 <FormField
   control={form.control}
   name="status"
@@ -388,6 +391,73 @@ const categoryOptions: SearchableSelectOption[] = useMemo(
 | Entity lookups (persons, assets, etc.) | `SearchableSelect` |
 | Enum values (status, type) | `Select` |
 | User-facing forms with many options | `SearchableSelect` |
+
+#### Nullable SearchableSelect Pattern
+
+For optional entity fields that can be cleared (e.g., `assignedToPersonId`), use the `__none__` sentinel value pattern:
+
+```tsx
+// Options with "None" option for clearing
+const personOptions: SearchableSelectOption[] = useMemo(
+  () => [
+    { value: "__none__", label: "— None —" },
+    ...persons.map((p) => ({
+      value: p.id,
+      label: p.displayName,
+    })),
+  ],
+  [persons]
+);
+
+<FormField
+  control={form.control}
+  name="assignedToPersonId"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Assigned To (Optional)</FormLabel>
+      <SearchableSelect
+        options={personOptions}
+        value={field.value || "__none__"}
+        onValueChange={(value) =>
+          field.onChange(value === "__none__" ? null : value)
+        }
+        placeholder="Select person..."
+      />
+      <FormMessage />
+    </FormItem>
+  )}
+/>;
+```
+
+#### Form Field Wrappers (Recommended)
+
+For cleaner forms, use the pre-built wrapper components from `form-fields.tsx`:
+
+```tsx
+import {
+  SearchableSelectField,
+  NullableSearchableSelectField,
+} from "@/components/ui/form-fields";
+
+// Required entity field
+<SearchableSelectField
+  form={form}
+  name="categoryId"
+  label="Category"
+  options={categoryOptions}
+  placeholder="Select category..."
+/>
+
+// Optional entity field (nullable)
+<NullableSearchableSelectField
+  form={form}
+  name="assignedToPersonId"
+  label="Assigned To"
+  options={personOptions}
+  placeholder="Select person..."
+  noneLabel="— None —"
+/>
+```
 
 ### Textarea Fields
 

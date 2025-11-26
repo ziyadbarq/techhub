@@ -159,9 +159,10 @@ async function validateEnvironment(): Promise<boolean> {
 }
 
 /**
- * Select organization unit for new users
+ * Select fallback organization unit for users whose department doesn't map
+ * Note: Most users will be assigned org units automatically based on department
  */
-async function selectOrgUnit(): Promise<string | null> {
+async function selectFallbackOrgUnit(): Promise<string | null> {
   const orgUnits = await prisma.organizationUnit.findMany({
     where: { isActive: true },
     select: { id: true, name: true, code: true },
@@ -183,8 +184,19 @@ async function selectOrgUnit(): Promise<string | null> {
   // Find BARQ's id to set as default
   const barqOrgUnit = sortedOrgUnits.find((ou) => ou.code === "BARQ");
 
+  console.log(
+    chalk.gray(
+      "\nNote: Users are assigned to org units based on their Azure AD department.",
+    ),
+  );
+  console.log(
+    chalk.gray(
+      "This fallback is used when a department doesn't have a mapping.\n",
+    ),
+  );
+
   const selectedId = await select({
-    message: "Select default organization unit for new users:",
+    message: "Select fallback organization unit:",
     choices: sortedOrgUnits.map((ou) => ({
       name: `${ou.name} (${ou.code})`,
       value: ou.id,
@@ -239,7 +251,19 @@ async function runSync(): Promise<void> {
   // Select defaults for new users
   console.log(chalk.white("Configure sync options:\n"));
 
-  const defaultOrgUnitId = await selectOrgUnit();
+  console.log(chalk.cyan.bold("📋 Department → Org Unit Mapping (Automatic):"));
+  console.log(
+    chalk.gray(
+      "  Users are assigned to org units based on their Azure AD department field.",
+    ),
+  );
+  console.log(
+    chalk.gray(
+      "  See graph-normalization.ts for the department mapping rules.\n",
+    ),
+  );
+
+  const defaultOrgUnitId = await selectFallbackOrgUnit();
   if (!defaultOrgUnitId) {
     return;
   }

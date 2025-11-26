@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -25,6 +25,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
 import {
   Form,
   FormControl,
@@ -116,6 +120,25 @@ export function DisposalForm({
     }
   };
 
+  // Memoized options for searchable selects
+  const assetOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      assets.map((asset) => ({
+        value: asset.id,
+        label: `${asset.assetTag} - ${asset.serialNumber || "No S/N"}`,
+      })),
+    [assets],
+  );
+
+  const vendorOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      vendors.map((vendor) => ({
+        value: vendor.id,
+        label: vendor.name,
+      })),
+    [vendors],
+  );
+
   const handleApproverToggle = (approverId: string) => {
     setSelectedApprovers((prev) => {
       const updated = prev.includes(approverId)
@@ -163,24 +186,16 @@ export function DisposalForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Asset</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    disabled={loading}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select an asset" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {assets.map((asset) => (
-                        <SelectItem key={asset.id} value={asset.id}>
-                          {asset.assetTag} - {asset.serialNumber || "No S/N"}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      options={assetOptions}
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      placeholder="Select an asset"
+                      searchPlaceholder="Search assets..."
+                      disabled={loading}
+                    />
+                  </FormControl>
                   <FormDescription>The asset to be disposed of</FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -307,24 +322,21 @@ export function DisposalForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Disposal Vendor (Optional)</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value ?? undefined}
-                    disabled={loading}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a vendor" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {vendors.map((vendor) => (
-                        <SelectItem key={vendor.id} value={vendor.id}>
-                          {vendor.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <SearchableSelect
+                      options={[
+                        { value: "__none__", label: "No vendor" },
+                        ...vendorOptions,
+                      ]}
+                      value={field.value ?? "__none__"}
+                      onValueChange={(value) =>
+                        field.onChange(value === "__none__" ? undefined : value)
+                      }
+                      placeholder="Select a vendor"
+                      searchPlaceholder="Search vendors..."
+                      disabled={loading}
+                    />
+                  </FormControl>
                   <FormDescription>
                     Vendor handling the disposal
                   </FormDescription>
