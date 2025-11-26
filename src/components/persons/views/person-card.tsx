@@ -5,17 +5,7 @@
 
 "use client";
 
-import {
-  Mail,
-  Phone,
-  MapPin,
-  Building2,
-  Users,
-  Pencil,
-  Trash2,
-  UserX,
-  UserCheck,
-} from "lucide-react";
+import { Mail, Phone, MapPin, Building2, Users } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -33,20 +23,12 @@ import { EmployeeAvatar } from "@/components/employee-directory/employee-avatar"
 interface PersonCardProps {
   person: EmployeeDirectoryDTO;
   onViewReportingChain?: () => void;
-  onEdit?: () => void;
-  onDelete?: () => void;
-  onToggleExclusion?: () => void;
-  isTogglingExclusion?: boolean;
   index?: number;
 }
 
 export function PersonCard({
   person,
   onViewReportingChain,
-  onEdit,
-  onDelete,
-  onToggleExclusion,
-  isTogglingExclusion,
   index = 0,
 }: PersonCardProps) {
   return (
@@ -130,68 +112,6 @@ export function PersonCard({
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>{person.mobile || person.phone}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
-
-              {/* Edit action */}
-              {onEdit && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon-sm" onClick={onEdit}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Edit</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
-
-              {/* Toggle exclusion action */}
-              {onToggleExclusion && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        onClick={onToggleExclusion}
-                        disabled={isTogglingExclusion}
-                      >
-                        {person.isExcluded ? (
-                          <UserCheck className="h-4 w-4" />
-                        ) : (
-                          <UserX className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{person.isExcluded ? "Include" : "Exclude"}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
-
-              {/* Delete action */}
-              {onDelete && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        onClick={onDelete}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Delete</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>

@@ -16,20 +16,12 @@ interface CardGridViewProps {
   persons: EmployeeDirectoryDTO[];
   isLoading: boolean;
   onViewReportingChain?: (person: EmployeeDirectoryDTO) => void;
-  onEdit?: (person: EmployeeDirectoryDTO) => void;
-  onDelete?: (person: EmployeeDirectoryDTO) => void;
-  onToggleExclusion?: (person: EmployeeDirectoryDTO) => void;
-  isTogglingExclusion?: boolean;
 }
 
 export function CardGridView({
   persons,
   isLoading,
   onViewReportingChain,
-  onEdit,
-  onDelete,
-  onToggleExclusion,
-  isTogglingExclusion,
 }: CardGridViewProps) {
   if (isLoading) {
     return (
@@ -75,12 +67,6 @@ export function CardGridView({
             person={person}
             index={index}
             onViewReportingChain={() => onViewReportingChain?.(person)}
-            onEdit={onEdit ? () => onEdit(person) : undefined}
-            onDelete={onDelete ? () => onDelete(person) : undefined}
-            onToggleExclusion={
-              onToggleExclusion ? () => onToggleExclusion(person) : undefined
-            }
-            isTogglingExclusion={isTogglingExclusion}
           />
         ))}
       </AnimatePresence>

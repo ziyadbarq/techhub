@@ -451,12 +451,6 @@ export function PersonsPageClient({
             persons={persons}
             isLoading={isLoading}
             onViewReportingChain={handleViewReportingChain}
-            onEdit={canUpdate ? handleEdit : undefined}
-            onDelete={canDelete ? handleDeleteClick : undefined}
-            onToggleExclusion={
-              canManagePersons ? handleToggleExclusion : undefined
-            }
-            isTogglingExclusion={isTogglingExclusion}
           />
         </TabsContent>
 
