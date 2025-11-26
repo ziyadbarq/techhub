@@ -19,7 +19,6 @@ import {
   UserCog,
   Settings2,
   TrendingUp,
-  Users,
 } from "lucide-react";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { NavGroup } from "../navigation.types";
@@ -99,16 +98,9 @@ export const organizationGroup: NavGroup = {
       title: "Persons",
       href: "/persons",
       icon: UserCircle,
-      description: "Manage persons",
+      description: "Manage and browse company employees",
       permission: PERMISSIONS.PERSONS_VIEW,
       featureFlag: "FOUNDATION",
-    },
-    {
-      title: "Employee Directory",
-      href: "/directory",
-      icon: Users,
-      description: "Browse and search company employees",
-      permission: PERMISSIONS.PERSONS_VIEW,
     },
     {
       title: "Role Assignments",

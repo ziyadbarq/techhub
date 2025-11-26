@@ -39,11 +39,11 @@ export function useOrgChartState({
     return new Set(roots.map((emp) => emp.id));
   });
 
-  const employeeIds = new Set(employees.map((emp) => emp.id));
   const previousRootIdsRef = useRef<string>("");
 
   // Auto-expand root nodes when employee list changes (e.g., parent filters change)
   useEffect(() => {
+    const employeeIds = new Set(employees.map((emp) => emp.id));
     const rootIds = rootEmployees
       .map((emp) => emp.id)
       .sort()
@@ -77,7 +77,7 @@ export function useOrgChartState({
 
       return next;
     });
-  }, [rootEmployees, employeeIds]);
+  }, [rootEmployees, employees]);
 
   // Toggle node expansion
   const handleToggleExpand = useCallback((id: string) => {
