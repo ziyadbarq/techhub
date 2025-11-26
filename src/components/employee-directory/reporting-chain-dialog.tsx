@@ -6,7 +6,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChevronUp, Loader2, Users, AlertCircle } from "lucide-react";
+import { Loader2, Users, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import {
@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/dialog";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import type { EmployeeDirectoryDTO } from "@/interface-adapters/presenters/employee-directory.presenter";
 import { getReportingChainAction } from "@/interface-adapters/controllers/employee-directory.controller";
 import { EmployeeAvatar } from "./employee-avatar";
@@ -103,8 +102,8 @@ export function ReportingChainDialog({
             </div>
           ) : (
             <div className="relative space-y-3">
-              {/* Connecting line */}
-              <div className="bg-border absolute top-12 bottom-12 left-6 w-0.5" />
+              {/* Connecting line with gradient */}
+              <div className="via-border to-primary/60 absolute top-10 bottom-10 left-[2rem] w-0.5 rounded-full bg-gradient-to-b from-amber-400/60" />
 
               <AnimatePresence mode="sync">
                 {/* Chain members (managers up to CEO) */}
@@ -115,12 +114,7 @@ export function ReportingChainDialog({
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <ChainCard
-                      member={member}
-                      isFirst={index === 0}
-                      isLast={index === chain.length - 1}
-                      level={chain.length - index}
-                    />
+                    <ChainCard member={member} isFirst={index === 0} />
                   </motion.div>
                 ))}
 
@@ -130,19 +124,18 @@ export function ReportingChainDialog({
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: chain.length * 0.1 }}
                 >
-                  <Card className="border-primary/50 bg-primary/5 relative">
+                  <Card className="border-primary/50 bg-primary/5 relative overflow-hidden">
                     <div className="flex items-center gap-3 p-3">
-                      {/* Connector dot */}
-                      <div className="relative z-10">
+                      <div className="relative z-10 shrink-0">
                         <EmployeeAvatar
                           firstName={employee.firstName}
                           lastName={employee.lastName}
                           size="md"
                         />
                       </div>
-                      <div className="min-w-0 flex-1">
+                      <div className="min-w-0 flex-1 overflow-hidden">
                         <div className="flex items-center gap-2">
-                          <p className="truncate text-sm font-medium">
+                          <p className="min-w-0 truncate text-sm font-medium">
                             {employee.fullName}
                           </p>
                           <Badge variant="default" className="shrink-0 text-xs">
@@ -150,13 +143,16 @@ export function ReportingChainDialog({
                           </Badge>
                         </div>
                         {employee.title && (
-                          <p className="text-muted-foreground truncate text-xs">
+                          <p className="text-muted-foreground text-xs">
                             {employee.title}
                           </p>
                         )}
-                        <p className="text-muted-foreground truncate text-xs">
-                          {employee.orgUnitName}
-                        </p>
+                        {employee.orgUnitName &&
+                          employee.orgUnitName !== "Unassigned" && (
+                            <p className="text-muted-foreground truncate text-xs">
+                              {employee.orgUnitName}
+                            </p>
+                          )}
                       </div>
                     </div>
                   </Card>
@@ -173,37 +169,25 @@ export function ReportingChainDialog({
 interface ChainCardProps {
   member: EmployeeDirectoryDTO;
   isFirst: boolean;
-  isLast: boolean;
-  level: number;
 }
 
-function ChainCard({ member, isFirst, isLast, level }: ChainCardProps) {
+function ChainCard({ member, isFirst }: ChainCardProps) {
   return (
-    <Card
-      className={cn(
-        "hover:bg-muted/50 relative transition-colors",
-        isFirst &&
-          "border-amber-500/50 bg-amber-500/5 dark:border-amber-400/50 dark:bg-amber-400/10",
-      )}
-    >
+    <Card className="border-border/60 hover:bg-muted/50 relative overflow-hidden transition-colors">
       <div className="flex items-center gap-3 p-3">
-        {/* Connector with chevron */}
-        <div className="relative z-10">
+        <div className="relative z-10 shrink-0">
           <EmployeeAvatar
             firstName={member.firstName}
             lastName={member.lastName}
             size="md"
           />
-          {!isLast && (
-            <div className="text-muted-foreground absolute -bottom-4 left-1/2 -translate-x-1/2">
-              <ChevronUp className="h-4 w-4" />
-            </div>
-          )}
         </div>
 
-        <div className="min-w-0 flex-1">
+        <div className="min-w-0 flex-1 overflow-hidden">
           <div className="flex items-center gap-2">
-            <p className="truncate text-sm font-medium">{member.fullName}</p>
+            <p className="min-w-0 truncate text-sm font-medium">
+              {member.fullName}
+            </p>
             {isFirst && (
               <Badge
                 variant="outline"
@@ -214,18 +198,14 @@ function ChainCard({ member, isFirst, isLast, level }: ChainCardProps) {
             )}
           </div>
           {member.title && (
+            <p className="text-muted-foreground text-xs">{member.title}</p>
+          )}
+          {member.orgUnitName && member.orgUnitName !== "Unassigned" && (
             <p className="text-muted-foreground truncate text-xs">
-              {member.title}
+              {member.orgUnitName}
             </p>
           )}
-          <p className="text-muted-foreground truncate text-xs">
-            {member.orgUnitName}
-          </p>
         </div>
-
-        <Badge variant="secondary" className="shrink-0 text-xs">
-          +{level}
-        </Badge>
       </div>
     </Card>
   );
