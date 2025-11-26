@@ -209,6 +209,35 @@ async function main(): Promise<void> {
     process.on("SIGTERM", () => shutdown("SIGTERM"));
     process.on("SIGINT", () => shutdown("SIGINT"));
 
+    // Process-level error handlers - prevent silent crashes
+    process.on("uncaughtException", (error: Error) => {
+      log.error(
+        "uncaughtException",
+        "Fatal: Uncaught exception in worker process",
+        error,
+        {
+          pid: process.pid,
+          uptime: process.uptime(),
+        },
+      );
+      shutdown("uncaughtException");
+    });
+
+    process.on("unhandledRejection", (reason: unknown) => {
+      const error =
+        reason instanceof Error ? reason : new Error(String(reason));
+      log.error(
+        "unhandledRejection",
+        "Fatal: Unhandled promise rejection in worker process",
+        error,
+        {
+          pid: process.pid,
+          uptime: process.uptime(),
+        },
+      );
+      shutdown("unhandledRejection");
+    });
+
     log.info("main", "Ready to process jobs");
     log.info("main", "Press Ctrl+C to stop");
   } catch (error) {
