@@ -524,7 +524,9 @@ export const auth = betterAuth({
     },
   },
 
-  trustedOrigins: [process.env.BETTER_AUTH_URL || "http://localhost:3000"],
+  trustedOrigins: process.env.TRUSTED_ORIGINS
+    ? process.env.TRUSTED_ORIGINS.split(",").map((o) => o.trim())
+    : [process.env.BETTER_AUTH_URL || "http://localhost:3000"],
 
   plugins: [
     nextCookies(),
