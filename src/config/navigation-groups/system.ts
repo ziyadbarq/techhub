@@ -64,9 +64,9 @@ export const systemSettingsGroup: NavGroup = {
       permission: PERMISSIONS.SETTINGS_MANAGE,
     },
   ],
-  visible: true,
+  visible: false,
   collapsible: true,
-  defaultCollapsed: false,
+  defaultCollapsed: true,
   permission: PERMISSIONS.SETTINGS_MANAGE,
 };
 
@@ -113,7 +113,7 @@ export const adminGroup: NavGroup = {
   ],
   visible: true,
   collapsible: true,
-  defaultCollapsed: false,
+  defaultCollapsed: true,
 };
 
 export const documentationGroup: NavGroup = {
@@ -147,5 +147,5 @@ export const documentationGroup: NavGroup = {
   ],
   visible: false,
   collapsible: true,
-  defaultCollapsed: false,
+  defaultCollapsed: true,
 };

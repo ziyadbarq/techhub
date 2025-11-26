@@ -95,6 +95,9 @@ import { UpdatePersonUseCase } from "@/core/use-cases/foundation/person/update-p
 import { DeletePersonUseCase } from "@/core/use-cases/foundation/person/delete-person.use-case";
 import { DeletePersonWithConfirmationUseCase } from "@/core/use-cases/foundation/person/delete-person-with-confirmation.use-case";
 
+// Employee Directory Use Cases
+import { ListEmployeeDirectoryUseCase } from "@/core/use-cases/foundation/employee-directory";
+
 // Person Role Assignment Use Cases
 import { CreatePersonRoleAssignmentUseCase } from "@/core/use-cases/foundation/person-role-assignment/create-person-role-assignment.use-case";
 import { GetPersonRoleAssignmentUseCase } from "@/core/use-cases/foundation/person-role-assignment/get-person-role-assignment.use-case";
@@ -439,6 +442,15 @@ export function bindFoundationDependencies(container: Container): void {
       DI_TOKENS.DeletePersonWithConfirmationUseCase,
     )
     .to(DeletePersonWithConfirmationUseCase)
+    .inTransientScope();
+
+  // ==========================================
+  // Employee Directory Use Cases
+  // ==========================================
+
+  container
+    .bind<ListEmployeeDirectoryUseCase>(DI_TOKENS.ListEmployeeDirectoryUseCase)
+    .to(ListEmployeeDirectoryUseCase)
     .inTransientScope();
 
   // ==========================================

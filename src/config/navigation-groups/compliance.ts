@@ -44,7 +44,7 @@ export const contractsGroup: NavGroup = {
       featureFlag: "CONTRACTS",
     },
   ],
-  visible: true,
+  visible: false,
   collapsible: true,
   defaultCollapsed: false,
 };
@@ -78,7 +78,7 @@ export const licensesGroup: NavGroup = {
       featureFlag: "LICENSES",
     },
   ],
-  visible: true,
+  visible: false,
   collapsible: true,
   defaultCollapsed: false,
 };
@@ -110,11 +110,12 @@ export const governanceGroup: NavGroup = {
       description: "Schedule and track compliance verification campaigns",
       permission: PERMISSIONS.VERIFICATION_CAMPAIGNS_VIEW,
       featureFlag: "GOVERNANCE",
+      visible: false,
     },
   ],
   visible: true,
   collapsible: true,
-  defaultCollapsed: false,
+  defaultCollapsed: true,
 };
 
 export const attachmentsGroup: NavGroup = {
@@ -138,7 +139,7 @@ export const attachmentsGroup: NavGroup = {
       featureFlag: "ATTACHMENTS",
     },
   ],
-  visible: true,
+  visible: false,
   collapsible: true,
   defaultCollapsed: false,
 };

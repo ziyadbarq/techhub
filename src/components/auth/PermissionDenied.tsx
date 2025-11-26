@@ -347,7 +347,7 @@ export function PermissionDenied({
   title = "Access Denied",
   showBackButton = true,
   backButtonText = "Return to Dashboard",
-  backButtonUrl = "/",
+  backButtonUrl = "/dashboard",
 }: PermissionDeniedProps) {
   const permissionDescription = getPermissionDescription(requiredPermission);
 

@@ -322,6 +322,9 @@ export const DI_TOKENS = {
   ),
   SyncUsersFromGraphUseCase: Symbol.for("SyncUsersFromGraphUseCase"),
 
+  // Foundation: Employee Directory Use Cases
+  ListEmployeeDirectoryUseCase: Symbol.for("ListEmployeeDirectoryUseCase"),
+
   // Foundation: Person Role Assignment Use Cases
   CreatePersonRoleAssignmentUseCase: Symbol.for(
     "CreatePersonRoleAssignmentUseCase",

@@ -19,6 +19,7 @@ import {
   UserCog,
   Settings2,
   TrendingUp,
+  Users,
 } from "lucide-react";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { NavGroup } from "../navigation.types";
@@ -54,7 +55,7 @@ export const lifecycleGroup: NavGroup = {
   ],
   visible: true,
   collapsible: true,
-  defaultCollapsed: false,
+  defaultCollapsed: true,
 };
 
 export const organizationGroup: NavGroup = {
@@ -103,6 +104,13 @@ export const organizationGroup: NavGroup = {
       featureFlag: "FOUNDATION",
     },
     {
+      title: "Employee Directory",
+      href: "/directory",
+      icon: Users,
+      description: "Browse and search company employees",
+      permission: PERMISSIONS.PERSONS_VIEW,
+    },
+    {
       title: "Role Assignments",
       href: "/person-role-assignments",
       icon: UserCog,
@@ -113,7 +121,7 @@ export const organizationGroup: NavGroup = {
   ],
   visible: true,
   collapsible: true,
-  defaultCollapsed: false,
+  defaultCollapsed: true,
 };
 
 export const configurationGroup: NavGroup = {
@@ -135,9 +143,10 @@ export const configurationGroup: NavGroup = {
       description: "Manage exchange rates for multi-currency support",
       permission: PERMISSIONS.FX_RATES_VIEW,
       featureFlag: "FX_RATES",
+      visible: false,
     },
   ],
   visible: true,
   collapsible: true,
-  defaultCollapsed: false,
+  defaultCollapsed: true,
 };

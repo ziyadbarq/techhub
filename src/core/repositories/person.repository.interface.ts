@@ -145,4 +145,43 @@ export interface IPersonRepository {
    * Check if user ID is linked (for uniqueness validation)
    */
   existsByUserId(userId: string, excludeId?: string): Promise<boolean>;
+
+  // ==========================================
+  // Employee Directory Methods
+  // ==========================================
+
+  /**
+   * Find all employees for directory with resolved relations
+   * Optimized query for the employee directory feature
+   */
+  findAllForDirectory(options?: {
+    search?: string;
+    orgUnitIds?: string[];
+    locationIds?: string[];
+    isActive?: boolean;
+    hasManager?: boolean;
+    managerId?: string;
+  }): Promise<PersonWithDirectoryRelations[]>;
+
+  /**
+   * Find direct reports for a specific person
+   */
+  findDirectReports(managerId: string): Promise<Person[]>;
+
+  /**
+   * Count employees by org unit for directory stats
+   */
+  countByOrgUnits(): Promise<Map<string, number>>;
+}
+
+/**
+ * Person with resolved directory relations
+ * Used for optimized directory queries
+ */
+export interface PersonWithDirectoryRelations {
+  person: Person;
+  orgUnit: { id: string; name: string; code: string | null } | null;
+  location: { id: string; name: string; city: string | null } | null;
+  manager: { id: string; firstName: string; lastName: string } | null;
+  directReportsCount: number;
 }

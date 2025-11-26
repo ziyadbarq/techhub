@@ -9,7 +9,10 @@ import type { Person as PrismaPerson } from "@/generated/prisma";
 
 import { DI_TOKENS } from "@/di/types";
 import { Person } from "@/core/domain/entities/person.entity";
-import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
+import type {
+  IPersonRepository,
+  PersonWithDirectoryRelations,
+} from "@/core/repositories/person.repository.interface";
 import { createRepositoryLogger } from "./repository-logger";
 
 @injectable()
@@ -374,5 +377,130 @@ export class PrismaPersonRepository implements IPersonRepository {
       createdAt: prismaPerson.createdAt,
       updatedAt: prismaPerson.updatedAt,
     });
+  }
+
+  // ==========================================
+  // Employee Directory Methods
+  // ==========================================
+
+  async findAllForDirectory(options?: {
+    search?: string;
+    orgUnitIds?: string[];
+    locationIds?: string[];
+    isActive?: boolean;
+    hasManager?: boolean;
+    managerId?: string;
+  }): Promise<PersonWithDirectoryRelations[]> {
+    const timer = this.logger.startTimer();
+
+    try {
+      // Build where clause
+      const where: Prisma.PersonWhereInput = {};
+
+      // Active status filter (defaults to true in caller)
+      if (options?.isActive !== undefined) {
+        where.isActive = options.isActive;
+      }
+
+      // Search across multiple fields
+      if (options?.search) {
+        const query = options.search.trim();
+        where.OR = [
+          { firstName: { contains: query, mode: "insensitive" } },
+          { lastName: { contains: query, mode: "insensitive" } },
+          { email: { contains: query, mode: "insensitive" } },
+          { title: { contains: query, mode: "insensitive" } },
+          { department: { contains: query, mode: "insensitive" } },
+          { employeeId: { contains: query, mode: "insensitive" } },
+        ];
+      }
+
+      // Filter by org units
+      if (options?.orgUnitIds && options.orgUnitIds.length > 0) {
+        where.orgUnitId = { in: options.orgUnitIds };
+      }
+
+      // Filter by locations
+      if (options?.locationIds && options.locationIds.length > 0) {
+        where.locationId = { in: options.locationIds };
+      }
+
+      // Filter by manager
+      if (options?.hasManager !== undefined) {
+        where.managerId = options.hasManager ? { not: null } : null;
+      }
+
+      if (options?.managerId) {
+        where.managerId = options.managerId;
+      }
+
+      // Fetch persons with relations
+      const persons = await this.prisma.person.findMany({
+        where,
+        include: {
+          orgUnit: {
+            select: { id: true, name: true, code: true },
+          },
+          location: {
+            select: { id: true, name: true, city: true },
+          },
+          manager: {
+            select: { id: true, firstName: true, lastName: true },
+          },
+          _count: {
+            select: { directReports: true },
+          },
+        },
+        orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
+      });
+
+      this.logger.timed(
+        "findAllForDirectory",
+        `Found ${persons.length} employees`,
+        timer(),
+      );
+
+      return persons.map((p) => ({
+        person: this.toDomain(p),
+        orgUnit: p.orgUnit,
+        location: p.location,
+        manager: p.manager,
+        directReportsCount: p._count.directReports,
+      }));
+    } catch (error) {
+      this.logger.error(
+        "findAllForDirectory",
+        "Failed to fetch employees for directory",
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async findDirectReports(managerId: string): Promise<Person[]> {
+    const persons = await this.prisma.person.findMany({
+      where: {
+        managerId,
+        isActive: true,
+      },
+      orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
+    });
+
+    return persons.map((p: PrismaPerson) => this.toDomain(p));
+  }
+
+  async countByOrgUnits(): Promise<Map<string, number>> {
+    const counts = await this.prisma.person.groupBy({
+      by: ["orgUnitId"],
+      where: { isActive: true },
+      _count: { id: true },
+    });
+
+    const map = new Map<string, number>();
+    counts.forEach((c) => {
+      map.set(c.orgUnitId, c._count.id);
+    });
+
+    return map;
   }
 }

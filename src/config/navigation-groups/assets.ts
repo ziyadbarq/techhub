@@ -55,6 +55,7 @@ export const assetManagementGroup: NavGroup = {
       description: "Manage asset assignments",
       permission: PERMISSIONS.ASSET_ASSIGNMENTS_VIEW,
       featureFlag: "ASSETS",
+      visible: false, // This page is useless, assets can be assigned from the assets page.
     },
     {
       title: "Warranties",
@@ -63,6 +64,7 @@ export const assetManagementGroup: NavGroup = {
       description: "Manage asset warranties",
       permission: PERMISSIONS.WARRANTIES_VIEW,
       featureFlag: "WARRANTIES",
+      visible: false,
     },
   ],
   visible: true,
@@ -99,9 +101,9 @@ export const assetOperationsGroup: NavGroup = {
       featureFlag: "ASSET_DISPOSALS",
     },
   ],
-  visible: true,
+  visible: false,
   collapsible: true,
-  defaultCollapsed: false,
+  defaultCollapsed: true,
 };
 
 export const inventoryGroup: NavGroup = {

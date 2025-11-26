@@ -108,7 +108,7 @@ export const maintenanceGroup: NavGroup = {
       featureFlag: "MAINTENANCE",
     },
   ],
-  visible: true,
+  visible: false,
   collapsible: true,
   defaultCollapsed: false,
 };
