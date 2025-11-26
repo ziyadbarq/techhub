@@ -356,9 +356,37 @@ export interface SeedPreset {
 
 export const BUILTIN_PRESETS: SeedPreset[] = [
   {
+    name: "production",
+    description:
+      "Production-ready config only (no demo data). Run Graph sync after for persons.",
+    modules: [
+      SeedModule.RBAC,
+      SeedModule.FOUNDATION,
+      SeedModule.BUSINESS_PROCESSES,
+      SeedModule.CMDB,
+      SeedModule.ATTACHMENTS_GOVERNANCE,
+    ],
+  },
+  {
     name: "full",
-    description: "Complete database seed (all modules)",
+    description: "Complete database seed with demo data (all modules)",
     modules: Object.values(SeedModule),
+  },
+  {
+    name: "dev",
+    description:
+      "Development with demo data (requires seeded persons for demo assets)",
+    modules: [
+      SeedModule.RBAC,
+      SeedModule.FOUNDATION,
+      SeedModule.BUSINESS_PROCESSES,
+      SeedModule.ASSETS,
+      SeedModule.WARRANTIES_MAINTENANCE,
+      SeedModule.CMDB,
+      SeedModule.LAYER3_ITAM,
+      SeedModule.ATTACHMENTS_GOVERNANCE,
+      SeedModule.AI_PROMPTS_TASKS,
+    ],
   },
   {
     name: "minimal",
@@ -366,18 +394,20 @@ export const BUILTIN_PRESETS: SeedPreset[] = [
     modules: [SeedModule.RBAC, SeedModule.FOUNDATION],
   },
   {
-    name: "dev",
-    description: "Common dev data (RBAC + Foundation + Assets)",
-    modules: [SeedModule.RBAC, SeedModule.FOUNDATION, SeedModule.ASSETS],
-  },
-  {
     name: "rbac-only",
     description: "RBAC system only (permissions + roles)",
     modules: [SeedModule.RBAC],
   },
   {
+    name: "services-only",
+    description:
+      "Services module only (run after Graph sync when persons exist)",
+    modules: [SeedModule.SERVICES],
+  },
+  {
     name: "itam-complete",
-    description: "Full ITAM stack (Assets + Warranties + Layer 3)",
+    description:
+      "Full ITAM stack with demo data (Assets + Warranties + Layer 3)",
     modules: [
       SeedModule.RBAC,
       SeedModule.FOUNDATION,
@@ -389,7 +419,7 @@ export const BUILTIN_PRESETS: SeedPreset[] = [
   },
   {
     name: "services-complete",
-    description: "Service management with dependencies",
+    description: "Service management with dependencies (requires persons)",
     modules: [
       SeedModule.RBAC,
       SeedModule.FOUNDATION,

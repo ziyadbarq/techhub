@@ -173,12 +173,23 @@ async function selectOrgUnit(): Promise<string | null> {
     return null;
   }
 
+  // Sort to put BARQ first (root company), then alphabetical
+  const sortedOrgUnits = [...orgUnits].sort((a, b) => {
+    if (a.code === "BARQ") return -1;
+    if (b.code === "BARQ") return 1;
+    return a.name.localeCompare(b.name);
+  });
+
+  // Find BARQ's id to set as default
+  const barqOrgUnit = sortedOrgUnits.find((ou) => ou.code === "BARQ");
+
   const selectedId = await select({
     message: "Select default organization unit for new users:",
-    choices: orgUnits.map((ou) => ({
+    choices: sortedOrgUnits.map((ou) => ({
       name: `${ou.name} (${ou.code})`,
       value: ou.id,
     })),
+    default: barqOrgUnit?.id,
   });
 
   return selectedId;
@@ -199,12 +210,23 @@ async function selectPrimaryRole(): Promise<string | null> {
     return null;
   }
 
+  // Sort to put viewer first (minimal access role), then alphabetical
+  const sortedRoles = [...roles].sort((a, b) => {
+    if (a.name === "viewer") return -1;
+    if (b.name === "viewer") return 1;
+    return a.displayName.localeCompare(b.displayName);
+  });
+
+  // Find viewer's id to set as default
+  const viewerRole = sortedRoles.find((r) => r.name === "viewer");
+
   const selectedId = await select({
     message: "Select default primary role for new users:",
-    choices: roles.map((r) => ({
+    choices: sortedRoles.map((r) => ({
       name: `${r.displayName} (${r.name})`,
       value: r.id,
     })),
+    default: viewerRole?.id,
   });
 
   return selectedId;

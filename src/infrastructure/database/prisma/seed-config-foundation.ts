@@ -31,7 +31,7 @@ export const VENDOR_DATA = [
 ] as const;
 
 // ==============================================
-// Location Data
+// Location Data (Barq Actual Locations)
 // ==============================================
 
 export const LOCATION_DATA = [
@@ -40,331 +40,352 @@ export const LOCATION_DATA = [
     code: "RUH-HQ",
     city: "Riyadh",
     country: "Saudi Arabia",
+    locationType: "BUILDING" as const,
   },
   {
-    name: "Jeddah Branch Office",
-    code: "JED-BR",
-    city: "Jeddah",
-    country: "Saudi Arabia",
+    name: "India Office",
+    code: "IND-OFF",
+    city: "Various",
+    country: "India",
+    locationType: "BUILDING" as const,
   },
   {
-    name: "Dammam Operations Center",
-    code: "DMM-OPS",
-    city: "Dammam",
-    country: "Saudi Arabia",
-  },
-  {
-    name: "Riyadh Data Center",
-    code: "RUH-DC",
+    name: "Contact Center",
+    code: "CC-INT",
     city: "Riyadh",
     country: "Saudi Arabia",
+    locationType: "BUILDING" as const,
   },
   {
-    name: "Khobar Regional Office",
-    code: "KHB-RO",
-    city: "Khobar",
-    country: "Saudi Arabia",
-  },
-  {
-    name: "Mecca Branch",
-    code: "MEC-BR",
-    city: "Mecca",
-    country: "Saudi Arabia",
-  },
-  {
-    name: "Medina Branch",
-    code: "MED-BR",
-    city: "Medina",
-    country: "Saudi Arabia",
-  },
-  {
-    name: "Riyadh Warehouse",
-    code: "RUH-WH",
-    city: "Riyadh",
-    country: "Saudi Arabia",
-  },
-  {
-    name: "Remote - Home Office",
-    code: "REMOTE",
+    name: "Remote - Saudi Arabia",
+    code: "SA-REMOTE",
     city: "Various",
     country: "Saudi Arabia",
+    locationType: "LOGICAL" as const,
   },
   {
-    name: "Storage - Archived",
-    code: "STORAGE",
-    city: "Riyadh",
-    country: "Saudi Arabia",
+    name: "Remote - General",
+    code: "REMOTE",
+    city: "Various",
+    country: "Various",
+    locationType: "LOGICAL" as const,
   },
 ] as const;
 
 // ==============================================
 // Vendor Contact Data
 // ==============================================
+// Vendor contacts are not seeded - add real contacts via UI or data import
 
-export const VENDOR_CONTACT_DATA = [
-  {
-    vendorCode: "DELL",
-    firstName: "Layth",
-    lastName: "Al-Dhahir",
-    email: "[email protected]",
-    phone: "+966-11-555-1001",
-    role: "Account Manager",
-    isPrimary: true,
-  },
-  {
-    vendorCode: "CISCO",
-    firstName: "Hussain",
-    lastName: "Al-Jaser",
-    email: "[email protected]",
-    phone: "+966-11-555-2002",
-    role: "Support Lead",
-    isPrimary: true,
-  },
-  {
-    vendorCode: "MSFT",
-    firstName: "Nasser",
-    lastName: "Al-Fahad",
-    email: "[email protected]",
-    phone: "+966-11-555-3003",
-    role: "Technical Advisor",
-    isPrimary: false,
-  },
-] as const;
+export const VENDOR_CONTACT_DATA = [] as const;
 
 // ==============================================
-// Organization Unit Data
+// Organization Unit Data (Barq Actual Structure)
 // ==============================================
 
 export const ORG_UNIT_DATA = [
+  // Level 1: Company
   {
-    name: "Technology Department",
-    code: "TECH",
-    description: "Technology and IT operations",
+    name: "Barq",
+    code: "BARQ",
+    description: "Barq Financial Services",
+    unitType: "COMPANY" as const,
+  },
+
+  // Level 2: Divisions
+  {
+    name: "Executive Office",
+    code: "EXEC",
+    parentCode: "BARQ",
+    description: "CEO Office & Board of Directors",
+    unitType: "DIVISION" as const,
   },
   {
-    name: "Engineering Team",
+    name: "Strategy & Growth",
+    code: "STRAT",
+    parentCode: "BARQ",
+    description: "Strategic planning and business growth",
+    unitType: "DIVISION" as const,
+  },
+  {
+    name: "Technology",
+    code: "TECH",
+    parentCode: "BARQ",
+    description: "Technology and IT operations",
+    unitType: "DIVISION" as const,
+  },
+  {
+    name: "Finance",
+    code: "FIN",
+    parentCode: "BARQ",
+    description: "Finance and accounting operations",
+    unitType: "DIVISION" as const,
+  },
+  {
+    name: "Risk & Compliance",
+    code: "RISK-COMP",
+    parentCode: "BARQ",
+    description: "Risk management and regulatory compliance",
+    unitType: "DIVISION" as const,
+  },
+  {
+    name: "Business",
+    code: "BIZ",
+    parentCode: "BARQ",
+    description: "Business and commercial operations",
+    unitType: "DIVISION" as const,
+  },
+  {
+    name: "Operations",
+    code: "OPS",
+    parentCode: "BARQ",
+    description: "Customer operations and support",
+    unitType: "DIVISION" as const,
+  },
+  {
+    name: "People & Culture",
+    code: "HR",
+    parentCode: "BARQ",
+    description: "Human resources and talent management",
+    unitType: "DIVISION" as const,
+  },
+
+  // Level 3: Technology Departments
+  {
+    name: "Engineering",
     code: "ENG",
     parentCode: "TECH",
-    description: "Software and infrastructure engineering",
+    description: "Software and platform engineering",
+    unitType: "DEPARTMENT" as const,
   },
   {
-    name: "Operations Team",
-    code: "OPS",
+    name: "DevOps & Infrastructure",
+    code: "DEVOPS",
     parentCode: "TECH",
-    description: "IT operations and support",
+    description: "DevOps, infrastructure, and cloud operations",
+    unitType: "DEPARTMENT" as const,
   },
   {
-    name: "Security Team",
-    code: "SEC",
+    name: "Cybersecurity",
+    code: "CYBERSEC",
     parentCode: "TECH",
-    description: "Information security and compliance",
+    description: "Information security and cybersecurity",
+    unitType: "DEPARTMENT" as const,
   },
   {
-    name: "Finance Department",
-    code: "FIN",
-    description: "Finance and accounting operations",
+    name: "Data & Analytics",
+    code: "DATA",
+    parentCode: "TECH",
+    description: "Data science and business intelligence",
+    unitType: "DEPARTMENT" as const,
+  },
+  {
+    name: "Product",
+    code: "PRODUCT",
+    parentCode: "TECH",
+    description: "Product management and product factory",
+    unitType: "DEPARTMENT" as const,
+  },
+  {
+    name: "Business Continuity Management",
+    code: "BCM",
+    parentCode: "TECH",
+    description: "Business continuity and disaster recovery",
+    unitType: "DEPARTMENT" as const,
+  },
+
+  // Level 3: Finance Departments
+  {
+    name: "Financial Control & Reconciliation",
+    code: "FCR",
+    parentCode: "FIN",
+    description: "Financial control and reconciliation",
+    unitType: "DEPARTMENT" as const,
+  },
+  {
+    name: "Accounting",
+    code: "ACCT",
+    parentCode: "FIN",
+    description: "General accounting and financial reporting",
+    unitType: "DEPARTMENT" as const,
+  },
+  {
+    name: "Procurement & Administration",
+    code: "PROC",
+    parentCode: "FIN",
+    description: "Procurement, payroll, and administration",
+    unitType: "DEPARTMENT" as const,
+  },
+
+  // Level 3: Risk & Compliance Departments
+  {
+    name: "Compliance",
+    code: "COMP",
+    parentCode: "RISK-COMP",
+    description: "Regulatory compliance",
+    unitType: "DEPARTMENT" as const,
+  },
+  {
+    name: "AML & CTF",
+    code: "AML",
+    parentCode: "RISK-COMP",
+    description: "Anti-money laundering and counter-terrorism financing",
+    unitType: "DEPARTMENT" as const,
+  },
+  {
+    name: "Anti-Fraud",
+    code: "FRAUD",
+    parentCode: "RISK-COMP",
+    description: "Fraud prevention, bribery, and corruption",
+    unitType: "DEPARTMENT" as const,
+  },
+  {
+    name: "Sanctions",
+    code: "SANCT",
+    parentCode: "RISK-COMP",
+    description: "Sanctions compliance",
+    unitType: "DEPARTMENT" as const,
+  },
+  {
+    name: "Risk Management",
+    code: "RISK",
+    parentCode: "RISK-COMP",
+    description: "Enterprise risk management",
+    unitType: "DEPARTMENT" as const,
+  },
+  {
+    name: "Internal Audit",
+    code: "AUDIT",
+    parentCode: "RISK-COMP",
+    description: "Internal and corporate audit",
+    unitType: "DEPARTMENT" as const,
+  },
+  {
+    name: "SAMA Affairs",
+    code: "SAMA",
+    parentCode: "RISK-COMP",
+    description: "SAMA affairs and compliance assurance",
+    unitType: "DEPARTMENT" as const,
+  },
+  {
+    name: "Self-Supervisory Unit",
+    code: "SSU",
+    parentCode: "RISK-COMP",
+    description: "Self-supervisory compliance unit",
+    unitType: "DEPARTMENT" as const,
+  },
+
+  // Level 3: Business Departments
+  {
+    name: "Corporate & Partnerships",
+    code: "CORP",
+    parentCode: "BIZ",
+    description: "Corporate clients and partnerships",
+    unitType: "DEPARTMENT" as const,
+  },
+  {
+    name: "Acquiring",
+    code: "ACQ",
+    parentCode: "BIZ",
+    description: "Merchant acquiring",
+    unitType: "DEPARTMENT" as const,
+  },
+  {
+    name: "Cards",
+    code: "CARDS",
+    parentCode: "BIZ",
+    description: "Card products and services",
+    unitType: "DEPARTMENT" as const,
+  },
+  {
+    name: "Remittance & International",
+    code: "REMIT",
+    parentCode: "BIZ",
+    description: "Remittance and international partnerships",
+    unitType: "DEPARTMENT" as const,
+  },
+  {
+    name: "Loyalty & Gaming",
+    code: "LOYALTY",
+    parentCode: "BIZ",
+    description: "Loyalty programs and gaming services",
+    unitType: "DEPARTMENT" as const,
+  },
+
+  // Level 3: Operations Departments
+  {
+    name: "Contact Center",
+    code: "CC",
+    parentCode: "OPS",
+    description: "Customer contact center",
+    unitType: "DEPARTMENT" as const,
+  },
+  {
+    name: "Customer Experience",
+    code: "CX",
+    parentCode: "OPS",
+    description: "Customer experience and success",
+    unitType: "DEPARTMENT" as const,
+  },
+  {
+    name: "Payment Operations",
+    code: "PAY-OPS",
+    parentCode: "OPS",
+    description: "Payment operation control",
+    unitType: "DEPARTMENT" as const,
+  },
+
+  // Level 3: People & Culture Departments
+  {
+    name: "Human Capital",
+    code: "HC",
+    parentCode: "HR",
+    description: "HR operations and organizational development",
+    unitType: "DEPARTMENT" as const,
+  },
+  {
+    name: "Talent Acquisition",
+    code: "TA",
+    parentCode: "HR",
+    description: "Recruitment and talent acquisition",
+    unitType: "DEPARTMENT" as const,
+  },
+  {
+    name: "Marketing & Communications",
+    code: "MARCOM",
+    parentCode: "HR",
+    description: "Marketing, communications, and engagement",
+    unitType: "DEPARTMENT" as const,
+  },
+
+  // Special: Vendor (for external contractors)
+  {
+    name: "Vendor",
+    code: "VENDOR",
+    parentCode: "BARQ",
+    description: "External vendors and contractors",
+    unitType: "DIVISION" as const,
   },
 ] as const;
 
 // ==============================================
-// Person Data (Realistic Saudi Names)
+// Person Data
 // ==============================================
+// Persons are synced from Microsoft Graph - no seed data needed.
+// The first admin user is created via /register UI and promoted
+// to system-administrator via Prisma Studio/SQL.
+// All other users are synced from Microsoft Entra ID (Azure AD).
 
-export const PERSON_DATA = [
-  {
-    firstName: "Ahmed",
-    lastName: "Al-Mansour",
-    email: "[email protected]",
-    title: "IT Manager",
-    orgUnitCode: "TECH",
-  },
-  {
-    firstName: "Fatima",
-    lastName: "Al-Zahrani",
-    email: "[email protected]",
-    title: "Senior Systems Engineer",
-    orgUnitCode: "ENG",
-  },
-  {
-    firstName: "Mohammed",
-    lastName: "Al-Qarni",
-    email: "[email protected]",
-    title: "Network Administrator",
-    orgUnitCode: "OPS",
-  },
-  {
-    firstName: "Noura",
-    lastName: "Al-Rashid",
-    email: "[email protected]",
-    title: "Security Analyst",
-    orgUnitCode: "SEC",
-  },
-  {
-    firstName: "Khalid",
-    lastName: "Al-Ghamdi",
-    email: "[email protected]",
-    title: "DevOps Engineer",
-    orgUnitCode: "ENG",
-  },
-  {
-    firstName: "Sara",
-    lastName: "Al-Mutairi",
-    email: "[email protected]",
-    title: "IT Support Specialist",
-    orgUnitCode: "OPS",
-  },
-  {
-    firstName: "Abdullah",
-    lastName: "Al-Harthi",
-    email: "[email protected]",
-    title: "Database Administrator",
-    orgUnitCode: "ENG",
-  },
-  {
-    firstName: "Layla",
-    lastName: "Al-Dosari",
-    email: "[email protected]",
-    title: "Systems Administrator",
-    orgUnitCode: "OPS",
-  },
-  {
-    firstName: "Omar",
-    lastName: "Al-Shehri",
-    email: "[email protected]",
-    title: "Security Engineer",
-    orgUnitCode: "SEC",
-  },
-  {
-    firstName: "Maha",
-    lastName: "Al-Otaibi",
-    email: "[email protected]",
-    title: "Software Engineer",
-    orgUnitCode: "ENG",
-  },
-  {
-    firstName: "Faisal",
-    lastName: "Al-Harbi",
-    email: "[email protected]",
-    title: "IT Analyst",
-    orgUnitCode: "OPS",
-  },
-  {
-    firstName: "Hanan",
-    lastName: "Al-Subai",
-    email: "[email protected]",
-    title: "System Architect",
-    orgUnitCode: "ENG",
-  },
-  {
-    firstName: "Saud",
-    lastName: "Al-Ajmi",
-    email: "[email protected]",
-    title: "Network Engineer",
-    orgUnitCode: "OPS",
-  },
-  {
-    firstName: "Aisha",
-    lastName: "Al-Malki",
-    email: "[email protected]",
-    title: "Compliance Officer",
-    orgUnitCode: "SEC",
-  },
-  {
-    firstName: "Tariq",
-    lastName: "Al-Shamrani",
-    email: "[email protected]",
-    title: "Infrastructure Engineer",
-    orgUnitCode: "ENG",
-  },
-] as const;
+export const PERSON_DATA = [] as const;
 
 // ==============================================
 // Person Role Assignments
 // ==============================================
+// Role assignments happen automatically during Graph sync
+// based on department and job title mapping.
+// See src/lib/schemas/graph-normalization.ts for mapping logic.
 
-export const PERSON_ROLE_ASSIGNMENTS = [
-  {
-    personEmail: "[email protected]",
-    personName: "Ahmed Al-Mansour",
-    roleName: "system-administrator",
-    isPrimary: true,
-  },
-  {
-    personEmail: "[email protected]",
-    personName: "Fatima Al-Zahrani",
-    roleName: "service-owner",
-  },
-  {
-    personEmail: "[email protected]",
-    personName: "Mohammed Al-Qarni",
-    roleName: "it-help-desk",
-  },
-  {
-    personEmail: "[email protected]",
-    personName: "Noura Al-Rashid",
-    roleName: "security-officer",
-  },
-  {
-    personEmail: "[email protected]",
-    personName: "Khalid Al-Ghamdi",
-    roleName: "finance-manager",
-  },
-  {
-    personEmail: "[email protected]",
-    personName: "Sara Al-Mutairi",
-    roleName: "data-steward",
-  },
-  {
-    personEmail: "[email protected]",
-    personName: "Abdullah Al-Harthi",
-    roleName: "inventory-manager",
-  },
-  {
-    personEmail: "[email protected]",
-    personName: "Layla Al-Dosari",
-    roleName: "asset-coordinator",
-  },
-  {
-    personEmail: "[email protected]",
-    personName: "Omar Al-Shehri",
-    roleName: "it-help-desk",
-  },
-  {
-    personEmail: "[email protected]",
-    personName: "Maha Al-Otaibi",
-    roleName: "maintenance-technician",
-  },
-  {
-    personEmail: "[email protected]",
-    personName: "Faisal Al-Harbi",
-    roleName: "maintenance-technician",
-  },
-  {
-    personEmail: "[email protected]",
-    personName: "Hanan Al-Subai",
-    roleName: "viewer",
-  },
-  {
-    personEmail: "[email protected]",
-    personName: "Saud Al-Ajmi",
-    roleName: "viewer",
-  },
-  {
-    personEmail: "[email protected]",
-    personName: "Aisha Al-Malki",
-    roleName: "auditor",
-  },
-  {
-    personEmail: "[email protected]",
-    personName: "Tariq Al-Shamrani",
-    roleName: "service-owner",
-  },
-  {
-    personEmail: "[email protected]",
-    personName: "Abdullah Al-Harthi",
-    roleName: "viewer",
-  },
-] as const;
+export const PERSON_ROLE_ASSIGNMENTS = [] as const;
 
 // ==============================================
 // Lifecycle Status Data

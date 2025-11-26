@@ -15,7 +15,12 @@ import {
   VERIFICATION_CAMPAIGNS,
   CI_CLASS_DATA,
 } from "./seed-config.js";
-import { getRelativeDate, logStep, logSuccess } from "./seed-utils.js";
+import {
+  getRelativeDate,
+  logStep,
+  logSuccess,
+  logWarning,
+} from "./seed-utils.js";
 
 /**
  * Seed governance data
@@ -83,10 +88,32 @@ export async function seedGovernance(prisma: PrismaClient) {
   }
   const ciClasses = await prisma.cIClass.findMany({});
   const assetCategories = await prisma.assetCategory.findMany({});
+  const hasPersons = persons.length > 0;
+  const hasAssetCategories = assetCategories.length > 0;
   const fallbackPerson = persons[0];
+
+  if (!hasPersons) {
+    logWarning(
+      "No persons found. Person-owned data ownerships and verification campaigns will be skipped. Run Microsoft Graph sync, then re-run governance seeding.",
+    );
+  }
+
+  if (!hasAssetCategories) {
+    logWarning(
+      "No asset categories found. Asset-category ownerships will be skipped (seed the Assets module for full demo data).",
+    );
+  }
 
   let ownershipCount = 0;
   for (const ownership of DATA_OWNERSHIPS) {
+    if (!hasAssetCategories && ownership.targetType === "ASSET_CATEGORY") {
+      continue;
+    }
+
+    if (!hasPersons && ownership.ownerType === "PERSON") {
+      continue;
+    }
+
     // Find the data domain
     const domain = createdDomains.find(
       (d) => d.code === ownership.dataDomainCode,
@@ -174,32 +201,41 @@ export async function seedGovernance(prisma: PrismaClient) {
   logStep("📋", "Creating verification campaigns...");
 
   const campaigns = [];
-  for (const campaignTemplate of VERIFICATION_CAMPAIGNS) {
-    // Find creator
-    const creator =
-      persons.find((p) => p.email === campaignTemplate.creatorEmail) ||
-      fallbackPerson;
-    if (!creator) {
-      console.warn(
-        `   ⚠️  Creator ${campaignTemplate.creatorEmail} not found and no fallback available, skipping campaign`,
-      );
-      continue;
+
+  if (!hasPersons) {
+    logWarning(
+      "Skipping verification campaigns and items because no persons exist. Run Graph sync, then re-run governance seeding.",
+    );
+  } else {
+    for (const campaignTemplate of VERIFICATION_CAMPAIGNS) {
+      // Find creator
+      const creator =
+        persons.find((p) => p.email === campaignTemplate.creatorEmail) ||
+        fallbackPerson;
+      if (!creator) {
+        console.warn(
+          `   ⚠️  Creator ${campaignTemplate.creatorEmail} not found and no fallback available, skipping campaign`,
+        );
+        continue;
+      }
+
+      const campaign = await prisma.verificationCampaign.create({
+        data: {
+          name: campaignTemplate.name,
+          description: campaignTemplate.description,
+          targetType: campaignTemplate.targetType,
+          scheduledStart: getRelativeDate(
+            campaignTemplate.scheduledStartDaysFromNow,
+          ),
+          scheduledEnd: getRelativeDate(
+            campaignTemplate.scheduledEndDaysFromNow,
+          ),
+          createdById: creator.id,
+        },
+      });
+
+      campaigns.push(campaign);
     }
-
-    const campaign = await prisma.verificationCampaign.create({
-      data: {
-        name: campaignTemplate.name,
-        description: campaignTemplate.description,
-        targetType: campaignTemplate.targetType,
-        scheduledStart: getRelativeDate(
-          campaignTemplate.scheduledStartDaysFromNow,
-        ),
-        scheduledEnd: getRelativeDate(campaignTemplate.scheduledEndDaysFromNow),
-        createdById: creator.id,
-      },
-    });
-
-    campaigns.push(campaign);
   }
 
   logSuccess(`Created ${campaigns.length} verification campaigns`);

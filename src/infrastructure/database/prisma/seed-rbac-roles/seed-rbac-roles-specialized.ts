@@ -241,4 +241,33 @@ export const SPECIALIZED_ROLES: Record<string, RoleDefinition> = {
       PERMISSIONS.SETTINGS_VIEW,
     ],
   },
+
+  /**
+   * HR Manager - Human Resources and People Operations
+   * People & Culture team - employee data access for HR functions
+   * NOTE: Minimal permissions for now; will expand when HR features are added
+   */
+  "hr-manager": {
+    name: "hr-manager",
+    displayName: "HR Manager",
+    description:
+      "Human Resources - employee data, org structure, people management",
+    permissions: [
+      // Organization Units - Read-only (org structure visibility)
+      PERMISSIONS.ORGANIZATION_UNITS_VIEW,
+
+      // Persons - Read-only (employee directory and info)
+      PERMISSIONS.PERSONS_VIEW,
+      PERMISSIONS.PERSON_ROLE_ASSIGNMENTS_VIEW,
+
+      // Locations - Read-only (office locations for HR planning)
+      PERMISSIONS.LOCATIONS_VIEW,
+
+      // Dashboard
+      PERMISSIONS.DASHBOARD_VIEW,
+
+      // Settings
+      PERMISSIONS.SETTINGS_VIEW,
+    ],
+  },
 } as const;

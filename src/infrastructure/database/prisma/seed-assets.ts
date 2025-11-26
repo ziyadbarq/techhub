@@ -183,31 +183,12 @@ export async function seedAssets(prisma: PrismaClient) {
 
   const stockLocations = [];
 
+  // Single main warehouse - add more locations via UI or data import
   const stockLocationData = [
     {
-      name: "Main Warehouse - Riyadh",
-      code: "WH-RUH-01",
-      description: "Primary warehouse for IT assets",
-    },
-    {
-      name: "IT Storage - Headquarters",
-      code: "IT-HQ-01",
-      description: "HQ IT department storage",
-    },
-    {
-      name: "Server Room - Data Center",
-      code: "DC-RUH-01",
-      description: "Data center storage area",
-    },
-    {
-      name: "Branch Storage - Jeddah",
-      code: "BR-JED-01",
-      description: "Jeddah branch storage facility",
-    },
-    {
-      name: "Asset Receiving Area",
-      code: "RECV-01",
-      description: "Incoming asset receiving dock",
+      name: "Main Warehouse",
+      code: "MAIN-WH",
+      description: "Primary IT asset warehouse",
     },
   ];
 

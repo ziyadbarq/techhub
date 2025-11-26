@@ -18,10 +18,10 @@
 
 export const SEED_QUANTITIES = {
   // Foundation Layer
-  VENDORS: 8,
-  LOCATIONS: 10,
-  ORGANIZATION_UNITS: 5,
-  PERSONS: 15,
+  VENDORS: 9,
+  LOCATIONS: 5, // Barq actual locations
+  ORGANIZATION_UNITS: 38, // 1 company + 9 divisions + 28 departments
+  PERSONS: 0, // Persons come from Microsoft Graph sync
   LIFECYCLE_STATUSES: 6,
   FIELD_DEFINITIONS: 8,
   EXCHANGE_RATES: 14, // All supported currencies except SAR

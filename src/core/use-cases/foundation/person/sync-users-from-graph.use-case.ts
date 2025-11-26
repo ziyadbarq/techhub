@@ -93,8 +93,8 @@ export class SyncUsersFromGraphUseCase {
     this.logger.info("Starting user sync from Microsoft Graph", { options });
 
     try {
-      // Get default IDs for required fields
-      const { orgUnitId, roleId } = await this.getDefaultIds(options);
+      // Get default org unit ID and build role map for automatic assignment
+      const { orgUnitId, roleMap } = await this.getDefaultIds(options);
 
       // Pass 1: Fetch and sync all users
       this.logger.info("Pass 1: Fetching users from Microsoft Graph");
@@ -109,9 +109,10 @@ export class SyncUsersFromGraphUseCase {
       // Process each user
       for (const graphUser of graphUsers) {
         try {
+          // Transform Graph user to Person data with automatic role assignment
           const personData = transformGraphUserToPerson(graphUser, {
             orgUnitId,
-            primaryRoleId: roleId,
+            roleMap, // Pass role map for automatic role assignment
           });
 
           // Find existing person by azureAdId (NOT by email!)
@@ -209,49 +210,55 @@ export class SyncUsersFromGraphUseCase {
   }
 
   /**
-   * Get default organization unit and role IDs
+   * Get default organization unit ID and build role map for automatic assignment
    */
   private async getDefaultIds(options?: SyncUsersOptions): Promise<{
     orgUnitId: string;
-    roleId: string;
+    roleMap: Map<string, string>;
   }> {
     // Get org unit ID
     let orgUnitId = options?.defaultOrgUnitId;
     if (!orgUnitId) {
-      // Fall back to first org unit
-      const allOrgUnits = await this.orgUnitRepository.findAll({ take: 1 });
-      if (allOrgUnits.length > 0) {
-        orgUnitId = allOrgUnits[0].id;
+      // Try to find BARQ root org unit first
+      const barqOrgUnit = await this.orgUnitRepository.findByCode("BARQ");
+      if (barqOrgUnit) {
+        orgUnitId = barqOrgUnit.id;
       } else {
-        throw new Error(
-          "No organization units found. Please create at least one organization unit before syncing.",
-        );
-      }
-    }
-
-    // Get role ID
-    let roleId = options?.defaultPrimaryRoleId;
-    if (!roleId) {
-      // Try to find viewer role
-      const viewerRole = await this.roleRepository.findByName("viewer");
-      if (viewerRole) {
-        roleId = viewerRole.id;
-      } else {
-        // Fall back to first role
-        const allRoles = await this.roleRepository.findAll({
-          includeInactive: false,
-        });
-        if (allRoles.length > 0) {
-          roleId = allRoles[0].id;
+        // Fall back to first org unit
+        const allOrgUnits = await this.orgUnitRepository.findAll({ take: 1 });
+        if (allOrgUnits.length > 0) {
+          orgUnitId = allOrgUnits[0].id;
         } else {
           throw new Error(
-            "No roles found. Please create at least one role before syncing.",
+            "No organization units found. Please create at least one organization unit before syncing.",
           );
         }
       }
     }
 
-    return { orgUnitId, roleId };
+    // Build role map: roleName → roleId
+    // This is used for automatic role assignment based on department/title
+    const roleMap = new Map<string, string>();
+    const allRoles = await this.roleRepository.findAll({
+      includeInactive: false,
+    });
+
+    if (allRoles.length === 0) {
+      throw new Error(
+        "No roles found. Please create at least one role before syncing.",
+      );
+    }
+
+    for (const role of allRoles) {
+      roleMap.set(role.name, role.id);
+    }
+
+    this.logger.info("Built role map for automatic assignment", {
+      roleCount: roleMap.size,
+      roles: Array.from(roleMap.keys()),
+    });
+
+    return { orgUnitId, roleMap };
   }
 
   /**

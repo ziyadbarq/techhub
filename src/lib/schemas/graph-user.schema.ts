@@ -4,9 +4,20 @@
  * Zod validation schemas for Microsoft Graph API user responses.
  * These schemas validate data received from the Graph API and provide
  * type-safe transformation to Person entity format.
+ *
+ * Features:
+ * - Email domain filtering (only @barq.com and @barraq.com.sa)
+ * - Department/office normalization for messy Graph data
+ * - Automatic role assignment based on department and title
  */
 
 import { z } from "zod";
+import {
+  isValidEmailDomain,
+  normalizeDepartment,
+  normalizeOffice,
+  determineRoleFromDeptTitle,
+} from "./graph-normalization";
 
 /**
  * Schema for a single user from Microsoft Graph API
@@ -122,25 +133,43 @@ export interface SyncResult {
 }
 
 /**
- * Checks if a user is an internal user (not a guest/external)
+ * Checks if a user is an internal Barq user.
+ *
+ * A user is considered internal if:
+ * 1. Not a guest/external user (no #EXT# in UPN)
+ * 2. Has a valid Barq email domain (@barq.com or @barraq.com.sa)
  *
  * @param user - Graph user to check
- * @returns true if user is internal, false if guest/external
+ * @returns true if user is internal Barq employee, false otherwise
  */
 export function isInternalUser(user: GraphUser): boolean {
-  return !user.userPrincipalName.includes("#EXT#");
+  // Check for guest/external flag
+  if (user.userPrincipalName.includes("#EXT#")) {
+    return false;
+  }
+
+  // Check email domain (use mail if available, otherwise extract from UPN)
+  const email = user.mail || user.userPrincipalName;
+  return isValidEmailDomain(email);
 }
 
 /**
  * Transforms a Microsoft Graph user to Person sync input
  *
+ * Features:
+ * - Normalizes department and office values (handles typos, variations)
+ * - Automatically assigns role based on department and job title
+ * - Stores raw department/office for reference, uses normalized codes internally
+ *
  * @param graphUser - Validated Graph user data
  * @param defaults - Default values for required fields
+ * @param defaults.orgUnitId - Default organization unit ID
+ * @param defaults.roleMap - Map of role names to role IDs (for automatic assignment)
  * @returns Data ready for Person upsert
  */
 export function transformGraphUserToPerson(
   graphUser: GraphUser,
-  defaults: { orgUnitId: string; primaryRoleId: string },
+  defaults: { orgUnitId: string; roleMap: Map<string, string> },
 ): PersonSyncInput {
   // Extract name parts with fallbacks
   const nameParts = graphUser.displayName.split(" ");
@@ -155,6 +184,23 @@ export function transformGraphUserToPerson(
     email = email.split("#EXT#")[0].replace("_", "@");
   }
 
+  // Normalize department and office for internal matching
+  const normalizedDeptCode = normalizeDepartment(graphUser.department);
+  const normalizedOfficeCode = normalizeOffice(graphUser.officeLocation);
+
+  // Determine role based on department and title
+  const roleName = determineRoleFromDeptTitle(
+    normalizedDeptCode,
+    graphUser.jobTitle,
+  );
+
+  // Get role ID from map, fallback to viewer
+  const primaryRoleId =
+    defaults.roleMap.get(roleName) ||
+    defaults.roleMap.get("viewer") ||
+    // Last resort: just use the first role ID in the map
+    Array.from(defaults.roleMap.values())[0];
+
   return {
     azureAdId: graphUser.id, // Immutable source of truth
     firstName,
@@ -164,13 +210,14 @@ export function transformGraphUserToPerson(
     mobile: graphUser.mobilePhone,
     employeeId: graphUser.employeeId,
     title: graphUser.jobTitle,
+    // Store raw department/office for display, but use normalized codes internally
     department: graphUser.department,
-    office: graphUser.officeLocation,
+    office: normalizedOfficeCode, // Use normalized office code for location matching
     isActive: graphUser.accountEnabled,
     hireDate: graphUser.employeeHireDate
       ? new Date(graphUser.employeeHireDate)
       : null,
     orgUnitId: defaults.orgUnitId,
-    primaryRoleId: defaults.primaryRoleId,
+    primaryRoleId,
   };
 }

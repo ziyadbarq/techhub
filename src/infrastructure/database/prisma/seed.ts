@@ -1,17 +1,16 @@
 /**
  * Database Seed File
  *
- * Seeds the database with comprehensive test data:
- * 1. RBAC (roles, permissions, role-permission assignments)
- * 2. Foundation (lifecycle, vendors, org units, locations, persons, fields)
- * 3. Assets (categories, models, assets, stock, assignments)
- * 4. Warranties & Maintenance (warranties, schedules, records)
- * 5. CMDB (relationship types, configuration items, relationships)
- * 6. Layer 3 ITAM (disposals, asset kits, reservations)
- * 7. Attachment Types (polymorphic file attachments)
- * 8. Governance (data domains, ownerships, verification campaigns)
- * 9. AI prompt templates
- * 10. Example tasks (for demonstration)
+ * Seeds the database based on selected preset:
+ * - production: RBAC, Foundation, Business Processes, CMDB types, Governance (no demo data)
+ * - dev: Production + demo assets, warranties, Layer 3 ITAM, AI tasks
+ * - full: All modules including services (requires persons)
+ *
+ * Usage:
+ *   npm run db:seed           # production preset (default)
+ *   npm run db:seed:dev       # dev preset with demo data
+ *   npm run db:seed:full      # full preset with all modules
+ *   npm run db:seed -- <preset>  # any preset by name
  */
 
 import { prisma } from "./client.js";
@@ -26,20 +25,55 @@ import { seedLayer3ITAM } from "./seed-layer3-itam.js";
 import { seedAttachments } from "./seed-attachments.js";
 import { seedGovernance } from "./seed-governance.js";
 import { seedBusinessProcesses, seedServices } from "./seed-services.js";
-import { logSection, logSuccess, logStep } from "./seed-utils.js";
+import { logSection, logSuccess, logStep, logWarning } from "./seed-utils.js";
 import {
   performFullCleanup,
   initializeCodeSequences,
   seedExampleTasks,
 } from "./seed-operations.js";
+import {
+  BUILTIN_PRESETS,
+  SeedModule,
+  resolveDependencies,
+} from "./seed-dependencies.js";
+
+/**
+ * Parse command line arguments for preset selection
+ */
+function getSelectedPreset(): { name: string; modules: Set<SeedModule> } {
+  const presetName = process.argv[2] || "production";
+
+  // Find the preset
+  const preset = BUILTIN_PRESETS.find((p) => p.name === presetName);
+  if (!preset) {
+    const available = BUILTIN_PRESETS.map((p) => p.name).join(", ");
+    console.error(`\n❌ Unknown preset: "${presetName}"`);
+    console.error(`Available presets: ${available}\n`);
+    process.exit(1);
+  }
+
+  // Resolve all dependencies
+  const resolvedModules = resolveDependencies(preset.modules);
+  return {
+    name: preset.name,
+    modules: new Set(resolvedModules),
+  };
+}
 
 async function main() {
   const startTime = Date.now();
+  const { name: presetName, modules } = getSelectedPreset();
+
+  // Helper to check if a module should be seeded
+  const shouldSeed = (module: SeedModule) => modules.has(module);
 
   console.log("\n" + "=".repeat(60));
-  console.log("🌱 COMPREHENSIVE DATABASE SEED");
+  console.log(`🌱 DATABASE SEED - ${presetName.toUpperCase()} PRESET`);
   console.log("=".repeat(60));
-  console.log("Starting comprehensive multi-layer seeding process...\n");
+
+  const preset = BUILTIN_PRESETS.find((p) => p.name === presetName);
+  console.log(`📋 ${preset?.description || ""}`);
+  console.log(`📦 Modules: ${Array.from(modules).join(", ")}\n`);
 
   try {
     // 0. Cleanup all tables
@@ -55,61 +89,104 @@ async function main() {
     logSuccess(`Initialized ${sequenceCount} code sequences`);
     console.log("");
 
-    // 1. Seed RBAC (roles, permissions, assignments)
-    await seedRBAC();
-    console.log("");
+    // Track what was seeded
+    const seeded: string[] = [];
 
-    // 1.5. Seed Feature Flags (all disabled by default)
-    await seedFeatureFlags(prisma);
-    console.log("");
+    // 1. Seed RBAC (always required - base dependency)
+    if (shouldSeed(SeedModule.RBAC)) {
+      await seedRBAC();
+      seeded.push("RBAC (roles, permissions)");
+      console.log("");
 
-    // 2. Seed Foundation (lifecycle, vendors, org units, locations, persons, fields)
-    await seedFoundation(prisma);
-    console.log("");
+      // Feature flags go with RBAC
+      await seedFeatureFlags(prisma);
+      seeded.push("Feature flags");
+      console.log("");
+    }
 
-    // 3. Seed Business Processes (for Service Management)
-    await seedBusinessProcesses(prisma);
+    // 2. Seed Foundation
+    if (shouldSeed(SeedModule.FOUNDATION)) {
+      await seedFoundation(prisma);
+      seeded.push("Foundation (vendors, locations, org units, lifecycle)");
+      console.log("");
+    }
 
-    // 4. Seed Assets (categories, models, assets, stock locations, movements, assignments)
-    await seedAssets(prisma);
-    console.log("");
+    // 3. Seed Business Processes
+    if (shouldSeed(SeedModule.BUSINESS_PROCESSES)) {
+      await seedBusinessProcesses(prisma);
+      seeded.push("Business Processes (25 processes)");
+      console.log("");
+    }
 
-    // 5. Seed Warranties & Maintenance (warranties, schedules, records)
-    await seedWarrantiesMaintenance(prisma);
-    console.log("");
+    // 4. Seed Assets (demo data)
+    if (shouldSeed(SeedModule.ASSETS)) {
+      await seedAssets(prisma);
+      seeded.push("Assets (categories, models, demo assets, stock)");
+      console.log("");
+    }
 
-    // 6. Seed Services (80 services with owners and infrastructure)
-    await seedServices(prisma);
-    console.log("");
+    // 5. Seed Warranties & Maintenance (demo data)
+    if (shouldSeed(SeedModule.WARRANTIES_MAINTENANCE)) {
+      await seedWarrantiesMaintenance(prisma);
+      seeded.push("Warranties & Maintenance (demo data)");
+      console.log("");
+    }
 
-    // 7. Seed CMDB Relationship Types (for Layer 3 to reference)
-    await seedCMDB(prisma);
-    console.log("");
+    // 6. Seed Services (requires persons)
+    if (shouldSeed(SeedModule.SERVICES)) {
+      // Check if persons exist first
+      const personCount = await prisma.person.count();
+      if (personCount === 0) {
+        logWarning(
+          "Services module skipped - no persons exist. Run Graph sync first, then use services-only preset.",
+        );
+      } else {
+        await seedServices(prisma);
+        seeded.push("Services (80 services with owners)");
+      }
+      console.log("");
+    }
 
-    // 8. Seed Layer 3 ITAM (disposals, asset kits, reservations, complete CMDB with CIs and relationships)
-    await seedLayer3ITAM(prisma);
-    console.log("");
+    // 7. Seed CMDB (relationship types + optional demo CIs)
+    if (shouldSeed(SeedModule.CMDB)) {
+      await seedCMDB(prisma);
+      seeded.push("CMDB (CI classes, relationship types)");
+      console.log("");
+    }
 
-    // 7. Seed Attachment Types
-    await seedAttachments(prisma);
-    console.log("");
+    // 8. Seed Layer 3 ITAM (demo data)
+    if (shouldSeed(SeedModule.LAYER3_ITAM)) {
+      await seedLayer3ITAM(prisma);
+      seeded.push("Layer 3 ITAM (disposals, kits, reservations, licenses)");
+      console.log("");
+    }
 
-    // 8. Seed Governance (data domains, ownerships, verification campaigns)
-    await seedGovernance(prisma);
-    console.log("");
+    // 9. Seed Attachment Types
+    if (shouldSeed(SeedModule.ATTACHMENTS_GOVERNANCE)) {
+      await seedAttachments(prisma);
+      seeded.push("Attachment types");
+      console.log("");
 
-    // 9. Seed AI prompt templates
-    logSection("AI Prompt Templates");
-    logStep("🤖", "Seeding AI prompt templates...");
-    await seedPrompts(prisma);
-    logSuccess("AI prompt templates seeded");
-    console.log("");
+      await seedGovernance(prisma);
+      seeded.push("Governance (data domains, ownerships, verification)");
+      console.log("");
+    }
 
-    // 10. Seed example tasks
-    logSection("Example Tasks");
-    logStep("📝", "Creating example tasks...");
-    const taskCount = await seedExampleTasks(prisma);
-    logSuccess(`Created ${taskCount} example tasks`);
+    // 10. Seed AI Prompts & Tasks (demo/dev data)
+    if (shouldSeed(SeedModule.AI_PROMPTS_TASKS)) {
+      logSection("AI Prompt Templates");
+      logStep("🤖", "Seeding AI prompt templates...");
+      await seedPrompts(prisma);
+      logSuccess("AI prompt templates seeded");
+      seeded.push("AI prompt templates");
+      console.log("");
+
+      logSection("Example Tasks");
+      logStep("📝", "Creating example tasks...");
+      const taskCount = await seedExampleTasks(prisma);
+      logSuccess(`Created ${taskCount} example tasks`);
+      seeded.push("Example tasks");
+    }
 
     // Calculate execution time
     const endTime = Date.now();
@@ -117,49 +194,29 @@ async function main() {
 
     // Final summary
     console.log("\n" + "=".repeat(60));
-    console.log("✅ COMPREHENSIVE DATABASE SEED COMPLETED SUCCESSFULLY!");
+    console.log(
+      `✅ DATABASE SEED COMPLETED - ${presetName.toUpperCase()} PRESET`,
+    );
     console.log("=".repeat(60));
-    console.log("\nSeeded data summary:");
-    console.log("  Layer 0: RBAC System");
-    console.log("    ✓ Roles, permissions, and role-permission assignments");
-    console.log("    ✓ Feature flags (19 features, default: disabled)");
-    console.log("  Layer 1: Foundation");
-    console.log(
-      "    ✓ Lifecycle, vendors, org units, locations, persons, fields",
-    );
-    console.log("  Service Management:");
-    console.log(
-      "    ✓ 25 business processes (Core Banking, Channels, Infrastructure, etc.)",
-    );
-    console.log("    ✓ 80 services with owners and infrastructure details");
-    console.log("  Layer 2: Asset Management");
-    console.log("    ✓ Categories, models, 50+ assets, stock, assignments");
-    console.log(
-      "    ✓ Warranties, maintenance schedules, and maintenance records",
-    );
-    console.log("  Layer 3: Advanced ITAM");
-    console.log("    ✓ Asset Disposals (approval workflow)");
-    console.log("    ✓ Asset Kits (predefined bundles with checkout tracking)");
-    console.log(
-      "    ✓ Asset Reservations (future booking with conflict detection)",
-    );
-    console.log(
-      "    ✓ CMDB (configuration items, relationships, dependency tracking)",
-    );
-    console.log("    ✓ Attachment Types (polymorphic file attachments)");
-    console.log(
-      "    ✓ Governance (data domains, ownerships, verification campaigns)",
-    );
-    console.log("  Support Systems:");
-    console.log("    ✓ AI prompt templates");
-    console.log("    ✓ Example tasks");
+    console.log("\nSeeded modules:");
+    for (const item of seeded) {
+      console.log(`  ✓ ${item}`);
+    }
+
+    if (presetName === "production") {
+      console.log("\n📝 Next steps for production:");
+      console.log("  1. Run Microsoft Graph sync to populate persons");
+      console.log("  2. Create first admin via /register");
+      console.log("  3. Assign system-administrator role via Prisma Studio");
+      console.log(
+        "  4. (Optional) Run db:seed -- services-only to seed services",
+      );
+    }
+
     console.log("\n" + "─".repeat(60));
     console.log(`⏱️  Total execution time: ${duration}s`);
     console.log("─".repeat(60));
-    console.log(
-      "\nYour ITAM system is now ready with comprehensive test data!",
-    );
-    console.log("Run: npm run dev\n");
+    console.log("\nRun: npm run dev\n");
   } catch (error) {
     console.error("\n" + "=".repeat(60));
     console.error("❌ SEED FAILED");
