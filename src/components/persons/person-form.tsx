@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
@@ -18,6 +18,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
 import {
   Form,
   FormControl,
@@ -37,6 +41,12 @@ import {
   CreatePersonSchema,
   type CreatePersonDTO,
 } from "@/interface-adapters/dtos/generated/person.dto";
+import { listOrganizationUnitsAction } from "@/interface-adapters/controllers/organization-unit.controller";
+import { listRolesAction } from "@/interface-adapters/controllers/role.controller";
+import { listLocationsAction } from "@/interface-adapters/controllers/location.controller";
+import type { OrganizationUnitDTO } from "@/interface-adapters/presenters/organization-unit.presenter";
+import type { RoleDTO } from "@/interface-adapters/presenters/role.presenter";
+import type { LocationDTO } from "@/interface-adapters/presenters/location.presenter";
 
 interface PersonFormProps {
   open: boolean;
@@ -47,6 +57,8 @@ interface PersonFormProps {
 
 type PersonFormValues = z.input<typeof CreatePersonSchema>;
 
+const NONE_OPTION_VALUE = "__none__";
+
 export function PersonForm({
   open,
   onOpenChange,
@@ -54,6 +66,75 @@ export function PersonForm({
   person,
 }: PersonFormProps) {
   const isEditing = !!person;
+
+  // Entity lists for dropdowns
+  const [orgUnits, setOrgUnits] = useState<OrganizationUnitDTO[]>([]);
+  const [roles, setRoles] = useState<RoleDTO[]>([]);
+  const [locations, setLocations] = useState<LocationDTO[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Memoized options for searchable dropdowns
+  const orgUnitOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      orgUnits.map((unit) => ({
+        value: unit.id,
+        label: `${unit.name} (${unit.code})`,
+      })),
+    [orgUnits],
+  );
+
+  const roleOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      roles.map((role) => ({
+        value: role.id,
+        label: role.displayName,
+      })),
+    [roles],
+  );
+
+  const locationOptions: SearchableSelectOption[] = useMemo(
+    () => [
+      { value: NONE_OPTION_VALUE, label: "None" },
+      ...locations.map((loc) => ({
+        value: loc.id,
+        label: `${loc.name} (${loc.code})`,
+      })),
+    ],
+    [locations],
+  );
+
+  // Load entity lists when dialog opens
+  useEffect(() => {
+    if (open) {
+      loadData();
+    }
+  }, [open]);
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const [orgUnitsResult, rolesResult, locationsResult] = await Promise.all([
+        listOrganizationUnitsAction(),
+        listRolesAction(),
+        listLocationsAction(),
+      ]);
+
+      if (orgUnitsResult.success) {
+        setOrgUnits(orgUnitsResult.data);
+      }
+      if (rolesResult.success) {
+        setRoles(rolesResult.data);
+      }
+      if (locationsResult.success) {
+        setLocations(locationsResult.data);
+      }
+    } catch (_error) {
+      toast.error("Failed to load form data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const form = useForm<PersonFormValues, undefined, CreatePersonDTO>({
     resolver: zodResolver(CreatePersonSchema),
     defaultValues: {
@@ -213,11 +294,18 @@ export function PersonForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Organization Unit ID{" "}
+                      Organization Unit{" "}
                       <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Org unit ID" {...field} />
+                      <SearchableSelect
+                        options={orgUnitOptions}
+                        value={field.value || undefined}
+                        onValueChange={field.onChange}
+                        placeholder="Select organization unit..."
+                        searchPlaceholder="Search organization units..."
+                        disabled={loading}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -229,11 +317,17 @@ export function PersonForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      Primary Role ID{" "}
-                      <span className="text-destructive">*</span>
+                      Primary Role <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input placeholder="Role ID" {...field} />
+                      <SearchableSelect
+                        options={roleOptions}
+                        value={field.value || undefined}
+                        onValueChange={field.onChange}
+                        placeholder="Select role..."
+                        searchPlaceholder="Search roles..."
+                        disabled={loading}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -281,12 +375,17 @@ export function PersonForm({
               name="locationId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Location ID</FormLabel>
+                  <FormLabel>Location</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Optional location"
-                      {...field}
-                      value={field.value || ""}
+                    <SearchableSelect
+                      options={locationOptions}
+                      value={field.value || NONE_OPTION_VALUE}
+                      onValueChange={(value) =>
+                        field.onChange(value === NONE_OPTION_VALUE ? "" : value)
+                      }
+                      placeholder="Select location..."
+                      searchPlaceholder="Search locations..."
+                      disabled={loading}
                     />
                   </FormControl>
                   <FormMessage />

@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
@@ -28,6 +28,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
+import {
   Form,
   FormControl,
   FormDescription,
@@ -46,6 +50,16 @@ import {
   CreateAssetAssignmentSchema,
   type CreateAssetAssignmentDTO,
 } from "@/interface-adapters/dtos/generated/asset-assignment.dto";
+import { listAssetsAction } from "@/interface-adapters/controllers/asset.controller";
+import { listPersonsAction } from "@/interface-adapters/controllers/person.controller";
+import { listOrganizationUnitsAction } from "@/interface-adapters/controllers/organization-unit.controller";
+import { listLocationsAction } from "@/interface-adapters/controllers/location.controller";
+import { listConfigurationItemsAction } from "@/interface-adapters/controllers/configuration-item.controller";
+import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
+import type { PersonDTO } from "@/interface-adapters/presenters/person.presenter";
+import type { OrganizationUnitDTO } from "@/interface-adapters/presenters/organization-unit.presenter";
+import type { LocationDTO } from "@/interface-adapters/presenters/location.presenter";
+import type { ConfigurationItemDTO } from "@/interface-adapters/dtos/generated/configuration-item.dto";
 
 interface AssetAssignmentFormProps {
   open: boolean;
@@ -63,6 +77,109 @@ export function AssetAssignmentForm({
   assetAssignment,
 }: AssetAssignmentFormProps) {
   const isEditing = !!assetAssignment;
+
+  // Entity lists for dropdowns
+  const [assets, setAssets] = useState<AssetDTO[]>([]);
+  const [persons, setPersons] = useState<PersonDTO[]>([]);
+  const [orgUnits, setOrgUnits] = useState<OrganizationUnitDTO[]>([]);
+  const [locations, setLocations] = useState<LocationDTO[]>([]);
+  const [configItems, setConfigItems] = useState<ConfigurationItemDTO[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Track previous assignee type to detect changes
+  const previousAssigneeTypeRef = useRef<string | null>(null);
+
+  // Memoized options for searchable dropdowns
+  const assetOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      assets.map((asset) => ({
+        value: asset.id,
+        label: `${asset.assetTag}${asset.serialNumber ? ` (${asset.serialNumber})` : ""}`,
+      })),
+    [assets],
+  );
+
+  const personOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      persons.map((person) => ({
+        value: person.id,
+        label: `${person.firstName} ${person.lastName} (${person.email})`,
+      })),
+    [persons],
+  );
+
+  const orgUnitOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      orgUnits.map((unit) => ({
+        value: unit.id,
+        label: `${unit.name} (${unit.code})`,
+      })),
+    [orgUnits],
+  );
+
+  const locationOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      locations.map((loc) => ({
+        value: loc.id,
+        label: `${loc.name} (${loc.code})`,
+      })),
+    [locations],
+  );
+
+  const configItemOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      configItems.map((ci) => ({
+        value: ci.id,
+        label: ci.name,
+      })),
+    [configItems],
+  );
+
+  // Load entity lists when dialog opens
+  useEffect(() => {
+    if (open) {
+      loadData();
+    }
+  }, [open]);
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const [
+        assetsResult,
+        personsResult,
+        orgUnitsResult,
+        locationsResult,
+        configItemsResult,
+      ] = await Promise.all([
+        listAssetsAction(),
+        listPersonsAction(),
+        listOrganizationUnitsAction(),
+        listLocationsAction(),
+        listConfigurationItemsAction(),
+      ]);
+
+      if (assetsResult.success) {
+        setAssets(assetsResult.data);
+      }
+      if (personsResult.success) {
+        setPersons(personsResult.data);
+      }
+      if (orgUnitsResult.success) {
+        setOrgUnits(orgUnitsResult.data);
+      }
+      if (locationsResult.success) {
+        setLocations(locationsResult.data);
+      }
+      if (configItemsResult.success) {
+        setConfigItems(configItemsResult.data);
+      }
+    } catch (_error) {
+      toast.error("Failed to load form data");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const form = useForm<
     AssetAssignmentFormValues,
@@ -109,7 +226,52 @@ export function AssetAssignmentForm({
       isPrimary: assetAssignment?.isPrimary ?? false,
       note: assetAssignment?.note ?? "",
     });
+    // Initialize the ref with current assignee type
+    previousAssigneeTypeRef.current = assetAssignment?.assigneeType ?? "PERSON";
   }, [assetAssignment, form]);
+
+  // Watch assignee type and clear assigneeId when it changes
+  const assigneeType = form.watch("assigneeType");
+  useEffect(() => {
+    if (
+      previousAssigneeTypeRef.current !== null &&
+      previousAssigneeTypeRef.current !== assigneeType
+    ) {
+      form.setValue("assigneeId", "");
+    }
+    previousAssigneeTypeRef.current = assigneeType;
+  }, [assigneeType, form]);
+
+  // Get assignee options based on current type
+  const getAssigneeOptions = (): SearchableSelectOption[] => {
+    switch (assigneeType) {
+      case "PERSON":
+        return personOptions;
+      case "ORG_UNIT":
+        return orgUnitOptions;
+      case "LOCATION":
+        return locationOptions;
+      case "CI":
+        return configItemOptions;
+      default:
+        return [];
+    }
+  };
+
+  const getAssigneePlaceholder = (): string => {
+    switch (assigneeType) {
+      case "PERSON":
+        return "Select a person...";
+      case "ORG_UNIT":
+        return "Select an organization unit...";
+      case "LOCATION":
+        return "Select a location...";
+      case "CI":
+        return "Select a configuration item...";
+      default:
+        return "Select assignee...";
+    }
+  };
 
   const onSubmit = async (data: CreateAssetAssignmentDTO) => {
     try {
@@ -157,18 +319,21 @@ export function AssetAssignmentForm({
               name="assetId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Asset ID *</FormLabel>
+                  <FormLabel>Asset *</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Asset ID"
-                      {...field}
-                      disabled={isEditing}
+                    <SearchableSelect
+                      options={assetOptions}
+                      value={field.value || undefined}
+                      onValueChange={field.onChange}
+                      placeholder="Select an asset..."
+                      searchPlaceholder="Search assets..."
+                      disabled={loading || isEditing}
                     />
                   </FormControl>
                   <FormDescription>
                     {isEditing
                       ? "Asset cannot be changed after creation"
-                      : "ID of the asset being assigned"}
+                      : "Select the asset to assign"}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -212,15 +377,19 @@ export function AssetAssignmentForm({
               name="assigneeId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Assignee ID *</FormLabel>
+                  <FormLabel>Assignee *</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="ID of person, org unit, location, or CI"
-                      {...field}
+                    <SearchableSelect
+                      options={getAssigneeOptions()}
+                      value={field.value || undefined}
+                      onValueChange={field.onChange}
+                      placeholder={getAssigneePlaceholder()}
+                      searchPlaceholder="Search..."
+                      disabled={loading}
                     />
                   </FormControl>
                   <FormDescription>
-                    ID of the entity this asset is assigned to
+                    Select the entity this asset is assigned to
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

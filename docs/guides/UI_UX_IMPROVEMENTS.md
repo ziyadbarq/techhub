@@ -248,6 +248,7 @@ const options: SearchableSelectOption[] = useMemo(
 *Core Asset Management:*
 - `asset-form.tsx` - 5 dropdowns (categories, models, vendors, stock locations, lifecycle states)
 - `asset-model-form.tsx` - 3 dropdowns (categories, vendors, asset types)
+- `asset-assignment-form.tsx` - 2 dropdowns (assets, dynamic assignee by type: person/org unit/location/CI)
 - `assign-asset-wizard.tsx` - 2 dropdowns (employees, stock locations)
 - `return-asset-wizard.tsx` - 1 dropdown (stock locations)
 - `checkout-form.tsx` - 2 dropdowns (kits, persons)
@@ -255,9 +256,12 @@ const options: SearchableSelectOption[] = useMemo(
 - `disposal-form.tsx` - 3 dropdowns (assets, handled by person, lifecycle states)
 - `warranty-form.tsx` - 2 dropdowns (assets, vendors)
 
+*Foundation Entities:*
+- `person-form.tsx` - 3 dropdowns (organization units, roles, locations)
+
 *CMDB & Services:*
 - `ci-class-form.tsx` - 1 dropdown (parent CI class)
-- `configuration-item-form.tsx` - 3 dropdowns (CI classes, locations, lifecycle states)
+- `configuration-item-form.tsx` - 1 dropdown (CI classes)
 - `service-owners-manager.tsx` - 1 dropdown (persons)
 
 *Governance & Contracts:*
@@ -284,6 +288,44 @@ const options: SearchableSelectOption[] = useMemo(
 ✅ **Scalable** - Works with 5 or 5000 options
 ✅ **Accessible** - Full keyboard navigation
 ✅ **Type-Safe** - Strongly typed props and options
+
+### Advanced Pattern: Dynamic Options Based on Field Value
+
+For forms where dropdown options depend on another field (e.g., Asset Assignment where assignee options change based on assignee type):
+
+```tsx
+// Watch the controlling field
+const assigneeType = form.watch("assigneeType");
+const previousTypeRef = useRef<string | null>(null);
+
+// Clear dependent field when controlling field changes
+useEffect(() => {
+  if (previousTypeRef.current !== null && previousTypeRef.current !== assigneeType) {
+    form.setValue("assigneeId", "");
+  }
+  previousTypeRef.current = assigneeType;
+}, [assigneeType, form]);
+
+// Return appropriate options based on type
+const getAssigneeOptions = (): SearchableSelectOption[] => {
+  switch (assigneeType) {
+    case "PERSON": return personOptions;
+    case "ORG_UNIT": return orgUnitOptions;
+    case "LOCATION": return locationOptions;
+    case "CI": return configItemOptions;
+    default: return [];
+  }
+};
+
+// Use in form
+<SearchableSelect
+  options={getAssigneeOptions()}
+  placeholder={getAssigneePlaceholder()}
+  // ...
+/>
+```
+
+This pattern is used in `asset-assignment-form.tsx` for the dynamic assignee selection.
 
 ### Usage Guidelines
 

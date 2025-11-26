@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -26,6 +26,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  SearchableSelect,
+  type SearchableSelectOption,
+} from "@/components/ui/searchable-select";
+import {
   Form,
   FormControl,
   FormDescription,
@@ -45,6 +49,8 @@ import {
   UpdateConfigurationItemSchema,
   type ConfigurationItemDTO,
 } from "@/interface-adapters/dtos/generated/configuration-item.dto";
+import { listCIClassesAction } from "@/interface-adapters/controllers/ci-class.controller";
+import type { CIClassDTO } from "@/interface-adapters/presenters/ci-class.presenter";
 
 interface ConfigurationItemFormProps {
   open: boolean;
@@ -65,6 +71,41 @@ export function ConfigurationItemForm({
   editingItem,
 }: ConfigurationItemFormProps) {
   const isEditing = !!editingItem;
+
+  // CI Classes for dropdown
+  const [ciClasses, setCIClasses] = useState<CIClassDTO[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Memoized options for searchable dropdown
+  const ciClassOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      ciClasses.map((cls) => ({
+        value: cls.id,
+        label: `${cls.name} (${cls.code})`,
+      })),
+    [ciClasses],
+  );
+
+  // Load CI classes when dialog opens
+  useEffect(() => {
+    if (open) {
+      loadData();
+    }
+  }, [open]);
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const result = await listCIClassesAction();
+      if (result.success) {
+        setCIClasses(result.data);
+      }
+    } catch (_error) {
+      toast.error("Failed to load CI classes");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const createForm = useForm<CreateFormValues, undefined, CreateFormOutput>({
     resolver: zodResolver(CreateConfigurationItemSchema),
@@ -209,13 +250,17 @@ export function ConfigurationItemForm({
                   <FormItem>
                     <FormLabel>CI Class *</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Enter CI Class ID (temporary)"
-                        {...field}
+                      <SearchableSelect
+                        options={ciClassOptions}
+                        value={field.value || undefined}
+                        onValueChange={field.onChange}
+                        placeholder="Select a CI class..."
+                        searchPlaceholder="Search CI classes..."
+                        disabled={loading}
                       />
                     </FormControl>
                     <FormDescription>
-                      TODO: Replace with CI Class selector dropdown
+                      The type of configuration item
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
