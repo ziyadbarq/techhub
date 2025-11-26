@@ -50,15 +50,39 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   // EXECUTIVE LEADERSHIP (EXEC)
   // ============================================
   "ceo office": "EXEC-CEO",
+  "ceo office manager": "EXEC-CEO",
+  "chief executive officer": "EXEC-CEO",
   "board of directors": "EXEC",
+  "board of directors member": "EXEC",
   board: "EXEC",
+  chairman: "EXEC",
+  "vice chairman": "EXEC",
+  "chairman of risk and compliance committee": "EXEC",
+  "member of risk and compliance committee": "EXEC",
   executive: "EXEC",
   "executive office": "EXEC",
   "executive leadership": "EXEC",
+  "business head": "EXEC",
   "chief of staff": "EXEC-COS",
   strategy: "EXEC-STRAT",
   "strategy & growth": "EXEC-STRAT",
   "strategy and growth": "EXEC-STRAT",
+  "strategy director": "EXEC-STRAT",
+
+  // C-levels go to their corresponding departments
+  "chief business officer": "BIZ",
+  "chief compliance officer": "RISK",
+  "chief financial officer": "FIN",
+  "chief information security officer": "SEC",
+  "chief internal audit officer": "AUDIT",
+  "chief marketing & customer experience": "MCX",
+  "chief operations officer": "OPS",
+  "chief partnerships officer": "BIZ",
+  "chief risk officer": "RISK",
+  "chief technology officer": "TECH",
+  "cto advisor": "TECH",
+  "deputy chief operation officer": "OPS",
+  "deputy chief technology officer": "TECH",
 
   // ============================================
   // INTERNAL AUDIT & OVERSIGHT (AUDIT)
@@ -67,7 +91,9 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   "internal audit ": "AUDIT-INT",
   audit: "AUDIT",
   "corporate audit": "AUDIT-CORP",
+  "corporate audit director": "AUDIT-CORP",
   "it audit": "AUDIT-IT",
+  "it audit general manager": "AUDIT-IT",
   "audit & oversight": "AUDIT",
 
   // ============================================
@@ -79,24 +105,38 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   // Compliance
   compliance: "RISK-COMP",
   "compliance ": "RISK-COMP",
+  "compliance officer": "RISK-COMP",
   complaince: "RISK-COMP",
   "compliance\t": "RISK-COMP",
   "regulatory compliance": "RISK-COMP",
+  "regulatory compliance officer": "RISK-COMP",
+  "regulatory compliance senior manager": "RISK-COMP",
   "compliance assurance": "RISK-COMP",
 
   // AML & CTF
   "aml & ctf": "RISK-AML",
+  "aml and ctf general manager": "RISK-AML",
   aml: "RISK-AML",
   "aml ": "RISK-AML",
+  "aml investigation senior associate": "RISK-AML",
+  "aml investigation senior officer": "RISK-AML",
+  "aml officer": "RISK-AML",
   ctf: "RISK-AML",
   "anti-money laundering": "RISK-AML",
   "anti money laundering": "RISK-AML",
+  "edd officer": "RISK-AML",
+  "finscan engineer": "RISK-AML",
 
   // Anti-Fraud
   "anti fraud, bribery & corruption": "RISK-FRAUD",
+  "anti-fraud, bribery and corruption director": "RISK-FRAUD",
   "anti-fraud monitoring": "RISK-FRAUD",
+  "anti-fraud monitoring manager": "RISK-FRAUD",
   "anti-fraud": "RISK-FRAUD",
   "anti fraud": "RISK-FRAUD",
+  "anti-fraud officer": "RISK-FRAUD",
+  "anti-fraud senior officer": "RISK-FRAUD",
+  "anit-fraud officer": "RISK-FRAUD",
   fraud: "RISK-FRAUD",
   "fraud ": "RISK-FRAUD",
   "bribery & corruption": "RISK-FRAUD",
@@ -105,17 +145,26 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   sanctions: "RISK-SANCT",
   "sanctions ": "RISK-SANCT",
   sanction: "RISK-SANCT",
+  "sanction officer": "RISK-SANCT",
+  "sanctions director": "RISK-SANCT",
+  "sanctions manager": "RISK-SANCT",
+  "sanctions senior associate": "RISK-SANCT",
 
   // Risk Management
   risk: "RISK-ERM",
   "risk ": "RISK-ERM",
+  "risk associate": "RISK-ERM",
+  "risk manager": "RISK-ERM",
   "risk management": "RISK-ERM",
   "risk management ": "RISK-ERM",
   "enterprise risk": "RISK-ERM",
+  "enterprise risk manager": "RISK-ERM",
   "operational risk": "RISK-ERM",
 
   // SAMA Affairs
   "sama affairs & compliance assurance": "RISK-SAMA",
+  "sama affairs and compliance assurance director": "RISK-SAMA",
+  "sama affairs and compliance assurance offcer": "RISK-SAMA",
   "sama affairs": "RISK-SAMA",
   sama: "RISK-SAMA",
   pdpl: "RISK-SAMA",
@@ -123,6 +172,8 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   // Self-Supervisory Unit
   "self-supervisory unit": "RISK-SSU",
   "self supervisory unit": "RISK-SSU",
+  "self supervisory unit manager": "RISK-SSU",
+  "self- supervisory unit associate": "RISK-SSU",
   ssu: "RISK-SSU",
 
   // ============================================
@@ -130,6 +181,8 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   // ============================================
   finance: "FIN",
   "finance ": "FIN",
+  "finance associate": "FIN",
+  "finance manager": "FIN",
   financial: "FIN",
 
   // Financial Planning & Analysis
@@ -143,6 +196,17 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   "financial control": "FIN-FCR",
   fcr: "FIN-FCR",
   reconciliation: "FIN-FCR",
+  "bank reconciliation manager": "FIN-FCR",
+  "card reconciliation director": "FIN-FCR",
+  "card reconciliation officer": "FIN-FCR",
+  "card reconciliation senior offcer": "FIN-FCR",
+  "internal reconciliation associate": "FIN-FCR",
+  "internal reconciliation director": "FIN-FCR",
+  "internal reconciliation officer": "FIN-FCR",
+  "international & corporate reconciliation director": "FIN-FCR",
+  "international & corporate reconciliation manager": "FIN-FCR",
+  "international & corporate reconciliation officer": "FIN-FCR",
+  "international transfer & merchant reconciliation senior officer": "FIN-FCR",
 
   // Treasury
   treasury: "FIN-TREAS",
@@ -151,6 +215,8 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   // Accounting
   accounting: "FIN-ACCT",
   "accounting ": "FIN-ACCT",
+  accountant: "FIN-ACCT",
+  "accountant senior associate": "FIN-ACCT",
   accounts: "FIN-ACCT",
   "accounts payable": "FIN-ACCT",
   "accounts receivable": "FIN-ACCT",
@@ -161,8 +227,14 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   "people & culture": "HR",
   "people and culture": "HR",
   "human resources": "HR",
+  "human resources officer": "HR",
+  "human resources support": "HR",
   hr: "HR",
+  "hr manager": "HR",
   "human capital": "HR",
+  "human capital associate": "HR",
+  "human capital director": "HR",
+  trainee: "HR",
 
   // HR Operations
   "hr operations": "HR-OPS",
@@ -173,18 +245,22 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   // Talent Acquisition
   "talent acquisition": "HR-TA",
   "talent acquisition ": "HR-TA",
+  "talent acquisition associate": "HR-TA",
   ta: "HR-TA",
   recruitment: "HR-TA",
   recruiting: "HR-TA",
 
   // Organizational Development
   "organizational development": "HR-OD",
+  "od assistant manager": "HR-OD",
+  "engagement assistant manager": "HR-OD",
   "performance management": "HR-OD",
   "training & development": "HR-OD",
   "learning & development": "HR-OD",
 
   // Payroll
   "payroll & hc operations": "HR-PAY",
+  "payroll and hc operation assistant manager": "HR-PAY",
   payroll: "HR-PAY",
   "hr systems": "HR-PAY",
 
@@ -193,17 +269,28 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   // ============================================
   "marketing & customer experience": "MCX",
   "marcom & engagement": "MCX-MKT",
+  "marcom and engagement general manager": "MCX-MKT",
   marcom: "MCX-MKT",
   marketing: "MCX-MKT",
   "marketing ": "MCX-MKT",
   communications: "MCX-MKT",
+  "communications manager": "MCX-MKT",
   "marketing & communications": "MCX-MKT",
   "brand management": "MCX-MKT",
+  "brand manager": "MCX-MKT",
   "digital marketing": "MCX-MKT",
+  "digital marketing senior associate": "MCX-MKT",
+  "digital marketing senior manager": "MCX-MKT",
+  "social media specialist": "MCX-MKT",
 
   // Customer Experience
   "customer experience": "MCX-CX",
   "customer experience ": "MCX-CX",
+  "customer experience director": "MCX-CX",
+  "customer experience officer": "MCX-CX",
+  "customer experience team leader": "MCX-CX",
+  "team leader customer experience": "MCX-CX",
+  "senior associate customer protection": "MCX-CX",
   cx: "MCX-CX",
   "customer success": "MCX-CX",
   "journey mapping": "MCX-CX",
@@ -213,28 +300,50 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   // ============================================
   business: "BIZ",
   "business ": "BIZ",
+  "business planning senior associate": "BIZ",
+  "micro lending manager": "BIZ",
   commercial: "BIZ",
   "business & partnerships": "BIZ",
 
-  // Business Development
+  // Business Development (Regional)
   "business development": "BIZ-BD",
   "regional operations": "BIZ-BD",
+  "central regional manager": "BIZ-BD",
+  "central regional officer": "BIZ-BD",
+  "eastern regional manager": "BIZ-BD",
+  "south & north regional manager": "BIZ-BD",
+  "south regional officer": "BIZ-BD",
+  "western regional manager": "BIZ-BD",
+  "western regional officer": "BIZ-BD",
 
   // Partnerships
   partnerships: "BIZ-PART",
+  "partnerships general manager": "BIZ-PART",
   "corporate & partnerships": "BIZ-PART",
+  "corporates & partnerships officer": "BIZ-PART",
   "merchant partnerships": "BIZ-PART",
   "corporate partnerships": "BIZ-PART",
+  "acquiring director": "BIZ-PART",
+  "acquiring payment manager": "BIZ-PART",
+  "corporate assistant manager": "BIZ-PART",
+  "corporate director": "BIZ-PART",
 
   // Remittance
   remittance: "BIZ-REMIT",
   "remittance ": "BIZ-REMIT",
+  "remittance director": "BIZ-REMIT",
+  "remittance sales representative": "BIZ-REMIT",
+  "remittance specialist": "BIZ-REMIT",
   "remittance & international partnership": "BIZ-REMIT",
+  "remittance and international partnership general manager": "BIZ-REMIT",
   "international partnership": "BIZ-REMIT",
+  "international partnership director": "BIZ-REMIT",
+  "country manager-south east asia corridors": "BIZ-REMIT",
   "corridor operations": "BIZ-REMIT",
 
   // Growth
   growth: "BIZ-GROWTH",
+  "growth & subsidiaries senior manager": "BIZ-GROWTH",
   subsidiaries: "BIZ-GROWTH",
 
   // ============================================
@@ -243,6 +352,7 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   operations: "OPS",
   "operations ": "OPS",
   ops: "OPS",
+  "director of ops": "OPS",
 
   // Operations Core
   "operations support": "OPS-CORE",
@@ -255,10 +365,20 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   "pay-ops": "OPS-PAY",
   "acquiring operations": "OPS-PAY",
   "scheme management": "OPS-PAY",
+  "payment scheme manager": "OPS-PAY",
+  "payments control manager": "OPS-PAY",
+  "payments general manager": "OPS-PAY",
+  "card operation assistant manager": "OPS-PAY",
+  "card senior manager": "OPS-PAY",
+  "cards director": "OPS-PAY",
+  "operation control officer": "OPS-PAY",
+  "operation control specialist": "OPS-PAY",
+  "operation control sr specialist": "OPS-PAY",
 
   // BCM (under Operations)
   "business continuity management": "OPS-BCM",
   bcm: "OPS-BCM",
+  "bcm senior associate": "OPS-BCM",
   "business continuity": "OPS-BCM",
 
   // ============================================
@@ -270,32 +390,52 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   "contact center   ": "CC",
   contactcenter: "CC",
   "call center": "CC",
+  "head of contact center": "CC",
 
   // CC Operations
   "contact center operations": "CC-OPS",
+  "contact center operations manager": "CC-OPS",
+  "contact center operations team leader": "CC-OPS",
+  "contact center operation agent": "CC-OPS",
+  "contact center operation assistant manager": "CC-OPS",
+  "contact center account manager": "CC-OPS",
+  "contact center agent": "CC-OPS",
+  "contact center outbound specialist": "CC-OPS",
+  "contact center process and procedures specialist": "CC-OPS",
   "cc operations": "CC-OPS",
 
   // CC Quality
   "quality & control": "CC-QC",
   "quality assurance": "CC-QC",
+  "contact center quality and control manager": "CC-QC",
+  "contact center quality and control officer": "CC-QC",
+  "contact center quality and control specialist": "CC-QC",
 
   // CC Workforce Management
   "workforce management": "CC-WFM",
   wfm: "CC-WFM",
+  "contact center wfm analyst": "CC-WFM",
+  "contact center wfm assistant manager": "CC-WFM",
+  "contact center wfm junior analyst": "CC-WFM",
+  "contact center wfm senior manager": "CC-WFM",
 
   // CC Learning & Development
   "contact center training": "CC-LD",
   "cc training": "CC-LD",
+  "contact center learning and development manager": "CC-LD",
+  "contact center learning and development specialist": "CC-LD",
 
   // ============================================
   // TECHNOLOGY (TECH) - Reports to CTO
   // ============================================
   technology: "TECH",
   "technology ": "TECH",
+  "technology director": "TECH",
   technologe: "TECH",
   technololgy: "TECH",
   tech: "TECH",
   it: "TECH",
+  "it manager": "TECH",
 
   // Software Engineering
   engineering: "TECH-SWE",
@@ -304,14 +444,49 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   "software engineering": "TECH-SWE",
   "platform engineering": "TECH-SWE",
   backend: "TECH-SWE",
+  "backend development manager": "TECH-SWE",
+  "backend engineer": "TECH-SWE",
   frontend: "TECH-SWE",
   "mobile development": "TECH-SWE",
+  "mobile development manager": "TECH-SWE",
   "web development": "TECH-SWE",
+  "web developer": "TECH-SWE",
+  "web developer officer": "TECH-SWE",
+  "director of engineering": "TECH-SWE",
+  em: "TECH-SWE",
+  "lead android developer": "TECH-SWE",
+  "lead expert technology engineer": "TECH-SWE",
+  "principal engineer": "TECH-SWE",
+  "senior principal": "TECH-SWE",
+  "qa automation engineer": "TECH-SWE",
+  "test and automation engineer": "TECH-SWE",
+  "software developer": "TECH-SWE",
+  "software developer associate": "TECH-SWE",
+  "uxui designer": "TECH-SWE",
+  "vp of engineering & site lead.": "TECH-SWE",
+  "sde 1": "TECH-SWE",
+  "sde 2": "TECH-SWE",
+  "sde 3": "TECH-SWE",
+  sde1: "TECH-SWE",
+  sde2: "TECH-SWE",
+  sde3: "TECH-SWE",
+  "sdet 1": "TECH-SWE",
+  "sdet 3": "TECH-SWE",
+  sdet2: "TECH-SWE",
+  sdet3: "TECH-SWE",
 
   // DevOps & Cloud
   devops: "TECH-DEVOPS",
   "devops ": "TECH-DEVOPS",
   "dev ops": "TECH-DEVOPS",
+  "devops engineer": "TECH-DEVOPS",
+  "devops engineer 1": "TECH-DEVOPS",
+  "devops engineer 2": "TECH-DEVOPS",
+  "senior devops engineer": "TECH-DEVOPS",
+  "senior lead - devops": "TECH-DEVOPS",
+  "architect devsecops": "TECH-DEVOPS",
+  "cloud engineer officer": "TECH-DEVOPS",
+  "sde 1 devops": "TECH-DEVOPS",
   infrastructure: "TECH-DEVOPS",
   "devops & infrastructure": "TECH-DEVOPS",
   "devops & cloud": "TECH-DEVOPS",
@@ -321,6 +496,9 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   sre: "TECH-SRE",
   "site reliability": "TECH-SRE",
   "site reliability engineering": "TECH-SRE",
+  "site reliability engineer": "TECH-SRE",
+  "site reliability engineering officer": "TECH-SRE",
+  "senior site reliability engineering": "TECH-SRE",
   "reliability engineering": "TECH-SRE",
 
   // Data & Analytics
@@ -330,32 +508,65 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   "data and analytics": "TECH-DATA",
   "data science": "TECH-DATA",
   "data science analytics": "TECH-DATA",
+  "data science analytics officer": "TECH-DATA",
+  "senior data science associate": "TECH-DATA",
   analytics: "TECH-DATA",
   bi: "TECH-DATA",
   "business intelligence": "TECH-DATA",
   "data engineering": "TECH-DATA",
+  "data engineer": "TECH-DATA",
+  "associate data analyst": "TECH-DATA",
+  "data analyst 2": "TECH-DATA",
+  "head of data": "TECH-DATA",
 
   // Product Management
   product: "TECH-PROD",
   "product ": "TECH-PROD",
   "product factory": "TECH-PROD",
+  "product factory general manager": "TECH-PROD",
+  "product factory manager": "TECH-PROD",
   "product management": "TECH-PROD",
   "product manager": "TECH-PROD",
+  "product manager 2": "TECH-PROD",
+  "product operations lead": "TECH-PROD",
   "technical program manager": "TECH-PROD",
+  "senior technical program manager": "TECH-PROD",
   tpm: "TECH-PROD",
+  apm: "TECH-PROD",
+  "associate product manager": "TECH-PROD",
+  "director pm": "TECH-PROD",
+  "pm 1": "TECH-PROD",
+  "pm 2": "TECH-PROD",
+  pm1: "TECH-PROD",
+  pm2: "TECH-PROD",
+  pm3: "TECH-PROD",
+  "principal pm": "TECH-PROD",
+  "tech pm 2": "TECH-PROD",
+  "technology pm 3": "TECH-PROD",
+  "project manager": "TECH-PROD",
+  "projects coordinator": "TECH-PROD",
+  "senior project management manager": "TECH-PROD",
 
   // IT Support
   "it support": "TECH-ITSUP",
   "it operations": "TECH-ITSUP",
+  "it back office support": "TECH-ITSUP",
   helpdesk: "TECH-ITSUP",
   "service desk": "TECH-ITSUP",
+  "service desk analyst": "TECH-ITSUP",
   "end user support": "TECH-ITSUP",
+  "end user support officer": "TECH-ITSUP",
+  "end user support senior associate": "TECH-ITSUP",
+  "end user support specialist": "TECH-ITSUP",
   "device management": "TECH-ITSUP",
+  jamf: "TECH-ITSUP",
 
   // ERP Systems
   erp: "TECH-ERP",
   "erp systems": "TECH-ERP",
   "erp engineering": "TECH-ERP",
+  "erp engineer": "TECH-ERP",
+  oracle: "TECH-ERP",
 
   // Tech BCM
   "technology bcm": "TECH-BCM",
@@ -367,10 +578,13 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   // ============================================
   cybersecurity: "SEC",
   "cybersecurity ": "SEC",
+  "cybersecurity officer": "SEC",
   "cyber security": "SEC",
+  "cyber security associate": "SEC",
   "cyber ": "SEC",
   cyber: "SEC",
   "information security": "SEC",
+  "information technology security senior associate": "SEC",
   infosec: "SEC",
   security: "SEC",
   ciso: "SEC",
@@ -379,10 +593,13 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   soc: "SEC-SOC",
   "security operations": "SEC-SOC",
   "security operations center": "SEC-SOC",
+  "cybersecurity operation associate": "SEC-SOC",
+  "cybersecurity operation manager": "SEC-SOC",
   "threat intelligence": "SEC-SOC",
 
   // Cyber Defense Center
   "cyber defense": "SEC-CDC",
+  "cyber defence center officer": "SEC-CDC",
   "penetration testing": "SEC-CDC",
   "red team": "SEC-CDC",
   "blue team": "SEC-CDC",
@@ -392,14 +609,17 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   "security compliance": "SEC-GRC",
   "security risk": "SEC-GRC",
   "security audit": "SEC-GRC",
+  "cybersecurity governance, risk and compliance assistant manager": "SEC-GRC",
 
   // Vulnerability Management
   "vulnerability management": "SEC-VM",
   "vulnerability assessment": "SEC-VM",
+  "cyber vulnerability management senior associate": "SEC-VM",
   "patch management": "SEC-VM",
 
   // Data Privacy
   "data privacy": "SEC-PRIV",
+  "data privacy associate": "SEC-PRIV",
   privacy: "SEC-PRIV",
   "data protection": "SEC-PRIV",
 
@@ -407,21 +627,26 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   // PROCUREMENT & ADMINISTRATION (PROC)
   // ============================================
   "procurement & administration": "PROC",
+  "procurement & administration director": "PROC",
   procurement: "PROC-BUY",
   "procurement ": "PROC-BUY",
   "vendor management": "PROC-BUY",
   "contract management": "PROC-BUY",
+  "contracts manager": "PROC-BUY",
   administration: "PROC-ADMIN",
+  "administration senior associate": "PROC-ADMIN",
   admin: "PROC-ADMIN",
   facilities: "PROC-ADMIN",
   "office management": "PROC-ADMIN",
   "travel desk": "PROC-TRAVEL",
+  "travel desk manager": "PROC-TRAVEL",
   travel: "PROC-TRAVEL",
 
   // ============================================
   // LEGAL (LEGAL)
   // ============================================
   legal: "LEGAL",
+  "legal officer": "LEGAL",
   "legal affairs": "LEGAL-AFF",
   "corporate legal": "LEGAL-AFF",
   litigation: "LEGAL-AFF",
@@ -441,6 +666,7 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   // LOYALTY & GAMING (LG)
   // ============================================
   "loyalty & gaming": "LG",
+  "loyality and gaming director": "LG",
   loyalty: "LG-LOYALTY",
   "loyalty ": "LG-LOYALTY",
   "loyalty programs": "LG-LOYALTY",
