@@ -8,7 +8,8 @@
 import { inject, injectable } from "inversify";
 import type { QueueOptions, JobsOptions } from "bullmq";
 import { Queue } from "bullmq";
-import type Redis from "ioredis";
+import IORedis from "ioredis";
+import type { Redis } from "ioredis";
 import { env } from "@/infrastructure/config/env";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services";
@@ -62,10 +63,6 @@ export class BullMQService implements IJobQueueService {
   private getRedisConnection(): Redis {
     if (!this.redisConnection) {
       try {
-        // Dynamic import to avoid bundling ioredis in client components
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const IORedis = require("ioredis");
-
         const connection: Redis = new IORedis(this.redisUrl, {
           maxRetriesPerRequest: null, // Required for BullMQ
           enableReadyCheck: false,

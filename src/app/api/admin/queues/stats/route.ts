@@ -7,6 +7,7 @@
 
 import { NextResponse } from "next/server";
 import { Queue } from "bullmq";
+import IORedis from "ioredis";
 import { env } from "@/infrastructure/config/env";
 import { logger } from "@/lib/logger";
 import { QUEUE_NAMES } from "@/core/domain/jobs/job-names";
@@ -20,9 +21,6 @@ let queues: Map<string, Queue> | null = null;
 function getQueues(): Map<string, Queue> {
   if (!queues) {
     const redisUrl = env.REDIS_URL;
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const IORedis = require("ioredis");
-
     const connection = new IORedis(redisUrl, {
       maxRetriesPerRequest: null,
       enableReadyCheck: false,

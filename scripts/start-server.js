@@ -254,7 +254,7 @@ async function isDatabaseEmpty() {
     client.release();
     await pool.end();
     return isEmpty;
-  } catch (error) {
+  } catch (_error) {
     await pool.end().catch(() => {});
     // If we can't check, assume it needs seeding
     return true;

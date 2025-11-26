@@ -2,10 +2,6 @@
 // @ts-nocheck
 // TODO: Fix type errors - this is WIP code
 
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import type { DisposalApproval } from "@/core/domain/entities/disposal-approval.entity";
 import type { DisposalApprovalDTO } from "../dtos/generated/disposal-approval.dto";
 

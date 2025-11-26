@@ -2,10 +2,6 @@
 // @ts-nocheck
 // TODO: Fix type errors - this is WIP code
 
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import type { AssetKit } from "@/core/domain/entities/asset-kit.entity";
 import type { AssetKitItem } from "@/core/domain/entities/asset-kit-item.entity";
 import type {
