@@ -14,8 +14,11 @@
 import { spawn } from "child_process";
 import { createRequire } from "module";
 import { config as loadEnv } from "dotenv";
+import Redis from "ioredis";
+import pg from "pg";
 
 const require = createRequire(import.meta.url);
+const { Pool } = pg;
 
 // Load environment variables from local files so validation reflects Next.js runtime
 loadEnv({ path: ".env.production" });
@@ -26,6 +29,36 @@ loadEnv();
 let serverProcess = null;
 
 /**
+ * Validates and returns the port number
+ * @returns {string} Valid port number
+ */
+function getValidatedPort() {
+  const portEnv = process.env.PORT?.trim();
+
+  if (!portEnv) {
+    return "3000"; // Default port
+  }
+
+  const port = parseInt(portEnv, 10);
+
+  if (isNaN(port)) {
+    console.error(`❌ Invalid PORT: "${portEnv}" is not a number`);
+    process.exit(1);
+  }
+
+  if (port < 1 || port > 65535) {
+    console.error(`❌ Invalid PORT: ${port} must be between 1 and 65535`);
+    process.exit(1);
+  }
+
+  if (port < 1024) {
+    console.warn(`⚠️  Warning: PORT ${port} requires root/admin privileges`);
+  }
+
+  return portEnv;
+}
+
+/**
  * Starts the Next.js production server
  */
 function startServer() {
@@ -34,12 +67,15 @@ function startServer() {
   console.log(`📍 Working Directory: ${process.cwd()}`);
   console.log("");
 
+  const port = getValidatedPort();
+
   // Spawn next start process
   serverProcess = spawn("npx", ["next", "start"], {
     stdio: "inherit",
     env: {
       ...process.env,
       NODE_ENV: process.env.NODE_ENV || "production",
+      PORT: port,
     },
   });
 
@@ -62,7 +98,7 @@ function startServer() {
   });
 
   console.log("✅ Server started successfully");
-  console.log("🔗 Server should be running on http://localhost:3000");
+  console.log(`🔗 Server should be running on http://localhost:${port}`);
   console.log("📝 Press Ctrl+C to stop the server");
   console.log("");
 }
@@ -110,14 +146,76 @@ function validateEnvironment() {
 
   // Check for required environment variables
   if (!process.env.DATABASE_URL) {
-    console.warn("⚠️  Warning: DATABASE_URL is not set");
+    console.error("❌ DATABASE_URL is not set");
+    process.exit(1);
   }
 
   if (!process.env.REDIS_URL) {
-    console.warn("⚠️  Warning: REDIS_URL is not set (background jobs may not work)");
+    console.error("❌ REDIS_URL is not set");
+    process.exit(1);
   }
 
-  console.log("✅ Environment validation passed\n");
+  console.log("✅ Environment variables validated\n");
+}
+
+/**
+ * Validates PostgreSQL connection
+ * @returns {Promise<void>}
+ */
+async function validateDatabase() {
+  console.log("🔍 Checking PostgreSQL connection...");
+
+  const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    connectionTimeoutMillis: 5000,
+  });
+
+  try {
+    const client = await pool.connect();
+    const result = await client.query("SELECT 1 as connected");
+
+    if (result.rows[0]?.connected === 1) {
+      console.log("✅ PostgreSQL connection successful\n");
+    }
+
+    client.release();
+    await pool.end();
+  } catch (error) {
+    console.error("❌ PostgreSQL connection failed:", error.message);
+    console.error("💡 Check your DATABASE_URL and ensure PostgreSQL is running");
+    await pool.end().catch(() => {});
+    process.exit(1);
+  }
+}
+
+/**
+ * Validates Redis connection
+ * @returns {Promise<void>}
+ */
+async function validateRedis() {
+  console.log("🔍 Checking Redis connection...");
+
+  const redis = new Redis(process.env.REDIS_URL, {
+    connectTimeout: 5000,
+    maxRetriesPerRequest: 1,
+    lazyConnect: true,
+  });
+
+  try {
+    await redis.connect();
+    const pong = await redis.ping();
+
+    if (pong === "PONG") {
+      console.log("✅ Redis connection successful\n");
+    }
+
+    await redis.quit();
+  } catch (error) {
+    console.error("❌ Redis connection failed:", error.message);
+    console.error("💡 Check your REDIS_URL and ensure Redis is running");
+    await redis.quit().catch(() => {});
+    process.exit(1);
+  }
 }
 
 // ========================================
@@ -140,5 +238,14 @@ process.on("unhandledRejection", (reason, promise) => {
 });
 
 // Validate and start
-validateEnvironment();
-startServer();
+async function main() {
+  validateEnvironment();
+  await validateDatabase();
+  await validateRedis();
+  startServer();
+}
+
+main().catch((error) => {
+  console.error("❌ Startup failed:", error);
+  process.exit(1);
+});
