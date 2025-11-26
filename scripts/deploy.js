@@ -234,7 +234,7 @@ function runBuild() {
     fs.rmSync(".next", { recursive: true, force: true });
   }
 
-  runCommand("npm run build", "Building application");
+  runCommand("npm run build:fast", "Building application");
 }
 
 /**
