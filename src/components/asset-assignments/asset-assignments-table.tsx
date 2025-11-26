@@ -6,7 +6,17 @@
 
 import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Trash2, Pencil, Star } from "lucide-react";
+import {
+  MoreHorizontal,
+  Trash2,
+  Pencil,
+  Star,
+  Tag,
+  User,
+  Building2,
+  MapPin,
+  Server,
+} from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -14,6 +24,7 @@ import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { EntityDisplay } from "@/components/ui/entity-display";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -101,16 +112,15 @@ export function AssetAssignmentsTable({
       enableHiding: false,
     },
     {
-      accessorKey: "assetId",
+      accessorKey: "assetTag",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Asset" />
       ),
       cell: ({ row }) => {
-        const assetId = row.getValue("assetId") as string;
         const isPrimary = row.original.isPrimary;
         return (
           <div className="flex items-center gap-2">
-            <span className="font-mono text-sm">{assetId.substring(0, 8)}</span>
+            <EntityDisplay name={row.original.assetTag} icon={Tag} />
             {isPrimary && (
               <Star className="fill-barq-yellow text-barq-yellow h-3 w-3" />
             )}
@@ -139,17 +149,21 @@ export function AssetAssignmentsTable({
       },
     },
     {
-      accessorKey: "assigneeId",
+      accessorKey: "assigneeName",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Assignee" />
       ),
       cell: ({ row }) => {
-        const assigneeId = row.getValue("assigneeId") as string;
-        return (
-          <span className="text-muted-foreground font-mono text-sm">
-            {assigneeId.substring(0, 8)}
-          </span>
-        );
+        const assigneeType = row.original.assigneeType;
+        const icon =
+          assigneeType === "PERSON"
+            ? User
+            : assigneeType === "ORG_UNIT"
+              ? Building2
+              : assigneeType === "LOCATION"
+                ? MapPin
+                : Server;
+        return <EntityDisplay name={row.original.assigneeName} icon={icon} />;
       },
       meta: {
         label: "Assignee",

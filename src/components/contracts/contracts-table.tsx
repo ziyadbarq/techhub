@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Trash2, Pencil, Eye } from "lucide-react";
+import { MoreHorizontal, Trash2, Pencil, Eye, Building2 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -10,6 +10,7 @@ import Link from "next/link";
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { EntityDisplay } from "@/components/ui/entity-display";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -130,14 +131,9 @@ export function ContractsTable({
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Vendor" />
       ),
-      cell: ({ row }) => {
-        const vendorId = row.getValue("vendorId") as string;
-        return (
-          <span className="text-muted-foreground text-sm">
-            {vendorId.substring(0, 8)}...
-          </span>
-        );
-      },
+      cell: ({ row }) => (
+        <EntityDisplay name={row.original.vendorName} icon={Building2} />
+      ),
       meta: {
         label: "Vendor",
       },

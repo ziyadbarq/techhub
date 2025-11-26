@@ -52,6 +52,9 @@ export const AssetReservationDTO = z.object({
   actualEndDate: z.date().nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  // Display fields (enriched from relations)
+  assetTag: z.string().optional(),
+  personName: z.string().optional(),
 });
 
 export type CreateReservationDTO = z.infer<typeof CreateReservationDTO>;

@@ -61,8 +61,18 @@ export function presentStockMovement(
   };
 }
 
+export interface StockMovementEnrichment {
+  stockLocationFromName?: string | null;
+  stockLocationToName?: string | null;
+  assetTag?: string | null;
+  performedByName?: string | null;
+}
+
 export function presentStockMovements(
   movements: StockMovement[],
+  enrichmentMap?: Map<string, StockMovementEnrichment>,
 ): StockMovementDTO[] {
-  return movements.map((movement) => presentStockMovement(movement));
+  return movements.map((movement) =>
+    presentStockMovement(movement, enrichmentMap?.get(movement.id)),
+  );
 }

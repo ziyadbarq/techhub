@@ -158,11 +158,11 @@ export function LifecycleTransitionsTable({
       cell: ({ row }) => (
         <div className="flex items-center gap-2 text-sm">
           <Badge variant="outline">
-            From: {row.original.fromStateId.slice(0, 8)}
+            {row.original.fromStateName || "Unknown"}
           </Badge>
           <ArrowRight className="text-muted-foreground h-4 w-4" />
           <Badge variant="outline">
-            To: {row.original.toStateId.slice(0, 8)}
+            {row.original.toStateName || "Unknown"}
           </Badge>
         </div>
       ),

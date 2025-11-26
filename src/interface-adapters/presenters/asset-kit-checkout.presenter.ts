@@ -2,10 +2,6 @@
 // @ts-nocheck
 // TODO: Fix type errors - this is WIP code
 
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import type { AssetKitCheckout } from "@/core/domain/entities/asset-kit-checkout.entity";
 import type { AssetKitCheckoutItem } from "@/core/domain/entities/asset-kit-checkout-item.entity";
 import type {
@@ -13,8 +9,16 @@ import type {
   AssetKitCheckoutItemDTO,
 } from "../dtos/generated/asset-kit-checkout.dto";
 
+export interface AssetKitCheckoutEnrichment {
+  kitName?: string;
+  personName?: string;
+}
+
 export class AssetKitCheckoutPresenter {
-  static toDTO(checkout: AssetKitCheckout): AssetKitCheckoutDTO {
+  static toDTO(
+    checkout: AssetKitCheckout,
+    enrichment?: AssetKitCheckoutEnrichment,
+  ): AssetKitCheckoutDTO {
     return {
       id: checkout.id,
       kitId: checkout.kitId,
@@ -27,11 +31,19 @@ export class AssetKitCheckoutPresenter {
       status: checkout.status,
       createdAt: checkout.createdAt,
       updatedAt: checkout.updatedAt,
+      // Display fields
+      kitName: enrichment?.kitName,
+      personName: enrichment?.personName,
     };
   }
 
-  static toDTOList(checkouts: AssetKitCheckout[]): AssetKitCheckoutDTO[] {
-    return checkouts.map((checkout) => this.toDTO(checkout));
+  static toDTOList(
+    checkouts: AssetKitCheckout[],
+    enrichmentMap?: Map<string, AssetKitCheckoutEnrichment>,
+  ): AssetKitCheckoutDTO[] {
+    return checkouts.map((checkout) =>
+      this.toDTO(checkout, enrichmentMap?.get(checkout.id)),
+    );
   }
 }
 

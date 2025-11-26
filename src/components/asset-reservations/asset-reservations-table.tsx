@@ -16,8 +16,9 @@ import {
   type SortingState,
   type ColumnFiltersState,
 } from "@tanstack/react-table";
-import { Eye } from "lucide-react";
+import { Eye, Tag, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { EntityDisplay } from "@/components/ui/entity-display";
 import {
   Table,
   TableBody,
@@ -62,21 +63,17 @@ export function AssetReservationsTable({
 
   const columns: ColumnDef<AssetReservationDTO>[] = [
     {
-      accessorKey: "assetId",
-      header: "Asset ID",
+      accessorKey: "assetTag",
+      header: "Asset",
       cell: ({ row }) => (
-        <div className="font-mono text-xs">
-          {row.getValue<string>("assetId").slice(0, 8)}...
-        </div>
+        <EntityDisplay name={row.original.assetTag} icon={Tag} />
       ),
     },
     {
-      accessorKey: "reservedByPersonId",
+      accessorKey: "personName",
       header: "Reserved By",
       cell: ({ row }) => (
-        <div className="font-mono text-xs">
-          {row.getValue<string>("reservedByPersonId").slice(0, 8)}...
-        </div>
+        <EntityDisplay name={row.original.personName} icon={User} />
       ),
     },
     {
@@ -154,10 +151,12 @@ export function AssetReservationsTable({
       {/* Filters */}
       <div className="flex flex-wrap gap-4">
         <Input
-          placeholder="Filter by asset ID..."
-          value={(table.getColumn("assetId")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter by asset tag..."
+          value={
+            (table.getColumn("assetTag")?.getFilterValue() as string) ?? ""
+          }
           onChange={(event) =>
-            table.getColumn("assetId")?.setFilterValue(event.target.value)
+            table.getColumn("assetTag")?.setFilterValue(event.target.value)
           }
           className="max-w-xs"
         />

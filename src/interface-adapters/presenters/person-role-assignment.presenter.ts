@@ -17,10 +17,19 @@ export interface PersonRoleAssignmentDTO {
   metadata: Record<string, unknown> | null;
   createdAt: string;
   updatedAt: string;
+  // Display fields (enriched from relations)
+  personName?: string | null;
+  roleName?: string | null;
+}
+
+export interface PersonRoleAssignmentEnrichment {
+  personName?: string | null;
+  roleName?: string | null;
 }
 
 export function presentPersonRoleAssignment(
   assignment: PersonRoleAssignment,
+  enrichment?: PersonRoleAssignmentEnrichment,
 ): PersonRoleAssignmentDTO {
   return {
     id: assignment.id,
@@ -34,11 +43,17 @@ export function presentPersonRoleAssignment(
     metadata: assignment.metadata,
     createdAt: assignment.createdAt.toISOString(),
     updatedAt: assignment.updatedAt.toISOString(),
+    // Display fields
+    personName: enrichment?.personName,
+    roleName: enrichment?.roleName,
   };
 }
 
 export function presentPersonRoleAssignments(
   assignments: PersonRoleAssignment[],
+  enrichmentMap?: Map<string, PersonRoleAssignmentEnrichment>,
 ): PersonRoleAssignmentDTO[] {
-  return assignments.map(presentPersonRoleAssignment);
+  return assignments.map((assignment) =>
+    presentPersonRoleAssignment(assignment, enrichmentMap?.get(assignment.id)),
+  );
 }

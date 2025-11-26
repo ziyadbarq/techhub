@@ -83,6 +83,8 @@ export const AssetDisposalDTO = z.object({
   metadata: z.record(z.string(), z.unknown()).nullable(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  // Display fields (enriched from relations)
+  assetTag: z.string().optional(),
 });
 
 export type CreateAssetDisposalDTO = z.infer<typeof CreateAssetDisposalDTO>;

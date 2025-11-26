@@ -14,6 +14,8 @@ import {
   ArrowUpFromLine,
   ArrowRightLeft,
   Settings,
+  Tag,
+  Warehouse,
 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -22,6 +24,7 @@ import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { EntityDisplay } from "@/components/ui/entity-display";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -152,18 +155,13 @@ export function StockMovementsTable({
       },
     },
     {
-      accessorKey: "assetId",
+      accessorKey: "assetTag",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Asset" />
       ),
-      cell: ({ row }) => {
-        const assetId = row.getValue("assetId") as string | null;
-        return (
-          <span className="text-sm">
-            {assetId ? assetId.substring(0, 8) : "—"}
-          </span>
-        );
-      },
+      cell: ({ row }) => (
+        <EntityDisplay name={row.original.assetTag} icon={Tag} />
+      ),
       meta: {
         label: "Asset",
       },
@@ -182,35 +180,31 @@ export function StockMovementsTable({
       },
     },
     {
-      accessorKey: "stockLocationFromId",
+      accessorKey: "stockLocationFromName",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="From" />
       ),
-      cell: ({ row }) => {
-        const fromId = row.getValue("stockLocationFromId") as string | null;
-        return (
-          <span className="text-muted-foreground text-sm">
-            {fromId ? fromId.substring(0, 8) : "—"}
-          </span>
-        );
-      },
+      cell: ({ row }) => (
+        <EntityDisplay
+          name={row.original.stockLocationFromName}
+          icon={Warehouse}
+        />
+      ),
       meta: {
         label: "From",
       },
     },
     {
-      accessorKey: "stockLocationToId",
+      accessorKey: "stockLocationToName",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="To" />
       ),
-      cell: ({ row }) => {
-        const toId = row.getValue("stockLocationToId") as string | null;
-        return (
-          <span className="text-muted-foreground text-sm">
-            {toId ? toId.substring(0, 8) : "—"}
-          </span>
-        );
-      },
+      cell: ({ row }) => (
+        <EntityDisplay
+          name={row.original.stockLocationToName}
+          icon={Warehouse}
+        />
+      ),
       meta: {
         label: "To",
       },

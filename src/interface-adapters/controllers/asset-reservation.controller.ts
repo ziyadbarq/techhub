@@ -22,7 +22,10 @@ import {
   ResolveConflictDTO,
   type AssetReservationConflictDTO,
 } from "../dtos/generated/asset-reservation-conflict.dto";
-import { AssetReservationPresenter } from "../presenters/asset-reservation.presenter";
+import {
+  AssetReservationPresenter,
+  type AssetReservationEnrichment,
+} from "../presenters/asset-reservation.presenter";
 import { AssetReservationConflictPresenter } from "../presenters/asset-reservation-conflict.presenter";
 import type {
   CreateReservationUseCase,
@@ -39,8 +42,79 @@ import type {
   CheckAvailabilityUseCase,
   ListAvailableAssetsUseCase,
 } from "@/core/use-cases/reservations";
+import type { ListAssetsUseCase } from "@/core/use-cases/asset/asset";
+import type { ListPeopleUseCase } from "@/core/use-cases/foundation/person";
+import type { AssetReservation } from "@/core/domain/entities/asset-reservation.entity";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+/**
+ * Enrich asset reservations with asset tags and person names
+ */
+async function enrichAssetReservations(
+  reservations: AssetReservation[],
+): Promise<Map<string, AssetReservationEnrichment>> {
+  if (reservations.length === 0) {
+    return new Map();
+  }
+
+  const container = getContainer();
+
+  // Collect unique IDs
+  const assetIds = [...new Set(reservations.map((r) => r.assetId))];
+  const personIds = [
+    ...new Set(
+      reservations
+        .map((r) => r.reservedForPersonId)
+        .filter((id): id is string => id !== null),
+    ),
+  ];
+
+  // Fetch assets and persons in parallel
+  const [assetsMap, personsMap] = await Promise.all([
+    (async () => {
+      if (assetIds.length === 0) return new Map<string, string>();
+
+      const useCase = container.get<ListAssetsUseCase>(
+        DI_TOKENS.ListAssetsUseCase,
+      );
+      const assets = await useCase.execute({});
+
+      return new Map(
+        assets
+          .filter((a) => assetIds.includes(a.id))
+          .map((a) => [a.id, a.assetTag]),
+      );
+    })(),
+    (async () => {
+      if (personIds.length === 0) return new Map<string, string>();
+
+      const useCase = container.get<ListPeopleUseCase>(
+        DI_TOKENS.ListPersonsUseCase,
+      );
+      const persons = await useCase.execute();
+
+      return new Map(
+        persons
+          .filter((p) => personIds.includes(p.id))
+          .map((p) => [p.id, p.fullName]),
+      );
+    })(),
+  ]);
+
+  // Build enrichment map
+  const enrichmentMap = new Map<string, AssetReservationEnrichment>();
+  for (const reservation of reservations) {
+    enrichmentMap.set(reservation.id, {
+      assetTag: assetsMap.get(reservation.assetId),
+      personName: reservation.reservedForPersonId
+        ? personsMap.get(reservation.reservedForPersonId)
+        : undefined,
+    });
+  }
+
+  return enrichmentMap;
+}
 
 // ==================== Reservation Management ====================
 
@@ -95,9 +169,15 @@ export async function listReservationsAction(): Promise<
 
     const result = await useCase.execute({});
 
+    // Enrich with asset tags and person names
+    const enrichmentMap = await enrichAssetReservations(result.reservations);
+
     return {
       success: true,
-      data: AssetReservationPresenter.toDTOList(result.reservations),
+      data: AssetReservationPresenter.toDTOList(
+        result.reservations,
+        enrichmentMap,
+      ),
     };
   } catch (error) {
     return handleControllerError(

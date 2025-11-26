@@ -17,6 +17,9 @@ import type {
   UpdateContractUseCase,
   DeleteContractUseCase,
 } from "@/core/use-cases/contract";
+import type { ListVendorsUseCase } from "@/core/use-cases/foundation/vendor";
+import type { ListContractTypesUseCase } from "@/core/use-cases/contract-type";
+import type { Contract } from "@/core/domain/entities/contract.entity";
 import {
   CreateContractSchema,
   UpdateContractSchema,
@@ -26,9 +29,74 @@ import {
 import {
   ContractPresenter,
   type ContractDTO,
+  type ContractEnrichment,
 } from "@/interface-adapters/presenters/contract.presenter";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+/**
+ * Enrich contracts with related entity display data
+ */
+async function enrichContracts(
+  contracts: Contract[],
+): Promise<Map<string, ContractEnrichment>> {
+  if (contracts.length === 0) {
+    return new Map();
+  }
+
+  const container = getContainer();
+
+  // Collect unique IDs
+  const vendorIds = [
+    ...new Set(contracts.map((c) => c.vendorId).filter(Boolean)),
+  ] as string[];
+  const contractTypeIds = [...new Set(contracts.map((c) => c.contractTypeId))];
+
+  // Fetch related entities in parallel
+  const [vendorsMap, contractTypesMap] = await Promise.all([
+    (async () => {
+      if (vendorIds.length === 0) return new Map<string, string>();
+
+      const useCase = container.get<ListVendorsUseCase>(
+        DI_TOKENS.ListVendorsUseCase,
+      );
+      const vendors = await useCase.execute();
+
+      return new Map(
+        vendors
+          .filter((v) => vendorIds.includes(v.id))
+          .map((v) => [v.id, v.name]),
+      );
+    })(),
+    (async () => {
+      if (contractTypeIds.length === 0) return new Map<string, string>();
+
+      const useCase = container.get<ListContractTypesUseCase>(
+        DI_TOKENS.ListContractTypesUseCase,
+      );
+      const types = await useCase.execute({});
+
+      return new Map(
+        types
+          .filter((t) => contractTypeIds.includes(t.id))
+          .map((t) => [t.id, t.name]),
+      );
+    })(),
+  ]);
+
+  // Build enrichment map
+  const enrichmentMap = new Map<string, ContractEnrichment>();
+  for (const contract of contracts) {
+    enrichmentMap.set(contract.id, {
+      vendorName: contract.vendorId
+        ? vendorsMap.get(contract.vendorId) || null
+        : null,
+      contractTypeName: contractTypesMap.get(contract.contractTypeId) || null,
+    });
+  }
+
+  return enrichmentMap;
+}
 
 /**
  * Create a new contract
@@ -87,9 +155,16 @@ export async function getContract(
 
     const contract = await useCase.execute({ id });
 
+    // Enrich with related entity names
+    const enrichmentMap = await enrichContracts([contract]);
+
     return {
       success: true,
-      data: ContractPresenter.toDTO(contract, true),
+      data: ContractPresenter.toDTO(
+        contract,
+        true,
+        enrichmentMap.get(contract.id),
+      ),
     };
   } catch (error) {
     return {
@@ -125,9 +200,12 @@ export async function listContracts(options?: {
       asOfDate: options?.asOfDate,
     });
 
+    // Enrich with related entity names
+    const enrichmentMap = await enrichContracts(contracts);
+
     return {
       success: true,
-      data: ContractPresenter.toDTOList(contracts, true),
+      data: ContractPresenter.toDTOList(contracts, true, enrichmentMap),
     };
   } catch (error) {
     return {

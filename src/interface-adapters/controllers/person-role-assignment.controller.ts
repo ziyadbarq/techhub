@@ -21,6 +21,7 @@ import {
   presentPersonRoleAssignment,
   presentPersonRoleAssignments,
   type PersonRoleAssignmentDTO,
+  type PersonRoleAssignmentEnrichment,
 } from "../presenters/person-role-assignment.presenter";
 import type {
   CreatePersonRoleAssignmentUseCase,
@@ -29,8 +30,69 @@ import type {
   UpdatePersonRoleAssignmentUseCase,
   DeletePersonRoleAssignmentUseCase,
 } from "@/core/use-cases/foundation/person-role-assignment";
+import type { ListPeopleUseCase } from "@/core/use-cases/foundation/person";
+import type { ListRolesUseCase } from "@/core/use-cases/rbac";
+import type { PersonRoleAssignment } from "@/core/domain/entities/person-role-assignment.entity";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+/**
+ * Enrich person role assignments with person and role names
+ */
+async function enrichPersonRoleAssignments(
+  assignments: PersonRoleAssignment[],
+): Promise<Map<string, PersonRoleAssignmentEnrichment>> {
+  if (assignments.length === 0) {
+    return new Map();
+  }
+
+  const container = getContainer();
+
+  // Collect unique IDs
+  const personIds = [...new Set(assignments.map((a) => a.personId))];
+  const roleIds = [...new Set(assignments.map((a) => a.roleId))];
+
+  // Fetch persons and roles in parallel
+  const [personsMap, rolesMap] = await Promise.all([
+    (async () => {
+      if (personIds.length === 0) return new Map<string, string>();
+
+      const useCase = container.get<ListPeopleUseCase>(
+        DI_TOKENS.ListPersonsUseCase,
+      );
+      const persons = await useCase.execute();
+
+      return new Map(
+        persons
+          .filter((p) => personIds.includes(p.id))
+          .map((p) => [p.id, p.fullName]),
+      );
+    })(),
+    (async () => {
+      if (roleIds.length === 0) return new Map<string, string>();
+
+      const useCase = container.get<ListRolesUseCase>(
+        DI_TOKENS.ListRolesUseCase,
+      );
+      const roles = await useCase.execute();
+
+      return new Map(
+        roles.filter((r) => roleIds.includes(r.id)).map((r) => [r.id, r.name]),
+      );
+    })(),
+  ]);
+
+  // Build enrichment map
+  const enrichmentMap = new Map<string, PersonRoleAssignmentEnrichment>();
+  for (const assignment of assignments) {
+    enrichmentMap.set(assignment.id, {
+      personName: personsMap.get(assignment.personId) || null,
+      roleName: rolesMap.get(assignment.roleId) || null,
+    });
+  }
+
+  return enrichmentMap;
+}
 
 export async function createPersonRoleAssignmentAction(
   data: CreatePersonRoleAssignmentDTO,
@@ -81,9 +143,12 @@ export async function listPersonRoleAssignmentsAction(): Promise<
 
     const assignments = await useCase.execute();
 
+    // Enrich with person and role names
+    const enrichmentMap = await enrichPersonRoleAssignments(assignments);
+
     return {
       success: true,
-      data: presentPersonRoleAssignments(assignments),
+      data: presentPersonRoleAssignments(assignments, enrichmentMap),
     };
   } catch (error) {
     return handleControllerError(

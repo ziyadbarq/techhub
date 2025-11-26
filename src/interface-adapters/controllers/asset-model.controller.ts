@@ -20,6 +20,7 @@ import {
   presentAssetModel,
   presentAssetModels,
   type AssetModelDTO,
+  type AssetModelEnrichment,
 } from "../presenters/asset-model.presenter";
 import type {
   CreateAssetModelUseCase,
@@ -28,8 +29,75 @@ import type {
   UpdateAssetModelUseCase,
   DeleteAssetModelUseCase,
 } from "@/core/use-cases/asset/asset-model";
+import type { ListAssetCategoriesUseCase } from "@/core/use-cases/asset/asset-category";
+import type { ListVendorsUseCase } from "@/core/use-cases/foundation/vendor";
+import type { AssetModel } from "@/core/domain/entities/asset-model.entity";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+/**
+ * Enrich asset models with related entity display data
+ */
+async function enrichAssetModels(
+  assetModels: AssetModel[],
+): Promise<Map<string, AssetModelEnrichment>> {
+  if (assetModels.length === 0) {
+    return new Map();
+  }
+
+  const container = getContainer();
+
+  // Collect unique IDs
+  const categoryIds = [...new Set(assetModels.map((m) => m.assetCategoryId))];
+  const vendorIds = [
+    ...new Set(assetModels.map((m) => m.vendorId).filter(Boolean)),
+  ] as string[];
+
+  // Fetch related entities in parallel
+  const [categoriesMap, vendorsMap] = await Promise.all([
+    (async () => {
+      if (categoryIds.length === 0) return new Map<string, string>();
+
+      const useCase = container.get<ListAssetCategoriesUseCase>(
+        DI_TOKENS.ListAssetCategoriesUseCase,
+      );
+      const categories = await useCase.execute();
+
+      return new Map(
+        categories
+          .filter((c) => categoryIds.includes(c.id))
+          .map((c) => [c.id, c.name]),
+      );
+    })(),
+    (async () => {
+      if (vendorIds.length === 0) return new Map<string, string>();
+
+      const useCase = container.get<ListVendorsUseCase>(
+        DI_TOKENS.ListVendorsUseCase,
+      );
+      const vendors = await useCase.execute();
+
+      return new Map(
+        vendors
+          .filter((v) => vendorIds.includes(v.id))
+          .map((v) => [v.id, v.name]),
+      );
+    })(),
+  ]);
+
+  // Build enrichment map
+  const enrichmentMap = new Map<string, AssetModelEnrichment>();
+  for (const model of assetModels) {
+    enrichmentMap.set(model.id, {
+      categoryName: categoriesMap.get(model.assetCategoryId) || null,
+      vendorName: model.vendorId
+        ? vendorsMap.get(model.vendorId) || null
+        : null,
+    });
+  }
+
+  return enrichmentMap;
+}
 
 export async function createAssetModelAction(
   data: CreateAssetModelDTO,
@@ -82,9 +150,12 @@ export async function listAssetModelsAction(): Promise<
 
     const assetModels = await useCase.execute();
 
+    // Enrich with related entity names
+    const enrichmentMap = await enrichAssetModels(assetModels);
+
     return {
       success: true,
-      data: presentAssetModels(assetModels),
+      data: presentAssetModels(assetModels, enrichmentMap),
     };
   } catch (error) {
     return handleControllerError(

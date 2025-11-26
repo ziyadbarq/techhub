@@ -4,8 +4,112 @@ This document tracks significant user interface and user experience improvements
 
 ## Table of Contents
 
+- [Entity Display Names Enhancement (2025-11)](#entity-display-names-enhancement-2025-11)
 - [SearchableSelect Component (2025-11)](#searchableselect-component-2025-11)
 - [Settings Navigation Restructure (2025-01)](#settings-navigation-restructure-2025-01)
+
+---
+
+## Entity Display Names Enhancement (2025-11)
+
+### Problem
+
+Tables and detail views throughout the application displayed raw CUIDs (e.g., `cmifrk2qu004i5k8b63lcefff`) or truncated CUIDs (`cmifrk2q...`) for related entities, creating poor UX:
+
+- **Unreadable**: Users couldn't identify entities without clicking through to details
+- **Inconsistent**: Some tables showed names, others showed IDs
+- **Poor Scannability**: Tables were hard to scan and compare rows
+- **Extra Clicks**: Users had to click into detail pages to identify related entities
+
+**Examples of affected tables:**
+- Asset Assignments: showed asset IDs instead of asset tags
+- Stock Movements: showed location IDs instead of location names
+- Kit Checkouts: showed kit IDs instead of kit names
+- Contracts: showed vendor IDs instead of vendor names
+
+### Solution
+
+Implemented **controller-level enrichment pattern** with **EntityDisplay component** for consistent entity name display:
+
+**Pattern Components:**
+
+1. **Enrichment Interface** - Optional display fields added to DTOs
+2. **Controller Enrichment** - Batch-fetch related entities and build ID→name maps
+3. **EntityDisplay Component** - Consistent UI component with icons and fallbacks
+
+### Implementation
+
+**New Component**: [src/components/ui/entity-display.tsx](../../src/components/ui/entity-display.tsx)
+
+```tsx
+<EntityDisplay name={row.original.vendorName} icon={Building2} />
+<EntityDisplay name={row.original.assigneeName} icon={User} fallback="Unassigned" />
+```
+
+**Tables Updated (14 components):**
+
+| Component | Display Fields Added |
+|-----------|---------------------|
+| `contracts-table.tsx` | `vendorName`, `primaryContactName` |
+| `asset-models-table.tsx` | `categoryName`, `vendorName` |
+| `asset-disposals-table.tsx` | `assetTag`, `handledByName` |
+| `lifecycle-transitions-table.tsx` | `fromStateName`, `toStateName`, `performedByName` |
+| `person-role-assignments-table.tsx` | `personName`, `roleName` |
+| `asset-reservations-table.tsx` | `assetTag`, `personName`, `orgUnitName` |
+| `kit-checkouts-table.tsx` | `kitName`, `checkedOutByName`, `returnedByName` |
+| `asset-assignments-table.tsx` | `assetTag`, `assigneeName` (polymorphic: person/org unit/location/CI) |
+| `stock-movements-table.tsx` | `assetTag`, `stockLocationFromName`, `stockLocationToName`, `performedByName` |
+| `reservation-detail.tsx` | `assetTag`, `personName` |
+| `asset-movements-tab.tsx` | `stockLocationFromName`, `stockLocationToName`, `performedByName` |
+| `asset-assignments-tab.tsx` | `assigneeName` |
+| `asset-detail-page-client.tsx` | `assigneeName` in Return Wizard |
+
+**Presenters Updated:**
+
+All corresponding presenters were updated with enrichment interfaces and optional display fields:
+- `asset-assignment.presenter.ts`
+- `stock-movement.presenter.ts`
+- `asset-reservation.presenter.ts`
+- `contract.presenter.ts`
+- And 6 more...
+
+**Controllers Updated:**
+
+All corresponding controllers were updated with enrichment functions that batch-fetch related entities using `Promise.all()` for parallel execution.
+
+### Benefits
+
+✅ **Human-Readable**: Entity names displayed instead of cryptic IDs
+✅ **Consistent Pattern**: Same enrichment approach across all tables
+✅ **Performance**: Batch fetching prevents N+1 queries
+✅ **Visual Consistency**: `EntityDisplay` component provides uniform styling
+✅ **Context-Aware Icons**: Different icons for different entity types
+✅ **Graceful Fallbacks**: Dash or custom text for null values
+✅ **Maintainability**: Enrichment logic centralized in controllers
+
+### Technical Details
+
+**Enrichment Pattern Flow:**
+
+```
+1. Controller receives request
+2. Use case returns entities with raw IDs
+3. Controller collects unique related IDs
+4. Batch-fetch related entities in parallel (Promise.all)
+5. Build ID→name Maps
+6. Pass enrichment map to presenter
+7. Presenter adds optional display fields to DTO
+8. UI uses EntityDisplay component
+```
+
+**Handling Polymorphic References:**
+
+For entities with multiple possible related types (e.g., `assigneeType` can be PERSON, ORG_UNIT, LOCATION, or CI), the enrichment function fetches from all possible sources and uses the type field to select the correct name.
+
+### Related Documentation
+
+- [Developer Guide - Enrichment Pattern](./DEVELOPER_GUIDE.md#enrichment-pattern-display-names-for-related-entities)
+- [UI Components - EntityDisplay](./UI_COMPONENTS.md#entitydisplay-component)
 
 ---
 
@@ -190,6 +294,7 @@ When making UI/UX improvements:
 
 ## Changelog
 
+- **2025-11-26**: Entity Display Names Enhancement - Replaced raw CUIDs with human-readable names across 14 tables/components using controller-level enrichment pattern and EntityDisplay component
 - **2025-11-26**: SearchableSelect Component - Added searchable dropdown for large option lists with filtering and limited visible results
 - **2025-01-22**: Settings Navigation Restructure - Flattened admin settings from nested tabs to dedicated sidebar group
 

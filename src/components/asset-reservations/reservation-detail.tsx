@@ -121,24 +121,24 @@ export function ReservationDetail({
             <h3 className="mb-3 text-lg font-semibold">Basic Information</h3>
             <div className="grid gap-3 text-sm">
               <div className="grid grid-cols-3 gap-2">
-                <span className="text-muted-foreground">Asset ID:</span>
-                <span className="col-span-2 font-mono">
-                  {reservation.assetId}
+                <span className="text-muted-foreground">Asset:</span>
+                <span className="col-span-2">
+                  {reservation.assetTag || reservation.assetId}
                 </span>
               </div>
               {reservation.reservedByPersonId && (
                 <div className="grid grid-cols-3 gap-2">
                   <span className="text-muted-foreground">Reserved By:</span>
-                  <span className="col-span-2 font-mono">
-                    {reservation.reservedByPersonId.slice(0, 8)}...
+                  <span className="col-span-2">
+                    {reservation.personName || reservation.reservedByPersonId}
                   </span>
                 </div>
               )}
               {reservation.reservedByOrgUnitId && (
                 <div className="grid grid-cols-3 gap-2">
                   <span className="text-muted-foreground">Org Unit:</span>
-                  <span className="col-span-2 font-mono">
-                    {reservation.reservedByOrgUnitId.slice(0, 8)}...
+                  <span className="col-span-2">
+                    {reservation.reservedByOrgUnitId}
                   </span>
                 </div>
               )}

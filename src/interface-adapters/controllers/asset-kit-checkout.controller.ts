@@ -21,7 +21,10 @@ import {
   ExtendCheckoutDTO,
   type AssetKitCheckoutDTO,
 } from "../dtos/generated/asset-kit-checkout.dto";
-import { AssetKitCheckoutPresenter } from "../presenters/asset-kit-checkout.presenter";
+import {
+  AssetKitCheckoutPresenter,
+  type AssetKitCheckoutEnrichment,
+} from "../presenters/asset-kit-checkout.presenter";
 import type {
   CreateKitCheckoutUseCase,
   GetKitCheckoutUseCase,
@@ -33,9 +36,81 @@ import type {
   ExtendCheckoutUseCase,
   ListOverdueCheckoutsUseCase,
   CheckKitAvailabilityUseCase,
+  ListAssetKitsUseCase,
 } from "@/core/use-cases/asset-kits";
+import type { ListPeopleUseCase } from "@/core/use-cases/foundation/person";
+import type { AssetKitCheckout } from "@/core/domain/entities/asset-kit-checkout.entity";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+/**
+ * Enrich kit checkouts with kit names and person names
+ */
+async function enrichKitCheckouts(
+  checkouts: AssetKitCheckout[],
+): Promise<Map<string, AssetKitCheckoutEnrichment>> {
+  if (checkouts.length === 0) {
+    return new Map();
+  }
+
+  const container = getContainer();
+
+  // Collect unique IDs (assigneeId for PERSON assigneeType)
+  const kitIds = [...new Set(checkouts.map((c) => c.assetKitId))];
+  const personIds = [
+    ...new Set(
+      checkouts
+        .filter((c) => c.assigneeType === "PERSON")
+        .map((c) => c.assigneeId),
+    ),
+  ];
+
+  // Fetch kits and persons in parallel
+  const [kitsMap, personsMap] = await Promise.all([
+    (async () => {
+      if (kitIds.length === 0) return new Map<string, string>();
+
+      const useCase = container.get<ListAssetKitsUseCase>(
+        DI_TOKENS.ListAssetKitsUseCase,
+      );
+      const result = await useCase.execute({});
+
+      return new Map(
+        result.kits
+          .filter((k) => kitIds.includes(k.id))
+          .map((k) => [k.id, k.name]),
+      );
+    })(),
+    (async () => {
+      if (personIds.length === 0) return new Map<string, string>();
+
+      const useCase = container.get<ListPeopleUseCase>(
+        DI_TOKENS.ListPersonsUseCase,
+      );
+      const persons = await useCase.execute();
+
+      return new Map(
+        persons
+          .filter((p) => personIds.includes(p.id))
+          .map((p) => [p.id, p.fullName]),
+      );
+    })(),
+  ]);
+
+  // Build enrichment map
+  const enrichmentMap = new Map<string, AssetKitCheckoutEnrichment>();
+  for (const checkout of checkouts) {
+    enrichmentMap.set(checkout.id, {
+      kitName: kitsMap.get(checkout.assetKitId),
+      personName:
+        checkout.assigneeType === "PERSON"
+          ? personsMap.get(checkout.assigneeId)
+          : undefined,
+    });
+  }
+
+  return enrichmentMap;
+}
 
 // ==================== Kit Checkout Management ====================
 
@@ -90,9 +165,15 @@ export async function listKitCheckoutsAction(): Promise<
 
     const result = await useCase.execute({});
 
+    // Enrich with kit and person names
+    const enrichmentMap = await enrichKitCheckouts(result.checkouts);
+
     return {
       success: true,
-      data: AssetKitCheckoutPresenter.toDTOList(result.checkouts),
+      data: AssetKitCheckoutPresenter.toDTOList(
+        result.checkouts,
+        enrichmentMap,
+      ),
     };
   } catch (error) {
     return handleControllerError(

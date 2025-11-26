@@ -6,7 +6,13 @@
 
 import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Trash2, Pencil } from "lucide-react";
+import {
+  MoreHorizontal,
+  Trash2,
+  Pencil,
+  FolderTree,
+  Building2,
+} from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -14,6 +20,7 @@ import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { EntityDisplay } from "@/components/ui/entity-display";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -125,15 +132,9 @@ export function AssetModelsTable({
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Category" />
       ),
-      cell: ({ row }) => {
-        // In a real implementation, we'd join with AssetCategory
-        // For now, just show the ID or we can enhance this later
-        return (
-          <span className="text-muted-foreground text-sm">
-            Category #{row.original.assetCategoryId.slice(0, 8)}
-          </span>
-        );
-      },
+      cell: ({ row }) => (
+        <EntityDisplay name={row.original.categoryName} icon={FolderTree} />
+      ),
       meta: {
         label: "Category",
       },
@@ -143,18 +144,9 @@ export function AssetModelsTable({
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Vendor" />
       ),
-      cell: ({ row }) => {
-        const vendorId = row.original.vendorId;
-        if (!vendorId) {
-          return <span className="text-muted-foreground text-sm">—</span>;
-        }
-        // In a real implementation, we'd join with Vendor
-        return (
-          <span className="text-muted-foreground text-sm">
-            Vendor #{vendorId.slice(0, 8)}
-          </span>
-        );
-      },
+      cell: ({ row }) => (
+        <EntityDisplay name={row.original.vendorName} icon={Building2} />
+      ),
       meta: {
         label: "Vendor",
       },

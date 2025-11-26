@@ -4,11 +4,137 @@ Advanced UI component patterns for building production-ready interfaces with Tan
 
 ## Table of Contents
 
+- [EntityDisplay Component](#entitydisplay-component)
 - [DataTable Component](#datatable-component)
 - [React Hook Form Integration](#react-hook-form-integration)
 - [CSV Import/Export](#csv-importexport)
 - [Form Utilities](#form-utilities)
 - [Best Practices](#best-practices)
+
+---
+
+## EntityDisplay Component
+
+A reusable component for displaying entity names in tables and lists with consistent styling, icons, and fallback handling.
+
+### Purpose
+
+Replace raw CUID displays (e.g., `cmifrk2qu004i5k8b63lcefff.slice(0,8)`) with human-readable names while providing:
+
+- Consistent visual styling across all tables
+- Optional icons for entity type identification
+- Automatic truncation with tooltips for long names
+- Graceful fallback for null/undefined values
+
+### Basic Usage
+
+```tsx
+import { EntityDisplay } from "@/components/ui/entity-display";
+import { User, Building2, Tag, Warehouse } from "lucide-react";
+
+// Basic usage with icon
+<EntityDisplay name={row.original.vendorName} icon={Building2} />
+
+// With custom fallback text
+<EntityDisplay name={row.original.assigneeName} icon={User} fallback="Unassigned" />
+
+// Without icon
+<EntityDisplay name={row.original.categoryName} />
+
+// With custom max width
+<EntityDisplay name={row.original.description} maxWidth="300px" />
+
+// Without truncation
+<EntityDisplay name={row.original.notes} truncate={false} />
+```
+
+### Props Reference
+
+| Prop        | Type                                        | Default   | Description                              |
+| ----------- | ------------------------------------------- | --------- | ---------------------------------------- |
+| `name`      | `string \| null \| undefined`               | required  | The name/label to display                |
+| `icon`      | `React.ComponentType<{ className?: string }>` | undefined | Icon component (e.g., Lucide icon)       |
+| `fallback`  | `string`                                    | `"—"`     | Text shown when name is null/undefined   |
+| `className` | `string`                                    | undefined | Additional CSS classes                   |
+| `truncate`  | `boolean`                                   | `true`    | Whether to truncate long text            |
+| `maxWidth`  | `string`                                    | `"150px"` | Maximum width for truncation             |
+
+### Common Icon Mappings
+
+Use context-appropriate icons for different entity types:
+
+| Entity Type          | Icon          | Import                            |
+| -------------------- | ------------- | --------------------------------- |
+| Person               | `User`        | `lucide-react`                    |
+| Organization Unit    | `Building2`   | `lucide-react`                    |
+| Location             | `MapPin`      | `lucide-react`                    |
+| Asset                | `Tag`         | `lucide-react`                    |
+| Vendor               | `Building2`   | `lucide-react`                    |
+| Stock Location       | `Warehouse`   | `lucide-react`                    |
+| Configuration Item   | `Server`      | `lucide-react`                    |
+| Contract             | `FileText`    | `lucide-react`                    |
+| Category             | `Folder`      | `lucide-react`                    |
+
+### In Table Columns
+
+```tsx
+import { type ColumnDef } from "@tanstack/react-table";
+import { EntityDisplay } from "@/components/ui/entity-display";
+import { Tag, User, Building2 } from "lucide-react";
+
+const columns: ColumnDef<AssetAssignmentDTO>[] = [
+  {
+    accessorKey: "assetTag",
+    header: "Asset",
+    cell: ({ row }) => (
+      <EntityDisplay
+        name={row.original.assetTag}
+        icon={Tag}
+        fallback="Unknown Asset"
+      />
+    ),
+  },
+  {
+    accessorKey: "assigneeName",
+    header: "Assignee",
+    cell: ({ row }) => {
+      // Context-aware icon based on assignee type
+      const IconComponent =
+        row.original.assigneeType === "PERSON" ? User :
+        row.original.assigneeType === "ORG_UNIT" ? Building2 :
+        row.original.assigneeType === "LOCATION" ? MapPin : Server;
+
+      return (
+        <EntityDisplay
+          name={row.original.assigneeName}
+          icon={IconComponent}
+        />
+      );
+    },
+  },
+];
+```
+
+### In Detail Views
+
+```tsx
+// Simple inline display
+<span className="text-muted-foreground">Vendor:</span>
+<EntityDisplay name={warranty.vendorName} icon={Building2} />
+
+// In a grid layout
+<div className="grid grid-cols-3 gap-2">
+  <span className="text-muted-foreground">Reserved By:</span>
+  <span className="col-span-2">
+    {reservation.personName || reservation.reservedByPersonId}
+  </span>
+</div>
+```
+
+### Related Patterns
+
+- **Enrichment Pattern**: See [Developer Guide - Enrichment Pattern](./DEVELOPER_GUIDE.md#enrichment-pattern-display-names-for-related-entities) for how to populate display names via controller-level enrichment
+- **DataTable**: See [DataTable Component](#datatable-component) for table integration
 
 ---
 

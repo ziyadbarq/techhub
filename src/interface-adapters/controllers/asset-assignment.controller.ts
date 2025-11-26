@@ -22,6 +22,7 @@ import {
   presentAssetAssignment,
   presentAssetAssignments,
   type AssetAssignmentDTO,
+  type AssetAssignmentEnrichment,
 } from "../presenters/asset-assignment.presenter";
 import type {
   CreateAssetAssignmentUseCase,
@@ -30,9 +31,159 @@ import type {
   UpdateAssetAssignmentUseCase,
   DeleteAssetAssignmentUseCase,
 } from "@/core/use-cases/asset/asset-assignment";
+import type { ListAssetsUseCase } from "@/core/use-cases/asset/asset";
+import type { ListPeopleUseCase } from "@/core/use-cases/foundation/person";
+import type { ListOrganizationUnitsUseCase } from "@/core/use-cases/foundation/organization-unit";
+import type { ListLocationsUseCase } from "@/core/use-cases/foundation/location";
+import type { ListConfigurationItemsUseCase } from "@/core/use-cases/cmdb/configuration-item";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
+import type { AssetAssignment } from "@/core/domain/entities/asset-assignment.entity";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+/**
+ * Enrich asset assignments with asset tags and assignee names
+ */
+async function enrichAssetAssignments(
+  assignments: AssetAssignment[],
+): Promise<Map<string, AssetAssignmentEnrichment>> {
+  if (assignments.length === 0) {
+    return new Map();
+  }
+
+  const container = getContainer();
+
+  // Collect unique IDs by assignee type
+  const assetIds = [...new Set(assignments.map((a) => a.assetId))];
+  const personIds = [
+    ...new Set(
+      assignments
+        .filter((a) => a.assigneeType === "PERSON")
+        .map((a) => a.assigneeId),
+    ),
+  ];
+  const orgUnitIds = [
+    ...new Set(
+      assignments
+        .filter((a) => a.assigneeType === "ORG_UNIT")
+        .map((a) => a.assigneeId),
+    ),
+  ];
+  const locationIds = [
+    ...new Set(
+      assignments
+        .filter((a) => a.assigneeType === "LOCATION")
+        .map((a) => a.assigneeId),
+    ),
+  ];
+  const ciIds = [
+    ...new Set(
+      assignments
+        .filter((a) => a.assigneeType === "CI")
+        .map((a) => a.assigneeId),
+    ),
+  ];
+
+  // Fetch all entities in parallel
+  const [assetsMap, personsMap, orgUnitsMap, locationsMap, cisMap]: [
+    Map<string, string>,
+    Map<string, string>,
+    Map<string, string>,
+    Map<string, string>,
+    Map<string, string>,
+  ] = await Promise.all([
+    // Assets
+    (async () => {
+      if (assetIds.length === 0) return new Map<string, string>();
+      const useCase = container.get<ListAssetsUseCase>(
+        DI_TOKENS.ListAssetsUseCase,
+      );
+      const assets = await useCase.execute({});
+      return new Map(
+        assets
+          .filter((a) => assetIds.includes(a.id))
+          .map((a) => [a.id, a.assetTag]),
+      );
+    })(),
+    // Persons
+    (async () => {
+      if (personIds.length === 0) return new Map<string, string>();
+      const useCase = container.get<ListPeopleUseCase>(
+        DI_TOKENS.ListPersonsUseCase,
+      );
+      const persons = await useCase.execute();
+      return new Map(
+        persons
+          .filter((p) => personIds.includes(p.id))
+          .map((p) => [p.id, p.fullName]),
+      );
+    })(),
+    // Org Units
+    (async () => {
+      if (orgUnitIds.length === 0) return new Map<string, string>();
+      const useCase = container.get<ListOrganizationUnitsUseCase>(
+        DI_TOKENS.ListOrganizationUnitsUseCase,
+      );
+      const orgUnits = await useCase.execute();
+      return new Map(
+        orgUnits
+          .filter((o) => orgUnitIds.includes(o.id))
+          .map((o) => [o.id, o.name]),
+      );
+    })(),
+    // Locations
+    (async () => {
+      if (locationIds.length === 0) return new Map<string, string>();
+      const useCase = container.get<ListLocationsUseCase>(
+        DI_TOKENS.ListLocationsUseCase,
+      );
+      const locations = await useCase.execute();
+      return new Map(
+        locations
+          .filter((l) => locationIds.includes(l.id))
+          .map((l) => [l.id, l.name]),
+      );
+    })(),
+    // Configuration Items
+    (async () => {
+      if (ciIds.length === 0) return new Map<string, string>();
+      const useCase = container.get<ListConfigurationItemsUseCase>(
+        DI_TOKENS.ListConfigurationItemsUseCase,
+      );
+      const cis = await useCase.execute({});
+      return new Map(
+        cis.filter((ci) => ciIds.includes(ci.id)).map((ci) => [ci.id, ci.name]),
+      );
+    })(),
+  ]);
+
+  // Build enrichment map
+  const enrichmentMap = new Map<string, AssetAssignmentEnrichment>();
+  for (const assignment of assignments) {
+    let assigneeName: string | undefined;
+    switch (assignment.assigneeType) {
+      case "PERSON":
+        assigneeName = personsMap.get(assignment.assigneeId);
+        break;
+      case "ORG_UNIT":
+        assigneeName = orgUnitsMap.get(assignment.assigneeId);
+        break;
+      case "LOCATION":
+        assigneeName = locationsMap.get(assignment.assigneeId);
+        break;
+      case "CI":
+        assigneeName = cisMap.get(assignment.assigneeId);
+        break;
+    }
+
+    enrichmentMap.set(assignment.id, {
+      assetTag: assetsMap.get(assignment.assetId),
+      assigneeName,
+    });
+  }
+
+  return enrichmentMap;
+}
 
 export async function createAssetAssignmentAction(
   data: CreateAssetAssignmentDTO,
@@ -98,9 +249,12 @@ export async function listAssetAssignmentsAction(
 
     const assignments = await useCase.execute(validated);
 
+    // Enrich with asset tags and assignee names
+    const enrichmentMap = await enrichAssetAssignments(assignments);
+
     return {
       success: true,
-      data: presentAssetAssignments(assignments),
+      data: presentAssetAssignments(assignments, enrichmentMap),
     };
   } catch (error) {
     return handleControllerError(

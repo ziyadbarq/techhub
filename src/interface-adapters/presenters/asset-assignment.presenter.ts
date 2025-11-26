@@ -5,6 +5,11 @@
 
 import type { AssetAssignment } from "@/core/domain/entities/asset-assignment.entity";
 
+export interface AssetAssignmentEnrichment {
+  assetTag?: string;
+  assigneeName?: string;
+}
+
 export interface AssetAssignmentDTO {
   id: string;
   assetId: string;
@@ -21,6 +26,9 @@ export interface AssetAssignmentDTO {
   // Computed fields
   isActive: boolean;
   durationInDays: number;
+  // Display fields (enriched from relations)
+  assetTag?: string;
+  assigneeName?: string;
 }
 
 /**
@@ -28,6 +36,7 @@ export interface AssetAssignmentDTO {
  */
 export function presentAssetAssignment(
   assignment: AssetAssignment,
+  enrichment?: AssetAssignmentEnrichment,
 ): AssetAssignmentDTO {
   return {
     id: assignment.id,
@@ -45,6 +54,9 @@ export function presentAssetAssignment(
     // Computed fields
     isActive: assignment.isActive(),
     durationInDays: assignment.getDurationInDays(),
+    // Display fields
+    assetTag: enrichment?.assetTag,
+    assigneeName: enrichment?.assigneeName,
   };
 }
 
@@ -53,6 +65,9 @@ export function presentAssetAssignment(
  */
 export function presentAssetAssignments(
   assignments: AssetAssignment[],
+  enrichmentMap?: Map<string, AssetAssignmentEnrichment>,
 ): AssetAssignmentDTO[] {
-  return assignments.map(presentAssetAssignment);
+  return assignments.map((assignment) =>
+    presentAssetAssignment(assignment, enrichmentMap?.get(assignment.id)),
+  );
 }

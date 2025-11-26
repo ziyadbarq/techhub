@@ -6,13 +6,14 @@
 
 import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Trash2, Pencil, UserCog } from "lucide-react";
+import { MoreHorizontal, Trash2, Pencil, User, Shield } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { EntityDisplay } from "@/components/ui/entity-display";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -130,36 +131,25 @@ export function PersonRoleAssignmentsTable({
     {
       accessorKey: "personId",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Assignment" />
+        <DataTableColumnHeader column={column} title="Person" />
       ),
       cell: ({ row }) => (
-        <div className="flex items-start gap-2">
-          <UserCog className="text-muted-foreground mt-0.5 h-4 w-4" />
-          <div className="flex flex-col gap-1">
-            <span className="text-sm font-medium">
-              Person: {row.original.personId.slice(0, 8)}
-            </span>
-            <span className="text-muted-foreground text-xs">
-              Role: {row.original.roleId.slice(0, 8)}
-            </span>
-          </div>
-        </div>
+        <EntityDisplay name={row.original.personName} icon={User} />
       ),
       meta: {
-        label: "Assignment",
+        label: "Person",
       },
     },
     {
       accessorKey: "roleId",
-      header: "Role ID",
-      cell: ({ row }) => (
-        <span className="text-muted-foreground text-sm">
-          {row.getValue("roleId")}
-        </span>
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Role" />
       ),
-      enableHiding: true,
+      cell: ({ row }) => (
+        <EntityDisplay name={row.original.roleName} icon={Shield} />
+      ),
       meta: {
-        label: "Role ID",
+        label: "Role",
       },
     },
     {
@@ -297,7 +287,7 @@ export function PersonRoleAssignmentsTable({
         data={data}
         loading={loading}
         searchable
-        searchKey="personId"
+        searchKey="personName"
         searchPlaceholder="Search assignments..."
         selectable
         onSelectionChange={setSelectedRows}

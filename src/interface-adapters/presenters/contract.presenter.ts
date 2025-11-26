@@ -24,10 +24,22 @@ export interface ContractDTO {
   isActive?: boolean;
   isExpired?: boolean;
   daysUntilExpiry?: number | null;
+  // Display fields (enriched from relations)
+  vendorName?: string | null;
+  contractTypeName?: string | null;
+}
+
+export interface ContractEnrichment {
+  vendorName?: string | null;
+  contractTypeName?: string | null;
 }
 
 export class ContractPresenter {
-  static toDTO(contract: Contract, includeStatus = false): ContractDTO {
+  static toDTO(
+    contract: Contract,
+    includeStatus = false,
+    enrichment?: ContractEnrichment,
+  ): ContractDTO {
     const dto: ContractDTO = {
       id: contract.id,
       contractTypeId: contract.contractTypeId,
@@ -44,6 +56,9 @@ export class ContractPresenter {
       note: contract.note,
       createdAt: contract.createdAt,
       updatedAt: contract.updatedAt,
+      // Display fields
+      vendorName: enrichment?.vendorName,
+      contractTypeName: enrichment?.contractTypeName,
     };
 
     if (includeStatus) {
@@ -58,7 +73,10 @@ export class ContractPresenter {
   static toDTOList(
     contracts: Contract[],
     includeStatus = false,
+    enrichmentMap?: Map<string, ContractEnrichment>,
   ): ContractDTO[] {
-    return contracts.map((contract) => this.toDTO(contract, includeStatus));
+    return contracts.map((contract) =>
+      this.toDTO(contract, includeStatus, enrichmentMap?.get(contract.id)),
+    );
   }
 }

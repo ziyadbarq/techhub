@@ -16,8 +16,9 @@ import {
   type SortingState,
   type ColumnFiltersState,
 } from "@tanstack/react-table";
-import { Eye } from "lucide-react";
+import { Eye, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { EntityDisplay } from "@/components/ui/entity-display";
 import {
   Table,
   TableBody,
@@ -73,11 +74,9 @@ export function AssetDisposalsTable({
   const columns: ColumnDef<AssetDisposalDTO>[] = [
     {
       accessorKey: "assetId",
-      header: "Asset ID",
+      header: "Asset",
       cell: ({ row }) => (
-        <div className="font-mono text-xs">
-          {row.getValue<string>("assetId").slice(0, 8)}...
-        </div>
+        <EntityDisplay name={row.original.assetTag} icon={Tag} />
       ),
     },
     {

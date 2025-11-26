@@ -32,7 +32,10 @@ import {
   ApproveDisposalDTO,
   RejectDisposalDTO,
 } from "../dtos/generated/disposal-approval.dto";
-import { AssetDisposalPresenter } from "../presenters/asset-disposal.presenter";
+import {
+  AssetDisposalPresenter,
+  type AssetDisposalEnrichment,
+} from "../presenters/asset-disposal.presenter";
 import type {
   CreateAssetDisposalUseCase,
   GetAssetDisposalUseCase,
@@ -46,8 +49,52 @@ import type {
   CancelDisposalUseCase,
   DeleteAssetDisposalUseCase,
 } from "@/core/use-cases/disposal";
+import type { ListAssetsUseCase } from "@/core/use-cases/asset/asset";
+import type { AssetDisposal } from "@/core/domain/entities/asset-disposal.entity";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+/**
+ * Enrich asset disposals with related entity display data
+ */
+async function enrichAssetDisposals(
+  disposals: AssetDisposal[],
+): Promise<Map<string, AssetDisposalEnrichment>> {
+  if (disposals.length === 0) {
+    return new Map();
+  }
+
+  const container = getContainer();
+
+  // Collect unique asset IDs
+  const assetIds = [...new Set(disposals.map((d) => d.assetId))];
+
+  // Fetch assets
+  const assetsMap = await (async () => {
+    if (assetIds.length === 0) return new Map<string, string>();
+
+    const useCase = container.get<ListAssetsUseCase>(
+      DI_TOKENS.ListAssetsUseCase,
+    );
+    const assets = await useCase.execute({});
+
+    return new Map(
+      assets
+        .filter((a) => assetIds.includes(a.id))
+        .map((a) => [a.id, a.assetTag]),
+    );
+  })();
+
+  // Build enrichment map
+  const enrichmentMap = new Map<string, AssetDisposalEnrichment>();
+  for (const disposal of disposals) {
+    enrichmentMap.set(disposal.id, {
+      assetTag: assetsMap.get(disposal.assetId),
+    });
+  }
+
+  return enrichmentMap;
+}
 
 export async function createAssetDisposalAction(
   data: z.infer<typeof CreateAssetDisposalDTO>,
@@ -105,9 +152,12 @@ export async function listAssetDisposalsAction(): Promise<
 
     const disposals = await useCase.execute({});
 
+    // Enrich with related entity names
+    const enrichmentMap = await enrichAssetDisposals(disposals);
+
     return {
       success: true,
-      data: AssetDisposalPresenter.toDTOList(disposals),
+      data: AssetDisposalPresenter.toDTOList(disposals, enrichmentMap),
     };
   } catch (error) {
     return handleControllerError(

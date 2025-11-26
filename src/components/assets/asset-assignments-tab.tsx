@@ -89,7 +89,7 @@ export function AssetAssignmentsTab({ assetId }: AssetAssignmentsTabProps) {
                   <div className="space-y-1">
                     <CardTitle className="text-base">
                       {assignment.assigneeType}:{" "}
-                      {assignment.assigneeId.slice(0, 8)}...
+                      {assignment.assigneeName || assignment.assigneeId}
                     </CardTitle>
                     <CardDescription>
                       {format(new Date(assignment.startDate), "MMM d, yyyy")}

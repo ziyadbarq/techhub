@@ -48,6 +48,9 @@ export const AssetKitCheckoutDTO = z.object({
   status: z.string(),
   createdAt: z.date(),
   updatedAt: z.date(),
+  // Display fields (enriched from relations)
+  kitName: z.string().optional(),
+  personName: z.string().optional(),
 });
 
 export const AssetKitCheckoutItemDTO = z.object({

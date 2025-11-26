@@ -796,6 +796,139 @@ export function presentTasks(tasks: Task[]): TaskDTO[] {
 }
 ```
 
+### Enrichment Pattern (Display Names for Related Entities)
+
+When displaying entities in tables or detail views, raw CUIDs (e.g., `cmifrk2qu004i5k8b63lcefff`) should be replaced with human-readable names. This is done via **controller-level enrichment**.
+
+**Pattern Overview**:
+
+1. **Presenter** - Define enrichment interface with optional display fields
+2. **Controller** - Batch-fetch related entities and build enrichment map
+3. **UI** - Use `EntityDisplay` component for consistent styling
+
+**Step 1: Define Enrichment Interface** (in presenter):
+
+```typescript
+// src/interface-adapters/presenters/asset-assignment.presenter.ts
+
+export interface AssetAssignmentEnrichment {
+  assetTag?: string;
+  assigneeName?: string;
+}
+
+export interface AssetAssignmentDTO {
+  // ... existing fields
+  // Display fields (enriched from relations)
+  assetTag?: string;
+  assigneeName?: string;
+}
+
+export function presentAssetAssignment(
+  assignment: AssetAssignment,
+  enrichment?: AssetAssignmentEnrichment,
+): AssetAssignmentDTO {
+  return {
+    // ... existing fields
+    assetTag: enrichment?.assetTag,
+    assigneeName: enrichment?.assigneeName,
+  };
+}
+
+export function presentAssetAssignments(
+  assignments: AssetAssignment[],
+  enrichmentMap?: Map<string, AssetAssignmentEnrichment>,
+): AssetAssignmentDTO[] {
+  return assignments.map((assignment) =>
+    presentAssetAssignment(assignment, enrichmentMap?.get(assignment.id)),
+  );
+}
+```
+
+**Step 2: Build Enrichment Map** (in controller):
+
+```typescript
+// src/interface-adapters/controllers/asset-assignment.controller.ts
+
+async function enrichAssetAssignments(
+  assignments: AssetAssignment[],
+): Promise<Map<string, AssetAssignmentEnrichment>> {
+  const enrichmentMap = new Map<string, AssetAssignmentEnrichment>();
+  if (assignments.length === 0) return enrichmentMap;
+
+  // Collect unique IDs
+  const assetIds = [...new Set(assignments.map((a) => a.assetId))];
+  const personIds = [...new Set(
+    assignments.filter((a) => a.assigneeType === "PERSON").map((a) => a.assigneeId)
+  )];
+
+  // Batch fetch related entities in parallel
+  const [assetsMap, personsMap] = await Promise.all([
+    (async () => {
+      const useCase = container.get<ListAssetsUseCase>(DI_TOKENS.ListAssetsUseCase);
+      const assets = await useCase.execute({ ids: assetIds });
+      return new Map(assets.items.map((a) => [a.id, a.assetTag]));
+    })(),
+    (async () => {
+      const useCase = container.get<ListPeopleUseCase>(DI_TOKENS.ListPeopleUseCase);
+      const persons = await useCase.execute({ ids: personIds });
+      return new Map(persons.map((p) => [p.id, p.displayName]));
+    })(),
+  ]);
+
+  // Build enrichment map
+  for (const assignment of assignments) {
+    enrichmentMap.set(assignment.id, {
+      assetTag: assetsMap.get(assignment.assetId),
+      assigneeName: assignment.assigneeType === "PERSON"
+        ? personsMap.get(assignment.assigneeId)
+        : undefined,
+    });
+  }
+
+  return enrichmentMap;
+}
+
+// Use in list action
+export async function listAssetAssignmentsAction() {
+  const assignments = await listUseCase.execute({});
+  const enrichmentMap = await enrichAssetAssignments(assignments);
+  return { success: true, data: presentAssetAssignments(assignments, enrichmentMap) };
+}
+```
+
+**Step 3: Use EntityDisplay in UI**:
+
+```tsx
+// In table column definition
+import { EntityDisplay } from "@/components/ui/entity-display";
+import { Tag, User } from "lucide-react";
+
+{
+  accessorKey: "assetTag",
+  header: "Asset",
+  cell: ({ row }) => (
+    <EntityDisplay name={row.original.assetTag} icon={Tag} fallback="Unknown" />
+  ),
+}
+
+{
+  accessorKey: "assigneeName",
+  header: "Assignee",
+  cell: ({ row }) => (
+    <EntityDisplay name={row.original.assigneeName} icon={User} />
+  ),
+}
+```
+
+**Key Benefits**:
+
+- **Performance**: Batch fetching prevents N+1 queries
+- **Flexibility**: Optional enrichment fields don't break existing code
+- **Consistency**: `EntityDisplay` component provides uniform styling
+- **Maintainability**: Enrichment logic centralized in controller
+
+**See**: [UI Components Guide](./UI_COMPONENTS.md#entitydisplay-component) for complete `EntityDisplay` documentation.
+
 ---
 
 ## 9. Infrastructure Layer

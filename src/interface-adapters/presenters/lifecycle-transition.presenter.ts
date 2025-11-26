@@ -18,10 +18,19 @@ export interface LifecycleTransitionDTO {
   metadata: Record<string, unknown> | null;
   createdAt: string;
   updatedAt: string;
+  // Display fields (enriched from relations)
+  fromStateName?: string | null;
+  toStateName?: string | null;
+}
+
+export interface LifecycleTransitionEnrichment {
+  fromStateName?: string | null;
+  toStateName?: string | null;
 }
 
 export function presentLifecycleTransition(
   transition: LifecycleTransition,
+  enrichment?: LifecycleTransitionEnrichment,
 ): LifecycleTransitionDTO {
   return {
     id: transition.id,
@@ -36,11 +45,17 @@ export function presentLifecycleTransition(
     metadata: transition.metadata,
     createdAt: transition.createdAt.toISOString(),
     updatedAt: transition.updatedAt.toISOString(),
+    // Display fields
+    fromStateName: enrichment?.fromStateName,
+    toStateName: enrichment?.toStateName,
   };
 }
 
 export function presentLifecycleTransitions(
   transitions: LifecycleTransition[],
+  enrichmentMap?: Map<string, LifecycleTransitionEnrichment>,
 ): LifecycleTransitionDTO[] {
-  return transitions.map(presentLifecycleTransition);
+  return transitions.map((t) =>
+    presentLifecycleTransition(t, enrichmentMap?.get(t.id)),
+  );
 }

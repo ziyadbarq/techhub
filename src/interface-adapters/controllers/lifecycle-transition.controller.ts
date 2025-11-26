@@ -21,6 +21,7 @@ import {
   presentLifecycleTransition,
   presentLifecycleTransitions,
   type LifecycleTransitionDTO,
+  type LifecycleTransitionEnrichment,
 } from "../presenters/lifecycle-transition.presenter";
 import type {
   CreateLifecycleTransitionUseCase,
@@ -29,8 +30,56 @@ import type {
   UpdateLifecycleTransitionUseCase,
   DeleteLifecycleTransitionUseCase,
 } from "@/core/use-cases/foundation/lifecycle-transition";
+import type { ListLifecycleStatesUseCase } from "@/core/use-cases/foundation/lifecycle-state";
+import type { LifecycleTransition } from "@/core/domain/entities/lifecycle-transition.entity";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+/**
+ * Enrich lifecycle transitions with state names
+ */
+async function enrichLifecycleTransitions(
+  transitions: LifecycleTransition[],
+): Promise<Map<string, LifecycleTransitionEnrichment>> {
+  if (transitions.length === 0) {
+    return new Map();
+  }
+
+  const container = getContainer();
+
+  // Collect unique state IDs
+  const stateIds = [
+    ...new Set([
+      ...transitions.map((t) => t.fromStateId),
+      ...transitions.map((t) => t.toStateId),
+    ]),
+  ];
+
+  // Fetch states
+  const statesMap = await (async () => {
+    if (stateIds.length === 0) return new Map<string, string>();
+
+    const useCase = container.get<ListLifecycleStatesUseCase>(
+      DI_TOKENS.ListLifecycleStatesUseCase,
+    );
+    const states = await useCase.execute();
+
+    return new Map(
+      states.filter((s) => stateIds.includes(s.id)).map((s) => [s.id, s.name]),
+    );
+  })();
+
+  // Build enrichment map
+  const enrichmentMap = new Map<string, LifecycleTransitionEnrichment>();
+  for (const transition of transitions) {
+    enrichmentMap.set(transition.id, {
+      fromStateName: statesMap.get(transition.fromStateId) || null,
+      toStateName: statesMap.get(transition.toStateId) || null,
+    });
+  }
+
+  return enrichmentMap;
+}
 
 export async function createLifecycleTransitionAction(
   data: CreateLifecycleTransitionDTO,
@@ -84,9 +133,12 @@ export async function listLifecycleTransitionsAction(): Promise<
 
     const transitions = await useCase.execute();
 
+    // Enrich with state names
+    const enrichmentMap = await enrichLifecycleTransitions(transitions);
+
     return {
       success: true,
-      data: presentLifecycleTransitions(transitions),
+      data: presentLifecycleTransitions(transitions, enrichmentMap),
     };
   } catch (error) {
     return handleControllerError(

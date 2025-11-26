@@ -16,8 +16,9 @@ import {
   type SortingState,
   type ColumnFiltersState,
 } from "@tanstack/react-table";
-import { Eye } from "lucide-react";
+import { Eye, Package, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { EntityDisplay } from "@/components/ui/entity-display";
 import {
   Table,
   TableBody,
@@ -55,21 +56,17 @@ export function KitCheckoutsTable({
 
   const columns: ColumnDef<AssetKitCheckoutDTO>[] = [
     {
-      accessorKey: "kitId",
-      header: "Kit ID",
+      accessorKey: "kitName",
+      header: "Kit",
       cell: ({ row }) => (
-        <div className="font-mono text-xs">
-          {row.getValue<string>("kitId").slice(0, 8)}...
-        </div>
+        <EntityDisplay name={row.original.kitName} icon={Package} />
       ),
     },
     {
-      accessorKey: "personId",
+      accessorKey: "personName",
       header: "Checked Out To",
       cell: ({ row }) => (
-        <div className="font-mono text-xs">
-          {row.getValue<string>("personId").slice(0, 8)}...
-        </div>
+        <EntityDisplay name={row.original.personName} icon={User} />
       ),
     },
     {
@@ -151,10 +148,10 @@ export function KitCheckoutsTable({
       {/* Filters */}
       <div className="flex gap-4">
         <Input
-          placeholder="Filter by kit ID..."
-          value={(table.getColumn("kitId")?.getFilterValue() as string) ?? ""}
+          placeholder="Filter by kit name..."
+          value={(table.getColumn("kitName")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("kitId")?.setFilterValue(event.target.value)
+            table.getColumn("kitName")?.setFilterValue(event.target.value)
           }
           className="max-w-xs"
         />

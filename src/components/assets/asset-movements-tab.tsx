@@ -133,21 +133,20 @@ export function AssetMovementsTab({ assetId }: AssetMovementsTabProps) {
                       </CardDescription>
 
                       {/* Location Flow */}
-                      {(movement.stockLocationFromId ||
-                        movement.stockLocationToId) && (
+                      {(movement.stockLocationFromName ||
+                        movement.stockLocationToName) && (
                         <div className="flex items-center gap-2 text-sm">
-                          {movement.stockLocationFromId ? (
+                          {movement.stockLocationFromName ? (
                             <span className="text-muted-foreground">
-                              From: {movement.stockLocationFromId.slice(0, 8)}
-                              ...
+                              From: {movement.stockLocationFromName}
                             </span>
                           ) : (
                             <span className="text-muted-foreground">—</span>
                           )}
                           <ArrowRight className="h-3 w-3" />
-                          {movement.stockLocationToId ? (
+                          {movement.stockLocationToName ? (
                             <span className="text-muted-foreground">
-                              To: {movement.stockLocationToId.slice(0, 8)}...
+                              To: {movement.stockLocationToName}
                             </span>
                           ) : (
                             <span className="text-muted-foreground">—</span>
@@ -163,7 +162,7 @@ export function AssetMovementsTab({ assetId }: AssetMovementsTabProps) {
                 </div>
               </CardHeader>
 
-              {(movement.reason || movement.performedById) && (
+              {(movement.reason || movement.performedByName) && (
                 <CardContent className="space-y-2">
                   {movement.reason && (
                     <div>
@@ -173,14 +172,12 @@ export function AssetMovementsTab({ assetId }: AssetMovementsTabProps) {
                       <p className="text-sm">{movement.reason}</p>
                     </div>
                   )}
-                  {movement.performedById && (
+                  {movement.performedByName && (
                     <div>
                       <p className="text-muted-foreground text-xs font-medium">
                         Performed By
                       </p>
-                      <p className="font-mono text-sm">
-                        {movement.performedById.slice(0, 8)}...
-                      </p>
+                      <p className="text-sm">{movement.performedByName}</p>
                     </div>
                   )}
                 </CardContent>

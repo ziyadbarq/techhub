@@ -15,9 +15,20 @@ export interface AssetModelDTO {
   defaultAttributes: Record<string, unknown> | null;
   createdAt: string;
   updatedAt: string;
+  // Display fields (enriched from relations)
+  categoryName?: string | null;
+  vendorName?: string | null;
 }
 
-export function presentAssetModel(assetModel: AssetModel): AssetModelDTO {
+export interface AssetModelEnrichment {
+  categoryName?: string | null;
+  vendorName?: string | null;
+}
+
+export function presentAssetModel(
+  assetModel: AssetModel,
+  enrichment?: AssetModelEnrichment,
+): AssetModelDTO {
   return {
     id: assetModel.id,
     assetCategoryId: assetModel.assetCategoryId,
@@ -29,9 +40,17 @@ export function presentAssetModel(assetModel: AssetModel): AssetModelDTO {
     defaultAttributes: assetModel.defaultAttributes,
     createdAt: assetModel.createdAt.toISOString(),
     updatedAt: assetModel.updatedAt.toISOString(),
+    // Display fields
+    categoryName: enrichment?.categoryName,
+    vendorName: enrichment?.vendorName,
   };
 }
 
-export function presentAssetModels(assetModels: AssetModel[]): AssetModelDTO[] {
-  return assetModels.map(presentAssetModel);
+export function presentAssetModels(
+  assetModels: AssetModel[],
+  enrichmentMap?: Map<string, AssetModelEnrichment>,
+): AssetModelDTO[] {
+  return assetModels.map((model) =>
+    presentAssetModel(model, enrichmentMap?.get(model.id)),
+  );
 }

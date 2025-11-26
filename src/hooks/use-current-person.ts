@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSession } from "@/lib/auth/client";
 import type { PersonDTO } from "@/interface-adapters/presenters/person.presenter";
 import { getCurrentPersonAction } from "@/interface-adapters/controllers/my-dashboard.controller";
@@ -50,7 +50,7 @@ export function useCurrentPerson(): UseCurrentPersonReturn {
   const [isError, setIsError] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchPerson = async () => {
+  const fetchPerson = useCallback(async () => {
     if (!session?.user) {
       setPerson(null);
       setIsLoading(false);
@@ -74,20 +74,19 @@ export function useCurrentPerson(): UseCurrentPersonReturn {
         setPerson(null);
       }
     } catch (err) {
-      console.error("Failed to fetch current person:", err);
       setIsError(true);
       setError(err instanceof Error ? err.message : "Failed to fetch person");
       setPerson(null);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [session?.user]);
 
   useEffect(() => {
     if (!isPending) {
       fetchPerson();
     }
-  }, [session?.user?.id, isPending]);
+  }, [fetchPerson, isPending]);
 
   return {
     person,

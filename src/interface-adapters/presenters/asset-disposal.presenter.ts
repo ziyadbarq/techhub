@@ -2,15 +2,18 @@
 // @ts-nocheck
 // TODO: Fix type errors - this is WIP code
 
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import type { AssetDisposal } from "@/core/domain/entities/asset-disposal.entity";
 import type { AssetDisposalDTO } from "../dtos/generated/asset-disposal.dto";
 
+export interface AssetDisposalEnrichment {
+  assetTag?: string;
+}
+
 export class AssetDisposalPresenter {
-  static toDTO(disposal: AssetDisposal): AssetDisposalDTO {
+  static toDTO(
+    disposal: AssetDisposal,
+    enrichment?: AssetDisposalEnrichment,
+  ): AssetDisposalDTO {
     return {
       id: disposal.id,
       assetId: disposal.assetId,
@@ -39,10 +42,17 @@ export class AssetDisposalPresenter {
       metadata: disposal.metadata,
       createdAt: disposal.createdAt,
       updatedAt: disposal.updatedAt,
+      // Display fields
+      assetTag: enrichment?.assetTag,
     };
   }
 
-  static toDTOList(disposals: AssetDisposal[]): AssetDisposalDTO[] {
-    return disposals.map((disposal) => this.toDTO(disposal));
+  static toDTOList(
+    disposals: AssetDisposal[],
+    enrichmentMap?: Map<string, AssetDisposalEnrichment>,
+  ): AssetDisposalDTO[] {
+    return disposals.map((disposal) =>
+      this.toDTO(disposal, enrichmentMap?.get(disposal.id)),
+    );
   }
 }

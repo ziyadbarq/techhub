@@ -249,7 +249,7 @@ export function AssetDetailPageClient({
         assignmentId={activeAssignment?.id || ""}
         assignedToName={
           activeAssignment
-            ? `${activeAssignment.assigneeType}: ${activeAssignment.assigneeId.slice(0, 8)}...`
+            ? `${activeAssignment.assigneeType}: ${activeAssignment.assigneeName || activeAssignment.assigneeId}`
             : undefined
         }
         open={isReturnWizardOpen}
