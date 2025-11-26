@@ -334,13 +334,18 @@ npm run type-check
 ```bash
 # Development
 npm run dev              # Start dev server with Turbopack
-npm run build            # Build for production
-npm run start            # Start production server
+npm run build            # Build for production (type-check + lint + build)
+npm run build:fast       # Fast build (skips TypeScript checks)
+
+# Production
+npm run start            # Start server only (requires existing build)
+npm run start:deploy     # Full deployment: build → migrate → seed (if empty) → start
 
 # Code Quality
 npm run lint             # Run ESLint
 npm run format           # Format with Prettier
 npm run type-check       # TypeScript type checking
+npm run validate         # Run all checks (type-check + lint + test)
 
 # Database
 npm run db:generate      # Generate Prisma Client

@@ -56,3 +56,6 @@ src/infrastructure/database/prisma/*.db-wal
 /.ai-debug/
 
 /local
+
+.htaccess
+yarn.lock

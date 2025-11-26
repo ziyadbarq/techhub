@@ -67,9 +67,11 @@ npm run db:seed      # Seed database (RBAC + Foundation + test data)
 npm run dev      # Start dev server with Turbopack
 npm run validate # Type-check + lint + test
 
-# Build
-npm run build       # Production build
-npm run build:fast  # Fast build (skips TypeScript)
+# Build & Deploy
+npm run build         # Production build (type-check + lint + build)
+npm run build:fast    # Fast build (skips TypeScript)
+npm run start         # Start server only (requires existing build)
+npm run start:deploy  # Full deployment: build → migrate → seed (if empty) → cache clear → start
 
 # Database
 npm run db:reset # Reset database + seed (drops all data!)

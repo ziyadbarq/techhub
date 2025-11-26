@@ -550,11 +550,34 @@ Required in `.env`:
 ```env
 REDIS_URL="redis://your-redis-host:6379"
 NODE_ENV="production"
+DATABASE_URL="postgresql://..."
 ```
 
-### Worker Deployment
+### Integrated Deployment (Recommended)
 
-The worker runs as a separate Node.js process.
+The `start-server.js` script handles both server and worker in a single process:
+
+```bash
+# Full deployment pipeline: build → migrate → seed (if empty) → clear cache → start server + worker
+npm run start:deploy
+
+# With options
+npm run start -- --deploy --force-build   # Force rebuild even if .next exists
+npm run start -- --deploy --skip-seed     # Skip seeding
+npm run start -- --skip-worker            # Don't start the background worker
+```
+
+The deployment script:
+1. **Builds** the application (skips if `.next` exists, use `--force-build` to rebuild)
+2. **Generates** Prisma client (`prisma generate`)
+3. **Applies migrations** (`prisma migrate deploy`)
+4. **Smart seeds** the database (only if `Role` table is empty)
+5. **Clears** Redis cache
+6. **Starts** both Next.js server and background worker with graceful shutdown
+
+### Standalone Worker Deployment
+
+For scaling, you can run workers separately from the server.
 
 #### Option 1: PM2
 
