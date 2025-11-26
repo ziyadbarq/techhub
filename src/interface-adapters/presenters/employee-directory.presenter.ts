@@ -24,6 +24,7 @@ export interface EmployeeDirectoryDTO {
   employeeId: string | null;
   hireDate: string | null;
   isActive: boolean;
+  isExcluded: boolean;
   // Resolved relations
   orgUnitId: string;
   orgUnitName: string;
@@ -97,6 +98,7 @@ export function presentEmployeeDirectory(
     employeeId: person.employeeId,
     hireDate: person.hireDate ? person.hireDate.toISOString() : null,
     isActive: person.isActive,
+    isExcluded: person.isExcluded,
     // Resolved relations
     orgUnitId: person.orgUnitId,
     orgUnitName: orgUnit?.name ?? "Unknown",

@@ -279,6 +279,7 @@ model Person {
   hireDate        DateTime?
   terminationDate DateTime?
   isActive        Boolean   @default(true)
+  isExcluded      Boolean   @default(false) // TechHub-specific: hide from app (service accounts)
   metadata        Json?
   deletedAt       DateTime? // Soft delete timestamp
   createdAt       DateTime  @default(now())
@@ -323,6 +324,7 @@ model Person {
   @@index([managerId])
   @@index([locationId])
   @@index([isActive])
+  @@index([isExcluded])
   @@map("persons")
 }
 

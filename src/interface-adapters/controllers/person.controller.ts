@@ -28,6 +28,8 @@ import type {
   GetPersonUseCase,
   UpdatePersonUseCase,
   DeletePersonUseCase,
+  TogglePersonExclusionUseCase,
+  TogglePersonStatusUseCase,
 } from "@/core/use-cases/foundation/person";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
@@ -211,6 +213,80 @@ export async function deletePersonAction(
       error,
       { function: "deletePersonAction" },
       "Failed to delete person",
+    );
+  }
+}
+
+export async function togglePersonStatusAction(
+  id: string,
+  isActive: boolean,
+): Promise<ActionResponse<PersonDTO>> {
+  try {
+    // Use PERSONS_MANAGE for enabling/disabling users
+    await requirePermission(PERMISSIONS.PERSONS_MANAGE);
+
+    const validated = PersonIdSchema.parse({ id });
+
+    const container = getContainer();
+    const useCase = container.get<TogglePersonStatusUseCase>(
+      DI_TOKENS.TogglePersonStatusUseCase,
+    );
+
+    const person = await useCase.execute({
+      id: validated.id,
+      isActive,
+    });
+
+    revalidatePath("/persons");
+
+    return {
+      success: true,
+      data: presentPerson(person),
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "togglePersonStatusAction" },
+      `Failed to ${isActive ? "enable" : "disable"} person`,
+    );
+  }
+}
+
+/**
+ * Toggle person exclusion from TechHub
+ * Excluded persons are hidden from app activities but remain active in Azure AD
+ */
+export async function togglePersonExclusionAction(
+  id: string,
+  isExcluded: boolean,
+): Promise<ActionResponse<PersonDTO>> {
+  try {
+    // Use PERSONS_MANAGE for excluding/including users
+    await requirePermission(PERMISSIONS.PERSONS_MANAGE);
+
+    const validated = PersonIdSchema.parse({ id });
+
+    const container = getContainer();
+    const useCase = container.get<TogglePersonExclusionUseCase>(
+      DI_TOKENS.TogglePersonExclusionUseCase,
+    );
+
+    const person = await useCase.execute({
+      id: validated.id,
+      isExcluded,
+    });
+
+    revalidatePath("/persons");
+
+    return {
+      success: true,
+      data: presentPerson(person),
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "togglePersonExclusionAction" },
+      `Failed to ${isExcluded ? "exclude" : "include"} person`,
     );
   }
 }

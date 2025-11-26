@@ -38,193 +38,232 @@ export function isValidEmailDomain(email: string | null): boolean {
  * Maps messy Graph department values to standardized OrgUnit codes.
  * Keys are lowercase for case-insensitive matching.
  * Handles typos, trailing spaces, and variations.
+ *
+ * NEW STRUCTURE (4 levels):
+ * - Level 2: Departments (EXEC, TECH, SEC, RISK, FIN, HR, etc.)
+ * - Level 3: Sub-Departments (TECH-SWE, SEC-SOC, RISK-AML, etc.)
+ *
+ * IMPORTANT: Cybersecurity (SEC) is SEPARATE from Technology (TECH) - reports to CISO!
  */
 export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
-  // Executive Office
-  "ceo office": "EXEC",
+  // ============================================
+  // EXECUTIVE LEADERSHIP (EXEC)
+  // ============================================
+  "ceo office": "EXEC-CEO",
   "board of directors": "EXEC",
   board: "EXEC",
   executive: "EXEC",
   "executive office": "EXEC",
-  "strategy & growth": "STRAT",
-  "strategy and growth": "STRAT",
-  strategy: "STRAT",
-  growth: "STRAT",
+  "executive leadership": "EXEC",
+  "chief of staff": "EXEC-COS",
+  strategy: "EXEC-STRAT",
+  "strategy & growth": "EXEC-STRAT",
+  "strategy and growth": "EXEC-STRAT",
 
-  // Technology Division
-  technology: "TECH",
-  "technology ": "TECH",
-  technologe: "TECH",
-  technololgy: "TECH",
-  tech: "TECH",
-  it: "TECH",
+  // ============================================
+  // INTERNAL AUDIT & OVERSIGHT (AUDIT)
+  // ============================================
+  "internal audit": "AUDIT-INT",
+  "internal audit ": "AUDIT-INT",
+  audit: "AUDIT",
+  "corporate audit": "AUDIT-CORP",
+  "it audit": "AUDIT-IT",
+  "audit & oversight": "AUDIT",
 
-  // Engineering
-  engineering: "ENG",
-  engineer: "ENG",
-  engineers: "ENG",
-  "software engineering": "ENG",
+  // ============================================
+  // RISK & COMPLIANCE (RISK) - Reports to CRO
+  // ============================================
+  "risk & compliance": "RISK",
+  "risk and compliance": "RISK",
 
-  // DevOps
-  devops: "DEVOPS",
-  "devops ": "DEVOPS",
-  "dev ops": "DEVOPS",
-  infrastructure: "DEVOPS",
-  "devops & infrastructure": "DEVOPS",
+  // Compliance
+  compliance: "RISK-COMP",
+  "compliance ": "RISK-COMP",
+  complaince: "RISK-COMP",
+  "compliance\t": "RISK-COMP",
+  "regulatory compliance": "RISK-COMP",
+  "compliance assurance": "RISK-COMP",
 
-  // Cybersecurity
-  cybersecurity: "CYBERSEC",
-  "cybersecurity ": "CYBERSEC",
-  "cyber security": "CYBERSEC",
-  "cyber ": "CYBERSEC",
-  cyber: "CYBERSEC",
-  "information security": "CYBERSEC",
-  infosec: "CYBERSEC",
+  // AML & CTF
+  "aml & ctf": "RISK-AML",
+  aml: "RISK-AML",
+  "aml ": "RISK-AML",
+  ctf: "RISK-AML",
+  "anti-money laundering": "RISK-AML",
+  "anti money laundering": "RISK-AML",
 
-  // Data & Analytics
-  data: "DATA",
-  "data ": "DATA",
-  "data & analytics": "DATA",
-  "data and analytics": "DATA",
-  "data science": "DATA",
-  "data science analytics": "DATA",
-  analytics: "DATA",
-  bi: "DATA",
-  "business intelligence": "DATA",
+  // Anti-Fraud
+  "anti fraud, bribery & corruption": "RISK-FRAUD",
+  "anti-fraud monitoring": "RISK-FRAUD",
+  "anti-fraud": "RISK-FRAUD",
+  "anti fraud": "RISK-FRAUD",
+  fraud: "RISK-FRAUD",
+  "fraud ": "RISK-FRAUD",
+  "bribery & corruption": "RISK-FRAUD",
 
-  // Product
-  product: "PRODUCT",
-  "product ": "PRODUCT",
-  "product factory": "PRODUCT",
-  "product management": "PRODUCT",
+  // Sanctions
+  sanctions: "RISK-SANCT",
+  "sanctions ": "RISK-SANCT",
+  sanction: "RISK-SANCT",
 
-  // Business Continuity Management (under Tech)
-  "business continuity management": "BCM",
-  bcm: "BCM",
-  "business continuity": "BCM",
+  // Risk Management
+  risk: "RISK-ERM",
+  "risk ": "RISK-ERM",
+  "risk management": "RISK-ERM",
+  "risk management ": "RISK-ERM",
+  "enterprise risk": "RISK-ERM",
+  "operational risk": "RISK-ERM",
 
-  // Finance Division
+  // SAMA Affairs
+  "sama affairs & compliance assurance": "RISK-SAMA",
+  "sama affairs": "RISK-SAMA",
+  sama: "RISK-SAMA",
+  pdpl: "RISK-SAMA",
+
+  // Self-Supervisory Unit
+  "self-supervisory unit": "RISK-SSU",
+  "self supervisory unit": "RISK-SSU",
+  ssu: "RISK-SSU",
+
+  // ============================================
+  // FINANCE (FIN) - Reports to CFO
+  // ============================================
   finance: "FIN",
   "finance ": "FIN",
   financial: "FIN",
 
+  // Financial Planning & Analysis
+  "financial planning & analysis": "FIN-FPA",
+  "fp&a": "FIN-FPA",
+  fpa: "FIN-FPA",
+  budgeting: "FIN-FPA",
+
   // Financial Control & Reconciliation
-  "financial control & reconciliation": "FCR",
-  "financial control": "FCR",
-  fcr: "FCR",
-  reconciliation: "FCR",
+  "financial control & reconciliation": "FIN-FCR",
+  "financial control": "FIN-FCR",
+  fcr: "FIN-FCR",
+  reconciliation: "FIN-FCR",
+
+  // Treasury
+  treasury: "FIN-TREAS",
+  "cash management": "FIN-TREAS",
 
   // Accounting
-  accounting: "ACCT",
-  "accounting ": "ACCT",
-  accounts: "ACCT",
+  accounting: "FIN-ACCT",
+  "accounting ": "FIN-ACCT",
+  accounts: "FIN-ACCT",
+  "accounts payable": "FIN-ACCT",
+  "accounts receivable": "FIN-ACCT",
 
-  // Procurement & Administration
-  "procurement & administration": "PROC",
-  procurement: "PROC",
-  "procurement ": "PROC",
-  administration: "PROC",
-  admin: "PROC",
-  "payroll & hc operations": "PROC",
-  payroll: "PROC",
+  // ============================================
+  // HUMAN CAPITAL (HR) - Reports to CHRO
+  // ============================================
+  "people & culture": "HR",
+  "people and culture": "HR",
+  "human resources": "HR",
+  hr: "HR",
+  "human capital": "HR",
 
-  // Risk & Compliance Division
-  "risk & compliance": "RISK-COMP",
-  "risk and compliance": "RISK-COMP",
+  // HR Operations
+  "hr operations": "HR-OPS",
+  "hc operations": "HR-OPS",
+  "human capital operations": "HR-OPS",
+  "employee relations": "HR-OPS",
 
-  // Compliance
-  compliance: "COMP",
-  "compliance ": "COMP",
-  complaince: "COMP",
-  "compliance\t": "COMP",
-  "regulatory compliance": "COMP",
-  "compliance assurance": "COMP",
+  // Talent Acquisition
+  "talent acquisition": "HR-TA",
+  "talent acquisition ": "HR-TA",
+  ta: "HR-TA",
+  recruitment: "HR-TA",
+  recruiting: "HR-TA",
 
-  // AML & CTF
-  "aml & ctf": "AML",
-  aml: "AML",
-  "aml ": "AML",
-  ctf: "AML",
-  "anti-money laundering": "AML",
-  "anti money laundering": "AML",
+  // Organizational Development
+  "organizational development": "HR-OD",
+  "performance management": "HR-OD",
+  "training & development": "HR-OD",
+  "learning & development": "HR-OD",
 
-  // Anti-Fraud
-  "anti fraud, bribery & corruption": "FRAUD",
-  "anti-fraud monitoring": "FRAUD",
-  "anti-fraud": "FRAUD",
-  "anti fraud": "FRAUD",
-  fraud: "FRAUD",
-  "fraud ": "FRAUD",
-  "bribery & corruption": "FRAUD",
+  // Payroll
+  "payroll & hc operations": "HR-PAY",
+  payroll: "HR-PAY",
+  "hr systems": "HR-PAY",
 
-  // Sanctions
-  sanctions: "SANCT",
-  "sanctions ": "SANCT",
-  sanction: "SANCT",
+  // ============================================
+  // MARKETING & CUSTOMER EXPERIENCE (MCX)
+  // ============================================
+  "marketing & customer experience": "MCX",
+  "marcom & engagement": "MCX-MKT",
+  marcom: "MCX-MKT",
+  marketing: "MCX-MKT",
+  "marketing ": "MCX-MKT",
+  communications: "MCX-MKT",
+  "marketing & communications": "MCX-MKT",
+  "brand management": "MCX-MKT",
+  "digital marketing": "MCX-MKT",
 
-  // Risk Management
-  risk: "RISK",
-  "risk ": "RISK",
-  "risk management": "RISK",
-  "risk management ": "RISK",
-  "enterprise risk": "RISK",
+  // Customer Experience
+  "customer experience": "MCX-CX",
+  "customer experience ": "MCX-CX",
+  cx: "MCX-CX",
+  "customer success": "MCX-CX",
+  "journey mapping": "MCX-CX",
 
-  // Internal Audit
-  "internal audit": "AUDIT",
-  "internal audit ": "AUDIT",
-  audit: "AUDIT",
-  "corporate audit": "AUDIT",
-
-  // SAMA Affairs
-  "sama affairs & compliance assurance": "SAMA",
-  "sama affairs": "SAMA",
-  sama: "SAMA",
-
-  // Self-Supervisory Unit
-  "self-supervisory unit": "SSU",
-  "self supervisory unit": "SSU",
-  ssu: "SSU",
-
-  // Business Division
+  // ============================================
+  // BUSINESS & PARTNERSHIPS (BIZ) - Reports to CBO
+  // ============================================
   business: "BIZ",
   "business ": "BIZ",
   commercial: "BIZ",
+  "business & partnerships": "BIZ",
 
-  // Corporate & Partnerships
-  "corporate & partnerships": "CORP",
-  corporate: "CORP",
-  "corporate ": "CORP",
-  partnerships: "CORP",
+  // Business Development
+  "business development": "BIZ-BD",
+  "regional operations": "BIZ-BD",
 
-  // Acquiring
-  acquiring: "ACQ",
-  "acquiring ": "ACQ",
-  "merchant acquiring": "ACQ",
-
-  // Cards
-  cards: "CARDS",
-  "cards ": "CARDS",
-  card: "CARDS",
-  "card services": "CARDS",
+  // Partnerships
+  partnerships: "BIZ-PART",
+  "corporate & partnerships": "BIZ-PART",
+  "merchant partnerships": "BIZ-PART",
+  "corporate partnerships": "BIZ-PART",
 
   // Remittance
-  remittance: "REMIT",
-  "remittance ": "REMIT",
-  "remittance & international partnership": "REMIT",
-  "international partnership": "REMIT",
+  remittance: "BIZ-REMIT",
+  "remittance ": "BIZ-REMIT",
+  "remittance & international partnership": "BIZ-REMIT",
+  "international partnership": "BIZ-REMIT",
+  "corridor operations": "BIZ-REMIT",
 
-  // Loyalty & Gaming
-  "loyalty & gaming": "LOYALTY",
-  loyalty: "LOYALTY",
-  "loyalty ": "LOYALTY",
-  gaming: "LOYALTY",
+  // Growth
+  growth: "BIZ-GROWTH",
+  subsidiaries: "BIZ-GROWTH",
 
-  // Operations Division
+  // ============================================
+  // OPERATIONS (OPS) - Reports to COO
+  // ============================================
   operations: "OPS",
   "operations ": "OPS",
   ops: "OPS",
 
-  // Contact Center
+  // Operations Core
+  "operations support": "OPS-CORE",
+  "customer protection": "OPS-CORE",
+
+  // Payment Operations
+  "payment operation control": "OPS-PAY",
+  "payment operations": "OPS-PAY",
+  "payment ops": "OPS-PAY",
+  "pay-ops": "OPS-PAY",
+  "acquiring operations": "OPS-PAY",
+  "scheme management": "OPS-PAY",
+
+  // BCM (under Operations)
+  "business continuity management": "OPS-BCM",
+  bcm: "OPS-BCM",
+  "business continuity": "OPS-BCM",
+
+  // ============================================
+  // CONTACT CENTER (CC) - Reports to COO
+  // ============================================
   "contact center": "CC",
   "contact center ": "CC",
   "contact center  ": "CC",
@@ -232,46 +271,187 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   contactcenter: "CC",
   "call center": "CC",
 
-  // Customer Experience
-  "customer experience": "CX",
-  "customer experience ": "CX",
-  cx: "CX",
-  "customer success": "CX",
+  // CC Operations
+  "contact center operations": "CC-OPS",
+  "cc operations": "CC-OPS",
 
-  // Payment Operations
-  "payment operation control": "PAY-OPS",
-  "payment operations": "PAY-OPS",
-  "payment ops": "PAY-OPS",
-  "pay-ops": "PAY-OPS",
+  // CC Quality
+  "quality & control": "CC-QC",
+  "quality assurance": "CC-QC",
 
-  // People & Culture Division
-  "people & culture": "HR",
-  "people and culture": "HR",
-  "human resources": "HR",
-  hr: "HR",
+  // CC Workforce Management
+  "workforce management": "CC-WFM",
+  wfm: "CC-WFM",
 
-  // Human Capital
-  "human capital": "HC",
-  "human capital ": "HC",
-  hc: "HC",
-  "organizational development": "HC",
+  // CC Learning & Development
+  "contact center training": "CC-LD",
+  "cc training": "CC-LD",
 
-  // Talent Acquisition
-  "talent acquisition": "TA",
-  "talent acquisition ": "TA",
-  ta: "TA",
-  recruitment: "TA",
-  recruiting: "TA",
+  // ============================================
+  // TECHNOLOGY (TECH) - Reports to CTO
+  // ============================================
+  technology: "TECH",
+  "technology ": "TECH",
+  technologe: "TECH",
+  technololgy: "TECH",
+  tech: "TECH",
+  it: "TECH",
 
-  // Marketing & Communications
-  "marcom & engagement": "MARCOM",
-  marcom: "MARCOM",
-  marketing: "MARCOM",
-  "marketing ": "MARCOM",
-  communications: "MARCOM",
-  "marketing & communications": "MARCOM",
+  // Software Engineering
+  engineering: "TECH-SWE",
+  engineer: "TECH-SWE",
+  engineers: "TECH-SWE",
+  "software engineering": "TECH-SWE",
+  "platform engineering": "TECH-SWE",
+  backend: "TECH-SWE",
+  frontend: "TECH-SWE",
+  "mobile development": "TECH-SWE",
+  "web development": "TECH-SWE",
 
-  // Vendor (special case for external contractors)
+  // DevOps & Cloud
+  devops: "TECH-DEVOPS",
+  "devops ": "TECH-DEVOPS",
+  "dev ops": "TECH-DEVOPS",
+  infrastructure: "TECH-DEVOPS",
+  "devops & infrastructure": "TECH-DEVOPS",
+  "devops & cloud": "TECH-DEVOPS",
+  "cloud engineering": "TECH-DEVOPS",
+
+  // Site Reliability Engineering
+  sre: "TECH-SRE",
+  "site reliability": "TECH-SRE",
+  "site reliability engineering": "TECH-SRE",
+  "reliability engineering": "TECH-SRE",
+
+  // Data & Analytics
+  data: "TECH-DATA",
+  "data ": "TECH-DATA",
+  "data & analytics": "TECH-DATA",
+  "data and analytics": "TECH-DATA",
+  "data science": "TECH-DATA",
+  "data science analytics": "TECH-DATA",
+  analytics: "TECH-DATA",
+  bi: "TECH-DATA",
+  "business intelligence": "TECH-DATA",
+  "data engineering": "TECH-DATA",
+
+  // Product Management
+  product: "TECH-PROD",
+  "product ": "TECH-PROD",
+  "product factory": "TECH-PROD",
+  "product management": "TECH-PROD",
+  "product manager": "TECH-PROD",
+  "technical program manager": "TECH-PROD",
+  tpm: "TECH-PROD",
+
+  // IT Support
+  "it support": "TECH-ITSUP",
+  "it operations": "TECH-ITSUP",
+  helpdesk: "TECH-ITSUP",
+  "service desk": "TECH-ITSUP",
+  "end user support": "TECH-ITSUP",
+  "device management": "TECH-ITSUP",
+
+  // ERP Systems
+  erp: "TECH-ERP",
+  "erp systems": "TECH-ERP",
+  "erp engineering": "TECH-ERP",
+
+  // Tech BCM
+  "technology bcm": "TECH-BCM",
+  "tech bcm": "TECH-BCM",
+
+  // ============================================
+  // CYBERSECURITY (SEC) - Reports to CISO
+  // IMPORTANT: Separate from Technology!
+  // ============================================
+  cybersecurity: "SEC",
+  "cybersecurity ": "SEC",
+  "cyber security": "SEC",
+  "cyber ": "SEC",
+  cyber: "SEC",
+  "information security": "SEC",
+  infosec: "SEC",
+  security: "SEC",
+  ciso: "SEC",
+
+  // Security Operations Center
+  soc: "SEC-SOC",
+  "security operations": "SEC-SOC",
+  "security operations center": "SEC-SOC",
+  "threat intelligence": "SEC-SOC",
+
+  // Cyber Defense Center
+  "cyber defense": "SEC-CDC",
+  "penetration testing": "SEC-CDC",
+  "red team": "SEC-CDC",
+  "blue team": "SEC-CDC",
+
+  // Security GRC
+  "security governance": "SEC-GRC",
+  "security compliance": "SEC-GRC",
+  "security risk": "SEC-GRC",
+  "security audit": "SEC-GRC",
+
+  // Vulnerability Management
+  "vulnerability management": "SEC-VM",
+  "vulnerability assessment": "SEC-VM",
+  "patch management": "SEC-VM",
+
+  // Data Privacy
+  "data privacy": "SEC-PRIV",
+  privacy: "SEC-PRIV",
+  "data protection": "SEC-PRIV",
+
+  // ============================================
+  // PROCUREMENT & ADMINISTRATION (PROC)
+  // ============================================
+  "procurement & administration": "PROC",
+  procurement: "PROC-BUY",
+  "procurement ": "PROC-BUY",
+  "vendor management": "PROC-BUY",
+  "contract management": "PROC-BUY",
+  administration: "PROC-ADMIN",
+  admin: "PROC-ADMIN",
+  facilities: "PROC-ADMIN",
+  "office management": "PROC-ADMIN",
+  "travel desk": "PROC-TRAVEL",
+  travel: "PROC-TRAVEL",
+
+  // ============================================
+  // LEGAL (LEGAL)
+  // ============================================
+  legal: "LEGAL",
+  "legal affairs": "LEGAL-AFF",
+  "corporate legal": "LEGAL-AFF",
+  litigation: "LEGAL-AFF",
+  "contract review": "LEGAL-CONT",
+  contracts: "LEGAL-CONT",
+
+  // ============================================
+  // CORPORATE (CORP)
+  // ============================================
+  corporate: "CORP",
+  "corporate ": "CORP",
+  "corporate services": "CORP-SVC",
+  "corporate governance": "CORP-GOV",
+  governance: "CORP-GOV",
+
+  // ============================================
+  // LOYALTY & GAMING (LG)
+  // ============================================
+  "loyalty & gaming": "LG",
+  loyalty: "LG-LOYALTY",
+  "loyalty ": "LG-LOYALTY",
+  "loyalty programs": "LG-LOYALTY",
+  gaming: "LG-GAMING",
+  "gaming operations": "LG-GAMING",
+
+  // ============================================
+  // SPECIAL CASES
+  // ============================================
+
+  // Vendor (external contractors)
   vendor: "VENDOR",
   "vendor ": "VENDOR",
   virtuos: "VENDOR",
@@ -332,60 +512,153 @@ export const OFFICE_NORMALIZATION_MAP: Record<string, string> = {
 /**
  * Maps normalized department codes to role names.
  * Used for automatic role assignment during sync.
+ *
+ * NEW STRUCTURE (aligned with C-level domains):
+ * - SEC (CISO) → security-officer
+ * - RISK, AUDIT (CRO) → auditor
+ * - TECH (CTO) → service-owner (TECH-DATA → data-steward override)
+ * - FIN (CFO) → finance-manager
+ * - HR (CHRO) → hr-manager
+ * - Others → viewer
  */
 export const DEPARTMENT_ROLE_MAP: Record<string, string> = {
-  // Risk & Compliance Division → auditor
-  COMP: "auditor",
-  AML: "auditor",
-  FRAUD: "auditor",
-  SANCT: "auditor",
+  // ============================================
+  // CYBERSECURITY (SEC) - Reports to CISO
+  // ============================================
+  SEC: "security-officer",
+  "SEC-SOC": "security-officer",
+  "SEC-CDC": "security-officer",
+  "SEC-GRC": "security-officer",
+  "SEC-VM": "security-officer",
+  "SEC-PRIV": "security-officer",
+
+  // ============================================
+  // RISK & COMPLIANCE (RISK) - Reports to CRO
+  // ============================================
   RISK: "auditor",
-  AUDIT: "auditor",
-  SAMA: "auditor",
-  SSU: "auditor",
   "RISK-COMP": "auditor",
+  "RISK-AML": "auditor",
+  "RISK-FRAUD": "auditor",
+  "RISK-SANCT": "auditor",
+  "RISK-ERM": "auditor",
+  "RISK-SAMA": "auditor",
+  "RISK-SSU": "auditor",
 
-  // Technology Division
+  // ============================================
+  // INTERNAL AUDIT (AUDIT) - Reports to CRO/Board
+  // ============================================
+  AUDIT: "auditor",
+  "AUDIT-INT": "auditor",
+  "AUDIT-CORP": "auditor",
+  "AUDIT-IT": "auditor",
+
+  // ============================================
+  // TECHNOLOGY (TECH) - Reports to CTO
+  // ============================================
   TECH: "service-owner",
-  CYBERSEC: "security-officer",
-  DATA: "data-steward",
-  ENG: "service-owner",
-  DEVOPS: "service-owner",
-  PRODUCT: "service-owner",
-  BCM: "service-owner",
+  "TECH-SWE": "service-owner",
+  "TECH-DEVOPS": "service-owner",
+  "TECH-SRE": "service-owner",
+  "TECH-PROD": "service-owner",
+  "TECH-ITSUP": "service-owner",
+  "TECH-ERP": "service-owner",
+  "TECH-BCM": "service-owner",
+  // Data & Analytics → data-steward (override)
+  "TECH-DATA": "data-steward",
 
-  // Finance Division
+  // ============================================
+  // FINANCE (FIN) - Reports to CFO
+  // ============================================
   FIN: "finance-manager",
-  FCR: "finance-manager",
-  ACCT: "finance-manager",
+  "FIN-FPA": "finance-manager",
+  "FIN-FCR": "finance-manager",
+  "FIN-TREAS": "finance-manager",
+  "FIN-ACCT": "finance-manager",
+
+  // ============================================
+  // PROCUREMENT (PROC) - Reports to CFO/COO
+  // ============================================
   PROC: "finance-manager",
+  "PROC-BUY": "finance-manager",
+  "PROC-ADMIN": "viewer",
+  "PROC-TRAVEL": "viewer",
 
-  // Operations Division → viewer
-  OPS: "viewer",
-  CC: "viewer",
-  CX: "viewer",
-  "PAY-OPS": "viewer",
-
-  // HR/People Division → hr-manager
+  // ============================================
+  // HUMAN CAPITAL (HR) - Reports to CHRO
+  // ============================================
   HR: "hr-manager",
-  HC: "hr-manager",
-  TA: "hr-manager",
-  MARCOM: "hr-manager",
+  "HR-OPS": "hr-manager",
+  "HR-TA": "hr-manager",
+  "HR-OD": "hr-manager",
+  "HR-PAY": "hr-manager",
 
-  // Business Division → viewer
+  // ============================================
+  // OPERATIONS (OPS) - Reports to COO
+  // ============================================
+  OPS: "viewer",
+  "OPS-CORE": "viewer",
+  "OPS-PAY": "viewer",
+  "OPS-BCM": "viewer",
+
+  // ============================================
+  // CONTACT CENTER (CC) - Reports to COO
+  // ============================================
+  CC: "viewer",
+  "CC-OPS": "viewer",
+  "CC-QC": "viewer",
+  "CC-WFM": "viewer",
+  "CC-LD": "viewer",
+
+  // ============================================
+  // MARKETING & CX (MCX) - Reports to CMCXO
+  // ============================================
+  MCX: "viewer",
+  "MCX-MKT": "viewer",
+  "MCX-CX": "viewer",
+
+  // ============================================
+  // BUSINESS & PARTNERSHIPS (BIZ) - Reports to CBO
+  // ============================================
   BIZ: "viewer",
-  CORP: "viewer",
-  ACQ: "viewer",
-  CARDS: "viewer",
-  REMIT: "viewer",
-  LOYALTY: "viewer",
+  "BIZ-BD": "viewer",
+  "BIZ-PART": "viewer",
+  "BIZ-REMIT": "viewer",
+  "BIZ-GROWTH": "viewer",
 
-  // Executive → viewer (no special system permissions)
+  // ============================================
+  // LOYALTY & GAMING (LG) - Reports to CBO
+  // ============================================
+  LG: "viewer",
+  "LG-LOYALTY": "viewer",
+  "LG-GAMING": "viewer",
+
+  // ============================================
+  // EXECUTIVE LEADERSHIP (EXEC) - Reports to CEO
+  // ============================================
   EXEC: "viewer",
-  STRAT: "viewer",
+  "EXEC-CEO": "viewer",
+  "EXEC-STRAT": "viewer",
+  "EXEC-COS": "viewer",
 
-  // Vendor → viewer
+  // ============================================
+  // LEGAL (LEGAL) - Reports to CEO
+  // ============================================
+  LEGAL: "viewer",
+  "LEGAL-AFF": "viewer",
+  "LEGAL-CONT": "viewer",
+
+  // ============================================
+  // CORPORATE (CORP) - Reports to CEO
+  // ============================================
+  CORP: "viewer",
+  "CORP-SVC": "viewer",
+  "CORP-GOV": "viewer",
+
+  // ============================================
+  // SPECIAL
+  // ============================================
   VENDOR: "viewer",
+  UNASSIGNED: "viewer",
 } as const;
 
 /**

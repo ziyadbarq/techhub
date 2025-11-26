@@ -13,6 +13,8 @@ import {
   Users,
   Pencil,
   Trash2,
+  UserX,
+  UserCheck,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -33,6 +35,8 @@ interface PersonCardProps {
   onViewReportingChain?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
+  onToggleExclusion?: () => void;
+  isTogglingExclusion?: boolean;
   index?: number;
 }
 
@@ -41,6 +45,8 @@ export function PersonCard({
   onViewReportingChain,
   onEdit,
   onDelete,
+  onToggleExclusion,
+  isTogglingExclusion,
   index = 0,
 }: PersonCardProps) {
   return (
@@ -140,6 +146,31 @@ export function PersonCard({
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>Edit</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+
+              {/* Toggle exclusion action */}
+              {onToggleExclusion && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        onClick={onToggleExclusion}
+                        disabled={isTogglingExclusion}
+                      >
+                        {person.isExcluded ? (
+                          <UserCheck className="h-4 w-4" />
+                        ) : (
+                          <UserX className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{person.isExcluded ? "Include" : "Exclude"}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>

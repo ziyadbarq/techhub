@@ -321,6 +321,8 @@ export const DI_TOKENS = {
     "DeletePersonWithConfirmationUseCase",
   ),
   SyncUsersFromGraphUseCase: Symbol.for("SyncUsersFromGraphUseCase"),
+  TogglePersonExclusionUseCase: Symbol.for("TogglePersonExclusionUseCase"),
+  TogglePersonStatusUseCase: Symbol.for("TogglePersonStatusUseCase"),
 
   // Foundation: Employee Directory Use Cases
   ListEmployeeDirectoryUseCase: Symbol.for("ListEmployeeDirectoryUseCase"),

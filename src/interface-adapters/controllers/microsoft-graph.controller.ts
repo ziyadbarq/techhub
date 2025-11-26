@@ -37,6 +37,8 @@ export interface SyncResultDTO {
   created: number;
   updated: number;
   deactivated: number;
+  /** Users auto-excluded due to missing department (service accounts) */
+  excluded: number;
   errorCount: number;
   errors: Array<{
     azureAdId: string;
@@ -117,6 +119,7 @@ export async function syncUsersFromGraphAction(
         created: result.created,
         updated: result.updated,
         deactivated: result.deactivated,
+        excluded: result.excluded,
         errorCount: result.errors.length,
         errors: result.errors,
       },

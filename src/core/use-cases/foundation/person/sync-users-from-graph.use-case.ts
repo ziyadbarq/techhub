@@ -91,6 +91,7 @@ export class SyncUsersFromGraphUseCase {
       created: 0,
       updated: 0,
       deactivated: 0,
+      excluded: 0,
       errors: [],
     };
 
@@ -144,6 +145,27 @@ export class SyncUsersFromGraphUseCase {
                 // Update location based on office mapping
                 locationId: personData.locationId,
               });
+
+              // Auto-exclude users without department (service accounts, system accounts)
+              // If department becomes null/empty, exclude from TechHub
+              // If department is set, include in TechHub
+              const hasDepartment = !!personData.department?.trim();
+              if (!hasDepartment && !existingPerson.isExcluded) {
+                existingPerson.exclude();
+                result.excluded++;
+                this.logger.debug("Auto-excluding user without department", {
+                  azureAdId: personData.azureAdId,
+                  email: personData.email,
+                });
+              } else if (hasDepartment && existingPerson.isExcluded) {
+                existingPerson.include();
+                this.logger.debug("Auto-including user with department", {
+                  azureAdId: personData.azureAdId,
+                  email: personData.email,
+                  department: personData.department,
+                });
+              }
+
               await this.personRepository.update(existingPerson);
             }
             result.updated++;
@@ -166,6 +188,21 @@ export class SyncUsersFromGraphUseCase {
                 locationId: personData.locationId,
                 primaryRoleId: personData.primaryRoleId,
               });
+
+              // Auto-exclude new users without department (service accounts, system accounts)
+              const hasDepartment = !!personData.department?.trim();
+              if (!hasDepartment) {
+                newPerson.exclude();
+                result.excluded++;
+                this.logger.debug(
+                  "Auto-excluding new user without department",
+                  {
+                    azureAdId: personData.azureAdId,
+                    email: personData.email,
+                  },
+                );
+              }
+
               await this.personRepository.create(newPerson);
             }
             result.created++;
@@ -206,6 +243,7 @@ export class SyncUsersFromGraphUseCase {
         created: result.created,
         updated: result.updated,
         deactivated: result.deactivated,
+        excluded: result.excluded,
         errors: result.errors.length,
       });
       return result;
@@ -239,9 +277,16 @@ export class SyncUsersFromGraphUseCase {
       if (orgUnit.code) {
         orgUnitCodeToIdMap.set(orgUnit.code, orgUnit.id);
       }
-      // Track default org unit ID (first one found if not specified)
-      if (!defaultOrgUnitId) {
-        defaultOrgUnitId = orgUnit.id;
+    }
+
+    // Use UNASSIGNED org unit as fallback for unmapped departments
+    if (!defaultOrgUnitId) {
+      const unassignedId = orgUnitCodeToIdMap.get("UNASSIGNED");
+      if (unassignedId) {
+        defaultOrgUnitId = unassignedId;
+      } else {
+        // Final fallback: use first org unit if UNASSIGNED doesn't exist
+        defaultOrgUnitId = allOrgUnits[0]?.id;
       }
     }
 

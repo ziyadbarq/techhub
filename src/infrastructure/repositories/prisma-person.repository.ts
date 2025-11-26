@@ -48,6 +48,7 @@ export class PrismaPersonRepository implements IPersonRepository {
           hireDate: person.hireDate,
           terminationDate: person.terminationDate,
           isActive: person.isActive,
+          isExcluded: person.isExcluded,
           userId: person.userId,
           metadata:
             (person.metadata as Prisma.InputJsonValue) ?? Prisma.JsonNull,
@@ -151,7 +152,7 @@ export class PrismaPersonRepository implements IPersonRepository {
     take?: number;
   }): Promise<Person[]> {
     const persons = await this.prisma.person.findMany({
-      where: { isActive: true },
+      where: { isActive: true, isExcluded: false },
       skip: options?.skip,
       take: options?.take,
       orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
@@ -166,6 +167,20 @@ export class PrismaPersonRepository implements IPersonRepository {
   }): Promise<Person[]> {
     const persons = await this.prisma.person.findMany({
       where: { isActive: false },
+      skip: options?.skip,
+      take: options?.take,
+      orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
+    });
+
+    return persons.map((p: PrismaPerson) => this.toDomain(p));
+  }
+
+  async findExcluded(options?: {
+    skip?: number;
+    take?: number;
+  }): Promise<Person[]> {
+    const persons = await this.prisma.person.findMany({
+      where: { isExcluded: true },
       skip: options?.skip,
       take: options?.take,
       orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
@@ -280,6 +295,7 @@ export class PrismaPersonRepository implements IPersonRepository {
           hireDate: person.hireDate,
           terminationDate: person.terminationDate,
           isActive: person.isActive,
+          isExcluded: person.isExcluded,
           userId: person.userId,
           metadata:
             (person.metadata as Prisma.InputJsonValue) ?? Prisma.JsonNull,
@@ -373,6 +389,7 @@ export class PrismaPersonRepository implements IPersonRepository {
       hireDate: prismaPerson.hireDate,
       terminationDate: prismaPerson.terminationDate,
       isActive: prismaPerson.isActive,
+      isExcluded: prismaPerson.isExcluded,
       metadata: prismaPerson.metadata as Record<string, unknown> | null,
       createdAt: prismaPerson.createdAt,
       updatedAt: prismaPerson.updatedAt,
@@ -388,6 +405,7 @@ export class PrismaPersonRepository implements IPersonRepository {
     orgUnitIds?: string[];
     locationIds?: string[];
     isActive?: boolean;
+    isExcluded?: boolean;
     hasManager?: boolean;
     managerId?: string;
   }): Promise<PersonWithDirectoryRelations[]> {
@@ -400,6 +418,11 @@ export class PrismaPersonRepository implements IPersonRepository {
       // Active status filter (defaults to true in caller)
       if (options?.isActive !== undefined) {
         where.isActive = options.isActive;
+      }
+
+      // Excluded status filter
+      if (options?.isExcluded !== undefined) {
+        where.isExcluded = options.isExcluded;
       }
 
       // Search across multiple fields
@@ -482,6 +505,7 @@ export class PrismaPersonRepository implements IPersonRepository {
       where: {
         managerId,
         isActive: true,
+        isExcluded: false,
       },
       orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
     });
@@ -492,7 +516,7 @@ export class PrismaPersonRepository implements IPersonRepository {
   async countByOrgUnits(): Promise<Map<string, number>> {
     const counts = await this.prisma.person.groupBy({
       by: ["orgUnitId"],
-      where: { isActive: true },
+      where: { isActive: true, isExcluded: false },
       _count: { id: true },
     });
 
@@ -507,7 +531,7 @@ export class PrismaPersonRepository implements IPersonRepository {
   async countByLocations(): Promise<Map<string, number>> {
     const counts = await this.prisma.person.groupBy({
       by: ["locationId"],
-      where: { isActive: true, locationId: { not: null } },
+      where: { isActive: true, isExcluded: false, locationId: { not: null } },
       _count: { id: true },
     });
 
@@ -624,6 +648,7 @@ export class PrismaPersonRepository implements IPersonRepository {
         where: {
           managerId,
           isActive: true,
+          isExcluded: false,
         },
         include: {
           orgUnit: {
@@ -680,6 +705,7 @@ export class PrismaPersonRepository implements IPersonRepository {
       const persons = await this.prisma.person.findMany({
         where: {
           isActive: true,
+          isExcluded: false,
           OR: [
             { managerId: null },
             {

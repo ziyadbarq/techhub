@@ -180,57 +180,90 @@ export interface OrgUnitData {
   code: string;
   description?: string;
   parentCode?: string;
+  unitType?:
+    | "COMPANY"
+    | "BUSINESS_UNIT"
+    | "DEPARTMENT"
+    | "TEAM"
+    | "DIVISION"
+    | "OTHER";
 }
 
 /**
- * Create organization units (handles parent relationships)
+ * Create organization units with multi-pass hierarchy support.
+ * Handles 4+ levels by repeatedly processing remaining units until
+ * all parents are resolved or no progress can be made.
  */
 export async function createOrganizationUnits(
   prisma: PrismaClient,
   orgUnits: readonly OrgUnitData[] | OrgUnitData[],
 ) {
   const createdUnits = new Map<string, { id: string; level: number }>(); // code -> metadata
+  let remaining = [...orgUnits];
+  let maxPasses = 10; // Safety limit to prevent infinite loops
+  let passCount = 0;
 
-  // First, create top-level units (no parent)
-  const topLevel = orgUnits.filter((ou) => !ou.parentCode);
-  for (const unit of topLevel) {
-    const created = await prisma.organizationUnit.create({
-      data: {
-        name: unit.name,
-        code: unit.code,
-        description: unit.description ?? null,
-        level: 1,
-        isActive: true,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any,
-    });
-    createdUnits.set(unit.code, { id: created.id, level: 1 });
-  }
+  while (remaining.length > 0 && maxPasses > 0) {
+    passCount++;
+    const nextRound: OrgUnitData[] = [];
+    let createdThisPass = 0;
 
-  // Then, create child units
-  const children = orgUnits.filter((ou) => ou.parentCode);
-  for (const unit of children) {
-    const parent = createdUnits.get(unit.parentCode!);
-    if (!parent) {
-      console.warn(
-        `⚠️  Parent unit not found for ${unit.code}: ${unit.parentCode}`,
-      );
-      continue;
+    for (const unit of remaining) {
+      // Check if this unit can be created (either no parent, or parent already exists)
+      const canCreate = !unit.parentCode || createdUnits.has(unit.parentCode);
+
+      if (canCreate) {
+        const parentMeta = unit.parentCode
+          ? createdUnits.get(unit.parentCode)
+          : undefined;
+        const level = parentMeta ? parentMeta.level + 1 : 1;
+
+        const created = await prisma.organizationUnit.create({
+          data: {
+            name: unit.name,
+            code: unit.code,
+            description: unit.description ?? null,
+            unitType: unit.unitType ?? "DEPARTMENT",
+            parent: parentMeta ? { connect: { id: parentMeta.id } } : undefined,
+            level,
+            isActive: true,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          } as any,
+        });
+
+        createdUnits.set(unit.code, { id: created.id, level });
+        createdThisPass++;
+      } else {
+        // Parent not yet created, defer to next pass
+        nextRound.push(unit);
+      }
     }
 
-    const created = await prisma.organizationUnit.create({
-      data: {
-        name: unit.name,
-        code: unit.code,
-        description: unit.description ?? null,
-        parent: { connect: { id: parent.id } },
-        level: parent.level + 1,
-        isActive: true,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } as any,
-    });
-    createdUnits.set(unit.code, { id: created.id, level: parent.level + 1 });
+    // If no progress was made this pass, we have orphaned units
+    if (createdThisPass === 0 && nextRound.length > 0) {
+      console.warn(
+        `⚠️  Could not create ${nextRound.length} org units - missing parents:`,
+      );
+      nextRound.forEach((u) =>
+        console.warn(`    - ${u.code} (parent: ${u.parentCode})`),
+      );
+      break;
+    }
+
+    remaining = nextRound;
+    maxPasses--;
   }
+
+  if (maxPasses === 0 && remaining.length > 0) {
+    console.warn(
+      `⚠️  Max passes reached with ${remaining.length} units remaining`,
+    );
+  }
+
+  // Log summary
+  console.log(
+    `    Created ${createdUnits.size} org units in ${passCount} pass(es)`,
+  );
 
   const orgUnitIdMap = new Map<string, string>();
   for (const [code, meta] of createdUnits.entries()) {

@@ -75,6 +75,11 @@ export interface IPersonRepository {
   findInactive(options?: { skip?: number; take?: number }): Promise<Person[]>;
 
   /**
+   * Find excluded persons (TechHub-specific exclusion, e.g., service accounts)
+   */
+  findExcluded(options?: { skip?: number; take?: number }): Promise<Person[]>;
+
+  /**
    * Find persons linked to user accounts
    */
   findLinkedToUsers(): Promise<Person[]>;
@@ -159,6 +164,7 @@ export interface IPersonRepository {
     orgUnitIds?: string[];
     locationIds?: string[];
     isActive?: boolean;
+    isExcluded?: boolean;
     hasManager?: boolean;
     managerId?: string;
   }): Promise<PersonWithDirectoryRelations[]>;

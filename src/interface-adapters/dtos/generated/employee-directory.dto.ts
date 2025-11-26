@@ -12,7 +12,8 @@ export const EmployeeDirectoryFilterSchema = z.object({
   search: z.string().optional(),
   orgUnitIds: z.array(z.string()).optional(),
   locationIds: z.array(z.string()).optional(),
-  isActive: z.boolean().optional().default(true),
+  isActive: z.boolean().optional(),
+  isExcluded: z.boolean().optional(),
   hasManager: z.boolean().optional(),
   managerId: z.string().optional(),
 });

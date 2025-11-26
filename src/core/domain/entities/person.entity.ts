@@ -24,6 +24,7 @@ export interface PersonProps {
   hireDate: Date | null;
   terminationDate: Date | null;
   isActive: boolean;
+  isExcluded: boolean; // TechHub-specific: hide from app (service accounts)
   metadata: Record<string, unknown> | null;
   createdAt: Date;
   updatedAt: Date;
@@ -84,6 +85,7 @@ export class Person {
       hireDate: props.hireDate || null,
       terminationDate: props.terminationDate || null,
       isActive: true,
+      isExcluded: false,
       metadata: props.metadata || null,
       createdAt: now,
       updatedAt: now,
@@ -217,6 +219,16 @@ export class Person {
     this.props.updatedAt = new Date();
   }
 
+  exclude(): void {
+    this.props.isExcluded = true;
+    this.props.updatedAt = new Date();
+  }
+
+  include(): void {
+    this.props.isExcluded = false;
+    this.props.updatedAt = new Date();
+  }
+
   moveToOrganizationUnit(orgUnitId: string): void {
     Person.validateOrgUnitId(orgUnitId);
     this.props.orgUnitId = orgUnitId;
@@ -340,6 +352,9 @@ export class Person {
   }
   get isActive(): boolean {
     return this.props.isActive;
+  }
+  get isExcluded(): boolean {
+    return this.props.isExcluded;
   }
   get metadata(): Record<string, unknown> | null {
     return this.props.metadata;

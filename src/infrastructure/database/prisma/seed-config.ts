@@ -20,7 +20,7 @@ export const SEED_QUANTITIES = {
   // Foundation Layer
   VENDORS: 9,
   LOCATIONS: 5, // Barq actual locations
-  ORGANIZATION_UNITS: 38, // 1 company + 9 divisions + 28 departments
+  ORGANIZATION_UNITS: 223, // 1 company + 17 departments + 55 sub-departments + 150 teams
   PERSONS: 0, // Persons come from Microsoft Graph sync
   LIFECYCLE_STATUSES: 6,
   FIELD_DEFINITIONS: 8,

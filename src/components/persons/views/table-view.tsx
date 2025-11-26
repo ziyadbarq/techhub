@@ -18,6 +18,8 @@ import {
   MoreHorizontal,
   Pencil,
   Trash2,
+  UserX,
+  UserCheck,
 } from "lucide-react";
 
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
@@ -44,6 +46,8 @@ interface TableViewProps {
   onViewReportingChain?: (person: EmployeeDirectoryDTO) => void;
   onEdit?: (person: EmployeeDirectoryDTO) => void;
   onDelete?: (person: EmployeeDirectoryDTO) => void;
+  onToggleExclusion?: (person: EmployeeDirectoryDTO) => void;
+  isTogglingExclusion?: boolean;
 }
 
 export function TableView({
@@ -52,6 +56,8 @@ export function TableView({
   onViewReportingChain,
   onEdit,
   onDelete,
+  onToggleExclusion,
+  isTogglingExclusion,
 }: TableViewProps) {
   const columns: ColumnDef<EmployeeDirectoryDTO>[] = [
     {
@@ -241,7 +247,7 @@ export function TableView({
       id: "actions",
       cell: ({ row }) => {
         const person = row.original;
-        const hasActions = onEdit || onDelete;
+        const hasActions = onEdit || onDelete || onToggleExclusion;
 
         return (
           <div className="flex items-center gap-1">
@@ -268,6 +274,24 @@ export function TableView({
                     <DropdownMenuItem onClick={() => onEdit(person)}>
                       <Pencil className="mr-2 h-4 w-4" />
                       Edit
+                    </DropdownMenuItem>
+                  )}
+                  {onToggleExclusion && (
+                    <DropdownMenuItem
+                      onClick={() => onToggleExclusion(person)}
+                      disabled={isTogglingExclusion}
+                    >
+                      {person.isExcluded ? (
+                        <>
+                          <UserCheck className="mr-2 h-4 w-4" />
+                          Include
+                        </>
+                      ) : (
+                        <>
+                          <UserX className="mr-2 h-4 w-4" />
+                          Exclude
+                        </>
+                      )}
                     </DropdownMenuItem>
                   )}
                   {onDelete && (

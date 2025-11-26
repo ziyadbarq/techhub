@@ -140,6 +140,8 @@ export interface SyncResult {
   created: number;
   updated: number;
   deactivated: number;
+  /** Users auto-excluded due to missing department (service accounts) */
+  excluded: number;
   errors: Array<{
     azureAdId: string;
     email?: string;

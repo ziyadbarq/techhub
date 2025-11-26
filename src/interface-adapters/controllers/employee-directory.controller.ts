@@ -55,6 +55,7 @@ export async function listEmployeeDirectoryAction(
       orgUnitIds: validated.orgUnitIds,
       locationIds: validated.locationIds,
       isActive: validated.isActive,
+      isExcluded: validated.isExcluded,
       hasManager: validated.hasManager,
       managerId: validated.managerId,
     });

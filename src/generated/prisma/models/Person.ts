@@ -45,6 +45,7 @@ export type PersonMinAggregateOutputType = {
   hireDate: Date | null
   terminationDate: Date | null
   isActive: boolean | null
+  isExcluded: boolean | null
   deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -71,6 +72,7 @@ export type PersonMaxAggregateOutputType = {
   hireDate: Date | null
   terminationDate: Date | null
   isActive: boolean | null
+  isExcluded: boolean | null
   deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -97,6 +99,7 @@ export type PersonCountAggregateOutputType = {
   hireDate: number
   terminationDate: number
   isActive: number
+  isExcluded: number
   metadata: number
   deletedAt: number
   createdAt: number
@@ -126,6 +129,7 @@ export type PersonMinAggregateInputType = {
   hireDate?: true
   terminationDate?: true
   isActive?: true
+  isExcluded?: true
   deletedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -152,6 +156,7 @@ export type PersonMaxAggregateInputType = {
   hireDate?: true
   terminationDate?: true
   isActive?: true
+  isExcluded?: true
   deletedAt?: true
   createdAt?: true
   updatedAt?: true
@@ -178,6 +183,7 @@ export type PersonCountAggregateInputType = {
   hireDate?: true
   terminationDate?: true
   isActive?: true
+  isExcluded?: true
   metadata?: true
   deletedAt?: true
   createdAt?: true
@@ -278,6 +284,7 @@ export type PersonGroupByOutputType = {
   hireDate: Date | null
   terminationDate: Date | null
   isActive: boolean
+  isExcluded: boolean
   metadata: runtime.JsonValue | null
   deletedAt: Date | null
   createdAt: Date
@@ -326,6 +333,7 @@ export type PersonWhereInput = {
   hireDate?: Prisma.DateTimeNullableFilter<"Person"> | Date | string | null
   terminationDate?: Prisma.DateTimeNullableFilter<"Person"> | Date | string | null
   isActive?: Prisma.BoolFilter<"Person"> | boolean
+  isExcluded?: Prisma.BoolFilter<"Person"> | boolean
   metadata?: Prisma.JsonNullableFilter<"Person">
   deletedAt?: Prisma.DateTimeNullableFilter<"Person"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Person"> | Date | string
@@ -380,6 +388,7 @@ export type PersonOrderByWithRelationInput = {
   hireDate?: Prisma.SortOrderInput | Prisma.SortOrder
   terminationDate?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isExcluded?: Prisma.SortOrder
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -437,6 +446,7 @@ export type PersonWhereUniqueInput = Prisma.AtLeast<{
   hireDate?: Prisma.DateTimeNullableFilter<"Person"> | Date | string | null
   terminationDate?: Prisma.DateTimeNullableFilter<"Person"> | Date | string | null
   isActive?: Prisma.BoolFilter<"Person"> | boolean
+  isExcluded?: Prisma.BoolFilter<"Person"> | boolean
   metadata?: Prisma.JsonNullableFilter<"Person">
   deletedAt?: Prisma.DateTimeNullableFilter<"Person"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Person"> | Date | string
@@ -491,6 +501,7 @@ export type PersonOrderByWithAggregationInput = {
   hireDate?: Prisma.SortOrderInput | Prisma.SortOrder
   terminationDate?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isExcluded?: Prisma.SortOrder
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -524,6 +535,7 @@ export type PersonScalarWhereWithAggregatesInput = {
   hireDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Person"> | Date | string | null
   terminationDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Person"> | Date | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"Person"> | boolean
+  isExcluded?: Prisma.BoolWithAggregatesFilter<"Person"> | boolean
   metadata?: Prisma.JsonNullableWithAggregatesFilter<"Person">
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Person"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Person"> | Date | string
@@ -546,6 +558,7 @@ export type PersonCreateInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -600,6 +613,7 @@ export type PersonUncheckedCreateInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -644,6 +658,7 @@ export type PersonUpdateInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -698,6 +713,7 @@ export type PersonUncheckedUpdateInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -747,6 +763,7 @@ export type PersonCreateManyInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -769,6 +786,7 @@ export type PersonUpdateManyMutationInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -796,6 +814,7 @@ export type PersonUncheckedUpdateManyInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -838,6 +857,7 @@ export type PersonCountOrderByAggregateInput = {
   hireDate?: Prisma.SortOrder
   terminationDate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isExcluded?: Prisma.SortOrder
   metadata?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -865,6 +885,7 @@ export type PersonMaxOrderByAggregateInput = {
   hireDate?: Prisma.SortOrder
   terminationDate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isExcluded?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -891,6 +912,7 @@ export type PersonMinOrderByAggregateInput = {
   hireDate?: Prisma.SortOrder
   terminationDate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isExcluded?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -1447,6 +1469,7 @@ export type PersonCreateWithoutUserInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -1499,6 +1522,7 @@ export type PersonUncheckedCreateWithoutUserInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -1559,6 +1583,7 @@ export type PersonUpdateWithoutUserInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1611,6 +1636,7 @@ export type PersonUncheckedUpdateWithoutUserInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1655,6 +1681,7 @@ export type PersonCreateWithoutPrimaryRoleInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -1707,6 +1734,7 @@ export type PersonUncheckedCreateWithoutPrimaryRoleInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -1785,6 +1813,7 @@ export type PersonScalarWhereInput = {
   hireDate?: Prisma.DateTimeNullableFilter<"Person"> | Date | string | null
   terminationDate?: Prisma.DateTimeNullableFilter<"Person"> | Date | string | null
   isActive?: Prisma.BoolFilter<"Person"> | boolean
+  isExcluded?: Prisma.BoolFilter<"Person"> | boolean
   metadata?: Prisma.JsonNullableFilter<"Person">
   deletedAt?: Prisma.DateTimeNullableFilter<"Person"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Person"> | Date | string
@@ -1807,6 +1836,7 @@ export type PersonCreateWithoutManagedOrgUnitsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -1860,6 +1890,7 @@ export type PersonUncheckedCreateWithoutManagedOrgUnitsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -1908,6 +1939,7 @@ export type PersonCreateWithoutOrgUnitInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -1960,6 +1992,7 @@ export type PersonUncheckedCreateWithoutOrgUnitInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2025,6 +2058,7 @@ export type PersonUpdateWithoutManagedOrgUnitsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2078,6 +2112,7 @@ export type PersonUncheckedUpdateWithoutManagedOrgUnitsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2137,6 +2172,7 @@ export type PersonCreateWithoutDirectReportsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2190,6 +2226,7 @@ export type PersonUncheckedCreateWithoutDirectReportsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2238,6 +2275,7 @@ export type PersonCreateWithoutManagerInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2290,6 +2328,7 @@ export type PersonUncheckedCreateWithoutManagerInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2355,6 +2394,7 @@ export type PersonUpdateWithoutDirectReportsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2408,6 +2448,7 @@ export type PersonUncheckedUpdateWithoutDirectReportsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2467,6 +2508,7 @@ export type PersonCreateWithoutRoleAssignmentsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2520,6 +2562,7 @@ export type PersonUncheckedCreateWithoutRoleAssignmentsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2579,6 +2622,7 @@ export type PersonUpdateWithoutRoleAssignmentsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2632,6 +2676,7 @@ export type PersonUncheckedUpdateWithoutRoleAssignmentsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2675,6 +2720,7 @@ export type PersonCreateWithoutLocationInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2727,6 +2773,7 @@ export type PersonUncheckedCreateWithoutLocationInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2797,6 +2844,7 @@ export type PersonCreateWithoutConfigurationItemsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2850,6 +2898,7 @@ export type PersonUncheckedCreateWithoutConfigurationItemsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -2909,6 +2958,7 @@ export type PersonUpdateWithoutConfigurationItemsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2962,6 +3012,7 @@ export type PersonUncheckedUpdateWithoutConfigurationItemsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3005,6 +3056,7 @@ export type PersonCreateWithoutStockMovementsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3058,6 +3110,7 @@ export type PersonUncheckedCreateWithoutStockMovementsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3117,6 +3170,7 @@ export type PersonUpdateWithoutStockMovementsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3170,6 +3224,7 @@ export type PersonUncheckedUpdateWithoutStockMovementsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3213,6 +3268,7 @@ export type PersonCreateWithoutAssignedMaintenanceSchedulesInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3266,6 +3322,7 @@ export type PersonUncheckedCreateWithoutAssignedMaintenanceSchedulesInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3325,6 +3382,7 @@ export type PersonUpdateWithoutAssignedMaintenanceSchedulesInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3378,6 +3436,7 @@ export type PersonUncheckedUpdateWithoutAssignedMaintenanceSchedulesInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3421,6 +3480,7 @@ export type PersonCreateWithoutPerformedMaintenanceRecordsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3474,6 +3534,7 @@ export type PersonUncheckedCreateWithoutPerformedMaintenanceRecordsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3533,6 +3594,7 @@ export type PersonUpdateWithoutPerformedMaintenanceRecordsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3586,6 +3648,7 @@ export type PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3629,6 +3692,7 @@ export type PersonCreateWithoutInitiatedDisposalsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3682,6 +3746,7 @@ export type PersonUncheckedCreateWithoutInitiatedDisposalsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3730,6 +3795,7 @@ export type PersonCreateWithoutApprovedDisposalsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3783,6 +3849,7 @@ export type PersonUncheckedCreateWithoutApprovedDisposalsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -3842,6 +3909,7 @@ export type PersonUpdateWithoutInitiatedDisposalsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3895,6 +3963,7 @@ export type PersonUncheckedUpdateWithoutInitiatedDisposalsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3949,6 +4018,7 @@ export type PersonUpdateWithoutApprovedDisposalsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4002,6 +4072,7 @@ export type PersonUncheckedUpdateWithoutApprovedDisposalsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4045,6 +4116,7 @@ export type PersonCreateWithoutDisposalApprovalsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4098,6 +4170,7 @@ export type PersonUncheckedCreateWithoutDisposalApprovalsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4157,6 +4230,7 @@ export type PersonUpdateWithoutDisposalApprovalsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4210,6 +4284,7 @@ export type PersonUncheckedUpdateWithoutDisposalApprovalsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4253,6 +4328,7 @@ export type PersonCreateWithoutUploadedDisposalDocumentsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4306,6 +4382,7 @@ export type PersonUncheckedCreateWithoutUploadedDisposalDocumentsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4365,6 +4442,7 @@ export type PersonUpdateWithoutUploadedDisposalDocumentsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4418,6 +4496,7 @@ export type PersonUncheckedUpdateWithoutUploadedDisposalDocumentsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4461,6 +4540,7 @@ export type PersonCreateWithoutKitCheckoutsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4514,6 +4594,7 @@ export type PersonUncheckedCreateWithoutKitCheckoutsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4573,6 +4654,7 @@ export type PersonUpdateWithoutKitCheckoutsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4626,6 +4708,7 @@ export type PersonUncheckedUpdateWithoutKitCheckoutsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4669,6 +4752,7 @@ export type PersonCreateWithoutReservationsForInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4722,6 +4806,7 @@ export type PersonUncheckedCreateWithoutReservationsForInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4770,6 +4855,7 @@ export type PersonCreateWithoutReservationsCreatedInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4823,6 +4909,7 @@ export type PersonUncheckedCreateWithoutReservationsCreatedInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4871,6 +4958,7 @@ export type PersonCreateWithoutReservationsConfirmedInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4924,6 +5012,7 @@ export type PersonUncheckedCreateWithoutReservationsConfirmedInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -4972,6 +5061,7 @@ export type PersonCreateWithoutReservationsCancelledInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -5025,6 +5115,7 @@ export type PersonUncheckedCreateWithoutReservationsCancelledInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -5084,6 +5175,7 @@ export type PersonUpdateWithoutReservationsForInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5137,6 +5229,7 @@ export type PersonUncheckedUpdateWithoutReservationsForInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5191,6 +5284,7 @@ export type PersonUpdateWithoutReservationsCreatedInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5244,6 +5338,7 @@ export type PersonUncheckedUpdateWithoutReservationsCreatedInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5298,6 +5393,7 @@ export type PersonUpdateWithoutReservationsConfirmedInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5351,6 +5447,7 @@ export type PersonUncheckedUpdateWithoutReservationsConfirmedInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5405,6 +5502,7 @@ export type PersonUpdateWithoutReservationsCancelledInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5458,6 +5556,7 @@ export type PersonUncheckedUpdateWithoutReservationsCancelledInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5501,6 +5600,7 @@ export type PersonCreateWithoutServiceOwnershipsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -5554,6 +5654,7 @@ export type PersonUncheckedCreateWithoutServiceOwnershipsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -5613,6 +5714,7 @@ export type PersonUpdateWithoutServiceOwnershipsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5666,6 +5768,7 @@ export type PersonUncheckedUpdateWithoutServiceOwnershipsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5709,6 +5812,7 @@ export type PersonCreateWithoutDataOwnershipsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -5762,6 +5866,7 @@ export type PersonUncheckedCreateWithoutDataOwnershipsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -5821,6 +5926,7 @@ export type PersonUpdateWithoutDataOwnershipsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5874,6 +5980,7 @@ export type PersonUncheckedUpdateWithoutDataOwnershipsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -5917,6 +6024,7 @@ export type PersonCreateWithoutVerificationCampaignsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -5970,6 +6078,7 @@ export type PersonUncheckedCreateWithoutVerificationCampaignsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -6029,6 +6138,7 @@ export type PersonUpdateWithoutVerificationCampaignsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -6082,6 +6192,7 @@ export type PersonUncheckedUpdateWithoutVerificationCampaignsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -6125,6 +6236,7 @@ export type PersonCreateWithoutVerificationItemsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -6178,6 +6290,7 @@ export type PersonUncheckedCreateWithoutVerificationItemsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -6237,6 +6350,7 @@ export type PersonUpdateWithoutVerificationItemsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -6290,6 +6404,7 @@ export type PersonUncheckedUpdateWithoutVerificationItemsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -6333,6 +6448,7 @@ export type PersonCreateWithoutAuditLogsChangedInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -6386,6 +6502,7 @@ export type PersonUncheckedCreateWithoutAuditLogsChangedInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -6445,6 +6562,7 @@ export type PersonUpdateWithoutAuditLogsChangedInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -6498,6 +6616,7 @@ export type PersonUncheckedUpdateWithoutAuditLogsChangedInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -6541,6 +6660,7 @@ export type PersonCreateWithoutAttachmentsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -6594,6 +6714,7 @@ export type PersonUncheckedCreateWithoutAttachmentsInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -6653,6 +6774,7 @@ export type PersonUpdateWithoutAttachmentsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -6706,6 +6828,7 @@ export type PersonUncheckedUpdateWithoutAttachmentsInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -6753,6 +6876,7 @@ export type PersonCreateManyPrimaryRoleInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -6775,6 +6899,7 @@ export type PersonUpdateWithoutPrimaryRoleInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -6827,6 +6952,7 @@ export type PersonUncheckedUpdateWithoutPrimaryRoleInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -6875,6 +7001,7 @@ export type PersonUncheckedUpdateManyWithoutPrimaryRoleInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -6901,6 +7028,7 @@ export type PersonCreateManyOrgUnitInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -6923,6 +7051,7 @@ export type PersonUpdateWithoutOrgUnitInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -6975,6 +7104,7 @@ export type PersonUncheckedUpdateWithoutOrgUnitInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -7023,6 +7153,7 @@ export type PersonUncheckedUpdateManyWithoutOrgUnitInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -7049,6 +7180,7 @@ export type PersonCreateManyManagerInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -7071,6 +7203,7 @@ export type PersonUpdateWithoutManagerInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -7123,6 +7256,7 @@ export type PersonUncheckedUpdateWithoutManagerInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -7171,6 +7305,7 @@ export type PersonUncheckedUpdateManyWithoutManagerInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -7197,6 +7332,7 @@ export type PersonCreateManyLocationInput = {
   hireDate?: Date | string | null
   terminationDate?: Date | string | null
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   createdAt?: Date | string
@@ -7219,6 +7355,7 @@ export type PersonUpdateWithoutLocationInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -7271,6 +7408,7 @@ export type PersonUncheckedUpdateWithoutLocationInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -7319,6 +7457,7 @@ export type PersonUncheckedUpdateManyWithoutLocationInput = {
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -7566,6 +7705,7 @@ export type PersonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   hireDate?: boolean
   terminationDate?: boolean
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: boolean
   deletedAt?: boolean
   createdAt?: boolean
@@ -7621,6 +7761,7 @@ export type PersonSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   hireDate?: boolean
   terminationDate?: boolean
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: boolean
   deletedAt?: boolean
   createdAt?: boolean
@@ -7653,6 +7794,7 @@ export type PersonSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   hireDate?: boolean
   terminationDate?: boolean
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: boolean
   deletedAt?: boolean
   createdAt?: boolean
@@ -7685,13 +7827,14 @@ export type PersonSelectScalar = {
   hireDate?: boolean
   terminationDate?: boolean
   isActive?: boolean
+  isExcluded?: boolean
   metadata?: boolean
   deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type PersonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "azureAdId" | "userId" | "firstName" | "lastName" | "middleName" | "email" | "phone" | "mobile" | "employeeId" | "orgUnitId" | "primaryRoleId" | "managerId" | "title" | "office" | "locationId" | "department" | "hireDate" | "terminationDate" | "isActive" | "metadata" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["person"]>
+export type PersonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "azureAdId" | "userId" | "firstName" | "lastName" | "middleName" | "email" | "phone" | "mobile" | "employeeId" | "orgUnitId" | "primaryRoleId" | "managerId" | "title" | "office" | "locationId" | "department" | "hireDate" | "terminationDate" | "isActive" | "isExcluded" | "metadata" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["person"]>
 export type PersonInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Person$userArgs<ExtArgs>
   orgUnit?: boolean | Prisma.OrganizationUnitDefaultArgs<ExtArgs>
@@ -7789,6 +7932,7 @@ export type $PersonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     hireDate: Date | null
     terminationDate: Date | null
     isActive: boolean
+    isExcluded: boolean
     metadata: runtime.JsonValue | null
     deletedAt: Date | null
     createdAt: Date
@@ -8263,6 +8407,7 @@ export interface PersonFieldRefs {
   readonly hireDate: Prisma.FieldRef<"Person", 'DateTime'>
   readonly terminationDate: Prisma.FieldRef<"Person", 'DateTime'>
   readonly isActive: Prisma.FieldRef<"Person", 'Boolean'>
+  readonly isExcluded: Prisma.FieldRef<"Person", 'Boolean'>
   readonly metadata: Prisma.FieldRef<"Person", 'Json'>
   readonly deletedAt: Prisma.FieldRef<"Person", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Person", 'DateTime'>

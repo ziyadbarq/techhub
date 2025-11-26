@@ -14,6 +14,7 @@ export interface ListEmployeeDirectoryInput {
   orgUnitIds?: string[];
   locationIds?: string[];
   isActive?: boolean;
+  isExcluded?: boolean;
   hasManager?: boolean;
   managerId?: string;
 }

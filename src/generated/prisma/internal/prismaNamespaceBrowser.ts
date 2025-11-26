@@ -325,6 +325,7 @@ export const PersonScalarFieldEnum = {
   hireDate: 'hireDate',
   terminationDate: 'terminationDate',
   isActive: 'isActive',
+  isExcluded: 'isExcluded',
   metadata: 'metadata',
   deletedAt: 'deletedAt',
   createdAt: 'createdAt',
