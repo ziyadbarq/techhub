@@ -1,0 +1,26 @@
+/**
+ * Dashboard Components
+ * Central exports for dashboard infrastructure and widgets
+ */
+
+// Infrastructure
+export { WidgetContainer } from "./widget-container";
+export { WidgetSkeleton, StatCardSkeleton } from "./widget-skeleton";
+export { WidgetEmpty } from "./widget-empty";
+export { WidgetError } from "./widget-error";
+export { DashboardSection } from "./dashboard-section";
+
+// Common Widgets
+export { WelcomeBannerWidget } from "./widgets/welcome-banner-widget";
+export { ProfileCardWidget } from "./widgets/profile-card-widget";
+
+// My Assets Section Widgets
+export { MyAssetsWidget } from "./widgets/my-assets-widget";
+export { MyServicesWidget } from "./widgets/my-services-widget";
+
+// My Work Section Widgets
+export { MyPendingApprovalsWidget } from "./widgets/my-pending-approvals-widget";
+export { MyMaintenanceTasksWidget } from "./widgets/my-maintenance-tasks-widget";
+
+// Page Components
+export { DashboardPageClient } from "./dashboard-page-client";
