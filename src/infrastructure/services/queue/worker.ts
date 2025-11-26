@@ -13,8 +13,11 @@
  */
 
 import "reflect-metadata";
-import { initContainer } from "@/di/container";
+import { initContainer, getContainer } from "@/di/container";
+import { DI_TOKENS } from "@/di/types";
 import { logger } from "@/lib/logger";
+import type { IJobQueueService } from "@/core/services/job-queue.service.interface";
+import { setupScheduledJobs } from "./scheduled-jobs";
 import { BaseWorker } from "./base-worker";
 import {
   QUEUE_NAMES,
@@ -204,6 +207,14 @@ async function main(): Promise<void> {
 
     // Start workers
     await startWorkers();
+
+    // Setup scheduled (recurring) jobs
+    const container = getContainer();
+    const jobQueueService = container.get<IJobQueueService>(
+      DI_TOKENS.IJobQueueService,
+    );
+    await setupScheduledJobs(jobQueueService);
+    log.info("main", "Scheduled jobs initialized");
 
     // Setup graceful shutdown
     process.on("SIGTERM", () => shutdown("SIGTERM"));

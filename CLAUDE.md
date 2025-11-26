@@ -71,7 +71,8 @@ npm run validate # Type-check + lint + test
 npm run build         # Production build (type-check + lint + build)
 npm run build:fast    # Fast build (skips TypeScript)
 npm run start         # Start server only (requires existing build)
-npm run start:deploy  # Full deployment: build → migrate → seed (if empty) → cache clear → start
+npm run deploy        # Full deployment: build → migrate → seed (if empty) → cache clear → PM2 start
+npm run deploy:full   # Full deployment with npm install and force rebuild
 
 # Database
 npm run db:reset # Reset database + seed (drops all data!)
