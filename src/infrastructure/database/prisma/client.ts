@@ -21,6 +21,12 @@ const globalForPrisma = globalThis as unknown as {
   pgPool: Pool | undefined;
 };
 
+// Detect Next.js build phase to provide a placeholder connection string
+// During build, no actual database connection is needed
+const isBuildPhase =
+  process.env.NEXT_PHASE === "phase-production-build" ||
+  process.env.NEXT_PHASE === "phase-export";
+
 // Create PostgreSQL connection pool (reused across entire application)
 // Pool configuration uses pg defaults:
 // - max: 10 connections
@@ -29,7 +35,11 @@ const globalForPrisma = globalThis as unknown as {
 // Override via connection string: ?connection_limit=20&pool_timeout=5
 export const pool =
   globalForPrisma.pgPool ??
-  new Pool({ connectionString: process.env.DATABASE_URL });
+  new Pool({
+    connectionString: isBuildPhase
+      ? "postgresql://build:build@localhost:5432/build"
+      : process.env.DATABASE_URL,
+  });
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.pgPool = pool;

@@ -122,9 +122,13 @@ export const env = createEnv({
   /**
    * Skip validation in specific contexts
    *
-   * By default, validation runs during build. Set to true for edge runtime or middleware.
+   * Automatically skips during Next.js build phases (NEXT_PHASE is set by Next.js CLI).
+   * Can also be manually skipped via SKIP_ENV_VALIDATION=true for edge runtime or middleware.
    */
-  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+  skipValidation:
+    !!process.env.SKIP_ENV_VALIDATION ||
+    process.env.NEXT_PHASE === "phase-production-build" ||
+    process.env.NEXT_PHASE === "phase-export",
 
   /**
    * Makes `process.env` empty object when building to ensure all env variables are accessed via `env`

@@ -3,11 +3,10 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
-import { initContainer } from "@/di/container";
 import { BRANDING, getPageTitle, getPageDescription } from "@/config/branding";
 
-// Initialize DI container globally (required for all server actions)
-initContainer();
+// DI container is initialized lazily via getContainer() on first request
+// This allows the app to build without environment variables
 
 const inter = Inter({ subsets: ["latin"] });
 
