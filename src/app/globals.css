@@ -307,9 +307,9 @@
     @apply rounded-lg shadow-md;
   }
 
-  /* MDX links with barq yellow */
+  /* MDX links - amber for light mode (accessibility), barq yellow for dark */
   .prose a {
-    @apply text-barq-yellow font-medium hover:underline;
+    @apply dark:text-barq-yellow font-medium text-amber-600 hover:underline;
   }
 
   /* MDX headings with better spacing */

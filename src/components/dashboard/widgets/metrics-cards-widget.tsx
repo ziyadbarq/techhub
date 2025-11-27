@@ -140,7 +140,7 @@ export function MetricsCardsWidget() {
         value={metrics.stockAlerts}
         icon={<AlertTriangle className="h-4 w-4" />}
         description="Low stock or issues"
-        color="text-yellow-500"
+        color="text-amber-600 dark:text-yellow-500"
       />
     </div>
   );

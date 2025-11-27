@@ -136,7 +136,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       return (
         <Component
           href={href || "#"}
-          className="text-barq-yellow font-medium hover:underline"
+          className="dark:text-barq-yellow font-medium text-amber-600 hover:underline"
           {...(isExternal && {
             target: "_blank",
             rel: "noopener noreferrer",
