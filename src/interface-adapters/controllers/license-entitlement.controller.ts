@@ -52,6 +52,8 @@ export async function createLicenseEntitlement(
       effectiveEnd: validated.effectiveEnd,
       allowedScope: validated.allowedScope,
       note: validated.note,
+      unitCost: validated.unitCost,
+      currency: validated.currency,
     });
 
     revalidatePath("/license-entitlements");
@@ -168,6 +170,8 @@ export async function updateLicenseEntitlement(
       effectiveEnd: validated.effectiveEnd,
       allowedScope: validated.allowedScope,
       note: validated.note,
+      unitCost: validated.unitCost,
+      currency: validated.currency,
     });
 
     revalidatePath("/license-entitlements");
@@ -253,6 +257,8 @@ export async function bulkCreateLicenseEntitlementsAction(
           effectiveEnd: validated.effectiveEnd,
           allowedScope: validated.allowedScope,
           note: validated.note,
+          unitCost: validated.unitCost,
+          currency: validated.currency,
         });
 
         results.successCount++;

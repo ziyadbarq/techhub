@@ -17,6 +17,8 @@ export interface CreateLicenseEntitlementRequest {
   effectiveEnd?: Date | null;
   allowedScope?: Record<string, unknown> | null;
   note?: string | null;
+  unitCost?: number | null;
+  currency?: string | null;
 }
 
 @injectable()
@@ -60,6 +62,8 @@ export class CreateLicenseEntitlementUseCase {
       effectiveEnd: request.effectiveEnd,
       allowedScope: request.allowedScope,
       note: request.note,
+      unitCost: request.unitCost,
+      currency: request.currency,
     });
 
     return await this.entitlementRepository.create(entitlement);

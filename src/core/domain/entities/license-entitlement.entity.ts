@@ -11,6 +11,8 @@ export interface CreateLicenseEntitlementProps {
   effectiveEnd?: Date | null;
   allowedScope?: Record<string, unknown> | null;
   note?: string | null;
+  unitCost?: number | null;
+  currency?: string | null;
 }
 
 export interface LicenseEntitlementProps {
@@ -22,6 +24,8 @@ export interface LicenseEntitlementProps {
   effectiveEnd: Date | null;
   allowedScope: Record<string, unknown> | null;
   note: string | null;
+  unitCost: number | null;
+  currency: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -32,6 +36,8 @@ export interface UpdateLicenseEntitlementProps {
   effectiveEnd?: Date | null;
   allowedScope?: Record<string, unknown> | null;
   note?: string | null;
+  unitCost?: number | null;
+  currency?: string | null;
 }
 
 export class LicenseEntitlement {
@@ -51,6 +57,14 @@ export class LicenseEntitlement {
       LicenseEntitlement.validateContractId(props.contractId);
     }
 
+    // Validate cost fields if provided
+    if (props.unitCost !== undefined && props.unitCost !== null) {
+      LicenseEntitlement.validateCostValue(props.unitCost, "Unit cost");
+    }
+    if (props.currency !== undefined && props.currency !== null) {
+      LicenseEntitlement.validateCurrency(props.currency);
+    }
+
     const now = new Date();
 
     return new LicenseEntitlement({
@@ -62,6 +76,8 @@ export class LicenseEntitlement {
       effectiveEnd: props.effectiveEnd ?? null,
       allowedScope: props.allowedScope ?? null,
       note: props.note ?? null,
+      unitCost: props.unitCost ?? null,
+      currency: props.currency ?? null,
       createdAt: now,
       updatedAt: now,
     });
@@ -105,6 +121,14 @@ export class LicenseEntitlement {
     return this.props.note;
   }
 
+  get unitCost(): number | null {
+    return this.props.unitCost;
+  }
+
+  get currency(): string | null {
+    return this.props.currency;
+  }
+
   get createdAt(): Date {
     return this.props.createdAt;
   }
@@ -143,6 +167,20 @@ export class LicenseEntitlement {
 
     if (updates.note !== undefined) {
       this.props.note = updates.note;
+    }
+
+    if (updates.unitCost !== undefined) {
+      if (updates.unitCost !== null) {
+        LicenseEntitlement.validateCostValue(updates.unitCost, "Unit cost");
+      }
+      this.props.unitCost = updates.unitCost;
+    }
+
+    if (updates.currency !== undefined) {
+      if (updates.currency !== null) {
+        LicenseEntitlement.validateCurrency(updates.currency);
+      }
+      this.props.currency = updates.currency;
     }
 
     this.props.updatedAt = new Date();
@@ -186,6 +224,37 @@ export class LicenseEntitlement {
     this.props.updatedAt = new Date();
   }
 
+  // Cost calculation methods
+
+  /**
+   * Calculate the total cost for this entitlement
+   * Returns unitCost × purchasedQuantity, or null if unitCost is not set
+   */
+  public calculateTotalCost(): number | null {
+    if (this.props.unitCost === null) {
+      return null;
+    }
+    return this.props.unitCost * this.props.purchasedQuantity;
+  }
+
+  /**
+   * Calculate the cost for a specific allocation quantity
+   * Returns unitCost × quantity, or null if unitCost is not set
+   */
+  public calculateAllocationCost(quantity: number): number | null {
+    if (this.props.unitCost === null) {
+      return null;
+    }
+    return this.props.unitCost * quantity;
+  }
+
+  /**
+   * Check if cost tracking is enabled for this entitlement
+   */
+  public hasCostTracking(): boolean {
+    return this.props.unitCost !== null;
+  }
+
   // Validation methods
   private static validateLicenseProductId(id: string): void {
     if (!id || id.trim().length === 0) {
@@ -225,6 +294,34 @@ export class LicenseEntitlement {
           "Effective end date must be after effective start date",
         );
       }
+    }
+  }
+
+  private static validateCostValue(value: number, fieldName: string): void {
+    if (value < 0) {
+      throw new Error(`${fieldName} must be non-negative`);
+    }
+    if (!Number.isFinite(value)) {
+      throw new Error(`${fieldName} must be a valid number`);
+    }
+    // Validate decimal precision (12,2)
+    const parts = value.toString().split(".");
+    if (parts[0] && parts[0].length > 10) {
+      throw new Error(`${fieldName} exceeds maximum precision`);
+    }
+    if (parts[1] && parts[1].length > 2) {
+      throw new Error(`${fieldName} can have at most 2 decimal places`);
+    }
+  }
+
+  private static validateCurrency(currency: string): void {
+    if (currency.length !== 3) {
+      throw new Error("Currency must be a 3-letter ISO code");
+    }
+    if (!/^[A-Z]{3}$/.test(currency)) {
+      throw new Error(
+        "Currency must be 3 uppercase letters (e.g., USD, EUR, SAR)",
+      );
     }
   }
 

@@ -110,6 +110,8 @@ export const ModelName = {
   LicenseProductField: 'LicenseProductField',
   LicenseEntitlement: 'LicenseEntitlement',
   LicenseAllocation: 'LicenseAllocation',
+  LicenseAddon: 'LicenseAddon',
+  LicenseEntitlementAddon: 'LicenseEntitlementAddon',
   DataDomain: 'DataDomain',
   DataOwnership: 'DataOwnership',
   VerificationCampaign: 'VerificationCampaign',
@@ -1153,6 +1155,8 @@ export const LicenseEntitlementScalarFieldEnum = {
   effectiveEnd: 'effectiveEnd',
   allowedScope: 'allowedScope',
   note: 'note',
+  unitCost: 'unitCost',
+  currency: 'currency',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1174,6 +1178,34 @@ export const LicenseAllocationScalarFieldEnum = {
 } as const
 
 export type LicenseAllocationScalarFieldEnum = (typeof LicenseAllocationScalarFieldEnum)[keyof typeof LicenseAllocationScalarFieldEnum]
+
+
+export const LicenseAddonScalarFieldEnum = {
+  id: 'id',
+  licenseProductId: 'licenseProductId',
+  name: 'name',
+  code: 'code',
+  description: 'description',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LicenseAddonScalarFieldEnum = (typeof LicenseAddonScalarFieldEnum)[keyof typeof LicenseAddonScalarFieldEnum]
+
+
+export const LicenseEntitlementAddonScalarFieldEnum = {
+  id: 'id',
+  licenseEntitlementId: 'licenseEntitlementId',
+  licenseAddonId: 'licenseAddonId',
+  cost: 'cost',
+  currency: 'currency',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LicenseEntitlementAddonScalarFieldEnum = (typeof LicenseEntitlementAddonScalarFieldEnum)[keyof typeof LicenseEntitlementAddonScalarFieldEnum]
 
 
 export const DataDomainScalarFieldEnum = {

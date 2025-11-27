@@ -335,6 +335,16 @@ export type LicenseEntitlement = Prisma.LicenseEntitlementModel
  */
 export type LicenseAllocation = Prisma.LicenseAllocationModel
 /**
+ * Model LicenseAddon
+ * 
+ */
+export type LicenseAddon = Prisma.LicenseAddonModel
+/**
+ * Model LicenseEntitlementAddon
+ * 
+ */
+export type LicenseEntitlementAddon = Prisma.LicenseEntitlementAddonModel
+/**
  * Model DataDomain
  * 
  */

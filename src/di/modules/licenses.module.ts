@@ -13,10 +13,14 @@ import type { ILicenseProductRepository } from "@/core/repositories/license-prod
 import type { ILicenseProductFieldRepository } from "@/core/repositories/license-product-field.repository.interface";
 import type { ILicenseEntitlementRepository } from "@/core/repositories/license-entitlement.repository.interface";
 import type { ILicenseAllocationRepository } from "@/core/repositories/license-allocation.repository.interface";
+import type { ILicenseAddonRepository } from "@/core/repositories/license-addon.repository.interface";
+import type { ILicenseEntitlementAddonRepository } from "@/core/repositories/license-entitlement-addon.repository.interface";
 import { PrismaLicenseProductRepository } from "@/infrastructure/repositories/prisma-license-product.repository";
 import { PrismaLicenseProductFieldRepository } from "@/infrastructure/repositories/prisma-license-product-field.repository";
 import { PrismaLicenseEntitlementRepository } from "@/infrastructure/repositories/prisma-license-entitlement.repository";
 import { PrismaLicenseAllocationRepository } from "@/infrastructure/repositories/prisma-license-allocation.repository";
+import { PrismaLicenseAddonRepository } from "@/infrastructure/repositories/prisma-license-addon.repository";
+import { PrismaLicenseEntitlementAddonRepository } from "@/infrastructure/repositories/prisma-license-entitlement-addon.repository";
 
 // Use Cases - License Products
 import { CreateLicenseProductUseCase } from "@/core/use-cases/license-product/create-license-product.use-case";
@@ -47,6 +51,20 @@ import { UpdateLicenseAllocationUseCase } from "@/core/use-cases/license-allocat
 import { DeleteLicenseAllocationUseCase } from "@/core/use-cases/license-allocation/delete-license-allocation.use-case";
 import { DeallocateLicenseAllocationUseCase } from "@/core/use-cases/license-allocation/deallocate-license-allocation.use-case";
 import { ReactivateLicenseAllocationUseCase } from "@/core/use-cases/license-allocation/reactivate-license-allocation.use-case";
+
+// Use Cases - License Addons
+import { CreateLicenseAddonUseCase } from "@/core/use-cases/license-addon/create-license-addon.use-case";
+import { GetLicenseAddonUseCase } from "@/core/use-cases/license-addon/get-license-addon.use-case";
+import { ListLicenseAddonsUseCase } from "@/core/use-cases/license-addon/list-license-addons.use-case";
+import { UpdateLicenseAddonUseCase } from "@/core/use-cases/license-addon/update-license-addon.use-case";
+import { DeleteLicenseAddonUseCase } from "@/core/use-cases/license-addon/delete-license-addon.use-case";
+
+// Use Cases - License Entitlement Addons
+import { AttachAddonToEntitlementUseCase } from "@/core/use-cases/license-entitlement-addon/attach-addon-to-entitlement.use-case";
+import { DetachAddonFromEntitlementUseCase } from "@/core/use-cases/license-entitlement-addon/detach-addon-from-entitlement.use-case";
+import { UpdateEntitlementAddonUseCase } from "@/core/use-cases/license-entitlement-addon/update-entitlement-addon.use-case";
+import { ListEntitlementAddonsUseCase } from "@/core/use-cases/license-entitlement-addon/list-entitlement-addons.use-case";
+import { CalculateEntitlementTotalCostUseCase } from "@/core/use-cases/license-entitlement-addon/calculate-entitlement-total-cost.use-case";
 
 const diLogger = logger.scope("DI:LicensesModule");
 
@@ -205,5 +223,71 @@ export function bindLicensesDependencies(container: Container): void {
       DI_TOKENS.ReactivateLicenseAllocationUseCase,
     )
     .to(ReactivateLicenseAllocationUseCase)
+    .inTransientScope();
+
+  // License Addon Repository
+  container
+    .bind<ILicenseAddonRepository>(DI_TOKENS.ILicenseAddonRepository)
+    .to(PrismaLicenseAddonRepository)
+    .inSingletonScope();
+
+  // License Entitlement Addon Repository
+  container
+    .bind<ILicenseEntitlementAddonRepository>(
+      DI_TOKENS.ILicenseEntitlementAddonRepository,
+    )
+    .to(PrismaLicenseEntitlementAddonRepository)
+    .inSingletonScope();
+
+  // License Addon Use Cases
+  container
+    .bind<CreateLicenseAddonUseCase>(DI_TOKENS.CreateLicenseAddonUseCase)
+    .to(CreateLicenseAddonUseCase)
+    .inTransientScope();
+  container
+    .bind<GetLicenseAddonUseCase>(DI_TOKENS.GetLicenseAddonUseCase)
+    .to(GetLicenseAddonUseCase)
+    .inTransientScope();
+  container
+    .bind<ListLicenseAddonsUseCase>(DI_TOKENS.ListLicenseAddonsUseCase)
+    .to(ListLicenseAddonsUseCase)
+    .inTransientScope();
+  container
+    .bind<UpdateLicenseAddonUseCase>(DI_TOKENS.UpdateLicenseAddonUseCase)
+    .to(UpdateLicenseAddonUseCase)
+    .inTransientScope();
+  container
+    .bind<DeleteLicenseAddonUseCase>(DI_TOKENS.DeleteLicenseAddonUseCase)
+    .to(DeleteLicenseAddonUseCase)
+    .inTransientScope();
+
+  // License Entitlement Addon Use Cases
+  container
+    .bind<AttachAddonToEntitlementUseCase>(
+      DI_TOKENS.AttachAddonToEntitlementUseCase,
+    )
+    .to(AttachAddonToEntitlementUseCase)
+    .inTransientScope();
+  container
+    .bind<DetachAddonFromEntitlementUseCase>(
+      DI_TOKENS.DetachAddonFromEntitlementUseCase,
+    )
+    .to(DetachAddonFromEntitlementUseCase)
+    .inTransientScope();
+  container
+    .bind<UpdateEntitlementAddonUseCase>(
+      DI_TOKENS.UpdateEntitlementAddonUseCase,
+    )
+    .to(UpdateEntitlementAddonUseCase)
+    .inTransientScope();
+  container
+    .bind<ListEntitlementAddonsUseCase>(DI_TOKENS.ListEntitlementAddonsUseCase)
+    .to(ListEntitlementAddonsUseCase)
+    .inTransientScope();
+  container
+    .bind<CalculateEntitlementTotalCostUseCase>(
+      DI_TOKENS.CalculateEntitlementTotalCostUseCase,
+    )
+    .to(CalculateEntitlementTotalCostUseCase)
     .inTransientScope();
 }

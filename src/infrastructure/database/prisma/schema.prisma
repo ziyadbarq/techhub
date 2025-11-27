@@ -1670,6 +1670,7 @@ model LicenseProduct {
   lifecycleModel      LifecycleModel?       @relation(fields: [lifecycleModelId], references: [id], onDelete: SetNull)
   fields              LicenseProductField[]
   licenseEntitlements LicenseEntitlement[]
+  addons              LicenseAddon[]
 
   // Indexes
   @@index([code])
@@ -1711,13 +1712,16 @@ model LicenseEntitlement {
   effectiveEnd      DateTime?
   allowedScope      Json? // e.g. regions, departments, environments
   note              String?   @db.Text
+  unitCost          Decimal?  @db.Decimal(12, 2) // Cost per license unit
+  currency          String? // ISO 3-letter currency code (USD, SAR, etc.)
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
   // Relations
-  licenseProduct LicenseProduct      @relation(fields: [licenseProductId], references: [id], onDelete: Restrict)
-  contract       Contract?           @relation(fields: [contractId], references: [id], onDelete: SetNull)
-  allocations    LicenseAllocation[]
+  licenseProduct    LicenseProduct            @relation(fields: [licenseProductId], references: [id], onDelete: Restrict)
+  contract          Contract?                 @relation(fields: [contractId], references: [id], onDelete: SetNull)
+  allocations       LicenseAllocation[]
+  entitlementAddons LicenseEntitlementAddon[]
 
   // Indexes
   @@index([licenseProductId])
@@ -1749,6 +1753,50 @@ model LicenseAllocation {
   @@index([allocatedAt])
   @@index([deallocatedAt]) // Medium-priority: Deallocation tracking
   @@map("license_allocations")
+}
+
+// LicenseAddon model - product-level addon templates (e.g., premium support, training)
+model LicenseAddon {
+  id               String   @id @default(cuid())
+  licenseProductId String
+  name             String
+  code             String
+  description      String?  @db.Text
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  licenseProduct LicenseProduct            @relation(fields: [licenseProductId], references: [id], onDelete: Cascade)
+  entitlements   LicenseEntitlementAddon[]
+
+  // Indexes
+  @@unique([licenseProductId, code])
+  @@index([licenseProductId])
+  @@index([isActive])
+  @@map("license_addons")
+}
+
+// LicenseEntitlementAddon model - junction table linking addons to entitlements with cost
+model LicenseEntitlementAddon {
+  id                   String   @id @default(cuid())
+  licenseEntitlementId String
+  licenseAddonId       String
+  cost                 Decimal? @db.Decimal(12, 2) // Cost for this addon on this entitlement
+  currency             String? // ISO 3-letter currency code
+  note                 String?  @db.Text
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  // Relations
+  licenseEntitlement LicenseEntitlement @relation(fields: [licenseEntitlementId], references: [id], onDelete: Cascade)
+  licenseAddon       LicenseAddon       @relation(fields: [licenseAddonId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@unique([licenseEntitlementId, licenseAddonId])
+  @@index([licenseEntitlementId])
+  @@index([licenseAddonId])
+  @@map("license_entitlement_addons")
 }
 
 // ============================================

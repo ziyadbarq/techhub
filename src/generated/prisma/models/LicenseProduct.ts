@@ -218,6 +218,7 @@ export type LicenseProductWhereInput = {
   lifecycleModel?: Prisma.XOR<Prisma.LifecycleModelNullableScalarRelationFilter, Prisma.LifecycleModelWhereInput> | null
   fields?: Prisma.LicenseProductFieldListRelationFilter
   licenseEntitlements?: Prisma.LicenseEntitlementListRelationFilter
+  addons?: Prisma.LicenseAddonListRelationFilter
 }
 
 export type LicenseProductOrderByWithRelationInput = {
@@ -234,6 +235,7 @@ export type LicenseProductOrderByWithRelationInput = {
   lifecycleModel?: Prisma.LifecycleModelOrderByWithRelationInput
   fields?: Prisma.LicenseProductFieldOrderByRelationAggregateInput
   licenseEntitlements?: Prisma.LicenseEntitlementOrderByRelationAggregateInput
+  addons?: Prisma.LicenseAddonOrderByRelationAggregateInput
 }
 
 export type LicenseProductWhereUniqueInput = Prisma.AtLeast<{
@@ -253,6 +255,7 @@ export type LicenseProductWhereUniqueInput = Prisma.AtLeast<{
   lifecycleModel?: Prisma.XOR<Prisma.LifecycleModelNullableScalarRelationFilter, Prisma.LifecycleModelWhereInput> | null
   fields?: Prisma.LicenseProductFieldListRelationFilter
   licenseEntitlements?: Prisma.LicenseEntitlementListRelationFilter
+  addons?: Prisma.LicenseAddonListRelationFilter
 }, "id" | "name" | "code">
 
 export type LicenseProductOrderByWithAggregationInput = {
@@ -297,6 +300,7 @@ export type LicenseProductCreateInput = {
   lifecycleModel?: Prisma.LifecycleModelCreateNestedOneWithoutLicenseProductsInput
   fields?: Prisma.LicenseProductFieldCreateNestedManyWithoutLicenseProductInput
   licenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutLicenseProductInput
+  addons?: Prisma.LicenseAddonCreateNestedManyWithoutLicenseProductInput
 }
 
 export type LicenseProductUncheckedCreateInput = {
@@ -311,6 +315,7 @@ export type LicenseProductUncheckedCreateInput = {
   updatedAt?: Date | string
   fields?: Prisma.LicenseProductFieldUncheckedCreateNestedManyWithoutLicenseProductInput
   licenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutLicenseProductInput
+  addons?: Prisma.LicenseAddonUncheckedCreateNestedManyWithoutLicenseProductInput
 }
 
 export type LicenseProductUpdateInput = {
@@ -325,6 +330,7 @@ export type LicenseProductUpdateInput = {
   lifecycleModel?: Prisma.LifecycleModelUpdateOneWithoutLicenseProductsNestedInput
   fields?: Prisma.LicenseProductFieldUpdateManyWithoutLicenseProductNestedInput
   licenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutLicenseProductNestedInput
+  addons?: Prisma.LicenseAddonUpdateManyWithoutLicenseProductNestedInput
 }
 
 export type LicenseProductUncheckedUpdateInput = {
@@ -339,6 +345,7 @@ export type LicenseProductUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fields?: Prisma.LicenseProductFieldUncheckedUpdateManyWithoutLicenseProductNestedInput
   licenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutLicenseProductNestedInput
+  addons?: Prisma.LicenseAddonUncheckedUpdateManyWithoutLicenseProductNestedInput
 }
 
 export type LicenseProductCreateManyInput = {
@@ -538,6 +545,20 @@ export type LicenseProductUpdateOneRequiredWithoutLicenseEntitlementsNestedInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.LicenseProductUpdateToOneWithWhereWithoutLicenseEntitlementsInput, Prisma.LicenseProductUpdateWithoutLicenseEntitlementsInput>, Prisma.LicenseProductUncheckedUpdateWithoutLicenseEntitlementsInput>
 }
 
+export type LicenseProductCreateNestedOneWithoutAddonsInput = {
+  create?: Prisma.XOR<Prisma.LicenseProductCreateWithoutAddonsInput, Prisma.LicenseProductUncheckedCreateWithoutAddonsInput>
+  connectOrCreate?: Prisma.LicenseProductCreateOrConnectWithoutAddonsInput
+  connect?: Prisma.LicenseProductWhereUniqueInput
+}
+
+export type LicenseProductUpdateOneRequiredWithoutAddonsNestedInput = {
+  create?: Prisma.XOR<Prisma.LicenseProductCreateWithoutAddonsInput, Prisma.LicenseProductUncheckedCreateWithoutAddonsInput>
+  connectOrCreate?: Prisma.LicenseProductCreateOrConnectWithoutAddonsInput
+  upsert?: Prisma.LicenseProductUpsertWithoutAddonsInput
+  connect?: Prisma.LicenseProductWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LicenseProductUpdateToOneWithWhereWithoutAddonsInput, Prisma.LicenseProductUpdateWithoutAddonsInput>, Prisma.LicenseProductUncheckedUpdateWithoutAddonsInput>
+}
+
 export type LicenseProductCreateWithoutVendorInput = {
   id?: string
   name: string
@@ -549,6 +570,7 @@ export type LicenseProductCreateWithoutVendorInput = {
   lifecycleModel?: Prisma.LifecycleModelCreateNestedOneWithoutLicenseProductsInput
   fields?: Prisma.LicenseProductFieldCreateNestedManyWithoutLicenseProductInput
   licenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutLicenseProductInput
+  addons?: Prisma.LicenseAddonCreateNestedManyWithoutLicenseProductInput
 }
 
 export type LicenseProductUncheckedCreateWithoutVendorInput = {
@@ -562,6 +584,7 @@ export type LicenseProductUncheckedCreateWithoutVendorInput = {
   updatedAt?: Date | string
   fields?: Prisma.LicenseProductFieldUncheckedCreateNestedManyWithoutLicenseProductInput
   licenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutLicenseProductInput
+  addons?: Prisma.LicenseAddonUncheckedCreateNestedManyWithoutLicenseProductInput
 }
 
 export type LicenseProductCreateOrConnectWithoutVendorInput = {
@@ -616,6 +639,7 @@ export type LicenseProductCreateWithoutLifecycleModelInput = {
   vendor: Prisma.VendorCreateNestedOneWithoutLicenseProductsInput
   fields?: Prisma.LicenseProductFieldCreateNestedManyWithoutLicenseProductInput
   licenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutLicenseProductInput
+  addons?: Prisma.LicenseAddonCreateNestedManyWithoutLicenseProductInput
 }
 
 export type LicenseProductUncheckedCreateWithoutLifecycleModelInput = {
@@ -629,6 +653,7 @@ export type LicenseProductUncheckedCreateWithoutLifecycleModelInput = {
   updatedAt?: Date | string
   fields?: Prisma.LicenseProductFieldUncheckedCreateNestedManyWithoutLicenseProductInput
   licenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutLicenseProductInput
+  addons?: Prisma.LicenseAddonUncheckedCreateNestedManyWithoutLicenseProductInput
 }
 
 export type LicenseProductCreateOrConnectWithoutLifecycleModelInput = {
@@ -668,6 +693,7 @@ export type LicenseProductCreateWithoutFieldsInput = {
   vendor: Prisma.VendorCreateNestedOneWithoutLicenseProductsInput
   lifecycleModel?: Prisma.LifecycleModelCreateNestedOneWithoutLicenseProductsInput
   licenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutLicenseProductInput
+  addons?: Prisma.LicenseAddonCreateNestedManyWithoutLicenseProductInput
 }
 
 export type LicenseProductUncheckedCreateWithoutFieldsInput = {
@@ -681,6 +707,7 @@ export type LicenseProductUncheckedCreateWithoutFieldsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   licenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutLicenseProductInput
+  addons?: Prisma.LicenseAddonUncheckedCreateNestedManyWithoutLicenseProductInput
 }
 
 export type LicenseProductCreateOrConnectWithoutFieldsInput = {
@@ -710,6 +737,7 @@ export type LicenseProductUpdateWithoutFieldsInput = {
   vendor?: Prisma.VendorUpdateOneRequiredWithoutLicenseProductsNestedInput
   lifecycleModel?: Prisma.LifecycleModelUpdateOneWithoutLicenseProductsNestedInput
   licenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutLicenseProductNestedInput
+  addons?: Prisma.LicenseAddonUpdateManyWithoutLicenseProductNestedInput
 }
 
 export type LicenseProductUncheckedUpdateWithoutFieldsInput = {
@@ -723,6 +751,7 @@ export type LicenseProductUncheckedUpdateWithoutFieldsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   licenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutLicenseProductNestedInput
+  addons?: Prisma.LicenseAddonUncheckedUpdateManyWithoutLicenseProductNestedInput
 }
 
 export type LicenseProductCreateWithoutLicenseEntitlementsInput = {
@@ -736,6 +765,7 @@ export type LicenseProductCreateWithoutLicenseEntitlementsInput = {
   vendor: Prisma.VendorCreateNestedOneWithoutLicenseProductsInput
   lifecycleModel?: Prisma.LifecycleModelCreateNestedOneWithoutLicenseProductsInput
   fields?: Prisma.LicenseProductFieldCreateNestedManyWithoutLicenseProductInput
+  addons?: Prisma.LicenseAddonCreateNestedManyWithoutLicenseProductInput
 }
 
 export type LicenseProductUncheckedCreateWithoutLicenseEntitlementsInput = {
@@ -749,6 +779,7 @@ export type LicenseProductUncheckedCreateWithoutLicenseEntitlementsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   fields?: Prisma.LicenseProductFieldUncheckedCreateNestedManyWithoutLicenseProductInput
+  addons?: Prisma.LicenseAddonUncheckedCreateNestedManyWithoutLicenseProductInput
 }
 
 export type LicenseProductCreateOrConnectWithoutLicenseEntitlementsInput = {
@@ -778,6 +809,7 @@ export type LicenseProductUpdateWithoutLicenseEntitlementsInput = {
   vendor?: Prisma.VendorUpdateOneRequiredWithoutLicenseProductsNestedInput
   lifecycleModel?: Prisma.LifecycleModelUpdateOneWithoutLicenseProductsNestedInput
   fields?: Prisma.LicenseProductFieldUpdateManyWithoutLicenseProductNestedInput
+  addons?: Prisma.LicenseAddonUpdateManyWithoutLicenseProductNestedInput
 }
 
 export type LicenseProductUncheckedUpdateWithoutLicenseEntitlementsInput = {
@@ -791,6 +823,79 @@ export type LicenseProductUncheckedUpdateWithoutLicenseEntitlementsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fields?: Prisma.LicenseProductFieldUncheckedUpdateManyWithoutLicenseProductNestedInput
+  addons?: Prisma.LicenseAddonUncheckedUpdateManyWithoutLicenseProductNestedInput
+}
+
+export type LicenseProductCreateWithoutAddonsInput = {
+  id?: string
+  name: string
+  code: string
+  metricType: string
+  description?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  vendor: Prisma.VendorCreateNestedOneWithoutLicenseProductsInput
+  lifecycleModel?: Prisma.LifecycleModelCreateNestedOneWithoutLicenseProductsInput
+  fields?: Prisma.LicenseProductFieldCreateNestedManyWithoutLicenseProductInput
+  licenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutLicenseProductInput
+}
+
+export type LicenseProductUncheckedCreateWithoutAddonsInput = {
+  id?: string
+  name: string
+  code: string
+  vendorId: string
+  metricType: string
+  description?: string | null
+  lifecycleModelId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  fields?: Prisma.LicenseProductFieldUncheckedCreateNestedManyWithoutLicenseProductInput
+  licenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutLicenseProductInput
+}
+
+export type LicenseProductCreateOrConnectWithoutAddonsInput = {
+  where: Prisma.LicenseProductWhereUniqueInput
+  create: Prisma.XOR<Prisma.LicenseProductCreateWithoutAddonsInput, Prisma.LicenseProductUncheckedCreateWithoutAddonsInput>
+}
+
+export type LicenseProductUpsertWithoutAddonsInput = {
+  update: Prisma.XOR<Prisma.LicenseProductUpdateWithoutAddonsInput, Prisma.LicenseProductUncheckedUpdateWithoutAddonsInput>
+  create: Prisma.XOR<Prisma.LicenseProductCreateWithoutAddonsInput, Prisma.LicenseProductUncheckedCreateWithoutAddonsInput>
+  where?: Prisma.LicenseProductWhereInput
+}
+
+export type LicenseProductUpdateToOneWithWhereWithoutAddonsInput = {
+  where?: Prisma.LicenseProductWhereInput
+  data: Prisma.XOR<Prisma.LicenseProductUpdateWithoutAddonsInput, Prisma.LicenseProductUncheckedUpdateWithoutAddonsInput>
+}
+
+export type LicenseProductUpdateWithoutAddonsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  vendor?: Prisma.VendorUpdateOneRequiredWithoutLicenseProductsNestedInput
+  lifecycleModel?: Prisma.LifecycleModelUpdateOneWithoutLicenseProductsNestedInput
+  fields?: Prisma.LicenseProductFieldUpdateManyWithoutLicenseProductNestedInput
+  licenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutLicenseProductNestedInput
+}
+
+export type LicenseProductUncheckedUpdateWithoutAddonsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  vendorId?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lifecycleModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fields?: Prisma.LicenseProductFieldUncheckedUpdateManyWithoutLicenseProductNestedInput
+  licenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutLicenseProductNestedInput
 }
 
 export type LicenseProductCreateManyVendorInput = {
@@ -815,6 +920,7 @@ export type LicenseProductUpdateWithoutVendorInput = {
   lifecycleModel?: Prisma.LifecycleModelUpdateOneWithoutLicenseProductsNestedInput
   fields?: Prisma.LicenseProductFieldUpdateManyWithoutLicenseProductNestedInput
   licenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutLicenseProductNestedInput
+  addons?: Prisma.LicenseAddonUpdateManyWithoutLicenseProductNestedInput
 }
 
 export type LicenseProductUncheckedUpdateWithoutVendorInput = {
@@ -828,6 +934,7 @@ export type LicenseProductUncheckedUpdateWithoutVendorInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fields?: Prisma.LicenseProductFieldUncheckedUpdateManyWithoutLicenseProductNestedInput
   licenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutLicenseProductNestedInput
+  addons?: Prisma.LicenseAddonUncheckedUpdateManyWithoutLicenseProductNestedInput
 }
 
 export type LicenseProductUncheckedUpdateManyWithoutVendorInput = {
@@ -863,6 +970,7 @@ export type LicenseProductUpdateWithoutLifecycleModelInput = {
   vendor?: Prisma.VendorUpdateOneRequiredWithoutLicenseProductsNestedInput
   fields?: Prisma.LicenseProductFieldUpdateManyWithoutLicenseProductNestedInput
   licenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutLicenseProductNestedInput
+  addons?: Prisma.LicenseAddonUpdateManyWithoutLicenseProductNestedInput
 }
 
 export type LicenseProductUncheckedUpdateWithoutLifecycleModelInput = {
@@ -876,6 +984,7 @@ export type LicenseProductUncheckedUpdateWithoutLifecycleModelInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fields?: Prisma.LicenseProductFieldUncheckedUpdateManyWithoutLicenseProductNestedInput
   licenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutLicenseProductNestedInput
+  addons?: Prisma.LicenseAddonUncheckedUpdateManyWithoutLicenseProductNestedInput
 }
 
 export type LicenseProductUncheckedUpdateManyWithoutLifecycleModelInput = {
@@ -897,11 +1006,13 @@ export type LicenseProductUncheckedUpdateManyWithoutLifecycleModelInput = {
 export type LicenseProductCountOutputType = {
   fields: number
   licenseEntitlements: number
+  addons: number
 }
 
 export type LicenseProductCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   fields?: boolean | LicenseProductCountOutputTypeCountFieldsArgs
   licenseEntitlements?: boolean | LicenseProductCountOutputTypeCountLicenseEntitlementsArgs
+  addons?: boolean | LicenseProductCountOutputTypeCountAddonsArgs
 }
 
 /**
@@ -928,6 +1039,13 @@ export type LicenseProductCountOutputTypeCountLicenseEntitlementsArgs<ExtArgs ex
   where?: Prisma.LicenseEntitlementWhereInput
 }
 
+/**
+ * LicenseProductCountOutputType without action
+ */
+export type LicenseProductCountOutputTypeCountAddonsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LicenseAddonWhereInput
+}
+
 
 export type LicenseProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -943,6 +1061,7 @@ export type LicenseProductSelect<ExtArgs extends runtime.Types.Extensions.Intern
   lifecycleModel?: boolean | Prisma.LicenseProduct$lifecycleModelArgs<ExtArgs>
   fields?: boolean | Prisma.LicenseProduct$fieldsArgs<ExtArgs>
   licenseEntitlements?: boolean | Prisma.LicenseProduct$licenseEntitlementsArgs<ExtArgs>
+  addons?: boolean | Prisma.LicenseProduct$addonsArgs<ExtArgs>
   _count?: boolean | Prisma.LicenseProductCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["licenseProduct"]>
 
@@ -992,6 +1111,7 @@ export type LicenseProductInclude<ExtArgs extends runtime.Types.Extensions.Inter
   lifecycleModel?: boolean | Prisma.LicenseProduct$lifecycleModelArgs<ExtArgs>
   fields?: boolean | Prisma.LicenseProduct$fieldsArgs<ExtArgs>
   licenseEntitlements?: boolean | Prisma.LicenseProduct$licenseEntitlementsArgs<ExtArgs>
+  addons?: boolean | Prisma.LicenseProduct$addonsArgs<ExtArgs>
   _count?: boolean | Prisma.LicenseProductCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type LicenseProductIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1010,6 +1130,7 @@ export type $LicenseProductPayload<ExtArgs extends runtime.Types.Extensions.Inte
     lifecycleModel: Prisma.$LifecycleModelPayload<ExtArgs> | null
     fields: Prisma.$LicenseProductFieldPayload<ExtArgs>[]
     licenseEntitlements: Prisma.$LicenseEntitlementPayload<ExtArgs>[]
+    addons: Prisma.$LicenseAddonPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1419,6 +1540,7 @@ export interface Prisma__LicenseProductClient<T, Null = never, ExtArgs extends r
   lifecycleModel<T extends Prisma.LicenseProduct$lifecycleModelArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LicenseProduct$lifecycleModelArgs<ExtArgs>>): Prisma.Prisma__LifecycleModelClient<runtime.Types.Result.GetResult<Prisma.$LifecycleModelPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   fields<T extends Prisma.LicenseProduct$fieldsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LicenseProduct$fieldsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LicenseProductFieldPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   licenseEntitlements<T extends Prisma.LicenseProduct$licenseEntitlementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LicenseProduct$licenseEntitlementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LicenseEntitlementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  addons<T extends Prisma.LicenseProduct$addonsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LicenseProduct$addonsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LicenseAddonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1917,6 +2039,30 @@ export type LicenseProduct$licenseEntitlementsArgs<ExtArgs extends runtime.Types
   take?: number
   skip?: number
   distinct?: Prisma.LicenseEntitlementScalarFieldEnum | Prisma.LicenseEntitlementScalarFieldEnum[]
+}
+
+/**
+ * LicenseProduct.addons
+ */
+export type LicenseProduct$addonsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LicenseAddon
+   */
+  select?: Prisma.LicenseAddonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LicenseAddon
+   */
+  omit?: Prisma.LicenseAddonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LicenseAddonInclude<ExtArgs> | null
+  where?: Prisma.LicenseAddonWhereInput
+  orderBy?: Prisma.LicenseAddonOrderByWithRelationInput | Prisma.LicenseAddonOrderByWithRelationInput[]
+  cursor?: Prisma.LicenseAddonWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LicenseAddonScalarFieldEnum | Prisma.LicenseAddonScalarFieldEnum[]
 }
 
 /**

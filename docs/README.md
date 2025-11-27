@@ -64,7 +64,7 @@ Advanced IT Asset Management features:
 - [Asset Reservations](./features/ASSET_RESERVATIONS.md) - Future asset reservations with conflict detection and automated background jobs
 - [CMDB Guide](./features/CMDB_GUIDE.md) - Configuration Management Database with dependency tracking
 - Contract Management - Contract types, contract lifecycle, and polymorphic asset/CI linking (see [Layer 3 Overview](./features/LAYER3_OVERVIEW.md#6-contract-management))
-- License Management - License products, entitlements, allocations, and compliance tracking (see [Layer 3 Overview](./features/LAYER3_OVERVIEW.md#7-license-management))
+- [License Management](./features/LICENSE_MANAGEMENT.md) - License products, entitlements, allocations, cost tracking with multi-currency support, and addon management
 - [Governance System](./features/GOVERNANCE_SYSTEM.md) - Data governance, ownership tracking, and verification campaigns for SAMA compliance
 - [Attachments System](./features/ATTACHMENTS_SYSTEM.md) - Polymorphic file attachments for compliance documentation and audit trails
 - [Service Management](./features/SERVICE_MANAGEMENT.md) - IT service catalog with ownership, infrastructure tracking, and business process alignment

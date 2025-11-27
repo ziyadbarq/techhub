@@ -24,6 +24,16 @@ export const CreateLicenseEntitlementSchema = z
       .max(5000, "Note must be 5000 characters or less")
       .optional()
       .nullable(),
+    unitCost: z
+      .number()
+      .nonnegative("Unit cost cannot be negative")
+      .optional()
+      .nullable(),
+    currency: z
+      .string()
+      .length(3, "Currency must be a 3-letter ISO code")
+      .optional()
+      .nullable(),
   })
   .refine(
     (data) => {
@@ -64,6 +74,16 @@ export const UpdateLicenseEntitlementSchema = z
       .max(5000, "Note must be 5000 characters or less")
       .optional()
       .nullable(),
+    unitCost: z
+      .number()
+      .nonnegative("Unit cost cannot be negative")
+      .optional()
+      .nullable(),
+    currency: z
+      .string()
+      .length(3, "Currency must be a 3-letter ISO code")
+      .optional()
+      .nullable(),
   })
   .refine(
     (data) => {
@@ -92,8 +112,13 @@ export interface LicenseEntitlementDTO {
   effectiveEnd: Date | null;
   allowedScope: Record<string, unknown> | null;
   note: string | null;
+  unitCost: number | null;
+  currency: string | null;
   createdAt: Date;
   updatedAt: Date;
   isActive?: boolean;
   isExpired?: boolean;
+  // Computed cost fields
+  totalCost?: number | null;
+  hasCostTracking?: boolean;
 }

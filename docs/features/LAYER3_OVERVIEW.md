@@ -6,7 +6,7 @@ This document provides a comprehensive overview of all Layer 3 (Advanced ITAM) m
 
 Layer 3 consists of **9 advanced modules** built with Clean Architecture patterns, providing enterprise-grade IT asset management capabilities beyond basic asset tracking.
 
-**Total**: ~31 entities, 27+ database tables, 175+ use cases
+**Total**: ~33 entities, 29+ database tables, 185+ use cases
 
 ## Modules
 
@@ -172,9 +172,9 @@ Layer 3 consists of **9 advanced modules** built with Clean Architecture pattern
 - `/license-allocations`
 
 **Permissions**: `LICENSE_PRODUCTS_VIEW`, `LICENSE_ENTITLEMENTS_VIEW`, `LICENSE_ALLOCATIONS_VIEW`
-**Documentation**: Detailed in ITAM_FEATURES.md
+**Documentation**: [LICENSE_MANAGEMENT.md](LICENSE_MANAGEMENT.md)
 
-**Entities**: LicenseProduct, LicenseProductField, LicenseEntitlement, LicenseAllocation (4 entities, 23 use cases)
+**Entities**: LicenseProduct, LicenseProductField, LicenseEntitlement, LicenseAllocation, LicenseAddon, LicenseEntitlementAddon (6 entities, 33 use cases)
 
 **Features**:
 - License Products with multiple metric types:
@@ -184,6 +184,14 @@ Layer 3 consists of **9 advanced modules** built with Clean Architecture pattern
   - `per_vm` - Virtual machine licensing
   - `per_cluster` - Cluster-based licensing
 - License Entitlements with purchased quantities and validity date ranges
+- **Cost Tracking** with multi-currency support:
+  - Unit cost per license (cost per seat/device/core)
+  - Total cost calculation (unit cost × quantity)
+  - Dual currency display (original + SAR conversion)
+- **License Addons** for extras like premium support, training, maintenance
+  - Product-level addon templates
+  - Entitlement-level addon attachments with quantity overrides
+  - Addon cost aggregation in total cost calculation
 - Polymorphic allocations to Persons, Configuration Items, or Assets
 - Available quantity tracking (purchased - allocated)
 - Soft deactivation support (deallocate/reactivate without deletion)
@@ -260,13 +268,13 @@ Layer 3 consists of **9 advanced modules** built with Clean Architecture pattern
 
 ## Database Implementation
 
-**Total Tables**: 27+ new tables
+**Total Tables**: 29+ new tables
 
 **Breakdown by Module**:
 - CMDB: 6 tables (ConfigurationItem, CIRelationship, RelationshipType, CIClass, CIClassField, RelationshipTypeScope)
 - Service Management: 5 tables (Service, ServiceOwnership, BusinessProcess, ServiceInfrastructure, ServiceAsset)
 - Contracts: 3 tables (ContractType, Contract, ContractLinkedObject)
-- Licenses: 4 tables (LicenseProduct, LicenseProductField, LicenseEntitlement, LicenseAllocation)
+- Licenses: 6 tables (LicenseProduct, LicenseProductField, LicenseEntitlement, LicenseAllocation, LicenseAddon, LicenseEntitlementAddon)
 - Governance: 4 tables (DataDomain, DataOwnership, VerificationCampaign, VerificationItem)
 - Disposals: 3 tables (AssetDisposal, DisposalApproval, DisposalDocument)
 - Asset Kits: 4 tables (AssetKit, AssetKitItem, AssetKitCheckout, AssetKitCheckoutItem)

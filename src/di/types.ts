@@ -109,6 +109,10 @@ export const DI_TOKENS = {
   // Licenses Repositories
   ILicenseProductRepository: Symbol.for("ILicenseProductRepository"),
   ILicenseProductFieldRepository: Symbol.for("ILicenseProductFieldRepository"),
+  ILicenseAddonRepository: Symbol.for("ILicenseAddonRepository"),
+  ILicenseEntitlementAddonRepository: Symbol.for(
+    "ILicenseEntitlementAddonRepository",
+  ),
 
   // Service Management Repositories
   IServiceRepository: Symbol.for("IServiceRepository"),
@@ -565,6 +569,26 @@ export const DI_TOKENS = {
   ),
   ReactivateLicenseAllocationUseCase: Symbol.for(
     "ReactivateLicenseAllocationUseCase",
+  ),
+
+  // Licenses: License Addon Use Cases
+  CreateLicenseAddonUseCase: Symbol.for("CreateLicenseAddonUseCase"),
+  GetLicenseAddonUseCase: Symbol.for("GetLicenseAddonUseCase"),
+  ListLicenseAddonsUseCase: Symbol.for("ListLicenseAddonsUseCase"),
+  UpdateLicenseAddonUseCase: Symbol.for("UpdateLicenseAddonUseCase"),
+  DeleteLicenseAddonUseCase: Symbol.for("DeleteLicenseAddonUseCase"),
+
+  // Licenses: License Entitlement Addon Use Cases
+  AttachAddonToEntitlementUseCase: Symbol.for(
+    "AttachAddonToEntitlementUseCase",
+  ),
+  DetachAddonFromEntitlementUseCase: Symbol.for(
+    "DetachAddonFromEntitlementUseCase",
+  ),
+  UpdateEntitlementAddonUseCase: Symbol.for("UpdateEntitlementAddonUseCase"),
+  ListEntitlementAddonsUseCase: Symbol.for("ListEntitlementAddonsUseCase"),
+  CalculateEntitlementTotalCostUseCase: Symbol.for(
+    "CalculateEntitlementTotalCostUseCase",
   ),
 
   // ==========================================

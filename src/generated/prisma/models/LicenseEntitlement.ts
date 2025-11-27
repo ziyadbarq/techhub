@@ -28,10 +28,12 @@ export type AggregateLicenseEntitlement = {
 
 export type LicenseEntitlementAvgAggregateOutputType = {
   purchasedQuantity: number | null
+  unitCost: runtime.Decimal | null
 }
 
 export type LicenseEntitlementSumAggregateOutputType = {
   purchasedQuantity: number | null
+  unitCost: runtime.Decimal | null
 }
 
 export type LicenseEntitlementMinAggregateOutputType = {
@@ -42,6 +44,8 @@ export type LicenseEntitlementMinAggregateOutputType = {
   effectiveStart: Date | null
   effectiveEnd: Date | null
   note: string | null
+  unitCost: runtime.Decimal | null
+  currency: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -54,6 +58,8 @@ export type LicenseEntitlementMaxAggregateOutputType = {
   effectiveStart: Date | null
   effectiveEnd: Date | null
   note: string | null
+  unitCost: runtime.Decimal | null
+  currency: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -67,6 +73,8 @@ export type LicenseEntitlementCountAggregateOutputType = {
   effectiveEnd: number
   allowedScope: number
   note: number
+  unitCost: number
+  currency: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -75,10 +83,12 @@ export type LicenseEntitlementCountAggregateOutputType = {
 
 export type LicenseEntitlementAvgAggregateInputType = {
   purchasedQuantity?: true
+  unitCost?: true
 }
 
 export type LicenseEntitlementSumAggregateInputType = {
   purchasedQuantity?: true
+  unitCost?: true
 }
 
 export type LicenseEntitlementMinAggregateInputType = {
@@ -89,6 +99,8 @@ export type LicenseEntitlementMinAggregateInputType = {
   effectiveStart?: true
   effectiveEnd?: true
   note?: true
+  unitCost?: true
+  currency?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -101,6 +113,8 @@ export type LicenseEntitlementMaxAggregateInputType = {
   effectiveStart?: true
   effectiveEnd?: true
   note?: true
+  unitCost?: true
+  currency?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -114,6 +128,8 @@ export type LicenseEntitlementCountAggregateInputType = {
   effectiveEnd?: true
   allowedScope?: true
   note?: true
+  unitCost?: true
+  currency?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -214,6 +230,8 @@ export type LicenseEntitlementGroupByOutputType = {
   effectiveEnd: Date | null
   allowedScope: runtime.JsonValue | null
   note: string | null
+  unitCost: runtime.Decimal | null
+  currency: string | null
   createdAt: Date
   updatedAt: Date
   _count: LicenseEntitlementCountAggregateOutputType | null
@@ -250,11 +268,14 @@ export type LicenseEntitlementWhereInput = {
   effectiveEnd?: Prisma.DateTimeNullableFilter<"LicenseEntitlement"> | Date | string | null
   allowedScope?: Prisma.JsonNullableFilter<"LicenseEntitlement">
   note?: Prisma.StringNullableFilter<"LicenseEntitlement"> | string | null
+  unitCost?: Prisma.DecimalNullableFilter<"LicenseEntitlement"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.StringNullableFilter<"LicenseEntitlement"> | string | null
   createdAt?: Prisma.DateTimeFilter<"LicenseEntitlement"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"LicenseEntitlement"> | Date | string
   licenseProduct?: Prisma.XOR<Prisma.LicenseProductScalarRelationFilter, Prisma.LicenseProductWhereInput>
   contract?: Prisma.XOR<Prisma.ContractNullableScalarRelationFilter, Prisma.ContractWhereInput> | null
   allocations?: Prisma.LicenseAllocationListRelationFilter
+  entitlementAddons?: Prisma.LicenseEntitlementAddonListRelationFilter
 }
 
 export type LicenseEntitlementOrderByWithRelationInput = {
@@ -266,11 +287,14 @@ export type LicenseEntitlementOrderByWithRelationInput = {
   effectiveEnd?: Prisma.SortOrderInput | Prisma.SortOrder
   allowedScope?: Prisma.SortOrderInput | Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
+  unitCost?: Prisma.SortOrderInput | Prisma.SortOrder
+  currency?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   licenseProduct?: Prisma.LicenseProductOrderByWithRelationInput
   contract?: Prisma.ContractOrderByWithRelationInput
   allocations?: Prisma.LicenseAllocationOrderByRelationAggregateInput
+  entitlementAddons?: Prisma.LicenseEntitlementAddonOrderByRelationAggregateInput
 }
 
 export type LicenseEntitlementWhereUniqueInput = Prisma.AtLeast<{
@@ -285,11 +309,14 @@ export type LicenseEntitlementWhereUniqueInput = Prisma.AtLeast<{
   effectiveEnd?: Prisma.DateTimeNullableFilter<"LicenseEntitlement"> | Date | string | null
   allowedScope?: Prisma.JsonNullableFilter<"LicenseEntitlement">
   note?: Prisma.StringNullableFilter<"LicenseEntitlement"> | string | null
+  unitCost?: Prisma.DecimalNullableFilter<"LicenseEntitlement"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.StringNullableFilter<"LicenseEntitlement"> | string | null
   createdAt?: Prisma.DateTimeFilter<"LicenseEntitlement"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"LicenseEntitlement"> | Date | string
   licenseProduct?: Prisma.XOR<Prisma.LicenseProductScalarRelationFilter, Prisma.LicenseProductWhereInput>
   contract?: Prisma.XOR<Prisma.ContractNullableScalarRelationFilter, Prisma.ContractWhereInput> | null
   allocations?: Prisma.LicenseAllocationListRelationFilter
+  entitlementAddons?: Prisma.LicenseEntitlementAddonListRelationFilter
 }, "id">
 
 export type LicenseEntitlementOrderByWithAggregationInput = {
@@ -301,6 +328,8 @@ export type LicenseEntitlementOrderByWithAggregationInput = {
   effectiveEnd?: Prisma.SortOrderInput | Prisma.SortOrder
   allowedScope?: Prisma.SortOrderInput | Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
+  unitCost?: Prisma.SortOrderInput | Prisma.SortOrder
+  currency?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.LicenseEntitlementCountOrderByAggregateInput
@@ -322,6 +351,8 @@ export type LicenseEntitlementScalarWhereWithAggregatesInput = {
   effectiveEnd?: Prisma.DateTimeNullableWithAggregatesFilter<"LicenseEntitlement"> | Date | string | null
   allowedScope?: Prisma.JsonNullableWithAggregatesFilter<"LicenseEntitlement">
   note?: Prisma.StringNullableWithAggregatesFilter<"LicenseEntitlement"> | string | null
+  unitCost?: Prisma.DecimalNullableWithAggregatesFilter<"LicenseEntitlement"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.StringNullableWithAggregatesFilter<"LicenseEntitlement"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"LicenseEntitlement"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"LicenseEntitlement"> | Date | string
 }
@@ -333,11 +364,14 @@ export type LicenseEntitlementCreateInput = {
   effectiveEnd?: Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   licenseProduct: Prisma.LicenseProductCreateNestedOneWithoutLicenseEntitlementsInput
   contract?: Prisma.ContractCreateNestedOneWithoutLicenseEntitlementsInput
   allocations?: Prisma.LicenseAllocationCreateNestedManyWithoutLicenseEntitlementInput
+  entitlementAddons?: Prisma.LicenseEntitlementAddonCreateNestedManyWithoutLicenseEntitlementInput
 }
 
 export type LicenseEntitlementUncheckedCreateInput = {
@@ -349,9 +383,12 @@ export type LicenseEntitlementUncheckedCreateInput = {
   effectiveEnd?: Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   allocations?: Prisma.LicenseAllocationUncheckedCreateNestedManyWithoutLicenseEntitlementInput
+  entitlementAddons?: Prisma.LicenseEntitlementAddonUncheckedCreateNestedManyWithoutLicenseEntitlementInput
 }
 
 export type LicenseEntitlementUpdateInput = {
@@ -361,11 +398,14 @@ export type LicenseEntitlementUpdateInput = {
   effectiveEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   licenseProduct?: Prisma.LicenseProductUpdateOneRequiredWithoutLicenseEntitlementsNestedInput
   contract?: Prisma.ContractUpdateOneWithoutLicenseEntitlementsNestedInput
   allocations?: Prisma.LicenseAllocationUpdateManyWithoutLicenseEntitlementNestedInput
+  entitlementAddons?: Prisma.LicenseEntitlementAddonUpdateManyWithoutLicenseEntitlementNestedInput
 }
 
 export type LicenseEntitlementUncheckedUpdateInput = {
@@ -377,9 +417,12 @@ export type LicenseEntitlementUncheckedUpdateInput = {
   effectiveEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   allocations?: Prisma.LicenseAllocationUncheckedUpdateManyWithoutLicenseEntitlementNestedInput
+  entitlementAddons?: Prisma.LicenseEntitlementAddonUncheckedUpdateManyWithoutLicenseEntitlementNestedInput
 }
 
 export type LicenseEntitlementCreateManyInput = {
@@ -391,6 +434,8 @@ export type LicenseEntitlementCreateManyInput = {
   effectiveEnd?: Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -402,6 +447,8 @@ export type LicenseEntitlementUpdateManyMutationInput = {
   effectiveEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -415,6 +462,8 @@ export type LicenseEntitlementUncheckedUpdateManyInput = {
   effectiveEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -438,12 +487,15 @@ export type LicenseEntitlementCountOrderByAggregateInput = {
   effectiveEnd?: Prisma.SortOrder
   allowedScope?: Prisma.SortOrder
   note?: Prisma.SortOrder
+  unitCost?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type LicenseEntitlementAvgOrderByAggregateInput = {
   purchasedQuantity?: Prisma.SortOrder
+  unitCost?: Prisma.SortOrder
 }
 
 export type LicenseEntitlementMaxOrderByAggregateInput = {
@@ -454,6 +506,8 @@ export type LicenseEntitlementMaxOrderByAggregateInput = {
   effectiveStart?: Prisma.SortOrder
   effectiveEnd?: Prisma.SortOrder
   note?: Prisma.SortOrder
+  unitCost?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -466,12 +520,15 @@ export type LicenseEntitlementMinOrderByAggregateInput = {
   effectiveStart?: Prisma.SortOrder
   effectiveEnd?: Prisma.SortOrder
   note?: Prisma.SortOrder
+  unitCost?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type LicenseEntitlementSumOrderByAggregateInput = {
   purchasedQuantity?: Prisma.SortOrder
+  unitCost?: Prisma.SortOrder
 }
 
 export type LicenseEntitlementScalarRelationFilter = {
@@ -577,6 +634,20 @@ export type LicenseEntitlementUpdateOneRequiredWithoutAllocationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.LicenseEntitlementUpdateToOneWithWhereWithoutAllocationsInput, Prisma.LicenseEntitlementUpdateWithoutAllocationsInput>, Prisma.LicenseEntitlementUncheckedUpdateWithoutAllocationsInput>
 }
 
+export type LicenseEntitlementCreateNestedOneWithoutEntitlementAddonsInput = {
+  create?: Prisma.XOR<Prisma.LicenseEntitlementCreateWithoutEntitlementAddonsInput, Prisma.LicenseEntitlementUncheckedCreateWithoutEntitlementAddonsInput>
+  connectOrCreate?: Prisma.LicenseEntitlementCreateOrConnectWithoutEntitlementAddonsInput
+  connect?: Prisma.LicenseEntitlementWhereUniqueInput
+}
+
+export type LicenseEntitlementUpdateOneRequiredWithoutEntitlementAddonsNestedInput = {
+  create?: Prisma.XOR<Prisma.LicenseEntitlementCreateWithoutEntitlementAddonsInput, Prisma.LicenseEntitlementUncheckedCreateWithoutEntitlementAddonsInput>
+  connectOrCreate?: Prisma.LicenseEntitlementCreateOrConnectWithoutEntitlementAddonsInput
+  upsert?: Prisma.LicenseEntitlementUpsertWithoutEntitlementAddonsInput
+  connect?: Prisma.LicenseEntitlementWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LicenseEntitlementUpdateToOneWithWhereWithoutEntitlementAddonsInput, Prisma.LicenseEntitlementUpdateWithoutEntitlementAddonsInput>, Prisma.LicenseEntitlementUncheckedUpdateWithoutEntitlementAddonsInput>
+}
+
 export type LicenseEntitlementCreateWithoutContractInput = {
   id?: string
   purchasedQuantity: number
@@ -584,10 +655,13 @@ export type LicenseEntitlementCreateWithoutContractInput = {
   effectiveEnd?: Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   licenseProduct: Prisma.LicenseProductCreateNestedOneWithoutLicenseEntitlementsInput
   allocations?: Prisma.LicenseAllocationCreateNestedManyWithoutLicenseEntitlementInput
+  entitlementAddons?: Prisma.LicenseEntitlementAddonCreateNestedManyWithoutLicenseEntitlementInput
 }
 
 export type LicenseEntitlementUncheckedCreateWithoutContractInput = {
@@ -598,9 +672,12 @@ export type LicenseEntitlementUncheckedCreateWithoutContractInput = {
   effectiveEnd?: Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   allocations?: Prisma.LicenseAllocationUncheckedCreateNestedManyWithoutLicenseEntitlementInput
+  entitlementAddons?: Prisma.LicenseEntitlementAddonUncheckedCreateNestedManyWithoutLicenseEntitlementInput
 }
 
 export type LicenseEntitlementCreateOrConnectWithoutContractInput = {
@@ -641,6 +718,8 @@ export type LicenseEntitlementScalarWhereInput = {
   effectiveEnd?: Prisma.DateTimeNullableFilter<"LicenseEntitlement"> | Date | string | null
   allowedScope?: Prisma.JsonNullableFilter<"LicenseEntitlement">
   note?: Prisma.StringNullableFilter<"LicenseEntitlement"> | string | null
+  unitCost?: Prisma.DecimalNullableFilter<"LicenseEntitlement"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.StringNullableFilter<"LicenseEntitlement"> | string | null
   createdAt?: Prisma.DateTimeFilter<"LicenseEntitlement"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"LicenseEntitlement"> | Date | string
 }
@@ -652,10 +731,13 @@ export type LicenseEntitlementCreateWithoutLicenseProductInput = {
   effectiveEnd?: Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   contract?: Prisma.ContractCreateNestedOneWithoutLicenseEntitlementsInput
   allocations?: Prisma.LicenseAllocationCreateNestedManyWithoutLicenseEntitlementInput
+  entitlementAddons?: Prisma.LicenseEntitlementAddonCreateNestedManyWithoutLicenseEntitlementInput
 }
 
 export type LicenseEntitlementUncheckedCreateWithoutLicenseProductInput = {
@@ -666,9 +748,12 @@ export type LicenseEntitlementUncheckedCreateWithoutLicenseProductInput = {
   effectiveEnd?: Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   allocations?: Prisma.LicenseAllocationUncheckedCreateNestedManyWithoutLicenseEntitlementInput
+  entitlementAddons?: Prisma.LicenseEntitlementAddonUncheckedCreateNestedManyWithoutLicenseEntitlementInput
 }
 
 export type LicenseEntitlementCreateOrConnectWithoutLicenseProductInput = {
@@ -704,10 +789,13 @@ export type LicenseEntitlementCreateWithoutAllocationsInput = {
   effectiveEnd?: Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   licenseProduct: Prisma.LicenseProductCreateNestedOneWithoutLicenseEntitlementsInput
   contract?: Prisma.ContractCreateNestedOneWithoutLicenseEntitlementsInput
+  entitlementAddons?: Prisma.LicenseEntitlementAddonCreateNestedManyWithoutLicenseEntitlementInput
 }
 
 export type LicenseEntitlementUncheckedCreateWithoutAllocationsInput = {
@@ -719,8 +807,11 @@ export type LicenseEntitlementUncheckedCreateWithoutAllocationsInput = {
   effectiveEnd?: Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  entitlementAddons?: Prisma.LicenseEntitlementAddonUncheckedCreateNestedManyWithoutLicenseEntitlementInput
 }
 
 export type LicenseEntitlementCreateOrConnectWithoutAllocationsInput = {
@@ -746,10 +837,13 @@ export type LicenseEntitlementUpdateWithoutAllocationsInput = {
   effectiveEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   licenseProduct?: Prisma.LicenseProductUpdateOneRequiredWithoutLicenseEntitlementsNestedInput
   contract?: Prisma.ContractUpdateOneWithoutLicenseEntitlementsNestedInput
+  entitlementAddons?: Prisma.LicenseEntitlementAddonUpdateManyWithoutLicenseEntitlementNestedInput
 }
 
 export type LicenseEntitlementUncheckedUpdateWithoutAllocationsInput = {
@@ -761,8 +855,91 @@ export type LicenseEntitlementUncheckedUpdateWithoutAllocationsInput = {
   effectiveEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  entitlementAddons?: Prisma.LicenseEntitlementAddonUncheckedUpdateManyWithoutLicenseEntitlementNestedInput
+}
+
+export type LicenseEntitlementCreateWithoutEntitlementAddonsInput = {
+  id?: string
+  purchasedQuantity: number
+  effectiveStart: Date | string
+  effectiveEnd?: Date | string | null
+  allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  licenseProduct: Prisma.LicenseProductCreateNestedOneWithoutLicenseEntitlementsInput
+  contract?: Prisma.ContractCreateNestedOneWithoutLicenseEntitlementsInput
+  allocations?: Prisma.LicenseAllocationCreateNestedManyWithoutLicenseEntitlementInput
+}
+
+export type LicenseEntitlementUncheckedCreateWithoutEntitlementAddonsInput = {
+  id?: string
+  licenseProductId: string
+  contractId?: string | null
+  purchasedQuantity: number
+  effectiveStart: Date | string
+  effectiveEnd?: Date | string | null
+  allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  allocations?: Prisma.LicenseAllocationUncheckedCreateNestedManyWithoutLicenseEntitlementInput
+}
+
+export type LicenseEntitlementCreateOrConnectWithoutEntitlementAddonsInput = {
+  where: Prisma.LicenseEntitlementWhereUniqueInput
+  create: Prisma.XOR<Prisma.LicenseEntitlementCreateWithoutEntitlementAddonsInput, Prisma.LicenseEntitlementUncheckedCreateWithoutEntitlementAddonsInput>
+}
+
+export type LicenseEntitlementUpsertWithoutEntitlementAddonsInput = {
+  update: Prisma.XOR<Prisma.LicenseEntitlementUpdateWithoutEntitlementAddonsInput, Prisma.LicenseEntitlementUncheckedUpdateWithoutEntitlementAddonsInput>
+  create: Prisma.XOR<Prisma.LicenseEntitlementCreateWithoutEntitlementAddonsInput, Prisma.LicenseEntitlementUncheckedCreateWithoutEntitlementAddonsInput>
+  where?: Prisma.LicenseEntitlementWhereInput
+}
+
+export type LicenseEntitlementUpdateToOneWithWhereWithoutEntitlementAddonsInput = {
+  where?: Prisma.LicenseEntitlementWhereInput
+  data: Prisma.XOR<Prisma.LicenseEntitlementUpdateWithoutEntitlementAddonsInput, Prisma.LicenseEntitlementUncheckedUpdateWithoutEntitlementAddonsInput>
+}
+
+export type LicenseEntitlementUpdateWithoutEntitlementAddonsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  purchasedQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  effectiveStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  effectiveEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  licenseProduct?: Prisma.LicenseProductUpdateOneRequiredWithoutLicenseEntitlementsNestedInput
+  contract?: Prisma.ContractUpdateOneWithoutLicenseEntitlementsNestedInput
+  allocations?: Prisma.LicenseAllocationUpdateManyWithoutLicenseEntitlementNestedInput
+}
+
+export type LicenseEntitlementUncheckedUpdateWithoutEntitlementAddonsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  licenseProductId?: Prisma.StringFieldUpdateOperationsInput | string
+  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchasedQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  effectiveStart?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  effectiveEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  allocations?: Prisma.LicenseAllocationUncheckedUpdateManyWithoutLicenseEntitlementNestedInput
 }
 
 export type LicenseEntitlementCreateManyContractInput = {
@@ -773,6 +950,8 @@ export type LicenseEntitlementCreateManyContractInput = {
   effectiveEnd?: Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -784,10 +963,13 @@ export type LicenseEntitlementUpdateWithoutContractInput = {
   effectiveEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   licenseProduct?: Prisma.LicenseProductUpdateOneRequiredWithoutLicenseEntitlementsNestedInput
   allocations?: Prisma.LicenseAllocationUpdateManyWithoutLicenseEntitlementNestedInput
+  entitlementAddons?: Prisma.LicenseEntitlementAddonUpdateManyWithoutLicenseEntitlementNestedInput
 }
 
 export type LicenseEntitlementUncheckedUpdateWithoutContractInput = {
@@ -798,9 +980,12 @@ export type LicenseEntitlementUncheckedUpdateWithoutContractInput = {
   effectiveEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   allocations?: Prisma.LicenseAllocationUncheckedUpdateManyWithoutLicenseEntitlementNestedInput
+  entitlementAddons?: Prisma.LicenseEntitlementAddonUncheckedUpdateManyWithoutLicenseEntitlementNestedInput
 }
 
 export type LicenseEntitlementUncheckedUpdateManyWithoutContractInput = {
@@ -811,6 +996,8 @@ export type LicenseEntitlementUncheckedUpdateManyWithoutContractInput = {
   effectiveEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -823,6 +1010,8 @@ export type LicenseEntitlementCreateManyLicenseProductInput = {
   effectiveEnd?: Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
+  unitCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -834,10 +1023,13 @@ export type LicenseEntitlementUpdateWithoutLicenseProductInput = {
   effectiveEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   contract?: Prisma.ContractUpdateOneWithoutLicenseEntitlementsNestedInput
   allocations?: Prisma.LicenseAllocationUpdateManyWithoutLicenseEntitlementNestedInput
+  entitlementAddons?: Prisma.LicenseEntitlementAddonUpdateManyWithoutLicenseEntitlementNestedInput
 }
 
 export type LicenseEntitlementUncheckedUpdateWithoutLicenseProductInput = {
@@ -848,9 +1040,12 @@ export type LicenseEntitlementUncheckedUpdateWithoutLicenseProductInput = {
   effectiveEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   allocations?: Prisma.LicenseAllocationUncheckedUpdateManyWithoutLicenseEntitlementNestedInput
+  entitlementAddons?: Prisma.LicenseEntitlementAddonUncheckedUpdateManyWithoutLicenseEntitlementNestedInput
 }
 
 export type LicenseEntitlementUncheckedUpdateManyWithoutLicenseProductInput = {
@@ -861,6 +1056,8 @@ export type LicenseEntitlementUncheckedUpdateManyWithoutLicenseProductInput = {
   effectiveEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   allowedScope?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -872,10 +1069,12 @@ export type LicenseEntitlementUncheckedUpdateManyWithoutLicenseProductInput = {
 
 export type LicenseEntitlementCountOutputType = {
   allocations: number
+  entitlementAddons: number
 }
 
 export type LicenseEntitlementCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   allocations?: boolean | LicenseEntitlementCountOutputTypeCountAllocationsArgs
+  entitlementAddons?: boolean | LicenseEntitlementCountOutputTypeCountEntitlementAddonsArgs
 }
 
 /**
@@ -895,6 +1094,13 @@ export type LicenseEntitlementCountOutputTypeCountAllocationsArgs<ExtArgs extend
   where?: Prisma.LicenseAllocationWhereInput
 }
 
+/**
+ * LicenseEntitlementCountOutputType without action
+ */
+export type LicenseEntitlementCountOutputTypeCountEntitlementAddonsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LicenseEntitlementAddonWhereInput
+}
+
 
 export type LicenseEntitlementSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -905,11 +1111,14 @@ export type LicenseEntitlementSelect<ExtArgs extends runtime.Types.Extensions.In
   effectiveEnd?: boolean
   allowedScope?: boolean
   note?: boolean
+  unitCost?: boolean
+  currency?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   licenseProduct?: boolean | Prisma.LicenseProductDefaultArgs<ExtArgs>
   contract?: boolean | Prisma.LicenseEntitlement$contractArgs<ExtArgs>
   allocations?: boolean | Prisma.LicenseEntitlement$allocationsArgs<ExtArgs>
+  entitlementAddons?: boolean | Prisma.LicenseEntitlement$entitlementAddonsArgs<ExtArgs>
   _count?: boolean | Prisma.LicenseEntitlementCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["licenseEntitlement"]>
 
@@ -922,6 +1131,8 @@ export type LicenseEntitlementSelectCreateManyAndReturn<ExtArgs extends runtime.
   effectiveEnd?: boolean
   allowedScope?: boolean
   note?: boolean
+  unitCost?: boolean
+  currency?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   licenseProduct?: boolean | Prisma.LicenseProductDefaultArgs<ExtArgs>
@@ -937,6 +1148,8 @@ export type LicenseEntitlementSelectUpdateManyAndReturn<ExtArgs extends runtime.
   effectiveEnd?: boolean
   allowedScope?: boolean
   note?: boolean
+  unitCost?: boolean
+  currency?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   licenseProduct?: boolean | Prisma.LicenseProductDefaultArgs<ExtArgs>
@@ -952,15 +1165,18 @@ export type LicenseEntitlementSelectScalar = {
   effectiveEnd?: boolean
   allowedScope?: boolean
   note?: boolean
+  unitCost?: boolean
+  currency?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type LicenseEntitlementOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "licenseProductId" | "contractId" | "purchasedQuantity" | "effectiveStart" | "effectiveEnd" | "allowedScope" | "note" | "createdAt" | "updatedAt", ExtArgs["result"]["licenseEntitlement"]>
+export type LicenseEntitlementOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "licenseProductId" | "contractId" | "purchasedQuantity" | "effectiveStart" | "effectiveEnd" | "allowedScope" | "note" | "unitCost" | "currency" | "createdAt" | "updatedAt", ExtArgs["result"]["licenseEntitlement"]>
 export type LicenseEntitlementInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   licenseProduct?: boolean | Prisma.LicenseProductDefaultArgs<ExtArgs>
   contract?: boolean | Prisma.LicenseEntitlement$contractArgs<ExtArgs>
   allocations?: boolean | Prisma.LicenseEntitlement$allocationsArgs<ExtArgs>
+  entitlementAddons?: boolean | Prisma.LicenseEntitlement$entitlementAddonsArgs<ExtArgs>
   _count?: boolean | Prisma.LicenseEntitlementCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type LicenseEntitlementIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -978,6 +1194,7 @@ export type $LicenseEntitlementPayload<ExtArgs extends runtime.Types.Extensions.
     licenseProduct: Prisma.$LicenseProductPayload<ExtArgs>
     contract: Prisma.$ContractPayload<ExtArgs> | null
     allocations: Prisma.$LicenseAllocationPayload<ExtArgs>[]
+    entitlementAddons: Prisma.$LicenseEntitlementAddonPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -988,6 +1205,8 @@ export type $LicenseEntitlementPayload<ExtArgs extends runtime.Types.Extensions.
     effectiveEnd: Date | null
     allowedScope: runtime.JsonValue | null
     note: string | null
+    unitCost: runtime.Decimal | null
+    currency: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["licenseEntitlement"]>
@@ -1387,6 +1606,7 @@ export interface Prisma__LicenseEntitlementClient<T, Null = never, ExtArgs exten
   licenseProduct<T extends Prisma.LicenseProductDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LicenseProductDefaultArgs<ExtArgs>>): Prisma.Prisma__LicenseProductClient<runtime.Types.Result.GetResult<Prisma.$LicenseProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   contract<T extends Prisma.LicenseEntitlement$contractArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LicenseEntitlement$contractArgs<ExtArgs>>): Prisma.Prisma__ContractClient<runtime.Types.Result.GetResult<Prisma.$ContractPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   allocations<T extends Prisma.LicenseEntitlement$allocationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LicenseEntitlement$allocationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LicenseAllocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  entitlementAddons<T extends Prisma.LicenseEntitlement$entitlementAddonsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LicenseEntitlement$entitlementAddonsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LicenseEntitlementAddonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1424,6 +1644,8 @@ export interface LicenseEntitlementFieldRefs {
   readonly effectiveEnd: Prisma.FieldRef<"LicenseEntitlement", 'DateTime'>
   readonly allowedScope: Prisma.FieldRef<"LicenseEntitlement", 'Json'>
   readonly note: Prisma.FieldRef<"LicenseEntitlement", 'String'>
+  readonly unitCost: Prisma.FieldRef<"LicenseEntitlement", 'Decimal'>
+  readonly currency: Prisma.FieldRef<"LicenseEntitlement", 'String'>
   readonly createdAt: Prisma.FieldRef<"LicenseEntitlement", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"LicenseEntitlement", 'DateTime'>
 }
@@ -1862,6 +2084,30 @@ export type LicenseEntitlement$allocationsArgs<ExtArgs extends runtime.Types.Ext
   take?: number
   skip?: number
   distinct?: Prisma.LicenseAllocationScalarFieldEnum | Prisma.LicenseAllocationScalarFieldEnum[]
+}
+
+/**
+ * LicenseEntitlement.entitlementAddons
+ */
+export type LicenseEntitlement$entitlementAddonsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LicenseEntitlementAddon
+   */
+  select?: Prisma.LicenseEntitlementAddonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LicenseEntitlementAddon
+   */
+  omit?: Prisma.LicenseEntitlementAddonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LicenseEntitlementAddonInclude<ExtArgs> | null
+  where?: Prisma.LicenseEntitlementAddonWhereInput
+  orderBy?: Prisma.LicenseEntitlementAddonOrderByWithRelationInput | Prisma.LicenseEntitlementAddonOrderByWithRelationInput[]
+  cursor?: Prisma.LicenseEntitlementAddonWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LicenseEntitlementAddonScalarFieldEnum | Prisma.LicenseEntitlementAddonScalarFieldEnum[]
 }
 
 /**

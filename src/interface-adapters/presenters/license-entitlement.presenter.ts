@@ -18,10 +18,14 @@ export class LicenseEntitlementPresenter {
       effectiveEnd: entitlement.effectiveEnd,
       allowedScope: entitlement.allowedScope,
       note: entitlement.note,
+      unitCost: entitlement.unitCost,
+      currency: entitlement.currency,
       createdAt: entitlement.createdAt,
       updatedAt: entitlement.updatedAt,
       isActive: entitlement.isActive(),
       isExpired: entitlement.isExpired(),
+      totalCost: entitlement.calculateTotalCost(),
+      hasCostTracking: entitlement.hasCostTracking(),
     };
   }
 

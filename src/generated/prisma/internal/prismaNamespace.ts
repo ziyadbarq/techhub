@@ -443,6 +443,8 @@ export const ModelName = {
   LicenseProductField: 'LicenseProductField',
   LicenseEntitlement: 'LicenseEntitlement',
   LicenseAllocation: 'LicenseAllocation',
+  LicenseAddon: 'LicenseAddon',
+  LicenseEntitlementAddon: 'LicenseEntitlementAddon',
   DataDomain: 'DataDomain',
   DataOwnership: 'DataOwnership',
   VerificationCampaign: 'VerificationCampaign',
@@ -471,7 +473,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verification" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "organizationUnit" | "person" | "personRoleAssignment" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "maintenanceSchedule" | "maintenanceRecord" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "contractType" | "contract" | "contractLinkedObject" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "attachmentType" | "attachment" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock" | "featureFlag" | "featureFlagAuditLog"
+    modelProps: "user" | "account" | "session" | "verification" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "organizationUnit" | "person" | "personRoleAssignment" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "maintenanceSchedule" | "maintenanceRecord" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "contractType" | "contract" | "contractLinkedObject" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "attachmentType" | "attachment" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock" | "featureFlag" | "featureFlagAuditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -4841,6 +4843,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    LicenseAddon: {
+      payload: Prisma.$LicenseAddonPayload<ExtArgs>
+      fields: Prisma.LicenseAddonFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LicenseAddonFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseAddonPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LicenseAddonFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseAddonPayload>
+        }
+        findFirst: {
+          args: Prisma.LicenseAddonFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseAddonPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LicenseAddonFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseAddonPayload>
+        }
+        findMany: {
+          args: Prisma.LicenseAddonFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseAddonPayload>[]
+        }
+        create: {
+          args: Prisma.LicenseAddonCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseAddonPayload>
+        }
+        createMany: {
+          args: Prisma.LicenseAddonCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LicenseAddonCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseAddonPayload>[]
+        }
+        delete: {
+          args: Prisma.LicenseAddonDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseAddonPayload>
+        }
+        update: {
+          args: Prisma.LicenseAddonUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseAddonPayload>
+        }
+        deleteMany: {
+          args: Prisma.LicenseAddonDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LicenseAddonUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LicenseAddonUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseAddonPayload>[]
+        }
+        upsert: {
+          args: Prisma.LicenseAddonUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseAddonPayload>
+        }
+        aggregate: {
+          args: Prisma.LicenseAddonAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLicenseAddon>
+        }
+        groupBy: {
+          args: Prisma.LicenseAddonGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LicenseAddonGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LicenseAddonCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LicenseAddonCountAggregateOutputType> | number
+        }
+      }
+    }
+    LicenseEntitlementAddon: {
+      payload: Prisma.$LicenseEntitlementAddonPayload<ExtArgs>
+      fields: Prisma.LicenseEntitlementAddonFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LicenseEntitlementAddonFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseEntitlementAddonPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LicenseEntitlementAddonFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseEntitlementAddonPayload>
+        }
+        findFirst: {
+          args: Prisma.LicenseEntitlementAddonFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseEntitlementAddonPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LicenseEntitlementAddonFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseEntitlementAddonPayload>
+        }
+        findMany: {
+          args: Prisma.LicenseEntitlementAddonFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseEntitlementAddonPayload>[]
+        }
+        create: {
+          args: Prisma.LicenseEntitlementAddonCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseEntitlementAddonPayload>
+        }
+        createMany: {
+          args: Prisma.LicenseEntitlementAddonCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LicenseEntitlementAddonCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseEntitlementAddonPayload>[]
+        }
+        delete: {
+          args: Prisma.LicenseEntitlementAddonDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseEntitlementAddonPayload>
+        }
+        update: {
+          args: Prisma.LicenseEntitlementAddonUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseEntitlementAddonPayload>
+        }
+        deleteMany: {
+          args: Prisma.LicenseEntitlementAddonDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LicenseEntitlementAddonUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LicenseEntitlementAddonUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseEntitlementAddonPayload>[]
+        }
+        upsert: {
+          args: Prisma.LicenseEntitlementAddonUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LicenseEntitlementAddonPayload>
+        }
+        aggregate: {
+          args: Prisma.LicenseEntitlementAddonAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLicenseEntitlementAddon>
+        }
+        groupBy: {
+          args: Prisma.LicenseEntitlementAddonGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LicenseEntitlementAddonGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LicenseEntitlementAddonCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LicenseEntitlementAddonCountAggregateOutputType> | number
+        }
+      }
+    }
     DataDomain: {
       payload: Prisma.$DataDomainPayload<ExtArgs>
       fields: Prisma.DataDomainFieldRefs
@@ -6854,6 +7004,8 @@ export const LicenseEntitlementScalarFieldEnum = {
   effectiveEnd: 'effectiveEnd',
   allowedScope: 'allowedScope',
   note: 'note',
+  unitCost: 'unitCost',
+  currency: 'currency',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -6875,6 +7027,34 @@ export const LicenseAllocationScalarFieldEnum = {
 } as const
 
 export type LicenseAllocationScalarFieldEnum = (typeof LicenseAllocationScalarFieldEnum)[keyof typeof LicenseAllocationScalarFieldEnum]
+
+
+export const LicenseAddonScalarFieldEnum = {
+  id: 'id',
+  licenseProductId: 'licenseProductId',
+  name: 'name',
+  code: 'code',
+  description: 'description',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LicenseAddonScalarFieldEnum = (typeof LicenseAddonScalarFieldEnum)[keyof typeof LicenseAddonScalarFieldEnum]
+
+
+export const LicenseEntitlementAddonScalarFieldEnum = {
+  id: 'id',
+  licenseEntitlementId: 'licenseEntitlementId',
+  licenseAddonId: 'licenseAddonId',
+  cost: 'cost',
+  currency: 'currency',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type LicenseEntitlementAddonScalarFieldEnum = (typeof LicenseEntitlementAddonScalarFieldEnum)[keyof typeof LicenseEntitlementAddonScalarFieldEnum]
 
 
 export const DataDomainScalarFieldEnum = {
@@ -7724,6 +7904,8 @@ export type GlobalOmitConfig = {
   licenseProductField?: Prisma.LicenseProductFieldOmit
   licenseEntitlement?: Prisma.LicenseEntitlementOmit
   licenseAllocation?: Prisma.LicenseAllocationOmit
+  licenseAddon?: Prisma.LicenseAddonOmit
+  licenseEntitlementAddon?: Prisma.LicenseEntitlementAddonOmit
   dataDomain?: Prisma.DataDomainOmit
   dataOwnership?: Prisma.DataOwnershipOmit
   verificationCampaign?: Prisma.VerificationCampaignOmit

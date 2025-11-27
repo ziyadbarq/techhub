@@ -6,7 +6,10 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILicenseEntitlementRepository } from "@/core/repositories/license-entitlement.repository.interface";
 import { LicenseEntitlement } from "@/core/domain/entities/license-entitlement.entity";
-import type { PrismaClient, Prisma } from "@/generated/prisma/server";
+import type {
+  PrismaClient,
+  LicenseEntitlement as PrismaLicenseEntitlement,
+} from "@/generated/prisma/server";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { fromJsonValue, toJsonValue } from "./prisma-helpers";
 
@@ -29,6 +32,8 @@ export class PrismaLicenseEntitlementRepository
         effectiveEnd: entitlement.effectiveEnd,
         allowedScope: toJsonValue(entitlement.allowedScope),
         note: entitlement.note,
+        unitCost: entitlement.unitCost,
+        currency: entitlement.currency,
       },
     });
 
@@ -135,6 +140,8 @@ export class PrismaLicenseEntitlementRepository
         effectiveEnd: entitlement.effectiveEnd,
         allowedScope: toJsonValue(entitlement.allowedScope),
         note: entitlement.note,
+        unitCost: entitlement.unitCost,
+        currency: entitlement.currency,
         updatedAt: entitlement.updatedAt,
       },
     });
@@ -169,18 +176,7 @@ export class PrismaLicenseEntitlementRepository
   }
 
   // Map Prisma model to domain entity
-  private toDomain(data: {
-    id: string;
-    licenseProductId: string;
-    contractId: string | null;
-    purchasedQuantity: number;
-    effectiveStart: Date;
-    effectiveEnd: Date | null;
-    allowedScope: Prisma.JsonValue | null;
-    note: string | null;
-    createdAt: Date;
-    updatedAt: Date;
-  }): LicenseEntitlement {
+  private toDomain(data: PrismaLicenseEntitlement): LicenseEntitlement {
     return LicenseEntitlement.reconstitute({
       id: data.id,
       licenseProductId: data.licenseProductId,
@@ -190,6 +186,8 @@ export class PrismaLicenseEntitlementRepository
       effectiveEnd: data.effectiveEnd,
       allowedScope: fromJsonValue<Record<string, unknown>>(data.allowedScope),
       note: data.note,
+      unitCost: data.unitCost?.toNumber() ?? null,
+      currency: data.currency,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
     });
