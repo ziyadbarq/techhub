@@ -67,9 +67,85 @@ type PersonLinkResult =
   | { status: "created"; personId: string }
   | {
       status: "blocked";
-      reason: "missing-org-unit" | "missing-viewer-role" | "conflict";
+      reason:
+        | "missing-org-unit"
+        | "missing-viewer-role"
+        | "conflict"
+        | "person-not-found"
+        | "person-inactive"
+        | "person-excluded";
       message: string;
     };
+
+/**
+ * Validates that a Person record exists and is eligible for login.
+ * Used for SSO (Microsoft OAuth) to restrict login to pre-synced employees.
+ *
+ * @param email - The email to check
+ * @returns Validation result with Person ID if valid, or error reason if blocked
+ */
+const validatePersonForSSO = async (
+  email: string,
+): Promise<
+  | {
+      valid: true;
+      personId: string;
+      person: { firstName: string; lastName: string };
+    }
+  | {
+      valid: false;
+      reason: "person-not-found" | "person-inactive" | "person-excluded";
+      message: string;
+    }
+> => {
+  const normalizedEmail = email.toLowerCase();
+
+  const person = await prismaWithEncryption.person.findFirst({
+    where: {
+      email: { equals: normalizedEmail, mode: "insensitive" },
+    },
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      isActive: true,
+      isExcluded: true,
+    },
+  });
+
+  if (!person) {
+    return {
+      valid: false,
+      reason: "person-not-found",
+      message:
+        "No employee record found for this email. Please contact IT to be added to the system.",
+    };
+  }
+
+  if (!person.isActive) {
+    return {
+      valid: false,
+      reason: "person-inactive",
+      message:
+        "Your employee account has been deactivated. Please contact IT for assistance.",
+    };
+  }
+
+  if (person.isExcluded) {
+    return {
+      valid: false,
+      reason: "person-excluded",
+      message:
+        "This account is not permitted to access the system. Please contact IT for assistance.",
+    };
+  }
+
+  return {
+    valid: true,
+    personId: person.id,
+    person: { firstName: person.firstName, lastName: person.lastName },
+  };
+};
 
 const parseName = (name?: string | null) => {
   if (!name) return { firstName: "New", lastName: "User" };
@@ -81,11 +157,16 @@ const parseName = (name?: string | null) => {
   return { firstName: first || "New", lastName: rest.join(" ") || "User" };
 };
 
-const ensurePersonLinkedToUser = async (user: {
-  id: string;
-  email?: string | null;
-  name?: string | null;
-}): Promise<PersonLinkResult> => {
+const ensurePersonLinkedToUser = async (
+  user: {
+    id: string;
+    email?: string | null;
+    name?: string | null;
+  },
+  options: { allowCreation?: boolean } = { allowCreation: true },
+): Promise<PersonLinkResult> => {
+  const { allowCreation = true } = options;
+
   try {
     return await prismaWithEncryption.$transaction(async (tx) => {
       // Already linked
@@ -125,7 +206,17 @@ const ensurePersonLinkedToUser = async (user: {
         }
       }
 
-      // Create a new person using defaults
+      // If creation is not allowed (SSO), return blocked
+      if (!allowCreation) {
+        return {
+          status: "blocked",
+          reason: "person-not-found",
+          message:
+            "No employee record found for this email. SSO requires an existing Person record.",
+        };
+      }
+
+      // Create a new person using defaults (only for email/password auth)
       const orgUnit = await tx.organizationUnit.findFirst({
         orderBy: { createdAt: "asc" },
       });
@@ -571,12 +662,18 @@ export const auth = betterAuth({
 
   // Person entity linkage hook
   // Automatically creates/links Person entity for authenticated users
+  // SSO (Microsoft OAuth) requires Person to exist, be active, and not excluded
   hooks: {
     after: createAuthMiddleware(async (ctx) => {
       const path = ctx.path || "";
+      const isOAuthCallback = path.includes("/callback/microsoft");
+      const isEmailAuth =
+        path.includes("/sign-in/email") || path.includes("/sign-up/email");
 
       authDebugLog("info", "Better Auth hook fired", {
         path,
+        isOAuthCallback,
+        isEmailAuth,
         hasNewSession: !!ctx.context.newSession,
         hasUser: !!ctx.context.newSession?.user,
       });
@@ -602,14 +699,88 @@ export const auth = betterAuth({
         return;
       }
 
+      // For OAuth (Microsoft SSO), validate Person exists and is eligible
+      if (isOAuthCallback && user.email) {
+        authDebugLog("info", "Validating Person for SSO login", {
+          userId: user.id,
+          userEmail: user.email,
+        });
+
+        const validation = await validatePersonForSSO(user.email);
+
+        if (!validation.valid) {
+          // Person not found, inactive, or excluded - block access
+          console.warn(
+            `🚫 SSO login blocked for ${user.email}: ${validation.reason} - ${validation.message}`,
+          );
+          authDebugLog("warn", "SSO login blocked - Person validation failed", {
+            userId: user.id,
+            userEmail: user.email,
+            reason: validation.reason,
+          });
+
+          // Clean up: Delete the session, account, and user that were just created
+          try {
+            // Delete session first (foreign key constraint)
+            await prismaWithEncryption.session.deleteMany({
+              where: { userId: user.id },
+            });
+
+            // Delete account (OAuth provider link)
+            await prismaWithEncryption.account.deleteMany({
+              where: { userId: user.id },
+            });
+
+            // Delete the user record
+            await prismaWithEncryption.user.delete({
+              where: { id: user.id },
+            });
+
+            authDebugLog("info", "Cleaned up unauthorized SSO user records", {
+              userId: user.id,
+            });
+          } catch (cleanupError) {
+            console.error(
+              "Failed to clean up unauthorized SSO user records:",
+              cleanupError instanceof Error
+                ? cleanupError.message
+                : String(cleanupError),
+            );
+          }
+
+          // Redirect to error page with encoded message
+          const errorUrl = new URL(
+            "/auth/blocked",
+            process.env.BETTER_AUTH_URL || "http://localhost:3000",
+          );
+          errorUrl.searchParams.set("reason", validation.reason);
+          errorUrl.searchParams.set("message", validation.message);
+
+          return ctx.redirect(errorUrl.toString());
+        }
+
+        // Person is valid - proceed to link
+        authDebugLog("info", "SSO Person validation passed", {
+          userId: user.id,
+          personId: validation.personId,
+          personName: `${validation.person.firstName} ${validation.person.lastName}`,
+        });
+      }
+
       authDebugLog("info", "Processing person linkage for user", {
         userId: user.id,
         userEmail: user.email,
       });
 
-      const linkResult = await ensurePersonLinkedToUser(user);
+      // For OAuth: only link existing Person (no creation)
+      // For Email/Password: allow creation (for initial admin setup)
+      const linkResult = await ensurePersonLinkedToUser(user, {
+        allowCreation: !isOAuthCallback,
+      });
 
       if (linkResult.status === "blocked") {
+        // For OAuth, this shouldn't happen as we validated above
+        // For email/password, log and continue (don't block login, just Person linkage)
         console.error(
           "⚠️ Failed to auto-link user to person",
           linkResult.message,

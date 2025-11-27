@@ -184,7 +184,8 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 **Better Auth**:
 - Use repository layer for user creation (NOT Better Auth API)
 - Account type: All providers use `type: "oauth"` (intentional design)
-- See [SYSTEM_SETUP.md](docs/features/SYSTEM_SETUP.md#refactoring-lessons-learned)
+- SSO restriction: Microsoft OAuth requires pre-existing active Person record (blocks unknown users)
+- See [SYSTEM_SETUP.md](docs/features/SYSTEM_SETUP.md#sso-login-restriction-microsoft-oauth)
 
 **Dependency Injection**:
 - Resolve via `getContainer()`/`resolve()`, never use `new`

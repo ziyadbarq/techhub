@@ -299,6 +299,28 @@ All located in `src/interface-adapters/controllers/setup.controller.ts`:
 - **Storage**: Password hash stored in the Account table by Better Auth
 - **Recommendation**: Create users through Better Auth flows (/register, auth actions) to avoid invalid hashes
 
+### SSO Login Restriction (Microsoft OAuth)
+
+Microsoft OAuth login is restricted to employees who already exist in the Person database. This provides enterprise-grade security by ensuring only known employees can access the system via SSO.
+
+**Requirements for SSO Login:**
+1. **Person must exist**: Email must match an existing Person record (synced from MS Graph)
+2. **Person must be active**: `isActive === true`
+3. **Person must not be excluded**: `isExcluded === false` (not a service account)
+
+**What Happens When Blocked:**
+- OAuth User, Account, and Session records are automatically cleaned up
+- User is redirected to `/auth/blocked` with an error code
+- Error page displays reason: `person-not-found`, `person-inactive`, or `person-excluded`
+
+**Email/Password Login:**
+- Still allows Person creation (for initial admin setup before MS Graph sync)
+- Required for bootstrapping the first administrator
+
+**Files:**
+- `src/lib/auth/better-auth.ts` - SSO validation logic (`validatePersonForSSO()`)
+- `src/app/(auth)/auth/blocked/page.tsx` - Error page for blocked SSO attempts
+
 ### Setup Approach
 
 **Current Approach**: CLI for data seeding + UI for account creation

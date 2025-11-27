@@ -162,7 +162,26 @@ const { data: session } = useSession(); // Each component calls /api/auth/get-se
 
 **Note**: The `SessionProvider` wraps the dashboard layout. Components outside the dashboard (marketing pages) should use `authClient.getSession()` in useEffect instead.
 
-### 3c. Client-Side Permissions via usePermissions()
+### 3c. SSO Login Restriction (Microsoft OAuth)
+
+**Microsoft OAuth** login is restricted to employees who already exist in the Person database and meet these criteria:
+
+- **Person must exist**: Email must match an existing Person record (synced from MS Graph)
+- **Person must be active**: `isActive === true`
+- **Person must not be excluded**: `isExcluded === false` (not a service account)
+
+If validation fails, the user is redirected to `/auth/blocked` with an appropriate error message. The User/Account/Session records created during OAuth are automatically cleaned up.
+
+**Email/password login** still allows Person auto-creation for initial admin setup (bootstrapping).
+
+**Implementation**: See `src/lib/auth/better-auth.ts` - `validatePersonForSSO()` function and `after` hook.
+
+**Workflow for new employees:**
+1. Run MS Graph user sync to populate Person records
+2. Employees can then sign in via Microsoft OAuth
+3. Person record is automatically linked to User on first login
+
+### 3d. Client-Side Permissions via usePermissions()
 
 In client components within the dashboard, use `usePermissions()` hook which delegates to the centralized `PermissionsProvider`. This prevents duplicate permission API calls.
 

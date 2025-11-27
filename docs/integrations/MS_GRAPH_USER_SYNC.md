@@ -26,6 +26,25 @@
 
 ---
 
+## SSO Login Dependency
+
+> **⚠️ Important**: Microsoft OAuth (SSO) login requires a Person record to exist BEFORE the user can log in.
+>
+> The system validates that:
+> 1. A Person record exists with a matching email
+> 2. The Person is active (`isActive: true`)
+> 3. The Person is not excluded (`isExcluded: false`)
+>
+> **Workflow**: MS Graph Sync → Person Record Created → User Can Login via SSO
+>
+> If a user attempts SSO login without a corresponding Person record, they will be redirected to `/auth/blocked` with an error message. This ensures only employees synced from Microsoft Entra ID can access the system via SSO.
+>
+> Email/password login still allows Person auto-creation (for initial admin setup before Graph sync is configured).
+>
+> See: [SYSTEM_SETUP.md](../features/SYSTEM_SETUP.md#sso-login-restriction-microsoft-oauth)
+
+---
+
 ## Tech Stack Summary
 
 **Full-stack**: Next.js 16 (Turbopack) with React 19.2 on TypeScript 5.9. UI built with shadcn/ui components and Sonner for toasts. React Compiler enabled.
