@@ -199,6 +199,13 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 - 7-step wizard with auto-mapping, fuzzy matching, sanitization
 - See [roadmap/UNIVERSAL_DATA_IMPORTER.md](roadmap/UNIVERSAL_DATA_IMPORTER.md)
 
+**Custom Fields**:
+- Dynamic fields attached to Asset Categories via FieldDefinition + AssetCategoryField
+- Use `useCategoryFields(categoryId)` hook to fetch fields for a category
+- Components: `CustomFieldsSection` (form), `CustomFieldsDisplay` (read-only), `CustomFieldInput` (14 data types)
+- Asset.attributes JSON stores custom field values
+- See [roadmap/CUSTOM_FIELDS_COMPLETION.md](roadmap/CUSTOM_FIELDS_COMPLETION.md)
+
 **Refactoring**:
 - When files exceed 300-500 lines: Extract hooks, create sub-components, use builders
 - See [REFACTORING_PATTERNS.md](docs/guides/REFACTORING_PATTERNS.md)

@@ -24,6 +24,7 @@ import type {
 import { csvSanitizer } from "./csv-sanitizer";
 import { fieldValidator } from "./field-validators";
 import { lookupResolver } from "./lookup-resolver";
+import { extractCustomFieldValues } from "./custom-field-loader";
 
 /**
  * Import processor class
@@ -375,6 +376,21 @@ export class ImportProcessor {
           }
 
           if (!hasMissingLookup) {
+            // Extract custom field values from attributes.* keys
+            const customAttributes = extractCustomFieldValues(resolvedRow);
+            if (Object.keys(customAttributes).length > 0) {
+              // Merge with any existing attributes
+              resolvedRow.attributes = {
+                ...((resolvedRow.attributes as Record<string, unknown>) || {}),
+                ...customAttributes,
+              };
+              // Remove the individual attributes.* keys
+              for (const key of Object.keys(resolvedRow)) {
+                if (key.startsWith("attributes.")) {
+                  delete resolvedRow[key];
+                }
+              }
+            }
             resolvedBatch.push(resolvedRow);
           }
         }

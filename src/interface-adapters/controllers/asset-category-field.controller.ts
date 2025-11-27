@@ -20,7 +20,10 @@ import {
 import {
   AssetCategoryFieldPresenter,
   type AssetCategoryFieldDTO,
+  type EnrichedAssetCategoryFieldDTO,
+  type AssetCategoryFieldWithDefinition,
 } from "@/interface-adapters/presenters/asset-category-field.presenter";
+import type { IAssetCategoryFieldRepository } from "@/core/repositories/asset-category-field.repository.interface";
 import type {
   CreateAssetCategoryFieldUseCase,
   GetAssetCategoryFieldUseCase,
@@ -196,6 +199,44 @@ export async function deleteAssetCategoryFieldAction(
         error instanceof Error
           ? error.message
           : "Failed to delete asset category field",
+    };
+  }
+}
+
+/**
+ * List asset category fields with FieldDefinition details for a specific category
+ * Returns enriched DTOs with field name, label, dataType, etc.
+ */
+export async function listEnrichedAssetCategoryFieldsAction(
+  assetCategoryId: string,
+): Promise<ActionResponse<EnrichedAssetCategoryFieldDTO[]>> {
+  try {
+    await requirePermission(PERMISSIONS.ASSET_CATEGORY_FIELDS_VIEW);
+
+    const container = getContainer();
+    const repository = container.get<IAssetCategoryFieldRepository>(
+      DI_TOKENS.IAssetCategoryFieldRepository,
+    );
+
+    const fields =
+      await repository.findByAssetCategoryIdWithDefinition(assetCategoryId);
+
+    // Transform to enriched DTOs - the presenter handles type casting
+    const enrichedFields = AssetCategoryFieldPresenter.toEnrichedDTOList(
+      fields as AssetCategoryFieldWithDefinition[],
+    );
+
+    return {
+      success: true,
+      data: enrichedFields,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to list enriched asset category fields",
     };
   }
 }

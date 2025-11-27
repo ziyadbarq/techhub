@@ -125,6 +125,34 @@ export class PrismaAssetCategoryFieldRepository
     });
   }
 
+  /**
+   * Find fields by asset category ID with FieldDefinition included
+   * Returns raw Prisma result for enriched DTO creation
+   */
+  async findByAssetCategoryIdWithDefinition(assetCategoryId: string) {
+    const fields = await prisma.assetCategoryField.findMany({
+      where: { assetCategoryId },
+      orderBy: { uiOrder: "asc" },
+      include: {
+        fieldDefinition: {
+          select: {
+            id: true,
+            name: true,
+            label: true,
+            description: true,
+            dataType: true,
+            enumOptions: true,
+            validationRules: true,
+            defaultValue: true,
+            uiGroup: true,
+          },
+        },
+      },
+    });
+
+    return fields;
+  }
+
   private toDomain(prismaField: PrismaAssetCategoryField): AssetCategoryField {
     return AssetCategoryField.reconstitute({
       id: prismaField.id,

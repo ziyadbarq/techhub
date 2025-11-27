@@ -1,0 +1,285 @@
+# Custom Fields Feature Completion
+
+**Status**: ✅ Complete (Backend 100%, UI 100%)
+**Priority**: High
+**Complexity**: Medium
+**Completed**: November 2025
+
+## Overview
+
+Complete the Custom Fields feature to allow dynamic field definitions that can be attached to Asset Categories and rendered in Asset forms. This enables category-specific attributes (e.g., "OS Version" for Laptops, "Toner Level" for Printers) without schema changes.
+
+### Business Value
+
+- **Flexibility**: Add custom tracking fields without developer intervention
+- **Category-specific data**: Different fields for Laptops vs Servers vs Printers
+- **Searchable/Filterable**: Custom fields can be indexed for reporting
+- **Data Import**: Import assets with custom field values via CSV
+
+---
+
+## Implementation Summary
+
+### All Phases Complete ✅
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| 1 | Asset Category Fields Management | ✅ Complete |
+| 2 | Dynamic Asset Form Fields | ✅ Complete |
+| 3 | Asset Detail View Enhancement | ✅ Complete |
+| 4 | Data Import Integration | ✅ Complete |
+
+---
+
+## Files Created
+
+### Hooks
+- `src/hooks/use-category-fields.ts` - Fetches and caches custom fields for a category
+
+### Components
+- `src/components/custom-fields/index.ts` - Barrel exports
+- `src/components/custom-fields/custom-field-input.tsx` - Dynamic input component for all 14 data types
+- `src/components/custom-fields/custom-fields-section.tsx` - Form section with validation
+- `src/components/custom-fields/custom-fields-display.tsx` - Read-only display with formatting
+
+### Data Import
+- `src/lib/data-import/custom-field-loader.ts` - Loads category fields as EntityFieldConfig
+
+## Files Modified
+
+### Components
+- `src/components/assets/asset-form.tsx` - Integrated CustomFieldsSection with validation
+- `src/components/assets/asset-overview-tab.tsx` - Added CustomFieldsDisplay for attributes
+- `src/components/data-import/Step4FieldMapper.tsx` - Added Custom Fields section for Asset imports
+
+### Data Import Infrastructure
+- `src/lib/data-import/entity-config.types.ts` - Added `isCustomField` property
+- `src/lib/data-import/import-processor.ts` - Extracts `attributes.*` fields into `attributes` object
+
+---
+
+## Feature Details
+
+### Phase 1: Asset Category Fields Management ✅
+
+**Implemented**:
+- Category Fields Manager component on asset category detail page
+- Add/remove fields from categories with dropdown selector
+- Up/Down arrow buttons for field ordering (uiOrder)
+- Per-field configuration: isRequired, isVisible, defaultValue overrides
+- Real-time save of field configurations
+
+**Key Files**:
+- `src/app/(dashboard)/asset-categories/[id]/page.tsx`
+- Asset category detail page with custom fields tab
+
+### Phase 2: Dynamic Asset Form Fields ✅
+
+**Implemented**:
+- `useCategoryFields` hook with in-memory caching
+- `CustomFieldInput` component supporting all 14 data types:
+  - STRING, TEXT → Input/Textarea
+  - INTEGER, DECIMAL → Number inputs with validation
+  - BOOLEAN → Switch component
+  - DATE, DATETIME → DatePicker
+  - ENUM → Select with options
+  - JSON → Textarea with JSON validation
+  - CI_REFERENCE → ConfigurationItem lookup (by ciKey)
+  - PERSON_REFERENCE → Person lookup (by email)
+  - ORG_UNIT_REFERENCE → OrganizationUnit lookup (by code)
+  - LOCATION_REFERENCE → Location lookup (by code)
+- `CustomFieldsSection` component with grouping by uiGroup
+- `validateCustomFields` function for required/type validation
+- Asset form integration with category change detection
+
+**Key Files**:
+- `src/hooks/use-category-fields.ts`
+- `src/components/custom-fields/custom-field-input.tsx`
+- `src/components/custom-fields/custom-fields-section.tsx`
+- `src/components/assets/asset-form.tsx`
+
+### Phase 3: Asset Detail View Enhancement ✅
+
+**Implemented**:
+- `CustomFieldsDisplay` component with proper formatting per type
+- Reference types resolve to names with clickable links
+- Groups fields by uiGroup for organized display
+- Graceful handling of missing/undefined values
+- Added to asset overview tab when attributes exist
+
+**Key Files**:
+- `src/components/custom-fields/custom-fields-display.tsx`
+- `src/components/assets/asset-overview-tab.tsx`
+
+### Phase 4: Data Import Integration ✅
+
+**Implemented**:
+- `loadCustomFieldsForCategory()` - Converts category fields to EntityFieldConfig format
+- `extractCustomFieldValues()` - Extracts `attributes.*` keys into `attributes` object
+- Step4FieldMapper custom fields section:
+  - Detects Asset imports
+  - Reads category from first row of CSV preview
+  - Resolves category code → ID using lookupMaps
+  - Loads custom fields dynamically
+  - Auto-maps custom fields to CSV columns
+  - Purple-themed UI with "Custom" badge
+  - Required custom fields block continue button if unmapped
+- Import processor integration for `attributes.*` field extraction
+
+**Key Files**:
+- `src/lib/data-import/custom-field-loader.ts`
+- `src/lib/data-import/import-processor.ts`
+- `src/components/data-import/Step4FieldMapper.tsx`
+- `src/lib/data-import/entity-config.types.ts`
+
+**CSV Format**:
+```csv
+assetTag,assetCategoryId,serialNumber,os_version,eas_activated,operating_system
+LAP-001,LAPTOP,SN123,10.0.26100,true,Windows
+```
+
+Mapped as:
+```json
+{
+  "assetTag": "LAP-001",
+  "assetCategoryId": "LAPTOP",
+  "serialNumber": "SN123",
+  "attributes": {
+    "os_version": "10.0.26100",
+    "eas_activated": true,
+    "operating_system": "Windows"
+  }
+}
+```
+
+---
+
+## Architecture
+
+### Data Flow for Asset Form
+
+```
+1. User selects Asset Category (e.g., LAPTOP)
+         │
+         ▼
+2. useCategoryFields hook fetches fields
+   → Returns: [
+       { fieldName: "os_version", dataType: "STRING", isRequired: true, ... },
+       { fieldName: "eas_activated", dataType: "BOOLEAN", isRequired: false, ... }
+     ]
+         │
+         ▼
+3. CustomFieldsSection renders CustomFieldInput for each field
+   → STRING → <Input />
+   → BOOLEAN → <Switch />
+   → ENUM → <Select options={enumOptions} />
+   → DATE → <DatePicker />
+   → CI_REFERENCE → <SearchableSelect with CI lookup />
+         │
+         ▼
+4. On submit, validateCustomFields() checks requirements
+         │
+         ▼
+5. Custom values merged into Asset.attributes JSON
+   → { os_version: "10.0.26100", eas_activated: true }
+         │
+         ▼
+6. Save asset with attributes
+```
+
+### Data Flow for Import
+
+```
+1. User selects ASSET entity and uploads CSV
+         │
+         ▼
+2. Step4FieldMapper detects assetCategoryId mapping
+         │
+         ▼
+3. Reads category code from first preview row
+         │
+         ▼
+4. Resolves category code → ID using lookupMaps
+         │
+         ▼
+5. loadCustomFieldsForCategory() fetches fields
+         │
+         ▼
+6. Custom Fields section appears with mapping options
+         │
+         ▼
+7. Auto-maps columns matching field names/labels
+         │
+         ▼
+8. On import, extractCustomFieldValues() consolidates
+   attributes.* → attributes object
+```
+
+---
+
+## Database Schema
+
+```prisma
+model FieldDefinition {
+  id              String   @id @default(cuid())
+  name            String   @unique    // e.g., "os_version"
+  label           String              // e.g., "OS Version"
+  dataType        FieldDataTypeEnum   // STRING, BOOLEAN, ENUM, etc.
+  entityType      String              // "Asset"
+  isGlobal        Boolean
+  isRequired      Boolean
+  isUnique        Boolean
+  validationRules Json?
+  defaultValue    Json?
+  enumOptions     Json?               // ["Windows", "macOS", "Linux"]
+  isSearchable    Boolean
+  isFilterable    Boolean
+  isActive        Boolean
+
+  assetCategoryFields AssetCategoryField[]
+}
+
+model AssetCategoryField {
+  id                String   @id @default(cuid())
+  assetCategoryId   String
+  fieldDefinitionId String
+  isRequired        Boolean  @default(false)  // Override
+  isVisible         Boolean  @default(true)
+  defaultValue      Json?                     // Override
+  uiOrder           Int      @default(0)
+  uiGroup           String?                   // Grouping
+
+  assetCategory   AssetCategory   @relation
+  fieldDefinition FieldDefinition @relation
+
+  @@unique([assetCategoryId, fieldDefinitionId])
+}
+
+model Asset {
+  // ... standard fields ...
+  attributes Json?  // Stores custom field values
+}
+```
+
+---
+
+## Success Criteria ✅
+
+1. ✅ Admin can create field definitions at `/field-definitions`
+2. ✅ Admin can attach fields to asset categories with configuration
+3. ✅ Asset form dynamically renders custom fields based on category
+4. ✅ Asset detail view displays custom field values
+5. ✅ Data import supports custom field columns
+6. ✅ Custom field values stored in `Asset.attributes` JSON
+
+---
+
+## Future Enhancements (Phase 5)
+
+The following are optional enhancements that can be implemented later:
+
+- [ ] Add custom field filters to asset list page
+- [ ] Index searchable custom fields (if isSearchable=true)
+- [ ] Add custom field columns to asset data table
+- [ ] Drag-and-drop reordering in Category Fields Manager
+- [ ] Advanced validation rules (cross-field, conditional)

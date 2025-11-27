@@ -147,6 +147,9 @@ export interface EntityFieldConfig {
   // Import behavior
   canIgnore?: boolean; // Can this field be skipped during import?
   autoMap?: string[]; // Alternative column names for auto-mapping
+
+  // Custom field indicator
+  isCustomField?: boolean; // True if this is a dynamic custom field from FieldDefinition
 }
 
 /**

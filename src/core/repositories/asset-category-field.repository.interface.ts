@@ -59,4 +59,35 @@ export interface IAssetCategoryFieldRepository {
    * Count fields for an asset category
    */
   countByAssetCategoryId(assetCategoryId: string): Promise<number>;
+
+  /**
+   * Find fields by asset category ID with FieldDefinition included
+   * Returns fields with nested fieldDefinition for UI enrichment
+   * Note: Returns raw Prisma types - caller should cast appropriately
+   */
+  findByAssetCategoryIdWithDefinition(assetCategoryId: string): Promise<
+    Array<{
+      id: string;
+      assetCategoryId: string;
+      fieldDefinitionId: string;
+      isRequired: boolean;
+      isUnique: boolean;
+      isVisible: boolean;
+      defaultValue: unknown;
+      uiOrder: number;
+      createdAt: Date;
+      updatedAt: Date;
+      fieldDefinition: {
+        id: string;
+        name: string;
+        label: string;
+        description: string | null;
+        dataType: string;
+        enumOptions: unknown;
+        validationRules: unknown;
+        defaultValue: unknown;
+        uiGroup: string | null;
+      };
+    }>
+  >;
 }

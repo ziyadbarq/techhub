@@ -9,16 +9,19 @@
  * - Required vs optional field distinction
  * - Unmapped column handling
  * - Field info tooltips
+ * - Custom fields support for Asset imports
  */
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import type {
   EntityConfig,
+  EntityFieldConfig,
   ParsedFile,
   ColumnMapping,
   LookupMap,
 } from "@/lib/data-import/entity-config.types";
 import { importProcessor } from "@/lib/data-import/import-processor";
+import { loadCustomFieldsForCategory } from "@/lib/data-import/custom-field-loader";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -48,6 +51,8 @@ import {
   Wand2,
   ExternalLink,
   Sparkles,
+  Loader2,
+  Puzzle,
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -82,6 +87,133 @@ export function Step4FieldMapper({
   // Track if we've shown the initial toast
   const hasShownToast = useRef(false);
 
+  // Custom fields state for Asset imports
+  const [customFields, setCustomFields] = useState<EntityFieldConfig[]>([]);
+  const [customFieldsLoading, setCustomFieldsLoading] = useState(false);
+  const [detectedCategoryId, setDetectedCategoryId] = useState<string | null>(
+    null,
+  );
+  const [detectedCategoryCode, setDetectedCategoryCode] = useState<
+    string | null
+  >(null);
+
+  /**
+   * Check if this is an Asset import and detect the category from CSV data
+   */
+  const isAssetImport = entity.key === "ASSET";
+
+  /**
+   * Detect category from CSV data when assetCategoryId is mapped
+   */
+  useEffect(() => {
+    if (!isAssetImport) return;
+
+    // Find the CSV column mapped to assetCategoryId
+    let categoryColumn: string | null = null;
+    for (const [col, fieldName] of mappings.entries()) {
+      if (fieldName === "assetCategoryId") {
+        categoryColumn = col;
+        break;
+      }
+    }
+
+    if (!categoryColumn) {
+      setDetectedCategoryId(null);
+      setDetectedCategoryCode(null);
+      setCustomFields([]);
+      return;
+    }
+
+    // Get the category value from the first row of preview data
+    const firstRow = parsedFile.preview[0];
+    if (!firstRow) {
+      setDetectedCategoryId(null);
+      setDetectedCategoryCode(null);
+      setCustomFields([]);
+      return;
+    }
+
+    const categoryValue = String(firstRow[categoryColumn] || "").trim();
+    if (!categoryValue) {
+      setDetectedCategoryId(null);
+      setDetectedCategoryCode(null);
+      setCustomFields([]);
+      return;
+    }
+
+    // Use lookupMaps to resolve category code to ID
+    const categoryMap =
+      lookupMaps.get("assetCategoryId") ?? lookupMaps.get("AssetCategory");
+    if (!categoryMap) {
+      setDetectedCategoryCode(categoryValue);
+      setDetectedCategoryId(null);
+      return;
+    }
+
+    // Try to find the category ID from the lookup map
+    const categoryId =
+      categoryMap.entries.get(categoryValue.toLowerCase()) ??
+      categoryMap.entries.get(categoryValue.toUpperCase()) ??
+      categoryMap.entries.get(categoryValue);
+
+    setDetectedCategoryCode(categoryValue);
+    setDetectedCategoryId(categoryId ?? null);
+  }, [isAssetImport, mappings, parsedFile.preview, lookupMaps]);
+
+  /**
+   * Load custom fields when category is detected
+   */
+  useEffect(() => {
+    if (!detectedCategoryId) {
+      setCustomFields([]);
+      return;
+    }
+
+    const loadFields = async () => {
+      setCustomFieldsLoading(true);
+      try {
+        const fields = await loadCustomFieldsForCategory(detectedCategoryId);
+        setCustomFields(fields);
+
+        // Auto-map custom fields to CSV columns if possible
+        if (fields.length > 0) {
+          const customFieldAutoMapped = importProcessor.autoMapColumns(
+            parsedFile.columns,
+            fields.map((f) => ({
+              name: f.name,
+              label: f.label,
+              autoMap: f.autoMap,
+            })),
+          );
+
+          // Merge with existing mappings
+          setMappings((prev) => {
+            const newMappings = new Map(prev);
+            for (const [col, fieldName] of customFieldAutoMapped.entries()) {
+              // Only add if not already mapped
+              if (!newMappings.has(col)) {
+                newMappings.set(col, fieldName);
+              }
+            }
+            return newMappings;
+          });
+
+          if (customFieldAutoMapped.size > 0) {
+            toast.info(
+              `${customFieldAutoMapped.size} custom field(s) auto-mapped`,
+            );
+          }
+        }
+      } catch {
+        setCustomFields([]);
+      } finally {
+        setCustomFieldsLoading(false);
+      }
+    };
+
+    loadFields();
+  }, [detectedCategoryId, parsedFile.columns]);
+
   /**
    * Show toast for auto-mapping (only once on initial render)
    */
@@ -95,10 +227,17 @@ export function Step4FieldMapper({
   }, [mappings.size]);
 
   /**
-   * Get column mappings array
+   * Get all fields including custom fields
+   */
+  const allFields = useMemo((): EntityFieldConfig[] => {
+    return [...entity.fields, ...customFields];
+  }, [entity.fields, customFields]);
+
+  /**
+   * Get column mappings array (including custom fields)
    */
   const columnMappings = useMemo((): ColumnMapping[] => {
-    return entity.fields.map((field) => {
+    return allFields.map((field) => {
       // Find CSV column mapped to this field
       let csvColumn: string | null = null;
       let autoMapped = false;
@@ -120,7 +259,7 @@ export function Step4FieldMapper({
         confidence: autoMapped ? 85 : 0,
       };
     });
-  }, [mappings, entity.fields]);
+  }, [mappings, allFields]);
 
   /**
    * Handle mapping change (unused - keeping for potential future use)
@@ -209,13 +348,24 @@ export function Step4FieldMapper({
   }, [parsedFile.columns, mappings]);
 
   /**
-   * Get unmapped required fields
+   * Get required custom field names
    */
+  const requiredCustomFieldNames = useMemo(() => {
+    return customFields.filter((f) => f.required).map((f) => f.name);
+  }, [customFields]);
+
+  /**
+   * Get all required field names (entity + custom)
+   */
+  const allRequiredFieldNames = useMemo(() => {
+    return [...entity.requiredFields, ...requiredCustomFieldNames];
+  }, [entity.requiredFields, requiredCustomFieldNames]);
+
   const unmappedRequiredFields = useMemo(() => {
-    return entity.requiredFields.filter((fieldName) => {
+    return allRequiredFieldNames.filter((fieldName) => {
       return !Array.from(mappings.values()).includes(fieldName);
     });
-  }, [entity.requiredFields, mappings]);
+  }, [allRequiredFieldNames, mappings]);
 
   /**
    * Can continue?
@@ -239,7 +389,7 @@ export function Step4FieldMapper({
    * Get field info
    */
   const getFieldInfo = (fieldName: string) => {
-    return entity.fields.find((f) => f.name === fieldName);
+    return allFields.find((f) => f.name === fieldName);
   };
 
   /**
@@ -600,6 +750,176 @@ export function Step4FieldMapper({
                   </div>
                 );
               })}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Custom Fields Section (for Asset imports) */}
+      {isAssetImport && (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Puzzle className="h-5 w-5 text-purple-600" />
+                <div>
+                  <CardTitle className="text-base">
+                    Custom Fields
+                    {customFields.length > 0 && ` (${customFields.length})`}
+                  </CardTitle>
+                  <CardDescription>
+                    {detectedCategoryCode
+                      ? `Category-specific fields for "${detectedCategoryCode}"`
+                      : "Map the Asset Category field to load custom fields"}
+                  </CardDescription>
+                </div>
+              </div>
+              {customFieldsLoading && (
+                <Loader2 className="text-muted-foreground h-4 w-4 animate-spin" />
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            {!detectedCategoryId && !customFieldsLoading && (
+              <div className="text-muted-foreground py-4 text-center">
+                {detectedCategoryCode ? (
+                  <p className="text-sm">
+                    Category &quot;{detectedCategoryCode}&quot; not found.
+                    Please check the category code in your CSV.
+                  </p>
+                ) : (
+                  <p className="text-sm">
+                    Map the <strong>Asset Category Code</strong> field above to
+                    load custom fields for that category.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {customFieldsLoading && (
+              <div className="text-muted-foreground py-4 text-center">
+                <Loader2 className="mx-auto mb-2 h-6 w-6 animate-spin" />
+                <p className="text-sm">Loading custom fields...</p>
+              </div>
+            )}
+
+            {detectedCategoryId &&
+              customFields.length === 0 &&
+              !customFieldsLoading && (
+                <div className="text-muted-foreground py-4 text-center">
+                  <p className="text-sm">
+                    No custom fields defined for this category.
+                  </p>
+                </div>
+              )}
+
+            {customFields.length > 0 && !customFieldsLoading && (
+              <div className="space-y-3">
+                {customFields.map((field) => {
+                  const mappedColumn = getMappedColumn(field.name);
+                  const isMapped = mappedColumn !== "__unmapped__";
+
+                  return (
+                    <div key={field.name} className="space-y-2">
+                      <div className="flex items-center gap-3 rounded-lg border border-purple-200 bg-purple-50/50 p-3 dark:border-purple-800 dark:bg-purple-950/20">
+                        {/* Status Icon */}
+                        <div className="flex-shrink-0">
+                          {isMapped ? (
+                            <CheckCircle2 className="h-5 w-5 text-green-600" />
+                          ) : field.required ? (
+                            <XCircle className="h-5 w-5 text-red-600" />
+                          ) : (
+                            <div className="border-muted h-5 w-5 rounded-full border-2" />
+                          )}
+                        </div>
+
+                        {/* Field Info */}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium">{field.label}</span>
+                            {field.required ? (
+                              <Badge variant="destructive" className="text-xs">
+                                Required
+                              </Badge>
+                            ) : (
+                              <Badge variant="secondary" className="text-xs">
+                                Optional
+                              </Badge>
+                            )}
+                            <Badge
+                              variant="outline"
+                              className="border-purple-300 bg-purple-100 text-xs text-purple-700 dark:border-purple-700 dark:bg-purple-900 dark:text-purple-300"
+                            >
+                              Custom
+                            </Badge>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger>
+                                  <Info className="text-muted-foreground h-4 w-4" />
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-sm">
+                                  <div className="space-y-1">
+                                    <p className="font-medium">
+                                      {field.description || field.label}
+                                    </p>
+                                    <p className="text-xs">
+                                      Type: {field.type}
+                                    </p>
+                                    {field.examples &&
+                                      field.examples.length > 0 && (
+                                        <p className="text-xs">
+                                          Examples: {field.examples.join(", ")}
+                                        </p>
+                                      )}
+                                  </div>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </div>
+                          <p className="text-muted-foreground truncate text-sm">
+                            {field.name}
+                          </p>
+                        </div>
+
+                        {/* Mapping Selector */}
+                        <div className="w-64">
+                          <SearchableSelect
+                            options={columnOptions}
+                            value={mappedColumn}
+                            onValueChange={(value) =>
+                              handleFieldChange(field.name, value)
+                            }
+                            placeholder="Select column..."
+                            searchPlaceholder="Search columns..."
+                            emptyMessage="No matching columns"
+                            maxVisibleItems={5}
+                          />
+                        </div>
+                      </div>
+                      {field.type === "lookup" ? (
+                        <div className="text-muted-foreground ml-12 flex flex-wrap items-center gap-2 text-xs">
+                          {getLookupSamples(field.name).length > 0 ? (
+                            <>
+                              <span>Sample values:</span>
+                              {getLookupSamples(field.name).map((val, idx) => (
+                                <Badge
+                                  key={`${field.name}-${val || idx}`}
+                                  variant="outline"
+                                  className="bg-muted/50"
+                                >
+                                  {val || "–"}
+                                </Badge>
+                              ))}
+                            </>
+                          ) : (
+                            <span>No sample values found</span>
+                          )}
+                        </div>
+                      ) : null}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </CardContent>
         </Card>
       )}

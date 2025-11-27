@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CurrencyDisplay } from "@/components/ui/currency-display";
+import { CustomFieldsDisplay } from "@/components/custom-fields";
 import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { convertCurrencyAction } from "@/interface-adapters/controllers/exchange-rate.controller";
@@ -160,7 +161,8 @@ export function AssetOverviewTab({ asset }: AssetOverviewTabProps) {
               <div className="text-sm font-semibold">
                 {isLoadingConversion ? (
                   <span className="text-muted-foreground">
-                    {asset.currency || "SAR"} {asset.purchaseCost.toLocaleString()} (converting...)
+                    {asset.currency || "SAR"}{" "}
+                    {asset.purchaseCost.toLocaleString()} (converting...)
                   </span>
                 ) : (
                   <CurrencyDisplay
@@ -261,24 +263,20 @@ export function AssetOverviewTab({ asset }: AssetOverviewTabProps) {
         </Card>
       )}
 
-      {/* Attributes */}
+      {/* Custom Fields */}
       {asset.attributes && Object.keys(asset.attributes).length > 0 && (
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>Additional Attributes</CardTitle>
-            <CardDescription>Custom fields and properties</CardDescription>
+            <CardTitle>Custom Fields</CardTitle>
+            <CardDescription>
+              Category-specific custom attributes
+            </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {Object.entries(asset.attributes).map(([key, value]) => (
-                <div key={key}>
-                  <p className="text-muted-foreground text-sm font-medium capitalize">
-                    {key.replace(/_/g, " ")}
-                  </p>
-                  <p className="text-sm">{String(value)}</p>
-                </div>
-              ))}
-            </div>
+            <CustomFieldsDisplay
+              categoryId={asset.assetCategoryId}
+              attributes={asset.attributes as Record<string, unknown>}
+            />
           </CardContent>
         </Card>
       )}

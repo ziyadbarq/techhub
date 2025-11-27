@@ -5,7 +5,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import { InlineEditableField } from "@/components/ui/inline-editable-field";
@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
 import {
   Select,
   SelectContent,
@@ -62,6 +63,13 @@ import type { StockLocationDTO } from "@/interface-adapters/presenters/stock-loc
 import type { LifecycleStateDTO } from "@/interface-adapters/presenters/lifecycle-state.presenter";
 import { isValidAssetCondition } from "@/core/domain/value-objects/asset-condition";
 import { SUPPORTED_CURRENCIES } from "@/lib/currencies.config";
+import {
+  CustomFieldsSection,
+  validateCustomFields,
+  type CustomFieldValues,
+  type CustomFieldErrors,
+} from "@/components/custom-fields";
+import { useCategoryFields } from "@/hooks/use-category-fields";
 
 interface AssetFormProps {
   open: boolean;
@@ -98,6 +106,14 @@ export function AssetForm({
     [],
   );
   const [loading, setLoading] = useState(true);
+
+  // Custom fields state
+  const [customFieldValues, setCustomFieldValues] = useState<CustomFieldValues>(
+    () => (asset?.attributes as CustomFieldValues) ?? {},
+  );
+  const [customFieldErrors, setCustomFieldErrors] = useState<CustomFieldErrors>(
+    {},
+  );
 
   // Memoized options for searchable dropdowns
   const categoryOptions: SearchableSelectOption[] = useMemo(
@@ -188,8 +204,26 @@ export function AssetForm({
         ? new Date(asset.warrantyEndDate)
         : undefined,
       note: asset?.note ?? "",
+      attributes: (asset?.attributes as Record<string, unknown>) ?? null,
     },
   });
+
+  // Watch the selected category ID for custom fields
+  const selectedCategoryId = useWatch({
+    control: form.control,
+    name: "assetCategoryId",
+  });
+
+  // Fetch custom fields for the selected category
+  const { fields: categoryFields } = useCategoryFields(selectedCategoryId);
+
+  // Reset custom field values when category changes (but not on initial load when editing)
+  useEffect(() => {
+    if (!isEditing && selectedCategoryId) {
+      setCustomFieldValues({});
+      setCustomFieldErrors({});
+    }
+  }, [selectedCategoryId, isEditing]);
 
   // Load categories, models, and vendors when dialog opens
   useEffect(() => {
@@ -260,18 +294,41 @@ export function AssetForm({
         ? new Date(asset.warrantyEndDate)
         : undefined,
       note: asset?.note ?? "",
+      attributes: (asset?.attributes as Record<string, unknown>) ?? null,
     });
+    // Reset custom field values when asset changes (editing mode)
+    setCustomFieldValues((asset?.attributes as CustomFieldValues) ?? {});
+    setCustomFieldErrors({});
   }, [asset, form]);
 
   const onSubmit = async (data: CreateAssetDTO) => {
+    // Validate custom fields before submission
+    const visibleFields = categoryFields.filter((f) => f.isVisible);
+    const errors = validateCustomFields(visibleFields, customFieldValues);
+
+    if (Object.keys(errors).length > 0) {
+      setCustomFieldErrors(errors);
+      toast.error("Please fix the custom field errors");
+      return;
+    }
+
+    // Include custom field values in the submission
+    const submitData: CreateAssetDTO = {
+      ...data,
+      attributes:
+        Object.keys(customFieldValues).length > 0 ? customFieldValues : null,
+    };
+
     try {
       const result = isEditing
-        ? await updateAssetAction(asset.id, data)
-        : await createAssetAction(data);
+        ? await updateAssetAction(asset.id, submitData)
+        : await createAssetAction(submitData);
 
       if (result.success) {
         toast.success(isEditing ? "Asset updated!" : "Asset created!");
         form.reset();
+        setCustomFieldValues({});
+        setCustomFieldErrors({});
         onOpenChange(false);
         onSuccess();
       } else {
@@ -335,6 +392,21 @@ export function AssetForm({
                   </FormItem>
                 )}
               />
+
+              {/* Custom Fields Section - appears when a category is selected */}
+              {selectedCategoryId && (
+                <>
+                  <Separator className="my-4" />
+                  <CustomFieldsSection
+                    categoryId={selectedCategoryId}
+                    values={customFieldValues}
+                    onChange={setCustomFieldValues}
+                    errors={customFieldErrors}
+                    disabled={loading || form.formState.isSubmitting}
+                  />
+                  <Separator className="my-4" />
+                </>
+              )}
 
               {/* Asset Model */}
               <FormField

@@ -6,7 +6,8 @@
 
 import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Trash2, Pencil } from "lucide-react";
+import Link from "next/link";
+import { MoreHorizontal, Trash2, Pencil, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -109,7 +110,12 @@ export function AssetCategoriesTable({
         const name = row.getValue("name") as string;
         return (
           <div className="flex flex-col gap-1">
-            <span className="font-medium">{name}</span>
+            <Link
+              href={`/asset-categories/${row.original.id}`}
+              className="hover:text-primary font-medium hover:underline"
+            >
+              {name}
+            </Link>
             <span className="text-muted-foreground text-xs">
               {row.original.code}
             </span>
@@ -178,10 +184,6 @@ export function AssetCategoriesTable({
         const canUpdate = hasPermission(PERMISSIONS.ASSET_CATEGORIES_UPDATE);
         const canDelete = hasPermission(PERMISSIONS.ASSET_CATEGORIES_DELETE);
 
-        if (!canUpdate && !canDelete) {
-          return null;
-        }
-
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -193,6 +195,12 @@ export function AssetCategoriesTable({
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href={`/asset-categories/${assetCategory.id}`}>
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  View Details
+                </Link>
+              </DropdownMenuItem>
               {canUpdate && (
                 <DropdownMenuItem onClick={() => onEdit(assetCategory)}>
                   <Pencil className="mr-2 h-4 w-4" />

@@ -22,6 +22,7 @@ This folder contains detailed specifications for planned features that are not y
 
 - [RBAC Improvements](RBAC_IMPROVEMENTS.md) - **Status: Planned** - Enhanced validation and enforcement: Bidirectional conflict detection, SoD enforcement in bulk assignment, server-side permission dependency validation, UI improvements (role name comparison, same-day expiration), and audit logging for blocked operations
 - [Universal Data Importer](UNIVERSAL_DATA_IMPORTER.md) - **Status: Partially Complete** - Core complete (7-step wizard, validation engine, fuzzy matching), extensions pending (64 entity configurations, import history, bulk actions for remaining entities). Currently functional for Assets and Persons.
+- [Custom Fields Completion](CUSTOM_FIELDS_COMPLETION.md) - **Status: ✅ Complete** - Dynamic field definitions attached to Asset Categories with full UI integration: category field management, dynamic form rendering (14 data types), asset detail display, and data import support.
 
 ### Layer 2 (Asset Management)
 
