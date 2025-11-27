@@ -65,7 +65,7 @@ export function Logo({
   priority = false,
   useFallback = false,
 }: LogoProps) {
-  const { theme, systemTheme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [error, setError] = useState(false);
 
@@ -75,9 +75,8 @@ export function Logo({
     setMounted(true);
   }, []);
 
-  // Determine effective theme
-  const effectiveTheme = theme === "system" ? systemTheme : theme;
-  const isDark = mounted && effectiveTheme === "dark";
+  // Use resolvedTheme which handles system preference automatically
+  const isDark = mounted && resolvedTheme === "dark";
 
   /**
    * Fallback URL for logo when local files fail to load

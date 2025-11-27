@@ -93,7 +93,7 @@ export default function RegisterPage() {
         </Button>
       </div>
       {/* Left Side - Branding */}
-      <div className="bg-muted/30 dark:from-barq-yellow/10 dark:via-background dark:to-barq-light-blue/10 relative hidden flex-1 flex-col justify-between border-r p-12 lg:flex dark:border-r-0 dark:bg-gradient-to-br">
+      <div className="dark:from-barq-yellow/10 dark:via-background dark:to-barq-light-blue/10 relative hidden flex-1 flex-col justify-between border-r bg-stone-100 p-12 transition-all duration-300 lg:flex dark:border-r-0 dark:bg-transparent dark:bg-gradient-to-br">
         {/* Background Pattern */}
         <div className="bg-grid-pattern absolute inset-0 opacity-5" />
 
@@ -167,7 +167,7 @@ export default function RegisterPage() {
       </div>
 
       {/* Right Side - Registration Form */}
-      <div className="flex flex-1 items-center justify-center p-8">
+      <div className="bg-background flex flex-1 items-center justify-center p-8">
         <div className="w-full max-w-md space-y-8">
           {/* Mobile Logo */}
           <div className="flex justify-center lg:hidden">

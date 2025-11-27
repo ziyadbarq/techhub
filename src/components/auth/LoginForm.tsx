@@ -115,17 +115,19 @@ export function LoginForm() {
           )}
         />
 
-        <div className="flex items-center justify-between">
-          <Link
-            href="/register"
-            className="text-barq-yellow hover:text-barq-yellow/80 text-sm font-medium underline-offset-4 hover:underline"
-          >
-            Need an account?
-          </Link>
-          <span className="text-muted-foreground text-sm opacity-50">
-            Forgot password?
-          </span>
-        </div>
+        {process.env.NEXT_PUBLIC_ENABLE_EMAIL_REGISTRATION !== "false" && (
+          <div className="flex items-center justify-between">
+            <Link
+              href="/register"
+              className="text-barq-yellow hover:text-barq-yellow/80 text-sm font-medium underline-offset-4 hover:underline"
+            >
+              Need an account?
+            </Link>
+            <span className="text-muted-foreground cursor-not-allowed text-sm">
+              Forgot password?
+            </span>
+          </div>
+        )}
 
         <Button
           type="submit"
