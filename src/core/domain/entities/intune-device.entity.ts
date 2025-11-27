@@ -108,6 +108,8 @@ export interface CreateIntuneDeviceProps {
 }
 
 export interface UpdateIntuneDeviceProps {
+  // Allow updating intuneDeviceId for re-enrollment scenarios
+  intuneDeviceId?: string;
   azureAdDeviceId?: string | null;
   deviceName?: string;
   serialNumber?: string | null;
@@ -195,6 +197,12 @@ export class IntuneDevice {
    * Update device properties (typically from sync)
    */
   update(props: UpdateIntuneDeviceProps): void {
+    // Handle intuneDeviceId update (re-enrollment scenario)
+    if (props.intuneDeviceId !== undefined) {
+      IntuneDevice.validateIntuneDeviceId(props.intuneDeviceId);
+      this.props.intuneDeviceId = props.intuneDeviceId.trim();
+    }
+
     if (props.deviceName !== undefined) {
       IntuneDevice.validateDeviceName(props.deviceName);
       this.props.deviceName = props.deviceName.trim();

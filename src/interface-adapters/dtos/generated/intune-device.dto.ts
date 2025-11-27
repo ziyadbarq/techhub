@@ -128,7 +128,8 @@ export const TriggerIntuneSyncSchema = z.object({
   autoLinkToPersons: z.boolean().default(true),
   trackComplianceHistory: z.boolean().default(true),
   deactivateMissing: z.boolean().default(true),
-  ownershipType: z.enum(["corporate", "personal"]).optional(),
+  // Note: Graph API uses "company" for corporate-owned devices
+  ownershipType: z.enum(["company", "personal"]).optional(),
   complianceState: z.enum(["compliant", "noncompliant"]).optional(),
   operatingSystem: z.string().optional(),
   dryRun: z.boolean().default(false),

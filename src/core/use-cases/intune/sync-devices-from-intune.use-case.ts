@@ -166,11 +166,18 @@ export class SyncDevicesFromIntuneUseCase {
           const syncInput = transformGraphDeviceToSyncInput(graphDevice);
           currentIntuneIds.push(syncInput.intuneDeviceId);
 
-          // Find existing device by Intune Device ID
-          const existingDevice =
-            await this.deviceRepository.findByIntuneDeviceId(
-              syncInput.intuneDeviceId,
+          // Find existing device by Intune Device ID or Azure AD Device ID
+          // (handles re-enrolled devices where intuneDeviceId changes but azureAdDeviceId remains)
+          let existingDevice = await this.deviceRepository.findByIntuneDeviceId(
+            syncInput.intuneDeviceId,
+          );
+
+          // If not found by intuneDeviceId, try azureAdDeviceId (re-enrollment case)
+          if (!existingDevice && syncInput.azureAdDeviceId) {
+            existingDevice = await this.deviceRepository.findByAzureAdDeviceId(
+              syncInput.azureAdDeviceId,
             );
+          }
 
           if (existingDevice) {
             // Track compliance changes before update
@@ -190,6 +197,8 @@ export class SyncDevicesFromIntuneUseCase {
             // Update existing device
             if (!opts.dryRun) {
               existingDevice.update({
+                // Update intuneDeviceId in case of re-enrollment
+                intuneDeviceId: syncInput.intuneDeviceId,
                 azureAdDeviceId: syncInput.azureAdDeviceId,
                 deviceName: syncInput.deviceName,
                 serialNumber: syncInput.serialNumber,
@@ -300,12 +309,12 @@ export class SyncDevicesFromIntuneUseCase {
         } catch (error) {
           result.errors.push({
             intuneDeviceId: graphDevice.id,
-            deviceName: graphDevice.deviceName,
+            deviceName: graphDevice.deviceName ?? undefined,
             error: error instanceof Error ? error.message : String(error),
           });
           this.logger.warn("Failed to sync device", {
             intuneDeviceId: graphDevice.id,
-            deviceName: graphDevice.deviceName,
+            deviceName: graphDevice.deviceName ?? "Unknown",
             error: error instanceof Error ? error.message : String(error),
           });
         }

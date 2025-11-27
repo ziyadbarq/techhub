@@ -13,48 +13,129 @@
 import { z } from "zod";
 
 /**
+ * Valid ownership types from Graph API
+ */
+export type GraphOwnershipType = "company" | "personal" | "unknown";
+
+/**
  * Ownership type as returned by Graph API
  * Maps to our IntuneDeviceOwnershipType enum
+ *
+ * Note: MS Graph API returns "company" (not "corporate")
+ * Reference: https://learn.microsoft.com/en-us/graph/api/resources/intune-devices-manageddevice
+ *
+ * This schema is resilient to unexpected values - unknown values default to "unknown"
  */
-export const GraphOwnershipTypeSchema = z.enum([
-  "corporate",
-  "personal",
-  "unknown",
-]);
+export const GraphOwnershipTypeSchema = z
+  .string()
+  .nullable()
+  .optional()
+  .transform((val): GraphOwnershipType => {
+    const normalized = val?.toLowerCase()?.trim();
+    // Handle both "company" (Graph API) and "corporate" (legacy/alternative)
+    if (normalized === "company" || normalized === "corporate")
+      return "company";
+    if (normalized === "personal") return "personal";
+    return "unknown";
+  });
+
+/**
+ * Valid compliance states from Graph API
+ */
+export type GraphComplianceState =
+  | "compliant"
+  | "noncompliant"
+  | "conflict"
+  | "error"
+  | "inGracePeriod"
+  | "configManager"
+  | "unknown";
 
 /**
  * Compliance state as returned by Graph API
  * Maps to our IntuneComplianceState enum
+ *
+ * This schema is resilient to unexpected values - unknown values default to "unknown"
  */
-export const GraphComplianceStateSchema = z.enum([
-  "compliant",
-  "noncompliant",
-  "conflict",
-  "error",
-  "inGracePeriod",
-  "configManager",
-  "unknown",
-]);
+export const GraphComplianceStateSchema = z
+  .string()
+  .nullable()
+  .optional()
+  .transform((val): GraphComplianceState => {
+    const normalized = val?.toLowerCase()?.trim();
+    if (normalized === "compliant") return "compliant";
+    if (normalized === "noncompliant" || normalized === "non-compliant")
+      return "noncompliant";
+    if (normalized === "conflict") return "conflict";
+    if (normalized === "error") return "error";
+    if (normalized === "ingraceperiod" || normalized === "in_grace_period")
+      return "inGracePeriod";
+    if (normalized === "configmanager" || normalized === "config_manager")
+      return "configManager";
+    return "unknown";
+  });
+
+/**
+ * Valid management states from Graph API
+ */
+export type GraphManagementState =
+  | "managed"
+  | "retirePending"
+  | "retireIssued"
+  | "wipePending"
+  | "wipeIssued"
+  | "unhealthy"
+  | "deletePending"
+  | "discovered";
 
 /**
  * Management state as returned by Graph API
  * Maps to our IntuneManagementState enum
+ *
+ * This schema is resilient to unexpected values - unknown values default to "managed"
  */
-export const GraphManagementStateSchema = z.enum([
-  "managed",
-  "retirePending",
-  "retireIssued",
-  "wipePending",
-  "wipeIssued",
-  "unhealthy",
-  "deletePending",
-  "discovered",
-]);
+export const GraphManagementStateSchema = z
+  .string()
+  .nullable()
+  .optional()
+  .transform((val): GraphManagementState => {
+    const normalized = val?.toLowerCase()?.trim();
+    if (normalized === "managed") return "managed";
+    if (normalized === "retirepending" || normalized === "retire_pending")
+      return "retirePending";
+    if (normalized === "retireissued" || normalized === "retire_issued")
+      return "retireIssued";
+    if (normalized === "wipepending" || normalized === "wipe_pending")
+      return "wipePending";
+    if (normalized === "wipeissued" || normalized === "wipe_issued")
+      return "wipeIssued";
+    if (normalized === "unhealthy") return "unhealthy";
+    if (normalized === "deletepending" || normalized === "delete_pending")
+      return "deletePending";
+    if (normalized === "discovered") return "discovered";
+    return "managed"; // Default to managed for unknown states
+  });
+
+/**
+ * Valid jail broken statuses from Graph API
+ */
+export type GraphJailBroken = "Unknown" | "True" | "False";
 
 /**
  * Jail broken status as returned by Graph API
+ *
+ * This schema is resilient to unexpected values - unknown values default to "Unknown"
  */
-export const GraphJailBrokenSchema = z.enum(["Unknown", "True", "False"]);
+export const GraphJailBrokenSchema = z
+  .string()
+  .nullable()
+  .optional()
+  .transform((val): GraphJailBroken => {
+    const normalized = val?.toLowerCase()?.trim();
+    if (normalized === "true" || normalized === "yes") return "True";
+    if (normalized === "false" || normalized === "no") return "False";
+    return "Unknown";
+  });
 
 /**
  * Schema for a single managed device from Microsoft Graph Intune API
@@ -64,10 +145,14 @@ export const GraphJailBrokenSchema = z.enum(["Unknown", "True", "False"]);
 export const GraphIntuneDeviceSchema = z.object({
   // Always present
   id: z.string(), // Intune device ID (GUID)
-  deviceName: z.string(),
-  managedDeviceOwnerType: GraphOwnershipTypeSchema.default("unknown"),
-  complianceState: GraphComplianceStateSchema.default("unknown"),
-  managementState: GraphManagementStateSchema.default("managed"),
+  // Device name can be empty/null in some edge cases, provide fallback
+  deviceName: z
+    .string()
+    .nullable()
+    .transform((val) => val?.trim() || null),
+  managedDeviceOwnerType: GraphOwnershipTypeSchema,
+  complianceState: GraphComplianceStateSchema,
+  managementState: GraphManagementStateSchema,
 
   // Usually present
   azureADDeviceId: z.string().nullable().default(null),
@@ -88,7 +173,7 @@ export const GraphIntuneDeviceSchema = z.object({
   // Security status
   isEncrypted: z.boolean().default(false),
   isSupervised: z.boolean().default(false),
-  jailBroken: GraphJailBrokenSchema.default("Unknown"),
+  jailBroken: GraphJailBrokenSchema,
 
   // Timestamps
   enrolledDateTime: z.string().datetime().nullable().default(null),
@@ -123,8 +208,9 @@ export type GraphIntuneDevicesResponse = z.infer<
 export interface FetchDevicesOptions {
   /**
    * Include only devices with specific ownership type
+   * Note: Use "company" for corporate devices (Graph API terminology)
    */
-  ownershipType?: "corporate" | "personal";
+  ownershipType?: "company" | "personal";
 
   /**
    * Include only devices with specific compliance state
@@ -139,12 +225,13 @@ export interface FetchDevicesOptions {
 
 /**
  * Maps Graph API ownership type to our Prisma enum value
+ * Note: Graph API uses "company" which maps to our "CORPORATE" enum
  */
 export function mapOwnershipType(
   graphType: z.infer<typeof GraphOwnershipTypeSchema>,
 ): "CORPORATE" | "PERSONAL" | "UNKNOWN" {
   const mapping: Record<string, "CORPORATE" | "PERSONAL" | "UNKNOWN"> = {
-    corporate: "CORPORATE",
+    company: "CORPORATE", // Graph API uses "company", we use "CORPORATE"
     personal: "PERSONAL",
     unknown: "UNKNOWN",
   };
@@ -282,6 +369,7 @@ export interface IntuneDeviceSyncInput {
  * - Maps Graph API enum values to our Prisma enum format
  * - Converts ISO datetime strings to Date objects
  * - Normalizes null/undefined values
+ * - Provides fallback device name for edge cases
  *
  * @param graphDevice - Validated Graph Intune device data
  * @returns Data ready for IntuneDevice entity creation/update
@@ -289,10 +377,18 @@ export interface IntuneDeviceSyncInput {
 export function transformGraphDeviceToSyncInput(
   graphDevice: GraphIntuneDevice,
 ): IntuneDeviceSyncInput {
+  // Generate fallback device name if missing
+  // Use model, serial number, or ID as fallback
+  const deviceName =
+    graphDevice.deviceName ||
+    graphDevice.model ||
+    graphDevice.serialNumber ||
+    `Device-${graphDevice.id.substring(0, 8)}`;
+
   return {
     intuneDeviceId: graphDevice.id,
     azureAdDeviceId: graphDevice.azureADDeviceId ?? null,
-    deviceName: graphDevice.deviceName,
+    deviceName,
     serialNumber: graphDevice.serialNumber ?? null,
     manufacturer: graphDevice.manufacturer ?? null,
     model: graphDevice.model ?? null,

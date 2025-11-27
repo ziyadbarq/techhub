@@ -6,7 +6,7 @@
  * Client component for the Intune devices list page.
  */
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { RefreshCw, Laptop } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,27 +15,48 @@ import { IntuneDevicesTable } from "./intune-devices-table";
 import {
   listIntuneDevicesAction,
   triggerIntuneSyncAction,
+  getIntuneComplianceStatsAction,
 } from "@/interface-adapters/controllers/intune-device.controller";
-import type { IntuneDeviceDTO } from "@/interface-adapters/dtos/generated/intune-device.dto";
+import type {
+  IntuneDeviceDTO,
+  IntuneComplianceStatsDTO,
+} from "@/interface-adapters/dtos/generated/intune-device.dto";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 interface IntuneDevicesPageClientProps {
   initialDevices: IntuneDeviceDTO[];
   initialTotal: number;
+  initialStats?: IntuneComplianceStatsDTO;
 }
 
 export function IntuneDevicesPageClient({
   initialDevices,
   initialTotal,
+  initialStats,
 }: IntuneDevicesPageClientProps) {
   const [devices, setDevices] = useState<IntuneDeviceDTO[]>(initialDevices);
   const [total, setTotal] = useState(initialTotal);
+  const [stats, setStats] = useState<IntuneComplianceStatsDTO | null>(
+    initialStats ?? null,
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
   const { hasPermission } = usePermissions();
 
   const canSync = hasPermission(PERMISSIONS.INTUNE_DEVICES_SYNC);
+
+  // Load stats from API (provides accurate counts from database)
+  const loadStats = useCallback(async () => {
+    try {
+      const result = await getIntuneComplianceStatsAction();
+      if (result.success) {
+        setStats(result.data);
+      }
+    } catch {
+      // Silently fail - stats will show 0 or cached values
+    }
+  }, []);
 
   const loadDevices = useCallback(async () => {
     setIsLoading(true);
@@ -62,7 +83,8 @@ export function IntuneDevicesPageClient({
         toast.success(
           `Sync complete: ${result.data.created} created, ${result.data.updated} updated`,
         );
-        await loadDevices();
+        // Reload both devices and stats after sync
+        await Promise.all([loadDevices(), loadStats()]);
       } else {
         toast.error(result.error || "Sync failed");
       }
@@ -71,7 +93,14 @@ export function IntuneDevicesPageClient({
     } finally {
       setIsSyncing(false);
     }
-  }, [loadDevices]);
+  }, [loadDevices, loadStats]);
+
+  // Load stats on mount if not provided initially
+  useEffect(() => {
+    if (!initialStats) {
+      loadStats();
+    }
+  }, [initialStats, loadStats]);
 
   return (
     <div className="space-y-6">
@@ -105,7 +134,9 @@ export function IntuneDevicesPageClient({
             <CardTitle className="text-sm font-medium">Total Devices</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{total}</div>
+            <div className="text-2xl font-bold">
+              {stats?.ownership.total ?? total}
+            </div>
           </CardContent>
         </Card>
         <Card>
@@ -114,7 +145,7 @@ export function IntuneDevicesPageClient({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {devices.filter((d) => d.ownershipType === "CORPORATE").length}
+              {stats?.ownership.corporate ?? 0}
             </div>
           </CardContent>
         </Card>
@@ -124,7 +155,7 @@ export function IntuneDevicesPageClient({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {devices.filter((d) => d.complianceState === "COMPLIANT").length}
+              {stats?.compliance.compliant ?? 0}
             </div>
           </CardContent>
         </Card>
@@ -134,10 +165,7 @@ export function IntuneDevicesPageClient({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-600">
-              {
-                devices.filter((d) => d.complianceState === "NON_COMPLIANT")
-                  .length
-              }
+              {stats?.compliance.nonCompliant ?? 0}
             </div>
           </CardContent>
         </Card>

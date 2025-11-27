@@ -162,6 +162,8 @@ export class PrismaIntuneDeviceRepository implements IIntuneDeviceRepository {
       const updated = await this.prisma.intuneDevice.update({
         where: { id: device.id },
         data: {
+          // Include intuneDeviceId for re-enrollment scenarios
+          intuneDeviceId: device.intuneDeviceId,
           azureAdDeviceId: device.azureAdDeviceId,
           deviceName: device.deviceName,
           serialNumber: device.serialNumber,

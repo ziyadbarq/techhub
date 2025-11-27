@@ -196,9 +196,10 @@ export interface IntuneSyncJobData extends BaseJobData {
   deactivateMissing?: boolean;
 
   /**
-   * Filter by ownership type (corporate or personal)
+   * Filter by ownership type
+   * Note: Graph API uses "company" for corporate-owned devices
    */
-  ownershipType?: "corporate" | "personal";
+  ownershipType?: "company" | "personal";
 
   /**
    * Filter by compliance state
