@@ -7,6 +7,7 @@ set -euo pipefail
 
 # Configuration
 PROJECT_DIR="/home/opc/node-projects/barq-assets"
+LOG_FILE="$PROJECT_DIR/logs/auto-sync.log"
 LOCK_FILE="/tmp/barq-sync.lock"
 LOCK_TIMEOUT=600  # 10 minutes - stale lock threshold
 WEB_USER="www"
@@ -85,7 +86,11 @@ echo $$ > "$LOCK_FILE"
 
 cd "$PROJECT_DIR" || { log_error "Failed to cd to $PROJECT_DIR"; notify_error "Failed to cd to $PROJECT_DIR"; exit 1; }
 
-echo "=== Barq Auto-Sync ==="
+# Setup logging - overwrite log file each run (keeps only last run)
+mkdir -p "$(dirname "$LOG_FILE")"
+exec > >(tee "$LOG_FILE") 2>&1
+
+echo "=== Barq Auto-Sync [$(date '+%Y-%m-%d %H:%M:%S')] ==="
 echo "→ Checking for updates..."
 
 # Mark directory as safe for git (handles ownership differences)
