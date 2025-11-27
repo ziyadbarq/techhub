@@ -159,6 +159,94 @@ export async function toggleFeatureFlagAction(
 }
 
 /**
+ * Bulk toggle all feature flags (enable all / disable all)
+ * Excludes MAINTENANCE_MODE from bulk operations for safety
+ */
+export async function bulkToggleFeatureFlagsAction(
+  enable: boolean,
+  reason?: string,
+): Promise<
+  ActionResponse<{
+    toggledCount: number;
+    skippedFlags: string[];
+  }>
+> {
+  try {
+    await requirePermission(PERMISSIONS.FEATURE_FLAGS_MANAGE);
+
+    const session = await getSession();
+    if (!session?.user) {
+      return {
+        success: false,
+        error: "Authentication required",
+      };
+    }
+
+    // Get all feature flags
+    const allFlags = await prisma.featureFlag.findMany();
+
+    // Exclude MAINTENANCE_MODE from bulk operations
+    const flagsToToggle = allFlags.filter(
+      (flag) => flag.name !== "MAINTENANCE_MODE",
+    );
+    const skippedFlags = allFlags
+      .filter((flag) => flag.name === "MAINTENANCE_MODE")
+      .map((f) => f.name);
+
+    // Toggle each flag
+    const action = enable ? "enabled" : "disabled";
+    let toggledCount = 0;
+
+    for (const flag of flagsToToggle) {
+      // Only toggle if the current state differs from the target state
+      if (flag.isEnabled !== enable) {
+        await prisma.featureFlag.update({
+          where: { id: flag.id },
+          data: { isEnabled: enable },
+        });
+
+        // Create audit log entry
+        await prisma.featureFlagAuditLog.create({
+          data: {
+            featureName: flag.name,
+            action,
+            userId: session.user.id,
+            userEmail: session.user.email ?? "unknown",
+            reason: reason ?? `Bulk ${action} all features`,
+          },
+        });
+
+        // Invalidate cache for this flag
+        await invalidateFeatureCache(flag.name);
+
+        toggledCount++;
+      }
+    }
+
+    // Revalidate paths
+    revalidatePath("/admin/features");
+    revalidatePath("/");
+
+    return {
+      success: true,
+      data: {
+        toggledCount,
+        skippedFlags,
+      },
+    };
+  } catch (error) {
+    console.error("Error bulk toggling feature flags:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to bulk toggle feature flags",
+    };
+  }
+}
+
+/**
  * Get audit log for a feature flag
  */
 export async function getFeatureFlagAuditLogAction(

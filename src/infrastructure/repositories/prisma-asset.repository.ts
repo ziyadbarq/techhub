@@ -70,6 +70,16 @@ export class PrismaAssetRepository implements IAssetRepository {
     return asset ? this.toDomain(asset) : null;
   }
 
+  async findByIds(ids: string[]): Promise<Asset[]> {
+    if (ids.length === 0) return [];
+
+    const assets = await this.prisma.asset.findMany({
+      where: { id: { in: ids } },
+    });
+
+    return assets.map((a) => this.toDomain(a));
+  }
+
   async findByAssetTag(assetTag: string): Promise<Asset | null> {
     const asset = await this.prisma.asset.findUnique({
       where: { assetTag: assetTag.toUpperCase() },

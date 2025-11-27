@@ -31,6 +31,11 @@ export interface IAssetRepository {
   findById(id: string): Promise<Asset | null>;
 
   /**
+   * Find multiple assets by IDs (batch fetch)
+   */
+  findByIds(ids: string[]): Promise<Asset[]>;
+
+  /**
    * Find asset by asset tag (unique identifier)
    */
   findByAssetTag(assetTag: string): Promise<Asset | null>;

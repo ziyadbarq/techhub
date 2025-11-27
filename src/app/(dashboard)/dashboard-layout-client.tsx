@@ -1,22 +1,34 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useSyncExternalStore, type ReactNode } from "react";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { GlobalLoading } from "@/components/global-loading";
 import { CommandPaletteProvider } from "@/components/search/command-palette-provider";
-import { FeatureFlagsChecker } from "@/components/features/feature-flags-checker";
+import { FeatureFlagsProvider } from "@/contexts/feature-flags-context";
+import { SidebarSkeleton } from "@/components/layout/sidebar/SidebarSkeleton";
+import { HeaderSkeleton } from "@/components/layout/HeaderSkeleton";
+
+// Hydration detection using useSyncExternalStore (React 18+ recommended pattern)
+// This fixes "Cannot read properties of null (reading 'useRef')" errors
+// that occur when Better-Auth's useSession() is called before React is ready
+const emptySubscribe = () => () => {};
+
+function useHydrated(): boolean {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true, // Client: always hydrated
+    () => false, // Server: not hydrated
+  );
+}
 
 export function DashboardLayoutClient({ children }: { children: ReactNode }) {
-  const [isMounted, setIsMounted] = useState(false);
+  const isHydrated = useHydrated();
 
-  // Only render after client-side hydration to avoid SSR issues with auth hooks
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsMounted(true);
-  }, []);
+  if (!isHydrated) {
+    return <GlobalLoading />;
+  }
 
   // Check if we're on a special page that needs full-width layout (no padding/max-width)
   // Add your special routes here (e.g., editor pages, canvas pages, etc.)
@@ -27,37 +39,37 @@ export function DashboardLayoutClient({ children }: { children: ReactNode }) {
     ? "flex-1 overflow-y-auto bg-muted/40"
     : "flex-1 overflow-y-auto bg-muted/40 p-4 md:p-6 lg:p-8";
 
-  // Show loading state during SSR/hydration
-  if (!isMounted) {
-    return <GlobalLoading />;
-  }
-
   return (
     <ErrorBoundary>
-      <FeatureFlagsChecker />
-      <CommandPaletteProvider>
-        <div className="bg-background relative flex min-h-screen">
-          {/* Sidebar - Manages its own responsive state */}
-          <Sidebar />
+      <FeatureFlagsProvider>
+        <CommandPaletteProvider>
+          <div className="bg-background relative flex min-h-screen">
+            {/* Sidebar with Suspense for non-blocking load */}
+            <Suspense fallback={<SidebarSkeleton />}>
+              <Sidebar />
+            </Suspense>
 
-          {/* Main Content Area */}
-          <div className="flex min-h-screen flex-1 flex-col">
-            {/* Header with breadcrumbs and user actions */}
-            <Header />
+            {/* Main Content Area */}
+            <div className="flex min-h-screen flex-1 flex-col">
+              {/* Header with Suspense for non-blocking load */}
+              <Suspense fallback={<HeaderSkeleton />}>
+                <Header />
+              </Suspense>
 
-            {/* Page Content */}
-            <main className={mainClasses}>
-              {isFullWidthPage ? (
-                <Suspense fallback={<GlobalLoading />}>{children}</Suspense>
-              ) : (
-                <div className="mx-auto max-w-7xl">
+              {/* Page Content */}
+              <main className={mainClasses}>
+                {isFullWidthPage ? (
                   <Suspense fallback={<GlobalLoading />}>{children}</Suspense>
-                </div>
-              )}
-            </main>
+                ) : (
+                  <div className="mx-auto max-w-7xl">
+                    <Suspense fallback={<GlobalLoading />}>{children}</Suspense>
+                  </div>
+                )}
+              </main>
+            </div>
           </div>
-        </div>
-      </CommandPaletteProvider>
+        </CommandPaletteProvider>
+      </FeatureFlagsProvider>
     </ErrorBoundary>
   );
 }

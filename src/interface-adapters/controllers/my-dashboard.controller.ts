@@ -112,21 +112,23 @@ export async function getMyAssetsAction(): Promise<
       person.id,
     );
 
-    // Fetch asset details for each assignment
-    const myAssets: MyAssetDTO[] = await Promise.all(
-      assignments.map(async (assignment) => {
-        const asset = await assetRepository.findById(assignment.assetId);
-        return {
-          id: assignment.id,
-          assetId: assignment.assetId,
-          assetTag: asset?.assetTag || null,
-          assetCategoryId: asset?.assetCategoryId || null,
-          assetModelId: asset?.assetModelId || null,
-          condition: assignment.conditionOnAssignment || null,
-          assignedAt: assignment.startDate.toISOString(),
-        };
-      }),
-    );
+    // Batch fetch all assets in a single query (fixes N+1)
+    const assetIds = assignments.map((a) => a.assetId);
+    const assets = await assetRepository.findByIds(assetIds);
+    const assetMap = new Map(assets.map((a) => [a.id, a]));
+
+    const myAssets: MyAssetDTO[] = assignments.map((assignment) => {
+      const asset = assetMap.get(assignment.assetId);
+      return {
+        id: assignment.id,
+        assetId: assignment.assetId,
+        assetTag: asset?.assetTag || null,
+        assetCategoryId: asset?.assetCategoryId || null,
+        assetModelId: asset?.assetModelId || null,
+        condition: assignment.conditionOnAssignment || null,
+        assignedAt: assignment.startDate.toISOString(),
+      };
+    });
 
     return { success: true, data: myAssets };
   } catch (error) {
@@ -184,21 +186,23 @@ export async function getMyReservationsAction(): Promise<
 
     const reservations = await reservationRepository.findByPersonId(person.id);
 
-    // Fetch asset details for each reservation
-    const myReservations: MyReservationDTO[] = await Promise.all(
-      reservations.map(async (res) => {
-        const asset = await assetRepository.findById(res.assetId);
-        return {
-          id: res.id,
-          assetId: res.assetId,
-          assetTag: asset?.assetTag || null,
-          startDate: res.startDate.toISOString(),
-          endDate: res.endDate.toISOString(),
-          status: res.status,
-          purpose: res.purpose,
-        };
-      }),
-    );
+    // Batch fetch all assets in a single query (fixes N+1)
+    const assetIds = reservations.map((r) => r.assetId);
+    const assets = await assetRepository.findByIds(assetIds);
+    const assetMap = new Map(assets.map((a) => [a.id, a]));
+
+    const myReservations: MyReservationDTO[] = reservations.map((res) => {
+      const asset = assetMap.get(res.assetId);
+      return {
+        id: res.id,
+        assetId: res.assetId,
+        assetTag: asset?.assetTag || null,
+        startDate: res.startDate.toISOString(),
+        endDate: res.endDate.toISOString(),
+        status: res.status,
+        purpose: res.purpose,
+      };
+    });
 
     return { success: true, data: myReservations };
   } catch (error) {
@@ -259,21 +263,23 @@ export async function getMyMaintenanceTasksAction(): Promise<
       isActive: true,
     });
 
-    // Fetch asset details for each schedule
-    const myTasks: MyMaintenanceTaskDTO[] = await Promise.all(
-      schedules.map(async (schedule) => {
-        const asset = await assetRepository.findById(schedule.assetId);
-        return {
-          id: schedule.id,
-          assetId: schedule.assetId,
-          assetTag: asset?.assetTag || null,
-          title: schedule.title,
-          nextDueDate: schedule.nextDueDate?.toISOString() || null,
-          priority: schedule.priority,
-          scheduleType: schedule.scheduleType.toString(),
-        };
-      }),
-    );
+    // Batch fetch all assets in a single query (fixes N+1)
+    const assetIds = schedules.map((s) => s.assetId);
+    const assets = await assetRepository.findByIds(assetIds);
+    const assetMap = new Map(assets.map((a) => [a.id, a]));
+
+    const myTasks: MyMaintenanceTaskDTO[] = schedules.map((schedule) => {
+      const asset = assetMap.get(schedule.assetId);
+      return {
+        id: schedule.id,
+        assetId: schedule.assetId,
+        assetTag: asset?.assetTag || null,
+        title: schedule.title,
+        nextDueDate: schedule.nextDueDate?.toISOString() || null,
+        priority: schedule.priority,
+        scheduleType: schedule.scheduleType.toString(),
+      };
+    });
 
     return { success: true, data: myTasks };
   } catch (error) {

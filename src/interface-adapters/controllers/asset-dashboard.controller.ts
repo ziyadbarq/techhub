@@ -17,7 +17,37 @@ import type { ListStockMovementsUseCase } from "@/core/use-cases/inventory/stock
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { ListStockLocationsUseCase } from "@/core/use-cases/inventory/stock-location";
-import type { ConvertCurrencyUseCase } from "@/core/use-cases/foundation/exchange-rate";
+import type { IExchangeRateRepository } from "@/core/repositories/exchange-rate.repository.interface";
+
+/**
+ * Helper to batch load exchange rates and convert currencies locally
+ * Avoids N+1 queries when converting many amounts
+ */
+async function buildExchangeRateMap(
+  exchangeRateRepository: IExchangeRateRepository,
+): Promise<Map<string, number>> {
+  const rates = await exchangeRateRepository.findAll({ onlyActive: true });
+  const rateMap = new Map<string, number>();
+  rateMap.set("SAR", 1.0); // Base currency
+  for (const rate of rates) {
+    rateMap.set(rate.currency.toUpperCase(), rate.rateToSAR);
+  }
+  return rateMap;
+}
+
+/**
+ * Convert amount to SAR using pre-loaded rate map
+ */
+function convertToSAR(
+  amount: number,
+  currency: string | null,
+  rateMap: Map<string, number>,
+): number {
+  if (!currency) return amount; // Assume SAR if no currency specified
+  const rate = rateMap.get(currency.toUpperCase());
+  if (!rate) return 0; // Skip if no exchange rate found
+  return amount * rate;
+}
 
 export interface AssetSummaryStats {
   totalAssets: number;
@@ -79,36 +109,26 @@ export async function getAssetSummaryStatsAction(): Promise<
     const listAssignmentsUseCase = container.get<ListAssetAssignmentsUseCase>(
       DI_TOKENS.ListAssetAssignmentsUseCase,
     );
-    const convertCurrencyUseCase = container.get<ConvertCurrencyUseCase>(
-      DI_TOKENS.ConvertCurrencyUseCase,
+    const exchangeRateRepository = container.get<IExchangeRateRepository>(
+      DI_TOKENS.IExchangeRateRepository,
     );
 
-    const [assets, assignments] = await Promise.all([
+    // Batch load all data in parallel (single query for exchange rates)
+    const [assets, assignments, exchangeRateMap] = await Promise.all([
       listAssetsUseCase.execute(),
       listAssignmentsUseCase.execute(),
+      buildExchangeRateMap(exchangeRateRepository),
     ]);
 
-    // Calculate total value in SAR (convert all currencies to SAR before summing)
+    // Calculate total value in SAR using pre-loaded exchange rates (no N+1)
     let totalValueInSAR = 0;
     for (const asset of assets) {
-      if (!asset.purchaseCost) {
-        continue;
-      }
-
-      if (asset.currency) {
-        try {
-          // Convert to SAR using exchange rates
-          const conversionResult = await convertCurrencyUseCase.execute({
-            amount: asset.purchaseCost,
-            fromCurrency: asset.currency,
-          });
-          totalValueInSAR += conversionResult.convertedAmount;
-        } catch (_error) {
-          // If exchange rate not found, skip this asset's value
-          // Assets with missing exchange rates are excluded from total calculation
-        }
-      } else {
-        totalValueInSAR += asset.purchaseCost;
+      if (asset.purchaseCost) {
+        totalValueInSAR += convertToSAR(
+          asset.purchaseCost,
+          asset.currency,
+          exchangeRateMap,
+        );
       }
     }
 
@@ -166,43 +186,31 @@ export async function getAssetsByCategoryAction(): Promise<
     const listCategoriesUseCase = container.get<ListAssetCategoriesUseCase>(
       DI_TOKENS.ListAssetCategoriesUseCase,
     );
-    const convertCurrencyUseCase = container.get<ConvertCurrencyUseCase>(
-      DI_TOKENS.ConvertCurrencyUseCase,
+    const exchangeRateRepository = container.get<IExchangeRateRepository>(
+      DI_TOKENS.IExchangeRateRepository,
     );
 
-    const [assets, categories] = await Promise.all([
+    // Batch load all data in parallel (single query for exchange rates)
+    const [assets, categories, exchangeRateMap] = await Promise.all([
       listAssetsUseCase.execute(),
       listCategoriesUseCase.execute(),
+      buildExchangeRateMap(exchangeRateRepository),
     ]);
 
     // Build category map for names
     const categoryMap = new Map(categories.map((c) => [c.id, c.name]));
 
-    // Group by category (convert all values to SAR)
+    // Group by category using pre-loaded exchange rates (no N+1)
     const breakdown = new Map<string, { count: number; value: number }>();
 
     for (const asset of assets) {
       const categoryId = asset.assetCategoryId;
       const existing = breakdown.get(categoryId) || { count: 0, value: 0 };
 
-      // Convert asset cost to SAR before adding
-      let costInSAR = 0;
-      if (asset.purchaseCost) {
-        if (asset.currency) {
-          try {
-            const conversionResult = await convertCurrencyUseCase.execute({
-              amount: asset.purchaseCost,
-              fromCurrency: asset.currency,
-            });
-            costInSAR = conversionResult.convertedAmount;
-          } catch (_error) {
-            // If exchange rate not found, skip this asset's value
-            // Assets with missing exchange rates are excluded from category value calculation
-          }
-        } else {
-          costInSAR = asset.purchaseCost;
-        }
-      }
+      // Convert asset cost to SAR using pre-loaded rates
+      const costInSAR = asset.purchaseCost
+        ? convertToSAR(asset.purchaseCost, asset.currency, exchangeRateMap)
+        : 0;
 
       breakdown.set(categoryId, {
         count: existing.count + 1,

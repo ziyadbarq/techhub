@@ -5,14 +5,14 @@
 
 "use client";
 
-import { useCurrentPerson } from "@/hooks/use-current-person";
+import { useCurrentPersonContext } from "@/contexts/current-person-context";
 import { WidgetContainer } from "@/components/dashboard/widget-container";
 import { WidgetSkeleton } from "@/components/dashboard/widget-skeleton";
 import { WidgetEmpty } from "@/components/dashboard/widget-empty";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { User, Mail, Building2, Briefcase, ExternalLink } from "lucide-react";
+import { User, Building2, ExternalLink, Calendar, Hash } from "lucide-react";
 import Link from "next/link";
 
 function getInitials(
@@ -24,8 +24,21 @@ function getInitials(
   return (first + last).toUpperCase() || "?";
 }
 
+function formatDate(dateString: string | null): string | null {
+  if (!dateString) return null;
+  try {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  } catch {
+    return null;
+  }
+}
+
 export function ProfileCardWidget() {
-  const { person, isLoading, hasLinkedPerson } = useCurrentPerson();
+  const { person, isLoading, hasLinkedPerson } = useCurrentPersonContext();
 
   if (isLoading) {
     return (
@@ -56,7 +69,7 @@ export function ProfileCardWidget() {
       icon={<User className="h-4 w-4" />}
       headerAction={
         <Button variant="ghost" size="sm" asChild>
-          <Link href={`/directory/persons/${person.id}`}>
+          <Link href={`/persons/${person.id}`}>
             <ExternalLink className="mr-1 h-3 w-3" />
             View
           </Link>
@@ -85,10 +98,10 @@ export function ProfileCardWidget() {
         </div>
 
         <div className="space-y-2 text-sm">
-          {person.email && (
+          {person.employeeId && (
             <div className="text-muted-foreground flex items-center gap-2">
-              <Mail className="h-4 w-4" />
-              <span>{person.email}</span>
+              <Hash className="h-4 w-4" />
+              <span>Employee ID: {person.employeeId}</span>
             </div>
           )}
           {person.department && (
@@ -97,10 +110,10 @@ export function ProfileCardWidget() {
               <span>{person.department}</span>
             </div>
           )}
-          {person.employeeId && (
+          {person.hireDate && formatDate(person.hireDate) && (
             <div className="text-muted-foreground flex items-center gap-2">
-              <Briefcase className="h-4 w-4" />
-              <span>ID: {person.employeeId}</span>
+              <Calendar className="h-4 w-4" />
+              <span>Joined: {formatDate(person.hireDate)}</span>
             </div>
           )}
         </div>

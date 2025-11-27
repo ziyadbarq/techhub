@@ -31,8 +31,13 @@ import {
   Layers,
   Package,
   Boxes,
+  ToggleLeft,
+  ToggleRight,
 } from "lucide-react";
-import { listFeatureFlagsAction } from "@/interface-adapters/controllers/feature-flags/feature-flag.controller";
+import {
+  listFeatureFlagsAction,
+  bulkToggleFeatureFlagsAction,
+} from "@/interface-adapters/controllers/feature-flags/feature-flag.controller";
 import { FeatureFlagToggle } from "./feature-flag-toggle";
 
 import type { FeatureFlagResponseDTO } from "@/interface-adapters/dtos/feature-flags/feature-flag.dto";
@@ -89,6 +94,7 @@ export function FeaturesPageClient() {
     LAYER_3: [],
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [isBulkToggling, setIsBulkToggling] = useState(false);
   const [openCategories, setOpenCategories] = useState<Set<CategoryType>>(
     new Set(["SYSTEM"]), // Open SYSTEM by default
   );
@@ -172,6 +178,38 @@ export function FeaturesPageClient() {
     setTimeout(() => loadFlags(true), 1000);
   };
 
+  const handleBulkToggle = async (enable: boolean) => {
+    setIsBulkToggling(true);
+    try {
+      const result = await bulkToggleFeatureFlagsAction(enable);
+
+      if (result.success) {
+        const action = enable ? "enabled" : "disabled";
+        toast.success(`Features ${action}`, {
+          description: `${result.data.toggledCount} feature(s) ${action}${
+            result.data.skippedFlags.length > 0
+              ? `. Skipped: ${result.data.skippedFlags.join(", ")}`
+              : ""
+          }`,
+        });
+        // Reload flags to reflect changes
+        await loadFlags();
+      } else {
+        toast.error("Failed to toggle features", {
+          description: result.error ?? "An unknown error occurred",
+        });
+      }
+    } catch (error) {
+      console.error("Error bulk toggling features:", error);
+      toast.error("Failed to toggle features", {
+        description:
+          error instanceof Error ? error.message : "An unknown error occurred",
+      });
+    } finally {
+      setIsBulkToggling(false);
+    }
+  };
+
   useEffect(() => {
     loadFlags();
   }, []);
@@ -241,12 +279,34 @@ export function FeaturesPageClient() {
 
   return (
     <div className="container mx-auto space-y-6 py-6">
-      <div>
-        <h1 className="text-3xl font-bold">Feature Flags</h1>
-        <p className="text-muted-foreground mt-2">
-          Manage system features and capabilities. Toggle features on or off to
-          control availability across the application.
-        </p>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Feature Flags</h1>
+          <p className="text-muted-foreground mt-2">
+            Manage system features and capabilities. Toggle features on or off
+            to control availability across the application.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleBulkToggle(true)}
+            disabled={isBulkToggling}
+          >
+            <ToggleRight className="mr-2 h-4 w-4" />
+            Enable All
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleBulkToggle(false)}
+            disabled={isBulkToggling}
+          >
+            <ToggleLeft className="mr-2 h-4 w-4" />
+            Disable All
+          </Button>
+        </div>
       </div>
 
       <Alert>

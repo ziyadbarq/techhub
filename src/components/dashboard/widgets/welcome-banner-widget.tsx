@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useCurrentPerson } from "@/hooks/use-current-person";
+import { useCurrentPersonContext } from "@/contexts/current-person-context";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -26,7 +26,7 @@ function getFormattedDate(): string {
 }
 
 export function WelcomeBannerWidget() {
-  const { person, isLoading, hasLinkedPerson } = useCurrentPerson();
+  const { person, isLoading, hasLinkedPerson } = useCurrentPersonContext();
 
   if (isLoading) {
     return (

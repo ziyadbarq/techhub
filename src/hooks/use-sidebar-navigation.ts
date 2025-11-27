@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import {
   getGroupDefaultState,
@@ -10,7 +12,7 @@ import {
 import { useBadgeUpdates } from "./use-badge-updates";
 import { useLocalStorage } from "./use-local-storage";
 import { usePermissions } from "./use-permissions";
-import { useFeatureFlags } from "./use-feature-flags";
+import { useFeatureFlagsContext } from "@/contexts/feature-flags-context";
 
 type SidebarGroupState = Record<string, boolean>;
 type SidebarItemState = Record<string, boolean>;
@@ -76,7 +78,8 @@ export function useSidebarNavigation() {
     hasNoPermissions,
   } = usePermissions();
 
-  const { enabledFeatures, isLoading: featuresLoading } = useFeatureFlags();
+  const { enabledFeatures, isLoading: featuresLoading } =
+    useFeatureFlagsContext();
 
   // Determine navigation visibility
   const navGroups = React.useMemo(() => {

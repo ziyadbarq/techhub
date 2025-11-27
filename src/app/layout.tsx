@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
@@ -25,11 +26,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+    <html
+      lang="en"
+      className="dark"
+      style={{ colorScheme: "dark", backgroundColor: "#262626" }}
+      suppressHydrationWarning
+    >
+      <head />
+      <body className={inter.className} style={{ backgroundColor: "inherit" }}>
+        <Script
+          id="theme-script"
+          src="/scripts/theme-init.js"
+          strategy="beforeInteractive"
+        />
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >

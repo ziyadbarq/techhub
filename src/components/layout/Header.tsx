@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -23,31 +24,34 @@ export function Header() {
   const router = useRouter();
   const { setOpen } = useCommandPalette();
 
-  // Generate breadcrumbs from pathname
-  const breadcrumbs =
-    pathname
-      ?.split("/")
-      .filter(Boolean)
-      .map((segment, index, array) => {
-        const path = "/" + array.slice(0, index + 1).join("/");
-        const label = segment
-          .split("-")
-          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(" ");
+  // Memoize breadcrumb calculation - only recalculate when pathname changes
+  const breadcrumbs = useMemo(() => {
+    const segments =
+      pathname
+        ?.split("/")
+        .filter(Boolean)
+        .map((segment, index, array) => {
+          const path = "/" + array.slice(0, index + 1).join("/");
+          const label = segment
+            .split("-")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ");
 
-        return { label, path };
-      }) ?? [];
+          return { label, path };
+        }) ?? [];
 
-  // Add home breadcrumb if not on home page
-  if (breadcrumbs.length > 0) {
-    breadcrumbs.unshift({ label: "Home", path: "/" });
-  }
+    // Add home breadcrumb if not on home page
+    if (segments.length > 0) {
+      return [{ label: "Home", path: "/" }, ...segments];
+    }
+    return segments;
+  }, [pathname]);
 
-  // Handle sign out
-  const handleSignOut = async () => {
+  // Handle sign out - memoized to prevent unnecessary re-renders
+  const handleSignOut = useCallback(async () => {
     await authClient.signOut();
     router.push("/login");
-  };
+  }, [router]);
 
   return (
     <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-30 flex h-16 items-center gap-4 border-b pr-4 pl-16 backdrop-blur md:pr-6 md:pl-6">
