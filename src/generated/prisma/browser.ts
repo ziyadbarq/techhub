@@ -378,6 +378,21 @@ export type PromptComposition = Prisma.PromptCompositionModel
  */
 export type PromptCompositionBlock = Prisma.PromptCompositionBlockModel
 /**
+ * Model IntuneDevice
+ * 
+ */
+export type IntuneDevice = Prisma.IntuneDeviceModel
+/**
+ * Model IntuneComplianceHistory
+ * 
+ */
+export type IntuneComplianceHistory = Prisma.IntuneComplianceHistoryModel
+/**
+ * Model IntuneSyncLog
+ * 
+ */
+export type IntuneSyncLog = Prisma.IntuneSyncLogModel
+/**
  * Model FeatureFlag
  * 
  */

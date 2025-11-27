@@ -873,6 +873,41 @@ export const DI_TOKENS = {
   DeleteAttachmentUseCase: Symbol.for("DeleteAttachmentUseCase"),
 
   // ==========================================
+  // Intune Module Tokens
+  // ==========================================
+
+  // Intune: Repositories
+  IIntuneDeviceRepository: Symbol.for("IIntuneDeviceRepository"),
+  IIntuneComplianceHistoryRepository: Symbol.for(
+    "IIntuneComplianceHistoryRepository",
+  ),
+
+  // Intune: Use Cases
+  SyncDevicesFromIntuneUseCase: Symbol.for("SyncDevicesFromIntuneUseCase"),
+  GetIntuneDeviceUseCase: Symbol.for("GetIntuneDeviceUseCase"),
+  ListIntuneDevicesUseCase: Symbol.for("ListIntuneDevicesUseCase"),
+  LinkIntuneDeviceToAssetUseCase: Symbol.for("LinkIntuneDeviceToAssetUseCase"),
+  UnlinkIntuneDeviceFromAssetUseCase: Symbol.for(
+    "UnlinkIntuneDeviceFromAssetUseCase",
+  ),
+  LinkIntuneDeviceToPersonUseCase: Symbol.for(
+    "LinkIntuneDeviceToPersonUseCase",
+  ),
+  UnlinkIntuneDeviceFromPersonUseCase: Symbol.for(
+    "UnlinkIntuneDeviceFromPersonUseCase",
+  ),
+  GetUnlinkedIntuneDevicesUseCase: Symbol.for(
+    "GetUnlinkedIntuneDevicesUseCase",
+  ),
+  GetIntuneComplianceStatsUseCase: Symbol.for(
+    "GetIntuneComplianceStatsUseCase",
+  ),
+  GetIntuneComplianceHistoryUseCase: Symbol.for(
+    "GetIntuneComplianceHistoryUseCase",
+  ),
+  GetIntuneSyncLogsUseCase: Symbol.for("GetIntuneSyncLogsUseCase"),
+
+  // ==========================================
   // Infrastructure Tokens
   // ==========================================
 

@@ -13,6 +13,10 @@ import type {
   GraphUser,
   GraphManagerResponse,
 } from "@/lib/schemas/graph-user.schema";
+import type {
+  FetchDevicesOptions,
+  GraphIntuneDevice,
+} from "@/lib/schemas/graph-intune-device.schema";
 
 /**
  * Service interface for Microsoft Graph API operations.
@@ -20,18 +24,25 @@ import type {
  * This service is responsible for:
  * - Fetching users from Microsoft Graph API
  * - Retrieving manager relationships
- * - Handling pagination for large user lists
+ * - Fetching Intune managed devices
+ * - Handling pagination for large data sets
  * - Authentication via Client Credentials Flow
  *
  * **Required Azure AD Permissions (Application type):**
  * - `User.Read.All` - Read all users' full profiles
  * - `Directory.Read.All` - Read directory data (optional, for manager)
+ * - `DeviceManagementManagedDevices.Read.All` - Read Intune managed devices
  *
  * **Usage:**
  * ```typescript
  * const users = await graphService.fetchAllUsers();
  * for (const user of users) {
  *   console.log(user.displayName, user.mail);
+ * }
+ *
+ * const devices = await graphService.fetchAllManagedDevices();
+ * for (const device of devices) {
+ *   console.log(device.deviceName, device.complianceState);
  * }
  * ```
  */
@@ -136,6 +147,75 @@ export interface IMicrosoftGraphService {
    * ```
    */
   testConnection(): Promise<boolean>;
+
+  // ==========================================
+  // Intune Device Management
+  // ==========================================
+
+  /**
+   * Fetches all managed devices from Microsoft Intune via Graph API.
+   *
+   * Handles pagination automatically, collecting all pages of results.
+   * Requires `DeviceManagementManagedDevices.Read.All` permission.
+   *
+   * @param options - Options for filtering devices
+   * @returns Promise resolving to array of all managed devices
+   *
+   * @example
+   * ```typescript
+   * // Get all managed devices
+   * const devices = await graphService.fetchAllManagedDevices();
+   *
+   * // Get only corporate devices
+   * const corporateDevices = await graphService.fetchAllManagedDevices({
+   *   ownershipType: 'corporate',
+   * });
+   *
+   * // Get only compliant devices
+   * const compliantDevices = await graphService.fetchAllManagedDevices({
+   *   complianceState: 'compliant',
+   * });
+   * ```
+   */
+  fetchAllManagedDevices(
+    options?: FetchDevicesOptions,
+  ): Promise<GraphIntuneDevice[]>;
+
+  /**
+   * Fetches a specific managed device by Intune device ID.
+   *
+   * @param deviceId - Intune device ID (GUID)
+   * @returns Promise resolving to device data or null if not found
+   *
+   * @example
+   * ```typescript
+   * const device = await graphService.fetchManagedDevice('device-guid-here');
+   * if (device) {
+   *   console.log(device.deviceName, device.complianceState);
+   * }
+   * ```
+   */
+  fetchManagedDevice(deviceId: string): Promise<GraphIntuneDevice | null>;
+
+  /**
+   * Tests the connection to Intune via Microsoft Graph API.
+   *
+   * Verifies that Intune-specific permissions are granted.
+   *
+   * @returns Promise resolving to true if Intune connection is successful
+   * @throws Error if connection fails
+   *
+   * @example
+   * ```typescript
+   * try {
+   *   await graphService.testIntuneConnection();
+   *   console.log('Intune API connection successful');
+   * } catch (error) {
+   *   console.error('Intune API connection failed:', error);
+   * }
+   * ```
+   */
+  testIntuneConnection(): Promise<boolean>;
 }
 
 /**

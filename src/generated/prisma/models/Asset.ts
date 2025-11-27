@@ -376,6 +376,7 @@ export type AssetWhereInput = {
   reservations?: Prisma.AssetReservationListRelationFilter
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemListRelationFilter
   serviceAssets?: Prisma.ServiceAssetListRelationFilter
+  intuneDevice?: Prisma.XOR<Prisma.IntuneDeviceNullableScalarRelationFilter, Prisma.IntuneDeviceWhereInput> | null
 }
 
 export type AssetOrderByWithRelationInput = {
@@ -418,6 +419,7 @@ export type AssetOrderByWithRelationInput = {
   reservations?: Prisma.AssetReservationOrderByRelationAggregateInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemOrderByRelationAggregateInput
   serviceAssets?: Prisma.ServiceAssetOrderByRelationAggregateInput
+  intuneDevice?: Prisma.IntuneDeviceOrderByWithRelationInput
 }
 
 export type AssetWhereUniqueInput = Prisma.AtLeast<{
@@ -463,6 +465,7 @@ export type AssetWhereUniqueInput = Prisma.AtLeast<{
   reservations?: Prisma.AssetReservationListRelationFilter
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemListRelationFilter
   serviceAssets?: Prisma.ServiceAssetListRelationFilter
+  intuneDevice?: Prisma.XOR<Prisma.IntuneDeviceNullableScalarRelationFilter, Prisma.IntuneDeviceWhereInput> | null
 }, "id" | "assetTag" | "serialNumber">
 
 export type AssetOrderByWithAggregationInput = {
@@ -559,6 +562,7 @@ export type AssetCreateInput = {
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetUncheckedCreateInput = {
@@ -595,6 +599,7 @@ export type AssetUncheckedCreateInput = {
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetUpdateInput = {
@@ -631,6 +636,7 @@ export type AssetUpdateInput = {
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateInput = {
@@ -667,6 +673,7 @@ export type AssetUncheckedUpdateInput = {
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetCreateManyInput = {
@@ -1245,6 +1252,22 @@ export type AssetUncheckedUpdateManyWithoutContractNestedInput = {
   deleteMany?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
 }
 
+export type AssetCreateNestedOneWithoutIntuneDeviceInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutIntuneDeviceInput, Prisma.AssetUncheckedCreateWithoutIntuneDeviceInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutIntuneDeviceInput
+  connect?: Prisma.AssetWhereUniqueInput
+}
+
+export type AssetUpdateOneWithoutIntuneDeviceNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutIntuneDeviceInput, Prisma.AssetUncheckedCreateWithoutIntuneDeviceInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutIntuneDeviceInput
+  upsert?: Prisma.AssetUpsertWithoutIntuneDeviceInput
+  disconnect?: Prisma.AssetWhereInput | boolean
+  delete?: Prisma.AssetWhereInput | boolean
+  connect?: Prisma.AssetWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutIntuneDeviceInput, Prisma.AssetUpdateWithoutIntuneDeviceInput>, Prisma.AssetUncheckedUpdateWithoutIntuneDeviceInput>
+}
+
 export type AssetCreateWithoutVendorInput = {
   id?: string
   assetTag: string
@@ -1278,6 +1301,7 @@ export type AssetCreateWithoutVendorInput = {
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetUncheckedCreateWithoutVendorInput = {
@@ -1313,6 +1337,7 @@ export type AssetUncheckedCreateWithoutVendorInput = {
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetCreateOrConnectWithoutVendorInput = {
@@ -1403,6 +1428,7 @@ export type AssetCreateWithoutLifecycleStateInput = {
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetUncheckedCreateWithoutLifecycleStateInput = {
@@ -1438,6 +1464,7 @@ export type AssetUncheckedCreateWithoutLifecycleStateInput = {
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetCreateOrConnectWithoutLifecycleStateInput = {
@@ -1499,6 +1526,7 @@ export type AssetCreateWithoutConfigurationItemsInput = {
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetUncheckedCreateWithoutConfigurationItemsInput = {
@@ -1534,6 +1562,7 @@ export type AssetUncheckedCreateWithoutConfigurationItemsInput = {
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetCreateOrConnectWithoutConfigurationItemsInput = {
@@ -1585,6 +1614,7 @@ export type AssetUpdateWithoutConfigurationItemsInput = {
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutConfigurationItemsInput = {
@@ -1620,6 +1650,7 @@ export type AssetUncheckedUpdateWithoutConfigurationItemsInput = {
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetCreateWithoutAssetCategoryInput = {
@@ -1655,6 +1686,7 @@ export type AssetCreateWithoutAssetCategoryInput = {
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetUncheckedCreateWithoutAssetCategoryInput = {
@@ -1690,6 +1722,7 @@ export type AssetUncheckedCreateWithoutAssetCategoryInput = {
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetCreateOrConnectWithoutAssetCategoryInput = {
@@ -1751,6 +1784,7 @@ export type AssetCreateWithoutAssetModelInput = {
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetUncheckedCreateWithoutAssetModelInput = {
@@ -1786,6 +1820,7 @@ export type AssetUncheckedCreateWithoutAssetModelInput = {
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetCreateOrConnectWithoutAssetModelInput = {
@@ -1847,6 +1882,7 @@ export type AssetCreateWithoutCurrentStockLocationInput = {
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetUncheckedCreateWithoutCurrentStockLocationInput = {
@@ -1882,6 +1918,7 @@ export type AssetUncheckedCreateWithoutCurrentStockLocationInput = {
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetCreateOrConnectWithoutCurrentStockLocationInput = {
@@ -1943,6 +1980,7 @@ export type AssetCreateWithoutStockMovementsInput = {
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetUncheckedCreateWithoutStockMovementsInput = {
@@ -1978,6 +2016,7 @@ export type AssetUncheckedCreateWithoutStockMovementsInput = {
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetCreateOrConnectWithoutStockMovementsInput = {
@@ -2029,6 +2068,7 @@ export type AssetUpdateWithoutStockMovementsInput = {
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutStockMovementsInput = {
@@ -2064,6 +2104,7 @@ export type AssetUncheckedUpdateWithoutStockMovementsInput = {
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetCreateWithoutAssetAssignmentsInput = {
@@ -2099,6 +2140,7 @@ export type AssetCreateWithoutAssetAssignmentsInput = {
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetUncheckedCreateWithoutAssetAssignmentsInput = {
@@ -2134,6 +2176,7 @@ export type AssetUncheckedCreateWithoutAssetAssignmentsInput = {
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetCreateOrConnectWithoutAssetAssignmentsInput = {
@@ -2185,6 +2228,7 @@ export type AssetUpdateWithoutAssetAssignmentsInput = {
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutAssetAssignmentsInput = {
@@ -2220,6 +2264,7 @@ export type AssetUncheckedUpdateWithoutAssetAssignmentsInput = {
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetCreateWithoutWarrantiesInput = {
@@ -2255,6 +2300,7 @@ export type AssetCreateWithoutWarrantiesInput = {
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetUncheckedCreateWithoutWarrantiesInput = {
@@ -2290,6 +2336,7 @@ export type AssetUncheckedCreateWithoutWarrantiesInput = {
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetCreateOrConnectWithoutWarrantiesInput = {
@@ -2341,6 +2388,7 @@ export type AssetUpdateWithoutWarrantiesInput = {
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutWarrantiesInput = {
@@ -2376,6 +2424,7 @@ export type AssetUncheckedUpdateWithoutWarrantiesInput = {
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetCreateWithoutMaintenanceSchedulesInput = {
@@ -2411,6 +2460,7 @@ export type AssetCreateWithoutMaintenanceSchedulesInput = {
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetUncheckedCreateWithoutMaintenanceSchedulesInput = {
@@ -2446,6 +2496,7 @@ export type AssetUncheckedCreateWithoutMaintenanceSchedulesInput = {
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetCreateOrConnectWithoutMaintenanceSchedulesInput = {
@@ -2497,6 +2548,7 @@ export type AssetUpdateWithoutMaintenanceSchedulesInput = {
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutMaintenanceSchedulesInput = {
@@ -2532,6 +2584,7 @@ export type AssetUncheckedUpdateWithoutMaintenanceSchedulesInput = {
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetCreateWithoutMaintenanceRecordsInput = {
@@ -2567,6 +2620,7 @@ export type AssetCreateWithoutMaintenanceRecordsInput = {
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetUncheckedCreateWithoutMaintenanceRecordsInput = {
@@ -2602,6 +2656,7 @@ export type AssetUncheckedCreateWithoutMaintenanceRecordsInput = {
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetCreateOrConnectWithoutMaintenanceRecordsInput = {
@@ -2653,6 +2708,7 @@ export type AssetUpdateWithoutMaintenanceRecordsInput = {
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutMaintenanceRecordsInput = {
@@ -2688,6 +2744,7 @@ export type AssetUncheckedUpdateWithoutMaintenanceRecordsInput = {
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetCreateWithoutDisposalsInput = {
@@ -2723,6 +2780,7 @@ export type AssetCreateWithoutDisposalsInput = {
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetUncheckedCreateWithoutDisposalsInput = {
@@ -2758,6 +2816,7 @@ export type AssetUncheckedCreateWithoutDisposalsInput = {
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetCreateOrConnectWithoutDisposalsInput = {
@@ -2809,6 +2868,7 @@ export type AssetUpdateWithoutDisposalsInput = {
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutDisposalsInput = {
@@ -2844,6 +2904,7 @@ export type AssetUncheckedUpdateWithoutDisposalsInput = {
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetCreateWithoutKitCheckoutItemsInput = {
@@ -2879,6 +2940,7 @@ export type AssetCreateWithoutKitCheckoutItemsInput = {
   disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetUncheckedCreateWithoutKitCheckoutItemsInput = {
@@ -2914,6 +2976,7 @@ export type AssetUncheckedCreateWithoutKitCheckoutItemsInput = {
   disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetCreateOrConnectWithoutKitCheckoutItemsInput = {
@@ -2965,6 +3028,7 @@ export type AssetUpdateWithoutKitCheckoutItemsInput = {
   disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutKitCheckoutItemsInput = {
@@ -3000,6 +3064,7 @@ export type AssetUncheckedUpdateWithoutKitCheckoutItemsInput = {
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetCreateWithoutReservationsInput = {
@@ -3035,6 +3100,7 @@ export type AssetCreateWithoutReservationsInput = {
   disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetUncheckedCreateWithoutReservationsInput = {
@@ -3070,6 +3136,7 @@ export type AssetUncheckedCreateWithoutReservationsInput = {
   disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetCreateOrConnectWithoutReservationsInput = {
@@ -3121,6 +3188,7 @@ export type AssetUpdateWithoutReservationsInput = {
   disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutReservationsInput = {
@@ -3156,6 +3224,7 @@ export type AssetUncheckedUpdateWithoutReservationsInput = {
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetCreateWithoutServiceAssetsInput = {
@@ -3191,6 +3260,7 @@ export type AssetCreateWithoutServiceAssetsInput = {
   disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetUncheckedCreateWithoutServiceAssetsInput = {
@@ -3226,6 +3296,7 @@ export type AssetUncheckedCreateWithoutServiceAssetsInput = {
   disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetCreateOrConnectWithoutServiceAssetsInput = {
@@ -3277,6 +3348,7 @@ export type AssetUpdateWithoutServiceAssetsInput = {
   disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutServiceAssetsInput = {
@@ -3312,6 +3384,7 @@ export type AssetUncheckedUpdateWithoutServiceAssetsInput = {
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetCreateWithoutContractInput = {
@@ -3347,6 +3420,7 @@ export type AssetCreateWithoutContractInput = {
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetUncheckedCreateWithoutContractInput = {
@@ -3382,6 +3456,7 @@ export type AssetUncheckedCreateWithoutContractInput = {
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
 }
 
 export type AssetCreateOrConnectWithoutContractInput = {
@@ -3408,6 +3483,166 @@ export type AssetUpdateWithWhereUniqueWithoutContractInput = {
 export type AssetUpdateManyWithWhereWithoutContractInput = {
   where: Prisma.AssetScalarWhereInput
   data: Prisma.XOR<Prisma.AssetUpdateManyMutationInput, Prisma.AssetUncheckedUpdateManyWithoutContractInput>
+}
+
+export type AssetCreateWithoutIntuneDeviceInput = {
+  id?: string
+  assetTag: string
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
+  assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
+  vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
+  contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
+  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutAssetsInput
+  currentStockLocation?: Prisma.StockLocationCreateNestedOneWithoutAssetsInput
+  warranties?: Prisma.WarrantyCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+}
+
+export type AssetUncheckedCreateWithoutIntuneDeviceInput = {
+  id?: string
+  assetTag: string
+  assetCategoryId: string
+  assetModelId?: string | null
+  vendorId?: string | null
+  contractId?: string | null
+  lifecycleStateId?: string | null
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  currentStockLocationId?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+}
+
+export type AssetCreateOrConnectWithoutIntuneDeviceInput = {
+  where: Prisma.AssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCreateWithoutIntuneDeviceInput, Prisma.AssetUncheckedCreateWithoutIntuneDeviceInput>
+}
+
+export type AssetUpsertWithoutIntuneDeviceInput = {
+  update: Prisma.XOR<Prisma.AssetUpdateWithoutIntuneDeviceInput, Prisma.AssetUncheckedUpdateWithoutIntuneDeviceInput>
+  create: Prisma.XOR<Prisma.AssetCreateWithoutIntuneDeviceInput, Prisma.AssetUncheckedCreateWithoutIntuneDeviceInput>
+  where?: Prisma.AssetWhereInput
+}
+
+export type AssetUpdateToOneWithWhereWithoutIntuneDeviceInput = {
+  where?: Prisma.AssetWhereInput
+  data: Prisma.XOR<Prisma.AssetUpdateWithoutIntuneDeviceInput, Prisma.AssetUncheckedUpdateWithoutIntuneDeviceInput>
+}
+
+export type AssetUpdateWithoutIntuneDeviceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
+  assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
+  vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
+  contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
+  lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutAssetsNestedInput
+  currentStockLocation?: Prisma.StockLocationUpdateOneWithoutAssetsNestedInput
+  warranties?: Prisma.WarrantyUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+}
+
+export type AssetUncheckedUpdateWithoutIntuneDeviceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetCreateManyVendorInput = {
@@ -3468,6 +3703,7 @@ export type AssetUpdateWithoutVendorInput = {
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutVendorInput = {
@@ -3503,6 +3739,7 @@ export type AssetUncheckedUpdateWithoutVendorInput = {
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateManyWithoutVendorInput = {
@@ -3588,6 +3825,7 @@ export type AssetUpdateWithoutLifecycleStateInput = {
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutLifecycleStateInput = {
@@ -3623,6 +3861,7 @@ export type AssetUncheckedUpdateWithoutLifecycleStateInput = {
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateManyWithoutLifecycleStateInput = {
@@ -3708,6 +3947,7 @@ export type AssetUpdateWithoutAssetCategoryInput = {
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutAssetCategoryInput = {
@@ -3743,6 +3983,7 @@ export type AssetUncheckedUpdateWithoutAssetCategoryInput = {
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateManyWithoutAssetCategoryInput = {
@@ -3828,6 +4069,7 @@ export type AssetUpdateWithoutAssetModelInput = {
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutAssetModelInput = {
@@ -3863,6 +4105,7 @@ export type AssetUncheckedUpdateWithoutAssetModelInput = {
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateManyWithoutAssetModelInput = {
@@ -3948,6 +4191,7 @@ export type AssetUpdateWithoutCurrentStockLocationInput = {
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutCurrentStockLocationInput = {
@@ -3983,6 +4227,7 @@ export type AssetUncheckedUpdateWithoutCurrentStockLocationInput = {
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateManyWithoutCurrentStockLocationInput = {
@@ -4068,6 +4313,7 @@ export type AssetUpdateWithoutContractInput = {
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutContractInput = {
@@ -4103,6 +4349,7 @@ export type AssetUncheckedUpdateWithoutContractInput = {
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
 
 export type AssetUncheckedUpdateManyWithoutContractInput = {
@@ -4282,6 +4529,7 @@ export type AssetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   reservations?: boolean | Prisma.Asset$reservationsArgs<ExtArgs>
   kitCheckoutItems?: boolean | Prisma.Asset$kitCheckoutItemsArgs<ExtArgs>
   serviceAssets?: boolean | Prisma.Asset$serviceAssetsArgs<ExtArgs>
+  intuneDevice?: boolean | Prisma.Asset$intuneDeviceArgs<ExtArgs>
   _count?: boolean | Prisma.AssetCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["asset"]>
 
@@ -4393,6 +4641,7 @@ export type AssetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   reservations?: boolean | Prisma.Asset$reservationsArgs<ExtArgs>
   kitCheckoutItems?: boolean | Prisma.Asset$kitCheckoutItemsArgs<ExtArgs>
   serviceAssets?: boolean | Prisma.Asset$serviceAssetsArgs<ExtArgs>
+  intuneDevice?: boolean | Prisma.Asset$intuneDeviceArgs<ExtArgs>
   _count?: boolean | Prisma.AssetCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AssetIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4431,6 +4680,7 @@ export type $AssetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     reservations: Prisma.$AssetReservationPayload<ExtArgs>[]
     kitCheckoutItems: Prisma.$AssetKitCheckoutItemPayload<ExtArgs>[]
     serviceAssets: Prisma.$ServiceAssetPayload<ExtArgs>[]
+    intuneDevice: Prisma.$IntuneDevicePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -4866,6 +5116,7 @@ export interface Prisma__AssetClient<T, Null = never, ExtArgs extends runtime.Ty
   reservations<T extends Prisma.Asset$reservationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$reservationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   kitCheckoutItems<T extends Prisma.Asset$kitCheckoutItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$kitCheckoutItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetKitCheckoutItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   serviceAssets<T extends Prisma.Asset$serviceAssetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$serviceAssetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServiceAssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  intuneDevice<T extends Prisma.Asset$intuneDeviceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$intuneDeviceArgs<ExtArgs>>): Prisma.Prisma__IntuneDeviceClient<runtime.Types.Result.GetResult<Prisma.$IntuneDevicePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5646,6 +5897,25 @@ export type Asset$serviceAssetsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.ServiceAssetScalarFieldEnum | Prisma.ServiceAssetScalarFieldEnum[]
+}
+
+/**
+ * Asset.intuneDevice
+ */
+export type Asset$intuneDeviceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the IntuneDevice
+   */
+  select?: Prisma.IntuneDeviceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the IntuneDevice
+   */
+  omit?: Prisma.IntuneDeviceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.IntuneDeviceInclude<ExtArgs> | null
+  where?: Prisma.IntuneDeviceWhereInput
 }
 
 /**

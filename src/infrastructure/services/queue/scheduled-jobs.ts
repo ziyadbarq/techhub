@@ -10,8 +10,12 @@ import {
   QUEUE_NAMES,
   TASK_JOBS,
   RESERVATION_JOBS,
+  MAINTENANCE_JOBS,
 } from "@/core/domain/jobs/job-names";
-import type { CleanupOldTasksJobData } from "@/core/domain/jobs/job-data.types";
+import type {
+  CleanupOldTasksJobData,
+  IntuneSyncJobData,
+} from "@/core/domain/jobs/job-data.types";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services";
@@ -115,6 +119,38 @@ export async function setupScheduledJobs(
     pattern: "*/30 * * * *",
     timezone: "UTC",
     jobName: RESERVATION_JOBS.SEND_REMINDERS,
+  });
+
+  // ==========================================
+  // Microsoft Intune Device Sync
+  // ==========================================
+
+  // Sync Intune managed devices daily at 3:00 AM UTC
+  // Links devices to Assets by serial number, Persons by userId
+  // Tracks compliance history for SAMA governance
+  const intuneSyncJobData: IntuneSyncJobData = {
+    autoLinkToAssets: true,
+    autoLinkToPersons: true,
+    trackComplianceHistory: true,
+    deactivateMissing: true,
+    dryRun: false,
+    createdAt: Date.now(),
+  };
+
+  await jobQueueService.scheduleJob(
+    QUEUE_NAMES.MAINTENANCE,
+    MAINTENANCE_JOBS.INTUNE_DEVICE_SYNC,
+    intuneSyncJobData,
+    {
+      pattern: "0 3 * * *", // Every day at 3:00 AM UTC
+      tz: "UTC",
+    },
+  );
+
+  logger.info("Intune device sync job scheduled", {
+    pattern: "0 3 * * *",
+    timezone: "UTC",
+    jobName: MAINTENANCE_JOBS.INTUNE_DEVICE_SYNC,
   });
 
   // ==========================================

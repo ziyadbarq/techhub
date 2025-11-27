@@ -268,6 +268,25 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
     requiredPermissions: [PERMISSIONS.ROLES_VIEW],
     description: "RBAC analytics dashboard",
   },
+
+  // ============================================================================
+  // INTUNE ROUTES
+  // ============================================================================
+
+  "/intune/devices": {
+    requiredPermissions: [PERMISSIONS.INTUNE_DEVICES_VIEW],
+    description: "View Microsoft Intune managed devices",
+  },
+
+  "/intune/devices/[id]": {
+    requiredPermissions: [PERMISSIONS.INTUNE_DEVICES_VIEW],
+    description: "View specific Intune device details",
+  },
+
+  "/intune/compliance": {
+    requiredPermissions: [PERMISSIONS.INTUNE_COMPLIANCE_VIEW],
+    description: "Device compliance monitoring dashboard",
+  },
 };
 
 /**

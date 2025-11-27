@@ -61,6 +61,7 @@ import {
 
 // Compliance & documentation groups (hidden for initial deployment)
 import {
+  intuneGroup,
   contractsGroup,
   licensesGroup,
   governanceGroup,
@@ -113,6 +114,7 @@ export const navGroups = [
   maintenanceGroup,
   cmdbGroup,
   serviceManagementGroup,
+  intuneGroup,
   contractsGroup,
   licensesGroup,
   governanceGroup,

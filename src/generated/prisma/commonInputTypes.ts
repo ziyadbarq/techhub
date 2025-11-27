@@ -776,6 +776,74 @@ export type EnumPromptPurposeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumPromptPurposeFilter<$PrismaModel>
 }
 
+export type EnumIntuneDeviceOwnershipTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.IntuneDeviceOwnershipType | Prisma.EnumIntuneDeviceOwnershipTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.IntuneDeviceOwnershipType[] | Prisma.ListEnumIntuneDeviceOwnershipTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IntuneDeviceOwnershipType[] | Prisma.ListEnumIntuneDeviceOwnershipTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIntuneDeviceOwnershipTypeFilter<$PrismaModel> | $Enums.IntuneDeviceOwnershipType
+}
+
+export type EnumIntuneComplianceStateFilter<$PrismaModel = never> = {
+  equals?: $Enums.IntuneComplianceState | Prisma.EnumIntuneComplianceStateFieldRefInput<$PrismaModel>
+  in?: $Enums.IntuneComplianceState[] | Prisma.ListEnumIntuneComplianceStateFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IntuneComplianceState[] | Prisma.ListEnumIntuneComplianceStateFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIntuneComplianceStateFilter<$PrismaModel> | $Enums.IntuneComplianceState
+}
+
+export type EnumIntuneManagementStateFilter<$PrismaModel = never> = {
+  equals?: $Enums.IntuneManagementState | Prisma.EnumIntuneManagementStateFieldRefInput<$PrismaModel>
+  in?: $Enums.IntuneManagementState[] | Prisma.ListEnumIntuneManagementStateFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IntuneManagementState[] | Prisma.ListEnumIntuneManagementStateFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIntuneManagementStateFilter<$PrismaModel> | $Enums.IntuneManagementState
+}
+
+export type EnumIntuneDeviceOwnershipTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.IntuneDeviceOwnershipType | Prisma.EnumIntuneDeviceOwnershipTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.IntuneDeviceOwnershipType[] | Prisma.ListEnumIntuneDeviceOwnershipTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IntuneDeviceOwnershipType[] | Prisma.ListEnumIntuneDeviceOwnershipTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIntuneDeviceOwnershipTypeWithAggregatesFilter<$PrismaModel> | $Enums.IntuneDeviceOwnershipType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumIntuneDeviceOwnershipTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumIntuneDeviceOwnershipTypeFilter<$PrismaModel>
+}
+
+export type EnumIntuneComplianceStateWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.IntuneComplianceState | Prisma.EnumIntuneComplianceStateFieldRefInput<$PrismaModel>
+  in?: $Enums.IntuneComplianceState[] | Prisma.ListEnumIntuneComplianceStateFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IntuneComplianceState[] | Prisma.ListEnumIntuneComplianceStateFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIntuneComplianceStateWithAggregatesFilter<$PrismaModel> | $Enums.IntuneComplianceState
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumIntuneComplianceStateFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumIntuneComplianceStateFilter<$PrismaModel>
+}
+
+export type EnumIntuneManagementStateWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.IntuneManagementState | Prisma.EnumIntuneManagementStateFieldRefInput<$PrismaModel>
+  in?: $Enums.IntuneManagementState[] | Prisma.ListEnumIntuneManagementStateFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IntuneManagementState[] | Prisma.ListEnumIntuneManagementStateFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIntuneManagementStateWithAggregatesFilter<$PrismaModel> | $Enums.IntuneManagementState
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumIntuneManagementStateFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumIntuneManagementStateFilter<$PrismaModel>
+}
+
+export type EnumIntuneSyncStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.IntuneSyncStatus | Prisma.EnumIntuneSyncStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.IntuneSyncStatus[] | Prisma.ListEnumIntuneSyncStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IntuneSyncStatus[] | Prisma.ListEnumIntuneSyncStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIntuneSyncStatusFilter<$PrismaModel> | $Enums.IntuneSyncStatus
+}
+
+export type EnumIntuneSyncStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.IntuneSyncStatus | Prisma.EnumIntuneSyncStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.IntuneSyncStatus[] | Prisma.ListEnumIntuneSyncStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IntuneSyncStatus[] | Prisma.ListEnumIntuneSyncStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIntuneSyncStatusWithAggregatesFilter<$PrismaModel> | $Enums.IntuneSyncStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumIntuneSyncStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumIntuneSyncStatusFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -1522,6 +1590,74 @@ export type NestedEnumPromptPurposeWithAggregatesFilter<$PrismaModel = never> = 
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumPromptPurposeFilter<$PrismaModel>
   _max?: Prisma.NestedEnumPromptPurposeFilter<$PrismaModel>
+}
+
+export type NestedEnumIntuneDeviceOwnershipTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.IntuneDeviceOwnershipType | Prisma.EnumIntuneDeviceOwnershipTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.IntuneDeviceOwnershipType[] | Prisma.ListEnumIntuneDeviceOwnershipTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IntuneDeviceOwnershipType[] | Prisma.ListEnumIntuneDeviceOwnershipTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIntuneDeviceOwnershipTypeFilter<$PrismaModel> | $Enums.IntuneDeviceOwnershipType
+}
+
+export type NestedEnumIntuneComplianceStateFilter<$PrismaModel = never> = {
+  equals?: $Enums.IntuneComplianceState | Prisma.EnumIntuneComplianceStateFieldRefInput<$PrismaModel>
+  in?: $Enums.IntuneComplianceState[] | Prisma.ListEnumIntuneComplianceStateFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IntuneComplianceState[] | Prisma.ListEnumIntuneComplianceStateFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIntuneComplianceStateFilter<$PrismaModel> | $Enums.IntuneComplianceState
+}
+
+export type NestedEnumIntuneManagementStateFilter<$PrismaModel = never> = {
+  equals?: $Enums.IntuneManagementState | Prisma.EnumIntuneManagementStateFieldRefInput<$PrismaModel>
+  in?: $Enums.IntuneManagementState[] | Prisma.ListEnumIntuneManagementStateFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IntuneManagementState[] | Prisma.ListEnumIntuneManagementStateFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIntuneManagementStateFilter<$PrismaModel> | $Enums.IntuneManagementState
+}
+
+export type NestedEnumIntuneDeviceOwnershipTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.IntuneDeviceOwnershipType | Prisma.EnumIntuneDeviceOwnershipTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.IntuneDeviceOwnershipType[] | Prisma.ListEnumIntuneDeviceOwnershipTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IntuneDeviceOwnershipType[] | Prisma.ListEnumIntuneDeviceOwnershipTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIntuneDeviceOwnershipTypeWithAggregatesFilter<$PrismaModel> | $Enums.IntuneDeviceOwnershipType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumIntuneDeviceOwnershipTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumIntuneDeviceOwnershipTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumIntuneComplianceStateWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.IntuneComplianceState | Prisma.EnumIntuneComplianceStateFieldRefInput<$PrismaModel>
+  in?: $Enums.IntuneComplianceState[] | Prisma.ListEnumIntuneComplianceStateFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IntuneComplianceState[] | Prisma.ListEnumIntuneComplianceStateFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIntuneComplianceStateWithAggregatesFilter<$PrismaModel> | $Enums.IntuneComplianceState
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumIntuneComplianceStateFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumIntuneComplianceStateFilter<$PrismaModel>
+}
+
+export type NestedEnumIntuneManagementStateWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.IntuneManagementState | Prisma.EnumIntuneManagementStateFieldRefInput<$PrismaModel>
+  in?: $Enums.IntuneManagementState[] | Prisma.ListEnumIntuneManagementStateFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IntuneManagementState[] | Prisma.ListEnumIntuneManagementStateFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIntuneManagementStateWithAggregatesFilter<$PrismaModel> | $Enums.IntuneManagementState
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumIntuneManagementStateFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumIntuneManagementStateFilter<$PrismaModel>
+}
+
+export type NestedEnumIntuneSyncStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.IntuneSyncStatus | Prisma.EnumIntuneSyncStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.IntuneSyncStatus[] | Prisma.ListEnumIntuneSyncStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IntuneSyncStatus[] | Prisma.ListEnumIntuneSyncStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIntuneSyncStatusFilter<$PrismaModel> | $Enums.IntuneSyncStatus
+}
+
+export type NestedEnumIntuneSyncStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.IntuneSyncStatus | Prisma.EnumIntuneSyncStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.IntuneSyncStatus[] | Prisma.ListEnumIntuneSyncStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.IntuneSyncStatus[] | Prisma.ListEnumIntuneSyncStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumIntuneSyncStatusWithAggregatesFilter<$PrismaModel> | $Enums.IntuneSyncStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumIntuneSyncStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumIntuneSyncStatusFilter<$PrismaModel>
 }
 
 

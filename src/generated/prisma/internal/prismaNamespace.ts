@@ -456,6 +456,9 @@ export const ModelName = {
   PromptBlock: 'PromptBlock',
   PromptComposition: 'PromptComposition',
   PromptCompositionBlock: 'PromptCompositionBlock',
+  IntuneDevice: 'IntuneDevice',
+  IntuneComplianceHistory: 'IntuneComplianceHistory',
+  IntuneSyncLog: 'IntuneSyncLog',
   FeatureFlag: 'FeatureFlag',
   FeatureFlagAuditLog: 'FeatureFlagAuditLog'
 } as const
@@ -473,7 +476,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verification" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "organizationUnit" | "person" | "personRoleAssignment" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "maintenanceSchedule" | "maintenanceRecord" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "contractType" | "contract" | "contractLinkedObject" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "attachmentType" | "attachment" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock" | "featureFlag" | "featureFlagAuditLog"
+    modelProps: "user" | "account" | "session" | "verification" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "organizationUnit" | "person" | "personRoleAssignment" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "maintenanceSchedule" | "maintenanceRecord" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "contractType" | "contract" | "contractLinkedObject" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "attachmentType" | "attachment" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock" | "intuneDevice" | "intuneComplianceHistory" | "intuneSyncLog" | "featureFlag" | "featureFlagAuditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -5805,6 +5808,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    IntuneDevice: {
+      payload: Prisma.$IntuneDevicePayload<ExtArgs>
+      fields: Prisma.IntuneDeviceFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.IntuneDeviceFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneDevicePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.IntuneDeviceFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneDevicePayload>
+        }
+        findFirst: {
+          args: Prisma.IntuneDeviceFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneDevicePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.IntuneDeviceFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneDevicePayload>
+        }
+        findMany: {
+          args: Prisma.IntuneDeviceFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneDevicePayload>[]
+        }
+        create: {
+          args: Prisma.IntuneDeviceCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneDevicePayload>
+        }
+        createMany: {
+          args: Prisma.IntuneDeviceCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.IntuneDeviceCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneDevicePayload>[]
+        }
+        delete: {
+          args: Prisma.IntuneDeviceDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneDevicePayload>
+        }
+        update: {
+          args: Prisma.IntuneDeviceUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneDevicePayload>
+        }
+        deleteMany: {
+          args: Prisma.IntuneDeviceDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.IntuneDeviceUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.IntuneDeviceUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneDevicePayload>[]
+        }
+        upsert: {
+          args: Prisma.IntuneDeviceUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneDevicePayload>
+        }
+        aggregate: {
+          args: Prisma.IntuneDeviceAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateIntuneDevice>
+        }
+        groupBy: {
+          args: Prisma.IntuneDeviceGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IntuneDeviceGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.IntuneDeviceCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IntuneDeviceCountAggregateOutputType> | number
+        }
+      }
+    }
+    IntuneComplianceHistory: {
+      payload: Prisma.$IntuneComplianceHistoryPayload<ExtArgs>
+      fields: Prisma.IntuneComplianceHistoryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.IntuneComplianceHistoryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneComplianceHistoryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.IntuneComplianceHistoryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneComplianceHistoryPayload>
+        }
+        findFirst: {
+          args: Prisma.IntuneComplianceHistoryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneComplianceHistoryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.IntuneComplianceHistoryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneComplianceHistoryPayload>
+        }
+        findMany: {
+          args: Prisma.IntuneComplianceHistoryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneComplianceHistoryPayload>[]
+        }
+        create: {
+          args: Prisma.IntuneComplianceHistoryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneComplianceHistoryPayload>
+        }
+        createMany: {
+          args: Prisma.IntuneComplianceHistoryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.IntuneComplianceHistoryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneComplianceHistoryPayload>[]
+        }
+        delete: {
+          args: Prisma.IntuneComplianceHistoryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneComplianceHistoryPayload>
+        }
+        update: {
+          args: Prisma.IntuneComplianceHistoryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneComplianceHistoryPayload>
+        }
+        deleteMany: {
+          args: Prisma.IntuneComplianceHistoryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.IntuneComplianceHistoryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.IntuneComplianceHistoryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneComplianceHistoryPayload>[]
+        }
+        upsert: {
+          args: Prisma.IntuneComplianceHistoryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneComplianceHistoryPayload>
+        }
+        aggregate: {
+          args: Prisma.IntuneComplianceHistoryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateIntuneComplianceHistory>
+        }
+        groupBy: {
+          args: Prisma.IntuneComplianceHistoryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IntuneComplianceHistoryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.IntuneComplianceHistoryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IntuneComplianceHistoryCountAggregateOutputType> | number
+        }
+      }
+    }
+    IntuneSyncLog: {
+      payload: Prisma.$IntuneSyncLogPayload<ExtArgs>
+      fields: Prisma.IntuneSyncLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.IntuneSyncLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneSyncLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.IntuneSyncLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneSyncLogPayload>
+        }
+        findFirst: {
+          args: Prisma.IntuneSyncLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneSyncLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.IntuneSyncLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneSyncLogPayload>
+        }
+        findMany: {
+          args: Prisma.IntuneSyncLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneSyncLogPayload>[]
+        }
+        create: {
+          args: Prisma.IntuneSyncLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneSyncLogPayload>
+        }
+        createMany: {
+          args: Prisma.IntuneSyncLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.IntuneSyncLogCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneSyncLogPayload>[]
+        }
+        delete: {
+          args: Prisma.IntuneSyncLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneSyncLogPayload>
+        }
+        update: {
+          args: Prisma.IntuneSyncLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneSyncLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.IntuneSyncLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.IntuneSyncLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.IntuneSyncLogUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneSyncLogPayload>[]
+        }
+        upsert: {
+          args: Prisma.IntuneSyncLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$IntuneSyncLogPayload>
+        }
+        aggregate: {
+          args: Prisma.IntuneSyncLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateIntuneSyncLog>
+        }
+        groupBy: {
+          args: Prisma.IntuneSyncLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IntuneSyncLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.IntuneSyncLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.IntuneSyncLogCountAggregateOutputType> | number
+        }
+      }
+    }
     FeatureFlag: {
       payload: Prisma.$FeatureFlagPayload<ExtArgs>
       fields: Prisma.FeatureFlagFieldRefs
@@ -7224,6 +7449,82 @@ export const PromptCompositionBlockScalarFieldEnum = {
 export type PromptCompositionBlockScalarFieldEnum = (typeof PromptCompositionBlockScalarFieldEnum)[keyof typeof PromptCompositionBlockScalarFieldEnum]
 
 
+export const IntuneDeviceScalarFieldEnum = {
+  id: 'id',
+  intuneDeviceId: 'intuneDeviceId',
+  azureAdDeviceId: 'azureAdDeviceId',
+  deviceName: 'deviceName',
+  serialNumber: 'serialNumber',
+  manufacturer: 'manufacturer',
+  model: 'model',
+  operatingSystem: 'operatingSystem',
+  osVersion: 'osVersion',
+  imei: 'imei',
+  wiFiMacAddress: 'wiFiMacAddress',
+  ethernetMacAddress: 'ethernetMacAddress',
+  intuneUserId: 'intuneUserId',
+  userPrincipalName: 'userPrincipalName',
+  userDisplayName: 'userDisplayName',
+  ownershipType: 'ownershipType',
+  complianceState: 'complianceState',
+  managementState: 'managementState',
+  isEncrypted: 'isEncrypted',
+  isSupervised: 'isSupervised',
+  isJailBroken: 'isJailBroken',
+  enrolledDateTime: 'enrolledDateTime',
+  lastSyncDateTime: 'lastSyncDateTime',
+  linkedAssetId: 'linkedAssetId',
+  linkedPersonId: 'linkedPersonId',
+  assetLinkMethod: 'assetLinkMethod',
+  assetLinkedAt: 'assetLinkedAt',
+  personLinkMethod: 'personLinkMethod',
+  personLinkedAt: 'personLinkedAt',
+  lastSyncedFromIntune: 'lastSyncedFromIntune',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type IntuneDeviceScalarFieldEnum = (typeof IntuneDeviceScalarFieldEnum)[keyof typeof IntuneDeviceScalarFieldEnum]
+
+
+export const IntuneComplianceHistoryScalarFieldEnum = {
+  id: 'id',
+  intuneDeviceId: 'intuneDeviceId',
+  previousState: 'previousState',
+  newState: 'newState',
+  changedAt: 'changedAt',
+  policyName: 'policyName',
+  policyId: 'policyId',
+  reason: 'reason'
+} as const
+
+export type IntuneComplianceHistoryScalarFieldEnum = (typeof IntuneComplianceHistoryScalarFieldEnum)[keyof typeof IntuneComplianceHistoryScalarFieldEnum]
+
+
+export const IntuneSyncLogScalarFieldEnum = {
+  id: 'id',
+  syncType: 'syncType',
+  status: 'status',
+  devicesProcessed: 'devicesProcessed',
+  devicesCreated: 'devicesCreated',
+  devicesUpdated: 'devicesUpdated',
+  devicesDeactivated: 'devicesDeactivated',
+  assetsLinked: 'assetsLinked',
+  personsLinked: 'personsLinked',
+  complianceChanges: 'complianceChanges',
+  errorsCount: 'errorsCount',
+  errors: 'errors',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  durationMs: 'durationMs',
+  triggeredBy: 'triggeredBy',
+  intuneDeviceId: 'intuneDeviceId'
+} as const
+
+export type IntuneSyncLogScalarFieldEnum = (typeof IntuneSyncLogScalarFieldEnum)[keyof typeof IntuneSyncLogScalarFieldEnum]
+
+
 export const FeatureFlagScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -7756,6 +8057,62 @@ export type ListEnumPromptPurposeFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
+ * Reference to a field of type 'IntuneDeviceOwnershipType'
+ */
+export type EnumIntuneDeviceOwnershipTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IntuneDeviceOwnershipType'>
+    
+
+
+/**
+ * Reference to a field of type 'IntuneDeviceOwnershipType[]'
+ */
+export type ListEnumIntuneDeviceOwnershipTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IntuneDeviceOwnershipType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'IntuneComplianceState'
+ */
+export type EnumIntuneComplianceStateFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IntuneComplianceState'>
+    
+
+
+/**
+ * Reference to a field of type 'IntuneComplianceState[]'
+ */
+export type ListEnumIntuneComplianceStateFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IntuneComplianceState[]'>
+    
+
+
+/**
+ * Reference to a field of type 'IntuneManagementState'
+ */
+export type EnumIntuneManagementStateFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IntuneManagementState'>
+    
+
+
+/**
+ * Reference to a field of type 'IntuneManagementState[]'
+ */
+export type ListEnumIntuneManagementStateFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IntuneManagementState[]'>
+    
+
+
+/**
+ * Reference to a field of type 'IntuneSyncStatus'
+ */
+export type EnumIntuneSyncStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IntuneSyncStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'IntuneSyncStatus[]'
+ */
+export type ListEnumIntuneSyncStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'IntuneSyncStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -7919,6 +8276,9 @@ export type GlobalOmitConfig = {
   promptBlock?: Prisma.PromptBlockOmit
   promptComposition?: Prisma.PromptCompositionOmit
   promptCompositionBlock?: Prisma.PromptCompositionBlockOmit
+  intuneDevice?: Prisma.IntuneDeviceOmit
+  intuneComplianceHistory?: Prisma.IntuneComplianceHistoryOmit
+  intuneSyncLog?: Prisma.IntuneSyncLogOmit
   featureFlag?: Prisma.FeatureFlagOmit
   featureFlagAuditLog?: Prisma.FeatureFlagAuditLogOmit
 }

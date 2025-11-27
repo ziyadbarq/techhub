@@ -203,6 +203,15 @@ export const FEATURE_FLAGS: FeatureFlagDefinition[] = [
     isSystem: false,
     dependsOn: ["ASSETS"],
   },
+  {
+    name: "INTUNE",
+    displayName: "Intune/MDM Integration",
+    description:
+      "Microsoft Intune device sync and compliance tracking. Links MDM devices to ITAM assets and persons for reconciliation and SAMA compliance reporting.",
+    category: "LAYER_3",
+    isSystem: false,
+    dependsOn: ["FOUNDATION", "ASSETS"],
+  },
 ];
 
 /**

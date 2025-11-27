@@ -42,6 +42,7 @@ import { bindLicensesDependencies } from "./modules/licenses.module";
 import { bindGovernanceDependencies } from "./modules/governance.module";
 import { bindAttachmentsDependencies } from "./modules/attachments.module";
 import { bindServiceDependencies } from "./modules/service.module";
+import { bindIntuneDependencies } from "./modules/intune.module";
 import { loadDisposalModule } from "./modules/disposal.module";
 import { loadAssetKitsModule } from "./modules/asset-kits.module";
 import { loadReservationsModule } from "./modules/reservations.module";
@@ -144,8 +145,12 @@ function createContainer(): Container {
 
   // Bind Attachments dependencies (attachment types, attachments)
   bindAttachmentsDependencies(newContainer);
+
   // Bind Service Management dependencies (services, business processes, infrastructure)
   bindServiceDependencies(newContainer);
+
+  // Bind Intune dependencies (Intune devices, compliance tracking)
+  bindIntuneDependencies(newContainer);
 
   // Bind Asset dependencies (asset categories, asset models, assets, assignments)
   bindAssetDependencies(newContainer);

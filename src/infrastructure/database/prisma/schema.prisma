@@ -313,6 +313,7 @@ model Person {
   reservationsConfirmed         AssetReservation[]     @relation("ReservationConfirmedBy")
   reservationsCancelled         AssetReservation[]     @relation("ReservationCancelledBy")
   serviceOwnerships             ServiceOwnership[]
+  intuneDevices                 IntuneDevice[]         @relation("IntuneDevicePerson")
 
   // Indexes
   @@index([azureAdId])
@@ -956,6 +957,7 @@ model Asset {
   reservations         AssetReservation[]
   kitCheckoutItems     AssetKitCheckoutItem[]
   serviceAssets        ServiceAsset[]
+  intuneDevice         IntuneDevice?          @relation("IntuneDeviceAsset")
 
   // Indexes
   @@index([assetTag])
@@ -2348,6 +2350,179 @@ enum ServiceRelationshipType {
   PUBLISHES_EVENTS_TO // Service A publishes events to Service B
   CONSUMES_EVENTS_FROM // Service A consumes events from Service B
   BACKUP_FOR // Service A is backup for Service B
+}
+
+// ============================================
+// INTUNE/MDM INTEGRATION
+// ============================================
+
+// Intune device ownership type
+enum IntuneDeviceOwnershipType {
+  CORPORATE // Company-owned device
+  PERSONAL // BYOD - Bring Your Own Device
+  UNKNOWN // Ownership not determined
+}
+
+// Intune device compliance state
+enum IntuneComplianceState {
+  COMPLIANT // Device meets all policies
+  NON_COMPLIANT // Device violates one or more policies
+  CONFLICT // Conflicting policy evaluations
+  ERROR // Error evaluating compliance
+  IN_GRACE_PERIOD // Non-compliant but within grace period
+  CONFIG_MANAGER // Managed by Configuration Manager
+  UNKNOWN // State not determined
+}
+
+// Intune device management state
+enum IntuneManagementState {
+  MANAGED // Actively managed by Intune
+  RETIRE_PENDING // Retirement initiated
+  RETIRE_ISSUED // Retire command issued
+  WIPE_PENDING // Wipe initiated
+  WIPE_ISSUED // Wipe command issued
+  UNHEALTHY // Communication issues
+  DELETE_PENDING // Deletion initiated
+  DISCOVERED // Discovered but not enrolled
+}
+
+// Intune sync log status
+enum IntuneSyncStatus {
+  IN_PROGRESS // Currently syncing
+  COMPLETED // Sync completed successfully
+  FAILED // Sync failed
+  PARTIAL // Partial sync (some errors)
+}
+
+// IntuneDevice model - Devices synced from Microsoft Intune
+model IntuneDevice {
+  id                   String                    @id @default(cuid())
+
+  // Intune Identity (from Microsoft Graph)
+  intuneDeviceId       String                    @unique // Intune device ID (immutable)
+  azureAdDeviceId      String?                   @unique // Azure AD device object ID
+
+  // Device Info
+  deviceName           String // Display name in Intune
+  serialNumber         String? // Hardware serial number - for Asset matching
+  manufacturer         String?
+  model                String?
+  operatingSystem      String? // e.g., "Windows", "iOS", "Android", "macOS"
+  osVersion            String? // e.g., "10.0.19044.1826"
+  imei                 String? // IMEI for mobile devices
+  wiFiMacAddress       String?
+  ethernetMacAddress   String?
+
+  // User Assignment (from Intune)
+  intuneUserId         String? // Intune user ID - maps to Person.azureAdId
+  userPrincipalName    String? // UPN from Intune
+  userDisplayName      String? // Display name from Intune
+
+  // Compliance & Management
+  ownershipType        IntuneDeviceOwnershipType @default(UNKNOWN)
+  complianceState      IntuneComplianceState     @default(UNKNOWN)
+  managementState      IntuneManagementState     @default(MANAGED)
+  isEncrypted          Boolean                   @default(false)
+  isSupervised         Boolean                   @default(false) // iOS supervised mode
+  isJailBroken         Boolean                   @default(false) // Jailbreak/root detection
+
+  // Timestamps from Intune
+  enrolledDateTime     DateTime? // When device was enrolled
+  lastSyncDateTime     DateTime? // Last Intune sync
+
+  // ITAM Links (Asset and Person only)
+  linkedAssetId        String?                   @unique // FK to Asset (1:1)
+  linkedPersonId       String? // FK to Person (derived from intuneUserId)
+
+  // Link Metadata
+  assetLinkMethod      String? // "auto_serial", "manual"
+  assetLinkedAt        DateTime?
+  personLinkMethod     String? // "auto_azuread", "manual"
+  personLinkedAt       DateTime?
+
+  // Sync Tracking
+  lastSyncedFromIntune DateTime? // When we last pulled from Graph API
+  isActive             Boolean                   @default(true)
+
+  createdAt            DateTime                  @default(now())
+  updatedAt            DateTime                  @updatedAt
+
+  // Relations
+  linkedAsset       Asset?                    @relation("IntuneDeviceAsset", fields: [linkedAssetId], references: [id], onDelete: SetNull)
+  linkedPerson      Person?                   @relation("IntuneDevicePerson", fields: [linkedPersonId], references: [id], onDelete: SetNull)
+  complianceHistory IntuneComplianceHistory[]
+  syncLogs          IntuneSyncLog[]
+
+  // Indexes
+  @@index([serialNumber])
+  @@index([intuneUserId])
+  @@index([complianceState])
+  @@index([complianceState, isActive])
+  @@index([managementState])
+  @@index([ownershipType])
+  @@index([linkedAssetId])
+  @@index([linkedPersonId])
+  @@index([isActive])
+  @@index([lastSyncDateTime])
+  @@map("intune_devices")
+}
+
+// Historical compliance tracking for SAMA governance
+model IntuneComplianceHistory {
+  id             String                @id @default(cuid())
+  intuneDeviceId String
+  intuneDevice   IntuneDevice          @relation(fields: [intuneDeviceId], references: [id], onDelete: Cascade)
+
+  previousState  IntuneComplianceState
+  newState       IntuneComplianceState
+  changedAt      DateTime              @default(now())
+
+  // Optional: compliance policy details from Intune
+  policyName     String?
+  policyId       String?
+  reason         String? // Why state changed
+
+  @@index([intuneDeviceId])
+  @@index([changedAt])
+  @@index([newState, changedAt])
+  @@map("intune_compliance_history")
+}
+
+// Sync operation log
+model IntuneSyncLog {
+  id                 String           @id @default(cuid())
+  syncType           String // "full", "delta", "single"
+  status             IntuneSyncStatus @default(IN_PROGRESS)
+
+  // Statistics
+  devicesProcessed   Int              @default(0)
+  devicesCreated     Int              @default(0)
+  devicesUpdated     Int              @default(0)
+  devicesDeactivated Int              @default(0)
+  assetsLinked       Int              @default(0)
+  personsLinked      Int              @default(0)
+  complianceChanges  Int              @default(0)
+  errorsCount        Int              @default(0)
+
+  errors             Json? // Array of error objects
+
+  // Timing
+  startedAt          DateTime         @default(now())
+  completedAt        DateTime?
+  durationMs         Int?
+
+  // Trigger info
+  triggeredBy        String? // User ID or "system"
+
+  // Optional: link to single device sync
+  intuneDeviceId     String?
+  intuneDevice       IntuneDevice?    @relation(fields: [intuneDeviceId], references: [id], onDelete: SetNull)
+
+  @@index([syncType])
+  @@index([status])
+  @@index([startedAt])
+  @@index([intuneDeviceId])
+  @@map("intune_sync_logs")
 }
 
 // ============================================

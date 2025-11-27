@@ -34,6 +34,7 @@ import {
   handleCompleteExpiredReservations,
   handleSendReservationReminders,
   handleUserSyncFromGraph,
+  handleIntuneDeviceSync,
 } from "./handlers";
 
 /**
@@ -142,6 +143,12 @@ function createMaintenanceWorker(): BaseWorker {
   worker.registerHandler(
     MAINTENANCE_JOBS.USER_SYNC_FROM_GRAPH,
     handleUserSyncFromGraph,
+  );
+
+  // Register Microsoft Intune device sync handler
+  worker.registerHandler(
+    MAINTENANCE_JOBS.INTUNE_DEVICE_SYNC,
+    handleIntuneDeviceSync,
   );
 
   /**

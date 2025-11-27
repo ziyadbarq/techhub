@@ -329,6 +329,52 @@ export const ServiceRelationshipType = {
 export type ServiceRelationshipType = (typeof ServiceRelationshipType)[keyof typeof ServiceRelationshipType]
 
 
+export const IntuneDeviceOwnershipType = {
+  CORPORATE: 'CORPORATE',
+  PERSONAL: 'PERSONAL',
+  UNKNOWN: 'UNKNOWN'
+} as const
+
+export type IntuneDeviceOwnershipType = (typeof IntuneDeviceOwnershipType)[keyof typeof IntuneDeviceOwnershipType]
+
+
+export const IntuneComplianceState = {
+  COMPLIANT: 'COMPLIANT',
+  NON_COMPLIANT: 'NON_COMPLIANT',
+  CONFLICT: 'CONFLICT',
+  ERROR: 'ERROR',
+  IN_GRACE_PERIOD: 'IN_GRACE_PERIOD',
+  CONFIG_MANAGER: 'CONFIG_MANAGER',
+  UNKNOWN: 'UNKNOWN'
+} as const
+
+export type IntuneComplianceState = (typeof IntuneComplianceState)[keyof typeof IntuneComplianceState]
+
+
+export const IntuneManagementState = {
+  MANAGED: 'MANAGED',
+  RETIRE_PENDING: 'RETIRE_PENDING',
+  RETIRE_ISSUED: 'RETIRE_ISSUED',
+  WIPE_PENDING: 'WIPE_PENDING',
+  WIPE_ISSUED: 'WIPE_ISSUED',
+  UNHEALTHY: 'UNHEALTHY',
+  DELETE_PENDING: 'DELETE_PENDING',
+  DISCOVERED: 'DISCOVERED'
+} as const
+
+export type IntuneManagementState = (typeof IntuneManagementState)[keyof typeof IntuneManagementState]
+
+
+export const IntuneSyncStatus = {
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  PARTIAL: 'PARTIAL'
+} as const
+
+export type IntuneSyncStatus = (typeof IntuneSyncStatus)[keyof typeof IntuneSyncStatus]
+
+
 export const FeatureFlagCategory = {
   SYSTEM: 'SYSTEM',
   LAYER_1: 'LAYER_1',

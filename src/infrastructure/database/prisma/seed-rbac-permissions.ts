@@ -611,6 +611,34 @@ const BASE_PERMISSIONS: PermissionDefinition[] = [
     displayName: "Reactivate License Allocations",
     description: "Reactivate previously deallocated licenses",
   }),
+
+  // ==========================================
+  // Intune / MDM Integration
+  // ==========================================
+  createPermission("intune-devices", "view", {
+    displayName: "View Intune Devices",
+    description: "View Intune device list and details",
+  }),
+  createPermission("intune-devices", "sync", {
+    displayName: "Sync Intune Devices",
+    description: "Trigger device sync from Microsoft Intune",
+  }),
+  createPermission("intune-devices", "link", {
+    displayName: "Link Intune Devices",
+    description: "Link or unlink Intune devices to assets and persons",
+  }),
+  createPermission("intune-devices", "manage", {
+    displayName: "Manage Intune Devices",
+    description: "Full Intune device management access",
+  }),
+  createPermission("intune-compliance", "view", {
+    displayName: "View Intune Compliance",
+    description: "View device compliance status and history",
+  }),
+  createPermission("intune-sync-logs", "view", {
+    displayName: "View Intune Sync Logs",
+    description: "View Intune sync operation logs",
+  }),
 ] as const;
 
 const definedPermissionNames = new Set(

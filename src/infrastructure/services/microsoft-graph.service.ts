@@ -23,6 +23,11 @@ import {
   type GraphUser,
   type GraphManagerResponse,
 } from "@/lib/schemas/graph-user.schema";
+import {
+  GraphIntuneDeviceSchema,
+  type FetchDevicesOptions,
+  type GraphIntuneDevice,
+} from "@/lib/schemas/graph-intune-device.schema";
 
 /**
  * Fields to select from Graph API user endpoint
@@ -59,6 +64,35 @@ const BATCH_DELAY_MS = 100;
  * Maximum users per page from Graph API
  */
 const PAGE_SIZE = 999;
+
+/**
+ * Fields to select from Graph API Intune managed devices endpoint
+ * Optimized for sync use case - only fields we need
+ */
+const INTUNE_SELECT_FIELDS = [
+  "id",
+  "azureADDeviceId",
+  "deviceName",
+  "serialNumber",
+  "manufacturer",
+  "model",
+  "operatingSystem",
+  "osVersion",
+  "imei",
+  "wiFiMacAddress",
+  "ethernetMacAddress",
+  "userId",
+  "userPrincipalName",
+  "userDisplayName",
+  "managedDeviceOwnerType",
+  "complianceState",
+  "managementState",
+  "isEncrypted",
+  "isSupervised",
+  "jailBroken",
+  "enrolledDateTime",
+  "lastSyncDateTime",
+].join(",");
 
 @injectable()
 export class MicrosoftGraphService implements IMicrosoftGraphService {
@@ -339,5 +373,164 @@ export class MicrosoftGraphService implements IMicrosoftGraphService {
    */
   private delay(ms: number): Promise<void> {
     return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  // ==========================================
+  // Intune Device Management
+  // ==========================================
+
+  /**
+   * Fetches all managed devices from Microsoft Intune via Graph API
+   */
+  async fetchAllManagedDevices(
+    options?: FetchDevicesOptions,
+  ): Promise<GraphIntuneDevice[]> {
+    const client = this.getClient();
+    const allDevices: GraphIntuneDevice[] = [];
+    let nextLink: string | undefined;
+    let pageCount = 0;
+
+    this.logger.info("Starting Intune device fetch from Graph API", {
+      options,
+    });
+
+    try {
+      // Build filter query
+      const filters: string[] = [];
+      if (options?.ownershipType) {
+        filters.push(`managedDeviceOwnerType eq '${options.ownershipType}'`);
+      }
+      if (options?.complianceState) {
+        filters.push(`complianceState eq '${options.complianceState}'`);
+      }
+      if (options?.operatingSystem) {
+        filters.push(
+          `startsWith(operatingSystem, '${options.operatingSystem}')`,
+        );
+      }
+      const filterQuery =
+        filters.length > 0 ? filters.join(" and ") : undefined;
+
+      // Initial request
+      let request = client
+        .api("/deviceManagement/managedDevices")
+        .select(INTUNE_SELECT_FIELDS)
+        .top(PAGE_SIZE);
+      if (filterQuery) {
+        request = request.filter(filterQuery);
+      }
+
+      const response = await request.get();
+      pageCount++;
+
+      // Validate and collect devices from first page
+      for (const device of response.value) {
+        const result = GraphIntuneDeviceSchema.safeParse(device);
+        if (result.success) {
+          allDevices.push(result.data);
+        } else {
+          this.logger.warn("Invalid Intune device data skipped", {
+            deviceId: device?.id,
+            deviceName: device?.deviceName,
+            errors: result.error.issues,
+          });
+        }
+      }
+
+      nextLink = response["@odata.nextLink"];
+
+      // Handle pagination
+      while (nextLink) {
+        this.logger.debug("Fetching next page of devices", {
+          page: pageCount + 1,
+        });
+
+        const pageResponse = await client.api(nextLink).get();
+        pageCount++;
+
+        for (const device of pageResponse.value) {
+          const result = GraphIntuneDeviceSchema.safeParse(device);
+          if (result.success) {
+            allDevices.push(result.data);
+          }
+        }
+
+        nextLink = pageResponse["@odata.nextLink"];
+      }
+
+      this.logger.info("Intune device fetch completed", {
+        totalDevices: allDevices.length,
+        pages: pageCount,
+      });
+
+      return allDevices;
+    } catch (error) {
+      this.logger.error(
+        "Failed to fetch Intune devices from Graph API",
+        error instanceof Error ? error : new Error(String(error)),
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Fetches a specific managed device by Intune device ID
+   */
+  async fetchManagedDevice(
+    deviceId: string,
+  ): Promise<GraphIntuneDevice | null> {
+    const client = this.getClient();
+
+    try {
+      const device = await client
+        .api(`/deviceManagement/managedDevices/${deviceId}`)
+        .select(INTUNE_SELECT_FIELDS)
+        .get();
+
+      const result = GraphIntuneDeviceSchema.safeParse(device);
+      if (result.success) {
+        return result.data;
+      }
+
+      this.logger.warn("Invalid Intune device data received", {
+        deviceId,
+        errors: result.error.issues,
+      });
+      return null;
+    } catch (error: unknown) {
+      // 404 = device not found
+      if (
+        error &&
+        typeof error === "object" &&
+        "statusCode" in error &&
+        error.statusCode === 404
+      ) {
+        return null;
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Tests connection to Intune via Microsoft Graph API
+   */
+  async testIntuneConnection(): Promise<boolean> {
+    try {
+      const client = this.getClient();
+      // Try to fetch a minimal amount of data to verify Intune access
+      await client
+        .api("/deviceManagement/managedDevices")
+        .select("id")
+        .top(1)
+        .get();
+      this.logger.info("Intune API connection successful");
+      return true;
+    } catch (error) {
+      this.logger.error(
+        "Intune API connection failed",
+        error instanceof Error ? error : new Error(String(error)),
+      );
+      return false;
+    }
   }
 }

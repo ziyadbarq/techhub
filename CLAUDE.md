@@ -43,7 +43,7 @@ This file provides high-level guidance when working with this repository.
 - **System Setup**: Status page (`/setup`) for system health monitoring and admin dashboard (`/admin/system-setup`) for database operations; first admin is created via the `/register` UI and promoted to system-administrator via Prisma Studio/SQL (see docs/features/SYSTEM_SETUP.md)
 - **Layer 1 (Foundation)**: 12 core entities - OrganizationUnit, Person, Role, Location, Vendor, Lifecycle models, Field definitions, **ExchangeRate** (multi-currency support)
 - **Layer 2 (Asset/Inventory)**: 9 entities - Asset, AssetCategory, AssetModel, AssetAssignment, StockLocation, StockMovement, Warranty, MaintenanceSchedule, MaintenanceRecord
-- **Layer 3 (Advanced ITAM & Extensions)**: 9 modules (~33 entities)
+- **Layer 3 (Advanced ITAM & Extensions)**: 10 modules (~35 entities)
   - **Asset Disposals**: AssetDisposal, DisposalApproval, DisposalDocument (3 entities, 11 use cases)
   - **Asset Kits**: AssetKit, AssetKitItem, AssetKitCheckout, AssetKitCheckoutItem (4 entities, 19 use cases)
   - **Asset Reservations**: AssetReservation, AssetReservationConflict (2 entities, 17 use cases)
@@ -53,6 +53,7 @@ This file provides high-level guidance when working with this repository.
   - **Governance**: DataDomain, DataOwnership, VerificationCampaign, VerificationItem (4 entities, 24 use cases)
   - **Attachments**: AttachmentType, Attachment (2 entities, 11 use cases)
   - **Service Management**: Service, ServiceOwnership, BusinessProcess, ServiceInfrastructure, ServiceAsset (5 entities, 25 use cases)
+  - **Intune Integration**: IntuneDevice, IntuneComplianceHistory (2 entities, 9 use cases) - MS Graph device sync with compliance tracking
 - **Reference**: Task entity (complete implementation, hidden from UI)
 - **Marketing**: Public landing page showcasing system capabilities
 

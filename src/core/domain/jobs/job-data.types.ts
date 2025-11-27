@@ -162,3 +162,62 @@ export interface UserSyncFromGraphJobData extends BaseJobData {
    */
   triggeredBy?: string;
 }
+
+// ========================================
+// Intune Device Sync Jobs
+// ========================================
+
+/**
+ * Data for Microsoft Intune device sync job
+ */
+export interface IntuneSyncJobData extends BaseJobData {
+  /**
+   * Automatically link devices to Assets by serial number match
+   * @default true
+   */
+  autoLinkToAssets?: boolean;
+
+  /**
+   * Automatically link devices to Persons by Intune userId match
+   * @default true
+   */
+  autoLinkToPersons?: boolean;
+
+  /**
+   * Track compliance state changes in history table
+   * @default true
+   */
+  trackComplianceHistory?: boolean;
+
+  /**
+   * Deactivate devices not found in Intune
+   * @default true
+   */
+  deactivateMissing?: boolean;
+
+  /**
+   * Filter by ownership type (corporate or personal)
+   */
+  ownershipType?: "corporate" | "personal";
+
+  /**
+   * Filter by compliance state
+   */
+  complianceState?: "compliant" | "noncompliant";
+
+  /**
+   * Filter by operating system (e.g., "Windows", "iOS", "Android")
+   */
+  operatingSystem?: string;
+
+  /**
+   * Dry run mode - preview changes without persisting
+   * @default false
+   */
+  dryRun?: boolean;
+
+  /**
+   * User who triggered the sync (for audit logging)
+   */
+  triggeredBy?: string;
+}

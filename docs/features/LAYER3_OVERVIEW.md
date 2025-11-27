@@ -4,9 +4,9 @@ This document provides a comprehensive overview of all Layer 3 (Advanced ITAM) m
 
 ## Overview
 
-Layer 3 consists of **9 advanced modules** built with Clean Architecture patterns, providing enterprise-grade IT asset management capabilities beyond basic asset tracking.
+Layer 3 consists of **10 advanced modules** built with Clean Architecture patterns, providing enterprise-grade IT asset management capabilities beyond basic asset tracking.
 
-**Total**: ~33 entities, 29+ database tables, 185+ use cases
+**Total**: ~35 entities, 31+ database tables, 195+ use cases
 
 ## Modules
 
@@ -266,9 +266,39 @@ Layer 3 consists of **9 advanced modules** built with Clean Architecture pattern
 
 ---
 
+### 10. Intune Integration
+
+**Routes**:
+- `/intune/devices`
+- `/intune/devices/[id]`
+- `/intune/compliance` (planned)
+
+**Permissions**: `INTUNE_DEVICES_VIEW`, `INTUNE_COMPLIANCE_VIEW`
+**Feature Flag**: `INTUNE`
+**Documentation**: [INTUNE_INTEGRATION.md](INTUNE_INTEGRATION.md)
+
+**Entities**: IntuneDevice, IntuneComplianceHistory (2 entities, 9 use cases)
+
+**Features**:
+- Microsoft Intune device synchronization via MS Graph API
+- Device compliance tracking (COMPLIANT, NON_COMPLIANT, IN_GRACE_PERIOD, etc.)
+- Ownership type tracking (CORPORATE, PERSONAL, UNKNOWN)
+- Auto-linking to ITAM Assets via serial number matching
+- Auto-linking to ITAM Persons via Azure AD user ID
+- Compliance history tracking for SAMA governance
+- Security status monitoring (encryption, supervised, jailbroken)
+- Scheduled background sync job (daily at 3 AM UTC)
+- Manual sync trigger via UI
+
+**Key Permissions**:
+- **Intune Devices**: `INTUNE_DEVICES_VIEW`, `INTUNE_DEVICES_SYNC`, `INTUNE_DEVICES_LINK`, `INTUNE_DEVICES_MANAGE`
+- **Intune Compliance**: `INTUNE_COMPLIANCE_VIEW`
+
+---
+
 ## Database Implementation
 
-**Total Tables**: 29+ new tables
+**Total Tables**: 31+ new tables
 
 **Breakdown by Module**:
 - CMDB: 6 tables (ConfigurationItem, CIRelationship, RelationshipType, CIClass, CIClassField, RelationshipTypeScope)
@@ -280,6 +310,7 @@ Layer 3 consists of **9 advanced modules** built with Clean Architecture pattern
 - Asset Kits: 4 tables (AssetKit, AssetKitItem, AssetKitCheckout, AssetKitCheckoutItem)
 - Reservations: 2 tables (AssetReservation, AssetReservationConflict)
 - Attachments: 2 tables (AttachmentType, Attachment)
+- Intune: 2 tables (IntuneDevice, IntuneComplianceHistory)
 
 **Schema Documentation**: See [DATABASE_SCHEMA.md](../architecture/DATABASE_SCHEMA.md) for complete schema design
 
@@ -296,6 +327,7 @@ All Layer 3 modules are registered in `src/di/container.ts`:
 - `bindLicensesDependencies()` - License management system
 - `bindGovernanceDependencies()` - Governance features (data domains, ownerships, verification)
 - `bindAttachmentsDependencies()` - Universal attachment system
+- `bindIntuneDependencies()` - Intune device sync and compliance tracking
 - `loadDisposalModule()` - Asset disposal workflows
 - `loadAssetKitsModule()` - Asset kit bundles and checkouts
 - `loadReservationsModule()` - Asset reservation system
@@ -314,6 +346,7 @@ New navigation groups added with permission-based filtering:
 - **Licenses Group**: License Products, License Entitlements, License Allocations
 - **Governance Group**: Data Domains, Data Ownerships, Verification Campaigns
 - **Attachments Group**: Attachment Types, Attachments
+- **Intune Group**: Managed Devices, Compliance Status
 - **Asset Operations Group**: Disposals, Kits, Reservations (alongside existing Asset features)
 
 **Auto-Filtering**: Navigation items automatically hide based on user permissions and feature flags
@@ -334,12 +367,14 @@ Layer 3 modules integrate with each other and with Layer 1 (Foundation) and Laye
 - **Attachments** link to all entities across all layers
 - **Governance Data Ownerships** link to Asset Categories (Layer 2) or CI Classes (Layer 3)
 - **Asset Kits** integrate with Asset Reservations for checkout workflow
+- **Intune Devices** link to Assets (via serial number) and Persons (via Azure AD user ID)
 
 **SAMA Compliance**:
 - Service Management: Essential service tracking
 - Governance: Data classification and verification campaigns
 - Attachments: Compliance documentation and audit trails
 - Asset Disposals: Data sanitization checklists and certificates
+- Intune Integration: Device compliance monitoring and historical tracking
 
 ---
 

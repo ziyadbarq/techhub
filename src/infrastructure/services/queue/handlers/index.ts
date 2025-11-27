@@ -12,3 +12,4 @@ export { handleActivateReadyReservations } from "./activate-ready-reservations.h
 export { handleCompleteExpiredReservations } from "./complete-expired-reservations.handler";
 export { handleSendReservationReminders } from "./send-reservation-reminders.handler";
 export { handleUserSyncFromGraph } from "./user-sync-from-graph.handler";
+export { handleIntuneDeviceSync } from "./intune-device-sync.handler";

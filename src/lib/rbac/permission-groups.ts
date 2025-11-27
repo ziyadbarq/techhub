@@ -1,7 +1,7 @@
 /**
  * Permission Groups Configuration
  *
- * Organizes 270 permissions into 14 logical groups for better UX in permission assignment UI.
+ * Organizes 276 permissions into 15 logical groups for better UX in permission assignment UI.
  * Each group contains related permissions based on functionality and domain.
  *
  * Groups:
@@ -16,9 +16,10 @@
  * 9. License Management (22 permissions)
  * 10. Service Management (11 permissions)
  * 11. Governance & Compliance (23 permissions)
- * 12. Attachments & Documents (10 permissions)
- * 13. Exchange Rates (6 permissions)
- * 14. Development & Testing (6 permissions)
+ * 12. Intune & MDM (6 permissions)
+ * 13. Attachments & Documents (10 permissions)
+ * 14. Exchange Rates (6 permissions)
+ * 15. Development & Testing (6 permissions)
  */
 
 import {
@@ -376,6 +377,21 @@ export const PERMISSION_GROUPS: PermissionGroup[] = [
       PERMISSIONS.VERIFICATION_ITEMS_VERIFY,
       PERMISSIONS.VERIFICATION_ITEMS_FLAG_EXCEPTION,
       PERMISSIONS.VERIFICATION_ITEMS_MANAGE,
+    ],
+  },
+  {
+    id: "intune-mdm",
+    label: "Intune & MDM",
+    description:
+      "Microsoft Intune device sync, compliance tracking, and asset/person reconciliation",
+    icon: "Smartphone",
+    permissions: [
+      PERMISSIONS.INTUNE_DEVICES_VIEW,
+      PERMISSIONS.INTUNE_DEVICES_SYNC,
+      PERMISSIONS.INTUNE_DEVICES_LINK,
+      PERMISSIONS.INTUNE_DEVICES_MANAGE,
+      PERMISSIONS.INTUNE_COMPLIANCE_VIEW,
+      PERMISSIONS.INTUNE_SYNC_LOGS_VIEW,
     ],
   },
   {

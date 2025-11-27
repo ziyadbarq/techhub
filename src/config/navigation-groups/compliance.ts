@@ -2,6 +2,7 @@
  * Compliance & Documentation Navigation Groups
  *
  * Groups:
+ * - Intune: Microsoft Intune device management and compliance
  * - Contracts: Contract types and management
  * - Licenses: License products, entitlements, and allocations
  * - Governance: Data domains, ownership, and verification campaigns
@@ -19,9 +20,38 @@ import {
   CheckCircle2,
   FileType,
   Paperclip,
+  Laptop,
+  Shield,
 } from "lucide-react";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { NavGroup } from "../navigation.types";
+
+export const intuneGroup: NavGroup = {
+  id: "intune",
+  title: "Intune",
+  items: [
+    {
+      title: "Managed Devices",
+      href: "/intune/devices",
+      icon: Laptop,
+      description: "View and manage Microsoft Intune devices",
+      permission: PERMISSIONS.INTUNE_DEVICES_VIEW,
+      featureFlag: "INTUNE",
+    },
+    {
+      title: "Compliance Status",
+      href: "/intune/compliance",
+      icon: Shield,
+      description: "Device compliance monitoring and reports",
+      permission: PERMISSIONS.INTUNE_COMPLIANCE_VIEW,
+      featureFlag: "INTUNE",
+      visible: false, // Coming soon
+    },
+  ],
+  visible: false, // Hidden until INTUNE feature flag is enabled
+  collapsible: true,
+  defaultCollapsed: false,
+};
 
 export const contractsGroup: NavGroup = {
   id: "contracts",

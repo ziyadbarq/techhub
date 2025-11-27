@@ -32,6 +32,7 @@ export const MAINTENANCE_JOBS = {
   HEALTH_CHECK: "health-check",
   WARRANTY_EXPIRATION_CHECK: "warranty-expiration-check",
   USER_SYNC_FROM_GRAPH: "user-sync-from-graph",
+  INTUNE_DEVICE_SYNC: "intune-device-sync",
 } as const;
 
 /**

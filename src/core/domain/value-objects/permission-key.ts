@@ -383,6 +383,18 @@ export const PERMISSIONS = {
   BUSINESS_PROCESSES_UPDATE: "business-processes:update",
   BUSINESS_PROCESSES_DELETE: "business-processes:delete",
   BUSINESS_PROCESSES_MANAGE: "business-processes:manage",
+
+  // Intune: Device Management
+  INTUNE_DEVICES_VIEW: "intune-devices:view",
+  INTUNE_DEVICES_SYNC: "intune-devices:sync",
+  INTUNE_DEVICES_LINK: "intune-devices:link",
+  INTUNE_DEVICES_MANAGE: "intune-devices:manage",
+
+  // Intune: Compliance
+  INTUNE_COMPLIANCE_VIEW: "intune-compliance:view",
+
+  // Intune: Sync Logs
+  INTUNE_SYNC_LOGS_VIEW: "intune-sync-logs:view",
 } as const;
 
 export type PermissionKey = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];

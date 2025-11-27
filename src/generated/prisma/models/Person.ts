@@ -365,6 +365,7 @@ export type PersonWhereInput = {
   reservationsConfirmed?: Prisma.AssetReservationListRelationFilter
   reservationsCancelled?: Prisma.AssetReservationListRelationFilter
   serviceOwnerships?: Prisma.ServiceOwnershipListRelationFilter
+  intuneDevices?: Prisma.IntuneDeviceListRelationFilter
 }
 
 export type PersonOrderByWithRelationInput = {
@@ -420,6 +421,7 @@ export type PersonOrderByWithRelationInput = {
   reservationsConfirmed?: Prisma.AssetReservationOrderByRelationAggregateInput
   reservationsCancelled?: Prisma.AssetReservationOrderByRelationAggregateInput
   serviceOwnerships?: Prisma.ServiceOwnershipOrderByRelationAggregateInput
+  intuneDevices?: Prisma.IntuneDeviceOrderByRelationAggregateInput
 }
 
 export type PersonWhereUniqueInput = Prisma.AtLeast<{
@@ -478,6 +480,7 @@ export type PersonWhereUniqueInput = Prisma.AtLeast<{
   reservationsConfirmed?: Prisma.AssetReservationListRelationFilter
   reservationsCancelled?: Prisma.AssetReservationListRelationFilter
   serviceOwnerships?: Prisma.ServiceOwnershipListRelationFilter
+  intuneDevices?: Prisma.IntuneDeviceListRelationFilter
 }, "id" | "azureAdId" | "userId" | "email" | "employeeId">
 
 export type PersonOrderByWithAggregationInput = {
@@ -590,6 +593,7 @@ export type PersonCreateInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateInput = {
@@ -640,6 +644,7 @@ export type PersonUncheckedCreateInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUpdateInput = {
@@ -690,6 +695,7 @@ export type PersonUpdateInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateInput = {
@@ -740,6 +746,7 @@ export type PersonUncheckedUpdateInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonCreateManyInput = {
@@ -1453,6 +1460,22 @@ export type PersonUpdateOneRequiredWithoutAttachmentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutAttachmentsInput, Prisma.PersonUpdateWithoutAttachmentsInput>, Prisma.PersonUncheckedUpdateWithoutAttachmentsInput>
 }
 
+export type PersonCreateNestedOneWithoutIntuneDevicesInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutIntuneDevicesInput, Prisma.PersonUncheckedCreateWithoutIntuneDevicesInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutIntuneDevicesInput
+  connect?: Prisma.PersonWhereUniqueInput
+}
+
+export type PersonUpdateOneWithoutIntuneDevicesNestedInput = {
+  create?: Prisma.XOR<Prisma.PersonCreateWithoutIntuneDevicesInput, Prisma.PersonUncheckedCreateWithoutIntuneDevicesInput>
+  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutIntuneDevicesInput
+  upsert?: Prisma.PersonUpsertWithoutIntuneDevicesInput
+  disconnect?: Prisma.PersonWhereInput | boolean
+  delete?: Prisma.PersonWhereInput | boolean
+  connect?: Prisma.PersonWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutIntuneDevicesInput, Prisma.PersonUpdateWithoutIntuneDevicesInput>, Prisma.PersonUncheckedUpdateWithoutIntuneDevicesInput>
+}
+
 export type PersonCreateWithoutUserInput = {
   id?: string
   azureAdId?: string | null
@@ -1500,6 +1523,7 @@ export type PersonCreateWithoutUserInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutUserInput = {
@@ -1549,6 +1573,7 @@ export type PersonUncheckedCreateWithoutUserInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutUserInput = {
@@ -1614,6 +1639,7 @@ export type PersonUpdateWithoutUserInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutUserInput = {
@@ -1663,6 +1689,7 @@ export type PersonUncheckedUpdateWithoutUserInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonCreateWithoutPrimaryRoleInput = {
@@ -1712,6 +1739,7 @@ export type PersonCreateWithoutPrimaryRoleInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutPrimaryRoleInput = {
@@ -1761,6 +1789,7 @@ export type PersonUncheckedCreateWithoutPrimaryRoleInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutPrimaryRoleInput = {
@@ -1867,6 +1896,7 @@ export type PersonCreateWithoutManagedOrgUnitsInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutManagedOrgUnitsInput = {
@@ -1916,6 +1946,7 @@ export type PersonUncheckedCreateWithoutManagedOrgUnitsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutManagedOrgUnitsInput = {
@@ -1970,6 +2001,7 @@ export type PersonCreateWithoutOrgUnitInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutOrgUnitInput = {
@@ -2019,6 +2051,7 @@ export type PersonUncheckedCreateWithoutOrgUnitInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutOrgUnitInput = {
@@ -2089,6 +2122,7 @@ export type PersonUpdateWithoutManagedOrgUnitsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutManagedOrgUnitsInput = {
@@ -2138,6 +2172,7 @@ export type PersonUncheckedUpdateWithoutManagedOrgUnitsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUpsertWithWhereUniqueWithoutOrgUnitInput = {
@@ -2203,6 +2238,7 @@ export type PersonCreateWithoutDirectReportsInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutDirectReportsInput = {
@@ -2252,6 +2288,7 @@ export type PersonUncheckedCreateWithoutDirectReportsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutDirectReportsInput = {
@@ -2306,6 +2343,7 @@ export type PersonCreateWithoutManagerInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutManagerInput = {
@@ -2355,6 +2393,7 @@ export type PersonUncheckedCreateWithoutManagerInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutManagerInput = {
@@ -2425,6 +2464,7 @@ export type PersonUpdateWithoutDirectReportsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDirectReportsInput = {
@@ -2474,6 +2514,7 @@ export type PersonUncheckedUpdateWithoutDirectReportsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUpsertWithWhereUniqueWithoutManagerInput = {
@@ -2539,6 +2580,7 @@ export type PersonCreateWithoutRoleAssignmentsInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutRoleAssignmentsInput = {
@@ -2588,6 +2630,7 @@ export type PersonUncheckedCreateWithoutRoleAssignmentsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutRoleAssignmentsInput = {
@@ -2653,6 +2696,7 @@ export type PersonUpdateWithoutRoleAssignmentsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutRoleAssignmentsInput = {
@@ -2702,6 +2746,7 @@ export type PersonUncheckedUpdateWithoutRoleAssignmentsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonCreateWithoutLocationInput = {
@@ -2751,6 +2796,7 @@ export type PersonCreateWithoutLocationInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutLocationInput = {
@@ -2800,6 +2846,7 @@ export type PersonUncheckedCreateWithoutLocationInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutLocationInput = {
@@ -2875,6 +2922,7 @@ export type PersonCreateWithoutConfigurationItemsInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutConfigurationItemsInput = {
@@ -2924,6 +2972,7 @@ export type PersonUncheckedCreateWithoutConfigurationItemsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutConfigurationItemsInput = {
@@ -2989,6 +3038,7 @@ export type PersonUpdateWithoutConfigurationItemsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutConfigurationItemsInput = {
@@ -3038,6 +3088,7 @@ export type PersonUncheckedUpdateWithoutConfigurationItemsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonCreateWithoutStockMovementsInput = {
@@ -3087,6 +3138,7 @@ export type PersonCreateWithoutStockMovementsInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutStockMovementsInput = {
@@ -3136,6 +3188,7 @@ export type PersonUncheckedCreateWithoutStockMovementsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutStockMovementsInput = {
@@ -3201,6 +3254,7 @@ export type PersonUpdateWithoutStockMovementsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutStockMovementsInput = {
@@ -3250,6 +3304,7 @@ export type PersonUncheckedUpdateWithoutStockMovementsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonCreateWithoutAssignedMaintenanceSchedulesInput = {
@@ -3299,6 +3354,7 @@ export type PersonCreateWithoutAssignedMaintenanceSchedulesInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutAssignedMaintenanceSchedulesInput = {
@@ -3348,6 +3404,7 @@ export type PersonUncheckedCreateWithoutAssignedMaintenanceSchedulesInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutAssignedMaintenanceSchedulesInput = {
@@ -3413,6 +3470,7 @@ export type PersonUpdateWithoutAssignedMaintenanceSchedulesInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutAssignedMaintenanceSchedulesInput = {
@@ -3462,6 +3520,7 @@ export type PersonUncheckedUpdateWithoutAssignedMaintenanceSchedulesInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonCreateWithoutPerformedMaintenanceRecordsInput = {
@@ -3511,6 +3570,7 @@ export type PersonCreateWithoutPerformedMaintenanceRecordsInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutPerformedMaintenanceRecordsInput = {
@@ -3560,6 +3620,7 @@ export type PersonUncheckedCreateWithoutPerformedMaintenanceRecordsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutPerformedMaintenanceRecordsInput = {
@@ -3625,6 +3686,7 @@ export type PersonUpdateWithoutPerformedMaintenanceRecordsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput = {
@@ -3674,6 +3736,7 @@ export type PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonCreateWithoutInitiatedDisposalsInput = {
@@ -3723,6 +3786,7 @@ export type PersonCreateWithoutInitiatedDisposalsInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutInitiatedDisposalsInput = {
@@ -3772,6 +3836,7 @@ export type PersonUncheckedCreateWithoutInitiatedDisposalsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutInitiatedDisposalsInput = {
@@ -3826,6 +3891,7 @@ export type PersonCreateWithoutApprovedDisposalsInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutApprovedDisposalsInput = {
@@ -3875,6 +3941,7 @@ export type PersonUncheckedCreateWithoutApprovedDisposalsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutApprovedDisposalsInput = {
@@ -3940,6 +4007,7 @@ export type PersonUpdateWithoutInitiatedDisposalsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutInitiatedDisposalsInput = {
@@ -3989,6 +4057,7 @@ export type PersonUncheckedUpdateWithoutInitiatedDisposalsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUpsertWithoutApprovedDisposalsInput = {
@@ -4049,6 +4118,7 @@ export type PersonUpdateWithoutApprovedDisposalsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutApprovedDisposalsInput = {
@@ -4098,6 +4168,7 @@ export type PersonUncheckedUpdateWithoutApprovedDisposalsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonCreateWithoutDisposalApprovalsInput = {
@@ -4147,6 +4218,7 @@ export type PersonCreateWithoutDisposalApprovalsInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutDisposalApprovalsInput = {
@@ -4196,6 +4268,7 @@ export type PersonUncheckedCreateWithoutDisposalApprovalsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutDisposalApprovalsInput = {
@@ -4261,6 +4334,7 @@ export type PersonUpdateWithoutDisposalApprovalsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDisposalApprovalsInput = {
@@ -4310,6 +4384,7 @@ export type PersonUncheckedUpdateWithoutDisposalApprovalsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonCreateWithoutUploadedDisposalDocumentsInput = {
@@ -4359,6 +4434,7 @@ export type PersonCreateWithoutUploadedDisposalDocumentsInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutUploadedDisposalDocumentsInput = {
@@ -4408,6 +4484,7 @@ export type PersonUncheckedCreateWithoutUploadedDisposalDocumentsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutUploadedDisposalDocumentsInput = {
@@ -4473,6 +4550,7 @@ export type PersonUpdateWithoutUploadedDisposalDocumentsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutUploadedDisposalDocumentsInput = {
@@ -4522,6 +4600,7 @@ export type PersonUncheckedUpdateWithoutUploadedDisposalDocumentsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonCreateWithoutKitCheckoutsInput = {
@@ -4571,6 +4650,7 @@ export type PersonCreateWithoutKitCheckoutsInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutKitCheckoutsInput = {
@@ -4620,6 +4700,7 @@ export type PersonUncheckedCreateWithoutKitCheckoutsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutKitCheckoutsInput = {
@@ -4685,6 +4766,7 @@ export type PersonUpdateWithoutKitCheckoutsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutKitCheckoutsInput = {
@@ -4734,6 +4816,7 @@ export type PersonUncheckedUpdateWithoutKitCheckoutsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonCreateWithoutReservationsForInput = {
@@ -4783,6 +4866,7 @@ export type PersonCreateWithoutReservationsForInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutReservationsForInput = {
@@ -4832,6 +4916,7 @@ export type PersonUncheckedCreateWithoutReservationsForInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutReservationsForInput = {
@@ -4886,6 +4971,7 @@ export type PersonCreateWithoutReservationsCreatedInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutReservationsCreatedInput = {
@@ -4935,6 +5021,7 @@ export type PersonUncheckedCreateWithoutReservationsCreatedInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutReservationsCreatedInput = {
@@ -4989,6 +5076,7 @@ export type PersonCreateWithoutReservationsConfirmedInput = {
   reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutReservationsConfirmedInput = {
@@ -5038,6 +5126,7 @@ export type PersonUncheckedCreateWithoutReservationsConfirmedInput = {
   reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutReservationsConfirmedInput = {
@@ -5092,6 +5181,7 @@ export type PersonCreateWithoutReservationsCancelledInput = {
   reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutReservationsCancelledInput = {
@@ -5141,6 +5231,7 @@ export type PersonUncheckedCreateWithoutReservationsCancelledInput = {
   reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutReservationsCancelledInput = {
@@ -5206,6 +5297,7 @@ export type PersonUpdateWithoutReservationsForInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutReservationsForInput = {
@@ -5255,6 +5347,7 @@ export type PersonUncheckedUpdateWithoutReservationsForInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUpsertWithoutReservationsCreatedInput = {
@@ -5315,6 +5408,7 @@ export type PersonUpdateWithoutReservationsCreatedInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutReservationsCreatedInput = {
@@ -5364,6 +5458,7 @@ export type PersonUncheckedUpdateWithoutReservationsCreatedInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUpsertWithoutReservationsConfirmedInput = {
@@ -5424,6 +5519,7 @@ export type PersonUpdateWithoutReservationsConfirmedInput = {
   reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutReservationsConfirmedInput = {
@@ -5473,6 +5569,7 @@ export type PersonUncheckedUpdateWithoutReservationsConfirmedInput = {
   reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUpsertWithoutReservationsCancelledInput = {
@@ -5533,6 +5630,7 @@ export type PersonUpdateWithoutReservationsCancelledInput = {
   reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutReservationsCancelledInput = {
@@ -5582,6 +5680,7 @@ export type PersonUncheckedUpdateWithoutReservationsCancelledInput = {
   reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonCreateWithoutServiceOwnershipsInput = {
@@ -5631,6 +5730,7 @@ export type PersonCreateWithoutServiceOwnershipsInput = {
   reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutServiceOwnershipsInput = {
@@ -5680,6 +5780,7 @@ export type PersonUncheckedCreateWithoutServiceOwnershipsInput = {
   reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutServiceOwnershipsInput = {
@@ -5745,6 +5846,7 @@ export type PersonUpdateWithoutServiceOwnershipsInput = {
   reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutServiceOwnershipsInput = {
@@ -5794,6 +5896,7 @@ export type PersonUncheckedUpdateWithoutServiceOwnershipsInput = {
   reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonCreateWithoutDataOwnershipsInput = {
@@ -5843,6 +5946,7 @@ export type PersonCreateWithoutDataOwnershipsInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutDataOwnershipsInput = {
@@ -5892,6 +5996,7 @@ export type PersonUncheckedCreateWithoutDataOwnershipsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutDataOwnershipsInput = {
@@ -5957,6 +6062,7 @@ export type PersonUpdateWithoutDataOwnershipsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutDataOwnershipsInput = {
@@ -6006,6 +6112,7 @@ export type PersonUncheckedUpdateWithoutDataOwnershipsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonCreateWithoutVerificationCampaignsInput = {
@@ -6055,6 +6162,7 @@ export type PersonCreateWithoutVerificationCampaignsInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutVerificationCampaignsInput = {
@@ -6104,6 +6212,7 @@ export type PersonUncheckedCreateWithoutVerificationCampaignsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutVerificationCampaignsInput = {
@@ -6169,6 +6278,7 @@ export type PersonUpdateWithoutVerificationCampaignsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutVerificationCampaignsInput = {
@@ -6218,6 +6328,7 @@ export type PersonUncheckedUpdateWithoutVerificationCampaignsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonCreateWithoutVerificationItemsInput = {
@@ -6267,6 +6378,7 @@ export type PersonCreateWithoutVerificationItemsInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutVerificationItemsInput = {
@@ -6316,6 +6428,7 @@ export type PersonUncheckedCreateWithoutVerificationItemsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutVerificationItemsInput = {
@@ -6381,6 +6494,7 @@ export type PersonUpdateWithoutVerificationItemsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutVerificationItemsInput = {
@@ -6430,6 +6544,7 @@ export type PersonUncheckedUpdateWithoutVerificationItemsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonCreateWithoutAuditLogsChangedInput = {
@@ -6479,6 +6594,7 @@ export type PersonCreateWithoutAuditLogsChangedInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutAuditLogsChangedInput = {
@@ -6528,6 +6644,7 @@ export type PersonUncheckedCreateWithoutAuditLogsChangedInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutAuditLogsChangedInput = {
@@ -6593,6 +6710,7 @@ export type PersonUpdateWithoutAuditLogsChangedInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutAuditLogsChangedInput = {
@@ -6642,6 +6760,7 @@ export type PersonUncheckedUpdateWithoutAuditLogsChangedInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonCreateWithoutAttachmentsInput = {
@@ -6691,6 +6810,7 @@ export type PersonCreateWithoutAttachmentsInput = {
   reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonUncheckedCreateWithoutAttachmentsInput = {
@@ -6740,6 +6860,7 @@ export type PersonUncheckedCreateWithoutAttachmentsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
 }
 
 export type PersonCreateOrConnectWithoutAttachmentsInput = {
@@ -6805,6 +6926,7 @@ export type PersonUpdateWithoutAttachmentsInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutAttachmentsInput = {
@@ -6841,6 +6963,223 @@ export type PersonUncheckedUpdateWithoutAttachmentsInput = {
   verificationCampaigns?: Prisma.VerificationCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   verificationItems?: Prisma.VerificationItemUncheckedUpdateManyWithoutVerifierPersonNestedInput
   auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
+  serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
+}
+
+export type PersonCreateWithoutIntuneDevicesInput = {
+  id?: string
+  azureAdId?: string | null
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  title?: string | null
+  office?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  isExcluded?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutPersonInput
+  orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
+  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
+  manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
+  directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
+  location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
+  managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
+  serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
+}
+
+export type PersonUncheckedCreateWithoutIntuneDevicesInput = {
+  id?: string
+  azureAdId?: string | null
+  userId?: string | null
+  firstName: string
+  lastName: string
+  middleName?: string | null
+  email: string
+  phone?: string | null
+  mobile?: string | null
+  employeeId?: string | null
+  orgUnitId: string
+  primaryRoleId: string
+  managerId?: string | null
+  title?: string | null
+  office?: string | null
+  locationId?: string | null
+  department?: string | null
+  hireDate?: Date | string | null
+  terminationDate?: Date | string | null
+  isActive?: boolean
+  isExcluded?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  verificationItems?: Prisma.VerificationItemUncheckedCreateNestedManyWithoutVerifierPersonInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
+  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
+  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
+  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
+  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
+  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
+  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
+  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
+  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
+  serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
+}
+
+export type PersonCreateOrConnectWithoutIntuneDevicesInput = {
+  where: Prisma.PersonWhereUniqueInput
+  create: Prisma.XOR<Prisma.PersonCreateWithoutIntuneDevicesInput, Prisma.PersonUncheckedCreateWithoutIntuneDevicesInput>
+}
+
+export type PersonUpsertWithoutIntuneDevicesInput = {
+  update: Prisma.XOR<Prisma.PersonUpdateWithoutIntuneDevicesInput, Prisma.PersonUncheckedUpdateWithoutIntuneDevicesInput>
+  create: Prisma.XOR<Prisma.PersonCreateWithoutIntuneDevicesInput, Prisma.PersonUncheckedCreateWithoutIntuneDevicesInput>
+  where?: Prisma.PersonWhereInput
+}
+
+export type PersonUpdateToOneWithWhereWithoutIntuneDevicesInput = {
+  where?: Prisma.PersonWhereInput
+  data: Prisma.XOR<Prisma.PersonUpdateWithoutIntuneDevicesInput, Prisma.PersonUncheckedUpdateWithoutIntuneDevicesInput>
+}
+
+export type PersonUpdateWithoutIntuneDevicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutPersonNestedInput
+  orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
+  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
+  manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
+  directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
+  location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
+  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
+  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
+  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
+  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
+  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
+  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
+  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
+  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
+  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
+  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
+  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
+  serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+}
+
+export type PersonUncheckedUpdateWithoutIntuneDevicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
+  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
+  managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
+  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
+  verificationCampaigns?: Prisma.VerificationCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  verificationItems?: Prisma.VerificationItemUncheckedUpdateManyWithoutVerifierPersonNestedInput
+  auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
+  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
   assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
   performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
@@ -6930,6 +7269,7 @@ export type PersonUpdateWithoutPrimaryRoleInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutPrimaryRoleInput = {
@@ -6979,6 +7319,7 @@ export type PersonUncheckedUpdateWithoutPrimaryRoleInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateManyWithoutPrimaryRoleInput = {
@@ -7082,6 +7423,7 @@ export type PersonUpdateWithoutOrgUnitInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutOrgUnitInput = {
@@ -7131,6 +7473,7 @@ export type PersonUncheckedUpdateWithoutOrgUnitInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateManyWithoutOrgUnitInput = {
@@ -7234,6 +7577,7 @@ export type PersonUpdateWithoutManagerInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutManagerInput = {
@@ -7283,6 +7627,7 @@ export type PersonUncheckedUpdateWithoutManagerInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateManyWithoutManagerInput = {
@@ -7386,6 +7731,7 @@ export type PersonUpdateWithoutLocationInput = {
   reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateWithoutLocationInput = {
@@ -7435,6 +7781,7 @@ export type PersonUncheckedUpdateWithoutLocationInput = {
   reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
   reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
   serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
+  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
 }
 
 export type PersonUncheckedUpdateManyWithoutLocationInput = {
@@ -7492,6 +7839,7 @@ export type PersonCountOutputType = {
   reservationsConfirmed: number
   reservationsCancelled: number
   serviceOwnerships: number
+  intuneDevices: number
 }
 
 export type PersonCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -7517,6 +7865,7 @@ export type PersonCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   reservationsConfirmed?: boolean | PersonCountOutputTypeCountReservationsConfirmedArgs
   reservationsCancelled?: boolean | PersonCountOutputTypeCountReservationsCancelledArgs
   serviceOwnerships?: boolean | PersonCountOutputTypeCountServiceOwnershipsArgs
+  intuneDevices?: boolean | PersonCountOutputTypeCountIntuneDevicesArgs
 }
 
 /**
@@ -7683,6 +8032,13 @@ export type PersonCountOutputTypeCountServiceOwnershipsArgs<ExtArgs extends runt
   where?: Prisma.ServiceOwnershipWhereInput
 }
 
+/**
+ * PersonCountOutputType without action
+ */
+export type PersonCountOutputTypeCountIntuneDevicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.IntuneDeviceWhereInput
+}
+
 
 export type PersonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -7737,6 +8093,7 @@ export type PersonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   reservationsConfirmed?: boolean | Prisma.Person$reservationsConfirmedArgs<ExtArgs>
   reservationsCancelled?: boolean | Prisma.Person$reservationsCancelledArgs<ExtArgs>
   serviceOwnerships?: boolean | Prisma.Person$serviceOwnershipsArgs<ExtArgs>
+  intuneDevices?: boolean | Prisma.Person$intuneDevicesArgs<ExtArgs>
   _count?: boolean | Prisma.PersonCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["person"]>
 
@@ -7863,6 +8220,7 @@ export type PersonInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   reservationsConfirmed?: boolean | Prisma.Person$reservationsConfirmedArgs<ExtArgs>
   reservationsCancelled?: boolean | Prisma.Person$reservationsCancelledArgs<ExtArgs>
   serviceOwnerships?: boolean | Prisma.Person$serviceOwnershipsArgs<ExtArgs>
+  intuneDevices?: boolean | Prisma.Person$intuneDevicesArgs<ExtArgs>
   _count?: boolean | Prisma.PersonCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PersonIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -7910,6 +8268,7 @@ export type $PersonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     reservationsConfirmed: Prisma.$AssetReservationPayload<ExtArgs>[]
     reservationsCancelled: Prisma.$AssetReservationPayload<ExtArgs>[]
     serviceOwnerships: Prisma.$ServiceOwnershipPayload<ExtArgs>[]
+    intuneDevices: Prisma.$IntuneDevicePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -8358,6 +8717,7 @@ export interface Prisma__PersonClient<T, Null = never, ExtArgs extends runtime.T
   reservationsConfirmed<T extends Prisma.Person$reservationsConfirmedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$reservationsConfirmedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reservationsCancelled<T extends Prisma.Person$reservationsCancelledArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$reservationsCancelledArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   serviceOwnerships<T extends Prisma.Person$serviceOwnershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$serviceOwnershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServiceOwnershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  intuneDevices<T extends Prisma.Person$intuneDevicesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$intuneDevicesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$IntuneDevicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9390,6 +9750,30 @@ export type Person$serviceOwnershipsArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.ServiceOwnershipScalarFieldEnum | Prisma.ServiceOwnershipScalarFieldEnum[]
+}
+
+/**
+ * Person.intuneDevices
+ */
+export type Person$intuneDevicesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the IntuneDevice
+   */
+  select?: Prisma.IntuneDeviceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the IntuneDevice
+   */
+  omit?: Prisma.IntuneDeviceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.IntuneDeviceInclude<ExtArgs> | null
+  where?: Prisma.IntuneDeviceWhereInput
+  orderBy?: Prisma.IntuneDeviceOrderByWithRelationInput | Prisma.IntuneDeviceOrderByWithRelationInput[]
+  cursor?: Prisma.IntuneDeviceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.IntuneDeviceScalarFieldEnum | Prisma.IntuneDeviceScalarFieldEnum[]
 }
 
 /**

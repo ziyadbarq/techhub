@@ -123,6 +123,9 @@ export const ModelName = {
   PromptBlock: 'PromptBlock',
   PromptComposition: 'PromptComposition',
   PromptCompositionBlock: 'PromptCompositionBlock',
+  IntuneDevice: 'IntuneDevice',
+  IntuneComplianceHistory: 'IntuneComplianceHistory',
+  IntuneSyncLog: 'IntuneSyncLog',
   FeatureFlag: 'FeatureFlag',
   FeatureFlagAuditLog: 'FeatureFlagAuditLog'
 } as const
@@ -1373,6 +1376,82 @@ export const PromptCompositionBlockScalarFieldEnum = {
 } as const
 
 export type PromptCompositionBlockScalarFieldEnum = (typeof PromptCompositionBlockScalarFieldEnum)[keyof typeof PromptCompositionBlockScalarFieldEnum]
+
+
+export const IntuneDeviceScalarFieldEnum = {
+  id: 'id',
+  intuneDeviceId: 'intuneDeviceId',
+  azureAdDeviceId: 'azureAdDeviceId',
+  deviceName: 'deviceName',
+  serialNumber: 'serialNumber',
+  manufacturer: 'manufacturer',
+  model: 'model',
+  operatingSystem: 'operatingSystem',
+  osVersion: 'osVersion',
+  imei: 'imei',
+  wiFiMacAddress: 'wiFiMacAddress',
+  ethernetMacAddress: 'ethernetMacAddress',
+  intuneUserId: 'intuneUserId',
+  userPrincipalName: 'userPrincipalName',
+  userDisplayName: 'userDisplayName',
+  ownershipType: 'ownershipType',
+  complianceState: 'complianceState',
+  managementState: 'managementState',
+  isEncrypted: 'isEncrypted',
+  isSupervised: 'isSupervised',
+  isJailBroken: 'isJailBroken',
+  enrolledDateTime: 'enrolledDateTime',
+  lastSyncDateTime: 'lastSyncDateTime',
+  linkedAssetId: 'linkedAssetId',
+  linkedPersonId: 'linkedPersonId',
+  assetLinkMethod: 'assetLinkMethod',
+  assetLinkedAt: 'assetLinkedAt',
+  personLinkMethod: 'personLinkMethod',
+  personLinkedAt: 'personLinkedAt',
+  lastSyncedFromIntune: 'lastSyncedFromIntune',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type IntuneDeviceScalarFieldEnum = (typeof IntuneDeviceScalarFieldEnum)[keyof typeof IntuneDeviceScalarFieldEnum]
+
+
+export const IntuneComplianceHistoryScalarFieldEnum = {
+  id: 'id',
+  intuneDeviceId: 'intuneDeviceId',
+  previousState: 'previousState',
+  newState: 'newState',
+  changedAt: 'changedAt',
+  policyName: 'policyName',
+  policyId: 'policyId',
+  reason: 'reason'
+} as const
+
+export type IntuneComplianceHistoryScalarFieldEnum = (typeof IntuneComplianceHistoryScalarFieldEnum)[keyof typeof IntuneComplianceHistoryScalarFieldEnum]
+
+
+export const IntuneSyncLogScalarFieldEnum = {
+  id: 'id',
+  syncType: 'syncType',
+  status: 'status',
+  devicesProcessed: 'devicesProcessed',
+  devicesCreated: 'devicesCreated',
+  devicesUpdated: 'devicesUpdated',
+  devicesDeactivated: 'devicesDeactivated',
+  assetsLinked: 'assetsLinked',
+  personsLinked: 'personsLinked',
+  complianceChanges: 'complianceChanges',
+  errorsCount: 'errorsCount',
+  errors: 'errors',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  durationMs: 'durationMs',
+  triggeredBy: 'triggeredBy',
+  intuneDeviceId: 'intuneDeviceId'
+} as const
+
+export type IntuneSyncLogScalarFieldEnum = (typeof IntuneSyncLogScalarFieldEnum)[keyof typeof IntuneSyncLogScalarFieldEnum]
 
 
 export const FeatureFlagScalarFieldEnum = {
