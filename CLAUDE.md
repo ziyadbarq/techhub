@@ -265,6 +265,7 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 
 - **NEVER** start the dev server (`npm run dev`) or kill a running dev server (user manages this)
 - Import from `@prisma/client` (causes TypeScript errors)
+- **NEVER** use `npx prisma generate` directly (use `npm run db:generate` - creates browser-safe entry points)
 - Create new `Pool()` or `PrismaClient()` instances (exhausts connections)
 - Access `params`/`searchParams` synchronously (runtime errors in Next.js 16)
 - Use shadcn useToast hook (use Sonner toast instead)

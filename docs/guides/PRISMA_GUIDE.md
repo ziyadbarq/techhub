@@ -562,8 +562,8 @@ import type { PrismaClient } from "@/generated/prisma";
 **Solution**:
 
 ```bash
-# Generate Prisma client
-npx prisma generate
+# Generate Prisma client (ALWAYS use this, not npx prisma generate)
+npm run db:generate
 
 # Or use setup command
 npm run setup

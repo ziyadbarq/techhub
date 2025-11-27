@@ -274,7 +274,7 @@ jobs:
         run: npm ci
 
       - name: Generate Prisma Client
-        run: npx prisma generate
+        run: npm run db:generate
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
@@ -303,7 +303,6 @@ jobs:
 ```bash
 # Generate Prisma Client (auto-runs after schema changes)
 npm run db:generate
-npx prisma generate
 
 # Push schema directly (no migration files)
 npm run db:push
@@ -331,7 +330,7 @@ npm run db:seed
 npx prisma migrate deploy
 
 # Generate Prisma Client
-npx prisma generate
+npm run db:generate
 
 # Check migration status
 npx prisma migrate status

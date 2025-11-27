@@ -569,7 +569,7 @@ npm run start -- --skip-worker            # Don't start the background worker
 
 The deployment script:
 1. **Builds** the application (skips if `.next` exists, use `--force-build` to rebuild)
-2. **Generates** Prisma client (`prisma generate`)
+2. **Generates** Prisma client (`npm run db:generate`)
 3. **Applies migrations** (`prisma migrate deploy`)
 4. **Smart seeds** the database (only if `Role` table is empty)
 5. **Clears** Redis cache

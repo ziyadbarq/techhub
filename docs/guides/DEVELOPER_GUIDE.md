@@ -2629,7 +2629,7 @@ npx prisma migrate deploy
 **Solution**: Generate Prisma Client:
 
 ```bash
-npx prisma generate
+npm run db:generate
 ```
 
 ---
