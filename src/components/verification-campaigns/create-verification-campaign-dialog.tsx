@@ -50,7 +50,7 @@ import {
   type CreateVerificationCampaignDTO,
 } from "@/interface-adapters/dtos/generated/verification-campaign.dto";
 import { createVerificationCampaign } from "@/interface-adapters/controllers/verification-campaign.controller";
-import { useSession } from "@/lib/auth/client";
+import { useSessionContext } from "@/contexts/session-context";
 
 interface CreateVerificationCampaignDialogProps {
   open: boolean;
@@ -63,7 +63,7 @@ export function CreateVerificationCampaignDialog({
   onOpenChange,
   onSuccess,
 }: CreateVerificationCampaignDialogProps) {
-  const { data: session } = useSession();
+  const { user } = useSessionContext();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<CreateVerificationCampaignDTO>({
@@ -76,7 +76,7 @@ export function CreateVerificationCampaignDialog({
       targetType: "CI",
       scheduledStart: new Date(),
       scheduledEnd: null,
-      createdById: session?.user?.id || "",
+      createdById: user?.id || "",
     },
   });
 
@@ -85,7 +85,7 @@ export function CreateVerificationCampaignDialog({
     try {
       const result = await createVerificationCampaign({
         ...data,
-        createdById: session?.user?.id || "",
+        createdById: user?.id || "",
       });
 
       if (result.success) {

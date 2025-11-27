@@ -11,6 +11,7 @@ import {
   getFeatureFlagsPollInterval,
   isFeatureFlagsPollingEnabled,
 } from "@/config/feature-flags.config";
+import { useFeatureFlagsContext } from "@/contexts/feature-flags-context";
 
 interface FeatureFlagsState {
   enabledFeatures: Set<string>;
@@ -109,15 +110,10 @@ export function useFeatureFlags(): FeatureFlagsState {
 
 /**
  * Check if a specific feature is enabled
+ * Uses FeatureFlagsProvider context - single fetch shared across all components
  * @param featureName - Feature name to check (e.g., "CONTRACTS", "LICENSES")
  */
 export function useIsFeatureEnabled(featureName: string): boolean {
-  const { enabledFeatures, isLoading } = useFeatureFlags();
-
-  // While loading, assume not enabled (prevents flashing UI)
-  if (isLoading) {
-    return false;
-  }
-
-  return enabledFeatures.has(featureName.toUpperCase());
+  const { isFeatureEnabled } = useFeatureFlagsContext();
+  return isFeatureEnabled(featureName);
 }

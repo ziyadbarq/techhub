@@ -6,7 +6,7 @@
  */
 
 import { useState, useEffect } from "react";
-import { useSession } from "@/lib/auth/client";
+import { useSessionContext } from "@/contexts/session-context";
 
 export interface RoleGuardProps {
   roles: string | string[];
@@ -51,13 +51,13 @@ export function RoleGuard({
   loading = null,
   requireAll = false,
 }: RoleGuardProps) {
-  const { data: session, isPending } = useSession();
+  const { user, isPending } = useSessionContext();
   const [userRoles, setUserRoles] = useState<string[]>([]);
   const [isLoadingRoles, setIsLoadingRoles] = useState(true);
 
   useEffect(() => {
     async function fetchUserRoles() {
-      if (!session?.user) {
+      if (!user) {
         setUserRoles([]);
         setIsLoadingRoles(false);
         return;
@@ -79,7 +79,7 @@ export function RoleGuard({
     }
 
     fetchUserRoles();
-  }, [session?.user, session?.user?.id]);
+  }, [user, user?.id]);
 
   const requiredRoles = Array.isArray(roles) ? roles : [roles];
 
@@ -102,13 +102,13 @@ export function RoleGuard({
  * Hook to check user roles
  */
 export function useRoles() {
-  const { data: session, isPending } = useSession();
+  const { user, isPending } = useSessionContext();
   const [roles, setRoles] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchRoles() {
-      if (!session?.user) {
+      if (!user) {
         setRoles([]);
         setIsLoading(false);
         return;
@@ -130,7 +130,7 @@ export function useRoles() {
     }
 
     fetchRoles();
-  }, [session?.user, session?.user?.id]);
+  }, [user, user?.id]);
 
   const hasRole = (role: string): boolean => {
     return roles.includes(role);

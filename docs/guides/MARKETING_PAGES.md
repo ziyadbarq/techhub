@@ -293,15 +293,17 @@ export function MyComponent() {
 }
 ```
 
-### Why Not `useSession()` Hook?
+### Why Not `useSession()` Hook on Marketing Pages?
 
-The `useSession()` hook from better-auth/react causes SSR errors:
+The `useSession()` hook from better-auth/react causes SSR errors on marketing pages:
 
 ```
 Cannot read properties of null (reading 'useRef')
 ```
 
-**Solution**: Use the promise-based `authClient.getSession()` API in `useEffect` after component mounts.
+**Solution for marketing pages**: Use the promise-based `authClient.getSession()` API in `useEffect` after component mounts.
+
+**Note**: Inside the dashboard, use `useSessionContext()` from `@/contexts/session-context` instead. The dashboard has a `SessionProvider` that centralizes session fetching to prevent rate limiting issues.
 
 ### Router Navigation
 

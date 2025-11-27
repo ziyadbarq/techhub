@@ -53,7 +53,7 @@ import { exportTasksToCSV } from "@/interface-adapters/controllers/csv.controlle
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { usePermissions } from "@/hooks/use-permissions";
-import { useSession } from "@/lib/auth/client";
+import { useSessionContext } from "@/contexts/session-context";
 
 interface TasksTableProps {
   data: TaskDTO[];
@@ -78,9 +78,9 @@ export function TasksTable({
   const [isDeleting, setIsDeleting] = React.useState(false);
 
   // Get current user and permissions
-  const { data: session } = useSession();
+  const { user } = useSessionContext();
   const { hasPermission } = usePermissions();
-  const currentUserId = session?.user?.id;
+  const currentUserId = user?.id;
 
   // Helper to check if user can modify a task
   const canModifyTask = React.useCallback(

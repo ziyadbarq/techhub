@@ -7,6 +7,8 @@ import { ErrorBoundary } from "@/components/error-boundary";
 import { GlobalLoading } from "@/components/global-loading";
 import { CommandPaletteProvider } from "@/components/search/command-palette-provider";
 import { FeatureFlagsProvider } from "@/contexts/feature-flags-context";
+import { PermissionsProvider } from "@/contexts/permissions-context";
+import { SessionProvider } from "@/contexts/session-context";
 import { SidebarSkeleton } from "@/components/layout/sidebar/SidebarSkeleton";
 import { HeaderSkeleton } from "@/components/layout/HeaderSkeleton";
 
@@ -41,35 +43,43 @@ export function DashboardLayoutClient({ children }: { children: ReactNode }) {
 
   return (
     <ErrorBoundary>
-      <FeatureFlagsProvider>
-        <CommandPaletteProvider>
-          <div className="bg-background relative flex min-h-screen">
-            {/* Sidebar with Suspense for non-blocking load */}
-            <Suspense fallback={<SidebarSkeleton />}>
-              <Sidebar />
-            </Suspense>
+      <SessionProvider>
+        <PermissionsProvider>
+          <FeatureFlagsProvider>
+            <CommandPaletteProvider>
+              <div className="bg-background relative flex min-h-screen">
+                {/* Sidebar with Suspense for non-blocking load */}
+                <Suspense fallback={<SidebarSkeleton />}>
+                  <Sidebar />
+                </Suspense>
 
-            {/* Main Content Area */}
-            <div className="flex min-h-screen flex-1 flex-col">
-              {/* Header with Suspense for non-blocking load */}
-              <Suspense fallback={<HeaderSkeleton />}>
-                <Header />
-              </Suspense>
+                {/* Main Content Area */}
+                <div className="flex min-h-screen flex-1 flex-col">
+                  {/* Header with Suspense for non-blocking load */}
+                  <Suspense fallback={<HeaderSkeleton />}>
+                    <Header />
+                  </Suspense>
 
-              {/* Page Content */}
-              <main className={mainClasses}>
-                {isFullWidthPage ? (
-                  <Suspense fallback={<GlobalLoading />}>{children}</Suspense>
-                ) : (
-                  <div className="mx-auto max-w-7xl">
-                    <Suspense fallback={<GlobalLoading />}>{children}</Suspense>
-                  </div>
-                )}
-              </main>
-            </div>
-          </div>
-        </CommandPaletteProvider>
-      </FeatureFlagsProvider>
+                  {/* Page Content */}
+                  <main className={mainClasses}>
+                    {isFullWidthPage ? (
+                      <Suspense fallback={<GlobalLoading />}>
+                        {children}
+                      </Suspense>
+                    ) : (
+                      <div className="mx-auto max-w-7xl">
+                        <Suspense fallback={<GlobalLoading />}>
+                          {children}
+                        </Suspense>
+                      </div>
+                    )}
+                  </main>
+                </div>
+              </div>
+            </CommandPaletteProvider>
+          </FeatureFlagsProvider>
+        </PermissionsProvider>
+      </SessionProvider>
     </ErrorBoundary>
   );
 }

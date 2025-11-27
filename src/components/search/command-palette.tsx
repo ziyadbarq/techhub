@@ -24,7 +24,7 @@ import { globalSearchAction } from "@/interface-adapters/controllers/search.cont
 import type { SearchResultDTO } from "@/interface-adapters/dtos/search.dto";
 import { getVisibleNavGroups, type NavItem } from "@/config/navigation";
 import { usePermissions } from "@/hooks/use-permissions";
-import { useFeatureFlags } from "@/hooks/use-feature-flags";
+import { useFeatureFlagsContext } from "@/contexts/feature-flags-context";
 
 // Entity type icons mapping
 const ENTITY_ICONS = {
@@ -67,7 +67,8 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
     isError: permissionsError,
     hasNoPermissions,
   } = usePermissions();
-  const { enabledFeatures, isLoading: featuresLoading } = useFeatureFlags();
+  const { enabledFeatures, isLoading: featuresLoading } =
+    useFeatureFlagsContext();
   const [query, setQuery] = React.useState("");
   const [results, setResults] = React.useState<SearchResultDTO[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);

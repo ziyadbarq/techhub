@@ -511,7 +511,40 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24, // 1 day
     cookieCache: {
       enabled: true,
-      maxAge: 5 * 60, // 5 minutes
+      maxAge: 10 * 60, // 10 minutes (increased for internal enterprise app)
+    },
+  },
+
+  // Rate limiting configuration - relaxed for internal enterprise app
+  // Default: 100 req/10s is too restrictive for SSR + client session checks
+  rateLimit: {
+    enabled: true,
+    window: 60, // 60 seconds window
+    max: 500, // 500 requests per minute globally
+    storage: "memory", // Memory storage for single-server PM2 deployment
+    customRules: {
+      // Session endpoint - high limit for SSR/client needs
+      "/get-session": {
+        window: 60,
+        max: 2000, // Very generous for internal app
+      },
+      // Auth endpoints - keep restrictive for security
+      "/sign-in/*": {
+        window: 60,
+        max: 20, // 20 sign-in attempts per minute
+      },
+      "/sign-up/*": {
+        window: 60,
+        max: 10, // 10 sign-up attempts per minute
+      },
+      "/reset-password/*": {
+        window: 300, // 5 minutes
+        max: 5, // 5 reset attempts per 5 minutes
+      },
+      "/callback/*": {
+        window: 60,
+        max: 50, // OAuth callbacks
+      },
     },
   },
 

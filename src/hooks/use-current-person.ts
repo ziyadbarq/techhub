@@ -6,7 +6,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { useSession } from "@/lib/auth/client";
+import { useSessionContext } from "@/contexts/session-context";
 import type { PersonDTO } from "@/interface-adapters/presenters/person.presenter";
 import { getCurrentPersonAction } from "@/interface-adapters/controllers/my-dashboard.controller";
 
@@ -44,14 +44,14 @@ export interface UseCurrentPersonReturn {
  * ```
  */
 export function useCurrentPerson(): UseCurrentPersonReturn {
-  const { data: session, isPending } = useSession();
+  const { user, isPending } = useSessionContext();
   const [person, setPerson] = useState<PersonDTO | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchPerson = useCallback(async () => {
-    if (!session?.user) {
+    if (!user) {
       setPerson(null);
       setIsLoading(false);
       setIsError(false);
@@ -80,7 +80,7 @@ export function useCurrentPerson(): UseCurrentPersonReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [session?.user]);
+  }, [user]);
 
   useEffect(() => {
     if (!isPending) {

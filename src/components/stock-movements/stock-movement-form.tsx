@@ -50,7 +50,7 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { useSession } from "@/lib/auth/client";
+import { useSessionContext } from "@/contexts/session-context";
 import type { StockLocationDTO } from "@/interface-adapters/presenters/stock-location.presenter";
 import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
 import { createStockMovementAction } from "@/interface-adapters/controllers/stock-movement.controller";
@@ -74,7 +74,7 @@ export function StockMovementForm({
   onOpenChange,
   onSuccess,
 }: StockMovementFormProps) {
-  const { data: session } = useSession();
+  const { user } = useSessionContext();
   const [stockLocations, setStockLocations] = useState<StockLocationDTO[]>([]);
   const [assets, setAssets] = useState<AssetDTO[]>([]);
   const [loadingData, setLoadingData] = useState(false);
@@ -92,7 +92,7 @@ export function StockMovementForm({
       assetId: null,
       quantity: 1,
       reason: null,
-      performedById: session?.user?.id ?? "",
+      performedById: user?.id ?? "",
       occurredAt: new Date(),
     },
   });
@@ -129,12 +129,12 @@ export function StockMovementForm({
     loadData();
   }, [open]);
 
-  // Update performedById when session changes
+  // Update performedById when user changes
   useEffect(() => {
-    if (session?.user?.id) {
-      form.setValue("performedById", session.user.id);
+    if (user?.id) {
+      form.setValue("performedById", user.id);
     }
-  }, [session, form]);
+  }, [user, form]);
 
   // Clear location fields when movement type changes
   useEffect(() => {

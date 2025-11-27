@@ -128,6 +128,18 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 - Add `"use no memo";` directive to TanStack Table components (React Compiler incompatibility)
 - See [STACK_UPGRADES.md](docs/guides/STACK_UPGRADES.md)
 
+**Client-Side Session**:
+- In dashboard: use `useSessionContext()` from `@/contexts/session-context` (NOT direct `useSession()`)
+- Outside dashboard (marketing): use `authClient.getSession()` in useEffect
+- Rate limiting: 2000 req/min for `/get-session`, auth endpoints more restrictive
+- See [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "3b. Client-Side Session Access"
+
+**Client-Side Permissions & Feature Flags**:
+- Use `usePermissions()` hook - delegates to `PermissionsProvider` context (single API call)
+- Use `useIsFeatureEnabled("FLAG")` hook - delegates to `FeatureFlagsProvider` context (single API call)
+- Provider hierarchy: `SessionProvider` → `PermissionsProvider` → `FeatureFlagsProvider`
+- See [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "3c. Client-Side Permissions"
+
 ### Security Patterns (ALWAYS Enforce)
 
 **Route Protection** (CRITICAL):

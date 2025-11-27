@@ -136,6 +136,70 @@ import { auth } from "@/lib/auth/better-auth";
 const session = await auth.api.getSession();
 ```
 
+### 3b. Client-Side Session Access via useSessionContext()
+
+In client components within the dashboard, use `useSessionContext()` from the centralized `SessionProvider`. This prevents duplicate session fetches and rate limiting issues.
+
+```typescript
+"use client";
+
+// ✅ Correct - Use centralized session context (inside dashboard)
+import { useSessionContext } from "@/contexts/session-context";
+
+function MyComponent() {
+  const { user, isPending } = useSessionContext();
+
+  if (isPending) return <Skeleton />;
+  if (!user) return null;
+
+  return <div>Hello, {user.name}</div>;
+}
+
+// ❌ Wrong - Direct useSession() causes duplicate API calls
+import { useSession } from "@/lib/auth/client";
+const { data: session } = useSession(); // Each component calls /api/auth/get-session
+```
+
+**Note**: The `SessionProvider` wraps the dashboard layout. Components outside the dashboard (marketing pages) should use `authClient.getSession()` in useEffect instead.
+
+### 3c. Client-Side Permissions via usePermissions()
+
+In client components within the dashboard, use `usePermissions()` hook which delegates to the centralized `PermissionsProvider`. This prevents duplicate permission API calls.
+
+```typescript
+"use client";
+
+// ✅ Correct - Use permissions hook (backed by PermissionsProvider context)
+import { usePermissions } from "@/hooks/use-permissions";
+import { PERMISSIONS } from "@/lib/rbac/permissions";
+
+function MyComponent() {
+  const { hasPermission, isLoading } = usePermissions();
+
+  if (isLoading) return <Skeleton />;
+  if (!hasPermission(PERMISSIONS.ASSET_VIEW)) return null;
+
+  return <AssetList />;
+}
+```
+
+**Provider Hierarchy** (in `dashboard-layout-client.tsx`):
+```
+SessionProvider → PermissionsProvider → FeatureFlagsProvider → CommandPaletteProvider
+```
+
+**Feature Flags**: Similarly, use `useIsFeatureEnabled("FLAG_NAME")` which delegates to `FeatureFlagsProvider` context.
+
+```typescript
+import { useIsFeatureEnabled } from "@/hooks/use-feature-flags";
+
+function MyFeature() {
+  const isEnabled = useIsFeatureEnabled("CONTRACTS");
+  if (!isEnabled) return null;
+  return <ContractsModule />;
+}
+```
+
 ### 4. Permission Checks
 
 Use `hasAnyPermission`/`checkPermissionUseCase` plus `permissionCache`. Ownership logic lives in `CheckPermissionUseCase` - keep new checks consistent.

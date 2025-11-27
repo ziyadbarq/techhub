@@ -5,7 +5,8 @@
  * Displays user info and sign out button
  */
 
-import { useSession, authClient } from "@/lib/auth/client";
+import { useSessionContext } from "@/contexts/session-context";
+import { authClient } from "@/lib/auth/client";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -20,7 +21,7 @@ import { LogOut, User, Settings } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function UserMenu() {
-  const { data: session, isPending } = useSession();
+  const { user, isPending } = useSessionContext();
   const router = useRouter();
 
   if (isPending) {
@@ -31,7 +32,7 @@ export function UserMenu() {
     );
   }
 
-  if (!session?.user) {
+  if (!user) {
     return (
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="sm" onClick={() => router.push("/login")}>
@@ -47,8 +48,6 @@ export function UserMenu() {
       </div>
     );
   }
-
-  const user = session.user;
   const initials = user.name
     ? user.name
         .split(" ")
