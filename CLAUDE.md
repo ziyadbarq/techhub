@@ -197,7 +197,11 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 **Universal Data Importer**:
 - Route: `/data-import` | Permission: `DATA_IMPORT_MANAGE`
 - 7-step wizard with auto-mapping, fuzzy matching, sanitization
-- See [roadmap/UNIVERSAL_DATA_IMPORTER.md](roadmap/UNIVERSAL_DATA_IMPORTER.md)
+- **Universal Assets Importer**: Single-file import with prefixed columns (`vendor.name`, `asset.serial_number`, `custom.cpu_cores`)
+  - Auto-creates: Vendor, Category, Model, Location, StockLocation, FieldDefinition
+  - No auto-create: Person (must exist), LifecycleState (lookup only)
+  - Module: `src/lib/data-import/universal-assets/`
+- See [roadmap/UNIVERSAL_DATA_IMPORTER.md](roadmap/UNIVERSAL_DATA_IMPORTER.md) and [docs/features/UNIVERSAL_ASSETS_IMPORTER.md](docs/features/UNIVERSAL_ASSETS_IMPORTER.md)
 
 **Custom Fields**:
 - Dynamic fields attached to Asset Categories via FieldDefinition + AssetCategoryField

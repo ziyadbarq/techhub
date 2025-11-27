@@ -282,6 +282,19 @@ export interface EntityConfig {
   icon?: string; // Icon name for UI
   color?: string; // Color for UI
   templateInstructions?: string; // Custom instructions for template
+
+  // Composite import features (Universal Assets Import)
+  /**
+   * Whether this is a composite import that handles multiple entity types.
+   * Composite imports use prefixed columns (e.g., vendor.name, asset.serial_number)
+   * and auto-create missing related entities.
+   */
+  isCompositeImport?: boolean;
+  /**
+   * Whether to show this entity prominently at the top of entity selection.
+   * Used for featured import types like Universal Assets.
+   */
+  isProminent?: boolean;
 }
 
 /**

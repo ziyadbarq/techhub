@@ -94,6 +94,7 @@ import {
   enumField,
   STANDARD_SANITIZATION,
 } from "./field-builders";
+import { UNIVERSAL_ASSETS_CONFIG } from "./universal-assets/config";
 import {
   OrganizationUnitType,
   VendorType,
@@ -2939,6 +2940,11 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
   - ASSET: Allocate Adobe CC to laptop asset
     `.trim(),
   },
+
+  // ========================================
+  // UNIVERSAL ASSETS (Composite Import)
+  // ========================================
+  UNIVERSAL_ASSETS: UNIVERSAL_ASSETS_CONFIG,
 };
 
 /**

@@ -23,7 +23,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, ChevronRight, Download, Info } from "lucide-react";
+import {
+  Search,
+  ChevronRight,
+  Download,
+  Info,
+  FileSpreadsheet,
+  Sparkles,
+} from "lucide-react";
 import { toast } from "sonner";
 
 interface Props {
@@ -143,8 +150,114 @@ export function Step1EntitySelector({ onEntitySelected }: Props) {
     return colors[category] || colors.SYSTEM;
   };
 
+  /**
+   * Check if Universal Assets is available and get its config
+   */
+  const universalAssetsConfig = useMemo(() => {
+    return entities.find((e) => e.key === "UNIVERSAL_ASSETS");
+  }, [entities]);
+
+  /**
+   * Filter out Universal Assets from regular entities (it has its own featured card)
+   */
+  const regularEntities = useMemo(() => {
+    return filteredEntities.filter((e) => e.key !== "UNIVERSAL_ASSETS");
+  }, [filteredEntities]);
+
   return (
     <div className="space-y-6">
+      {/* Featured: Universal Assets Import */}
+      {universalAssetsConfig && (
+        <Card
+          className="cursor-pointer border-emerald-200 bg-gradient-to-r from-emerald-50 to-teal-50 transition-all hover:shadow-lg dark:border-emerald-800 dark:from-emerald-950/50 dark:to-teal-950/50"
+          onClick={() => handleSelect(universalAssetsConfig)}
+        >
+          <CardHeader className="pb-2">
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <div className="rounded-lg bg-emerald-500 p-2 text-white">
+                  <FileSpreadsheet className="h-6 w-6" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <CardTitle className="text-lg">
+                      {universalAssetsConfig.name}
+                    </CardTitle>
+                    <Badge className="bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300">
+                      <Sparkles className="mr-1 h-3 w-3" />
+                      Recommended
+                    </Badge>
+                  </div>
+                  <CardDescription className="mt-1">
+                    {universalAssetsConfig.description}
+                  </CardDescription>
+                </div>
+              </div>
+              <ChevronRight className="h-6 w-6 text-emerald-600" />
+            </div>
+          </CardHeader>
+          <CardContent className="pt-2">
+            <div className="flex flex-wrap gap-4 text-sm">
+              <div className="flex items-center gap-1 text-emerald-700 dark:text-emerald-400">
+                <span className="font-medium">Auto-creates:</span>
+                <span>
+                  Vendors, Categories, Models, Locations, Custom Fields
+                </span>
+              </div>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Badge
+                variant="outline"
+                className="border-emerald-300 text-emerald-700 dark:border-emerald-700 dark:text-emerald-400"
+              >
+                person.email
+              </Badge>
+              <Badge
+                variant="outline"
+                className="border-emerald-300 text-emerald-700 dark:border-emerald-700 dark:text-emerald-400"
+              >
+                asset.*
+              </Badge>
+              <Badge
+                variant="outline"
+                className="border-emerald-300 text-emerald-700 dark:border-emerald-700 dark:text-emerald-400"
+              >
+                vendor.*
+              </Badge>
+              <Badge
+                variant="outline"
+                className="border-emerald-300 text-emerald-700 dark:border-emerald-700 dark:text-emerald-400"
+              >
+                category.*
+              </Badge>
+              <Badge
+                variant="outline"
+                className="border-emerald-300 text-emerald-700 dark:border-emerald-700 dark:text-emerald-400"
+              >
+                model.*
+              </Badge>
+              <Badge
+                variant="outline"
+                className="border-emerald-300 text-emerald-700 dark:border-emerald-700 dark:text-emerald-400"
+              >
+                custom.*
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Divider */}
+      {universalAssetsConfig && (
+        <div className="flex items-center gap-4">
+          <div className="bg-border h-px flex-1" />
+          <span className="text-muted-foreground text-sm">
+            Or import a single entity type
+          </span>
+          <div className="bg-border h-px flex-1" />
+        </div>
+      )}
+
       {/* Search and Filters */}
       <div className="space-y-4">
         <div className="relative">
@@ -186,7 +299,7 @@ export function Step1EntitySelector({ onEntitySelected }: Props) {
 
       {/* Entity Cards */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredEntities.map((entity) => (
+        {regularEntities.map((entity) => (
           <Card
             key={entity.key}
             className="hover:border-primary cursor-pointer transition-colors"
@@ -240,7 +353,7 @@ export function Step1EntitySelector({ onEntitySelected }: Props) {
       </div>
 
       {/* No Results */}
-      {filteredEntities.length === 0 && (
+      {regularEntities.length === 0 && (
         <div className="py-12 text-center">
           <p className="text-muted-foreground">
             No entities found matching your search

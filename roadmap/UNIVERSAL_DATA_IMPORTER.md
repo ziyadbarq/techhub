@@ -1,6 +1,6 @@
 # Universal Data Importer - Remaining Work
 
-**Status**: Core + Phase 2C Complete (47% Entity Coverage)
+**Status**: Core + Phase 2C + Universal Assets Complete (47% Entity Coverage)
 **Priority**: Medium
 **Complexity**: Medium (Core Complete) / Small-Medium (Extensions)
 **Estimated Effort**: 2-3 days for remaining 35 entity configurations
@@ -8,6 +8,21 @@
 ## Overview
 
 A universal data importer admin page that supports importing CSV/Excel data into all 66 entities in the system with intelligent validation, fuzzy matching, and comprehensive error handling.
+
+### Universal Assets Importer (NEW)
+
+**Status**: Complete
+**Documentation**: [docs/features/UNIVERSAL_ASSETS_IMPORTER.md](../docs/features/UNIVERSAL_ASSETS_IMPORTER.md)
+
+A specialized composite import feature that allows importing assets with all related entities in a single CSV file:
+- **Single-file import**: Assets + Vendor + Category + Model + Location + StockLocation + Custom Fields + Assignments
+- **Auto-creation**: Missing entities created automatically (Vendor, Category, Model, Location, StockLocation, FieldDefinition)
+- **Prefixed columns**: Clear column naming (`vendor.name`, `asset.serial_number`, `custom.cpu_cores`)
+- **Custom field inference**: Automatically detects data types (INTEGER, DECIMAL, BOOLEAN, DATE, STRING)
+- **Assignment handling**: Creates/updates asset-to-person assignments with re-assignment support
+- **Row-level transactions**: Failed rows don't block others
+
+**Module Location**: `src/lib/data-import/universal-assets/`
 
 ### What's Completed ✅
 

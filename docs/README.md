@@ -76,6 +76,7 @@ Cross-cutting features and utilities:
 - [Feature Flags](./features/FEATURE_FLAGS.md) - Master toggle system for enabling/disabling major modules with admin bypass, dependency enforcement, and maintenance mode
 - [Global Search](./features/GLOBAL_SEARCH.md) - Command palette global search with keyboard shortcuts (⌘K/Ctrl+K)
 - **[PARTIALLY COMPLETE]** [Universal Data Importer](../roadmap/UNIVERSAL_DATA_IMPORTER.md) - CSV/Excel import wizard for all entities with fuzzy matching, validation, and batch processing (core complete, 64 entity configurations pending)
+- [Universal Assets Importer](./features/UNIVERSAL_ASSETS_IMPORTER.md) - Single-file asset import with auto-creation of vendors, categories, models, locations, and custom fields using prefixed column format
 - **[MISSING]** Dashboard & Widgets - Main dashboard with metrics cards, recent activity, task queue, and quick actions
 - **[MISSING]** Navigation System - Global navigation, sidebar with collapsible groups, breadcrumbs, and permission filtering
 - **[MISSING]** Reports System - Asset reports (EOL, by category, value analysis, warranty status, unassigned assets)

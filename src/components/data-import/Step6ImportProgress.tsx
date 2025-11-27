@@ -21,6 +21,7 @@ import type {
   LookupMap,
 } from "@/lib/data-import/entity-config.types";
 import { importProcessor } from "@/lib/data-import/import-processor";
+import { processUniversalAssetsImportAction } from "@/interface-adapters/controllers/universal-assets-import.controller";
 import {
   Card,
   CardContent,
@@ -81,20 +82,110 @@ export function Step6ImportProgress({
   }, []);
 
   /**
+   * Check if this is a Universal Assets import
+   */
+  const isUniversalAssetsImport = entity.key === "UNIVERSAL_ASSETS";
+
+  /**
    * Run import
    */
   useEffect(() => {
     const runImport = async () => {
       try {
-        const result = await importProcessor.processImport(
-          validRows,
-          entity,
-          settings,
-          lookupMaps,
-          (progressUpdate) => {
-            updateProgress(progressUpdate);
-          },
-        );
+        let result: ImportResult;
+
+        if (isUniversalAssetsImport) {
+          // Use Universal Assets specific import
+          const rows = validRows.map((r) => r.data);
+          const columnHeaders = Object.keys(validRows[0]?.data || {});
+
+          const response = await processUniversalAssetsImportAction(
+            rows,
+            columnHeaders,
+            {
+              autoCreateMissingEntities: true,
+              skipRowOnAutoCreateFailure: true,
+              handleAssignmentChanges: true,
+              closeOldAssignmentsOnReassign: true,
+            },
+          );
+
+          if (!response.success || !response.data) {
+            throw new Error(response.error || "Universal Assets Import failed");
+          }
+
+          // Convert UniversalImportResult to ImportResult
+          const universalResult = response.data;
+          result = {
+            success: universalResult.success,
+            totalRows: universalResult.totalRows,
+            successCount: universalResult.successCount,
+            skipCount: universalResult.skipCount,
+            failureCount: universalResult.failureCount,
+            createCount: universalResult.assetsCreated,
+            updateCount: universalResult.assetsUpdated,
+            duration: universalResult.duration,
+            throughput: universalResult.throughput,
+            createdRecords: [],
+            updatedRecords: [],
+            skippedRows: universalResult.skipped.map((s) => ({
+              rowNumber: s.rowNumber,
+              message: s.reason,
+            })),
+            failedRows: universalResult.errors.map((e) => ({
+              rowNumber: e.rowNumber,
+              message: e.error,
+              suggestion: e.suggestion,
+            })),
+          };
+
+          // Update progress with final stats
+          updateProgress({
+            status: "completed",
+            processedRows: universalResult.totalRows,
+            successCount: universalResult.successCount,
+            skipCount: universalResult.skipCount,
+            failureCount: universalResult.failureCount,
+            createCount: universalResult.assetsCreated,
+            updateCount: universalResult.assetsUpdated,
+            recentActivity: [
+              {
+                timestamp: new Date(),
+                type: "success",
+                message: `Created ${universalResult.assetsCreated} assets, updated ${universalResult.assetsUpdated}`,
+              },
+              ...(universalResult.autoCreatedEntities.length > 0
+                ? [
+                    {
+                      timestamp: new Date(),
+                      type: "success" as const,
+                      message: `Auto-created ${universalResult.autoCreatedEntities.filter((e) => e.action === "created").length} related entities`,
+                    },
+                  ]
+                : []),
+              ...(universalResult.assignmentsCreated > 0
+                ? [
+                    {
+                      timestamp: new Date(),
+                      type: "success" as const,
+                      message: `Created ${universalResult.assignmentsCreated} assignments`,
+                    },
+                  ]
+                : []),
+            ],
+          });
+        } else {
+          // Use standard import processor
+          result = await importProcessor.processImport(
+            validRows,
+            entity,
+            settings,
+            lookupMaps,
+            (progressUpdate) => {
+              updateProgress(progressUpdate);
+            },
+          );
+        }
 
         // Auto-advance to results after a brief delay
         setTimeout(() => {
@@ -121,6 +212,7 @@ export function Step6ImportProgress({
     lookupMaps,
     onImportComplete,
     updateProgress,
+    isUniversalAssetsImport,
   ]);
 
   /**
