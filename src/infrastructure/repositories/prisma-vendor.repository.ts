@@ -77,6 +77,47 @@ export class PrismaVendorRepository implements IVendorRepository {
     return vendor ? this.toDomain(vendor) : null;
   }
 
+  async findByCode(code: string): Promise<Vendor | null> {
+    const vendor = await this.prisma.vendor.findUnique({
+      where: { code: code.toUpperCase() },
+    });
+
+    return vendor ? this.toDomain(vendor) : null;
+  }
+
+  async findByCodes(codes: string[]): Promise<Vendor[]> {
+    if (codes.length === 0) return [];
+
+    const timer = this.logger.startTimer();
+
+    try {
+      // Filter out empty/null values and normalize to uppercase
+      const validCodes = codes
+        .filter((c) => c !== null && c !== undefined && c.trim() !== "")
+        .map((c) => c.toUpperCase().trim());
+
+      if (validCodes.length === 0) return [];
+
+      const vendors = await this.prisma.vendor.findMany({
+        where: { code: { in: validCodes } },
+      });
+
+      this.logger.timed("findByCodes", "Vendors fetched by codes", timer(), {
+        requestedCount: validCodes.length,
+        foundCount: vendors.length,
+      });
+
+      return vendors.map((v: PrismaVendor) => this.toDomain(v));
+    } catch (error) {
+      this.logger.error(
+        "findByCodes",
+        "Failed to fetch vendors by codes",
+        error,
+      );
+      throw error;
+    }
+  }
+
   async findByEmail(email: string): Promise<Vendor | null> {
     const vendor = await this.prisma.vendor.findFirst({
       where: { email: { equals: email, mode: "insensitive" } },

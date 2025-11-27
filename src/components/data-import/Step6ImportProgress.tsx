@@ -63,6 +63,8 @@ export function Step6ImportProgress({
     successCount: 0,
     skipCount: 0,
     failureCount: 0,
+    createCount: 0,
+    updateCount: 0,
     currentBatch: 0,
     totalBatches: Math.ceil(validRows.length / settings.batchSize),
     startTime: new Date(),

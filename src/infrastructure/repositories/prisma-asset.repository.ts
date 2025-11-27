@@ -96,6 +96,73 @@ export class PrismaAssetRepository implements IAssetRepository {
     return asset ? this.toDomain(asset) : null;
   }
 
+  async findByAssetTags(assetTags: string[]): Promise<Asset[]> {
+    if (assetTags.length === 0) return [];
+
+    const timer = this.logger.startTimer();
+
+    try {
+      // Normalize to uppercase for case-insensitive matching
+      const normalizedTags = assetTags.map((tag) => tag.toUpperCase());
+
+      const assets = await this.prisma.asset.findMany({
+        where: { assetTag: { in: normalizedTags } },
+      });
+
+      this.logger.timed("findByAssetTags", "Assets fetched by tags", timer(), {
+        requestedCount: assetTags.length,
+        foundCount: assets.length,
+      });
+
+      return assets.map((a) => this.toDomain(a));
+    } catch (error) {
+      this.logger.error(
+        "findByAssetTags",
+        "Failed to fetch assets by tags",
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async findBySerialNumbers(serialNumbers: string[]): Promise<Asset[]> {
+    if (serialNumbers.length === 0) return [];
+
+    const timer = this.logger.startTimer();
+
+    try {
+      // Filter out empty/null values
+      const validSerials = serialNumbers.filter(
+        (s) => s !== null && s !== undefined && s.trim() !== "",
+      );
+
+      if (validSerials.length === 0) return [];
+
+      const assets = await this.prisma.asset.findMany({
+        where: { serialNumber: { in: validSerials } },
+      });
+
+      this.logger.timed(
+        "findBySerialNumbers",
+        "Assets fetched by serial numbers",
+        timer(),
+        {
+          requestedCount: validSerials.length,
+          foundCount: assets.length,
+        },
+      );
+
+      return assets.map((a) => this.toDomain(a));
+    } catch (error) {
+      this.logger.error(
+        "findBySerialNumbers",
+        "Failed to fetch assets by serial numbers",
+        error,
+      );
+      throw error;
+    }
+  }
+
   async findByAssetCategory(assetCategoryId: string): Promise<Asset[]> {
     const assets = await this.prisma.asset.findMany({
       where: { assetCategoryId },

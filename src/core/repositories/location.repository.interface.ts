@@ -22,6 +22,12 @@ export interface ILocationRepository {
   findByCode(code: string): Promise<Location | null>;
 
   /**
+   * Find locations by codes (batch lookup for import)
+   * Used for duplicate detection in data import
+   */
+  findByCodes(codes: string[]): Promise<Location[]>;
+
+  /**
    * Find root locations (no parent)
    */
   findRoots(): Promise<Location[]>;

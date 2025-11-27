@@ -22,6 +22,17 @@ export interface IVendorRepository {
   findByName(name: string): Promise<Vendor | null>;
 
   /**
+   * Find vendor by code
+   */
+  findByCode(code: string): Promise<Vendor | null>;
+
+  /**
+   * Find vendors by codes (batch lookup for import)
+   * Used for duplicate detection in data import
+   */
+  findByCodes(codes: string[]): Promise<Vendor[]>;
+
+  /**
    * Find vendor by email
    */
   findByEmail(email: string): Promise<Vendor | null>;

@@ -73,6 +73,44 @@ export class PrismaOrganizationUnitRepository
     return orgUnit ? this.toDomain(orgUnit) : null;
   }
 
+  async findByCodes(codes: string[]): Promise<OrganizationUnit[]> {
+    if (codes.length === 0) return [];
+
+    const timer = this.logger.startTimer();
+
+    try {
+      // Filter out empty/null values and normalize to uppercase
+      const validCodes = codes
+        .filter((c) => c !== null && c !== undefined && c.trim() !== "")
+        .map((c) => c.toUpperCase().trim());
+
+      if (validCodes.length === 0) return [];
+
+      const orgUnits = await this.prisma.organizationUnit.findMany({
+        where: { code: { in: validCodes } },
+      });
+
+      this.logger.timed(
+        "findByCodes",
+        "Organization units fetched by codes",
+        timer(),
+        {
+          requestedCount: validCodes.length,
+          foundCount: orgUnits.length,
+        },
+      );
+
+      return orgUnits.map((ou: PrismaOrganizationUnit) => this.toDomain(ou));
+    } catch (error) {
+      this.logger.error(
+        "findByCodes",
+        "Failed to fetch organization units by codes",
+        error,
+      );
+      throw error;
+    }
+  }
+
   async findRoots(): Promise<OrganizationUnit[]> {
     const orgUnits = await this.prisma.organizationUnit.findMany({
       where: { parentId: null },

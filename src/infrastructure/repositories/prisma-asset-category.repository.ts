@@ -61,6 +61,46 @@ export class PrismaAssetCategoryRepository implements IAssetCategoryRepository {
     return assetCategory ? this.toDomain(assetCategory) : null;
   }
 
+  async findByCodes(codes: string[]): Promise<AssetCategory[]> {
+    if (codes.length === 0) return [];
+
+    const timer = this.logger.startTimer();
+
+    try {
+      // Filter out empty/null values and normalize to uppercase
+      const validCodes = codes
+        .filter((c) => c !== null && c !== undefined && c.trim() !== "")
+        .map((c) => c.toUpperCase().trim());
+
+      if (validCodes.length === 0) return [];
+
+      const assetCategories = await this.prisma.assetCategory.findMany({
+        where: { code: { in: validCodes } },
+      });
+
+      this.logger.timed(
+        "findByCodes",
+        "Asset categories fetched by codes",
+        timer(),
+        {
+          requestedCount: validCodes.length,
+          foundCount: assetCategories.length,
+        },
+      );
+
+      return assetCategories.map((ac: PrismaAssetCategory) =>
+        this.toDomain(ac),
+      );
+    } catch (error) {
+      this.logger.error(
+        "findByCodes",
+        "Failed to fetch asset categories by codes",
+        error,
+      );
+      throw error;
+    }
+  }
+
   async findByName(name: string): Promise<AssetCategory | null> {
     const assetCategory = await this.prisma.assetCategory.findUnique({
       where: { name },

@@ -151,6 +151,12 @@ export interface IPersonRepository {
    */
   existsByUserId(userId: string, excludeId?: string): Promise<boolean>;
 
+  /**
+   * Find persons by email addresses (batch lookup for import)
+   * Used for duplicate detection in data import
+   */
+  findByEmails(emails: string[]): Promise<Person[]>;
+
   // ==========================================
   // Employee Directory Methods
   // ==========================================

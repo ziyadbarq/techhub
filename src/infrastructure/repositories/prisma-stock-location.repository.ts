@@ -60,6 +60,44 @@ export class PrismaStockLocationRepository implements IStockLocationRepository {
     return stockLocation ? this.toDomain(stockLocation) : null;
   }
 
+  async findByCodes(codes: string[]): Promise<StockLocation[]> {
+    if (codes.length === 0) return [];
+
+    const timer = this.logger.startTimer();
+
+    try {
+      // Filter out empty/null values and normalize to uppercase
+      const validCodes = codes
+        .filter((c) => c !== null && c !== undefined && c.trim() !== "")
+        .map((c) => c.toUpperCase().trim());
+
+      if (validCodes.length === 0) return [];
+
+      const stockLocations = await this.prisma.stockLocation.findMany({
+        where: { code: { in: validCodes } },
+      });
+
+      this.logger.timed(
+        "findByCodes",
+        "Stock locations fetched by codes",
+        timer(),
+        {
+          requestedCount: validCodes.length,
+          foundCount: stockLocations.length,
+        },
+      );
+
+      return stockLocations.map((sl: PrismaStockLocation) => this.toDomain(sl));
+    } catch (error) {
+      this.logger.error(
+        "findByCodes",
+        "Failed to fetch stock locations by codes",
+        error,
+      );
+      throw error;
+    }
+  }
+
   async findByLocation(locationId: string): Promise<StockLocation[]> {
     const stockLocations = await this.prisma.stockLocation.findMany({
       where: { locationId },

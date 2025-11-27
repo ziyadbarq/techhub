@@ -11,7 +11,7 @@
  * - Option to proceed or go back
  */
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import type {
   EntityConfig,
   ImportSettings,
@@ -19,6 +19,7 @@ import type {
   ColumnMapping,
   RowValidationResult,
   LookupMap,
+  DuplicatePreview,
 } from "@/lib/data-import/entity-config.types";
 import { importProcessor } from "@/lib/data-import/import-processor";
 import { templateGenerator } from "@/lib/data-import/template-generator";
@@ -56,6 +57,9 @@ import {
   Download,
   Search,
   ChevronRight,
+  RefreshCw,
+  Copy,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -86,6 +90,11 @@ export function Step5ValidationResults({
   const [invalidRows, setInvalidRows] = useState<RowValidationResult[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [errorTypeFilter, setErrorTypeFilter] = useState<string>("all");
+
+  // Duplicate preview state
+  const [isCheckingDuplicates, setIsCheckingDuplicates] = useState(false);
+  const [duplicatePreview, setDuplicatePreview] =
+    useState<DuplicatePreview | null>(null);
 
   /**
    * Run validation on mount
@@ -138,6 +147,109 @@ export function Step5ValidationResults({
 
     runValidation();
   }, [entity, settings, parsedFile, columnMappings, lookupMaps]);
+
+  /**
+   * Check for duplicates after validation completes
+   */
+  const checkDuplicates = useCallback(
+    async (rows: RowValidationResult[]) => {
+      // Only check if entity has checkDuplicatesAction configured
+      if (!entity.checkDuplicatesAction || rows.length === 0) {
+        return;
+      }
+
+      setIsCheckingDuplicates(true);
+
+      try {
+        // Collect unique field values from valid rows
+        // For assets, this is typically serialNumber
+        const uniqueValues: string[] = [];
+        const primaryUniqueField = entity.uniqueFields[0]; // e.g., "serialNumber"
+
+        for (const row of rows) {
+          const value = row.data[primaryUniqueField];
+          if (
+            value !== null &&
+            value !== undefined &&
+            String(value).trim() !== ""
+          ) {
+            uniqueValues.push(String(value));
+          }
+        }
+
+        if (uniqueValues.length === 0) {
+          setDuplicatePreview({
+            totalRows: rows.length,
+            toCreateCount: rows.length,
+            toUpdateCount: 0,
+            toSkipCount: 0,
+            existingRecordsMap: new Map(),
+          });
+          return;
+        }
+
+        // Call the checkDuplicatesAction to find existing records
+        const result = await entity.checkDuplicatesAction(uniqueValues);
+
+        if (result.success && result.data) {
+          const duplicateSet = new Set<string>();
+          const existingRecordsMap = new Map<
+            string,
+            { id: string; displayValue: string }
+          >();
+
+          for (const dup of result.data.duplicates) {
+            const value = dup[primaryUniqueField] as string;
+            if (value) {
+              const normalizedValue = value.toLowerCase();
+              duplicateSet.add(normalizedValue);
+              existingRecordsMap.set(normalizedValue, {
+                id: dup.id,
+                displayValue: value,
+              });
+            }
+          }
+
+          // Count how many of our valid rows are duplicates
+          let duplicateCount = 0;
+          for (const row of rows) {
+            const value = row.data[primaryUniqueField];
+            if (value && duplicateSet.has(String(value).toLowerCase())) {
+              duplicateCount++;
+            }
+          }
+
+          // Set counts based on duplicate strategy
+          const newCount = rows.length - duplicateCount;
+          const toUpdateCount =
+            settings.duplicateStrategy === "overwrite" ? duplicateCount : 0;
+          const toSkipCount =
+            settings.duplicateStrategy === "skip" ? duplicateCount : 0;
+
+          setDuplicatePreview({
+            totalRows: rows.length,
+            toCreateCount: newCount,
+            toUpdateCount,
+            toSkipCount,
+            existingRecordsMap,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to check duplicates:", error);
+        // Don't show error toast - this is a non-critical feature
+      } finally {
+        setIsCheckingDuplicates(false);
+      }
+    },
+    [entity, settings.duplicateStrategy],
+  );
+
+  // Trigger duplicate check when valid rows are available
+  useEffect(() => {
+    if (!isValidating && validRows.length > 0) {
+      checkDuplicates(validRows);
+    }
+  }, [isValidating, validRows, checkDuplicates]);
 
   /**
    * Get error types
@@ -301,6 +413,161 @@ export function Step5ValidationResults({
           </div>
         </CardContent>
       </Card>
+
+      {/* Duplicate Preview */}
+      {entity.checkDuplicatesAction && validRows.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <Copy className="h-4 w-4" />
+              Duplicate Detection Preview
+              {isCheckingDuplicates && (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              )}
+            </CardTitle>
+            <CardDescription>
+              Based on your duplicate strategy:{" "}
+              <Badge variant="secondary">{settings.duplicateStrategy}</Badge>
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isCheckingDuplicates ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="text-muted-foreground text-sm">
+                  Checking for existing records...
+                </div>
+              </div>
+            ) : duplicatePreview ? (
+              <div className="space-y-4">
+                {/* Preview Counts */}
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-800 dark:bg-green-950">
+                    <CheckCircle2 className="h-6 w-6 text-green-600" />
+                    <div>
+                      <div className="text-xl font-bold">
+                        {duplicatePreview.toCreateCount}
+                      </div>
+                      <div className="text-muted-foreground text-xs">
+                        Will be Created
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950">
+                    <Copy className="h-6 w-6 text-amber-600" />
+                    <div>
+                      <div className="text-xl font-bold">
+                        {settings.duplicateStrategy === "overwrite"
+                          ? duplicatePreview.toUpdateCount
+                          : settings.duplicateStrategy === "skip"
+                            ? duplicatePreview.toSkipCount
+                            : duplicatePreview.existingRecordsMap.size}
+                      </div>
+                      <div className="text-muted-foreground text-xs">
+                        {settings.duplicateStrategy === "overwrite"
+                          ? "Will be Updated"
+                          : settings.duplicateStrategy === "skip"
+                            ? "Will be Skipped"
+                            : settings.duplicateStrategy === "fail"
+                              ? "Will Fail"
+                              : "Will be Appended"}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 rounded-lg border p-4">
+                    <RefreshCw className="h-6 w-6 text-blue-600" />
+                    <div>
+                      <div className="text-xl font-bold">
+                        {duplicatePreview.totalRows}
+                      </div>
+                      <div className="text-muted-foreground text-xs">
+                        Total Valid Rows
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Strategy explanation */}
+                <Alert>
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>
+                    {settings.duplicateStrategy === "overwrite" && (
+                      <span>
+                        <strong>Overwrite:</strong> Existing records with
+                        matching unique identifiers will be updated with the
+                        imported data.
+                        {duplicatePreview.toUpdateCount > 0 &&
+                          ` ${duplicatePreview.toUpdateCount} record(s) will be updated.`}
+                      </span>
+                    )}
+                    {settings.duplicateStrategy === "skip" && (
+                      <span>
+                        <strong>Skip:</strong> Records with matching unique
+                        identifiers will be skipped (not imported).
+                        {duplicatePreview.toSkipCount > 0 &&
+                          ` ${duplicatePreview.toSkipCount} record(s) will be skipped.`}
+                      </span>
+                    )}
+                    {settings.duplicateStrategy === "fail" && (
+                      <span>
+                        <strong>Fail:</strong> Import will fail if any
+                        duplicates are found.
+                        {duplicatePreview.existingRecordsMap.size > 0 && (
+                          <span className="text-red-600">
+                            {" "}
+                            Warning: {
+                              duplicatePreview.existingRecordsMap.size
+                            }{" "}
+                            duplicate(s) detected!
+                          </span>
+                        )}
+                      </span>
+                    )}
+                    {settings.duplicateStrategy === "append" && (
+                      <span>
+                        <strong>Append:</strong> Duplicate records will be
+                        created with modified identifiers.
+                      </span>
+                    )}
+                  </AlertDescription>
+                </Alert>
+
+                {/* Sample duplicates */}
+                {duplicatePreview.existingRecordsMap.size > 0 && (
+                  <div className="space-y-2">
+                    <div className="text-sm font-medium">
+                      Sample existing records found:
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {Array.from(duplicatePreview.existingRecordsMap.values())
+                        .slice(0, 10)
+                        .map((record, i) => (
+                          <Badge
+                            key={i}
+                            variant="outline"
+                            className="font-mono text-xs"
+                          >
+                            {record.displayValue}
+                          </Badge>
+                        ))}
+                      {duplicatePreview.existingRecordsMap.size > 10 && (
+                        <Badge variant="secondary" className="text-xs">
+                          +{duplicatePreview.existingRecordsMap.size - 10} more
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="text-muted-foreground py-4 text-center text-sm">
+                No duplicate check data available
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Options */}
       {invalidRows.length > 0 && (

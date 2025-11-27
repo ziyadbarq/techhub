@@ -238,6 +238,39 @@ export interface EntityConfig {
   // Import behavior
   bulkCreateAction: Function; // Server action for bulk create
   bulkUpdateAction?: Function; // Server action for bulk update
+  /**
+   * Server action to check for existing records by unique field values.
+   * Used for pre-import duplicate detection.
+   */
+  checkDuplicatesAction?: (uniqueValues: string[]) => Promise<{
+    success: boolean;
+    data?: {
+      duplicates: Array<{ id: string; [key: string]: unknown }>;
+      duplicateCount: number;
+    };
+    error?: string;
+  }>;
+  /**
+   * Server action for bulk upsert (create or update based on duplicate strategy).
+   * Used when duplicateStrategy is "overwrite" to handle both creates and updates.
+   */
+  bulkUpsertAction?: (
+    items: Record<string, unknown>[],
+    strategy: DuplicateStrategy,
+  ) => Promise<{
+    success: boolean;
+    data?: {
+      createdCount: number;
+      updatedCount: number;
+      skipCount: number;
+      failureCount: number;
+      created?: Array<Record<string, unknown>>;
+      updated?: Array<Record<string, unknown>>;
+      skipped?: Array<{ identifier: string; reason: string }>;
+      failures?: Array<{ index: number; identifier: string; error: string }>;
+    };
+    error?: string;
+  }>;
   maxBatchSize: number; // Maximum rows per batch
 
   // Advanced features
@@ -316,6 +349,11 @@ export interface ImportProgress {
   skipCount: number;
   failureCount: number;
 
+  /** Number of new records created */
+  createCount: number;
+  /** Number of existing records updated */
+  updateCount: number;
+
   currentBatch: number;
   totalBatches: number;
 
@@ -358,6 +396,11 @@ export interface ImportResult {
   successCount: number;
   skipCount: number;
   failureCount: number;
+
+  /** Number of new records created (subset of successCount) */
+  createCount: number;
+  /** Number of existing records updated (subset of successCount for overwrite strategy) */
+  updateCount: number;
 
   duration: number; // seconds
   throughput: number; // rows per second
@@ -441,4 +484,20 @@ export interface CSVExportOptions {
   includeHeaders: boolean;
   includeUTF8BOM: boolean; // For Excel compatibility
   delimiter?: string;
+}
+
+/**
+ * Preview of what will happen during import based on duplicate strategy
+ */
+export interface DuplicatePreview {
+  /** Total rows in the import file */
+  totalRows: number;
+  /** Number of rows that will create new records */
+  toCreateCount: number;
+  /** Number of rows that will update existing records (overwrite strategy) */
+  toUpdateCount: number;
+  /** Number of rows that will be skipped (skip strategy) */
+  toSkipCount: number;
+  /** Map of unique field values to existing record IDs (for duplicates found) */
+  existingRecordsMap: Map<string, { id: string; displayValue: string }>;
 }

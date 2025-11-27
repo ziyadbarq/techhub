@@ -22,6 +22,12 @@ export interface IAssetCategoryRepository {
   findByCode(code: string): Promise<AssetCategory | null>;
 
   /**
+   * Find asset categories by codes (batch lookup for import)
+   * Used for duplicate detection in data import
+   */
+  findByCodes(codes: string[]): Promise<AssetCategory[]>;
+
+  /**
    * Find asset category by name
    */
   findByName(name: string): Promise<AssetCategory | null>;

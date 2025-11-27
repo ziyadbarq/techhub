@@ -572,3 +572,280 @@ export async function getImportLookupMapsAction(): Promise<
     );
   }
 }
+
+/**
+ * Check for existing assets by serial numbers (for pre-import duplicate detection)
+ * Uses serial number as the primary unique field for duplicate detection
+ */
+export async function checkAssetDuplicatesAction(
+  serialNumbers: string[],
+): Promise<{
+  success: boolean;
+  data?: {
+    duplicates: Array<{ id: string; serialNumber: string; assetTag: string }>;
+    duplicateCount: number;
+  };
+  error?: string;
+}> {
+  try {
+    await requirePermission(PERMISSIONS.ASSETS_CREATE);
+
+    const container = getContainer();
+    const repository = container.get<IAssetRepository>(
+      DI_TOKENS.IAssetRepository,
+    );
+
+    // Filter out empty values
+    const validSerialNumbers = serialNumbers.filter(
+      (s) => s !== null && s !== undefined && s.trim() !== "",
+    );
+
+    if (validSerialNumbers.length === 0) {
+      return {
+        success: true,
+        data: { duplicates: [], duplicateCount: 0 },
+      };
+    }
+
+    // Batch lookup existing assets by serial numbers
+    const existingAssets =
+      await repository.findBySerialNumbers(validSerialNumbers);
+
+    const duplicates = existingAssets.map((asset) => ({
+      id: asset.id,
+      serialNumber: asset.serialNumber || "",
+      assetTag: asset.assetTag,
+    }));
+
+    return {
+      success: true,
+      data: {
+        duplicates,
+        duplicateCount: duplicates.length,
+      },
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to check duplicates",
+    };
+  }
+}
+
+/**
+ * Bulk upsert assets (create or update based on duplicate strategy)
+ * For "overwrite" strategy: updates existing records, creates new ones
+ * For "skip" strategy: skips existing records, creates new ones
+ */
+export async function bulkUpsertAssetsAction(
+  assetsData: Record<string, unknown>[],
+  strategy: "skip" | "overwrite" | "fail" | "append",
+): Promise<{
+  success: boolean;
+  data?: {
+    createdCount: number;
+    updatedCount: number;
+    skipCount: number;
+    failureCount: number;
+    created?: Array<{ assetTag: string; serialNumber?: string }>;
+    updated?: Array<{ assetTag: string; serialNumber?: string }>;
+    skipped?: Array<{ identifier: string; reason: string }>;
+    failures?: Array<{ index: number; identifier: string; error: string }>;
+  };
+  error?: string;
+}> {
+  try {
+    await requirePermission(PERMISSIONS.ASSETS_CREATE);
+
+    const container = getContainer();
+    const logger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
+    const repository = container.get<IAssetRepository>(
+      DI_TOKENS.IAssetRepository,
+    );
+    const createUseCase = container.get<CreateAssetUseCase>(
+      DI_TOKENS.CreateAssetUseCase,
+    );
+    const updateUseCase = container.get<UpdateAssetUseCase>(
+      DI_TOKENS.UpdateAssetUseCase,
+    );
+
+    const log = logger.child({
+      controller: "asset.bulkUpsert",
+      rows: assetsData.length,
+      strategy,
+    });
+    log.info("Bulk asset upsert started");
+
+    const results = {
+      createdCount: 0,
+      updatedCount: 0,
+      skipCount: 0,
+      failureCount: 0,
+      created: [] as Array<{ assetTag: string; serialNumber?: string }>,
+      updated: [] as Array<{ assetTag: string; serialNumber?: string }>,
+      skipped: [] as Array<{ identifier: string; reason: string }>,
+      failures: [] as Array<{
+        index: number;
+        identifier: string;
+        error: string;
+      }>,
+    };
+
+    // Step 1: Collect serial numbers for batch lookup
+    const serialNumbers = assetsData
+      .map((a) => a.serialNumber as string | undefined)
+      .filter((s): s is string => !!s && s.trim() !== "");
+
+    // Step 2: Batch lookup existing assets
+    const existingAssets = await repository.findBySerialNumbers(serialNumbers);
+    const existingBySerial = new Map(
+      existingAssets
+        .filter((a) => a.serialNumber)
+        .map((a) => [a.serialNumber!, a]),
+    );
+
+    // Step 3: Process each record
+    for (let i = 0; i < assetsData.length; i++) {
+      const assetData = assetsData[i];
+      const identifier =
+        (assetData.serialNumber as string) ||
+        (assetData.assetTag as string) ||
+        `Row ${i + 1}`;
+
+      try {
+        const validated = CreateAssetSchema.parse(assetData);
+        const existingAsset = validated.serialNumber
+          ? existingBySerial.get(validated.serialNumber)
+          : null;
+
+        if (existingAsset) {
+          // Handle duplicate based on strategy
+          switch (strategy) {
+            case "skip":
+              results.skipCount++;
+              results.skipped.push({
+                identifier,
+                reason: `Serial number "${validated.serialNumber}" already exists`,
+              });
+              break;
+
+            case "overwrite": {
+              // Merge/patch: only update non-empty fields from import
+              const updateData: Record<string, unknown> = {};
+              if (validated.assetCategoryId)
+                updateData.assetCategoryId = validated.assetCategoryId;
+              if (validated.assetModelId)
+                updateData.assetModelId = validated.assetModelId;
+              if (validated.vendorId) updateData.vendorId = validated.vendorId;
+              if (validated.lifecycleStateId)
+                updateData.lifecycleStateId = validated.lifecycleStateId;
+              if (validated.purchaseDate)
+                updateData.purchaseDate = validated.purchaseDate;
+              if (
+                validated.purchaseCost !== undefined &&
+                validated.purchaseCost !== null
+              ) {
+                updateData.purchaseCost = validated.purchaseCost;
+              }
+              if (validated.currency) updateData.currency = validated.currency;
+              if (validated.warrantyEndDate)
+                updateData.warrantyEndDate = validated.warrantyEndDate;
+              if (validated.currentStockLocationId) {
+                updateData.currentStockLocationId =
+                  validated.currentStockLocationId;
+              }
+              if (validated.note) updateData.note = validated.note;
+
+              await updateUseCase.execute({
+                id: existingAsset.id,
+                ...updateData,
+              });
+              results.updatedCount++;
+              results.updated.push({
+                assetTag: existingAsset.assetTag,
+                serialNumber: validated.serialNumber ?? undefined,
+              });
+              break;
+            }
+
+            case "fail":
+              results.failureCount++;
+              results.failures.push({
+                index: i,
+                identifier,
+                error: `Duplicate serial number "${validated.serialNumber}" not allowed`,
+              });
+              break;
+
+            case "append": {
+              // Create with modified serial number
+              const modifiedSerial = `${validated.serialNumber}-COPY-${Date.now()}`;
+              await createUseCase.execute({
+                ...validated,
+                serialNumber: modifiedSerial,
+              });
+              results.createdCount++;
+              results.created.push({
+                assetTag: validated.assetTag ?? "AUTO",
+                serialNumber: modifiedSerial,
+              });
+              break;
+            }
+          }
+        } else {
+          // No duplicate - create new record
+          const created = await createUseCase.execute({
+            assetTag: validated.assetTag,
+            assetCategoryId: validated.assetCategoryId,
+            assetModelId: validated.assetModelId ?? undefined,
+            vendorId: validated.vendorId ?? undefined,
+            contractId: validated.contractId ?? undefined,
+            lifecycleStateId: validated.lifecycleStateId ?? undefined,
+            serialNumber: validated.serialNumber ?? undefined,
+            purchaseDate: validated.purchaseDate ?? undefined,
+            purchaseCost: validated.purchaseCost ?? undefined,
+            currency: validated.currency ?? undefined,
+            warrantyEndDate: validated.warrantyEndDate ?? undefined,
+            currentStockLocationId:
+              validated.currentStockLocationId ?? undefined,
+            attributes: validated.attributes ?? undefined,
+            note: validated.note ?? undefined,
+          });
+          results.createdCount++;
+          results.created.push({
+            assetTag: created.assetTag,
+            serialNumber: validated.serialNumber ?? undefined,
+          });
+        }
+      } catch (error) {
+        results.failureCount++;
+        results.failures.push({
+          index: i,
+          identifier,
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/assets");
+
+    log.info("Bulk asset upsert completed", {
+      createdCount: results.createdCount,
+      updatedCount: results.updatedCount,
+      skipCount: results.skipCount,
+      failureCount: results.failureCount,
+    });
+
+    return {
+      success: true,
+      data: results,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to bulk upsert assets",
+    };
+  }
+}

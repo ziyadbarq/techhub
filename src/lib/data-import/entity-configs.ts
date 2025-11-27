@@ -10,14 +10,46 @@
 
 import type { EntityConfig } from "./entity-config.types";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { bulkCreateAssetsAction } from "@/interface-adapters/controllers/asset.controller";
-import { bulkCreatePersonsAction } from "@/interface-adapters/controllers/person.controller";
-import { bulkCreateOrganizationUnitsAction } from "@/interface-adapters/controllers/organization-unit.controller";
-import { bulkCreateLocationsAction } from "@/interface-adapters/controllers/location.controller";
-import { bulkCreateVendorsAction } from "@/interface-adapters/controllers/vendor.controller";
-import { bulkCreateAssetCategoriesAction } from "@/interface-adapters/controllers/asset-category.controller";
-import { bulkCreateAssetModelsAction } from "@/interface-adapters/controllers/asset-model.controller";
-import { bulkCreateStockLocationsAction } from "@/interface-adapters/controllers/stock-location.controller";
+import {
+  bulkCreateAssetsAction,
+  checkAssetDuplicatesAction,
+  bulkUpsertAssetsAction,
+} from "@/interface-adapters/controllers/asset.controller";
+import {
+  bulkCreatePersonsAction,
+  checkPersonDuplicatesAction,
+  bulkUpsertPersonsAction,
+} from "@/interface-adapters/controllers/person.controller";
+import {
+  bulkCreateOrganizationUnitsAction,
+  checkOrganizationUnitDuplicatesAction,
+  bulkUpsertOrganizationUnitsAction,
+} from "@/interface-adapters/controllers/organization-unit.controller";
+import {
+  bulkCreateLocationsAction,
+  checkLocationDuplicatesAction,
+  bulkUpsertLocationsAction,
+} from "@/interface-adapters/controllers/location.controller";
+import {
+  bulkCreateVendorsAction,
+  checkVendorDuplicatesAction,
+  bulkUpsertVendorsAction,
+} from "@/interface-adapters/controllers/vendor.controller";
+import {
+  bulkCreateAssetCategoriesAction,
+  checkAssetCategoryDuplicatesAction,
+  bulkUpsertAssetCategoriesAction,
+} from "@/interface-adapters/controllers/asset-category.controller";
+import {
+  bulkCreateAssetModelsAction,
+  checkAssetModelDuplicatesAction,
+  bulkUpsertAssetModelsAction,
+} from "@/interface-adapters/controllers/asset-model.controller";
+import {
+  bulkCreateStockLocationsAction,
+  checkStockLocationDuplicatesAction,
+  bulkUpsertStockLocationsAction,
+} from "@/interface-adapters/controllers/stock-location.controller";
 import { bulkCreateConfigurationItemsAction } from "@/interface-adapters/controllers/configuration-item.controller";
 import { bulkCreateContractsAction } from "@/interface-adapters/controllers/contract.controller";
 import { bulkCreateServicesAction } from "@/interface-adapters/controllers/service.controller";
@@ -83,7 +115,7 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
     category: "ASSET_MANAGEMENT",
     permission: PERMISSIONS.ASSETS_CREATE,
     viewPermission: PERMISSIONS.ASSETS_VIEW,
-    uniqueFields: ["assetTag"],
+    uniqueFields: ["serialNumber", "assetTag"], // serialNumber is primary for duplicate detection
     requiredFields: ["assetCategoryId"],
     lookupFields: [
       "assetCategoryId",
@@ -94,6 +126,8 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
     ],
     maxBatchSize: 100,
     bulkCreateAction: bulkCreateAssetsAction,
+    checkDuplicatesAction: checkAssetDuplicatesAction,
+    bulkUpsertAction: bulkUpsertAssetsAction,
     icon: "Package",
     color: "#3b82f6",
     fields: [
@@ -245,6 +279,8 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
     ],
     maxBatchSize: 200,
     bulkCreateAction: bulkCreatePersonsAction,
+    checkDuplicatesAction: checkPersonDuplicatesAction,
+    bulkUpsertAction: bulkUpsertPersonsAction,
     icon: "Users",
     color: "#8b5cf6",
     fields: [
@@ -407,6 +443,8 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
     lookupFields: [],
     maxBatchSize: 100,
     bulkCreateAction: bulkCreateVendorsAction,
+    checkDuplicatesAction: checkVendorDuplicatesAction,
+    bulkUpsertAction: bulkUpsertVendorsAction,
     icon: "Building2",
     color: "#10b981",
     fields: [
@@ -522,6 +560,8 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
     lookupFields: ["parentId"],
     maxBatchSize: 100,
     bulkCreateAction: bulkCreateLocationsAction,
+    checkDuplicatesAction: checkLocationDuplicatesAction,
+    bulkUpsertAction: bulkUpsertLocationsAction,
     icon: "MapPin",
     color: "#f59e0b",
     fields: [
@@ -638,6 +678,8 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
     lookupFields: ["parentCategoryId"],
     maxBatchSize: 100,
     bulkCreateAction: bulkCreateAssetCategoriesAction,
+    checkDuplicatesAction: checkAssetCategoryDuplicatesAction,
+    bulkUpsertAction: bulkUpsertAssetCategoriesAction,
     icon: "FolderTree",
     color: "#6366f1",
     fields: [
@@ -694,6 +736,8 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
     lookupFields: ["parentId", "managerId"],
     maxBatchSize: 100,
     bulkCreateAction: bulkCreateOrganizationUnitsAction,
+    checkDuplicatesAction: checkOrganizationUnitDuplicatesAction,
+    bulkUpsertAction: bulkUpsertOrganizationUnitsAction,
     icon: "Building",
     color: "#8b5cf6",
     fields: [
@@ -795,6 +839,8 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
     lookupFields: ["assetCategoryId", "vendorId"],
     maxBatchSize: 100,
     bulkCreateAction: bulkCreateAssetModelsAction,
+    checkDuplicatesAction: checkAssetModelDuplicatesAction,
+    bulkUpsertAction: bulkUpsertAssetModelsAction,
     icon: "Box",
     color: "#3b82f6",
     fields: [
@@ -865,6 +911,8 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
     lookupFields: ["locationId"],
     maxBatchSize: 100,
     bulkCreateAction: bulkCreateStockLocationsAction,
+    checkDuplicatesAction: checkStockLocationDuplicatesAction,
+    bulkUpsertAction: bulkUpsertStockLocationsAction,
     icon: "Warehouse",
     color: "#f59e0b",
     fields: [

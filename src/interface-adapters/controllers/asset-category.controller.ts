@@ -29,6 +29,8 @@ import type {
   UpdateAssetCategoryUseCase,
   DeleteAssetCategoryUseCase,
 } from "@/core/use-cases/asset/asset-category";
+import type { IAssetCategoryRepository } from "@/core/repositories/asset-category.repository.interface";
+import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
@@ -259,5 +261,222 @@ export async function bulkCreateAssetCategoriesAction(
       { function: "bulkCreateAssetCategoriesAction" },
       "Failed to bulk create asset categories",
     );
+  }
+}
+
+/**
+ * Check for existing asset categories by code (batch lookup for duplicate detection)
+ */
+export async function checkAssetCategoryDuplicatesAction(
+  codes: string[],
+): Promise<{
+  success: boolean;
+  data?: {
+    duplicates: Array<{ id: string; code: string; name: string }>;
+    duplicateCount: number;
+  };
+  error?: string;
+}> {
+  try {
+    await requirePermission(PERMISSIONS.ASSET_CATEGORIES_CREATE);
+
+    const container = getContainer();
+    const repository = container.get<IAssetCategoryRepository>(
+      DI_TOKENS.IAssetCategoryRepository,
+    );
+
+    const validCodes = codes.filter(
+      (c) => c !== null && c !== undefined && c.trim() !== "",
+    );
+
+    if (validCodes.length === 0) {
+      return { success: true, data: { duplicates: [], duplicateCount: 0 } };
+    }
+
+    const existingCategories = await repository.findByCodes(validCodes);
+
+    const duplicates = existingCategories.map((category) => ({
+      id: category.id,
+      code: category.code,
+      name: category.name,
+    }));
+
+    return {
+      success: true,
+      data: { duplicates, duplicateCount: duplicates.length },
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to check duplicates",
+    };
+  }
+}
+
+/**
+ * Bulk upsert asset categories (create or update based on duplicate strategy)
+ */
+export async function bulkUpsertAssetCategoriesAction(
+  categoriesData: Record<string, unknown>[],
+  strategy: "skip" | "overwrite" | "fail" | "append",
+): Promise<{
+  success: boolean;
+  data?: {
+    createdCount: number;
+    updatedCount: number;
+    skipCount: number;
+    failureCount: number;
+    created?: Array<{ code: string; name: string }>;
+    updated?: Array<{ code: string; name: string }>;
+    skipped?: Array<{ identifier: string; reason: string }>;
+    failures?: Array<{ index: number; identifier: string; error: string }>;
+  };
+  error?: string;
+}> {
+  try {
+    await requirePermission(PERMISSIONS.ASSET_CATEGORIES_CREATE);
+
+    const container = getContainer();
+    const logger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
+    const repository = container.get<IAssetCategoryRepository>(
+      DI_TOKENS.IAssetCategoryRepository,
+    );
+    const createUseCase = container.get<CreateAssetCategoryUseCase>(
+      DI_TOKENS.CreateAssetCategoryUseCase,
+    );
+    const updateUseCase = container.get<UpdateAssetCategoryUseCase>(
+      DI_TOKENS.UpdateAssetCategoryUseCase,
+    );
+
+    const log = logger.child({
+      controller: "assetCategory.bulkUpsert",
+      rows: categoriesData.length,
+      strategy,
+    });
+    log.info("Bulk asset category upsert started");
+
+    const results = {
+      createdCount: 0,
+      updatedCount: 0,
+      skipCount: 0,
+      failureCount: 0,
+      created: [] as Array<{ code: string; name: string }>,
+      updated: [] as Array<{ code: string; name: string }>,
+      skipped: [] as Array<{ identifier: string; reason: string }>,
+      failures: [] as Array<{
+        index: number;
+        identifier: string;
+        error: string;
+      }>,
+    };
+
+    const codes = categoriesData
+      .map((c) => c.code as string | undefined)
+      .filter((c): c is string => !!c && c.trim() !== "");
+
+    const existingCategories = await repository.findByCodes(codes);
+    const existingByCode = new Map(
+      existingCategories.map((c) => [c.code.toUpperCase(), c]),
+    );
+
+    for (let i = 0; i < categoriesData.length; i++) {
+      const categoryData = categoriesData[i];
+      const identifier =
+        (categoryData.code as string) ||
+        (categoryData.name as string) ||
+        `Row ${i + 1}`;
+
+      try {
+        const validated = CreateAssetCategorySchema.parse(categoryData);
+        const existingCategory = validated.code
+          ? existingByCode.get(validated.code.toUpperCase())
+          : null;
+
+        if (existingCategory) {
+          switch (strategy) {
+            case "skip":
+              results.skipCount++;
+              results.skipped.push({
+                identifier,
+                reason: `Code "${validated.code}" already exists`,
+              });
+              break;
+            case "overwrite": {
+              await updateUseCase.execute({
+                id: existingCategory.id,
+                name: validated.name || undefined,
+                description: validated.description ?? undefined,
+                lifecycleModelId: validated.lifecycleModelId ?? undefined,
+                isConsumable: validated.isConsumable,
+              });
+              results.updatedCount++;
+              results.updated.push({
+                code: existingCategory.code,
+                name: validated.name,
+              });
+              break;
+            }
+            case "fail":
+              results.failureCount++;
+              results.failures.push({
+                index: i,
+                identifier,
+                error: `Duplicate code "${validated.code}" not allowed`,
+              });
+              break;
+            case "append": {
+              const modifiedCode = `${validated.code}-COPY-${Date.now()}`;
+              await createUseCase.execute({
+                name: validated.name,
+                code: modifiedCode,
+                description: validated.description ?? undefined,
+                lifecycleModelId: validated.lifecycleModelId ?? undefined,
+                isConsumable: validated.isConsumable ?? undefined,
+              });
+              results.createdCount++;
+              results.created.push({
+                code: modifiedCode,
+                name: validated.name,
+              });
+              break;
+            }
+          }
+        } else {
+          await createUseCase.execute({
+            name: validated.name,
+            code: validated.code,
+            description: validated.description ?? undefined,
+            lifecycleModelId: validated.lifecycleModelId ?? undefined,
+            isConsumable: validated.isConsumable ?? undefined,
+          });
+          results.createdCount++;
+          results.created.push({
+            code: validated.code || "AUTO",
+            name: validated.name,
+          });
+        }
+      } catch (error) {
+        results.failureCount++;
+        results.failures.push({
+          index: i,
+          identifier,
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/asset-categories");
+    log.info("Bulk asset category upsert completed", results);
+
+    return { success: true, data: results };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to bulk upsert asset categories",
+    };
   }
 }

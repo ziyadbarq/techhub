@@ -9,6 +9,11 @@ export interface IAssetModelRepository {
   create(assetModel: AssetModel): Promise<AssetModel>;
   findById(id: string): Promise<AssetModel | null>;
   findByCode(code: string): Promise<AssetModel | null>;
+  /**
+   * Find asset models by codes (batch lookup for import)
+   * Used for duplicate detection in data import
+   */
+  findByCodes(codes: string[]): Promise<AssetModel[]>;
   findByAssetCategory(assetCategoryId: string): Promise<AssetModel[]>;
   findByVendor(vendorId: string): Promise<AssetModel[]>;
   findAll(options?: {

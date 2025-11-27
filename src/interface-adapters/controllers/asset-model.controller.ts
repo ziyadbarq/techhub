@@ -32,6 +32,8 @@ import type {
 import type { ListAssetCategoriesUseCase } from "@/core/use-cases/asset/asset-category";
 import type { ListVendorsUseCase } from "@/core/use-cases/foundation/vendor";
 import type { AssetModel } from "@/core/domain/entities/asset-model.entity";
+import type { IAssetModelRepository } from "@/core/repositories/asset-model.repository.interface";
+import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
@@ -335,5 +337,230 @@ export async function bulkCreateAssetModelsAction(
       { function: "bulkCreateAssetModelsAction" },
       "Failed to bulk create asset models",
     );
+  }
+}
+
+/**
+ * Check for existing asset models by code (batch lookup for duplicate detection)
+ */
+export async function checkAssetModelDuplicatesAction(
+  codes: string[],
+): Promise<{
+  success: boolean;
+  data?: {
+    duplicates: Array<{ id: string; code: string; name: string }>;
+    duplicateCount: number;
+  };
+  error?: string;
+}> {
+  try {
+    await requirePermission(PERMISSIONS.ASSET_MODELS_CREATE);
+
+    const container = getContainer();
+    const repository = container.get<IAssetModelRepository>(
+      DI_TOKENS.IAssetModelRepository,
+    );
+
+    const validCodes = codes.filter(
+      (c) => c !== null && c !== undefined && c.trim() !== "",
+    );
+
+    if (validCodes.length === 0) {
+      return { success: true, data: { duplicates: [], duplicateCount: 0 } };
+    }
+
+    const existingModels = await repository.findByCodes(validCodes);
+
+    const duplicates = existingModels.map((model) => ({
+      id: model.id,
+      code: model.code,
+      name: model.name,
+    }));
+
+    return {
+      success: true,
+      data: { duplicates, duplicateCount: duplicates.length },
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to check duplicates",
+    };
+  }
+}
+
+/**
+ * Bulk upsert asset models (create or update based on duplicate strategy)
+ */
+export async function bulkUpsertAssetModelsAction(
+  modelsData: Record<string, unknown>[],
+  strategy: "skip" | "overwrite" | "fail" | "append",
+): Promise<{
+  success: boolean;
+  data?: {
+    createdCount: number;
+    updatedCount: number;
+    skipCount: number;
+    failureCount: number;
+    created?: Array<{ code: string; name: string }>;
+    updated?: Array<{ code: string; name: string }>;
+    skipped?: Array<{ identifier: string; reason: string }>;
+    failures?: Array<{ index: number; identifier: string; error: string }>;
+  };
+  error?: string;
+}> {
+  try {
+    await requirePermission(PERMISSIONS.ASSET_MODELS_CREATE);
+
+    const container = getContainer();
+    const logger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
+    const repository = container.get<IAssetModelRepository>(
+      DI_TOKENS.IAssetModelRepository,
+    );
+    const createUseCase = container.get<CreateAssetModelUseCase>(
+      DI_TOKENS.CreateAssetModelUseCase,
+    );
+    const updateUseCase = container.get<UpdateAssetModelUseCase>(
+      DI_TOKENS.UpdateAssetModelUseCase,
+    );
+
+    const log = logger.child({
+      controller: "assetModel.bulkUpsert",
+      rows: modelsData.length,
+      strategy,
+    });
+    log.info("Bulk asset model upsert started");
+
+    const results = {
+      createdCount: 0,
+      updatedCount: 0,
+      skipCount: 0,
+      failureCount: 0,
+      created: [] as Array<{ code: string; name: string }>,
+      updated: [] as Array<{ code: string; name: string }>,
+      skipped: [] as Array<{ identifier: string; reason: string }>,
+      failures: [] as Array<{
+        index: number;
+        identifier: string;
+        error: string;
+      }>,
+    };
+
+    const codes = modelsData
+      .map((m) => m.code as string | undefined)
+      .filter((c): c is string => !!c && c.trim() !== "");
+
+    const existingModels = await repository.findByCodes(codes);
+    const existingByCode = new Map(
+      existingModels.map((m) => [m.code.toUpperCase(), m]),
+    );
+
+    for (let i = 0; i < modelsData.length; i++) {
+      const modelData = modelsData[i];
+      const identifier =
+        (modelData.code as string) ||
+        (modelData.name as string) ||
+        `Row ${i + 1}`;
+
+      try {
+        const validated = CreateAssetModelSchema.parse(modelData);
+        const existingModel = validated.code
+          ? existingByCode.get(validated.code.toUpperCase())
+          : null;
+
+        if (existingModel) {
+          switch (strategy) {
+            case "skip":
+              results.skipCount++;
+              results.skipped.push({
+                identifier,
+                reason: `Code "${validated.code}" already exists`,
+              });
+              break;
+            case "overwrite": {
+              await updateUseCase.execute({
+                id: existingModel.id,
+                name: validated.name || undefined,
+                description: validated.description ?? undefined,
+                assetCategoryId: validated.assetCategoryId || undefined,
+                vendorId: validated.vendorId ?? undefined,
+                defaultWarrantyMonths:
+                  validated.defaultWarrantyMonths ?? undefined,
+                defaultAttributes: validated.defaultAttributes ?? undefined,
+              });
+              results.updatedCount++;
+              results.updated.push({
+                code: existingModel.code,
+                name: validated.name,
+              });
+              break;
+            }
+            case "fail":
+              results.failureCount++;
+              results.failures.push({
+                index: i,
+                identifier,
+                error: `Duplicate code "${validated.code}" not allowed`,
+              });
+              break;
+            case "append": {
+              const modifiedCode = `${validated.code}-COPY-${Date.now()}`;
+              await createUseCase.execute({
+                name: validated.name,
+                code: modifiedCode,
+                description: validated.description ?? undefined,
+                assetCategoryId: validated.assetCategoryId,
+                vendorId: validated.vendorId ?? undefined,
+                defaultWarrantyMonths:
+                  validated.defaultWarrantyMonths ?? undefined,
+                defaultAttributes: validated.defaultAttributes ?? undefined,
+              });
+              results.createdCount++;
+              results.created.push({
+                code: modifiedCode,
+                name: validated.name,
+              });
+              break;
+            }
+          }
+        } else {
+          await createUseCase.execute({
+            name: validated.name,
+            code: validated.code,
+            description: validated.description ?? undefined,
+            assetCategoryId: validated.assetCategoryId,
+            vendorId: validated.vendorId ?? undefined,
+            defaultWarrantyMonths: validated.defaultWarrantyMonths ?? undefined,
+            defaultAttributes: validated.defaultAttributes ?? undefined,
+          });
+          results.createdCount++;
+          results.created.push({
+            code: validated.code || "AUTO",
+            name: validated.name,
+          });
+        }
+      } catch (error) {
+        results.failureCount++;
+        results.failures.push({
+          index: i,
+          identifier,
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/asset-models");
+    log.info("Bulk asset model upsert completed", results);
+
+    return { success: true, data: results };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to bulk upsert asset models",
+    };
   }
 }

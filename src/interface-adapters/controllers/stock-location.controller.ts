@@ -28,6 +28,8 @@ import type {
   UpdateStockLocationUseCase,
   DeleteStockLocationUseCase,
 } from "@/core/use-cases/inventory/stock-location";
+import type { IStockLocationRepository } from "@/core/repositories/stock-location.repository.interface";
+import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
@@ -255,5 +257,219 @@ export async function bulkCreateStockLocationsAction(
       { function: "bulkCreateStockLocationsAction" },
       "Failed to bulk create stock locations",
     );
+  }
+}
+
+/**
+ * Check for existing stock locations by code (batch lookup for duplicate detection)
+ */
+export async function checkStockLocationDuplicatesAction(
+  codes: string[],
+): Promise<{
+  success: boolean;
+  data?: {
+    duplicates: Array<{ id: string; code: string; name: string }>;
+    duplicateCount: number;
+  };
+  error?: string;
+}> {
+  try {
+    await requirePermission(PERMISSIONS.STOCK_LOCATIONS_CREATE);
+
+    const container = getContainer();
+    const repository = container.get<IStockLocationRepository>(
+      DI_TOKENS.IStockLocationRepository,
+    );
+
+    const validCodes = codes.filter(
+      (c) => c !== null && c !== undefined && c.trim() !== "",
+    );
+
+    if (validCodes.length === 0) {
+      return { success: true, data: { duplicates: [], duplicateCount: 0 } };
+    }
+
+    const existingLocations = await repository.findByCodes(validCodes);
+
+    const duplicates = existingLocations.map((location) => ({
+      id: location.id,
+      code: location.code,
+      name: location.name,
+    }));
+
+    return {
+      success: true,
+      data: { duplicates, duplicateCount: duplicates.length },
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to check duplicates",
+    };
+  }
+}
+
+/**
+ * Bulk upsert stock locations (create or update based on duplicate strategy)
+ */
+export async function bulkUpsertStockLocationsAction(
+  locationsData: Record<string, unknown>[],
+  strategy: "skip" | "overwrite" | "fail" | "append",
+): Promise<{
+  success: boolean;
+  data?: {
+    createdCount: number;
+    updatedCount: number;
+    skipCount: number;
+    failureCount: number;
+    created?: Array<{ code: string; name: string }>;
+    updated?: Array<{ code: string; name: string }>;
+    skipped?: Array<{ identifier: string; reason: string }>;
+    failures?: Array<{ index: number; identifier: string; error: string }>;
+  };
+  error?: string;
+}> {
+  try {
+    await requirePermission(PERMISSIONS.STOCK_LOCATIONS_CREATE);
+
+    const container = getContainer();
+    const logger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
+    const repository = container.get<IStockLocationRepository>(
+      DI_TOKENS.IStockLocationRepository,
+    );
+    const createUseCase = container.get<CreateStockLocationUseCase>(
+      DI_TOKENS.CreateStockLocationUseCase,
+    );
+    const updateUseCase = container.get<UpdateStockLocationUseCase>(
+      DI_TOKENS.UpdateStockLocationUseCase,
+    );
+
+    const log = logger.child({
+      controller: "stockLocation.bulkUpsert",
+      rows: locationsData.length,
+      strategy,
+    });
+    log.info("Bulk stock location upsert started");
+
+    const results = {
+      createdCount: 0,
+      updatedCount: 0,
+      skipCount: 0,
+      failureCount: 0,
+      created: [] as Array<{ code: string; name: string }>,
+      updated: [] as Array<{ code: string; name: string }>,
+      skipped: [] as Array<{ identifier: string; reason: string }>,
+      failures: [] as Array<{
+        index: number;
+        identifier: string;
+        error: string;
+      }>,
+    };
+
+    const codes = locationsData
+      .map((l) => l.code as string | undefined)
+      .filter((c): c is string => !!c && c.trim() !== "");
+
+    const existingLocations = await repository.findByCodes(codes);
+    const existingByCode = new Map(
+      existingLocations.map((l) => [l.code.toUpperCase(), l]),
+    );
+
+    for (let i = 0; i < locationsData.length; i++) {
+      const locationData = locationsData[i];
+      const identifier =
+        (locationData.code as string) ||
+        (locationData.name as string) ||
+        `Row ${i + 1}`;
+
+      try {
+        const validated = CreateStockLocationSchema.parse(locationData);
+        const existingLocation = validated.code
+          ? existingByCode.get(validated.code.toUpperCase())
+          : null;
+
+        if (existingLocation) {
+          switch (strategy) {
+            case "skip":
+              results.skipCount++;
+              results.skipped.push({
+                identifier,
+                reason: `Code "${validated.code}" already exists`,
+              });
+              break;
+            case "overwrite": {
+              await updateUseCase.execute({
+                id: existingLocation.id,
+                name: validated.name || undefined,
+                description: validated.description ?? undefined,
+                locationId: validated.locationId ?? undefined,
+              });
+              results.updatedCount++;
+              results.updated.push({
+                code: existingLocation.code,
+                name: validated.name,
+              });
+              break;
+            }
+            case "fail":
+              results.failureCount++;
+              results.failures.push({
+                index: i,
+                identifier,
+                error: `Duplicate code "${validated.code}" not allowed`,
+              });
+              break;
+            case "append": {
+              const modifiedCode = `${validated.code}-COPY-${Date.now()}`;
+              await createUseCase.execute({
+                name: validated.name,
+                code: modifiedCode,
+                description: validated.description ?? undefined,
+                locationId: validated.locationId ?? undefined,
+              });
+              results.createdCount++;
+              results.created.push({
+                code: modifiedCode,
+                name: validated.name,
+              });
+              break;
+            }
+          }
+        } else {
+          await createUseCase.execute({
+            name: validated.name,
+            code: validated.code,
+            description: validated.description ?? undefined,
+            locationId: validated.locationId ?? undefined,
+          });
+          results.createdCount++;
+          results.created.push({
+            code: validated.code || "AUTO",
+            name: validated.name,
+          });
+        }
+      } catch (error) {
+        results.failureCount++;
+        results.failures.push({
+          index: i,
+          identifier,
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/stock-locations");
+    log.info("Bulk stock location upsert completed", results);
+
+    return { success: true, data: results };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to bulk upsert stock locations",
+    };
   }
 }

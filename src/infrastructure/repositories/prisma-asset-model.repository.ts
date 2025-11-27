@@ -63,6 +63,44 @@ export class PrismaAssetModelRepository implements IAssetModelRepository {
     return assetModel ? this.toDomain(assetModel) : null;
   }
 
+  async findByCodes(codes: string[]): Promise<AssetModel[]> {
+    if (codes.length === 0) return [];
+
+    const timer = this.logger.startTimer();
+
+    try {
+      // Filter out empty/null values and normalize to uppercase
+      const validCodes = codes
+        .filter((c) => c !== null && c !== undefined && c.trim() !== "")
+        .map((c) => c.toUpperCase().trim());
+
+      if (validCodes.length === 0) return [];
+
+      const assetModels = await this.prisma.assetModel.findMany({
+        where: { code: { in: validCodes } },
+      });
+
+      this.logger.timed(
+        "findByCodes",
+        "Asset models fetched by codes",
+        timer(),
+        {
+          requestedCount: validCodes.length,
+          foundCount: assetModels.length,
+        },
+      );
+
+      return assetModels.map((am: PrismaAssetModel) => this.toDomain(am));
+    } catch (error) {
+      this.logger.error(
+        "findByCodes",
+        "Failed to fetch asset models by codes",
+        error,
+      );
+      throw error;
+    }
+  }
+
   async findByAssetCategory(assetCategoryId: string): Promise<AssetModel[]> {
     const assetModels = await this.prisma.assetModel.findMany({
       where: { assetCategoryId },

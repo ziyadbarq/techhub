@@ -22,6 +22,12 @@ export interface IOrganizationUnitRepository {
   findByCode(code: string): Promise<OrganizationUnit | null>;
 
   /**
+   * Find organization units by codes (batch lookup for import)
+   * Used for duplicate detection in data import
+   */
+  findByCodes(codes: string[]): Promise<OrganizationUnit[]>;
+
+  /**
    * Find root organization units (no parent)
    */
   findRoots(): Promise<OrganizationUnit[]>;

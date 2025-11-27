@@ -22,6 +22,12 @@ export interface IStockLocationRepository {
   findByCode(code: string): Promise<StockLocation | null>;
 
   /**
+   * Find stock locations by codes (batch lookup for import)
+   * Used for duplicate detection in data import
+   */
+  findByCodes(codes: string[]): Promise<StockLocation[]>;
+
+  /**
    * Find stock locations by location
    */
   findByLocation(locationId: string): Promise<StockLocation[]>;

@@ -367,6 +367,39 @@ export class PrismaPersonRepository implements IPersonRepository {
     return true;
   }
 
+  async findByEmails(emails: string[]): Promise<Person[]> {
+    if (emails.length === 0) return [];
+
+    const timer = this.logger.startTimer();
+
+    try {
+      // Filter out empty/null values and normalize to lowercase
+      const validEmails = emails
+        .filter((e) => e !== null && e !== undefined && e.trim() !== "")
+        .map((e) => e.toLowerCase().trim());
+
+      if (validEmails.length === 0) return [];
+
+      const persons = await this.prisma.person.findMany({
+        where: { email: { in: validEmails, mode: "insensitive" } },
+      });
+
+      this.logger.timed("findByEmails", "Persons fetched by emails", timer(), {
+        requestedCount: validEmails.length,
+        foundCount: persons.length,
+      });
+
+      return persons.map((p: PrismaPerson) => this.toDomain(p));
+    } catch (error) {
+      this.logger.error(
+        "findByEmails",
+        "Failed to fetch persons by emails",
+        error,
+      );
+      throw error;
+    }
+  }
+
   private toDomain(prismaPerson: PrismaPerson): Person {
     return Person.reconstitute({
       id: prismaPerson.id,

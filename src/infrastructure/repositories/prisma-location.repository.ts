@@ -75,6 +75,39 @@ export class PrismaLocationRepository implements ILocationRepository {
     return location ? this.toDomain(location) : null;
   }
 
+  async findByCodes(codes: string[]): Promise<Location[]> {
+    if (codes.length === 0) return [];
+
+    const timer = this.logger.startTimer();
+
+    try {
+      // Filter out empty/null values and normalize to uppercase
+      const validCodes = codes
+        .filter((c) => c !== null && c !== undefined && c.trim() !== "")
+        .map((c) => c.toUpperCase().trim());
+
+      if (validCodes.length === 0) return [];
+
+      const locations = await this.prisma.location.findMany({
+        where: { code: { in: validCodes } },
+      });
+
+      this.logger.timed("findByCodes", "Locations fetched by codes", timer(), {
+        requestedCount: validCodes.length,
+        foundCount: locations.length,
+      });
+
+      return locations.map((l: PrismaLocation) => this.toDomain(l));
+    } catch (error) {
+      this.logger.error(
+        "findByCodes",
+        "Failed to fetch locations by codes",
+        error,
+      );
+      throw error;
+    }
+  }
+
   async findRoots(): Promise<Location[]> {
     const locations = await this.prisma.location.findMany({
       where: { parentId: null },

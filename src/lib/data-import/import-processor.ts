@@ -301,6 +301,8 @@ export class ImportProcessor {
     let successCount = 0;
     let skipCount = 0;
     let failureCount = 0;
+    let createCount = 0;
+    let updateCount = 0;
 
     const createdRecords: any[] = [];
     const updatedRecords: any[] = [];
@@ -316,6 +318,8 @@ export class ImportProcessor {
         successCount: totalRows,
         skipCount: 0,
         failureCount: 0,
+        createCount: totalRows,
+        updateCount: 0,
         duration: 0,
         throughput: 0,
         createdRecords: [],
@@ -324,6 +328,65 @@ export class ImportProcessor {
         failedRows: [],
       };
     }
+
+    // ============================================
+    // PRE-IMPORT DUPLICATE DETECTION
+    // ============================================
+    // Check for existing records BEFORE processing if checkDuplicatesAction is available
+    const duplicatesMap: Map<string, { id: string; [key: string]: unknown }> =
+      new Map();
+
+    if (
+      entityConfig.checkDuplicatesAction &&
+      settings.duplicateStrategy !== "fail"
+    ) {
+      // Collect unique field values from all valid rows
+      const uniqueValues: string[] = [];
+      for (const row of validRows) {
+        for (const fieldName of entityConfig.uniqueFields) {
+          const value = row.data[fieldName];
+          if (
+            value !== null &&
+            value !== undefined &&
+            String(value).trim() !== ""
+          ) {
+            uniqueValues.push(String(value));
+          }
+        }
+      }
+
+      if (uniqueValues.length > 0) {
+        try {
+          const checkResult =
+            await entityConfig.checkDuplicatesAction(uniqueValues);
+          if (checkResult.success && checkResult.data?.duplicates) {
+            for (const dup of checkResult.data.duplicates) {
+              // Map by the first non-id string value (the unique field value)
+              for (const [key, value] of Object.entries(dup)) {
+                if (
+                  key !== "id" &&
+                  typeof value === "string" &&
+                  value.trim() !== ""
+                ) {
+                  duplicatesMap.set(value.toLowerCase(), dup);
+                  break;
+                }
+              }
+            }
+          }
+        } catch {
+          // If duplicate check fails, continue with create-only approach
+          // This maintains backward compatibility
+        }
+      }
+    }
+
+    // Determine if we should use bulkUpsertAction
+    const useBulkUpsert =
+      entityConfig.bulkUpsertAction &&
+      duplicatesMap.size > 0 &&
+      (settings.duplicateStrategy === "overwrite" ||
+        settings.duplicateStrategy === "skip");
 
     // Process in batches
     for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
@@ -395,103 +458,177 @@ export class ImportProcessor {
           }
         }
 
-        // Call bulk create action
-        const result = await entityConfig.bulkCreateAction(resolvedBatch);
+        // ============================================
+        // CALL APPROPRIATE BULK ACTION
+        // ============================================
+        // Use bulkUpsertAction if available and duplicates were pre-checked
+        // Otherwise fall back to bulkCreateAction
+        let result: {
+          success: boolean;
+          data?: Record<string, any>;
+          error?: string;
+        };
 
-        if (result.success) {
-          successCount += result.data.successCount || 0;
-          skipCount += result.data.skipCount || 0;
-          failureCount += result.data.failureCount || 0;
+        if (useBulkUpsert && entityConfig.bulkUpsertAction) {
+          // Use the new bulkUpsertAction that handles both create and update
+          result = await entityConfig.bulkUpsertAction(
+            resolvedBatch,
+            settings.duplicateStrategy,
+          );
+        } else {
+          // Fall back to bulkCreateAction
+          result = await entityConfig.bulkCreateAction(resolvedBatch);
+        }
 
-          if (result.data.created) {
-            createdRecords.push(...result.data.created);
-          }
-          if (result.data.updated) {
-            updatedRecords.push(...result.data.updated);
-          }
-          if (result.data.skipped) {
-            skippedRows.push(...result.data.skipped);
-          }
-          if (result.data.failed) {
-            failedRows.push(...result.data.failed);
-          }
-          if (result.data.failures) {
-            const failures = result.data.failures as Array<Record<string, any>>;
+        if (result.success && result.data) {
+          // Handle results from bulkUpsertAction (has separate created/updated counts)
+          if (result.data.createdCount !== undefined) {
+            createCount += result.data.createdCount || 0;
+            updateCount += result.data.updatedCount || 0;
+            successCount +=
+              (result.data.createdCount || 0) + (result.data.updatedCount || 0);
+            skipCount += result.data.skipCount || 0;
+            failureCount += result.data.failureCount || 0;
 
-            const duplicateFailures: Array<Record<string, any>> = [];
-            const otherFailures: Array<Record<string, any>> = [];
-
-            for (const failure of failures) {
-              const message =
-                (failure.error as string) || (failure.message as string) || "";
-              if (
-                settings.duplicateStrategy === "skip" &&
-                message.toLowerCase().includes("already exists")
-              ) {
-                duplicateFailures.push(failure);
-              } else {
-                otherFailures.push(failure);
-              }
+            if (result.data.created) {
+              createdRecords.push(...result.data.created);
             }
-
-            if (duplicateFailures.length > 0) {
-              skipCount += duplicateFailures.length;
-              failureCount = Math.max(
-                0,
-                failureCount - duplicateFailures.length,
-              );
+            if (result.data.updated) {
+              updatedRecords.push(...result.data.updated);
+            }
+            if (result.data.skipped) {
+              // Map skipped items to ImportError format
+              const skippedItems = result.data.skipped as Array<{
+                identifier: string;
+                reason: string;
+              }>;
               skippedRows.push(
-                ...duplicateFailures.map((failure) => ({
-                  rowNumber:
-                    typeof failure.index === "number"
-                      ? failure.index + 1
-                      : (failure.rowNumber ?? 0),
-                  field: (failure.field ||
-                    failure.email ||
-                    failure.code ||
-                    failure.name ||
-                    failure.assetTag ||
-                    "") as string,
-                  message: "Skipped duplicate (already exists)",
-                  originalValue:
-                    (failure.value as string | number | undefined) ??
-                    (failure.email as string | undefined) ??
-                    (failure.code as string | undefined) ??
-                    (failure.name as string | undefined) ??
-                    (failure.assetTag as string | undefined) ??
-                    undefined,
+                ...skippedItems.map((s, idx) => ({
+                  rowNumber: batchStart + idx + 1,
+                  field: entityConfig.uniqueFields[0] || "",
+                  message: s.reason,
+                  originalValue: s.identifier,
                 })),
               );
             }
-
-            if (otherFailures.length > 0) {
+            if (result.data.failures) {
+              const failures = result.data.failures as Array<{
+                index: number;
+                identifier: string;
+                error: string;
+              }>;
               failedRows.push(
-                ...otherFailures.map((failure: Record<string, any>) => ({
-                  rowNumber:
-                    typeof failure.index === "number"
-                      ? failure.index + 1
-                      : (failure.rowNumber ?? 0),
-                  field: (failure.field ||
-                    failure.assetTag ||
-                    failure.code ||
-                    failure.email ||
-                    failure.name ||
-                    failure.movementType ||
-                    failure.currency ||
-                    "") as string,
-                  message:
-                    (failure.error as string) ||
-                    (failure.message as string) ||
-                    "Import failure",
-                  originalValue:
-                    (failure.value as string | number | undefined) ??
-                    (failure.assetTag as string | undefined) ??
-                    (failure.code as string | undefined) ??
-                    (failure.email as string | undefined) ??
-                    (failure.name as string | undefined) ??
-                    undefined,
+                ...failures.map((f) => ({
+                  rowNumber: batchStart + f.index + 1,
+                  field: entityConfig.uniqueFields[0] || "",
+                  message: f.error,
+                  originalValue: f.identifier,
                 })),
               );
+            }
+          } else {
+            // Handle results from bulkCreateAction (legacy format)
+            successCount += result.data.successCount || 0;
+            createCount += result.data.successCount || 0; // All successes are creates
+            skipCount += result.data.skipCount || 0;
+            failureCount += result.data.failureCount || 0;
+
+            if (result.data.created) {
+              createdRecords.push(...result.data.created);
+            }
+            if (result.data.updated) {
+              updatedRecords.push(...result.data.updated);
+            }
+            if (result.data.skipped) {
+              skippedRows.push(...result.data.skipped);
+            }
+            if (result.data.failed) {
+              failedRows.push(...result.data.failed);
+            }
+
+            // Handle failures array (reclassify duplicates as skips for backward compatibility)
+            if (result.data.failures) {
+              const failures = result.data.failures as Array<
+                Record<string, any>
+              >;
+
+              const duplicateFailures: Array<Record<string, any>> = [];
+              const otherFailures: Array<Record<string, any>> = [];
+
+              for (const failure of failures) {
+                const message =
+                  (failure.error as string) ||
+                  (failure.message as string) ||
+                  "";
+                if (
+                  settings.duplicateStrategy === "skip" &&
+                  message.toLowerCase().includes("already exists")
+                ) {
+                  duplicateFailures.push(failure);
+                } else {
+                  otherFailures.push(failure);
+                }
+              }
+
+              if (duplicateFailures.length > 0) {
+                skipCount += duplicateFailures.length;
+                failureCount = Math.max(
+                  0,
+                  failureCount - duplicateFailures.length,
+                );
+                skippedRows.push(
+                  ...duplicateFailures.map((failure) => ({
+                    rowNumber:
+                      typeof failure.index === "number"
+                        ? failure.index + 1
+                        : (failure.rowNumber ?? 0),
+                    field: (failure.field ||
+                      failure.email ||
+                      failure.code ||
+                      failure.name ||
+                      failure.assetTag ||
+                      "") as string,
+                    message: "Skipped duplicate (already exists)",
+                    originalValue:
+                      (failure.value as string | number | undefined) ??
+                      (failure.email as string | undefined) ??
+                      (failure.code as string | undefined) ??
+                      (failure.name as string | undefined) ??
+                      (failure.assetTag as string | undefined) ??
+                      undefined,
+                  })),
+                );
+              }
+
+              if (otherFailures.length > 0) {
+                failedRows.push(
+                  ...otherFailures.map((failure: Record<string, any>) => ({
+                    rowNumber:
+                      typeof failure.index === "number"
+                        ? failure.index + 1
+                        : (failure.rowNumber ?? 0),
+                    field: (failure.field ||
+                      failure.assetTag ||
+                      failure.code ||
+                      failure.email ||
+                      failure.name ||
+                      failure.movementType ||
+                      failure.currency ||
+                      "") as string,
+                    message:
+                      (failure.error as string) ||
+                      (failure.message as string) ||
+                      "Import failure",
+                    originalValue:
+                      (failure.value as string | number | undefined) ??
+                      (failure.assetTag as string | undefined) ??
+                      (failure.code as string | undefined) ??
+                      (failure.email as string | undefined) ??
+                      (failure.name as string | undefined) ??
+                      undefined,
+                  })),
+                );
+              }
             }
           }
 
@@ -543,6 +680,8 @@ export class ImportProcessor {
           successCount,
           skipCount,
           failureCount,
+          createCount,
+          updateCount,
           currentBatch: batchIndex + 1,
           totalBatches,
           startTime,
@@ -568,6 +707,8 @@ export class ImportProcessor {
       successCount,
       skipCount,
       failureCount,
+      createCount,
+      updateCount,
       duration,
       throughput,
       createdRecords,

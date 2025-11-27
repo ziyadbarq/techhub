@@ -41,9 +41,19 @@ export interface IAssetRepository {
   findByAssetTag(assetTag: string): Promise<Asset | null>;
 
   /**
+   * Find multiple assets by asset tags (batch lookup for duplicate detection)
+   */
+  findByAssetTags(assetTags: string[]): Promise<Asset[]>;
+
+  /**
    * Find asset by serial number (unique)
    */
   findBySerialNumber(serialNumber: string): Promise<Asset | null>;
+
+  /**
+   * Find multiple assets by serial numbers (batch lookup for duplicate detection)
+   */
+  findBySerialNumbers(serialNumbers: string[]): Promise<Asset[]>;
 
   /**
    * Find all assets by category

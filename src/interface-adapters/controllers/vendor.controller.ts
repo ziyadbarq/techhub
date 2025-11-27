@@ -29,6 +29,8 @@ import type {
   UpdateVendorUseCase,
   DeleteVendorUseCase,
 } from "@/core/use-cases/foundation/vendor";
+import type { IVendorRepository } from "@/core/repositories/vendor.repository.interface";
+import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
@@ -297,5 +299,286 @@ export async function bulkCreateVendorsAction(
       { function: "bulkCreateVendorsAction" },
       "Failed to bulk create vendors",
     );
+  }
+}
+
+/**
+ * Check for existing vendors by code (batch lookup for duplicate detection)
+ * Uses code as the primary unique field for duplicate detection
+ */
+export async function checkVendorDuplicatesAction(codes: string[]): Promise<{
+  success: boolean;
+  data?: {
+    duplicates: Array<{ id: string; code: string; name: string }>;
+    duplicateCount: number;
+  };
+  error?: string;
+}> {
+  try {
+    await requirePermission(PERMISSIONS.VENDORS_CREATE);
+
+    const container = getContainer();
+    const repository = container.get<IVendorRepository>(
+      DI_TOKENS.IVendorRepository,
+    );
+
+    // Filter out empty values
+    const validCodes = codes.filter(
+      (c) => c !== null && c !== undefined && c.trim() !== "",
+    );
+
+    if (validCodes.length === 0) {
+      return {
+        success: true,
+        data: { duplicates: [], duplicateCount: 0 },
+      };
+    }
+
+    // Batch lookup existing vendors by code
+    const existingVendors = await repository.findByCodes(validCodes);
+
+    const duplicates = existingVendors.map((vendor) => ({
+      id: vendor.id,
+      code: vendor.code,
+      name: vendor.name,
+    }));
+
+    return {
+      success: true,
+      data: {
+        duplicates,
+        duplicateCount: duplicates.length,
+      },
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to check duplicates",
+    };
+  }
+}
+
+/**
+ * Bulk upsert vendors (create or update based on duplicate strategy)
+ * For "overwrite" strategy: updates existing records, creates new ones
+ * For "skip" strategy: skips existing records, creates new ones
+ */
+export async function bulkUpsertVendorsAction(
+  vendorsData: Record<string, unknown>[],
+  strategy: "skip" | "overwrite" | "fail" | "append",
+): Promise<{
+  success: boolean;
+  data?: {
+    createdCount: number;
+    updatedCount: number;
+    skipCount: number;
+    failureCount: number;
+    created?: Array<{ code: string; name: string }>;
+    updated?: Array<{ code: string; name: string }>;
+    skipped?: Array<{ identifier: string; reason: string }>;
+    failures?: Array<{ index: number; identifier: string; error: string }>;
+  };
+  error?: string;
+}> {
+  try {
+    await requirePermission(PERMISSIONS.VENDORS_CREATE);
+
+    const container = getContainer();
+    const logger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
+    const repository = container.get<IVendorRepository>(
+      DI_TOKENS.IVendorRepository,
+    );
+    const createUseCase = container.get<CreateVendorUseCase>(
+      DI_TOKENS.CreateVendorUseCase,
+    );
+    const updateUseCase = container.get<UpdateVendorUseCase>(
+      DI_TOKENS.UpdateVendorUseCase,
+    );
+
+    const log = logger.child({
+      controller: "vendor.bulkUpsert",
+      rows: vendorsData.length,
+      strategy,
+    });
+    log.info("Bulk vendor upsert started");
+
+    const results = {
+      createdCount: 0,
+      updatedCount: 0,
+      skipCount: 0,
+      failureCount: 0,
+      created: [] as Array<{ code: string; name: string }>,
+      updated: [] as Array<{ code: string; name: string }>,
+      skipped: [] as Array<{ identifier: string; reason: string }>,
+      failures: [] as Array<{
+        index: number;
+        identifier: string;
+        error: string;
+      }>,
+    };
+
+    // Step 1: Collect codes for batch lookup
+    const codes = vendorsData
+      .map((v) => v.code as string | undefined)
+      .filter((c): c is string => !!c && c.trim() !== "");
+
+    // Step 2: Batch lookup existing vendors
+    const existingVendors = await repository.findByCodes(codes);
+    const existingByCode = new Map(
+      existingVendors.map((v) => [v.code.toUpperCase(), v]),
+    );
+
+    // Step 3: Process each record
+    for (let i = 0; i < vendorsData.length; i++) {
+      const vendorData = vendorsData[i];
+      const identifier =
+        (vendorData.code as string) ||
+        (vendorData.name as string) ||
+        `Row ${i + 1}`;
+
+      try {
+        const validated = CreateVendorSchema.parse(vendorData);
+        const existingVendor = validated.code
+          ? existingByCode.get(validated.code.toUpperCase())
+          : null;
+
+        if (existingVendor) {
+          // Handle duplicate based on strategy
+          switch (strategy) {
+            case "skip":
+              results.skipCount++;
+              results.skipped.push({
+                identifier,
+                reason: `Code "${validated.code}" already exists`,
+              });
+              break;
+
+            case "overwrite": {
+              // Merge/patch: only update non-empty fields from import
+              const updateData: Record<string, unknown> = {
+                id: existingVendor.id,
+              };
+              if (validated.name) updateData.name = validated.name;
+              if (validated.legalName)
+                updateData.legalName = validated.legalName;
+              if (validated.description)
+                updateData.description = validated.description;
+              if (validated.vendorType)
+                updateData.vendorType = validated.vendorType;
+              if (validated.website) updateData.website = validated.website;
+              if (validated.email) updateData.email = validated.email;
+              if (validated.phone) updateData.phone = validated.phone;
+              if (validated.address) updateData.address = validated.address;
+              if (validated.city) updateData.city = validated.city;
+              if (validated.state) updateData.state = validated.state;
+              if (validated.country) updateData.country = validated.country;
+              if (validated.postalCode)
+                updateData.postalCode = validated.postalCode;
+              if (validated.taxId) updateData.taxId = validated.taxId;
+              if (validated.note) updateData.note = validated.note;
+
+              await updateUseCase.execute(updateData as UpdateVendorDTO);
+              results.updatedCount++;
+              results.updated.push({
+                code: existingVendor.code,
+                name: validated.name,
+              });
+              break;
+            }
+
+            case "fail":
+              results.failureCount++;
+              results.failures.push({
+                index: i,
+                identifier,
+                error: `Duplicate code "${validated.code}" not allowed`,
+              });
+              break;
+
+            case "append": {
+              // Create with modified code
+              const modifiedCode = `${validated.code}-COPY-${Date.now()}`;
+              await createUseCase.execute({
+                name: validated.name,
+                code: modifiedCode,
+                legalName: validated.legalName ?? undefined,
+                description: validated.description ?? undefined,
+                vendorType: validated.vendorType,
+                website: validated.website ?? undefined,
+                email: validated.email ?? undefined,
+                phone: validated.phone ?? undefined,
+                address: validated.address ?? undefined,
+                city: validated.city ?? undefined,
+                state: validated.state ?? undefined,
+                country: validated.country ?? undefined,
+                postalCode: validated.postalCode ?? undefined,
+                taxId: validated.taxId ?? undefined,
+                note: validated.note ?? undefined,
+              });
+              results.createdCount++;
+              results.created.push({
+                code: modifiedCode,
+                name: validated.name,
+              });
+              break;
+            }
+          }
+        } else {
+          // No duplicate - create new record
+          await createUseCase.execute({
+            name: validated.name,
+            code: validated.code,
+            legalName: validated.legalName ?? undefined,
+            description: validated.description ?? undefined,
+            vendorType: validated.vendorType,
+            website: validated.website ?? undefined,
+            email: validated.email ?? undefined,
+            phone: validated.phone ?? undefined,
+            address: validated.address ?? undefined,
+            city: validated.city ?? undefined,
+            state: validated.state ?? undefined,
+            country: validated.country ?? undefined,
+            postalCode: validated.postalCode ?? undefined,
+            taxId: validated.taxId ?? undefined,
+            note: validated.note ?? undefined,
+          });
+          results.createdCount++;
+          results.created.push({
+            code: validated.code || "AUTO",
+            name: validated.name,
+          });
+        }
+      } catch (error) {
+        results.failureCount++;
+        results.failures.push({
+          index: i,
+          identifier,
+          error: error instanceof Error ? error.message : "Unknown error",
+        });
+      }
+    }
+
+    revalidatePath("/vendors");
+
+    log.info("Bulk vendor upsert completed", {
+      createdCount: results.createdCount,
+      updatedCount: results.updatedCount,
+      skipCount: results.skipCount,
+      failureCount: results.failureCount,
+    });
+
+    return {
+      success: true,
+      data: results,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to bulk upsert vendors",
+    };
   }
 }

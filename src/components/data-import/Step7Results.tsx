@@ -24,15 +24,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   CheckCircle2,
   XCircle,
@@ -40,10 +44,11 @@ import {
   Download,
   ExternalLink,
   RotateCcw,
-  ChevronDown,
   PartyPopper,
   Clock,
   Zap,
+  Plus,
+  RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -54,8 +59,7 @@ interface Props {
 }
 
 export function Step7Results({ entity, result, onReset }: Props) {
-  const [showSkipped, setShowSkipped] = useState(false);
-  const [showFailed, setShowFailed] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>("summary");
 
   /**
    * Download full report
@@ -91,14 +95,6 @@ export function Step7Results({ entity, result, onReset }: Props) {
     // For now, just show a toast
     toast.info(`Viewing ${entity.name} list...`);
   };
-
-  /**
-   * Success rate
-   */
-  const successRate =
-    result.totalRows > 0
-      ? Math.round((result.successCount / result.totalRows) * 100)
-      : 0;
 
   /**
    * Overall status
@@ -149,7 +145,7 @@ export function Step7Results({ entity, result, onReset }: Props) {
       )}
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-muted-foreground text-sm font-medium">
@@ -164,16 +160,31 @@ export function Step7Results({ entity, result, onReset }: Props) {
         <Card className="border-green-200 dark:border-green-800">
           <CardHeader className="pb-2">
             <CardTitle className="text-muted-foreground flex items-center gap-2 text-sm font-medium">
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
-              Successful
+              <Plus className="h-4 w-4 text-green-600" />
+              Created
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {result.successCount}
+              {result.createCount}
+            </div>
+            <p className="text-muted-foreground mt-1 text-xs">New records</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-blue-200 dark:border-blue-800">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-muted-foreground flex items-center gap-2 text-sm font-medium">
+              <RefreshCw className="h-4 w-4 text-blue-600" />
+              Updated
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">
+              {result.updateCount}
             </div>
             <p className="text-muted-foreground mt-1 text-xs">
-              {successRate}% success rate
+              Existing records modified
             </p>
           </CardContent>
         </Card>
@@ -244,33 +255,170 @@ export function Step7Results({ entity, result, onReset }: Props) {
         </CardContent>
       </Card>
 
-      {/* Skipped Rows */}
-      {result.skipCount > 0 && (
-        <Collapsible open={showSkipped} onOpenChange={setShowSkipped}>
-          <Card>
-            <CollapsibleTrigger className="w-full">
-              <CardHeader className="hover:bg-muted/50 cursor-pointer transition-colors">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <AlertCircle className="h-5 w-5 text-yellow-600" />
-                    <CardTitle className="text-base">
-                      Skipped Rows ({result.skipCount})
-                    </CardTitle>
-                  </div>
-                  <ChevronDown
-                    className={`h-5 w-5 transition-transform ${
-                      showSkipped ? "rotate-180" : ""
-                    }`}
-                  />
+      {/* Detailed Results Tabs */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Import Details</CardTitle>
+          <CardDescription>
+            View detailed breakdown of all imported records
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="created" className="gap-2">
+                <Plus className="h-4 w-4" />
+                Created
+                {result.createCount > 0 && (
+                  <Badge variant="secondary" className="ml-1">
+                    {result.createCount}
+                  </Badge>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="updated" className="gap-2">
+                <RefreshCw className="h-4 w-4" />
+                Updated
+                {result.updateCount > 0 && (
+                  <Badge variant="secondary" className="ml-1">
+                    {result.updateCount}
+                  </Badge>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="skipped" className="gap-2">
+                <AlertCircle className="h-4 w-4" />
+                Skipped
+                {result.skipCount > 0 && (
+                  <Badge variant="secondary" className="ml-1">
+                    {result.skipCount}
+                  </Badge>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="failed" className="gap-2">
+                <XCircle className="h-4 w-4" />
+                Failed
+                {result.failureCount > 0 && (
+                  <Badge variant="destructive" className="ml-1">
+                    {result.failureCount}
+                  </Badge>
+                )}
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Created Records Tab */}
+            <TabsContent value="created" className="mt-4">
+              {result.createCount === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <Plus className="text-muted-foreground mb-4 h-12 w-12" />
+                  <p className="text-muted-foreground">
+                    No records were created
+                  </p>
                 </div>
-                <CardDescription className="text-left">
-                  Rows that were skipped during import
-                </CardDescription>
-              </CardHeader>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <CardContent>
-                <ScrollArea className="h-64">
+              ) : (
+                <ScrollArea className="h-80">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-16">#</TableHead>
+                        <TableHead>Identifier</TableHead>
+                        <TableHead>Details</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {result.createdRecords.slice(0, 100).map((record, i) => (
+                        <TableRow key={i}>
+                          <TableCell className="font-mono text-sm">
+                            {i + 1}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="font-mono">
+                              {record.assetTag ||
+                                record.code ||
+                                record.id ||
+                                `Record ${i + 1}`}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-muted-foreground text-sm">
+                            {record.serialNumber &&
+                              `Serial: ${record.serialNumber}`}
+                            {record.name && record.name}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                  {result.createdRecords.length > 100 && (
+                    <p className="text-muted-foreground py-4 text-center text-sm">
+                      Showing first 100 of {result.createdRecords.length}{" "}
+                      created records
+                    </p>
+                  )}
+                </ScrollArea>
+              )}
+            </TabsContent>
+
+            {/* Updated Records Tab */}
+            <TabsContent value="updated" className="mt-4">
+              {result.updateCount === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <RefreshCw className="text-muted-foreground mb-4 h-12 w-12" />
+                  <p className="text-muted-foreground">
+                    No records were updated
+                  </p>
+                </div>
+              ) : (
+                <ScrollArea className="h-80">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="w-16">#</TableHead>
+                        <TableHead>Identifier</TableHead>
+                        <TableHead>Details</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {result.updatedRecords.slice(0, 100).map((record, i) => (
+                        <TableRow key={i}>
+                          <TableCell className="font-mono text-sm">
+                            {i + 1}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="font-mono">
+                              {record.assetTag ||
+                                record.code ||
+                                record.id ||
+                                `Record ${i + 1}`}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-muted-foreground text-sm">
+                            {record.serialNumber &&
+                              `Serial: ${record.serialNumber}`}
+                            {record.name && record.name}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                  {result.updatedRecords.length > 100 && (
+                    <p className="text-muted-foreground py-4 text-center text-sm">
+                      Showing first 100 of {result.updatedRecords.length}{" "}
+                      updated records
+                    </p>
+                  )}
+                </ScrollArea>
+              )}
+            </TabsContent>
+
+            {/* Skipped Rows Tab */}
+            <TabsContent value="skipped" className="mt-4">
+              {result.skipCount === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <AlertCircle className="text-muted-foreground mb-4 h-12 w-12" />
+                  <p className="text-muted-foreground">
+                    No records were skipped
+                  </p>
+                </div>
+              ) : (
+                <ScrollArea className="h-80">
                   <div className="space-y-2">
                     {result.skippedRows.slice(0, 50).map((skip, i) => (
                       <div
@@ -300,90 +448,75 @@ export function Step7Results({ entity, result, onReset }: Props) {
                     )}
                   </div>
                 </ScrollArea>
-              </CardContent>
-            </CollapsibleContent>
-          </Card>
-        </Collapsible>
-      )}
+              )}
+            </TabsContent>
 
-      {/* Failed Rows */}
-      {result.failureCount > 0 && (
-        <Collapsible open={showFailed} onOpenChange={setShowFailed}>
-          <Card>
-            <CollapsibleTrigger className="w-full">
-              <CardHeader className="hover:bg-muted/50 cursor-pointer transition-colors">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <XCircle className="h-5 w-5 text-red-600" />
-                    <CardTitle className="text-base">
-                      Failed Rows ({result.failureCount})
-                    </CardTitle>
+            {/* Failed Rows Tab */}
+            <TabsContent value="failed" className="mt-4">
+              {result.failureCount === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <CheckCircle2 className="mb-4 h-12 w-12 text-green-600" />
+                  <p className="text-muted-foreground">
+                    No failures - all records processed successfully!
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex justify-end">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleDownloadFailed}
+                    >
+                      <Download className="mr-2 h-4 w-4" />
+                      Download Failed Rows
+                    </Button>
                   </div>
-                  <ChevronDown
-                    className={`h-5 w-5 transition-transform ${
-                      showFailed ? "rotate-180" : ""
-                    }`}
-                  />
-                </div>
-                <CardDescription className="text-left">
-                  Rows that failed to import with error details
-                </CardDescription>
-              </CardHeader>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <CardContent className="space-y-4">
-                <div className="flex justify-end">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleDownloadFailed}
-                  >
-                    <Download className="mr-2 h-4 w-4" />
-                    Download Failed Rows
-                  </Button>
-                </div>
-                <ScrollArea className="h-64">
-                  <div className="space-y-2">
-                    {result.failedRows.slice(0, 50).map((fail, i) => (
-                      <div
-                        key={i}
-                        className="rounded-lg border bg-red-50 p-3 dark:bg-red-950"
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <div className="mb-1 flex items-center gap-2">
-                              <Badge variant="outline">
-                                Row {fail.rowNumber}
-                              </Badge>
-                              {fail.field && (
-                                <Badge variant="secondary">{fail.field}</Badge>
+                  <ScrollArea className="h-72">
+                    <div className="space-y-2">
+                      {result.failedRows.slice(0, 50).map((fail, i) => (
+                        <div
+                          key={i}
+                          className="rounded-lg border bg-red-50 p-3 dark:bg-red-950"
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="mb-1 flex items-center gap-2">
+                                <Badge variant="outline">
+                                  Row {fail.rowNumber}
+                                </Badge>
+                                {fail.field && (
+                                  <Badge variant="secondary">
+                                    {fail.field}
+                                  </Badge>
+                                )}
+                              </div>
+                              <p className="text-sm font-medium text-red-900 dark:text-red-100">
+                                {fail.message}
+                              </p>
+                              {fail.suggestion && (
+                                <p className="text-muted-foreground mt-1 text-xs">
+                                  Suggestion: {fail.suggestion}
+                                </p>
                               )}
                             </div>
-                            <p className="text-sm font-medium text-red-900 dark:text-red-100">
-                              {fail.message}
-                            </p>
-                            {fail.suggestion && (
-                              <p className="text-muted-foreground mt-1 text-xs">
-                                Suggestion: {fail.suggestion}
-                              </p>
-                            )}
                           </div>
                         </div>
-                      </div>
-                    ))}
-                    {result.failedRows.length > 50 && (
-                      <p className="text-muted-foreground pt-2 text-center text-sm">
-                        Showing first 50 of {result.failedRows.length} failed
-                        rows
-                      </p>
-                    )}
-                  </div>
-                </ScrollArea>
-              </CardContent>
-            </CollapsibleContent>
-          </Card>
-        </Collapsible>
-      )}
+                      ))}
+                      {result.failedRows.length > 50 && (
+                        <p className="text-muted-foreground pt-2 text-center text-sm">
+                          Showing first 50 of {result.failedRows.length} failed
+                          rows
+                        </p>
+                      )}
+                    </div>
+                  </ScrollArea>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
 
       {/* Actions */}
       <Card>
