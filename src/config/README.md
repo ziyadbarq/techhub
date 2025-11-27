@@ -11,11 +11,12 @@ src/config/
 ├── navigation.types.ts      # Navigation type definitions
 ├── navigation.utils.ts      # Navigation utilities and helpers
 ├── navigation-groups/       # Domain-separated navigation groups
-│   ├── main.ts              # Main navigation
-│   ├── assets.ts            # Asset management groups
-│   ├── itam.ts              # CMDB, services, maintenance
-│   ├── compliance.ts        # Contracts, licenses, governance, attachments
-│   ├── foundation.ts        # Lifecycle, organization, configuration
+│   ├── main.ts              # Main navigation (Dashboard, Data Import)
+│   ├── setup.ts             # Setup group (consolidated for initial deployment)
+│   ├── assets.ts            # Asset management groups (hidden)
+│   ├── itam.ts              # CMDB, services, maintenance (hidden)
+│   ├── compliance.ts        # Contracts, licenses, governance, attachments (hidden)
+│   ├── foundation.ts        # Lifecycle, organization, configuration (hidden)
 │   └── system.ts            # System settings, admin, documentation
 ├── index.ts                 # Barrel export file
 └── README.md                # This file

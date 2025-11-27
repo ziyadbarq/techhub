@@ -384,11 +384,12 @@ Navigation is organized into modular files for better maintainability:
 - **Types**: `src/config/navigation.types.ts` - Type definitions
 - **Utilities**: `src/config/navigation.utils.ts` - Filtering and helper functions
 - **Groups**: `src/config/navigation-groups/*.ts` - Domain-separated navigation groups
-  - `main.ts` - Main navigation
-  - `assets.ts` - Asset management groups
-  - `itam.ts` - CMDB, services, maintenance
-  - `compliance.ts` - Contracts, licenses, governance, attachments
-  - `foundation.ts` - Lifecycle, organization, configuration
+  - `main.ts` - Main navigation (Dashboard, Data Import)
+  - `setup.ts` - Setup group (consolidated for initial deployment - entities in dependency order)
+  - `assets.ts` - Asset management groups (hidden for initial deployment)
+  - `itam.ts` - CMDB, services, maintenance (hidden for initial deployment)
+  - `compliance.ts` - Contracts, licenses, governance, attachments (hidden for initial deployment)
+  - `foundation.ts` - Lifecycle, organization, configuration (hidden for initial deployment)
   - `system.ts` - System settings, admin, documentation
 
 **NavItem Interface:**

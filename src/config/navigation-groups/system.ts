@@ -20,6 +20,7 @@ import {
   Lightbulb,
   GitBranch,
   ShieldCheck,
+  TrendingUp,
 } from "lucide-react";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { NavGroup } from "../navigation.types";
@@ -72,8 +73,16 @@ export const systemSettingsGroup: NavGroup = {
 
 export const adminGroup: NavGroup = {
   id: "admin",
-  title: "Administration",
+  title: "Admin",
   items: [
+    {
+      title: "Stock Movements",
+      href: "/stock-movements",
+      icon: TrendingUp,
+      description: "Track inventory movements",
+      permission: PERMISSIONS.STOCK_MOVEMENTS_VIEW,
+      featureFlag: "INVENTORY",
+    },
     {
       title: "Admin Dashboard",
       href: "/admin",
@@ -87,6 +96,7 @@ export const adminGroup: NavGroup = {
       icon: ServerCog,
       description: "System health, diagnostics, and database operations",
       permission: PERMISSIONS.USERS_MANAGE,
+      visible: false, // Hidden for initial deployment
     },
     {
       title: "RBAC Analytics",
@@ -94,6 +104,7 @@ export const adminGroup: NavGroup = {
       icon: LayoutDashboard,
       description: "Role and permission usage statistics",
       permission: PERMISSIONS.ROLES_VIEW,
+      visible: false, // Hidden for initial deployment
     },
     {
       title: "Data Import",
@@ -102,6 +113,7 @@ export const adminGroup: NavGroup = {
       description: "Universal data importer for all entities",
       permission: PERMISSIONS.DATA_IMPORT_MANAGE,
       featureFlag: "DATA_IMPORT",
+      visible: false, // Moved to Main group
     },
     {
       title: "Feature Flags",

@@ -52,7 +52,7 @@ export const lifecycleGroup: NavGroup = {
       featureFlag: "FOUNDATION",
     },
   ],
-  visible: true,
+  visible: false, // Hidden for initial deployment - items moved to Setup group
   collapsible: true,
   defaultCollapsed: true,
 };
@@ -111,7 +111,7 @@ export const organizationGroup: NavGroup = {
       featureFlag: "FOUNDATION",
     },
   ],
-  visible: true,
+  visible: false, // Hidden for initial deployment - items moved to Setup group
   collapsible: true,
   defaultCollapsed: true,
 };
@@ -138,7 +138,7 @@ export const configurationGroup: NavGroup = {
       visible: false,
     },
   ],
-  visible: true,
+  visible: false, // Hidden for initial deployment - Field Definitions moved to Setup group
   collapsible: true,
   defaultCollapsed: true,
 };

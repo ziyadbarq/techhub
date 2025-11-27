@@ -56,7 +56,7 @@ export const cmdbGroup: NavGroup = {
       featureFlag: "CMDB",
     },
   ],
-  visible: true,
+  visible: false, // Hidden for initial deployment
   collapsible: true,
   defaultCollapsed: false,
 };
@@ -82,7 +82,7 @@ export const serviceManagementGroup: NavGroup = {
       featureFlag: "SERVICES",
     },
   ],
-  visible: true,
+  visible: false, // Hidden for initial deployment
   collapsible: true,
   defaultCollapsed: false,
 };

@@ -113,7 +113,7 @@ export const governanceGroup: NavGroup = {
       visible: false,
     },
   ],
-  visible: true,
+  visible: false, // Hidden for initial deployment
   collapsible: true,
   defaultCollapsed: true,
 };

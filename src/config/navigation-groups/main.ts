@@ -5,7 +5,13 @@
  * Always visible - not collapsible
  */
 
-import { Home, CheckSquare, LayoutDashboard, FileText } from "lucide-react";
+import {
+  Home,
+  CheckSquare,
+  LayoutDashboard,
+  FileText,
+  Database,
+} from "lucide-react";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { NavGroup } from "../navigation.types";
 
@@ -19,6 +25,14 @@ export const mainNavGroup: NavGroup = {
       icon: Home,
       description: "Overview and statistics",
       permission: PERMISSIONS.DASHBOARD_VIEW,
+    },
+    {
+      title: "Data Import",
+      href: "/data-import",
+      icon: Database,
+      description: "Universal data importer for all entities",
+      permission: PERMISSIONS.DATA_IMPORT_MANAGE,
+      featureFlag: "DATA_IMPORT",
     },
     {
       title: "Analytics",

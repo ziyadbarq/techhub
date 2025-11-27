@@ -42,21 +42,24 @@ export type {
 // Main navigation
 import { mainNavGroup } from "./navigation-groups/main";
 
-// Asset-related groups
+// Setup group (consolidated for initial deployment)
+import { setupGroup } from "./navigation-groups/setup";
+
+// Asset-related groups (hidden for initial deployment)
 import {
   assetManagementGroup,
   assetOperationsGroup,
   inventoryGroup,
 } from "./navigation-groups/assets";
 
-// ITAM groups
+// ITAM groups (hidden for initial deployment)
 import {
   cmdbGroup,
   serviceManagementGroup,
   maintenanceGroup,
 } from "./navigation-groups/itam";
 
-// Compliance & documentation groups
+// Compliance & documentation groups (hidden for initial deployment)
 import {
   contractsGroup,
   licensesGroup,
@@ -64,7 +67,7 @@ import {
   attachmentsGroup,
 } from "./navigation-groups/compliance";
 
-// Foundation layer groups
+// Foundation layer groups (hidden for initial deployment)
 import {
   lifecycleGroup,
   organizationGroup,
@@ -85,35 +88,39 @@ import {
 /**
  * All navigation groups in display order
  * Organized into logical sections for better user experience
+ *
+ * For initial deployment, simplified to 3 active groups:
+ * 1. Main (Dashboard, Data Import)
+ * 2. Setup (entities in dependency order)
+ * 3. Admin (Stock Movements, Admin Dashboard, Feature Flags)
+ *
+ * Other groups remain in array for future use but are hidden via visible: false
  */
 export const navGroups = [
-  // Core navigation
+  // Core navigation (always visible)
   mainNavGroup,
 
-  // Asset management
+  // Setup - consolidated group for initial deployment
+  setupGroup,
+
+  // Admin group
+  adminGroup,
+
+  // Hidden groups (visible: false) - kept for future use
   assetManagementGroup,
   assetOperationsGroup,
   inventoryGroup,
-
-  // ITAM
   maintenanceGroup,
   cmdbGroup,
   serviceManagementGroup,
-
-  // Compliance
   contractsGroup,
   licensesGroup,
   governanceGroup,
   attachmentsGroup,
-
-  // Foundation
   lifecycleGroup,
   organizationGroup,
   configurationGroup,
-
-  // System
   systemSettingsGroup,
-  adminGroup,
   documentationGroup,
 ];
 

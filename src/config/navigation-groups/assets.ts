@@ -67,7 +67,7 @@ export const assetManagementGroup: NavGroup = {
       visible: false,
     },
   ],
-  visible: true,
+  visible: false, // Hidden for initial deployment - items moved to Setup group
   collapsible: true,
   defaultCollapsed: false,
 };
@@ -127,7 +127,7 @@ export const inventoryGroup: NavGroup = {
       featureFlag: "INVENTORY",
     },
   ],
-  visible: true,
+  visible: false, // Hidden for initial deployment - items moved to Setup/Admin groups
   collapsible: true,
   defaultCollapsed: false,
 };
