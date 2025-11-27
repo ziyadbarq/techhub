@@ -34,9 +34,9 @@ export class CreateStockLocationUseCase {
    * @throws Error if code already exists
    */
   async execute(props: CreateStockLocationProps): Promise<StockLocation> {
-    // Auto-generate code if not provided
+    // Auto-generate code if not provided or empty
     const code =
-      props.code ??
+      props.code ||
       (await this.codeGenerator.generateCode("STOCK_LOCATION", "STOCK"));
 
     // Check for duplicate code

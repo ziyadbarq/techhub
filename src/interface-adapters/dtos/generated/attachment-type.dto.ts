@@ -29,7 +29,7 @@ export const CreateAttachmentTypeSchema = z.object({
     .toUpperCase()
     .max(50, "Attachment type code must not exceed 50 characters")
     .regex(
-      /^[A-Z0-9_-]+$/,
+      /^[A-Z0-9_-]*$/,
       "Attachment type code must contain only letters, numbers, hyphens, and underscores",
     )
     .optional(),
@@ -95,5 +95,9 @@ export const UpdateAttachmentTypeSchema = z.object({
 });
 
 // Type exports
-export type CreateAttachmentTypeDTO = z.infer<typeof CreateAttachmentTypeSchema>;
-export type UpdateAttachmentTypeDTO = z.infer<typeof UpdateAttachmentTypeSchema>;
+export type CreateAttachmentTypeDTO = z.infer<
+  typeof CreateAttachmentTypeSchema
+>;
+export type UpdateAttachmentTypeDTO = z.infer<
+  typeof UpdateAttachmentTypeSchema
+>;

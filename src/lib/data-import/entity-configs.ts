@@ -84,7 +84,7 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
     permission: PERMISSIONS.ASSETS_CREATE,
     viewPermission: PERMISSIONS.ASSETS_VIEW,
     uniqueFields: ["assetTag"],
-    requiredFields: ["assetTag", "assetCategoryId"],
+    requiredFields: ["assetCategoryId"],
     lookupFields: [
       "assetCategoryId",
       "assetModelId",
@@ -97,18 +97,19 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
     icon: "Package",
     color: "#3b82f6",
     fields: [
-      // Unique identifier
+      // Unique identifier (auto-generated if not provided)
       {
         name: "assetTag",
         label: "Asset Tag",
         type: "string",
-        required: true,
+        required: false,
         unique: true,
+        autoGenerate: true,
         maxLength: 50,
-        pattern: /^[A-Z0-9-]+$/,
+        pattern: /^[A-Z0-9_-]*$/,
         sanitization: STANDARD_SANITIZATION.CODE,
         examples: ["LAP-001", "SRV-042", "MON-123"],
-        description: "Unique asset identifier",
+        description: "Unique asset identifier (auto-generated if empty)",
         autoMap: ["asset_tag", "tag", "asset_id", "assetId"],
       },
       // Lookups

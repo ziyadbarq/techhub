@@ -47,9 +47,9 @@ export class CreateLocationUseCase {
    * @throws Error if code already exists
    */
   async execute(props: CreateLocationProps): Promise<Location> {
-    // Auto-generate code if not provided
+    // Auto-generate code if not provided or empty
     const code =
-      props.code ?? (await this.codeGenerator.generateCode("LOCATION", "LOC"));
+      props.code || (await this.codeGenerator.generateCode("LOCATION", "LOC"));
 
     // Check for duplicate code
     const existsByCode = await this.locationRepository.existsByCode(code);

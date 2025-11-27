@@ -17,7 +17,7 @@ export const CreateContractTypeSchema = z.object({
     .toUpperCase()
     .max(50, "Contract type code must not exceed 50 characters")
     .regex(
-      /^[A-Z0-9_-]+$/,
+      /^[A-Z0-9_-]*$/,
       "Contract type code must contain only uppercase letters, numbers, hyphens, and underscores",
     )
     .optional(),

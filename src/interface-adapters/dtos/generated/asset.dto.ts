@@ -15,10 +15,9 @@ const dateSchema = optionalDate;
 export const CreateAssetSchema = z.object({
   assetTag: z
     .string()
-    .min(2, "Asset tag must be at least 2 characters")
     .max(100, "Asset tag must be 100 characters or less")
     .regex(
-      /^[A-Z0-9_-]+$/i,
+      /^[A-Z0-9_-]*$/i,
       "Asset tag can only contain letters, numbers, hyphens, and underscores",
     )
     .optional(),

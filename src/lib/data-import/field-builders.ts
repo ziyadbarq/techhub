@@ -95,7 +95,7 @@ export function codeField(config: {
     unique: true,
     autoGenerate: true,
     maxLength: config.maxLength ?? 50,
-    pattern: config.pattern ?? /^[A-Z0-9-_]+$/,
+    pattern: config.pattern ?? /^[A-Z0-9-_]*$/,
     sanitization: [
       { operation: "trim" },
       { operation: "uppercase" },

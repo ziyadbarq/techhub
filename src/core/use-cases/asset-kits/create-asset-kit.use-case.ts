@@ -29,9 +29,9 @@ export class CreateAssetKitUseCase {
   ) {}
 
   async execute(request: CreateAssetKitRequest): Promise<AssetKit> {
-    // Auto-generate code if not provided
+    // Auto-generate code if not provided or empty
     const code =
-      request.code ??
+      request.code ||
       (await this.codeGenerator.generateCode("ASSET_KIT", "KIT"));
 
     // Check if code already exists

@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InlineEditableField } from "@/components/ui/inline-editable-field";
+import { useAutoGenerateCode } from "@/hooks/use-auto-generate-code";
 import {
   Dialog,
   DialogContent,
@@ -68,6 +69,9 @@ export function KitForm({ open, onOpenChange, onSuccess, kit }: KitFormProps) {
       isActive: kit?.isActive ?? true,
     },
   });
+
+  // Auto-generate code from name (like WordPress slugs)
+  useAutoGenerateCode({ form, isEditing });
 
   // Focus the first field when dialog opens
   useEffect(() => {
@@ -139,127 +143,127 @@ export function KitForm({ open, onOpenChange, onSuccess, kit }: KitFormProps) {
           </DialogHeader>
 
           <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {/* Name */}
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="e.g., New Employee Kit"
-                      tabIndex={1}
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Descriptive name for this kit
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Kit Type */}
-            <FormField
-              control={form.control}
-              name="kitType"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Kit Type</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {/* Name */}
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select kit type" />
-                      </SelectTrigger>
+                      <Input
+                        placeholder="e.g., New Employee Kit"
+                        tabIndex={1}
+                        {...field}
+                      />
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="NEW_HIRE">New Hire</SelectItem>
-                      <SelectItem value="CONTRACTOR">Contractor</SelectItem>
-                      <SelectItem value="EXECUTIVE">Executive</SelectItem>
-                      <SelectItem value="PROJECT">Project</SelectItem>
-                      <SelectItem value="TEMPORARY">Temporary</SelectItem>
-                      <SelectItem value="OTHER">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormDescription>
-                    Purpose or use case for this kit
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Description */}
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description (Optional)</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Describe what's included in this kit..."
-                      className="resize-none"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    What's included and when to use this kit
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Is Active */}
-            <FormField
-              control={form.control}
-              name="isActive"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <FormLabel className="text-base">Active</FormLabel>
                     <FormDescription>
-                      Kit can be checked out when active
+                      Descriptive name for this kit
                     </FormDescription>
-                  </div>
-                  <FormControl>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={form.formState.isSubmitting}
-                className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
-              >
-                {form.formState.isSubmitting
-                  ? isEditing
-                    ? "Updating..."
-                    : "Creating..."
-                  : isEditing
-                    ? "Update"
-                    : "Create"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+              {/* Kit Type */}
+              <FormField
+                control={form.control}
+                name="kitType"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Kit Type</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select kit type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="NEW_HIRE">New Hire</SelectItem>
+                        <SelectItem value="CONTRACTOR">Contractor</SelectItem>
+                        <SelectItem value="EXECUTIVE">Executive</SelectItem>
+                        <SelectItem value="PROJECT">Project</SelectItem>
+                        <SelectItem value="TEMPORARY">Temporary</SelectItem>
+                        <SelectItem value="OTHER">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormDescription>
+                      Purpose or use case for this kit
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Description */}
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description (Optional)</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Describe what's included in this kit..."
+                        className="resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      What's included and when to use this kit
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Is Active */}
+              <FormField
+                control={form.control}
+                name="isActive"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Active</FormLabel>
+                      <FormDescription>
+                        Kit can be checked out when active
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <DialogFooter>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => onOpenChange(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={form.formState.isSubmitting}
+                  className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
+                >
+                  {form.formState.isSubmitting
+                    ? isEditing
+                      ? "Updating..."
+                      : "Creating..."
+                    : isEditing
+                      ? "Update"
+                      : "Create"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </Form>
         </FormProvider>
       </DialogContent>
     </Dialog>

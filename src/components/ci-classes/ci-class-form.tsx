@@ -7,6 +7,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAutoGenerateCode } from "@/hooks/use-auto-generate-code";
 import {
   Dialog,
   DialogContent,
@@ -123,6 +124,9 @@ export function CIClassForm({
       isDiscoverable: ciClass?.isDiscoverable ?? false,
     },
   });
+
+  // Auto-generate code from name (like WordPress slugs)
+  useAutoGenerateCode({ form, isEditing });
 
   const loadData = useCallback(async () => {
     setLoading(true);

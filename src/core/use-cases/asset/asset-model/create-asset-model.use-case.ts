@@ -28,9 +28,9 @@ export class CreateAssetModelUseCase {
   ) {}
 
   async execute(props: CreateAssetModelProps): Promise<AssetModel> {
-    // Auto-generate code if not provided
+    // Auto-generate code if not provided or empty
     const code =
-      props.code ??
+      props.code ||
       (await this.codeGenerator.generateCode("ASSET_MODEL", "MODEL"));
 
     const existsByCode = await this.assetModelRepository.existsByCode(code);

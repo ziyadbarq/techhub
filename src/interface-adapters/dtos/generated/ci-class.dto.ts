@@ -32,7 +32,7 @@ export const CreateCIClassSchema = z.object({
     .string()
     .max(50, "Code must be 50 characters or less")
     .regex(
-      /^[A-Z0-9_-]+$/i,
+      /^[A-Z0-9_-]*$/i,
       "Code must contain only letters, numbers, hyphens, and underscores",
     )
     .optional(),

@@ -31,7 +31,7 @@ export class CSVSanitizer {
       const value = row[field.name];
 
       if (value === null || value === undefined || value === "") {
-        sanitized[field.name] = field.defaultValue ?? null;
+        sanitized[field.name] = field.defaultValue ?? undefined;
         continue;
       }
 
@@ -51,7 +51,7 @@ export class CSVSanitizer {
    */
   sanitizeValue(value: any, type: FieldType, rules?: SanitizationRule[]): any {
     if (value === null || value === undefined) {
-      return null;
+      return undefined;
     }
 
     // Convert to string for initial processing

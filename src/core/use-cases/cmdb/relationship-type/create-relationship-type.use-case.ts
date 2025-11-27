@@ -21,9 +21,9 @@ export class CreateRelationshipTypeUseCase {
   async execute(
     request: CreateRelationshipTypeRequest,
   ): Promise<RelationshipType> {
-    // Auto-generate code if not provided
+    // Auto-generate code if not provided or empty
     const code =
-      request.code ??
+      request.code ||
       (await this.codeGenerator.generateCode("RELATIONSHIP_TYPE", "REL"));
 
     // Check if code already exists

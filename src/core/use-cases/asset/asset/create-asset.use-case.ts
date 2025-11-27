@@ -22,9 +22,9 @@ export class CreateAssetUseCase {
   ) {}
 
   async execute(props: CreateAssetProps): Promise<Asset> {
-    // Auto-generate asset tag if not provided
+    // Auto-generate asset tag if not provided or empty
     const assetTag =
-      props.assetTag ??
+      props.assetTag ||
       (await this.codeGenerator.generateCode("ASSET", "ASSET"));
 
     // Business Rule: Asset tag must be unique

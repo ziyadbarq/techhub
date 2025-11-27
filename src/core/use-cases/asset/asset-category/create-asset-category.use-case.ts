@@ -35,9 +35,9 @@ export class CreateAssetCategoryUseCase {
    * @throws Error if code or name already exists
    */
   async execute(props: CreateAssetCategoryProps): Promise<AssetCategory> {
-    // Auto-generate code if not provided
+    // Auto-generate code if not provided or empty
     const code =
-      props.code ??
+      props.code ||
       (await this.codeGenerator.generateCode("ASSET_CATEGORY", "CAT"));
 
     // Check for duplicate code

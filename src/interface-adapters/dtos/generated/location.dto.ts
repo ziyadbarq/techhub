@@ -16,7 +16,7 @@ export const CreateLocationSchema = z.object({
     .string()
     .max(50, "Code must be 50 characters or less")
     .regex(
-      /^[A-Z0-9_-]+$/,
+      /^[A-Z0-9_-]*$/,
       "Code must contain only uppercase letters, numbers, hyphens, and underscores",
     )
     .optional(),

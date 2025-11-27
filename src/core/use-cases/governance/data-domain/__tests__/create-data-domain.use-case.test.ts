@@ -192,15 +192,18 @@ describe("CreateDataDomainUseCase", () => {
       await expect(useCase.execute(props)).rejects.toThrow(ValidationError);
     });
 
-    it("should throw ValidationError for empty code", async () => {
+    it("should auto-generate code when empty string provided", async () => {
       // Arrange
       const props = {
         name: "Test Domain",
         code: "",
       };
 
-      // Act & Assert
-      await expect(useCase.execute(props)).rejects.toThrow(ValidationError);
+      // Act
+      const result = await useCase.execute(props);
+
+      // Assert - Should auto-generate code instead of throwing
+      expect(result.code).toBe("GENERATED");
     });
 
     it("should throw ValidationError for name exceeding 255 characters", async () => {

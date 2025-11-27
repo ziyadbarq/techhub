@@ -33,9 +33,9 @@ export class CreateCIClassUseCase {
   ) {}
 
   async execute(request: CreateCIClassRequest): Promise<CIClass> {
-    // Auto-generate code if not provided
+    // Auto-generate code if not provided or empty
     const code =
-      request.code ?? (await this.codeGenerator.generateCode("CI_CLASS", "CI"));
+      request.code || (await this.codeGenerator.generateCode("CI_CLASS", "CI"));
 
     // Check for duplicates
     const existingByName = await this.ciClassRepository.existsByName(

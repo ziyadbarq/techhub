@@ -29,9 +29,9 @@ export class CreateDataDomainUseCase {
     const trimmedName = request.name?.trim();
     const providedCode = request.code?.trim();
 
-    // Auto-generate code if not provided
+    // Auto-generate code if not provided or empty
     const code =
-      providedCode ??
+      providedCode ||
       (await this.codeGenerator.generateCode("DATA_DOMAIN", "DD"));
 
     // Check for duplicate name

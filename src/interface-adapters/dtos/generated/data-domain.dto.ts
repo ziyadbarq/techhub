@@ -17,7 +17,7 @@ export const CreateDataDomainSchema = z.object({
     .toUpperCase()
     .max(50, "Data domain code must not exceed 50 characters")
     .regex(
-      /^[A-Z0-9_-]+$/,
+      /^[A-Z0-9_-]*$/,
       "Data domain code must contain only letters, numbers, hyphens, and underscores",
     )
     .optional(),

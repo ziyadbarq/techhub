@@ -41,9 +41,9 @@ export class CreateOrganizationUnitUseCase {
    * @throws Error if code already exists
    */
   async execute(props: CreateOrganizationUnitProps): Promise<OrganizationUnit> {
-    // Auto-generate code if not provided
+    // Auto-generate code if not provided or empty
     const code =
-      props.code ??
+      props.code ||
       (await this.codeGenerator.generateCode("ORGANIZATION_UNIT", "ORG"));
 
     // Check for duplicate code

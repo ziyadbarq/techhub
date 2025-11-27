@@ -27,9 +27,9 @@ export class CreateAttachmentTypeUseCase {
   ) {}
 
   async execute(request: CreateAttachmentTypeRequest): Promise<AttachmentType> {
-    // Auto-generate code if not provided
+    // Auto-generate code if not provided or empty
     const code =
-      request.code ??
+      request.code ||
       (await this.codeGenerator.generateCode("ATTACHMENT_TYPE", "ATT"));
 
     // Check for duplicate name
@@ -41,9 +41,8 @@ export class CreateAttachmentTypeUseCase {
     }
 
     // Check for duplicate code
-    const existingByCode = await this.attachmentTypeRepository.existsByCode(
-      code,
-    );
+    const existingByCode =
+      await this.attachmentTypeRepository.existsByCode(code);
     if (existingByCode) {
       throw new Error("An attachment type with this code already exists");
     }

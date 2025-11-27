@@ -9,6 +9,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
 import { InlineEditableField } from "@/components/ui/inline-editable-field";
+import { useAutoGenerateCode } from "@/hooks/use-auto-generate-code";
 import {
   Dialog,
   DialogContent,
@@ -79,6 +80,9 @@ export function AssetModelForm({
       defaultWarrantyMonths: assetModel?.defaultWarrantyMonths ?? undefined,
     },
   });
+
+  // Auto-generate code from name (like WordPress slugs)
+  useAutoGenerateCode({ form, isEditing });
 
   // Focus the first field when dialog opens
   useEffect(() => {

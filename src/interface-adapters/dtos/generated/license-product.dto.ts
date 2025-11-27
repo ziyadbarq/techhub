@@ -18,7 +18,7 @@ export const CreateLicenseProductSchema = z.object({
     .toUpperCase()
     .max(50, "License product code must not exceed 50 characters")
     .regex(
-      /^[A-Z0-9_-]+$/,
+      /^[A-Z0-9_-]*$/,
       "License product code must contain only letters, numbers, hyphens, and underscores",
     )
     .optional(),

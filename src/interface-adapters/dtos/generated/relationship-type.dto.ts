@@ -5,7 +5,7 @@ export const CreateRelationshipTypeSchema = z.object({
   code: z
     .string()
     .max(50)
-    .regex(/^[A-Z0-9_-]+$/i)
+    .regex(/^[A-Z0-9_-]*$/i)
     .optional(),
   description: z.string().max(500).optional().nullable(),
   direction: z

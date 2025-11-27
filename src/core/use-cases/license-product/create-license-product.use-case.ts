@@ -31,9 +31,9 @@ export class CreateLicenseProductUseCase {
   ) {}
 
   async execute(request: CreateLicenseProductRequest): Promise<LicenseProduct> {
-    // Auto-generate code if not provided
+    // Auto-generate code if not provided or empty
     const code =
-      request.code ??
+      request.code ||
       (await this.codeGenerator.generateCode("LICENSE_PRODUCT", "LIC"));
 
     // Validate vendor exists

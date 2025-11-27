@@ -39,10 +39,10 @@ export class CreateLifecycleStateUseCase {
    * @returns Created lifecycle state
    */
   async execute(props: CreateLifecycleStateProps): Promise<LifecycleState> {
-    // Auto-generate code if not provided
+    // Auto-generate code if not provided or empty
     // Scoped to lifecycle model since code is unique within model
     const code =
-      props.code ??
+      props.code ||
       (await this.codeGenerator.generateCode("LIFECYCLE_STATE", "STATE", {
         scopeId: props.lifecycleModelId,
       }));

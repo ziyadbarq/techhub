@@ -56,9 +56,9 @@ export class CreateVendorUseCase {
       throw new Error(`Vendor with name "${props.name}" already exists`);
     }
 
-    // Auto-generate code if not provided
+    // Auto-generate code if not provided or empty
     const code =
-      props.code ?? (await this.codeGenerator.generateCode("VENDOR", "VENDOR"));
+      props.code || (await this.codeGenerator.generateCode("VENDOR", "VENDOR"));
 
     const vendor = Vendor.create({ ...props, code });
     const created = await this.vendorRepository.create(vendor);

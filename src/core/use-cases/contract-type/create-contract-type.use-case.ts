@@ -25,9 +25,9 @@ export class CreateContractTypeUseCase {
   ) {}
 
   async execute(request: CreateContractTypeRequest): Promise<ContractType> {
-    // Auto-generate code if not provided
+    // Auto-generate code if not provided or empty
     const code =
-      request.code ??
+      request.code ||
       (await this.codeGenerator.generateCode("CONTRACT_TYPE", "CTYPE"));
 
     // Check for duplicate name
