@@ -3,7 +3,7 @@
  */
 
 import { inject, injectable } from "inversify";
-import type { PrismaClient } from "@/generated/prisma";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type { LifecycleTransition as PrismaLifecycleTransition } from "@/generated/prisma";
 
 import { DI_TOKENS } from "@/di/types";

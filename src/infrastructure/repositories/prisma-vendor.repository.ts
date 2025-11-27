@@ -3,7 +3,7 @@
  */
 
 import { inject, injectable } from "inversify";
-import type { PrismaClient, $Enums } from "@/generated/prisma";
+import type { PrismaClient, $Enums } from "@/generated/prisma/server";
 import type { Vendor as PrismaVendor } from "@/generated/prisma";
 
 import { DI_TOKENS } from "@/di/types";

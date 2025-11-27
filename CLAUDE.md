@@ -111,8 +111,11 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 ### Framework Patterns (ALWAYS Follow)
 
 **Prisma**:
-- Import from `@/generated/prisma` (NOT `@prisma/client`)
+- Default `@/generated/prisma` is browser-safe (types + enums), use anywhere
+- Server code needing `PrismaClient`: `import from "@/generated/prisma/server"`
+- Client components: `import from "@/generated/prisma"` or `@/generated/prisma/enums`
 - Use singleton from `@/infrastructure/database/prisma/client` (NOT new instances)
+- NEVER import from `@prisma/client` (ESLint enforced)
 - See [PRISMA_GUIDE.md](docs/guides/PRISMA_GUIDE.md)
 
 **Next.js 16 Async APIs**:

@@ -1,5 +1,5 @@
 import { injectable, inject } from "inversify";
-import type { PrismaClient } from "@/generated/prisma";
+import type { PrismaClient } from "@/generated/prisma/server";
 import { DI_TOKENS } from "@/di/types";
 import type { IDisposalApprovalRepository } from "@/core/repositories/disposal-approval.repository.interface";
 import {

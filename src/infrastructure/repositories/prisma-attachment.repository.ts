@@ -6,7 +6,10 @@
 
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
-import type { PrismaClient, TargetObjectTypeEnum } from "@/generated/prisma";
+import type {
+  PrismaClient,
+  TargetObjectTypeEnum,
+} from "@/generated/prisma/server";
 import type { IAttachmentRepository } from "@/core/repositories/attachment.repository.interface";
 import { Attachment } from "@/core/domain/entities/attachment.entity";
 import type { ILoggerService } from "@/core/services";
@@ -64,7 +67,10 @@ export class PrismaAttachmentRepository implements IAttachmentRepository {
     targetType: TargetObjectTypeEnum,
     targetId: string,
   ): Promise<Attachment[]> {
-    this.logger.debug("Finding attachments by target", { targetType, targetId });
+    this.logger.debug("Finding attachments by target", {
+      targetType,
+      targetId,
+    });
 
     const data = await this.prisma.attachment.findMany({
       where: {

@@ -4,7 +4,7 @@
  * Type-safe factory for generating AssetKit test data
  */
 
-import type { Prisma, PrismaClient } from "@/generated/prisma";
+import type { Prisma, PrismaClient } from "@/generated/prisma/server";
 
 export interface AssetKitFactoryOptions {
   name: string;

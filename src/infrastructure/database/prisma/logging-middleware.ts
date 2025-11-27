@@ -23,7 +23,7 @@
  */
 
 // Prisma types no longer needed since middleware is deprecated
-// import type { Prisma } from "@/generated/prisma";
+// import type { Prisma } from "@/generated/prisma/server"
 import type { ILoggerService } from "@/core/services";
 
 // Prisma Middleware types (deprecated in Prisma 5+, defined manually for backwards compatibility)

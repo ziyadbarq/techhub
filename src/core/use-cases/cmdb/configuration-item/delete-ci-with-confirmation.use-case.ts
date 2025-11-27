@@ -16,7 +16,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IConfigurationItemRepository } from "@/core/repositories/configuration-item.repository.interface";
-import type { Prisma, PrismaClient } from "@/generated/prisma";
+import type { Prisma, PrismaClient } from "@/generated/prisma/server";
 
 export interface DeleteCIConfirmationRequest {
   id: string;

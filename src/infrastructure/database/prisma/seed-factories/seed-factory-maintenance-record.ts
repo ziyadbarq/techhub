@@ -4,7 +4,7 @@
  * Type-safe factory for generating MaintenanceRecord test data
  */
 
-import type { Prisma, PrismaClient } from "@/generated/prisma";
+import type { Prisma, PrismaClient } from "@/generated/prisma/server";
 import { MaintenanceStatus } from "@/core/domain/value-objects/maintenance-status";
 import {
   getRelativeDate,

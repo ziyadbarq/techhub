@@ -11,7 +11,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { PrismaRoleRepository } from "../prisma-role.repository";
 import { Role } from "@/core/domain/entities/role.entity";
-import type { PrismaClient } from "@/generated/prisma";
+import type { PrismaClient } from "@/generated/prisma/server";
 
 /**
  * Mock Prisma Client for testing

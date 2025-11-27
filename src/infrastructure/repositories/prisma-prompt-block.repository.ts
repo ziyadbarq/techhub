@@ -3,7 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
-import type { PrismaClient } from "@/generated/prisma";
+import type { PrismaClient } from "@/generated/prisma/server";
 import {
   type PromptBlockCategory,
   type PromptBlock as PrismaPromptBlock,

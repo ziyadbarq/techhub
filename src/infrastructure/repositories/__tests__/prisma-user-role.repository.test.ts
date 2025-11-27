@@ -19,7 +19,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import type { PrismaClient } from "@/generated/prisma";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type {
   UserRole as PrismaUserRole,
   Role as PrismaRole,

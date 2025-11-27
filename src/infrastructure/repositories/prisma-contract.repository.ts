@@ -6,7 +6,7 @@
 
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
-import type { PrismaClient } from "@/generated/prisma";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type { IContractRepository } from "@/core/repositories/contract.repository.interface";
 import { Contract } from "@/core/domain/entities/contract.entity";
 import type { ILoggerService } from "@/core/services";

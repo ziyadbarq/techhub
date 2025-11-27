@@ -3,7 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
-import type { PrismaClient } from "@/generated/prisma";
+import type { PrismaClient } from "@/generated/prisma/server";
 import { DI_TOKENS } from "@/di/types";
 import type { ISystemSetupRepository } from "@/core/repositories/system-setup-repository.interface";
 import { createRepositoryLogger } from "./repository-logger";

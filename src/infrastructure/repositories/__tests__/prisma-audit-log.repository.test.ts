@@ -13,7 +13,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import type { PrismaClient } from "@/generated/prisma";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type { AuditLog as PrismaAuditLog } from "@/generated/prisma";
 import { PrismaAuditLogRepository } from "../prisma-audit-log.repository";
 import type {

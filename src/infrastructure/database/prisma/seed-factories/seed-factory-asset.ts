@@ -5,7 +5,7 @@
  * Uses builder pattern for flexibility
  */
 
-import type { Prisma, PrismaClient } from "@/generated/prisma";
+import type { Prisma, PrismaClient } from "@/generated/prisma/server";
 import {
   generateAssetTag,
   generateSerialNumber,

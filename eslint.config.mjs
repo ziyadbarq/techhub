@@ -96,6 +96,53 @@ export default [
           prefer: "type-imports",
         },
       ],
+      // Prevent imports from @prisma/client (use @/generated/prisma instead)
+      "@typescript-eslint/no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@prisma/client", "@prisma/client/*"],
+              message:
+                "Import from '@/generated/prisma' (browser-safe) or '@/generated/prisma/server' (server-only). See PRISMA_GUIDE.md.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  // Prevent server-only Prisma imports in client components
+  {
+    files: [
+      "src/components/**/*.tsx",
+      "src/components/**/*.ts",
+      "src/**/*-page-client.tsx",
+    ],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@/generated/prisma/server",
+              message:
+                "Cannot import server-only module in client components. Use '@/generated/prisma' or '@/generated/prisma/enums' instead.",
+            },
+            {
+              name: "@/generated/prisma/client",
+              message:
+                "Cannot import Prisma client in client components. Use '@/generated/prisma' or '@/generated/prisma/enums' instead.",
+            },
+          ],
+          patterns: [
+            {
+              group: ["@prisma/client", "@prisma/client/*"],
+              message:
+                "Import from '@/generated/prisma' (browser-safe) or '@/generated/prisma/enums'. See PRISMA_GUIDE.md.",
+            },
+          ],
+        },
+      ],
     },
   },
 ];

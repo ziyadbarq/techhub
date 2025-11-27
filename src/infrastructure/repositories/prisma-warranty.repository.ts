@@ -8,7 +8,7 @@ import type {
   Warranty as PrismaWarranty,
   Prisma,
   WarrantyCoverageType,
-} from "@/generated/prisma";
+} from "@/generated/prisma/server";
 import { DI_TOKENS } from "@/di/types";
 import type {
   IWarrantyRepository,

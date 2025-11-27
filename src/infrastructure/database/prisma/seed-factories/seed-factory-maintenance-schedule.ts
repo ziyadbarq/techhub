@@ -4,7 +4,7 @@
  * Type-safe factory for generating MaintenanceSchedule test data
  */
 
-import type { Prisma, PrismaClient } from "@/generated/prisma";
+import type { Prisma, PrismaClient } from "@/generated/prisma/server";
 import { MaintenancePriority } from "@/core/domain/value-objects/maintenance-priority";
 import {
   ScheduleType,

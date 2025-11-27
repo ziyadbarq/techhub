@@ -3,7 +3,7 @@
  */
 
 import { injectable, inject } from "inversify";
-import type { PrismaClient, PromptPurpose } from "@/generated/prisma";
+import type { PrismaClient, PromptPurpose } from "@/generated/prisma/server";
 import { DI_TOKENS } from "@/di/types";
 import type { IPromptCompositionRepository } from "@/core/repositories/prompt-composition.repository.interface";
 import {

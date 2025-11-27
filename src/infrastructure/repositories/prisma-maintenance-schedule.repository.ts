@@ -7,7 +7,7 @@ import type {
   PrismaClient,
   MaintenanceSchedule as PrismaMaintenanceSchedule,
   Prisma,
-} from "@/generated/prisma";
+} from "@/generated/prisma/server";
 import { DI_TOKENS } from "@/di/types";
 import type {
   IMaintenanceScheduleRepository,

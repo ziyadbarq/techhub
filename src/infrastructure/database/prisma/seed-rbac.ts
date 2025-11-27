@@ -10,7 +10,7 @@
  * Can accept a Prisma client instance or use the singleton for standalone execution
  */
 
-import type { PrismaClient } from "@/generated/prisma";
+import type { PrismaClient } from "@/generated/prisma/server";
 import { prisma as prismaSingleton } from "./client";
 import { logSection, logStep, logSuccess, logWarning } from "./seed-utils";
 import { SYSTEM_PERMISSIONS } from "./seed-rbac-permissions";

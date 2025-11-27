@@ -8,7 +8,7 @@ import {
   type PrismaClient,
   type ServiceRelationship as PrismaServiceRelationship,
   type ServiceRelationshipType,
-} from "@/generated/prisma";
+} from "@/generated/prisma/server";
 import { DI_TOKENS } from "@/di/types";
 import type { IServiceRelationshipRepository } from "@/core/repositories/service-relationship.repository.interface";
 import { ServiceRelationship } from "@/core/domain/entities/service-relationship.entity";

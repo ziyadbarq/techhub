@@ -12,7 +12,7 @@ import {
 import type {
   PrismaClient,
   AllocationTargetTypeEnum,
-} from "@/generated/prisma";
+} from "@/generated/prisma/server";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 
 @injectable()

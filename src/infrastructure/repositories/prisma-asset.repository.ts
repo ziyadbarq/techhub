@@ -7,7 +7,7 @@ import type {
   PrismaClient,
   Asset as PrismaAsset,
   Prisma,
-} from "@/generated/prisma";
+} from "@/generated/prisma/server";
 import { DI_TOKENS } from "@/di/types";
 import type {
   IAssetRepository,

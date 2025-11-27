@@ -5,7 +5,7 @@
  * These helpers eliminate unsafe type assertions and provide runtime safety.
  */
 
-import type { Prisma } from "@/generated/prisma";
+import type { Prisma } from "@/generated/prisma/server";
 
 /**
  * Converts a TypeScript value to Prisma's InputJsonValue type safely.

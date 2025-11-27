@@ -10,7 +10,7 @@
 
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
-import type { PrismaClient } from "@/generated/prisma";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type { IAttachmentTypeRepository } from "@/core/repositories/attachment-type.repository.interface";
 import { AttachmentType } from "@/core/domain/entities/attachment-type.entity";
 import type { ILoggerService } from "@/core/services";

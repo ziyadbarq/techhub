@@ -10,7 +10,7 @@ import type {
   PrismaClient,
   TargetObjectTypeEnum,
   VerificationStatusEnum,
-} from "@/generated/prisma";
+} from "@/generated/prisma/server";
 import type { IVerificationItemRepository } from "@/core/repositories/verification-item.repository.interface";
 import { VerificationItem } from "@/core/domain/entities/verification-item.entity";
 import type { VerificationStatusEnum as VerificationStatusEnumEntity } from "@/core/domain/entities/verification-item.entity";

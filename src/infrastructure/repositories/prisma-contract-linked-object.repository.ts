@@ -6,7 +6,10 @@
 
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
-import type { PrismaClient, TargetObjectTypeEnum } from "@/generated/prisma";
+import type {
+  PrismaClient,
+  TargetObjectTypeEnum,
+} from "@/generated/prisma/server";
 import type { IContractLinkedObjectRepository } from "@/core/repositories/contract-linked-object.repository.interface";
 import {
   ContractLinkedObject,

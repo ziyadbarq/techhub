@@ -7,7 +7,7 @@ import type {
   PrismaClient,
   AssetAssignment as PrismaAssetAssignment,
   Prisma,
-} from "@/generated/prisma";
+} from "@/generated/prisma/server";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetAssignmentRepository } from "@/core/repositories/asset-assignment.repository.interface";
 import {

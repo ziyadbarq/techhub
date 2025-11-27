@@ -6,7 +6,7 @@
 
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
-import type { PrismaClient } from "@/generated/prisma";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type { ILicenseProductRepository } from "@/core/repositories/license-product.repository.interface";
 import type { LicenseMetricType } from "@/core/domain/entities/license-product.entity";
 import { LicenseProduct } from "@/core/domain/entities/license-product.entity";

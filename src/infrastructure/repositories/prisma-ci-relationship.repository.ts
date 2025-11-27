@@ -6,7 +6,7 @@ import { injectable, inject } from "inversify";
 import type {
   PrismaClient,
   CIRelationship as PrismaCIRelationship,
-} from "@/generated/prisma";
+} from "@/generated/prisma/server";
 import { DI_TOKENS } from "@/di/types";
 import type { ICIRelationshipRepository } from "@/core/repositories/ci-relationship.repository.interface";
 import { CIRelationship } from "@/core/domain/entities/ci-relationship.entity";

@@ -3,8 +3,8 @@
  */
 
 import { inject, injectable } from "inversify";
-import { Prisma } from "@/generated/prisma";
-import type { PrismaClient } from "@/generated/prisma";
+import { Prisma } from "@/generated/prisma/server";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type { Person as PrismaPerson } from "@/generated/prisma";
 
 import { DI_TOKENS } from "@/di/types";

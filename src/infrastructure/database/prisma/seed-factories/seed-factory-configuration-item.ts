@@ -4,7 +4,7 @@
  * Type-safe factory for generating ConfigurationItem test data
  */
 
-import type { Prisma, PrismaClient } from "@/generated/prisma";
+import type { Prisma, PrismaClient } from "@/generated/prisma/server";
 import { optionalConnect, requireConnect } from "../seed-utils.js";
 
 export interface ConfigurationItemFactoryOptions {

@@ -5,7 +5,7 @@
  * Default: All features DISABLED (system admin must enable manually)
  */
 
-import type { PrismaClient } from "@/generated/prisma";
+import type { PrismaClient } from "@/generated/prisma/server";
 import { prisma as prismaSingleton } from "./client";
 import { logSection, logStep, logSuccess } from "./seed-utils";
 

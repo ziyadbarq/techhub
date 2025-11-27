@@ -7,7 +7,7 @@ import type {
   PrismaClient,
   MaintenanceRecord as PrismaMaintenanceRecord,
   Prisma,
-} from "@/generated/prisma";
+} from "@/generated/prisma/server";
 import { DI_TOKENS } from "@/di/types";
 import type {
   IMaintenanceRecordRepository,

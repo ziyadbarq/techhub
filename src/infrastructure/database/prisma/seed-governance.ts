@@ -8,7 +8,7 @@
  * - Verification Items (items within campaigns for tracking)
  */
 
-import type { PrismaClient } from "@/generated/prisma";
+import type { PrismaClient } from "@/generated/prisma/server";
 import {
   DATA_DOMAINS,
   DATA_OWNERSHIPS,

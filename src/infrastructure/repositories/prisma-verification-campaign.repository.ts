@@ -6,8 +6,8 @@
 
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
-import type { PrismaClient } from "@/generated/prisma";
-import { Prisma } from "@/generated/prisma";
+import type { PrismaClient } from "@/generated/prisma/server";
+import { Prisma } from "@/generated/prisma/server";
 import type { IVerificationCampaignRepository } from "@/core/repositories/verification-campaign.repository.interface";
 import { VerificationCampaign } from "@/core/domain/entities/verification-campaign.entity";
 import type { TargetObjectTypeEnum } from "@/core/domain/entities/verification-campaign.entity";

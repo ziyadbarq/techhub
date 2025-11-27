@@ -16,7 +16,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import type { PrismaClient } from "@/generated/prisma";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type { Permission as PrismaPermission } from "@/generated/prisma";
 import { PrismaPermissionRepository } from "../prisma-permission.repository";
 import { Permission } from "@/core/domain/entities/permission.entity";

@@ -5,7 +5,7 @@
  * Applies DRY principle and batch operations for better performance
  */
 
-import type { PrismaClient } from "@/generated/prisma";
+import type { PrismaClient } from "@/generated/prisma/server";
 import { FieldDataTypeEnum } from "@/generated/prisma/enums";
 
 // ==============================================

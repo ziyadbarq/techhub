@@ -11,8 +11,8 @@
  * - DO NOT create new Pool() or PrismaClient() elsewhere
  */
 
-import type { Prisma } from "@/generated/prisma/client";
-import { PrismaClient } from "@/generated/prisma/client";
+import type { Prisma } from "@/generated/prisma/server";
+import { PrismaClient } from "@/generated/prisma/server";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 

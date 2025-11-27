@@ -11,7 +11,7 @@
  */
 
 import { inject, injectable } from "inversify";
-import type { PrismaClient } from "@/generated/prisma";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type { Task as PrismaTask } from "@/generated/prisma";
 import type { TaskStatus as PrismaTaskStatus } from "@/generated/prisma/enums";
 

@@ -10,7 +10,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { PrismaDataDomainRepository } from "../prisma-data-domain.repository";
 import { DataDomain } from "@/core/domain/entities/data-domain.entity";
-import type { PrismaClient } from "@/generated/prisma";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type { ILoggerService } from "@/core/services";
 
 interface DataDomainData {

@@ -6,7 +6,7 @@ import { injectable, inject } from "inversify";
 import type {
   PrismaClient,
   ConfigurationItem as PrismaConfigurationItem,
-} from "@/generated/prisma";
+} from "@/generated/prisma/server";
 import { DI_TOKENS } from "@/di/types";
 import type { IConfigurationItemRepository } from "@/core/repositories/configuration-item.repository.interface";
 import {

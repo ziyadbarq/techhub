@@ -4,7 +4,7 @@
  * Type-safe factory for generating Warranty test data
  */
 
-import type { Prisma, PrismaClient } from "@/generated/prisma";
+import type { Prisma, PrismaClient } from "@/generated/prisma/server";
 import type { WarrantyCoverageType } from "@/generated/prisma/enums";
 import {
   generateSequentialCode,

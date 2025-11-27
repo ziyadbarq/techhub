@@ -18,7 +18,7 @@
 
 import type { Container } from "inversify";
 import { DI_TOKENS } from "../types";
-import type { PrismaClient } from "@/generated/prisma/client";
+import type { PrismaClient } from "@/generated/prisma/server";
 import { logger } from "@/lib/logger";
 import { prisma as singletonPrisma } from "@/infrastructure/database/prisma/client";
 // NOTE: Middleware imports commented out - Prisma 5+ deprecated middleware API
