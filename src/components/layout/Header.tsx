@@ -26,25 +26,24 @@ export function Header() {
 
   // Memoize breadcrumb calculation - only recalculate when pathname changes
   const breadcrumbs = useMemo(() => {
-    const segments =
-      pathname
-        ?.split("/")
-        .filter(Boolean)
-        .map((segment, index, array) => {
-          const path = "/" + array.slice(0, index + 1).join("/");
-          const label = segment
-            .split("-")
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ");
+    const pathSegments = pathname?.split("/").filter(Boolean) ?? [];
 
-          return { label, path };
-        }) ?? [];
+    // Skip the "dashboard" segment since we always show it as the first breadcrumb
+    const segmentsAfterDashboard =
+      pathSegments[0] === "dashboard" ? pathSegments.slice(1) : pathSegments;
 
-    // Add home breadcrumb if not on home page
-    if (segments.length > 0) {
-      return [{ label: "Home", path: "/" }, ...segments];
-    }
-    return segments;
+    const segments = segmentsAfterDashboard.map((segment, index, array) => {
+      const path = "/dashboard/" + array.slice(0, index + 1).join("/");
+      const label = segment
+        .split("-")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+
+      return { label, path };
+    });
+
+    // Always start with Dashboard
+    return [{ label: "Dashboard", path: "/dashboard" }, ...segments];
   }, [pathname]);
 
   // Handle sign out - memoized to prevent unnecessary re-renders

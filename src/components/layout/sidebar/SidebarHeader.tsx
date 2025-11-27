@@ -46,9 +46,9 @@ export const SidebarHeader = React.memo(function SidebarHeader({
     >
       <div className="flex items-center gap-2">
         <Link
-          href="/"
+          href="/dashboard"
           className="hover:text-sidebar-accent-foreground flex items-center gap-2 font-semibold transition-colors"
-          aria-label={`${BRANDING.app.name} Home`}
+          aria-label={`${BRANDING.app.name} Dashboard`}
         >
           {/* Logo Icon */}
           <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center">
