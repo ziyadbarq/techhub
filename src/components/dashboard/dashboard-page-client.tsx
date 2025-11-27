@@ -13,6 +13,7 @@ import {
   MyPendingApprovalsWidget,
   MyMaintenanceTasksWidget,
   DashboardSection,
+  DependencyInfographic,
 } from "@/components/dashboard";
 import { QuickActionsWidget } from "@/components/dashboard/widgets/quick-actions-widget";
 import { ExpiringWarrantiesWidget } from "@/components/warranties/expiring-warranties-widget";
@@ -25,6 +26,9 @@ import { CurrentPersonProvider } from "@/contexts/current-person-context";
 const DASHBOARD_CONFIG = {
   // Header
   welcomeBanner: true,
+
+  // Setup guide
+  dependencyInfographic: true,
 
   // Left column - My Work section
   maintenanceTasks: false,
@@ -56,6 +60,9 @@ export function DashboardPageClient() {
       <div className="space-y-6">
         {/* Welcome Banner */}
         {DASHBOARD_CONFIG.welcomeBanner && <WelcomeBannerWidget />}
+
+        {/* Data Entry Workflow Guide */}
+        {DASHBOARD_CONFIG.dependencyInfographic && <DependencyInfographic />}
 
         {/* Main Dashboard Grid */}
         <div className="grid gap-6 lg:grid-cols-3">

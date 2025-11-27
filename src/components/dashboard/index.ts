@@ -22,5 +22,8 @@ export { MyServicesWidget } from "./widgets/my-services-widget";
 export { MyPendingApprovalsWidget } from "./widgets/my-pending-approvals-widget";
 export { MyMaintenanceTasksWidget } from "./widgets/my-maintenance-tasks-widget";
 
+// Setup Guide Widgets
+export { DependencyInfographic } from "./widgets/dependency-infographic";
+
 // Page Components
 export { DashboardPageClient } from "./dashboard-page-client";
