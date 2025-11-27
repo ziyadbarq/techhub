@@ -28,10 +28,12 @@ export type AggregateContract = {
 
 export type ContractAvgAggregateOutputType = {
   totalValue: runtime.Decimal | null
+  totalValueSar: runtime.Decimal | null
 }
 
 export type ContractSumAggregateOutputType = {
   totalValue: runtime.Decimal | null
+  totalValueSar: runtime.Decimal | null
 }
 
 export type ContractMinAggregateOutputType = {
@@ -45,6 +47,7 @@ export type ContractMinAggregateOutputType = {
   autoRenew: boolean | null
   renewalTerms: string | null
   totalValue: runtime.Decimal | null
+  totalValueSar: runtime.Decimal | null
   currency: string | null
   note: string | null
   createdAt: Date | null
@@ -62,6 +65,7 @@ export type ContractMaxAggregateOutputType = {
   autoRenew: boolean | null
   renewalTerms: string | null
   totalValue: runtime.Decimal | null
+  totalValueSar: runtime.Decimal | null
   currency: string | null
   note: string | null
   createdAt: Date | null
@@ -80,6 +84,7 @@ export type ContractCountAggregateOutputType = {
   renewalTerms: number
   slaDefinition: number
   totalValue: number
+  totalValueSar: number
   currency: number
   note: number
   createdAt: number
@@ -90,10 +95,12 @@ export type ContractCountAggregateOutputType = {
 
 export type ContractAvgAggregateInputType = {
   totalValue?: true
+  totalValueSar?: true
 }
 
 export type ContractSumAggregateInputType = {
   totalValue?: true
+  totalValueSar?: true
 }
 
 export type ContractMinAggregateInputType = {
@@ -107,6 +114,7 @@ export type ContractMinAggregateInputType = {
   autoRenew?: true
   renewalTerms?: true
   totalValue?: true
+  totalValueSar?: true
   currency?: true
   note?: true
   createdAt?: true
@@ -124,6 +132,7 @@ export type ContractMaxAggregateInputType = {
   autoRenew?: true
   renewalTerms?: true
   totalValue?: true
+  totalValueSar?: true
   currency?: true
   note?: true
   createdAt?: true
@@ -142,6 +151,7 @@ export type ContractCountAggregateInputType = {
   renewalTerms?: true
   slaDefinition?: true
   totalValue?: true
+  totalValueSar?: true
   currency?: true
   note?: true
   createdAt?: true
@@ -247,6 +257,7 @@ export type ContractGroupByOutputType = {
   renewalTerms: string | null
   slaDefinition: runtime.JsonValue | null
   totalValue: runtime.Decimal | null
+  totalValueSar: runtime.Decimal | null
   currency: string | null
   note: string | null
   createdAt: Date
@@ -288,6 +299,7 @@ export type ContractWhereInput = {
   renewalTerms?: Prisma.StringNullableFilter<"Contract"> | string | null
   slaDefinition?: Prisma.JsonNullableFilter<"Contract">
   totalValue?: Prisma.DecimalNullableFilter<"Contract"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.DecimalNullableFilter<"Contract"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"Contract"> | string | null
   note?: Prisma.StringNullableFilter<"Contract"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Contract"> | Date | string
@@ -311,6 +323,7 @@ export type ContractOrderByWithRelationInput = {
   renewalTerms?: Prisma.SortOrderInput | Prisma.SortOrder
   slaDefinition?: Prisma.SortOrderInput | Prisma.SortOrder
   totalValue?: Prisma.SortOrderInput | Prisma.SortOrder
+  totalValueSar?: Prisma.SortOrderInput | Prisma.SortOrder
   currency?: Prisma.SortOrderInput | Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -337,6 +350,7 @@ export type ContractWhereUniqueInput = Prisma.AtLeast<{
   renewalTerms?: Prisma.StringNullableFilter<"Contract"> | string | null
   slaDefinition?: Prisma.JsonNullableFilter<"Contract">
   totalValue?: Prisma.DecimalNullableFilter<"Contract"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.DecimalNullableFilter<"Contract"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"Contract"> | string | null
   note?: Prisma.StringNullableFilter<"Contract"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Contract"> | Date | string
@@ -360,6 +374,7 @@ export type ContractOrderByWithAggregationInput = {
   renewalTerms?: Prisma.SortOrderInput | Prisma.SortOrder
   slaDefinition?: Prisma.SortOrderInput | Prisma.SortOrder
   totalValue?: Prisma.SortOrderInput | Prisma.SortOrder
+  totalValueSar?: Prisma.SortOrderInput | Prisma.SortOrder
   currency?: Prisma.SortOrderInput | Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -386,6 +401,7 @@ export type ContractScalarWhereWithAggregatesInput = {
   renewalTerms?: Prisma.StringNullableWithAggregatesFilter<"Contract"> | string | null
   slaDefinition?: Prisma.JsonNullableWithAggregatesFilter<"Contract">
   totalValue?: Prisma.DecimalNullableWithAggregatesFilter<"Contract"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.DecimalNullableWithAggregatesFilter<"Contract"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableWithAggregatesFilter<"Contract"> | string | null
   note?: Prisma.StringNullableWithAggregatesFilter<"Contract"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Contract"> | Date | string
@@ -402,6 +418,7 @@ export type ContractCreateInput = {
   renewalTerms?: string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   note?: string | null
   createdAt?: Date | string
@@ -425,6 +442,7 @@ export type ContractUncheckedCreateInput = {
   renewalTerms?: string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   note?: string | null
   createdAt?: Date | string
@@ -444,6 +462,7 @@ export type ContractUpdateInput = {
   renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -467,6 +486,7 @@ export type ContractUncheckedUpdateInput = {
   renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -488,6 +508,7 @@ export type ContractCreateManyInput = {
   renewalTerms?: string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   note?: string | null
   createdAt?: Date | string
@@ -504,6 +525,7 @@ export type ContractUpdateManyMutationInput = {
   renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -522,6 +544,7 @@ export type ContractUncheckedUpdateManyInput = {
   renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -555,6 +578,7 @@ export type ContractCountOrderByAggregateInput = {
   renewalTerms?: Prisma.SortOrder
   slaDefinition?: Prisma.SortOrder
   totalValue?: Prisma.SortOrder
+  totalValueSar?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   note?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -563,6 +587,7 @@ export type ContractCountOrderByAggregateInput = {
 
 export type ContractAvgOrderByAggregateInput = {
   totalValue?: Prisma.SortOrder
+  totalValueSar?: Prisma.SortOrder
 }
 
 export type ContractMaxOrderByAggregateInput = {
@@ -576,6 +601,7 @@ export type ContractMaxOrderByAggregateInput = {
   autoRenew?: Prisma.SortOrder
   renewalTerms?: Prisma.SortOrder
   totalValue?: Prisma.SortOrder
+  totalValueSar?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   note?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -593,6 +619,7 @@ export type ContractMinOrderByAggregateInput = {
   autoRenew?: Prisma.SortOrder
   renewalTerms?: Prisma.SortOrder
   totalValue?: Prisma.SortOrder
+  totalValueSar?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   note?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -601,6 +628,7 @@ export type ContractMinOrderByAggregateInput = {
 
 export type ContractSumOrderByAggregateInput = {
   totalValue?: Prisma.SortOrder
+  totalValueSar?: Prisma.SortOrder
 }
 
 export type ContractScalarRelationFilter = {
@@ -748,6 +776,7 @@ export type ContractCreateWithoutVendorInput = {
   renewalTerms?: string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   note?: string | null
   createdAt?: Date | string
@@ -769,6 +798,7 @@ export type ContractUncheckedCreateWithoutVendorInput = {
   renewalTerms?: string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   note?: string | null
   createdAt?: Date | string
@@ -819,6 +849,7 @@ export type ContractScalarWhereInput = {
   renewalTerms?: Prisma.StringNullableFilter<"Contract"> | string | null
   slaDefinition?: Prisma.JsonNullableFilter<"Contract">
   totalValue?: Prisma.DecimalNullableFilter<"Contract"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.DecimalNullableFilter<"Contract"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"Contract"> | string | null
   note?: Prisma.StringNullableFilter<"Contract"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Contract"> | Date | string
@@ -835,6 +866,7 @@ export type ContractCreateWithoutAssetsInput = {
   renewalTerms?: string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   note?: string | null
   createdAt?: Date | string
@@ -857,6 +889,7 @@ export type ContractUncheckedCreateWithoutAssetsInput = {
   renewalTerms?: string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   note?: string | null
   createdAt?: Date | string
@@ -891,6 +924,7 @@ export type ContractUpdateWithoutAssetsInput = {
   renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -913,6 +947,7 @@ export type ContractUncheckedUpdateWithoutAssetsInput = {
   renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -931,6 +966,7 @@ export type ContractCreateWithoutContractTypeInput = {
   renewalTerms?: string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   note?: string | null
   createdAt?: Date | string
@@ -952,6 +988,7 @@ export type ContractUncheckedCreateWithoutContractTypeInput = {
   renewalTerms?: string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   note?: string | null
   createdAt?: Date | string
@@ -997,6 +1034,7 @@ export type ContractCreateWithoutLinkedObjectsInput = {
   renewalTerms?: string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   note?: string | null
   createdAt?: Date | string
@@ -1019,6 +1057,7 @@ export type ContractUncheckedCreateWithoutLinkedObjectsInput = {
   renewalTerms?: string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   note?: string | null
   createdAt?: Date | string
@@ -1053,6 +1092,7 @@ export type ContractUpdateWithoutLinkedObjectsInput = {
   renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1075,6 +1115,7 @@ export type ContractUncheckedUpdateWithoutLinkedObjectsInput = {
   renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1093,6 +1134,7 @@ export type ContractCreateWithoutLicenseEntitlementsInput = {
   renewalTerms?: string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   note?: string | null
   createdAt?: Date | string
@@ -1115,6 +1157,7 @@ export type ContractUncheckedCreateWithoutLicenseEntitlementsInput = {
   renewalTerms?: string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   note?: string | null
   createdAt?: Date | string
@@ -1149,6 +1192,7 @@ export type ContractUpdateWithoutLicenseEntitlementsInput = {
   renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1171,6 +1215,7 @@ export type ContractUncheckedUpdateWithoutLicenseEntitlementsInput = {
   renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1190,6 +1235,7 @@ export type ContractCreateManyVendorInput = {
   renewalTerms?: string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   note?: string | null
   createdAt?: Date | string
@@ -1206,6 +1252,7 @@ export type ContractUpdateWithoutVendorInput = {
   renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1227,6 +1274,7 @@ export type ContractUncheckedUpdateWithoutVendorInput = {
   renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1247,6 +1295,7 @@ export type ContractUncheckedUpdateManyWithoutVendorInput = {
   renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1264,6 +1313,7 @@ export type ContractCreateManyContractTypeInput = {
   renewalTerms?: string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   note?: string | null
   createdAt?: Date | string
@@ -1280,6 +1330,7 @@ export type ContractUpdateWithoutContractTypeInput = {
   renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1301,6 +1352,7 @@ export type ContractUncheckedUpdateWithoutContractTypeInput = {
   renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1321,6 +1373,7 @@ export type ContractUncheckedUpdateManyWithoutContractTypeInput = {
   renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1388,6 +1441,7 @@ export type ContractSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   renewalTerms?: boolean
   slaDefinition?: boolean
   totalValue?: boolean
+  totalValueSar?: boolean
   currency?: boolean
   note?: boolean
   createdAt?: boolean
@@ -1412,6 +1466,7 @@ export type ContractSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   renewalTerms?: boolean
   slaDefinition?: boolean
   totalValue?: boolean
+  totalValueSar?: boolean
   currency?: boolean
   note?: boolean
   createdAt?: boolean
@@ -1432,6 +1487,7 @@ export type ContractSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   renewalTerms?: boolean
   slaDefinition?: boolean
   totalValue?: boolean
+  totalValueSar?: boolean
   currency?: boolean
   note?: boolean
   createdAt?: boolean
@@ -1452,13 +1508,14 @@ export type ContractSelectScalar = {
   renewalTerms?: boolean
   slaDefinition?: boolean
   totalValue?: boolean
+  totalValueSar?: boolean
   currency?: boolean
   note?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ContractOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "contractTypeId" | "vendorId" | "name" | "contractNumber" | "startDate" | "endDate" | "autoRenew" | "renewalTerms" | "slaDefinition" | "totalValue" | "currency" | "note" | "createdAt" | "updatedAt", ExtArgs["result"]["contract"]>
+export type ContractOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "contractTypeId" | "vendorId" | "name" | "contractNumber" | "startDate" | "endDate" | "autoRenew" | "renewalTerms" | "slaDefinition" | "totalValue" | "totalValueSar" | "currency" | "note" | "createdAt" | "updatedAt", ExtArgs["result"]["contract"]>
 export type ContractInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   contractType?: boolean | Prisma.ContractTypeDefaultArgs<ExtArgs>
   vendor?: boolean | Prisma.VendorDefaultArgs<ExtArgs>
@@ -1497,6 +1554,7 @@ export type $ContractPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     renewalTerms: string | null
     slaDefinition: runtime.JsonValue | null
     totalValue: runtime.Decimal | null
+    totalValueSar: runtime.Decimal | null
     currency: string | null
     note: string | null
     createdAt: Date
@@ -1940,6 +1998,7 @@ export interface ContractFieldRefs {
   readonly renewalTerms: Prisma.FieldRef<"Contract", 'String'>
   readonly slaDefinition: Prisma.FieldRef<"Contract", 'Json'>
   readonly totalValue: Prisma.FieldRef<"Contract", 'Decimal'>
+  readonly totalValueSar: Prisma.FieldRef<"Contract", 'Decimal'>
   readonly currency: Prisma.FieldRef<"Contract", 'String'>
   readonly note: Prisma.FieldRef<"Contract", 'String'>
   readonly createdAt: Prisma.FieldRef<"Contract", 'DateTime'>

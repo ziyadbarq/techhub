@@ -193,6 +193,12 @@ export const DI_TOKENS = {
    */
   ICodeGeneratorService: Symbol.for("ICodeGeneratorService"),
 
+  /**
+   * Token for ISarConversionService
+   * Provides SAR conversion for frozen financial snapshots
+   */
+  ISarConversionService: Symbol.for("ISarConversionService"),
+
   // ==========================================
   // Use Case Tokens (Example)
   // ==========================================

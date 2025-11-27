@@ -925,6 +925,7 @@ model Asset {
   serialNumber           String?   @unique
   purchaseDate           DateTime?
   purchaseCost           Decimal?  @db.Decimal(12, 2)
+  purchaseCostSar        Decimal?  @db.Decimal(12, 2) // Frozen SAR snapshot at create/update
   currency               String?
   depreciationModel      String?
   depreciationStart      DateTime?
@@ -1614,6 +1615,7 @@ model Contract {
   renewalTerms   String?   @db.Text
   slaDefinition  Json? // SLA rules
   totalValue     Decimal?  @db.Decimal(12, 2)
+  totalValueSar  Decimal?  @db.Decimal(12, 2) // Frozen SAR snapshot at create/update
   currency       String?
   note           String?   @db.Text
   createdAt      DateTime  @default(now())

@@ -38,6 +38,10 @@ import { PrismaPersonRoleAssignmentRepository } from "@/infrastructure/repositor
 import { PrismaFieldDefinitionRepository } from "@/infrastructure/repositories/prisma-field-definition.repository";
 import { PrismaExchangeRateRepository } from "@/infrastructure/repositories/prisma-exchange-rate.repository";
 
+// SAR Conversion Service
+import type { ISarConversionService } from "@/core/services/sar-conversion.service.interface";
+import { SarConversionService } from "@/infrastructure/services/sar-conversion.service";
+
 // Lifecycle Model Use Cases
 import { CreateLifecycleModelUseCase } from "@/core/use-cases/foundation/lifecycle-model/create-lifecycle-model.use-case";
 import { GetLifecycleModelUseCase } from "@/core/use-cases/foundation/lifecycle-model/get-lifecycle-model.use-case";
@@ -194,6 +198,15 @@ export function bindFoundationDependencies(container: Container): void {
   container
     .bind<IExchangeRateRepository>(DI_TOKENS.IExchangeRateRepository)
     .to(PrismaExchangeRateRepository)
+    .inSingletonScope();
+
+  // ==========================================
+  // Foundation Services
+  // ==========================================
+
+  container
+    .bind<ISarConversionService>(DI_TOKENS.ISarConversionService)
+    .to(SarConversionService)
     .inSingletonScope();
 
   // ==========================================

@@ -16,6 +16,7 @@ export interface AssetDTO {
   serialNumber: string | null;
   purchaseDate: string | null;
   purchaseCost: number | null;
+  purchaseCostSar: number | null;
   currency: string | null;
   depreciationModel: string | null;
   depreciationStart: string | null;
@@ -63,6 +64,7 @@ export function presentAsset(
     serialNumber: asset.serialNumber,
     purchaseDate: asset.purchaseDate?.toISOString() || null,
     purchaseCost: asset.purchaseCost,
+    purchaseCostSar: asset.purchaseCostSar,
     currency: asset.currency,
     depreciationModel: asset.depreciationModel,
     depreciationStart: asset.depreciationStart?.toISOString() || null,

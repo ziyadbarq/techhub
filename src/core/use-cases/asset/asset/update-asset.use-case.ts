@@ -7,6 +7,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import type { Asset } from "@/core/domain/entities/asset.entity";
+import type { ISarConversionService } from "@/core/services/sar-conversion.service.interface";
 
 export interface UpdateAssetInput {
   id: string;
@@ -33,6 +34,8 @@ export class UpdateAssetUseCase {
   constructor(
     @inject(DI_TOKENS.IAssetRepository)
     private readonly assetRepository: IAssetRepository,
+    @inject(DI_TOKENS.ISarConversionService)
+    private readonly sarConversionService: ISarConversionService,
   ) {}
 
   async execute(input: UpdateAssetInput): Promise<Asset> {
@@ -68,6 +71,21 @@ export class UpdateAssetUseCase {
       }
     }
 
+    // Check if SAR recalculation is needed (when cost or currency changes)
+    const sarCheck = this.sarConversionService.shouldRecalculateSar(
+      { amount: input.purchaseCost, currency: input.currency },
+      asset.purchaseCost,
+      asset.currency,
+    );
+
+    let purchaseCostSar: number | null | undefined;
+    if (sarCheck.needsConversion) {
+      purchaseCostSar = await this.sarConversionService.convertToSarIfNeeded(
+        sarCheck.amount,
+        sarCheck.currency,
+      );
+    }
+
     // Update the entity (validation happens in entity method)
     asset.update({
       assetTag: input.assetTag,
@@ -78,6 +96,7 @@ export class UpdateAssetUseCase {
       serialNumber: input.serialNumber,
       purchaseDate: input.purchaseDate,
       purchaseCost: input.purchaseCost,
+      purchaseCostSar,
       currency: input.currency,
       depreciationModel: input.depreciationModel,
       depreciationStart: input.depreciationStart,

@@ -41,6 +41,7 @@ export class PrismaAssetRepository implements IAssetRepository {
           serialNumber: asset.serialNumber,
           purchaseDate: asset.purchaseDate,
           purchaseCost: asset.purchaseCost || null,
+          purchaseCostSar: asset.purchaseCostSar || null,
           currency: asset.currency,
           depreciationModel: asset.depreciationModel,
           depreciationStart: asset.depreciationStart,
@@ -428,6 +429,7 @@ export class PrismaAssetRepository implements IAssetRepository {
           serialNumber: asset.serialNumber,
           purchaseDate: asset.purchaseDate,
           purchaseCost: asset.purchaseCost || null,
+          purchaseCostSar: asset.purchaseCostSar || null,
           currency: asset.currency,
           depreciationModel: asset.depreciationModel,
           depreciationStart: asset.depreciationStart,
@@ -525,6 +527,9 @@ export class PrismaAssetRepository implements IAssetRepository {
       purchaseDate: prismaAsset.purchaseDate,
       purchaseCost: prismaAsset.purchaseCost
         ? Number(prismaAsset.purchaseCost)
+        : null,
+      purchaseCostSar: prismaAsset.purchaseCostSar
+        ? Number(prismaAsset.purchaseCostSar)
         : null,
       currency: prismaAsset.currency,
       depreciationModel: prismaAsset.depreciationModel,

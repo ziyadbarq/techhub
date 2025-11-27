@@ -8,6 +8,7 @@ import type { IContractRepository } from "@/core/repositories/contract.repositor
 import type { IContractTypeRepository } from "@/core/repositories/contract-type.repository.interface";
 import type { IVendorRepository } from "@/core/repositories/vendor.repository.interface";
 import type { Contract } from "@/core/domain/entities/contract.entity";
+import type { ISarConversionService } from "@/core/services/sar-conversion.service.interface";
 
 export interface UpdateContractRequest {
   id: string;
@@ -34,6 +35,8 @@ export class UpdateContractUseCase {
     private contractTypeRepository: IContractTypeRepository,
     @inject(DI_TOKENS.IVendorRepository)
     private vendorRepository: IVendorRepository,
+    @inject(DI_TOKENS.ISarConversionService)
+    private sarConversionService: ISarConversionService,
   ) {}
 
   async execute(request: UpdateContractRequest): Promise<Contract> {
@@ -116,6 +119,22 @@ export class UpdateContractUseCase {
     }
     if (request.note !== undefined) {
       contract.note = request.note;
+    }
+
+    // Check if SAR recalculation is needed (when value or currency changes)
+    const sarCheck = this.sarConversionService.shouldRecalculateSar(
+      { amount: request.totalValue, currency: request.currency },
+      contract.totalValue,
+      contract.currency,
+    );
+
+    if (sarCheck.needsConversion) {
+      const totalValueSar =
+        await this.sarConversionService.convertToSarIfNeeded(
+          sarCheck.amount,
+          sarCheck.currency,
+        );
+      contract.totalValueSar = totalValueSar;
     }
 
     return await this.contractRepository.update(contract);

@@ -11,6 +11,7 @@ import {
   type CreateAssetProps,
 } from "@/core/domain/entities/asset.entity";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
+import type { ISarConversionService } from "@/core/services/sar-conversion.service.interface";
 
 @injectable()
 export class CreateAssetUseCase {
@@ -19,6 +20,8 @@ export class CreateAssetUseCase {
     private readonly assetRepository: IAssetRepository,
     @inject(DI_TOKENS.ICodeGeneratorService)
     private readonly codeGenerator: ICodeGeneratorService,
+    @inject(DI_TOKENS.ISarConversionService)
+    private readonly sarConversionService: ISarConversionService,
   ) {}
 
   async execute(props: CreateAssetProps): Promise<Asset> {
@@ -47,8 +50,15 @@ export class CreateAssetUseCase {
       }
     }
 
+    // Calculate SAR snapshot for purchase cost
+    const purchaseCostSar =
+      await this.sarConversionService.convertToSarIfNeeded(
+        props.purchaseCost,
+        props.currency,
+      );
+
     // Create the entity (validation happens in entity factory)
-    const asset = Asset.create({ ...props, assetTag });
+    const asset = Asset.create({ ...props, assetTag, purchaseCostSar });
 
     // Persist to database
     return await this.assetRepository.create(asset);

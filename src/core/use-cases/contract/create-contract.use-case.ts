@@ -8,6 +8,7 @@ import type { IContractRepository } from "@/core/repositories/contract.repositor
 import type { IContractTypeRepository } from "@/core/repositories/contract-type.repository.interface";
 import type { IVendorRepository } from "@/core/repositories/vendor.repository.interface";
 import { Contract } from "@/core/domain/entities/contract.entity";
+import type { ISarConversionService } from "@/core/services/sar-conversion.service.interface";
 
 export interface CreateContractRequest {
   contractTypeId: string;
@@ -33,6 +34,8 @@ export class CreateContractUseCase {
     private contractTypeRepository: IContractTypeRepository,
     @inject(DI_TOKENS.IVendorRepository)
     private vendorRepository: IVendorRepository,
+    @inject(DI_TOKENS.ISarConversionService)
+    private sarConversionService: ISarConversionService,
   ) {}
 
   async execute(request: CreateContractRequest): Promise<Contract> {
@@ -61,6 +64,12 @@ export class CreateContractUseCase {
       }
     }
 
+    // Calculate SAR snapshot for total value
+    const totalValueSar = await this.sarConversionService.convertToSarIfNeeded(
+      request.totalValue,
+      request.currency,
+    );
+
     // Create contract entity
     const contract = Contract.create({
       contractTypeId: request.contractTypeId,
@@ -73,6 +82,7 @@ export class CreateContractUseCase {
       renewalTerms: request.renewalTerms,
       slaDefinition: request.slaDefinition,
       totalValue: request.totalValue,
+      totalValueSar,
       currency: request.currency,
       note: request.note,
     });

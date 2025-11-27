@@ -12,6 +12,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { CreateAssetUseCase } from "../create-asset.use-case";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
+import type { ISarConversionService } from "@/core/services/sar-conversion.service.interface";
 import type { Asset } from "@/core/domain/entities/asset.entity";
 
 /**
@@ -66,17 +67,41 @@ class MockCodeGeneratorService implements Partial<ICodeGeneratorService> {
   }
 }
 
+/**
+ * Mock SAR Conversion Service
+ */
+class MockSarConversionService implements Partial<ISarConversionService> {
+  async convertToSarIfNeeded(
+    amount: number | null | undefined,
+    currency: string | null | undefined,
+  ): Promise<number | null> {
+    if (amount === null || amount === undefined) return null;
+    if (!currency) return null;
+    // Simple mock: assume 1 USD = 3.75 SAR, SAR = 1
+    if (currency.toUpperCase() === "SAR") return amount;
+    if (currency.toUpperCase() === "USD") return amount * 3.75;
+    return null; // Unknown currency
+  }
+
+  shouldRecalculateSar() {
+    return { needsConversion: true, amount: null, currency: null };
+  }
+}
+
 describe("CreateAssetUseCase", () => {
   let useCase: CreateAssetUseCase;
   let mockRepository: MockAssetRepository;
   let mockCodeGenerator: MockCodeGeneratorService;
+  let mockSarConversionService: MockSarConversionService;
 
   beforeEach(() => {
     mockRepository = new MockAssetRepository();
     mockCodeGenerator = new MockCodeGeneratorService();
+    mockSarConversionService = new MockSarConversionService();
     useCase = new CreateAssetUseCase(
       mockRepository as unknown as IAssetRepository,
       mockCodeGenerator as unknown as ICodeGeneratorService,
+      mockSarConversionService as unknown as ISarConversionService,
     );
   });
 

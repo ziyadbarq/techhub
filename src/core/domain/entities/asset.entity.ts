@@ -15,6 +15,7 @@ export interface AssetProps {
   serialNumber: string | null;
   purchaseDate: Date | null;
   purchaseCost: number | null;
+  purchaseCostSar: number | null; // Frozen SAR snapshot at create/update
   currency: string | null;
   depreciationModel: string | null;
   depreciationStart: Date | null;
@@ -38,6 +39,7 @@ export interface CreateAssetProps {
   serialNumber?: string | null;
   purchaseDate?: Date | null;
   purchaseCost?: number | null;
+  purchaseCostSar?: number | null; // Frozen SAR snapshot
   currency?: string | null;
   depreciationModel?: string | null;
   depreciationStart?: Date | null;
@@ -89,6 +91,7 @@ export class Asset {
       serialNumber: props.serialNumber?.trim() || null,
       purchaseDate: props.purchaseDate || null,
       purchaseCost: props.purchaseCost || null,
+      purchaseCostSar: props.purchaseCostSar ?? null,
       currency: props.currency?.toUpperCase() || null,
       depreciationModel: props.depreciationModel || null,
       depreciationStart: props.depreciationStart || null,
@@ -122,6 +125,7 @@ export class Asset {
     serialNumber?: string | null;
     purchaseDate?: Date | null;
     purchaseCost?: number | null;
+    purchaseCostSar?: number | null;
     currency?: string | null;
     depreciationModel?: string | null;
     depreciationStart?: Date | null;
@@ -149,6 +153,10 @@ export class Asset {
         Asset.validatePurchaseCost(props.purchaseCost);
       }
       this.props.purchaseCost = props.purchaseCost;
+    }
+
+    if (props.purchaseCostSar !== undefined) {
+      this.props.purchaseCostSar = props.purchaseCostSar;
     }
 
     if (props.currency !== undefined) {
@@ -367,6 +375,10 @@ export class Asset {
 
   get purchaseCost(): number | null {
     return this.props.purchaseCost;
+  }
+
+  get purchaseCostSar(): number | null {
+    return this.props.purchaseCostSar;
   }
 
   get currency(): string | null {

@@ -28,10 +28,12 @@ export type AggregateAsset = {
 
 export type AssetAvgAggregateOutputType = {
   purchaseCost: runtime.Decimal | null
+  purchaseCostSar: runtime.Decimal | null
 }
 
 export type AssetSumAggregateOutputType = {
   purchaseCost: runtime.Decimal | null
+  purchaseCostSar: runtime.Decimal | null
 }
 
 export type AssetMinAggregateOutputType = {
@@ -45,6 +47,7 @@ export type AssetMinAggregateOutputType = {
   serialNumber: string | null
   purchaseDate: Date | null
   purchaseCost: runtime.Decimal | null
+  purchaseCostSar: runtime.Decimal | null
   currency: string | null
   depreciationModel: string | null
   depreciationStart: Date | null
@@ -69,6 +72,7 @@ export type AssetMaxAggregateOutputType = {
   serialNumber: string | null
   purchaseDate: Date | null
   purchaseCost: runtime.Decimal | null
+  purchaseCostSar: runtime.Decimal | null
   currency: string | null
   depreciationModel: string | null
   depreciationStart: Date | null
@@ -93,6 +97,7 @@ export type AssetCountAggregateOutputType = {
   serialNumber: number
   purchaseDate: number
   purchaseCost: number
+  purchaseCostSar: number
   currency: number
   depreciationModel: number
   depreciationStart: number
@@ -111,10 +116,12 @@ export type AssetCountAggregateOutputType = {
 
 export type AssetAvgAggregateInputType = {
   purchaseCost?: true
+  purchaseCostSar?: true
 }
 
 export type AssetSumAggregateInputType = {
   purchaseCost?: true
+  purchaseCostSar?: true
 }
 
 export type AssetMinAggregateInputType = {
@@ -128,6 +135,7 @@ export type AssetMinAggregateInputType = {
   serialNumber?: true
   purchaseDate?: true
   purchaseCost?: true
+  purchaseCostSar?: true
   currency?: true
   depreciationModel?: true
   depreciationStart?: true
@@ -152,6 +160,7 @@ export type AssetMaxAggregateInputType = {
   serialNumber?: true
   purchaseDate?: true
   purchaseCost?: true
+  purchaseCostSar?: true
   currency?: true
   depreciationModel?: true
   depreciationStart?: true
@@ -176,6 +185,7 @@ export type AssetCountAggregateInputType = {
   serialNumber?: true
   purchaseDate?: true
   purchaseCost?: true
+  purchaseCostSar?: true
   currency?: true
   depreciationModel?: true
   depreciationStart?: true
@@ -288,6 +298,7 @@ export type AssetGroupByOutputType = {
   serialNumber: string | null
   purchaseDate: Date | null
   purchaseCost: runtime.Decimal | null
+  purchaseCostSar: runtime.Decimal | null
   currency: string | null
   depreciationModel: string | null
   depreciationStart: Date | null
@@ -336,6 +347,7 @@ export type AssetWhereInput = {
   serialNumber?: Prisma.StringNullableFilter<"Asset"> | string | null
   purchaseDate?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
   purchaseCost?: Prisma.DecimalNullableFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.DecimalNullableFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"Asset"> | string | null
   depreciationModel?: Prisma.StringNullableFilter<"Asset"> | string | null
   depreciationStart?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
@@ -377,6 +389,7 @@ export type AssetOrderByWithRelationInput = {
   serialNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   purchaseDate?: Prisma.SortOrderInput | Prisma.SortOrder
   purchaseCost?: Prisma.SortOrderInput | Prisma.SortOrder
+  purchaseCostSar?: Prisma.SortOrderInput | Prisma.SortOrder
   currency?: Prisma.SortOrderInput | Prisma.SortOrder
   depreciationModel?: Prisma.SortOrderInput | Prisma.SortOrder
   depreciationStart?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -421,6 +434,7 @@ export type AssetWhereUniqueInput = Prisma.AtLeast<{
   lifecycleStateId?: Prisma.StringNullableFilter<"Asset"> | string | null
   purchaseDate?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
   purchaseCost?: Prisma.DecimalNullableFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.DecimalNullableFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"Asset"> | string | null
   depreciationModel?: Prisma.StringNullableFilter<"Asset"> | string | null
   depreciationStart?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
@@ -462,6 +476,7 @@ export type AssetOrderByWithAggregationInput = {
   serialNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   purchaseDate?: Prisma.SortOrderInput | Prisma.SortOrder
   purchaseCost?: Prisma.SortOrderInput | Prisma.SortOrder
+  purchaseCostSar?: Prisma.SortOrderInput | Prisma.SortOrder
   currency?: Prisma.SortOrderInput | Prisma.SortOrder
   depreciationModel?: Prisma.SortOrderInput | Prisma.SortOrder
   depreciationStart?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -495,6 +510,7 @@ export type AssetScalarWhereWithAggregatesInput = {
   serialNumber?: Prisma.StringNullableWithAggregatesFilter<"Asset"> | string | null
   purchaseDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Asset"> | Date | string | null
   purchaseCost?: Prisma.DecimalNullableWithAggregatesFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.DecimalNullableWithAggregatesFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableWithAggregatesFilter<"Asset"> | string | null
   depreciationModel?: Prisma.StringNullableWithAggregatesFilter<"Asset"> | string | null
   depreciationStart?: Prisma.DateTimeNullableWithAggregatesFilter<"Asset"> | Date | string | null
@@ -515,6 +531,7 @@ export type AssetCreateInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -555,6 +572,7 @@ export type AssetUncheckedCreateInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -585,6 +603,7 @@ export type AssetUpdateInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -625,6 +644,7 @@ export type AssetUncheckedUpdateInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -660,6 +680,7 @@ export type AssetCreateManyInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -680,6 +701,7 @@ export type AssetUpdateManyMutationInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -704,6 +726,7 @@ export type AssetUncheckedUpdateManyInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -744,6 +767,7 @@ export type AssetCountOrderByAggregateInput = {
   serialNumber?: Prisma.SortOrder
   purchaseDate?: Prisma.SortOrder
   purchaseCost?: Prisma.SortOrder
+  purchaseCostSar?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   depreciationModel?: Prisma.SortOrder
   depreciationStart?: Prisma.SortOrder
@@ -760,6 +784,7 @@ export type AssetCountOrderByAggregateInput = {
 
 export type AssetAvgOrderByAggregateInput = {
   purchaseCost?: Prisma.SortOrder
+  purchaseCostSar?: Prisma.SortOrder
 }
 
 export type AssetMaxOrderByAggregateInput = {
@@ -773,6 +798,7 @@ export type AssetMaxOrderByAggregateInput = {
   serialNumber?: Prisma.SortOrder
   purchaseDate?: Prisma.SortOrder
   purchaseCost?: Prisma.SortOrder
+  purchaseCostSar?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   depreciationModel?: Prisma.SortOrder
   depreciationStart?: Prisma.SortOrder
@@ -797,6 +823,7 @@ export type AssetMinOrderByAggregateInput = {
   serialNumber?: Prisma.SortOrder
   purchaseDate?: Prisma.SortOrder
   purchaseCost?: Prisma.SortOrder
+  purchaseCostSar?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   depreciationModel?: Prisma.SortOrder
   depreciationStart?: Prisma.SortOrder
@@ -812,6 +839,7 @@ export type AssetMinOrderByAggregateInput = {
 
 export type AssetSumOrderByAggregateInput = {
   purchaseCost?: Prisma.SortOrder
+  purchaseCostSar?: Prisma.SortOrder
 }
 
 export type AssetScalarRelationFilter = {
@@ -1223,6 +1251,7 @@ export type AssetCreateWithoutVendorInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -1261,6 +1290,7 @@ export type AssetUncheckedCreateWithoutVendorInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -1325,6 +1355,7 @@ export type AssetScalarWhereInput = {
   serialNumber?: Prisma.StringNullableFilter<"Asset"> | string | null
   purchaseDate?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
   purchaseCost?: Prisma.DecimalNullableFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.DecimalNullableFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"Asset"> | string | null
   depreciationModel?: Prisma.StringNullableFilter<"Asset"> | string | null
   depreciationStart?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
@@ -1345,6 +1376,7 @@ export type AssetCreateWithoutLifecycleStateInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -1383,6 +1415,7 @@ export type AssetUncheckedCreateWithoutLifecycleStateInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -1439,6 +1472,7 @@ export type AssetCreateWithoutConfigurationItemsInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -1478,6 +1512,7 @@ export type AssetUncheckedCreateWithoutConfigurationItemsInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -1523,6 +1558,7 @@ export type AssetUpdateWithoutConfigurationItemsInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1562,6 +1598,7 @@ export type AssetUncheckedUpdateWithoutConfigurationItemsInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1591,6 +1628,7 @@ export type AssetCreateWithoutAssetCategoryInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -1629,6 +1667,7 @@ export type AssetUncheckedCreateWithoutAssetCategoryInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -1685,6 +1724,7 @@ export type AssetCreateWithoutAssetModelInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -1723,6 +1763,7 @@ export type AssetUncheckedCreateWithoutAssetModelInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -1779,6 +1820,7 @@ export type AssetCreateWithoutCurrentStockLocationInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -1818,6 +1860,7 @@ export type AssetUncheckedCreateWithoutCurrentStockLocationInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -1873,6 +1916,7 @@ export type AssetCreateWithoutStockMovementsInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -1912,6 +1956,7 @@ export type AssetUncheckedCreateWithoutStockMovementsInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -1957,6 +2002,7 @@ export type AssetUpdateWithoutStockMovementsInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1996,6 +2042,7 @@ export type AssetUncheckedUpdateWithoutStockMovementsInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2025,6 +2072,7 @@ export type AssetCreateWithoutAssetAssignmentsInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -2064,6 +2112,7 @@ export type AssetUncheckedCreateWithoutAssetAssignmentsInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -2109,6 +2158,7 @@ export type AssetUpdateWithoutAssetAssignmentsInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2148,6 +2198,7 @@ export type AssetUncheckedUpdateWithoutAssetAssignmentsInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2177,6 +2228,7 @@ export type AssetCreateWithoutWarrantiesInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -2216,6 +2268,7 @@ export type AssetUncheckedCreateWithoutWarrantiesInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -2261,6 +2314,7 @@ export type AssetUpdateWithoutWarrantiesInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2300,6 +2354,7 @@ export type AssetUncheckedUpdateWithoutWarrantiesInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2329,6 +2384,7 @@ export type AssetCreateWithoutMaintenanceSchedulesInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -2368,6 +2424,7 @@ export type AssetUncheckedCreateWithoutMaintenanceSchedulesInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -2413,6 +2470,7 @@ export type AssetUpdateWithoutMaintenanceSchedulesInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2452,6 +2510,7 @@ export type AssetUncheckedUpdateWithoutMaintenanceSchedulesInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2481,6 +2540,7 @@ export type AssetCreateWithoutMaintenanceRecordsInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -2520,6 +2580,7 @@ export type AssetUncheckedCreateWithoutMaintenanceRecordsInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -2565,6 +2626,7 @@ export type AssetUpdateWithoutMaintenanceRecordsInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2604,6 +2666,7 @@ export type AssetUncheckedUpdateWithoutMaintenanceRecordsInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2633,6 +2696,7 @@ export type AssetCreateWithoutDisposalsInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -2672,6 +2736,7 @@ export type AssetUncheckedCreateWithoutDisposalsInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -2717,6 +2782,7 @@ export type AssetUpdateWithoutDisposalsInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2756,6 +2822,7 @@ export type AssetUncheckedUpdateWithoutDisposalsInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2785,6 +2852,7 @@ export type AssetCreateWithoutKitCheckoutItemsInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -2824,6 +2892,7 @@ export type AssetUncheckedCreateWithoutKitCheckoutItemsInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -2869,6 +2938,7 @@ export type AssetUpdateWithoutKitCheckoutItemsInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2908,6 +2978,7 @@ export type AssetUncheckedUpdateWithoutKitCheckoutItemsInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2937,6 +3008,7 @@ export type AssetCreateWithoutReservationsInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -2976,6 +3048,7 @@ export type AssetUncheckedCreateWithoutReservationsInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -3021,6 +3094,7 @@ export type AssetUpdateWithoutReservationsInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3060,6 +3134,7 @@ export type AssetUncheckedUpdateWithoutReservationsInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3089,6 +3164,7 @@ export type AssetCreateWithoutServiceAssetsInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -3128,6 +3204,7 @@ export type AssetUncheckedCreateWithoutServiceAssetsInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -3173,6 +3250,7 @@ export type AssetUpdateWithoutServiceAssetsInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3212,6 +3290,7 @@ export type AssetUncheckedUpdateWithoutServiceAssetsInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3241,6 +3320,7 @@ export type AssetCreateWithoutContractInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -3279,6 +3359,7 @@ export type AssetUncheckedCreateWithoutContractInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -3339,6 +3420,7 @@ export type AssetCreateManyVendorInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -3359,6 +3441,7 @@ export type AssetUpdateWithoutVendorInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3397,6 +3480,7 @@ export type AssetUncheckedUpdateWithoutVendorInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3431,6 +3515,7 @@ export type AssetUncheckedUpdateManyWithoutVendorInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3455,6 +3540,7 @@ export type AssetCreateManyLifecycleStateInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -3475,6 +3561,7 @@ export type AssetUpdateWithoutLifecycleStateInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3513,6 +3600,7 @@ export type AssetUncheckedUpdateWithoutLifecycleStateInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3547,6 +3635,7 @@ export type AssetUncheckedUpdateManyWithoutLifecycleStateInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3571,6 +3660,7 @@ export type AssetCreateManyAssetCategoryInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -3591,6 +3681,7 @@ export type AssetUpdateWithoutAssetCategoryInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3629,6 +3720,7 @@ export type AssetUncheckedUpdateWithoutAssetCategoryInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3663,6 +3755,7 @@ export type AssetUncheckedUpdateManyWithoutAssetCategoryInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3687,6 +3780,7 @@ export type AssetCreateManyAssetModelInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -3707,6 +3801,7 @@ export type AssetUpdateWithoutAssetModelInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3745,6 +3840,7 @@ export type AssetUncheckedUpdateWithoutAssetModelInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3779,6 +3875,7 @@ export type AssetUncheckedUpdateManyWithoutAssetModelInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3804,6 +3901,7 @@ export type AssetCreateManyCurrentStockLocationInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -3823,6 +3921,7 @@ export type AssetUpdateWithoutCurrentStockLocationInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3862,6 +3961,7 @@ export type AssetUncheckedUpdateWithoutCurrentStockLocationInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3896,6 +3996,7 @@ export type AssetUncheckedUpdateManyWithoutCurrentStockLocationInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3919,6 +4020,7 @@ export type AssetCreateManyContractInput = {
   serialNumber?: string | null
   purchaseDate?: Date | string | null
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
   depreciationModel?: string | null
   depreciationStart?: Date | string | null
@@ -3939,6 +4041,7 @@ export type AssetUpdateWithoutContractInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -3977,6 +4080,7 @@ export type AssetUncheckedUpdateWithoutContractInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4011,6 +4115,7 @@ export type AssetUncheckedUpdateManyWithoutContractInput = {
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -4148,6 +4253,7 @@ export type AssetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   serialNumber?: boolean
   purchaseDate?: boolean
   purchaseCost?: boolean
+  purchaseCostSar?: boolean
   currency?: boolean
   depreciationModel?: boolean
   depreciationStart?: boolean
@@ -4190,6 +4296,7 @@ export type AssetSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   serialNumber?: boolean
   purchaseDate?: boolean
   purchaseCost?: boolean
+  purchaseCostSar?: boolean
   currency?: boolean
   depreciationModel?: boolean
   depreciationStart?: boolean
@@ -4221,6 +4328,7 @@ export type AssetSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   serialNumber?: boolean
   purchaseDate?: boolean
   purchaseCost?: boolean
+  purchaseCostSar?: boolean
   currency?: boolean
   depreciationModel?: boolean
   depreciationStart?: boolean
@@ -4252,6 +4360,7 @@ export type AssetSelectScalar = {
   serialNumber?: boolean
   purchaseDate?: boolean
   purchaseCost?: boolean
+  purchaseCostSar?: boolean
   currency?: boolean
   depreciationModel?: boolean
   depreciationStart?: boolean
@@ -4266,7 +4375,7 @@ export type AssetSelectScalar = {
   updatedAt?: boolean
 }
 
-export type AssetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "assetTag" | "assetCategoryId" | "assetModelId" | "vendorId" | "contractId" | "lifecycleStateId" | "serialNumber" | "purchaseDate" | "purchaseCost" | "currency" | "depreciationModel" | "depreciationStart" | "depreciationEnd" | "warrantyEndDate" | "condition" | "currentStockLocationId" | "attributes" | "note" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["asset"]>
+export type AssetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "assetTag" | "assetCategoryId" | "assetModelId" | "vendorId" | "contractId" | "lifecycleStateId" | "serialNumber" | "purchaseDate" | "purchaseCost" | "purchaseCostSar" | "currency" | "depreciationModel" | "depreciationStart" | "depreciationEnd" | "warrantyEndDate" | "condition" | "currentStockLocationId" | "attributes" | "note" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["asset"]>
 export type AssetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   assetCategory?: boolean | Prisma.AssetCategoryDefaultArgs<ExtArgs>
   assetModel?: boolean | Prisma.Asset$assetModelArgs<ExtArgs>
@@ -4334,6 +4443,7 @@ export type $AssetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     serialNumber: string | null
     purchaseDate: Date | null
     purchaseCost: runtime.Decimal | null
+    purchaseCostSar: runtime.Decimal | null
     currency: string | null
     depreciationModel: string | null
     depreciationStart: Date | null
@@ -4795,6 +4905,7 @@ export interface AssetFieldRefs {
   readonly serialNumber: Prisma.FieldRef<"Asset", 'String'>
   readonly purchaseDate: Prisma.FieldRef<"Asset", 'DateTime'>
   readonly purchaseCost: Prisma.FieldRef<"Asset", 'Decimal'>
+  readonly purchaseCostSar: Prisma.FieldRef<"Asset", 'Decimal'>
   readonly currency: Prisma.FieldRef<"Asset", 'String'>
   readonly depreciationModel: Prisma.FieldRef<"Asset", 'String'>
   readonly depreciationStart: Prisma.FieldRef<"Asset", 'DateTime'>

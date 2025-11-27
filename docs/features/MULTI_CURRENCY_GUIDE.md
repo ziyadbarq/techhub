@@ -88,6 +88,83 @@ Asset 3: SAR 500 × 1.00 = SAR 500
 Total: SAR 1,695
 ```
 
+### SAR Snapshot Columns (Frozen Values)
+
+For regulatory compliance and audit stability, certain entities store a **frozen SAR snapshot** at the time of creation or update. This provides stable financial reporting without requiring historical exchange rate lookups.
+
+#### Entities with SAR Snapshots
+
+| Entity | Original Field | SAR Snapshot Field | Recalculation Trigger |
+|--------|---------------|-------------------|----------------------|
+| Asset | `purchaseCost` | `purchaseCostSar` | Cost or currency changes |
+| Contract | `totalValue` | `totalValueSar` | Value or currency changes |
+
+#### How It Works
+
+1. **On Create**: When an entity is created with a cost/value and currency, the system looks up the active exchange rate and stores the SAR equivalent.
+
+2. **On Update**: The SAR snapshot is recalculated **only when** the cost/value OR currency changes. Other field updates leave the snapshot unchanged.
+
+3. **Missing Exchange Rate**: If no active exchange rate exists for the currency, the SAR snapshot is set to `null` (the record is still saved).
+
+4. **Existing Records**: Records created before this feature have `null` SAR snapshots - they are NOT backfilled.
+
+#### Example Flow
+
+```typescript
+// Asset created with USD 1000 when 1 USD = 3.75 SAR
+{
+  purchaseCost: 1000,
+  currency: "USD",
+  purchaseCostSar: 3750  // Frozen at creation time
+}
+
+// Later: Exchange rate changes to 3.80 SAR
+// Asset's purchaseCostSar remains 3750 (unchanged)
+
+// Later: User updates purchaseCost to 1200
+// purchaseCostSar recalculated: 1200 × 3.80 = 4560
+{
+  purchaseCost: 1200,
+  currency: "USD",
+  purchaseCostSar: 4560  // Recalculated with current rate
+}
+```
+
+#### Service: ISarConversionService
+
+The conversion logic is centralized in a reusable service:
+
+**Interface**: `src/core/services/sar-conversion.service.interface.ts`
+
+```typescript
+interface ISarConversionService {
+  // Convert amount to SAR using active exchange rate
+  convertToSarIfNeeded(
+    amount: number | null | undefined,
+    currency: string | null | undefined,
+  ): Promise<number | null>;
+
+  // Determine if SAR recalculation is needed
+  shouldRecalculateSar(
+    changes: { amount?: number | null; currency?: string | null },
+    currentAmount: number | null,
+    currentCurrency: string | null,
+  ): SarRecalculationResult;
+}
+```
+
+**Implementation**: `src/infrastructure/services/sar-conversion.service.ts`
+
+#### Adding SAR Snapshot to a New Entity
+
+1. **Schema**: Add nullable `Decimal(12, 2)` column (e.g., `costSar`)
+2. **Entity**: Add property to Props and CreateProps interfaces
+3. **Create Use Case**: Inject `ISarConversionService`, call `convertToSarIfNeeded()` before creating entity
+4. **Update Use Case**: Call `shouldRecalculateSar()` to check if recalculation needed
+5. **Repository**: Map the field in create/update/toDomain methods
+6. **Presenter**: Expose the field in the DTO
+
 ## Architecture
 
 ### Database Schema
@@ -812,15 +889,18 @@ npm run reset
 - Show loading state while fetching conversions
 - Handle missing exchange rates gracefully (show single currency)
 - Use exchange rate tooltips for transparency
+- Use SAR snapshot columns for audit/compliance requirements (frozen values)
+- Use `ISarConversionService` for centralized SAR conversion logic
 
 ### Don't ❌
 
 - Hardcode exchange rates in code
-- Store SAR-converted amounts in database (store original + currency)
+- Store **live-calculated** SAR amounts that should reflect current rates (use real-time conversion instead)
 - Aggregate mixed currencies without conversion
 - Use `console.log` for currency conversion errors
 - Skip permission checks for exchange rate management
 - Update exchange rates without considering impact on existing data
+- Backfill SAR snapshots for historical records (they should remain null)
 
 ## Future Enhancements
 

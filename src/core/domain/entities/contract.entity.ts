@@ -17,6 +17,7 @@ export interface CreateContractProps {
   renewalTerms?: string | null;
   slaDefinition?: Record<string, unknown> | null;
   totalValue?: number | null;
+  totalValueSar?: number | null; // Frozen SAR snapshot at create/update
   currency?: string | null;
   note?: string | null;
 }
@@ -122,6 +123,14 @@ export class Contract {
     this.props.currency = value;
   }
 
+  get totalValueSar(): number | null {
+    return this.props.totalValueSar ?? null;
+  }
+
+  set totalValueSar(value: number | null) {
+    this.props.totalValueSar = value;
+  }
+
   get note(): string | null {
     return this.props.note ?? null;
   }
@@ -201,6 +210,7 @@ export class Contract {
       renewalTerms: props.renewalTerms?.trim() || null,
       slaDefinition: props.slaDefinition ?? null,
       totalValue: props.totalValue ?? null,
+      totalValueSar: props.totalValueSar ?? null,
       currency: props.currency?.trim() || null,
       note: props.note?.trim() || null,
       createdAt: now,

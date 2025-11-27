@@ -17,6 +17,7 @@ export interface ContractDTO {
   renewalTerms: string | null;
   slaDefinition: Record<string, unknown> | null;
   totalValue: number | null;
+  totalValueSar: number | null;
   currency: string | null;
   note: string | null;
   createdAt: Date;
@@ -52,6 +53,7 @@ export class ContractPresenter {
       renewalTerms: contract.renewalTerms,
       slaDefinition: contract.slaDefinition,
       totalValue: contract.totalValue,
+      totalValueSar: contract.totalValueSar,
       currency: contract.currency,
       note: contract.note,
       createdAt: contract.createdAt,
