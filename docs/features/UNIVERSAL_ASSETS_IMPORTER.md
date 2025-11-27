@@ -4,12 +4,12 @@
 
 ## Overview
 
-The Universal Assets Importer is a specialized composite import feature that allows importing assets along with all their related entities (vendor, category, model, location, stock location, custom fields) in a single CSV file. It automatically creates missing entities and handles asset assignments.
+The Universal Assets Importer is a specialized composite import feature that allows importing assets along with all their related entities (manufacturer, category, model, location, stock location, custom fields) in a single CSV file. It automatically creates missing entities and handles asset assignments.
 
 ### Key Features
 
 - **Single-file import**: All asset-related data in one CSV
-- **Auto-creation**: Missing Vendor, Category, Model, Location, StockLocation entities created automatically
+- **Auto-creation**: Missing Manufacturer, Category, Model, Location, StockLocation entities created automatically
 - **Custom fields**: Auto-infers data types and creates FieldDefinitions
 - **Assignments**: Handles asset-to-person assignments with re-assignment support
 - **Prefixed columns**: Clear, organized column naming (e.g., `vendor.name`, `asset.serial_number`)
@@ -51,9 +51,9 @@ All columns must use a prefix to indicate which entity the field belongs to:
 |--------|--------|-------------|-----------------|-------------|
 | `person.` | Person | No | `email` | Assignee (must exist in system) |
 | `asset.` | Asset | - | `serial_number` | Core asset fields |
-| `vendor.` | Vendor | Yes | `code` or `name` | Supplier/manufacturer |
+| `vendor.` | Vendor | Yes | `code` or `name` | Manufacturer (company that makes the model) |
 | `category.` | AssetCategory | Yes | `code` or `name` | Asset classification |
-| `model.` | AssetModel | Yes | `code` or `name` | Product model |
+| `model.` | AssetModel | Yes | `code` or `name` | Product model (linked to manufacturer) |
 | `location.` | Location | Yes | `code` or `name` | Physical location |
 | `stock_location.` | StockLocation | Yes | `code` or `name` | Warehouse/storage |
 | `lifecycle.` | LifecycleState | No | `code` | Asset lifecycle state (lookup only) |
@@ -84,12 +84,12 @@ All columns must use a prefix to indicate which entity the field belongs to:
 | `asset.warranty_end_date` | Warranty expiration | No |
 | `asset.notes` | Additional notes | No |
 
-### Vendor Fields
+### Manufacturer Fields (vendor.*)
 
 | Column | Description | Required |
 |--------|-------------|----------|
-| `vendor.code` | Unique vendor code | Code OR name |
-| `vendor.name` | Vendor display name | Code OR name |
+| `vendor.code` | Unique manufacturer/vendor code | Code OR name |
+| `vendor.name` | Manufacturer name (company that makes the model) | Code OR name |
 
 ### Category Fields
 
@@ -105,7 +105,7 @@ All columns must use a prefix to indicate which entity the field belongs to:
 | `model.code` | Unique model code | Code OR name |
 | `model.name` | Model display name | Code OR name |
 
-**Note**: Model requires a Vendor to be specified in the same row.
+**Note**: Model requires a Manufacturer (vendor.*) to be specified in the same row.
 
 ### Location Fields
 
@@ -160,9 +160,9 @@ If both match an existing record, the asset is **updated**. Otherwise, a new ass
 
 | Entity | Created When | Default Values |
 |--------|--------------|----------------|
-| Vendor | Code/name not found | `vendorType: OTHER`, `isActive: true` |
+| Manufacturer (Vendor) | Code/name not found | `vendorType: OTHER`, `isActive: true` |
 | Category | Code/name not found | Generated code from name |
-| Model | Code/name not found | Linked to vendor from same row |
+| Model | Code/name not found | Linked to manufacturer from same row |
 | Location | Code/name not found | `locationType: BUILDING` |
 | StockLocation | Code/name not found | `isActive: true` |
 | FieldDefinition | Custom field not defined | Inferred type, linked to category |
@@ -224,9 +224,9 @@ The import runs through 11 sequential phases:
 2. **Parsing columns** - Detect and validate prefixed columns
 3. **Grouping rows** - Parse each row into grouped data by prefix
 4. **Validating persons** - Look up and validate person emails
-5. **Resolving vendors** - Find or create vendors
+5. **Resolving manufacturers** - Find or create manufacturers (vendors)
 6. **Resolving categories** - Find or create asset categories
-7. **Resolving models** - Find or create asset models
+7. **Resolving models** - Find or create asset models (linked to manufacturers)
 8. **Resolving locations** - Find or create locations
 9. **Processing custom fields** - Infer types and create field definitions
 10. **Processing assets** - Create or update assets
@@ -279,7 +279,7 @@ The Universal Assets Importer is integrated into the existing 7-step Data Import
 1. **Prepare CSV** with columns:
    - `person.email` - Employee email
    - `asset.serial_number` - Laptop serial
-   - `vendor.name` - Dell, Lenovo, HP
+   - `vendor.name` - Manufacturer (Dell, Lenovo, HP)
    - `category.code` - LAPTOP
    - `model.name` - Model names
    - `location.code` - Office locations
@@ -287,9 +287,9 @@ The Universal Assets Importer is integrated into the existing 7-step Data Import
    - `custom.cpu_cores` - CPU cores
 
 2. **Upload and import**:
-   - System creates missing vendors (Dell, Lenovo, HP)
+   - System creates missing manufacturers (Dell, Lenovo, HP)
    - System creates category (LAPTOP) if not exists
-   - System creates models linked to vendors
+   - System creates models linked to their manufacturers
    - System creates locations
    - System creates custom fields (ram_gb as INTEGER, cpu_cores as INTEGER)
    - System creates assets linked to all entities
@@ -297,7 +297,7 @@ The Universal Assets Importer is integrated into the existing 7-step Data Import
 
 3. **Review results**:
    - 95 assets created
-   - 3 vendors auto-created
+   - 3 manufacturers auto-created
    - 1 category auto-created
    - 5 models auto-created
    - 2 custom fields created
@@ -312,8 +312,8 @@ The Universal Assets Importer is integrated into the existing 7-step Data Import
 | Issue | Cause | Solution |
 |-------|-------|----------|
 | "Person not found" | Email doesn't match any Person | Create person first or check email spelling |
-| "Vendor creation failed" | Duplicate vendor code | Use existing vendor code |
-| "Model requires vendor" | No vendor.* columns | Add vendor.code or vendor.name column |
+| "Manufacturer creation failed" | Duplicate vendor code | Use existing vendor code |
+| "Model requires manufacturer" | No vendor.* columns | Add vendor.code or vendor.name column |
 | "Invalid date format" | Non-standard date format | Use YYYY-MM-DD format |
 | "Custom field type mismatch" | Mixed data types in column | Ensure consistent values in custom fields |
 

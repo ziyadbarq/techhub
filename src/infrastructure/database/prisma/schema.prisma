@@ -1453,6 +1453,8 @@ model Service {
   owners                  ServiceOwnership[]
   infrastructure          ServiceInfrastructure[]
   assets                  ServiceAsset[]
+  outgoingRelationships   ServiceRelationship[]    @relation("ServiceRelationshipFrom")
+  incomingRelationships   ServiceRelationship[]    @relation("ServiceRelationshipTo")
 
   // Indexes
   @@index([serviceType])
@@ -1540,6 +1542,40 @@ model ServiceAsset {
   @@index([assetId])
   @@index([relationship])
   @@map("service_assets")
+}
+
+// ServiceRelationship model
+// Service-to-service dependencies for microservices architecture
+model ServiceRelationship {
+  id               String                  @id @default(cuid())
+  fromServiceId    String                  @map("from_service_id")
+  toServiceId      String                  @map("to_service_id")
+  relationshipType ServiceRelationshipType @map("relationship_type")
+  isCritical       Boolean                 @default(false) @map("is_critical")
+  description      String?                 @db.Text
+  metadata         Json?
+  isActive         Boolean                 @default(true) @map("is_active")
+  validFrom        DateTime                @default(now()) @map("valid_from")
+  validTo          DateTime?               @map("valid_to")
+  createdAt        DateTime                @default(now()) @map("created_at")
+  updatedAt        DateTime                @updatedAt @map("updated_at")
+
+  // Relations
+  fromService Service @relation("ServiceRelationshipFrom", fields: [fromServiceId], references: [id], onDelete: Restrict)
+  toService   Service @relation("ServiceRelationshipTo", fields: [toServiceId], references: [id], onDelete: Restrict)
+
+  // Unique constraint: prevent duplicate relationships of same type
+  @@unique([fromServiceId, toServiceId, relationshipType])
+
+  // Indexes
+  @@index([fromServiceId])
+  @@index([toServiceId])
+  @@index([relationshipType])
+  @@index([isActive])
+  @@index([isCritical])
+  @@index([fromServiceId, isActive])
+  @@index([toServiceId, isActive])
+  @@map("service_relationships")
 }
 
 // ============================================
@@ -2253,6 +2289,15 @@ enum AssetRelationship {
   DEPENDS_ON // Service depends on asset
   MONITORS // Asset monitors the service
   BACKS_UP // Asset backs up the service
+}
+
+// Service-to-service relationship types
+enum ServiceRelationshipType {
+  DEPENDS_ON // Service A depends on Service B
+  CALLS // Service A calls Service B (API/RPC)
+  PUBLISHES_EVENTS_TO // Service A publishes events to Service B
+  CONSUMES_EVENTS_FROM // Service A consumes events from Service B
+  BACKUP_FOR // Service A is backup for Service B
 }
 
 // ============================================

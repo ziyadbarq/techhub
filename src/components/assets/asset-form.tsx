@@ -436,13 +436,13 @@ export function AssetForm({
                 )}
               />
 
-              {/* Vendor */}
+              {/* Supplier (Override) */}
               <FormField
                 control={form.control}
                 name="vendorId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Vendor (Optional)</FormLabel>
+                    <FormLabel>Supplier (Optional)</FormLabel>
                     <SearchableSelect
                       options={vendorOptions}
                       value={field.value ?? NONE_OPTION_VALUE}
@@ -451,13 +451,14 @@ export function AssetForm({
                           value === NONE_OPTION_VALUE ? null : value,
                         )
                       }
-                      placeholder="Select a vendor..."
-                      searchPlaceholder="Search vendors..."
-                      emptyMessage="No vendors found"
+                      placeholder="Select a supplier..."
+                      searchPlaceholder="Search suppliers..."
+                      emptyMessage="No suppliers found"
                       disabled={loading}
                     />
                     <FormDescription>
-                      The supplier or manufacturer
+                      The company that supplied this specific asset (overrides
+                      manufacturer from model)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

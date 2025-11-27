@@ -116,6 +116,7 @@ export const DI_TOKENS = {
   IServiceInfrastructureRepository: Symbol.for(
     "IServiceInfrastructureRepository",
   ),
+  IServiceRelationshipRepository: Symbol.for("IServiceRelationshipRepository"),
   ISearchRepository: Symbol.for("ISearchRepository"),
 
   // ==========================================
@@ -807,6 +808,24 @@ export const DI_TOKENS = {
   UnlinkServiceFromAssetUseCase: Symbol.for("UnlinkServiceFromAssetUseCase"),
   GetServiceAssetsUseCase: Symbol.for("GetServiceAssetsUseCase"),
   GetAssetServicesUseCase: Symbol.for("GetAssetServicesUseCase"),
+
+  // Service Management: Service Relationship Use Cases
+  CreateServiceRelationshipUseCase: Symbol.for(
+    "CreateServiceRelationshipUseCase",
+  ),
+  GetServiceRelationshipUseCase: Symbol.for("GetServiceRelationshipUseCase"),
+  UpdateServiceRelationshipUseCase: Symbol.for(
+    "UpdateServiceRelationshipUseCase",
+  ),
+  DeleteServiceRelationshipUseCase: Symbol.for(
+    "DeleteServiceRelationshipUseCase",
+  ),
+  ListServiceRelationshipsUseCase: Symbol.for(
+    "ListServiceRelationshipsUseCase",
+  ),
+  GetServiceDependenciesUseCase: Symbol.for("GetServiceDependenciesUseCase"),
+  GetServiceDependentsUseCase: Symbol.for("GetServiceDependentsUseCase"),
+  GetImpactedServicesUseCase: Symbol.for("GetImpactedServicesUseCase"),
 
   // ==========================================
   // Attachments Module Tokens

@@ -295,6 +295,11 @@ export type ServiceInfrastructure = Prisma.ServiceInfrastructureModel
  */
 export type ServiceAsset = Prisma.ServiceAssetModel
 /**
+ * Model ServiceRelationship
+ * 
+ */
+export type ServiceRelationship = Prisma.ServiceRelationshipModel
+/**
  * Model ContractType
  * 
  */

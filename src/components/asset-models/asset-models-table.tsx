@@ -142,13 +142,13 @@ export function AssetModelsTable({
     {
       accessorKey: "vendorId",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Vendor" />
+        <DataTableColumnHeader column={column} title="Manufacturer" />
       ),
       cell: ({ row }) => (
         <EntityDisplay name={row.original.vendorName} icon={Building2} />
       ),
       meta: {
-        label: "Vendor",
+        label: "Manufacturer",
       },
     },
     {

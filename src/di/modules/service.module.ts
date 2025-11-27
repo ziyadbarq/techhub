@@ -25,6 +25,10 @@ import { PrismaBusinessProcessRepository } from "@/infrastructure/repositories/p
 import type { IServiceInfrastructureRepository } from "@/core/repositories/service-infrastructure.repository.interface";
 import { PrismaServiceInfrastructureRepository } from "@/infrastructure/repositories/prisma-service-infrastructure.repository";
 
+// Service Relationship Repository
+import type { IServiceRelationshipRepository } from "@/core/repositories/service-relationship.repository.interface";
+import { PrismaServiceRelationshipRepository } from "@/infrastructure/repositories/prisma-service-relationship.repository";
+
 // Service Use Cases
 import {
   CreateServiceUseCase,
@@ -69,6 +73,18 @@ import {
   GetServiceAssetsUseCase,
   GetAssetServicesUseCase,
 } from "@/core/use-cases/service-asset";
+
+// Service Relationship Use Cases
+import {
+  CreateServiceRelationshipUseCase,
+  GetServiceRelationshipUseCase,
+  UpdateServiceRelationshipUseCase,
+  DeleteServiceRelationshipUseCase,
+  ListServiceRelationshipsUseCase,
+  GetServiceDependenciesUseCase,
+  GetServiceDependentsUseCase,
+  GetImpactedServicesUseCase,
+} from "@/core/use-cases/service-relationship";
 
 const diLogger = logger.scope("DI");
 
@@ -253,6 +269,73 @@ export function bindServiceDependencies(container: Container): void {
   container
     .bind<GetAssetServicesUseCase>(DI_TOKENS.GetAssetServicesUseCase)
     .to(GetAssetServicesUseCase)
+    .inSingletonScope();
+
+  // ==========================================
+  // Repository - Service Relationship
+  // ==========================================
+
+  container
+    .bind<IServiceRelationshipRepository>(
+      DI_TOKENS.IServiceRelationshipRepository,
+    )
+    .to(PrismaServiceRelationshipRepository)
+    .inSingletonScope();
+
+  // ==========================================
+  // Use Cases - Service Relationship
+  // ==========================================
+
+  container
+    .bind<CreateServiceRelationshipUseCase>(
+      DI_TOKENS.CreateServiceRelationshipUseCase,
+    )
+    .to(CreateServiceRelationshipUseCase)
+    .inSingletonScope();
+
+  container
+    .bind<GetServiceRelationshipUseCase>(
+      DI_TOKENS.GetServiceRelationshipUseCase,
+    )
+    .to(GetServiceRelationshipUseCase)
+    .inSingletonScope();
+
+  container
+    .bind<UpdateServiceRelationshipUseCase>(
+      DI_TOKENS.UpdateServiceRelationshipUseCase,
+    )
+    .to(UpdateServiceRelationshipUseCase)
+    .inSingletonScope();
+
+  container
+    .bind<DeleteServiceRelationshipUseCase>(
+      DI_TOKENS.DeleteServiceRelationshipUseCase,
+    )
+    .to(DeleteServiceRelationshipUseCase)
+    .inSingletonScope();
+
+  container
+    .bind<ListServiceRelationshipsUseCase>(
+      DI_TOKENS.ListServiceRelationshipsUseCase,
+    )
+    .to(ListServiceRelationshipsUseCase)
+    .inSingletonScope();
+
+  container
+    .bind<GetServiceDependenciesUseCase>(
+      DI_TOKENS.GetServiceDependenciesUseCase,
+    )
+    .to(GetServiceDependenciesUseCase)
+    .inSingletonScope();
+
+  container
+    .bind<GetServiceDependentsUseCase>(DI_TOKENS.GetServiceDependentsUseCase)
+    .to(GetServiceDependentsUseCase)
+    .inSingletonScope();
+
+  container
+    .bind<GetImpactedServicesUseCase>(DI_TOKENS.GetImpactedServicesUseCase)
+    .to(GetImpactedServicesUseCase)
     .inSingletonScope();
 
   diLogger.debug(

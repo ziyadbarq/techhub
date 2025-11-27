@@ -1,18 +1,21 @@
 # Service Management System
 
 **Status**: ✅ Implemented (Layer 2 Entity)
-**Version**: 1.0.0
-**Last Updated**: 2025-11-23
+**Version**: 1.1.0
+**Last Updated**: 2025-11-27
 
 ## Table of Contents
 
 - [Overview](#overview)
 - [Business Context](#business-context)
 - [Database Schema](#database-schema)
+  - [ServiceRelationship Model](#servicerelationship-model)
 - [Domain Entities](#domain-entities)
 - [Use Cases](#use-cases)
+  - [ServiceRelationship Use Cases](#servicerelationship-use-cases)
 - [Interface Adapters](#interface-adapters)
 - [UI Components](#ui-components)
+  - [ServiceDependenciesTab](#servicedependenciestab)
 - [Permissions (RBAC)](#permissions-rbac)
 - [Seed Data](#seed-data)
 - [API Reference](#api-reference)
@@ -32,22 +35,24 @@ The Service Management system provides comprehensive IT Service Management (ITSM
 - **Lifecycle Management**: Deployment dates, status tracking, patch management, decommission planning
 - **Business Alignment**: Map services to business processes
 - **Asset Relationships**: Link services to supporting assets (servers, databases, etc.)
+- **Service Dependencies**: Track service-to-service relationships with impact analysis
 - **Governance**: Compliance tracking and central asset register inclusion
 
 ### Entities
 
-The Service Management system consists of 4 main entities:
+The Service Management system consists of 6 main entities:
 
 1. **Service** - Main service catalog entity
 2. **ServiceOwnership** - Join table for multiple owners per service
 3. **BusinessProcess** - Business process mapping for service alignment
 4. **ServiceInfrastructure** - Cloud/on-prem infrastructure details
 5. **ServiceAsset** - Many-to-many relationship between services and assets
+6. **ServiceRelationship** - Service-to-service dependencies with impact analysis
 
 ### Statistics
 
-- **Entities**: 5 models
-- **Use Cases**: 25+ use cases across all modules
+- **Entities**: 6 models
+- **Use Cases**: 33+ use cases across all modules
 - **Permissions**: 7 permissions (SERVICES_VIEW, CREATE, UPDATE, DELETE, MANAGE, BUSINESS_PROCESSES_VIEW, MANAGE)
 - **Seeded Data**: 25 business processes, 80+ services with full metadata
 
@@ -299,6 +304,60 @@ enum AssetRelationship {
 }
 ```
 
+### ServiceRelationship Model
+
+Tracks dependencies between services for impact analysis.
+
+```prisma
+model ServiceRelationship {
+  id               String                  @id @default(cuid())
+  fromServiceId    String
+  toServiceId      String
+  relationshipType ServiceRelationshipType
+  isCritical       Boolean                 @default(false)
+  description      String?                 @db.Text
+  metadata         Json?
+  isActive         Boolean                 @default(true)
+  validFrom        DateTime                @default(now())
+  validTo          DateTime?
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
+
+  fromService Service @relation("ServiceRelationshipFrom", fields: [fromServiceId], references: [id], onDelete: Cascade)
+  toService   Service @relation("ServiceRelationshipTo", fields: [toServiceId], references: [id], onDelete: Cascade)
+
+  @@unique([fromServiceId, toServiceId, relationshipType])
+  @@index([fromServiceId])
+  @@index([toServiceId])
+  @@index([relationshipType])
+  @@index([isCritical])
+  @@index([isActive])
+  @@map("service_relationships")
+}
+
+enum ServiceRelationshipType {
+  DEPENDS_ON            // Service requires target to function
+  CALLS                 // Service makes API/network calls to target
+  PUBLISHES_EVENTS_TO   // Service publishes events to target
+  CONSUMES_EVENTS_FROM  // Service consumes events from target
+  BACKUP_FOR            // Service is a backup/failover for target
+}
+```
+
+#### Relationship Types
+
+| Type | Description | Example |
+|------|-------------|---------|
+| `DEPENDS_ON` | Hard dependency - service fails without target | Mobile App → Auth Service |
+| `CALLS` | API/network communication | Customer Portal → Core API |
+| `PUBLISHES_EVENTS_TO` | Event producer relationship | Payment Service → Kafka |
+| `CONSUMES_EVENTS_FROM` | Event consumer relationship | Notification Service → Kafka |
+| `BACKUP_FOR` | Failover/DR relationship | DR Site Service → Prod Service |
+
+#### Impact Analysis
+
+The ServiceRelationship entity enables recursive impact analysis using PostgreSQL's WITH RECURSIVE CTE. When a service fails, the system can identify all affected services up to 3 levels deep (configurable).
+
 ## Domain Entities
 
 ### Service Entity
@@ -454,6 +513,21 @@ All use cases follow Clean Architecture patterns with dependency injection.
 | `GetServiceAssetsUseCase` | Get assets for service | SERVICES_VIEW |
 | `GetAssetServicesUseCase` | Get services for asset | SERVICES_VIEW |
 
+### ServiceRelationship Use Cases
+
+**Location**: `src/core/use-cases/service-relationship/`
+
+| Use Case | Description | Permission Required |
+|----------|-------------|---------------------|
+| `CreateServiceRelationshipUseCase` | Create dependency between services | SERVICES_MANAGE |
+| `GetServiceRelationshipUseCase` | Get relationship by ID | SERVICES_VIEW |
+| `UpdateServiceRelationshipUseCase` | Update relationship details | SERVICES_MANAGE |
+| `DeleteServiceRelationshipUseCase` | Delete relationship | SERVICES_MANAGE |
+| `ListServiceRelationshipsUseCase` | List relationships with filters | SERVICES_VIEW |
+| `GetServiceDependenciesUseCase` | Get services this service depends on | SERVICES_VIEW |
+| `GetServiceDependentsUseCase` | Get services that depend on this service | SERVICES_VIEW |
+| `GetImpactedServicesUseCase` | Recursive impact analysis (3 levels) | SERVICES_VIEW |
+
 ## Interface Adapters
 
 ### DTOs (Data Transfer Objects)
@@ -564,6 +638,22 @@ export async function getServiceAssetsAction(serviceId: string): Promise<ActionR
 export async function getAssetServicesAction(assetId: string): Promise<ActionResponse<ServiceAssetDTO[]>>
 ```
 
+#### Service Relationship Controller
+**Location**: `src/interface-adapters/controllers/service-relationship.controller.ts`
+
+Manages service-to-service dependencies and impact analysis.
+
+```typescript
+export async function createServiceRelationshipAction(data: CreateServiceRelationshipDTO): Promise<ActionResponse<ServiceRelationshipDTO>>
+export async function getServiceRelationshipAction(id: string): Promise<ActionResponse<ServiceRelationshipDTO>>
+export async function updateServiceRelationshipAction(id: string, data: UpdateServiceRelationshipDTO): Promise<ActionResponse<ServiceRelationshipDTO>>
+export async function deleteServiceRelationshipAction(id: string): Promise<ActionResponse<void>>
+export async function listServiceRelationshipsAction(serviceId?: string, relationshipType?: ServiceRelationshipType): Promise<ActionResponse<ServiceRelationshipDTO[]>>
+export async function getServiceDependenciesAction(serviceId: string): Promise<ActionResponse<ServiceRelationshipDTO[]>>
+export async function getServiceDependentsAction(serviceId: string): Promise<ActionResponse<ServiceRelationshipDTO[]>>
+export async function getImpactedServicesAction(serviceId: string, maxDepth?: number): Promise<ActionResponse<ImpactedServiceDTO[]>>
+```
+
 ## UI Components
 
 ### Core Components
@@ -604,11 +694,12 @@ export async function getAssetServicesAction(assetId: string): Promise<ActionRes
 **Architecture**: Refactored using DRY/SOLID principles (see [REFACTORING_PATTERNS.md](../guides/REFACTORING_PATTERNS.md#pattern-7-reusable-component-library))
 
 **Features**:
-- Tabs: Overview, Owners, Infrastructure, Assets, History
+- Tabs: Overview, Owners, Infrastructure, Assets, Dependencies, History
 - Overview: All classification fields, lifecycle dates, vendor SLA
 - Owners: Grouped by type (Technical, Product, Business) with primary indicator
 - Infrastructure: Location, cloud details, IP/hostname, backup status
 - Assets: Linked assets with relationship type
+- Dependencies: Service-to-service relationships with impact analysis
 
 **Extracted Components**:
 - **[service-detail-fields.tsx](../../src/components/services/service-detail-fields.tsx)** - Reusable display components:
@@ -663,6 +754,29 @@ export async function getAssetServicesAction(assetId: string): Promise<ActionRes
 - Relationship type dropdown (HOSTS, SUPPORTS, DEPENDS_ON, MONITORS, BACKS_UP)
 - Description text area
 - Supports null asset for third-party services
+
+### ServiceDependenciesTab
+
+**Location**: `src/components/services/dependencies/service-dependencies-tab.tsx`
+
+**Features**:
+- **Impact Analysis Card**: Shows services that would be affected if this service goes down (3 levels deep)
+- **Dependencies Table**: Services this service depends on (outgoing)
+- **Dependents Table**: Services that depend on this service (incoming)
+- Add/Delete dependency relationships
+- Relationship type badges (DEPENDS_ON, CALLS, PUBLISHES_EVENTS_TO, etc.)
+- Critical dependency indicators
+
+### ServiceRelationshipForm
+
+**Location**: `src/components/services/dependencies/service-relationship-form.tsx`
+
+**Features**:
+- Target service selector (excludes current service)
+- Relationship type dropdown with descriptions
+- Critical dependency checkbox
+- Description text area
+- Dialog-based form with validation
 
 ## Permissions (RBAC)
 
@@ -923,7 +1037,7 @@ const result = await searchServicesAction({
 
 - **Service Dashboard**: Analytics on service distribution, criticality, ownership
 - **Service Health Monitoring**: Integration with monitoring tools (Prometheus, DataDog)
-- **Dependency Mapping**: Service-to-service dependencies (microservices)
+- ~~**Dependency Mapping**: Service-to-service dependencies (microservices)~~ ✅ **Implemented** (ServiceRelationship)
 - **Change Management**: Track service changes, deployments, incidents
 - **Compliance Automation**: Auto-generate compliance reports (SAMA, ISO 27001)
 - **Cost Tracking**: Link services to financial costs (cloud spend, licensing)

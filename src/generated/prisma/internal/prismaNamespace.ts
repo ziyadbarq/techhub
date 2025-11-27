@@ -435,6 +435,7 @@ export const ModelName = {
   ServiceOwnership: 'ServiceOwnership',
   ServiceInfrastructure: 'ServiceInfrastructure',
   ServiceAsset: 'ServiceAsset',
+  ServiceRelationship: 'ServiceRelationship',
   ContractType: 'ContractType',
   Contract: 'Contract',
   ContractLinkedObject: 'ContractLinkedObject',
@@ -470,7 +471,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verification" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "organizationUnit" | "person" | "personRoleAssignment" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "maintenanceSchedule" | "maintenanceRecord" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "contractType" | "contract" | "contractLinkedObject" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "attachmentType" | "attachment" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock" | "featureFlag" | "featureFlagAuditLog"
+    modelProps: "user" | "account" | "session" | "verification" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "organizationUnit" | "person" | "personRoleAssignment" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "maintenanceSchedule" | "maintenanceRecord" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "contractType" | "contract" | "contractLinkedObject" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "attachmentType" | "attachment" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock" | "featureFlag" | "featureFlagAuditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -4248,6 +4249,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ServiceRelationship: {
+      payload: Prisma.$ServiceRelationshipPayload<ExtArgs>
+      fields: Prisma.ServiceRelationshipFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ServiceRelationshipFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceRelationshipPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ServiceRelationshipFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceRelationshipPayload>
+        }
+        findFirst: {
+          args: Prisma.ServiceRelationshipFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceRelationshipPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ServiceRelationshipFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceRelationshipPayload>
+        }
+        findMany: {
+          args: Prisma.ServiceRelationshipFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceRelationshipPayload>[]
+        }
+        create: {
+          args: Prisma.ServiceRelationshipCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceRelationshipPayload>
+        }
+        createMany: {
+          args: Prisma.ServiceRelationshipCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ServiceRelationshipCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceRelationshipPayload>[]
+        }
+        delete: {
+          args: Prisma.ServiceRelationshipDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceRelationshipPayload>
+        }
+        update: {
+          args: Prisma.ServiceRelationshipUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceRelationshipPayload>
+        }
+        deleteMany: {
+          args: Prisma.ServiceRelationshipDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ServiceRelationshipUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ServiceRelationshipUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceRelationshipPayload>[]
+        }
+        upsert: {
+          args: Prisma.ServiceRelationshipUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ServiceRelationshipPayload>
+        }
+        aggregate: {
+          args: Prisma.ServiceRelationshipAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateServiceRelationship>
+        }
+        groupBy: {
+          args: Prisma.ServiceRelationshipGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ServiceRelationshipGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ServiceRelationshipCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ServiceRelationshipCountAggregateOutputType> | number
+        }
+      }
+    }
     ContractType: {
       payload: Prisma.$ContractTypePayload<ExtArgs>
       fields: Prisma.ContractTypeFieldRefs
@@ -6676,6 +6751,24 @@ export const ServiceAssetScalarFieldEnum = {
 export type ServiceAssetScalarFieldEnum = (typeof ServiceAssetScalarFieldEnum)[keyof typeof ServiceAssetScalarFieldEnum]
 
 
+export const ServiceRelationshipScalarFieldEnum = {
+  id: 'id',
+  fromServiceId: 'fromServiceId',
+  toServiceId: 'toServiceId',
+  relationshipType: 'relationshipType',
+  isCritical: 'isCritical',
+  description: 'description',
+  metadata: 'metadata',
+  isActive: 'isActive',
+  validFrom: 'validFrom',
+  validTo: 'validTo',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ServiceRelationshipScalarFieldEnum = (typeof ServiceRelationshipScalarFieldEnum)[keyof typeof ServiceRelationshipScalarFieldEnum]
+
+
 export const ContractTypeScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -7383,6 +7476,20 @@ export type ListEnumAssetRelationshipFieldRefInput<$PrismaModel> = FieldRefInput
 
 
 /**
+ * Reference to a field of type 'ServiceRelationshipType'
+ */
+export type EnumServiceRelationshipTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ServiceRelationshipType'>
+    
+
+
+/**
+ * Reference to a field of type 'ServiceRelationshipType[]'
+ */
+export type ListEnumServiceRelationshipTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ServiceRelationshipType[]'>
+    
+
+
+/**
  * Reference to a field of type 'TargetObjectTypeEnum'
  */
 export type EnumTargetObjectTypeEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TargetObjectTypeEnum'>
@@ -7609,6 +7716,7 @@ export type GlobalOmitConfig = {
   serviceOwnership?: Prisma.ServiceOwnershipOmit
   serviceInfrastructure?: Prisma.ServiceInfrastructureOmit
   serviceAsset?: Prisma.ServiceAssetOmit
+  serviceRelationship?: Prisma.ServiceRelationshipOmit
   contractType?: Prisma.ContractTypeOmit
   contract?: Prisma.ContractOmit
   contractLinkedObject?: Prisma.ContractLinkedObjectOmit

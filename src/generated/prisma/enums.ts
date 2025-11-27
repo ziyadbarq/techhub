@@ -318,6 +318,17 @@ export const AssetRelationship = {
 export type AssetRelationship = (typeof AssetRelationship)[keyof typeof AssetRelationship]
 
 
+export const ServiceRelationshipType = {
+  DEPENDS_ON: 'DEPENDS_ON',
+  CALLS: 'CALLS',
+  PUBLISHES_EVENTS_TO: 'PUBLISHES_EVENTS_TO',
+  CONSUMES_EVENTS_FROM: 'CONSUMES_EVENTS_FROM',
+  BACKUP_FOR: 'BACKUP_FOR'
+} as const
+
+export type ServiceRelationshipType = (typeof ServiceRelationshipType)[keyof typeof ServiceRelationshipType]
+
+
 export const FeatureFlagCategory = {
   SYSTEM: 'SYSTEM',
   LAYER_1: 'LAYER_1',

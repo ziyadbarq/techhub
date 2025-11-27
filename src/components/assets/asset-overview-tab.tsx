@@ -109,7 +109,7 @@ export function AssetOverviewTab({ asset }: AssetOverviewTabProps) {
           {asset.vendorName && (
             <div>
               <p className="text-muted-foreground text-sm font-medium">
-                Vendor
+                Supplier
               </p>
               <p className="text-sm">{asset.vendorName}</p>
             </div>

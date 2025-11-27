@@ -657,6 +657,23 @@ export type EnumAssetRelationshipWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumAssetRelationshipFilter<$PrismaModel>
 }
 
+export type EnumServiceRelationshipTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ServiceRelationshipType | Prisma.EnumServiceRelationshipTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ServiceRelationshipType[] | Prisma.ListEnumServiceRelationshipTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ServiceRelationshipType[] | Prisma.ListEnumServiceRelationshipTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumServiceRelationshipTypeFilter<$PrismaModel> | $Enums.ServiceRelationshipType
+}
+
+export type EnumServiceRelationshipTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ServiceRelationshipType | Prisma.EnumServiceRelationshipTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ServiceRelationshipType[] | Prisma.ListEnumServiceRelationshipTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ServiceRelationshipType[] | Prisma.ListEnumServiceRelationshipTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumServiceRelationshipTypeWithAggregatesFilter<$PrismaModel> | $Enums.ServiceRelationshipType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumServiceRelationshipTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumServiceRelationshipTypeFilter<$PrismaModel>
+}
+
 export type EnumTargetObjectTypeEnumFilter<$PrismaModel = never> = {
   equals?: $Enums.TargetObjectTypeEnum | Prisma.EnumTargetObjectTypeEnumFieldRefInput<$PrismaModel>
   in?: $Enums.TargetObjectTypeEnum[] | Prisma.ListEnumTargetObjectTypeEnumFieldRefInput<$PrismaModel>
@@ -1386,6 +1403,23 @@ export type NestedEnumAssetRelationshipWithAggregatesFilter<$PrismaModel = never
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumAssetRelationshipFilter<$PrismaModel>
   _max?: Prisma.NestedEnumAssetRelationshipFilter<$PrismaModel>
+}
+
+export type NestedEnumServiceRelationshipTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ServiceRelationshipType | Prisma.EnumServiceRelationshipTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ServiceRelationshipType[] | Prisma.ListEnumServiceRelationshipTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ServiceRelationshipType[] | Prisma.ListEnumServiceRelationshipTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumServiceRelationshipTypeFilter<$PrismaModel> | $Enums.ServiceRelationshipType
+}
+
+export type NestedEnumServiceRelationshipTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ServiceRelationshipType | Prisma.EnumServiceRelationshipTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ServiceRelationshipType[] | Prisma.ListEnumServiceRelationshipTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ServiceRelationshipType[] | Prisma.ListEnumServiceRelationshipTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumServiceRelationshipTypeWithAggregatesFilter<$PrismaModel> | $Enums.ServiceRelationshipType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumServiceRelationshipTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumServiceRelationshipTypeFilter<$PrismaModel>
 }
 
 export type NestedEnumTargetObjectTypeEnumFilter<$PrismaModel = never> = {

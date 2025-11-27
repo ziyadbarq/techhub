@@ -127,30 +127,31 @@ const UNIVERSAL_ASSETS_FIELDS: EntityFieldConfig[] = [
   },
 
   // ========================================
-  // VENDOR (Auto-create enabled)
+  // MANUFACTURER (Auto-create enabled)
   // ========================================
   {
     name: "vendor.code",
-    label: "Vendor Code",
+    label: "Manufacturer Code",
     description:
-      "Unique vendor code (auto-generated from name if not provided)",
+      "Unique manufacturer/vendor code (auto-generated from name if not provided)",
     type: "string",
     required: false,
     maxLength: 50,
     sanitization: STANDARD_SANITIZATION.CODE,
     examples: ["DELL", "HP", "LENOVO"],
-    autoMap: ["vendorCode", "vendor_id", "manufacturer_code"],
+    autoMap: ["vendorCode", "vendor_id", "manufacturer_code", "mfr_code"],
   },
   {
     name: "vendor.name",
-    label: "Vendor Name",
-    description: "Vendor display name (creates vendor if code not found)",
+    label: "Manufacturer Name",
+    description:
+      "Manufacturer name - the company that makes the model (creates vendor if code not found)",
     type: "string",
     required: false,
     maxLength: 100,
     sanitization: STANDARD_SANITIZATION.TRIM,
     examples: ["Dell Technologies", "HP Inc.", "Lenovo Group"],
-    autoMap: ["vendorName", "vendor", "manufacturer", "brand"],
+    autoMap: ["vendorName", "vendor", "manufacturer", "brand", "mfr", "make"],
   },
 
   // ========================================
@@ -181,12 +182,12 @@ const UNIVERSAL_ASSETS_FIELDS: EntityFieldConfig[] = [
   },
 
   // ========================================
-  // MODEL (Auto-create enabled, depends on vendor + category)
+  // MODEL (Auto-create enabled, depends on manufacturer + category)
   // ========================================
   {
     name: "model.code",
     label: "Model Code",
-    description: "Asset model code (requires vendor to auto-create)",
+    description: "Asset model code (requires manufacturer to auto-create)",
     type: "string",
     required: false,
     maxLength: 50,
@@ -198,7 +199,7 @@ const UNIVERSAL_ASSETS_FIELDS: EntityFieldConfig[] = [
     name: "model.name",
     label: "Model Name",
     description:
-      "Asset model name (creates model if code not found, requires vendor)",
+      "Asset model name (creates model if code not found, requires manufacturer)",
     type: "string",
     required: false,
     maxLength: 150,
@@ -281,7 +282,7 @@ const UNIVERSAL_ASSETS_FIELDS: EntityFieldConfig[] = [
  *
  * This is a special composite importer configuration that:
  * 1. Uses prefixed columns (entity.field) for multi-entity import
- * 2. Auto-creates missing entities (Vendor, Category, Model, Location, StockLocation)
+ * 2. Auto-creates missing entities (Manufacturer/Vendor, Category, Model, Location, StockLocation)
  * 3. Infers and creates custom field definitions from custom.* columns
  * 4. Handles asset assignments with re-assignment support
  */
@@ -290,7 +291,7 @@ export const UNIVERSAL_ASSETS_CONFIG: EntityConfig = {
   name: "Universal Assets Import",
   tableName: "Asset", // Primary entity
   description:
-    "Import assets with all related data in a single file. Auto-creates vendors, categories, models, locations, and custom fields as needed.",
+    "Import assets with all related data in a single file. Auto-creates manufacturers, categories, models, locations, and custom fields as needed.",
   category: "ASSET_MANAGEMENT",
 
   // Permissions
@@ -317,16 +318,16 @@ export const UNIVERSAL_ASSETS_CONFIG: EntityConfig = {
 # Universal Assets Import Template
 
 This template allows you to import assets with all related entities in a single file.
-The system will automatically create missing vendors, categories, models, and locations.
+The system will automatically create missing manufacturers, categories, models, and locations.
 
 ## Column Naming Convention
 
 Columns use a prefix.field format to identify which entity the data belongs to:
 - person.email - Assignee (must exist, no auto-create)
 - asset.* - Asset fields (serial_number required)
-- vendor.* - Vendor (auto-created if not found)
+- vendor.* - Manufacturer (auto-created if not found)
 - category.* - Category (auto-created if not found)
-- model.* - Model (auto-created, requires vendor)
+- model.* - Model (auto-created, requires manufacturer)
 - location.* - Location (auto-created if not found)
 - stock_location.* - Stock Location (auto-created if not found)
 - lifecycle.* - Lifecycle State (lookup only, no auto-create)
@@ -336,7 +337,7 @@ Columns use a prefix.field format to identify which entity the data belongs to:
 
 1. **Person must exist**: The person.email must match an existing person in the system
 2. **Serial number required**: Each row must have a unique asset.serial_number
-3. **Auto-creation**: Missing vendors, categories, models, and locations are created automatically
+3. **Auto-creation**: Missing manufacturers, categories, models, and locations are created automatically
 4. **Custom fields**: Any column starting with custom. will create a new field definition
 5. **Updates**: If an asset with the same serial number exists, it will be updated
 

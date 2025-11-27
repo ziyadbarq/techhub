@@ -262,19 +262,19 @@ export function AssetModelForm({
                 name="vendorId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Vendor</FormLabel>
+                    <FormLabel>Manufacturer</FormLabel>
                     <FormControl>
                       <SearchableSelect
                         options={vendorOptions}
                         value={field.value}
                         onValueChange={field.onChange}
-                        placeholder="Select a vendor"
-                        searchPlaceholder="Search vendors..."
+                        placeholder="Select a manufacturer"
+                        searchPlaceholder="Search manufacturers..."
                         disabled={loading}
                       />
                     </FormControl>
                     <FormDescription>
-                      The manufacturer or supplier
+                      The company that makes this model
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

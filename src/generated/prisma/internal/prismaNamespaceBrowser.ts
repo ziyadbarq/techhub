@@ -102,6 +102,7 @@ export const ModelName = {
   ServiceOwnership: 'ServiceOwnership',
   ServiceInfrastructure: 'ServiceInfrastructure',
   ServiceAsset: 'ServiceAsset',
+  ServiceRelationship: 'ServiceRelationship',
   ContractType: 'ContractType',
   Contract: 'Contract',
   ContractLinkedObject: 'ContractLinkedObject',
@@ -1047,6 +1048,24 @@ export const ServiceAssetScalarFieldEnum = {
 } as const
 
 export type ServiceAssetScalarFieldEnum = (typeof ServiceAssetScalarFieldEnum)[keyof typeof ServiceAssetScalarFieldEnum]
+
+
+export const ServiceRelationshipScalarFieldEnum = {
+  id: 'id',
+  fromServiceId: 'fromServiceId',
+  toServiceId: 'toServiceId',
+  relationshipType: 'relationshipType',
+  isCritical: 'isCritical',
+  description: 'description',
+  metadata: 'metadata',
+  isActive: 'isActive',
+  validFrom: 'validFrom',
+  validTo: 'validTo',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ServiceRelationshipScalarFieldEnum = (typeof ServiceRelationshipScalarFieldEnum)[keyof typeof ServiceRelationshipScalarFieldEnum]
 
 
 export const ContractTypeScalarFieldEnum = {

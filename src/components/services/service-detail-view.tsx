@@ -51,6 +51,7 @@ import {
   ConditionalDetailField,
   ConditionalDetailLinkField,
 } from "./service-detail-fields";
+import { ServiceDependenciesTab } from "./dependencies/service-dependencies-tab";
 
 interface ServiceDetailViewProps {
   service: ServiceDTO;
@@ -137,6 +138,7 @@ export function ServiceDetailView({
           <TabsTrigger value="assets">
             Linked Assets ({linkedAssets.length})
           </TabsTrigger>
+          <TabsTrigger value="dependencies">Dependencies</TabsTrigger>
           <TabsTrigger value="history">History</TabsTrigger>
         </TabsList>
 
@@ -395,6 +397,14 @@ export function ServiceDetailView({
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Dependencies Tab */}
+        <TabsContent value="dependencies">
+          <ServiceDependenciesTab
+            serviceId={service.id}
+            serviceName={service.name}
+          />
         </TabsContent>
 
         {/* History Tab */}
