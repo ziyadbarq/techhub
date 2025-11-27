@@ -657,7 +657,7 @@ model LifecycleState {
 **Validation Rules**:
 
 - Name: Required, 1-100 characters
-- Code: Required, uppercase, unique within model
+- Code: Optional (auto-generated if empty), uppercase, unique within model
 - StateType: Must be valid enum value
 - SortOrder: Integer, unique within model
 

@@ -120,7 +120,7 @@ model DataDomain {
 
 **Validations**:
 - Name: Required, max 255 characters, unique
-- Code: Required, max 50 characters, uppercase, alphanumeric + hyphens/underscores, unique
+- Code: Optional (auto-generated if empty), max 50 characters, uppercase, alphanumeric + hyphens/underscores, unique
 - Description: Optional, max 2000 characters
 
 ### 2. DataOwnership Model
@@ -264,7 +264,7 @@ enum VerificationStatusEnum {
 class DataDomain {
   // Validations
   - Name: Required, max 255 chars
-  - Code: Required, max 50 chars, uppercase, alphanumeric + hyphens/underscores
+  - Code: Optional (auto-generated if empty), max 50 chars, uppercase, alphanumeric + hyphens/underscores
   - Code is automatically converted to uppercase
 
   // Methods
@@ -685,7 +685,7 @@ const result = await flagExceptionVerificationItem({
 ### DataDomain Validation
 
 1. **Name**: Required, max 255 characters, must be unique
-2. **Code**: Required, max 50 characters, alphanumeric + hyphens/underscores, auto-uppercase, must be unique
+2. **Code**: Optional (auto-generated if empty), max 50 characters, alphanumeric + hyphens/underscores, auto-uppercase, must be unique
 3. **Description**: Optional, max 2000 characters
 4. **isActive**: Boolean, defaults to true
 

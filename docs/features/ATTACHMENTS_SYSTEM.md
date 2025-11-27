@@ -109,7 +109,7 @@ class AttachmentType {
 **Validation Rules**:
 
 - Name: Required, max 255 characters
-- Code: Required, max 50 characters, alphanumeric + hyphens/underscores only, uppercase
+- Code: Optional (auto-generated if empty), max 50 characters, alphanumeric + hyphens/underscores only, uppercase
 - Allowed Extensions: Array of alphanumeric strings (without leading dot)
 - Max File Size: 1-10000 MB (integer only)
 
