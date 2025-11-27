@@ -215,7 +215,7 @@ function runInstall() {
  * Step 2: Prisma generate
  */
 function runPrismaGenerate() {
-  runCommand("npx prisma generate", "Generating Prisma client");
+  runCommand("npm run db:generate", "Generating Prisma client");
 }
 
 /**

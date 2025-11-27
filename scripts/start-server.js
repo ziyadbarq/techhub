@@ -313,7 +313,7 @@ async function runDeployment() {
   // Step 2: Generate Prisma Client
   currentStep++;
   logStep(currentStep, steps, "PRISMA GENERATE");
-  runCommand("npx prisma generate", "Generating Prisma client");
+  runCommand("npm run db:generate", "Generating Prisma client");
 
   // Step 3: Run Migrations
   currentStep++;

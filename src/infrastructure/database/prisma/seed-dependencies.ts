@@ -364,7 +364,6 @@ export const BUILTIN_PRESETS: SeedPreset[] = [
       SeedModule.FOUNDATION,
       SeedModule.BUSINESS_PROCESSES,
       SeedModule.CMDB,
-      SeedModule.ATTACHMENTS_GOVERNANCE,
     ],
   },
   {

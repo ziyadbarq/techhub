@@ -175,6 +175,7 @@ export async function getEnabledFeatures(): Promise<Set<string>> {
       "ASSET_DISPOSALS",
       "ASSET_KITS",
       "ASSET_RESERVATIONS",
+      "INTUNE",
     ]);
   }
 
