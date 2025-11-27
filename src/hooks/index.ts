@@ -19,3 +19,4 @@ export {
   type BadgeRegistry,
 } from "./use-badge-updates";
 export { useSidebarNavigation } from "./use-sidebar-navigation";
+export { useEntityTypeOptions } from "./use-entity-type-options";

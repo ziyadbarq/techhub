@@ -26,6 +26,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SearchableSelect } from "@/components/ui/searchable-select";
+import { useEntityTypeOptions } from "@/hooks/use-entity-type-options";
 import {
   Form,
   FormControl,
@@ -61,6 +63,7 @@ export function FieldDefinitionForm({
   field,
 }: FieldDefinitionFormProps) {
   const isEditing = !!field;
+  const entityTypeOptions = useEntityTypeOptions();
 
   const form = useForm<CreateFieldDefinitionDTO>({
     resolver: zodResolver(
@@ -256,10 +259,13 @@ export function FieldDefinitionForm({
                       Entity Type <span className="text-destructive">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Asset, Person, etc."
-                        maxLength={100}
-                        {...field}
+                      <SearchableSelect
+                        options={entityTypeOptions}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                        placeholder="Select an entity type"
+                        searchPlaceholder="Search entities..."
+                        emptyMessage="No matching entities found"
                       />
                     </FormControl>
                     <FormDescription>

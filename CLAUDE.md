@@ -206,6 +206,11 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 - Asset.attributes JSON stores custom field values
 - See [roadmap/CUSTOM_FIELDS_COMPLETION.md](roadmap/CUSTOM_FIELDS_COMPLETION.md)
 
+**Entity Registry**:
+- Centralized registry of 20 business entities supporting custom fields across 7 categories
+- Use `getCustomFieldsEnabledEntities()` for entity list, `useEntityTypeOptions()` hook for form selects
+- See [docs/features/ENTITY_REGISTRY.md](docs/features/ENTITY_REGISTRY.md)
+
 **Refactoring**:
 - When files exceed 300-500 lines: Extract hooks, create sub-components, use builders
 - See [REFACTORING_PATTERNS.md](docs/guides/REFACTORING_PATTERNS.md)

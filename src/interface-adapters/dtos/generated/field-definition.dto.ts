@@ -5,6 +5,7 @@
 
 import { z } from "zod";
 import { FieldDataTypeEnum } from "@/core/domain/value-objects/foundation-enums";
+import { getValidEntityKeys } from "@/lib/entity-registry";
 
 export const CreateFieldDefinitionSchema = z.object({
   name: z
@@ -24,7 +25,10 @@ export const CreateFieldDefinitionSchema = z.object({
   entityType: z
     .string()
     .min(1, "Entity type is required")
-    .max(100, "Entity type must be 100 characters or less"),
+    .max(100, "Entity type must be 100 characters or less")
+    .refine((val) => getValidEntityKeys().includes(val), {
+      message: "Invalid entity type. Please select from the available options.",
+    }),
   isRequired: z.boolean().default(false),
   isUnique: z.boolean().default(false),
   defaultValue: z.unknown().optional().nullable(),
