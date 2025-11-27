@@ -194,7 +194,7 @@ export async function bulkToggleFeatureFlagsAction(
       .map((f) => f.name);
 
     // Toggle each flag
-    const action = enable ? "enabled" : "disabled";
+    const action = enable ? "ENABLED" : "DISABLED";
     let toggledCount = 0;
 
     for (const flag of flagsToToggle) {

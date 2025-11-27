@@ -3,13 +3,14 @@
  */
 
 import { injectable, inject } from "inversify";
+import type { FeatureFlagCategory } from "@/generated/prisma";
 import { DI_TOKENS } from "@/di/types";
 import type { IFeatureFlagRepository } from "../../repositories/feature-flag.repository.interface";
 import type { FeatureFlag } from "../../domain/entities/feature-flag.entity";
 
 export interface ListFeatureFlagsRequest {
   onlyEnabled?: boolean;
-  category?: string;
+  category?: FeatureFlagCategory;
 }
 
 export interface ListFeatureFlagsResponse {

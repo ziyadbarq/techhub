@@ -3,6 +3,7 @@
  * Data access contract for feature flags
  */
 
+import type { FeatureFlagCategory } from "@/generated/prisma";
 import type { FeatureFlag } from "../domain/entities/feature-flag.entity";
 
 export interface IFeatureFlagRepository {
@@ -26,7 +27,7 @@ export interface IFeatureFlagRepository {
    */
   findAll(options?: {
     onlyEnabled?: boolean;
-    category?: string;
+    category?: FeatureFlagCategory;
     orderBy?: "name" | "displayName" | "category" | "createdAt";
     order?: "asc" | "desc";
   }): Promise<FeatureFlag[]>;

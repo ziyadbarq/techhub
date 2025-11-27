@@ -4,7 +4,10 @@
 
 import { inject, injectable } from "inversify";
 import type { PrismaClient } from "@/generated/prisma/server";
-import type { FeatureFlag as PrismaFeatureFlag } from "@/generated/prisma";
+import type {
+  FeatureFlag as PrismaFeatureFlag,
+  FeatureFlagCategory,
+} from "@/generated/prisma";
 
 import { DI_TOKENS } from "@/di/types";
 import { FeatureFlag } from "@/core/domain/entities/feature-flag.entity";
@@ -65,7 +68,7 @@ export class PrismaFeatureFlagRepository implements IFeatureFlagRepository {
 
   async findAll(options?: {
     onlyEnabled?: boolean;
-    category?: string;
+    category?: FeatureFlagCategory;
     orderBy?: "name" | "displayName" | "category" | "createdAt";
     order?: "asc" | "desc";
   }): Promise<FeatureFlag[]> {
@@ -227,11 +230,7 @@ export class PrismaFeatureFlagRepository implements IFeatureFlagRepository {
       name: prismaFeatureFlag.name,
       displayName: prismaFeatureFlag.displayName,
       description: prismaFeatureFlag.description,
-      category: prismaFeatureFlag.category as
-        | "SYSTEM"
-        | "LAYER_1"
-        | "LAYER_2"
-        | "LAYER_3",
+      category: prismaFeatureFlag.category,
       isEnabled: prismaFeatureFlag.isEnabled,
       isSystem: prismaFeatureFlag.isSystem,
       dependsOn: prismaFeatureFlag.dependsOn,

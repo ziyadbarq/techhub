@@ -2534,7 +2534,7 @@ model FeatureFlag {
   name        String   @unique // CONTRACTS, LICENSES, CMDB, etc.
   displayName String // "Contract Management"
   description String   @db.Text
-  category    String // LAYER_1, LAYER_2, LAYER_3, SYSTEM
+  category    FeatureFlagCategory
   isEnabled   Boolean  @default(false) // Default: DISABLED (admin must enable)
   isSystem    Boolean  @default(false) // System flags (e.g., MAINTENANCE_MODE)
 
@@ -2553,7 +2553,7 @@ model FeatureFlag {
 model FeatureFlagAuditLog {
   id          String   @id @default(cuid())
   featureName String
-  action      String // ENABLED, DISABLED
+  action      FeatureFlagAction
   userId      String
   userEmail   String
   reason      String?  @db.Text

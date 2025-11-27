@@ -844,6 +844,40 @@ export type EnumIntuneSyncStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumIntuneSyncStatusFilter<$PrismaModel>
 }
 
+export type EnumFeatureFlagCategoryFilter<$PrismaModel = never> = {
+  equals?: $Enums.FeatureFlagCategory | Prisma.EnumFeatureFlagCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.FeatureFlagCategory[] | Prisma.ListEnumFeatureFlagCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FeatureFlagCategory[] | Prisma.ListEnumFeatureFlagCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFeatureFlagCategoryFilter<$PrismaModel> | $Enums.FeatureFlagCategory
+}
+
+export type EnumFeatureFlagCategoryWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.FeatureFlagCategory | Prisma.EnumFeatureFlagCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.FeatureFlagCategory[] | Prisma.ListEnumFeatureFlagCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FeatureFlagCategory[] | Prisma.ListEnumFeatureFlagCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFeatureFlagCategoryWithAggregatesFilter<$PrismaModel> | $Enums.FeatureFlagCategory
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFeatureFlagCategoryFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFeatureFlagCategoryFilter<$PrismaModel>
+}
+
+export type EnumFeatureFlagActionFilter<$PrismaModel = never> = {
+  equals?: $Enums.FeatureFlagAction | Prisma.EnumFeatureFlagActionFieldRefInput<$PrismaModel>
+  in?: $Enums.FeatureFlagAction[] | Prisma.ListEnumFeatureFlagActionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FeatureFlagAction[] | Prisma.ListEnumFeatureFlagActionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFeatureFlagActionFilter<$PrismaModel> | $Enums.FeatureFlagAction
+}
+
+export type EnumFeatureFlagActionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.FeatureFlagAction | Prisma.EnumFeatureFlagActionFieldRefInput<$PrismaModel>
+  in?: $Enums.FeatureFlagAction[] | Prisma.ListEnumFeatureFlagActionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FeatureFlagAction[] | Prisma.ListEnumFeatureFlagActionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFeatureFlagActionWithAggregatesFilter<$PrismaModel> | $Enums.FeatureFlagAction
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFeatureFlagActionFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFeatureFlagActionFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -1658,6 +1692,40 @@ export type NestedEnumIntuneSyncStatusWithAggregatesFilter<$PrismaModel = never>
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumIntuneSyncStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumIntuneSyncStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumFeatureFlagCategoryFilter<$PrismaModel = never> = {
+  equals?: $Enums.FeatureFlagCategory | Prisma.EnumFeatureFlagCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.FeatureFlagCategory[] | Prisma.ListEnumFeatureFlagCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FeatureFlagCategory[] | Prisma.ListEnumFeatureFlagCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFeatureFlagCategoryFilter<$PrismaModel> | $Enums.FeatureFlagCategory
+}
+
+export type NestedEnumFeatureFlagCategoryWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.FeatureFlagCategory | Prisma.EnumFeatureFlagCategoryFieldRefInput<$PrismaModel>
+  in?: $Enums.FeatureFlagCategory[] | Prisma.ListEnumFeatureFlagCategoryFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FeatureFlagCategory[] | Prisma.ListEnumFeatureFlagCategoryFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFeatureFlagCategoryWithAggregatesFilter<$PrismaModel> | $Enums.FeatureFlagCategory
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFeatureFlagCategoryFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFeatureFlagCategoryFilter<$PrismaModel>
+}
+
+export type NestedEnumFeatureFlagActionFilter<$PrismaModel = never> = {
+  equals?: $Enums.FeatureFlagAction | Prisma.EnumFeatureFlagActionFieldRefInput<$PrismaModel>
+  in?: $Enums.FeatureFlagAction[] | Prisma.ListEnumFeatureFlagActionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FeatureFlagAction[] | Prisma.ListEnumFeatureFlagActionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFeatureFlagActionFilter<$PrismaModel> | $Enums.FeatureFlagAction
+}
+
+export type NestedEnumFeatureFlagActionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.FeatureFlagAction | Prisma.EnumFeatureFlagActionFieldRefInput<$PrismaModel>
+  in?: $Enums.FeatureFlagAction[] | Prisma.ListEnumFeatureFlagActionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FeatureFlagAction[] | Prisma.ListEnumFeatureFlagActionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFeatureFlagActionWithAggregatesFilter<$PrismaModel> | $Enums.FeatureFlagAction
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFeatureFlagActionFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFeatureFlagActionFilter<$PrismaModel>
 }
 
 

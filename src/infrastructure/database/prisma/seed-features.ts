@@ -6,6 +6,7 @@
  */
 
 import type { PrismaClient } from "@/generated/prisma/server";
+import type { FeatureFlagCategory } from "@/generated/prisma";
 import { prisma as prismaSingleton } from "./client";
 import { logSection, logStep, logSuccess } from "./seed-utils";
 
@@ -16,7 +17,7 @@ interface FeatureFlagDefinition {
   name: string;
   displayName: string;
   description: string;
-  category: "SYSTEM" | "LAYER_1" | "LAYER_2" | "LAYER_3";
+  category: FeatureFlagCategory;
   isSystem: boolean;
   dependsOn: string[];
 }

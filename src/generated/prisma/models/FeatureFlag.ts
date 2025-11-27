@@ -29,7 +29,7 @@ export type FeatureFlagMinAggregateOutputType = {
   name: string | null
   displayName: string | null
   description: string | null
-  category: string | null
+  category: $Enums.FeatureFlagCategory | null
   isEnabled: boolean | null
   isSystem: boolean | null
   createdAt: Date | null
@@ -41,7 +41,7 @@ export type FeatureFlagMaxAggregateOutputType = {
   name: string | null
   displayName: string | null
   description: string | null
-  category: string | null
+  category: $Enums.FeatureFlagCategory | null
   isEnabled: boolean | null
   isSystem: boolean | null
   createdAt: Date | null
@@ -178,7 +178,7 @@ export type FeatureFlagGroupByOutputType = {
   name: string
   displayName: string
   description: string
-  category: string
+  category: $Enums.FeatureFlagCategory
   isEnabled: boolean
   isSystem: boolean
   dependsOn: string[]
@@ -212,7 +212,7 @@ export type FeatureFlagWhereInput = {
   name?: Prisma.StringFilter<"FeatureFlag"> | string
   displayName?: Prisma.StringFilter<"FeatureFlag"> | string
   description?: Prisma.StringFilter<"FeatureFlag"> | string
-  category?: Prisma.StringFilter<"FeatureFlag"> | string
+  category?: Prisma.EnumFeatureFlagCategoryFilter<"FeatureFlag"> | $Enums.FeatureFlagCategory
   isEnabled?: Prisma.BoolFilter<"FeatureFlag"> | boolean
   isSystem?: Prisma.BoolFilter<"FeatureFlag"> | boolean
   dependsOn?: Prisma.StringNullableListFilter<"FeatureFlag">
@@ -241,7 +241,7 @@ export type FeatureFlagWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.FeatureFlagWhereInput | Prisma.FeatureFlagWhereInput[]
   displayName?: Prisma.StringFilter<"FeatureFlag"> | string
   description?: Prisma.StringFilter<"FeatureFlag"> | string
-  category?: Prisma.StringFilter<"FeatureFlag"> | string
+  category?: Prisma.EnumFeatureFlagCategoryFilter<"FeatureFlag"> | $Enums.FeatureFlagCategory
   isEnabled?: Prisma.BoolFilter<"FeatureFlag"> | boolean
   isSystem?: Prisma.BoolFilter<"FeatureFlag"> | boolean
   dependsOn?: Prisma.StringNullableListFilter<"FeatureFlag">
@@ -273,7 +273,7 @@ export type FeatureFlagScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"FeatureFlag"> | string
   displayName?: Prisma.StringWithAggregatesFilter<"FeatureFlag"> | string
   description?: Prisma.StringWithAggregatesFilter<"FeatureFlag"> | string
-  category?: Prisma.StringWithAggregatesFilter<"FeatureFlag"> | string
+  category?: Prisma.EnumFeatureFlagCategoryWithAggregatesFilter<"FeatureFlag"> | $Enums.FeatureFlagCategory
   isEnabled?: Prisma.BoolWithAggregatesFilter<"FeatureFlag"> | boolean
   isSystem?: Prisma.BoolWithAggregatesFilter<"FeatureFlag"> | boolean
   dependsOn?: Prisma.StringNullableListFilter<"FeatureFlag">
@@ -286,7 +286,7 @@ export type FeatureFlagCreateInput = {
   name: string
   displayName: string
   description: string
-  category: string
+  category: $Enums.FeatureFlagCategory
   isEnabled?: boolean
   isSystem?: boolean
   dependsOn?: Prisma.FeatureFlagCreatedependsOnInput | string[]
@@ -299,7 +299,7 @@ export type FeatureFlagUncheckedCreateInput = {
   name: string
   displayName: string
   description: string
-  category: string
+  category: $Enums.FeatureFlagCategory
   isEnabled?: boolean
   isSystem?: boolean
   dependsOn?: Prisma.FeatureFlagCreatedependsOnInput | string[]
@@ -312,7 +312,7 @@ export type FeatureFlagUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
-  category?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.EnumFeatureFlagCategoryFieldUpdateOperationsInput | $Enums.FeatureFlagCategory
   isEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dependsOn?: Prisma.FeatureFlagUpdatedependsOnInput | string[]
@@ -325,7 +325,7 @@ export type FeatureFlagUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
-  category?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.EnumFeatureFlagCategoryFieldUpdateOperationsInput | $Enums.FeatureFlagCategory
   isEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dependsOn?: Prisma.FeatureFlagUpdatedependsOnInput | string[]
@@ -338,7 +338,7 @@ export type FeatureFlagCreateManyInput = {
   name: string
   displayName: string
   description: string
-  category: string
+  category: $Enums.FeatureFlagCategory
   isEnabled?: boolean
   isSystem?: boolean
   dependsOn?: Prisma.FeatureFlagCreatedependsOnInput | string[]
@@ -351,7 +351,7 @@ export type FeatureFlagUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
-  category?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.EnumFeatureFlagCategoryFieldUpdateOperationsInput | $Enums.FeatureFlagCategory
   isEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dependsOn?: Prisma.FeatureFlagUpdatedependsOnInput | string[]
@@ -364,7 +364,7 @@ export type FeatureFlagUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
-  category?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.EnumFeatureFlagCategoryFieldUpdateOperationsInput | $Enums.FeatureFlagCategory
   isEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isSystem?: Prisma.BoolFieldUpdateOperationsInput | boolean
   dependsOn?: Prisma.FeatureFlagUpdatedependsOnInput | string[]
@@ -411,6 +411,10 @@ export type FeatureFlagMinOrderByAggregateInput = {
 
 export type FeatureFlagCreatedependsOnInput = {
   set: string[]
+}
+
+export type EnumFeatureFlagCategoryFieldUpdateOperationsInput = {
+  set?: $Enums.FeatureFlagCategory
 }
 
 export type FeatureFlagUpdatedependsOnInput = {
@@ -482,7 +486,7 @@ export type $FeatureFlagPayload<ExtArgs extends runtime.Types.Extensions.Interna
     name: string
     displayName: string
     description: string
-    category: string
+    category: $Enums.FeatureFlagCategory
     isEnabled: boolean
     isSystem: boolean
     dependsOn: string[]
@@ -915,7 +919,7 @@ export interface FeatureFlagFieldRefs {
   readonly name: Prisma.FieldRef<"FeatureFlag", 'String'>
   readonly displayName: Prisma.FieldRef<"FeatureFlag", 'String'>
   readonly description: Prisma.FieldRef<"FeatureFlag", 'String'>
-  readonly category: Prisma.FieldRef<"FeatureFlag", 'String'>
+  readonly category: Prisma.FieldRef<"FeatureFlag", 'FeatureFlagCategory'>
   readonly isEnabled: Prisma.FieldRef<"FeatureFlag", 'Boolean'>
   readonly isSystem: Prisma.FieldRef<"FeatureFlag", 'Boolean'>
   readonly dependsOn: Prisma.FieldRef<"FeatureFlag", 'String[]'>

@@ -8113,6 +8113,34 @@ export type ListEnumIntuneSyncStatusFieldRefInput<$PrismaModel> = FieldRefInputT
 
 
 /**
+ * Reference to a field of type 'FeatureFlagCategory'
+ */
+export type EnumFeatureFlagCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeatureFlagCategory'>
+    
+
+
+/**
+ * Reference to a field of type 'FeatureFlagCategory[]'
+ */
+export type ListEnumFeatureFlagCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeatureFlagCategory[]'>
+    
+
+
+/**
+ * Reference to a field of type 'FeatureFlagAction'
+ */
+export type EnumFeatureFlagActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeatureFlagAction'>
+    
+
+
+/**
+ * Reference to a field of type 'FeatureFlagAction[]'
+ */
+export type ListEnumFeatureFlagActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeatureFlagAction[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>

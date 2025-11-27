@@ -27,7 +27,7 @@ export type AggregateFeatureFlagAuditLog = {
 export type FeatureFlagAuditLogMinAggregateOutputType = {
   id: string | null
   featureName: string | null
-  action: string | null
+  action: $Enums.FeatureFlagAction | null
   userId: string | null
   userEmail: string | null
   reason: string | null
@@ -37,7 +37,7 @@ export type FeatureFlagAuditLogMinAggregateOutputType = {
 export type FeatureFlagAuditLogMaxAggregateOutputType = {
   id: string | null
   featureName: string | null
-  action: string | null
+  action: $Enums.FeatureFlagAction | null
   userId: string | null
   userEmail: string | null
   reason: string | null
@@ -162,7 +162,7 @@ export type FeatureFlagAuditLogGroupByArgs<ExtArgs extends runtime.Types.Extensi
 export type FeatureFlagAuditLogGroupByOutputType = {
   id: string
   featureName: string
-  action: string
+  action: $Enums.FeatureFlagAction
   userId: string
   userEmail: string
   reason: string | null
@@ -193,7 +193,7 @@ export type FeatureFlagAuditLogWhereInput = {
   NOT?: Prisma.FeatureFlagAuditLogWhereInput | Prisma.FeatureFlagAuditLogWhereInput[]
   id?: Prisma.StringFilter<"FeatureFlagAuditLog"> | string
   featureName?: Prisma.StringFilter<"FeatureFlagAuditLog"> | string
-  action?: Prisma.StringFilter<"FeatureFlagAuditLog"> | string
+  action?: Prisma.EnumFeatureFlagActionFilter<"FeatureFlagAuditLog"> | $Enums.FeatureFlagAction
   userId?: Prisma.StringFilter<"FeatureFlagAuditLog"> | string
   userEmail?: Prisma.StringFilter<"FeatureFlagAuditLog"> | string
   reason?: Prisma.StringNullableFilter<"FeatureFlagAuditLog"> | string | null
@@ -216,7 +216,7 @@ export type FeatureFlagAuditLogWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.FeatureFlagAuditLogWhereInput[]
   NOT?: Prisma.FeatureFlagAuditLogWhereInput | Prisma.FeatureFlagAuditLogWhereInput[]
   featureName?: Prisma.StringFilter<"FeatureFlagAuditLog"> | string
-  action?: Prisma.StringFilter<"FeatureFlagAuditLog"> | string
+  action?: Prisma.EnumFeatureFlagActionFilter<"FeatureFlagAuditLog"> | $Enums.FeatureFlagAction
   userId?: Prisma.StringFilter<"FeatureFlagAuditLog"> | string
   userEmail?: Prisma.StringFilter<"FeatureFlagAuditLog"> | string
   reason?: Prisma.StringNullableFilter<"FeatureFlagAuditLog"> | string | null
@@ -242,7 +242,7 @@ export type FeatureFlagAuditLogScalarWhereWithAggregatesInput = {
   NOT?: Prisma.FeatureFlagAuditLogScalarWhereWithAggregatesInput | Prisma.FeatureFlagAuditLogScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"FeatureFlagAuditLog"> | string
   featureName?: Prisma.StringWithAggregatesFilter<"FeatureFlagAuditLog"> | string
-  action?: Prisma.StringWithAggregatesFilter<"FeatureFlagAuditLog"> | string
+  action?: Prisma.EnumFeatureFlagActionWithAggregatesFilter<"FeatureFlagAuditLog"> | $Enums.FeatureFlagAction
   userId?: Prisma.StringWithAggregatesFilter<"FeatureFlagAuditLog"> | string
   userEmail?: Prisma.StringWithAggregatesFilter<"FeatureFlagAuditLog"> | string
   reason?: Prisma.StringNullableWithAggregatesFilter<"FeatureFlagAuditLog"> | string | null
@@ -252,7 +252,7 @@ export type FeatureFlagAuditLogScalarWhereWithAggregatesInput = {
 export type FeatureFlagAuditLogCreateInput = {
   id?: string
   featureName: string
-  action: string
+  action: $Enums.FeatureFlagAction
   userId: string
   userEmail: string
   reason?: string | null
@@ -262,7 +262,7 @@ export type FeatureFlagAuditLogCreateInput = {
 export type FeatureFlagAuditLogUncheckedCreateInput = {
   id?: string
   featureName: string
-  action: string
+  action: $Enums.FeatureFlagAction
   userId: string
   userEmail: string
   reason?: string | null
@@ -272,7 +272,7 @@ export type FeatureFlagAuditLogUncheckedCreateInput = {
 export type FeatureFlagAuditLogUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   featureName?: Prisma.StringFieldUpdateOperationsInput | string
-  action?: Prisma.StringFieldUpdateOperationsInput | string
+  action?: Prisma.EnumFeatureFlagActionFieldUpdateOperationsInput | $Enums.FeatureFlagAction
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   userEmail?: Prisma.StringFieldUpdateOperationsInput | string
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -282,7 +282,7 @@ export type FeatureFlagAuditLogUpdateInput = {
 export type FeatureFlagAuditLogUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   featureName?: Prisma.StringFieldUpdateOperationsInput | string
-  action?: Prisma.StringFieldUpdateOperationsInput | string
+  action?: Prisma.EnumFeatureFlagActionFieldUpdateOperationsInput | $Enums.FeatureFlagAction
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   userEmail?: Prisma.StringFieldUpdateOperationsInput | string
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -292,7 +292,7 @@ export type FeatureFlagAuditLogUncheckedUpdateInput = {
 export type FeatureFlagAuditLogCreateManyInput = {
   id?: string
   featureName: string
-  action: string
+  action: $Enums.FeatureFlagAction
   userId: string
   userEmail: string
   reason?: string | null
@@ -302,7 +302,7 @@ export type FeatureFlagAuditLogCreateManyInput = {
 export type FeatureFlagAuditLogUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   featureName?: Prisma.StringFieldUpdateOperationsInput | string
-  action?: Prisma.StringFieldUpdateOperationsInput | string
+  action?: Prisma.EnumFeatureFlagActionFieldUpdateOperationsInput | $Enums.FeatureFlagAction
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   userEmail?: Prisma.StringFieldUpdateOperationsInput | string
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -312,7 +312,7 @@ export type FeatureFlagAuditLogUpdateManyMutationInput = {
 export type FeatureFlagAuditLogUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   featureName?: Prisma.StringFieldUpdateOperationsInput | string
-  action?: Prisma.StringFieldUpdateOperationsInput | string
+  action?: Prisma.EnumFeatureFlagActionFieldUpdateOperationsInput | $Enums.FeatureFlagAction
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   userEmail?: Prisma.StringFieldUpdateOperationsInput | string
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -347,6 +347,10 @@ export type FeatureFlagAuditLogMinOrderByAggregateInput = {
   userEmail?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type EnumFeatureFlagActionFieldUpdateOperationsInput = {
+  set?: $Enums.FeatureFlagAction
 }
 
 
@@ -399,7 +403,7 @@ export type $FeatureFlagAuditLogPayload<ExtArgs extends runtime.Types.Extensions
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     featureName: string
-    action: string
+    action: $Enums.FeatureFlagAction
     userId: string
     userEmail: string
     reason: string | null
@@ -829,7 +833,7 @@ export interface Prisma__FeatureFlagAuditLogClient<T, Null = never, ExtArgs exte
 export interface FeatureFlagAuditLogFieldRefs {
   readonly id: Prisma.FieldRef<"FeatureFlagAuditLog", 'String'>
   readonly featureName: Prisma.FieldRef<"FeatureFlagAuditLog", 'String'>
-  readonly action: Prisma.FieldRef<"FeatureFlagAuditLog", 'String'>
+  readonly action: Prisma.FieldRef<"FeatureFlagAuditLog", 'FeatureFlagAction'>
   readonly userId: Prisma.FieldRef<"FeatureFlagAuditLog", 'String'>
   readonly userEmail: Prisma.FieldRef<"FeatureFlagAuditLog", 'String'>
   readonly reason: Prisma.FieldRef<"FeatureFlagAuditLog", 'String'>

@@ -25,17 +25,30 @@ The Feature Flag System provides **master toggle control** for the entire applic
 #### FeatureFlag Table
 
 ```prisma
+// Enums for type safety
+enum FeatureFlagCategory {
+  SYSTEM
+  LAYER_1
+  LAYER_2
+  LAYER_3
+}
+
+enum FeatureFlagAction {
+  ENABLED
+  DISABLED
+}
+
 model FeatureFlag {
-  id          String   @id @default(cuid())
-  name        String   @unique             // e.g., "CONTRACTS", "LICENSES"
-  displayName String                       // e.g., "Contract Management"
-  description String   @db.Text
-  category    String                       // SYSTEM, LAYER_1, LAYER_2, LAYER_3
-  isEnabled   Boolean  @default(false)     // Default: DISABLED
-  isSystem    Boolean  @default(false)     // System flags (e.g., MAINTENANCE_MODE)
-  dependsOn   String[] @default([])        // Dependency array
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          String              @id @default(cuid())
+  name        String              @unique             // e.g., "CONTRACTS", "LICENSES"
+  displayName String                                  // e.g., "Contract Management"
+  description String              @db.Text
+  category    FeatureFlagCategory                     // Type-safe enum
+  isEnabled   Boolean             @default(false)     // Default: DISABLED
+  isSystem    Boolean             @default(false)     // System flags (e.g., MAINTENANCE_MODE)
+  dependsOn   String[]            @default([])        // Dependency array
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
 
   @@index([isEnabled])
   @@index([category])
@@ -47,13 +60,13 @@ model FeatureFlag {
 
 ```prisma
 model FeatureFlagAuditLog {
-  id          String   @id @default(cuid())
+  id          String            @id @default(cuid())
   featureName String
-  action      String                       // "ENABLED", "DISABLED"
+  action      FeatureFlagAction                       // Type-safe enum
   userId      String
   userEmail   String
-  reason      String?  @db.Text            // Optional reason for toggle
-  createdAt   DateTime @default(now())
+  reason      String?           @db.Text              // Optional reason for toggle
+  createdAt   DateTime          @default(now())
 
   @@index([featureName])
   @@index([userId])
@@ -777,6 +790,6 @@ For issues or questions:
 
 ---
 
-**Last Updated**: 2025-11-24
-**Version**: 1.0.0
+**Last Updated**: 2025-11-27
+**Version**: 1.1.0
 **Status**: Production-Ready
