@@ -23,10 +23,13 @@ import { SyncDevicesFromIntuneUseCase } from "@/core/use-cases/intune/sync-devic
 import { GetIntuneDeviceUseCase } from "@/core/use-cases/intune/get-intune-device.use-case";
 import { ListIntuneDevicesUseCase } from "@/core/use-cases/intune/list-intune-devices.use-case";
 import { GetIntuneComplianceStatsUseCase } from "@/core/use-cases/intune/get-intune-compliance-stats.use-case";
+import { GetDeviceComplianceHistoryUseCase } from "@/core/use-cases/intune/get-device-compliance-history.use-case";
 import { LinkIntuneDeviceToAssetUseCase } from "@/core/use-cases/intune/link-intune-device-to-asset.use-case";
 import { UnlinkIntuneDeviceFromAssetUseCase } from "@/core/use-cases/intune/unlink-intune-device-from-asset.use-case";
 import { LinkIntuneDeviceToPersonUseCase } from "@/core/use-cases/intune/link-intune-device-to-person.use-case";
 import { UnlinkIntuneDeviceFromPersonUseCase } from "@/core/use-cases/intune/unlink-intune-device-from-person.use-case";
+import { CreateAssetFromIntuneDeviceUseCase } from "@/core/use-cases/intune/create-asset-from-intune-device.use-case";
+import { BulkCreateAssetsFromIntuneDevicesUseCase } from "@/core/use-cases/intune/bulk-create-assets-from-intune-devices.use-case";
 
 const diLogger = logger.scope("DI:IntuneModule");
 
@@ -77,6 +80,13 @@ export function bindIntuneDependencies(container: Container): void {
     .to(GetIntuneComplianceStatsUseCase)
     .inTransientScope();
 
+  container
+    .bind<GetDeviceComplianceHistoryUseCase>(
+      DI_TOKENS.GetDeviceComplianceHistoryUseCase,
+    )
+    .to(GetDeviceComplianceHistoryUseCase)
+    .inTransientScope();
+
   // Link/Unlink to Asset Use Cases
   container
     .bind<LinkIntuneDeviceToAssetUseCase>(
@@ -105,6 +115,21 @@ export function bindIntuneDependencies(container: Container): void {
       DI_TOKENS.UnlinkIntuneDeviceFromPersonUseCase,
     )
     .to(UnlinkIntuneDeviceFromPersonUseCase)
+    .inTransientScope();
+
+  // Asset Creation Use Cases
+  container
+    .bind<CreateAssetFromIntuneDeviceUseCase>(
+      DI_TOKENS.CreateAssetFromIntuneDeviceUseCase,
+    )
+    .to(CreateAssetFromIntuneDeviceUseCase)
+    .inTransientScope();
+
+  container
+    .bind<BulkCreateAssetsFromIntuneDevicesUseCase>(
+      DI_TOKENS.BulkCreateAssetsFromIntuneDevicesUseCase,
+    )
+    .to(BulkCreateAssetsFromIntuneDevicesUseCase)
     .inTransientScope();
 
   diLogger.debug(

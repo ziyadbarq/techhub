@@ -1,7 +1,7 @@
 # Microsoft Intune/MDM Integration
 
 **Status**: ✅ Production Ready
-**Version**: 1.0.0
+**Version**: 1.1.0
 **Last Updated**: November 28, 2024
 **Feature Flag**: `INTUNE`
 
@@ -16,6 +16,7 @@ The Intune Integration module enables synchronization of Microsoft Intune manage
 - **Gap Analysis**: Identify coverage gaps (devices in Intune not in ITAM and vice versa)
 - **Automated Linking**: Auto-link devices to assets via serial number matching
 - **User Association**: Auto-link devices to persons via Azure AD user ID
+- **Asset Creation**: Create single or bulk ITAM assets directly from Intune devices
 
 ## Architecture
 
@@ -30,11 +31,13 @@ Intune Integration Module
 │   ├── MSGraphService                    # Microsoft Graph API client
 │   ├── PrismaIntuneDeviceRepository      # Device persistence
 │   └── PrismaIntuneComplianceHistoryRepository
-├── Use Cases (9 total)
+├── Use Cases (11 total)
 │   ├── SyncDevicesFromIntuneUseCase      # Main sync orchestrator
 │   ├── GetIntuneDeviceUseCase            # Single device lookup
 │   ├── ListIntuneDevicesUseCase          # Paginated list with filters
 │   ├── GetIntuneComplianceStatsUseCase   # Dashboard statistics
+│   ├── CreateAssetFromIntuneDeviceUseCase # Create single asset from device
+│   ├── BulkCreateAssetsFromIntuneUseCase # Create multiple assets from devices
 │   ├── LinkIntuneDeviceToAssetUseCase    # Manual asset linking
 │   ├── UnlinkIntuneDeviceFromAssetUseCase
 │   ├── LinkIntuneDeviceToPersonUseCase   # Manual person linking
@@ -44,8 +47,11 @@ Intune Integration Module
 ├── UI Components
 │   ├── /intune/devices                   # Device list page
 │   ├── /intune/devices/[id]              # Device detail page
-│   ├── IntuneDevicesTable                # Data table component
-│   └── IntuneDeviceDetailClient          # Detail view with tabs
+│   ├── IntuneDevicesTable                # Data table with row selection
+│   ├── IntuneDeviceDetailClient          # Detail view with tabs & stats
+│   ├── CreateAssetFromDeviceWizard       # Single asset creation wizard
+│   ├── BulkCreateAssetsWizard            # Bulk asset creation wizard
+│   └── RelatedItemsTab                   # Linked asset/person details
 └── Background Jobs
     └── handleIntuneDeviceSync            # BullMQ scheduled job (daily 3 AM UTC)
 ```
@@ -125,13 +131,38 @@ Manual linking (planned):
 - Click "Link to Asset" in ITAM Links tab
 - Search and select target asset
 
+### Creating Assets from Devices
+
+**Single Asset Creation**:
+1. Navigate to a device detail page
+2. Click **"Create Asset"** button in the header
+3. Wizard auto-populates device data (name, serial, manufacturer, model)
+4. Select category, stock location, and lifecycle state
+5. Review and create the asset
+6. Asset is automatically linked to the Intune device
+
+**Bulk Asset Creation**:
+1. Navigate to **Intune → Managed Devices**
+2. Select multiple devices using checkboxes
+3. Click **"Create Assets"** in the bulk action toolbar
+4. Configure: Select category, stock location, lifecycle state, and asset tag prefix
+5. View eligibility summary (devices without serial/already linked are skipped)
+6. Click **"Create Assets"** to process all eligible devices
+7. Review results: success count, failed devices with error details
+
 ### Viewing Device Details
 
 1. Click on a device name in the list
-2. View three tabs:
+2. View **Quick Stats** cards at the top:
+   - Compliance status (Compliant/Non-Compliant)
+   - Days since enrollment
+   - Days since last sync
+   - ITAM link status (Asset/Person linked indicators)
+3. View four tabs:
    - **Overview**: Device info, user assignment, timestamps, identifiers
    - **Security**: Compliance state, encryption, supervision, jailbreak status
-   - **ITAM Links**: Linked asset and person with unlink options
+   - **ITAM Links**: Link/unlink devices to assets and persons
+   - **Related Items**: Full details of linked asset and person (category, vendor, model, location, job title, department, etc.)
 
 ## Data Model
 
@@ -230,6 +261,12 @@ linkDeviceToPersonAction(data: LinkDeviceToPersonDTO): Promise<ActionResponse<In
 
 // Unlink device from person
 unlinkDeviceFromPersonAction(data: UnlinkDeviceDTO): Promise<ActionResponse<IntuneDeviceDTO>>
+
+// Create asset from single Intune device
+createAssetFromIntuneDeviceAction(data: CreateAssetFromIntuneDeviceDTO): Promise<ActionResponse<CreateAssetFromIntuneDeviceOutput>>
+
+// Bulk create assets from multiple Intune devices
+bulkCreateAssetsFromIntuneAction(data: BulkCreateAssetsFromIntuneDTO): Promise<ActionResponse<BulkCreateAssetsFromIntuneOutput>>
 ```
 
 ### Filter Options
@@ -277,8 +314,11 @@ npm run worker:dev
 ## Future Enhancements
 
 - [ ] Compliance dashboard with charts and trends
-- [ ] Manual device-to-asset linking dialog
-- [ ] Manual device-to-person linking dialog
+- [x] ~~Manual device-to-asset linking dialog~~ (Implemented via ITAM Links tab)
+- [x] ~~Manual device-to-person linking dialog~~ (Implemented via ITAM Links tab)
+- [x] ~~Create asset from Intune device~~ (Single & Bulk creation wizards)
+- [x] ~~Related Items tab with linked asset/person details~~
+- [x] ~~Device detail quick stats cards~~
 - [ ] Compliance policy configuration
 - [ ] Device actions (wipe, retire, sync)
 - [ ] Compliance history timeline view

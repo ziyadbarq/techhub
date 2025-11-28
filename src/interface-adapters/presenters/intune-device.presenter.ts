@@ -5,10 +5,12 @@
  */
 
 import type { IntuneDevice } from "@/core/domain/entities/intune-device.entity";
+import type { IntuneComplianceHistory } from "@/core/domain/entities/intune-compliance-history.entity";
 import type {
   IntuneDeviceDTO,
   IntuneComplianceStatsDTO,
   IntuneSyncResultDTO,
+  IntuneComplianceHistoryDTO,
 } from "@/interface-adapters/dtos/generated/intune-device.dto";
 
 /**
@@ -216,4 +218,31 @@ export function getOwnershipTypeColor(
     UNKNOWN: "outline",
   };
   return colors[type];
+}
+
+/**
+ * Present a single IntuneComplianceHistory entity as a DTO
+ */
+export function presentComplianceHistory(
+  history: IntuneComplianceHistory,
+): IntuneComplianceHistoryDTO {
+  return {
+    id: history.id,
+    intuneDeviceId: history.intuneDeviceId,
+    previousState: history.previousState,
+    newState: history.newState,
+    changedAt: history.changedAt.toISOString(),
+    policyName: history.policyName,
+    policyId: history.policyId,
+    reason: history.reason,
+  };
+}
+
+/**
+ * Present multiple IntuneComplianceHistory entities as DTOs
+ */
+export function presentComplianceHistories(
+  histories: IntuneComplianceHistory[],
+): IntuneComplianceHistoryDTO[] {
+  return histories.map(presentComplianceHistory);
 }

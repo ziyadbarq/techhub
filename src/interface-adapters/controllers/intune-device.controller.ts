@@ -17,18 +17,23 @@ import type {
   ListIntuneDevicesUseCase,
   GetIntuneDeviceUseCase,
   GetIntuneComplianceStatsUseCase,
+  GetDeviceComplianceHistoryUseCase,
   SyncDevicesFromIntuneUseCase,
   LinkIntuneDeviceToAssetUseCase,
   UnlinkIntuneDeviceFromAssetUseCase,
   LinkIntuneDeviceToPersonUseCase,
   UnlinkIntuneDeviceFromPersonUseCase,
+  CreateAssetFromIntuneDeviceUseCase,
+  BulkCreateAssetsFromIntuneDevicesUseCase,
 } from "@/core/use-cases/intune";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
+import type { IntuneDeviceFilters } from "@/core/repositories/intune-device.repository.interface";
 import {
   presentIntuneDevice,
   presentIntuneDevices,
   presentComplianceStats,
+  presentComplianceHistories,
   presentSyncResult,
 } from "@/interface-adapters/presenters/intune-device.presenter";
 import {
@@ -37,14 +42,21 @@ import {
   UnlinkDeviceSchema,
   TriggerIntuneSyncSchema,
   IntuneDeviceFiltersSchema,
+  CreateAssetFromDeviceSchema,
+  BulkCreateAssetsFromDevicesSchema,
   type IntuneDeviceDTO,
   type IntuneComplianceStatsDTO,
+  type IntuneComplianceHistoryDTO,
   type IntuneSyncResultDTO,
   type LinkDeviceToAssetDTO,
   type LinkDeviceToPersonDTO,
   type UnlinkDeviceDTO,
   type TriggerIntuneSyncDTO,
   type IntuneDeviceFiltersDTO,
+  type CreateAssetFromDeviceDTO,
+  type CreateAssetFromDeviceResultDTO,
+  type BulkCreateAssetsFromDevicesDTO,
+  type BulkCreateAssetsResultDTO,
 } from "@/interface-adapters/dtos/generated/intune-device.dto";
 
 // ==========================================
@@ -109,6 +121,31 @@ async function enrichDevices(
 }
 
 // ==========================================
+// Filter Mapping
+// ==========================================
+
+/**
+ * Maps DTO filters to repository filters
+ * Handles property name differences between API and repository layer
+ */
+function mapFiltersToRepository(
+  dtoFilters?: IntuneDeviceFiltersDTO,
+): IntuneDeviceFilters | undefined {
+  if (!dtoFilters) return undefined;
+
+  return {
+    searchQuery: dtoFilters.search,
+    complianceState: dtoFilters.complianceState,
+    ownershipType: dtoFilters.ownershipType,
+    managementState: dtoFilters.managementState,
+    operatingSystem: dtoFilters.operatingSystem,
+    isActive: dtoFilters.isActive,
+    isLinkedToAsset: dtoFilters.linkedToAsset,
+    isLinkedToPerson: dtoFilters.linkedToPerson,
+  };
+}
+
+// ==========================================
 // Query Actions
 // ==========================================
 
@@ -132,13 +169,16 @@ export async function listIntuneDevicesAction(
       ? IntuneDeviceFiltersSchema.parse(filters)
       : undefined;
 
+    // Map DTO filters to repository filters
+    const repositoryFilters = mapFiltersToRepository(validatedFilters);
+
     const container = getContainer();
     const listDevicesUseCase = container.get<ListIntuneDevicesUseCase>(
       DI_TOKENS.ListIntuneDevicesUseCase,
     );
 
     const result = await listDevicesUseCase.execute({
-      filters: validatedFilters,
+      filters: repositoryFilters,
       pagination,
     });
 
@@ -226,6 +266,47 @@ export async function getIntuneComplianceStatsAction(): Promise<
       error,
       { function: "getIntuneComplianceStatsAction" },
       "Failed to get compliance statistics",
+    );
+  }
+}
+
+/**
+ * Get compliance history for a device
+ */
+export async function getDeviceComplianceHistoryAction(
+  deviceId: string,
+  options?: { maxAgeDays?: number; skip?: number; take?: number },
+): Promise<
+  ActionResponse<{ history: IntuneComplianceHistoryDTO[]; total: number }>
+> {
+  try {
+    await requirePermission(PERMISSIONS.INTUNE_COMPLIANCE_VIEW);
+
+    const container = getContainer();
+    const getHistoryUseCase = container.get<GetDeviceComplianceHistoryUseCase>(
+      DI_TOKENS.GetDeviceComplianceHistoryUseCase,
+    );
+
+    const result = await getHistoryUseCase.execute({
+      deviceId,
+      maxAgeDays: options?.maxAgeDays,
+      pagination: options
+        ? { skip: options.skip, take: options.take }
+        : undefined,
+    });
+
+    return {
+      success: true,
+      data: {
+        history: presentComplianceHistories(result.history),
+        total: result.total,
+      },
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getDeviceComplianceHistoryAction", deviceId },
+      "Failed to get device compliance history",
     );
   }
 }
@@ -416,6 +497,114 @@ export async function unlinkDeviceFromPersonAction(
       error,
       { function: "unlinkDeviceFromPersonAction" },
       "Failed to unlink device from person",
+    );
+  }
+}
+
+// ==========================================
+// Asset Creation Actions
+// ==========================================
+
+/**
+ * Create an ITAM Asset from an Intune device
+ */
+export async function createAssetFromDeviceAction(
+  data: CreateAssetFromDeviceDTO,
+): Promise<ActionResponse<CreateAssetFromDeviceResultDTO>> {
+  try {
+    // Requires both assets create and intune link permissions
+    await requirePermission(PERMISSIONS.ASSETS_CREATE);
+    await requirePermission(PERMISSIONS.INTUNE_DEVICES_LINK);
+
+    const validated = CreateAssetFromDeviceSchema.parse(data);
+
+    const container = getContainer();
+    const createAssetUseCase =
+      container.get<CreateAssetFromIntuneDeviceUseCase>(
+        DI_TOKENS.CreateAssetFromIntuneDeviceUseCase,
+      );
+
+    const result = await createAssetUseCase.execute({
+      deviceId: validated.deviceId,
+      categoryId: validated.categoryId,
+      stockLocationId: validated.stockLocationId,
+      lifecycleStateId: validated.lifecycleStateId,
+      autoCreateVendor: validated.autoCreateVendor,
+      autoCreateModel: validated.autoCreateModel,
+      autoLinkToDevice: validated.autoLinkToDevice,
+    });
+
+    revalidatePath("/intune");
+    revalidatePath("/intune/devices");
+    revalidatePath(`/intune/devices/${validated.deviceId}`);
+    revalidatePath("/assets");
+
+    return {
+      success: true,
+      data: {
+        assetId: result.asset.id,
+        assetTag: result.asset.assetTag,
+        serialNumber: result.asset.serialNumber ?? "",
+        vendorCreated: result.vendorCreated,
+        modelCreated: result.modelCreated,
+        linkedToDevice: validated.autoLinkToDevice ?? true,
+      },
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "createAssetFromDeviceAction" },
+      "Failed to create asset from device",
+    );
+  }
+}
+
+/**
+ * Bulk create ITAM Assets from multiple Intune devices
+ */
+export async function bulkCreateAssetsFromDevicesAction(
+  data: BulkCreateAssetsFromDevicesDTO,
+): Promise<ActionResponse<BulkCreateAssetsResultDTO>> {
+  try {
+    // Requires both assets create and intune link permissions
+    await requirePermission(PERMISSIONS.ASSETS_CREATE);
+    await requirePermission(PERMISSIONS.INTUNE_DEVICES_LINK);
+
+    const validated = BulkCreateAssetsFromDevicesSchema.parse(data);
+
+    const container = getContainer();
+    const bulkCreateUseCase =
+      container.get<BulkCreateAssetsFromIntuneDevicesUseCase>(
+        DI_TOKENS.BulkCreateAssetsFromIntuneDevicesUseCase,
+      );
+
+    const result = await bulkCreateUseCase.execute({
+      deviceIds: validated.deviceIds,
+      categoryId: validated.categoryId,
+      stockLocationId: validated.stockLocationId,
+      lifecycleStateId: validated.lifecycleStateId,
+      autoCreateVendor: validated.autoCreateVendor,
+      autoCreateModel: validated.autoCreateModel,
+      autoLinkToDevice: validated.autoLinkToDevice,
+    });
+
+    revalidatePath("/intune");
+    revalidatePath("/intune/devices");
+    revalidatePath("/assets");
+
+    return {
+      success: true,
+      data: {
+        results: result.results,
+        summary: result.summary,
+        durationMs: result.durationMs,
+      },
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "bulkCreateAssetsFromDevicesAction" },
+      "Failed to bulk create assets from devices",
     );
   }
 }

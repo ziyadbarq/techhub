@@ -201,6 +201,21 @@ export interface IntuneSyncResultDTO {
 }
 
 // ==========================================
+// Compliance History DTO
+// ==========================================
+
+export interface IntuneComplianceHistoryDTO {
+  id: string;
+  intuneDeviceId: string;
+  previousState: z.infer<typeof IntuneComplianceStateSchema>;
+  newState: z.infer<typeof IntuneComplianceStateSchema>;
+  changedAt: string;
+  policyName: string | null;
+  policyId: string | null;
+  reason: string | null;
+}
+
+// ==========================================
 // Type Exports
 // ==========================================
 
@@ -209,3 +224,83 @@ export type LinkDeviceToPersonDTO = z.infer<typeof LinkDeviceToPersonSchema>;
 export type UnlinkDeviceDTO = z.infer<typeof UnlinkDeviceSchema>;
 export type TriggerIntuneSyncDTO = z.infer<typeof TriggerIntuneSyncSchema>;
 export type IntuneDeviceFiltersDTO = z.infer<typeof IntuneDeviceFiltersSchema>;
+
+// ==========================================
+// Create Asset from Device Schema
+// ==========================================
+
+export const CreateAssetFromDeviceSchema = z.object({
+  deviceId: z.string().min(1, "Device ID is required"),
+  categoryId: z.string().min(1, "Category ID is required"),
+  stockLocationId: z.string().optional(),
+  lifecycleStateId: z.string().optional(),
+  autoCreateVendor: z.boolean().default(true),
+  autoCreateModel: z.boolean().default(true),
+  autoLinkToDevice: z.boolean().default(true),
+});
+
+export type CreateAssetFromDeviceDTO = z.infer<
+  typeof CreateAssetFromDeviceSchema
+>;
+
+// ==========================================
+// Create Asset Result DTO
+// ==========================================
+
+export interface CreateAssetFromDeviceResultDTO {
+  assetId: string;
+  assetTag: string;
+  serialNumber: string;
+  vendorCreated: boolean;
+  modelCreated: boolean;
+  linkedToDevice: boolean;
+}
+
+// ==========================================
+// Bulk Create Assets Schema
+// ==========================================
+
+export const BulkCreateAssetsFromDevicesSchema = z.object({
+  deviceIds: z
+    .array(z.string().min(1))
+    .min(1, "At least one device is required"),
+  categoryId: z.string().min(1, "Category ID is required"),
+  stockLocationId: z.string().optional(),
+  lifecycleStateId: z.string().optional(),
+  autoCreateVendor: z.boolean().default(true),
+  autoCreateModel: z.boolean().default(true),
+  autoLinkToDevice: z.boolean().default(true),
+});
+
+export type BulkCreateAssetsFromDevicesDTO = z.infer<
+  typeof BulkCreateAssetsFromDevicesSchema
+>;
+
+// ==========================================
+// Bulk Create Result DTOs
+// ==========================================
+
+export interface BulkCreateAssetResultDTO {
+  deviceId: string;
+  deviceName: string;
+  serialNumber: string | null;
+  success: boolean;
+  assetTag?: string;
+  assetId?: string;
+  error?: string;
+  vendorCreated?: boolean;
+  modelCreated?: boolean;
+}
+
+export interface BulkCreateAssetsResultDTO {
+  results: BulkCreateAssetResultDTO[];
+  summary: {
+    total: number;
+    created: number;
+    skipped: number;
+    failed: number;
+    vendorsCreated: number;
+    modelsCreated: number;
+  };
+  durationMs: number;
+}

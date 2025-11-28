@@ -22,6 +22,12 @@ export type {
 export { GetIntuneComplianceStatsUseCase } from "./get-intune-compliance-stats.use-case";
 export type { IntuneStatsOutput } from "./get-intune-compliance-stats.use-case";
 
+export { GetDeviceComplianceHistoryUseCase } from "./get-device-compliance-history.use-case";
+export type {
+  GetDeviceComplianceHistoryInput,
+  GetDeviceComplianceHistoryOutput,
+} from "./get-device-compliance-history.use-case";
+
 // Link to Asset
 export { LinkIntuneDeviceToAssetUseCase } from "./link-intune-device-to-asset.use-case";
 export type {
@@ -47,3 +53,17 @@ export type {
   UnlinkDeviceFromPersonInput,
   UnlinkDeviceFromPersonOutput,
 } from "./unlink-intune-device-from-person.use-case";
+
+// Asset Creation
+export { CreateAssetFromIntuneDeviceUseCase } from "./create-asset-from-intune-device.use-case";
+export type {
+  CreateAssetFromIntuneDeviceInput,
+  CreateAssetFromIntuneDeviceOutput,
+} from "./create-asset-from-intune-device.use-case";
+
+export { BulkCreateAssetsFromIntuneDevicesUseCase } from "./bulk-create-assets-from-intune-devices.use-case";
+export type {
+  BulkCreateAssetsInput,
+  BulkCreateAssetResult,
+  BulkCreateAssetsOutput,
+} from "./bulk-create-assets-from-intune-devices.use-case";

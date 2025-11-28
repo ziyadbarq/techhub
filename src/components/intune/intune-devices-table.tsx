@@ -5,6 +5,7 @@
  * Intune Devices Table
  *
  * Data table component for displaying Intune devices.
+ * Supports row selection for bulk operations.
  */
 
 import { useMemo } from "react";
@@ -14,6 +15,7 @@ import { MoreHorizontal, ExternalLink, Laptop, Monitor } from "lucide-react";
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,14 +36,64 @@ interface IntuneDevicesTableProps {
   devices: IntuneDeviceDTO[];
   isLoading?: boolean;
   onRefresh?: () => void;
+  selectable?: boolean;
+  onSelectionChange?: (selectedDevices: IntuneDeviceDTO[]) => void;
 }
 
 export function IntuneDevicesTable({
   devices,
   isLoading,
+  selectable = false,
+  onSelectionChange,
 }: IntuneDevicesTableProps) {
   const columns = useMemo<ColumnDef<IntuneDeviceDTO>[]>(
     () => [
+      // Selection column (conditionally added)
+      ...(selectable
+        ? [
+            {
+              id: "select",
+              header: ({
+                table,
+              }: {
+                table: {
+                  getIsAllPageRowsSelected: () => boolean;
+                  getIsSomePageRowsSelected: () => boolean;
+                  toggleAllPageRowsSelected: (value?: boolean) => void;
+                };
+              }) => (
+                <Checkbox
+                  checked={
+                    table.getIsAllPageRowsSelected() ||
+                    (table.getIsSomePageRowsSelected() && "indeterminate")
+                  }
+                  onCheckedChange={(value) =>
+                    table.toggleAllPageRowsSelected(!!value)
+                  }
+                  aria-label="Select all"
+                />
+              ),
+              cell: ({
+                row,
+              }: {
+                row: {
+                  getIsSelected: () => boolean;
+                  toggleSelected: (value?: boolean) => void;
+                  getCanSelect: () => boolean;
+                };
+              }) => (
+                <Checkbox
+                  checked={row.getIsSelected()}
+                  onCheckedChange={(value) => row.toggleSelected(!!value)}
+                  aria-label="Select row"
+                  disabled={!row.getCanSelect()}
+                />
+              ),
+              enableSorting: false,
+              enableHiding: false,
+            } as ColumnDef<IntuneDeviceDTO>,
+          ]
+        : []),
       {
         accessorKey: "deviceName",
         header: ({ column }) => (
@@ -235,17 +287,16 @@ export function IntuneDevicesTable({
         },
       },
     ],
-    [],
+    [selectable],
   );
 
   return (
     <DataTable
       columns={columns}
       data={devices}
-      searchable
-      searchKey="deviceName"
-      searchPlaceholder="Search devices..."
       loading={isLoading}
+      selectable={selectable}
+      onSelectionChange={onSelectionChange}
     />
   );
 }

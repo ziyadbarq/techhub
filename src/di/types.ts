@@ -905,7 +905,16 @@ export const DI_TOKENS = {
   GetIntuneComplianceHistoryUseCase: Symbol.for(
     "GetIntuneComplianceHistoryUseCase",
   ),
+  GetDeviceComplianceHistoryUseCase: Symbol.for(
+    "GetDeviceComplianceHistoryUseCase",
+  ),
   GetIntuneSyncLogsUseCase: Symbol.for("GetIntuneSyncLogsUseCase"),
+  CreateAssetFromIntuneDeviceUseCase: Symbol.for(
+    "CreateAssetFromIntuneDeviceUseCase",
+  ),
+  BulkCreateAssetsFromIntuneDevicesUseCase: Symbol.for(
+    "BulkCreateAssetsFromIntuneDevicesUseCase",
+  ),
 
   // ==========================================
   // Infrastructure Tokens
