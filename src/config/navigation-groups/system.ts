@@ -20,7 +20,6 @@ import {
   Lightbulb,
   GitBranch,
   ShieldCheck,
-  TrendingUp,
 } from "lucide-react";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { NavGroup } from "../navigation.types";
@@ -75,14 +74,6 @@ export const adminGroup: NavGroup = {
   id: "admin",
   title: "Admin",
   items: [
-    {
-      title: "Stock Movements",
-      href: "/stock-movements",
-      icon: TrendingUp,
-      description: "Track inventory movements",
-      permission: PERMISSIONS.STOCK_MOVEMENTS_VIEW,
-      featureFlag: "INVENTORY",
-    },
     {
       title: "Admin Dashboard",
       href: "/admin",
