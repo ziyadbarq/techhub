@@ -54,16 +54,25 @@ export async function seedWarrantiesMaintenance(prisma: PrismaClient) {
   const tablets = assets.filter((a) => a.assetCategory.code === "TABLET");
 
   // ==============================================
-  // 1. WARRANTIES
+  // 1. WARRANTIES (idempotent - check before create)
   // ==============================================
   logStep("🛡️", "Creating warranties...");
+
+  // Load existing warranties to support append mode
+  const existingWarranties = await prisma.warranty.findMany({
+    select: { assetId: true },
+  });
+  const existingWarrantyAssetIds = new Set(
+    existingWarranties.map((w) => w.assetId),
+  );
 
   let warrantyCount = 0;
 
   // Laptops - Standard 3-year warranty
   for (let i = 0; i < Math.min(laptops.length, 10); i++) {
     const laptop = laptops[i];
-    if (!laptop.purchaseDate) continue;
+    if (!laptop.purchaseDate || existingWarrantyAssetIds.has(laptop.id))
+      continue;
 
     const warrantyMonths = i < 7 ? 36 : 12; // Vary: 3 years for most, 1 year for some
     const provider = laptop.assetModel?.vendor?.name || "Manufacturer";
@@ -81,7 +90,8 @@ export async function seedWarrantiesMaintenance(prisma: PrismaClient) {
   // Desktops - Standard 3-year warranty
   for (let i = 0; i < desktops.length; i++) {
     const desktop = desktops[i];
-    if (!desktop.purchaseDate) continue;
+    if (!desktop.purchaseDate || existingWarrantyAssetIds.has(desktop.id))
+      continue;
 
     const provider = desktop.assetModel?.vendor?.name || "Manufacturer";
     await WarrantyFactory.fromAsset(
@@ -97,7 +107,8 @@ export async function seedWarrantiesMaintenance(prisma: PrismaClient) {
   // Monitors - Standard 3-year warranty
   for (let i = 0; i < Math.min(monitors.length, 5); i++) {
     const monitor = monitors[i];
-    if (!monitor.purchaseDate) continue;
+    if (!monitor.purchaseDate || existingWarrantyAssetIds.has(monitor.id))
+      continue;
 
     const provider = monitor.assetModel?.vendor?.name || "Manufacturer";
     await WarrantyFactory.fromAsset(
@@ -113,7 +124,8 @@ export async function seedWarrantiesMaintenance(prisma: PrismaClient) {
   // Servers - Extended warranty with premium support (5 years)
   for (let i = 0; i < servers.length; i++) {
     const server = servers[i];
-    if (!server.purchaseDate) continue;
+    if (!server.purchaseDate || existingWarrantyAssetIds.has(server.id))
+      continue;
 
     const provider =
       (server.assetModel?.vendor?.name || "Vendor") + " ProSupport";
@@ -130,7 +142,8 @@ export async function seedWarrantiesMaintenance(prisma: PrismaClient) {
   // Network equipment - Support contract (3 years)
   for (let i = 0; i < network.length; i++) {
     const device = network[i];
-    if (!device.purchaseDate) continue;
+    if (!device.purchaseDate || existingWarrantyAssetIds.has(device.id))
+      continue;
 
     await WarrantyFactory.fromAsset(
       device,
@@ -145,7 +158,8 @@ export async function seedWarrantiesMaintenance(prisma: PrismaClient) {
   // Printers - Standard 1-year warranty
   for (let i = 0; i < printers.length; i++) {
     const printer = printers[i];
-    if (!printer.purchaseDate) continue;
+    if (!printer.purchaseDate || existingWarrantyAssetIds.has(printer.id))
+      continue;
 
     const provider = printer.assetModel?.vendor?.name || "Manufacturer";
     await WarrantyFactory.fromAsset(
@@ -161,7 +175,7 @@ export async function seedWarrantiesMaintenance(prisma: PrismaClient) {
   // Phones - 2-year warranty
   for (let i = 0; i < Math.min(phones.length, 5); i++) {
     const phone = phones[i];
-    if (!phone.purchaseDate) continue;
+    if (!phone.purchaseDate || existingWarrantyAssetIds.has(phone.id)) continue;
 
     const provider =
       phone.assetModel?.vendor?.name === "Apple Inc."
@@ -180,7 +194,8 @@ export async function seedWarrantiesMaintenance(prisma: PrismaClient) {
   // Tablets - 2-year warranty
   for (let i = 0; i < Math.min(tablets.length, 3); i++) {
     const tablet = tablets[i];
-    if (!tablet.purchaseDate) continue;
+    if (!tablet.purchaseDate || existingWarrantyAssetIds.has(tablet.id))
+      continue;
 
     const provider =
       tablet.assetModel?.vendor?.name === "Apple Inc."
@@ -196,17 +211,26 @@ export async function seedWarrantiesMaintenance(prisma: PrismaClient) {
     warrantyCount++;
   }
 
-  logSuccess(`Created ${warrantyCount} warranties`);
+  logSuccess(`Processed ${warrantyCount} warranties`);
 
   // ==============================================
-  // 2. MAINTENANCE SCHEDULES
+  // 2. MAINTENANCE SCHEDULES (idempotent - check before create)
   // ==============================================
   logStep("🔧", "Creating maintenance schedules...");
+
+  // Load existing schedules to support append mode
+  const existingSchedules = await prisma.maintenanceSchedule.findMany({
+    select: { assetId: true },
+  });
+  const existingScheduleAssetIds = new Set(
+    existingSchedules.map((s) => s.assetId),
+  );
 
   let scheduleCount = 0;
 
   // Monthly server maintenance
   for (const server of servers) {
+    if (existingScheduleAssetIds.has(server.id)) continue;
     const person = pickRandom(persons);
     await MaintenanceScheduleFactory.createRecurring(
       server.id,
@@ -221,6 +245,7 @@ export async function seedWarrantiesMaintenance(prisma: PrismaClient) {
 
   // Quarterly network equipment inspection
   for (const device of network) {
+    if (existingScheduleAssetIds.has(device.id)) continue;
     const person = pickRandom(persons);
     await MaintenanceScheduleFactory.createRecurring(
       device.id,
@@ -235,6 +260,7 @@ export async function seedWarrantiesMaintenance(prisma: PrismaClient) {
 
   // Bi-annual printer maintenance
   for (const printer of printers) {
+    if (existingScheduleAssetIds.has(printer.id)) continue;
     const person = pickRandom(persons);
     await MaintenanceScheduleFactory.createRecurring(
       printer.id,
@@ -250,6 +276,7 @@ export async function seedWarrantiesMaintenance(prisma: PrismaClient) {
   // Annual laptop refresh/upgrade (first 3 laptops)
   for (let i = 0; i < Math.min(laptops.length, 3); i++) {
     const laptop = laptops[i];
+    if (existingScheduleAssetIds.has(laptop.id)) continue;
     const person = pickRandom(persons);
     await MaintenanceScheduleFactory.createRecurring(
       laptop.id,
@@ -262,17 +289,24 @@ export async function seedWarrantiesMaintenance(prisma: PrismaClient) {
     scheduleCount++;
   }
 
-  logSuccess(`Created ${scheduleCount} maintenance schedules`);
+  logSuccess(`Processed ${scheduleCount} maintenance schedules`);
 
   // ==============================================
-  // 3. MAINTENANCE RECORDS
+  // 3. MAINTENANCE RECORDS (idempotent - check before create)
   // ==============================================
   logStep("📋", "Creating maintenance records...");
+
+  // Load existing records to support append mode
+  const existingRecords = await prisma.maintenanceRecord.findMany({
+    select: { assetId: true },
+  });
+  const existingRecordAssetIds = new Set(existingRecords.map((r) => r.assetId));
 
   let recordCount = 0;
 
   // Completed maintenance records (historical)
   for (let i = 0; i < Math.min(servers.length, 5); i++) {
+    if (existingRecordAssetIds.has(servers[i].id)) continue;
     const server = servers[i];
     const person = pickRandom(persons);
     const daysAgo = 30 + i * 30; // 30, 60, 90, 120, 150 days ago
@@ -290,6 +324,7 @@ export async function seedWarrantiesMaintenance(prisma: PrismaClient) {
   // Completed printer maintenance
   for (let i = 0; i < Math.min(printers.length, 2); i++) {
     const printer = printers[i];
+    if (existingRecordAssetIds.has(printer.id)) continue;
     const person = pickRandom(persons);
 
     await MaintenanceRecordFactory.createCompleted(
@@ -304,6 +339,7 @@ export async function seedWarrantiesMaintenance(prisma: PrismaClient) {
 
   // Network equipment maintenance records
   for (const device of network) {
+    if (existingRecordAssetIds.has(device.id)) continue;
     const person = pickRandom(persons);
 
     await MaintenanceRecordFactory.createCompleted(
@@ -316,9 +352,10 @@ export async function seedWarrantiesMaintenance(prisma: PrismaClient) {
     recordCount++;
   }
 
-  // Scheduled maintenance (upcoming)
+  // Scheduled maintenance (upcoming) - skip if we already have completed records
   for (let i = 0; i < Math.min(servers.length, 3); i++) {
     const server = servers[i];
+    // For scheduled records, we allow even if completed records exist (different status)
     const person = pickRandom(persons);
 
     await MaintenanceRecordFactory.createScheduled(
@@ -385,7 +422,7 @@ export async function seedWarrantiesMaintenance(prisma: PrismaClient) {
     recordCount++;
   }
 
-  logSuccess(`Created ${recordCount} maintenance records`);
+  logSuccess(`Processed ${recordCount} maintenance records`);
 
   // ==============================================
   // Summary

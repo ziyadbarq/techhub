@@ -29,6 +29,7 @@
     "db:seed:full": "dotenv -e .env.local -- tsx src/infrastructure/database/prisma/seed.ts full",
     "db:seed:interactive": "dotenv -e .env.local -- tsx src/infrastructure/database/prisma/seed-interactive.ts",
     "db:studio": "dotenv -e .env.local -- prisma studio",
+    "db:reset": "dotenv -e .env.local -- prisma db push --force-reset && npm run db:seed:dev",
     "cache:clear": "tsx scripts/clear-cache.ts",
     "cache:clear:all": "tsx scripts/clear-cache.ts && npm run reset",
     "redis:start": "docker compose up -d redis",

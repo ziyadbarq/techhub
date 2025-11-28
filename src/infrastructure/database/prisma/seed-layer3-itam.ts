@@ -51,11 +51,19 @@ export async function seedLayer3ITAM(prisma: PrismaClient) {
   const today = new Date();
 
   // ==============================================
-  // 1. ASSET DISPOSALS
+  // 1. ASSET DISPOSALS (idempotent - check before create)
   // ==============================================
   console.log("   🗑️  Seeding asset disposals...");
 
-  if (retiredAssets[0]) {
+  // Load existing disposals to support append mode
+  const existingDisposals = await prisma.assetDisposal.findMany({
+    select: { assetId: true },
+  });
+  const existingDisposalAssetIds = new Set(
+    existingDisposals.map((d) => d.assetId),
+  );
+
+  if (retiredAssets[0] && !existingDisposalAssetIds.has(retiredAssets[0].id)) {
     const disposal = await new AssetDisposalFactory({
       assetId: retiredAssets[0].id,
       disposalType: DISPOSAL_TYPES.RECYCLING,
@@ -76,7 +84,7 @@ export async function seedLayer3ITAM(prisma: PrismaClient) {
     });
   }
 
-  if (retiredAssets[1]) {
+  if (retiredAssets[1] && !existingDisposalAssetIds.has(retiredAssets[1].id)) {
     const disposal = await new AssetDisposalFactory({
       assetId: retiredAssets[1].id,
       disposalType: DISPOSAL_TYPES.DONATION,
@@ -101,7 +109,7 @@ export async function seedLayer3ITAM(prisma: PrismaClient) {
     });
   }
 
-  if (retiredAssets[2]) {
+  if (retiredAssets[2] && !existingDisposalAssetIds.has(retiredAssets[2].id)) {
     await new AssetDisposalFactory({
       assetId: retiredAssets[2].id,
       disposalType: DISPOSAL_TYPES.RECYCLING,
@@ -121,7 +129,7 @@ export async function seedLayer3ITAM(prisma: PrismaClient) {
     }).create(prisma);
   }
 
-  if (retiredAssets[3]) {
+  if (retiredAssets[3] && !existingDisposalAssetIds.has(retiredAssets[3].id)) {
     await new AssetDisposalFactory({
       assetId: retiredAssets[3].id,
       disposalType: DISPOSAL_TYPES.RECYCLING,
@@ -141,7 +149,7 @@ export async function seedLayer3ITAM(prisma: PrismaClient) {
     }).create(prisma);
   }
 
-  if (laptops[10]) {
+  if (laptops[10] && !existingDisposalAssetIds.has(laptops[10].id)) {
     await new AssetDisposalFactory({
       assetId: laptops[10].id,
       disposalType: DISPOSAL_TYPES.SALE,
@@ -166,76 +174,107 @@ export async function seedLayer3ITAM(prisma: PrismaClient) {
   console.log("   ✓ Asset disposals seeded");
 
   // ==============================================
-  // 2. ASSET KITS
+  // 2. ASSET KITS (idempotent - check before create)
   // ==============================================
   console.log("   📦 Seeding asset kits...");
 
-  const newHireKit = await AssetKitFactory.createWithItems(
-    prisma,
-    {
-      name: "New Hire - Developer Kit",
-      code: "KIT-DEV-001",
-      description: "Laptop and dual monitors for developers",
-      kitType: KIT_TYPES.NEW_HIRE,
-      isActive: true,
-    },
-    [
-      {
-        assetCategoryId: laptops[0]?.assetCategoryId,
-        quantity: 1,
-        isRequired: true,
-        note: "Primary laptop",
-      },
-      {
-        assetCategoryId: assets.find((a) => a.assetCategory.code === "MONITOR")
-          ?.assetCategoryId,
-        quantity: 2,
-        isRequired: true,
-        note: "Dual monitors",
-      },
-    ],
-  );
+  // Load existing kits to support append mode
+  const existingKits = await prisma.assetKit.findMany({
+    select: { id: true, code: true },
+  });
+  const _existingKitCodes = new Set(existingKits.map((k) => k.code));
 
-  const remoteKit = await AssetKitFactory.createWithItems(
-    prisma,
-    {
-      name: "Remote Worker Kit",
-      code: "KIT-REMOTE-001",
-      description: "Laptop and monitor for remote staff",
-      kitType: KIT_TYPES.CONTRACTOR, // Using CONTRACTOR as "REMOTE" is not in enum
-      isActive: true,
-    },
-    [
+  let newHireKit = existingKits.find((k) => k.code === "KIT-DEV-001");
+  if (!newHireKit) {
+    newHireKit = await AssetKitFactory.createWithItems(
+      prisma,
       {
-        assetCategoryId: laptops[1]?.assetCategoryId,
-        quantity: 1,
-        isRequired: true,
+        name: "New Hire - Developer Kit",
+        code: "KIT-DEV-001",
+        description: "Laptop and dual monitors for developers",
+        kitType: KIT_TYPES.NEW_HIRE,
+        isActive: true,
       },
+      [
+        {
+          assetCategoryId: laptops[0]?.assetCategoryId,
+          quantity: 1,
+          isRequired: true,
+          note: "Primary laptop",
+        },
+        {
+          assetCategoryId: assets.find(
+            (a) => a.assetCategory.code === "MONITOR",
+          )?.assetCategoryId,
+          quantity: 2,
+          isRequired: true,
+          note: "Dual monitors",
+        },
+      ],
+    );
+  }
+
+  let remoteKit = existingKits.find((k) => k.code === "KIT-REMOTE-001");
+  if (!remoteKit) {
+    remoteKit = await AssetKitFactory.createWithItems(
+      prisma,
       {
-        assetCategoryId: assets.find((a) => a.assetCategory.code === "MONITOR")
-          ?.assetCategoryId,
-        quantity: 1,
-        isRequired: true,
+        name: "Remote Worker Kit",
+        code: "KIT-REMOTE-001",
+        description: "Laptop and monitor for remote staff",
+        kitType: KIT_TYPES.CONTRACTOR, // Using CONTRACTOR as "REMOTE" is not in enum
+        isActive: true,
       },
-    ],
-  );
+      [
+        {
+          assetCategoryId: laptops[1]?.assetCategoryId,
+          quantity: 1,
+          isRequired: true,
+        },
+        {
+          assetCategoryId: assets.find(
+            (a) => a.assetCategory.code === "MONITOR",
+          )?.assetCategoryId,
+          quantity: 1,
+          isRequired: true,
+        },
+      ],
+    );
+  }
 
   console.log("   ✓ Asset kits seeded");
 
   // ==============================================
-  // 3. ASSET KIT CHECKOUTS
+  // 3. ASSET KIT CHECKOUTS (idempotent - check before create)
   // ==============================================
   console.log("   🛒 Seeding asset kit checkouts...");
 
-  // Get kit items for both kits
-  const newHireKitItems = await prisma.assetKitItem.findMany({
-    where: { assetKitId: newHireKit.id },
+  // Load existing checkouts to support append mode
+  const existingCheckouts = await prisma.assetKitCheckout.findMany({
+    select: { id: true, assetKitId: true },
   });
-  const remoteKitItems = await prisma.assetKitItem.findMany({
-    where: { assetKitId: remoteKit.id },
-  });
+  const existingCheckoutKitIds = new Set(
+    existingCheckouts.map((c) => c.assetKitId),
+  );
 
-  if (availableAssets.length >= 3 && newHireKitItems.length > 0) {
+  // Get kit items for both kits (if kits exist)
+  const newHireKitItems = newHireKit
+    ? await prisma.assetKitItem.findMany({
+        where: { assetKitId: newHireKit.id },
+      })
+    : [];
+  const remoteKitItems = remoteKit
+    ? await prisma.assetKitItem.findMany({
+        where: { assetKitId: remoteKit.id },
+      })
+    : [];
+
+  if (
+    newHireKit &&
+    !existingCheckoutKitIds.has(newHireKit.id) &&
+    availableAssets.length >= 3 &&
+    newHireKitItems.length > 0
+  ) {
     const checkout1 = await prisma.assetKitCheckout.create({
       data: {
         assetKitId: newHireKit.id,
@@ -268,7 +307,12 @@ export async function seedLayer3ITAM(prisma: PrismaClient) {
     }
   }
 
-  if (availableAssets.length >= 5 && remoteKitItems.length > 0) {
+  if (
+    remoteKit &&
+    !existingCheckoutKitIds.has(remoteKit.id) &&
+    availableAssets.length >= 5 &&
+    remoteKitItems.length > 0
+  ) {
     const checkout2 = await prisma.assetKitCheckout.create({
       data: {
         assetKitId: remoteKit.id,
@@ -307,11 +351,19 @@ export async function seedLayer3ITAM(prisma: PrismaClient) {
   console.log("   ✓ Asset kit checkouts seeded");
 
   // ==============================================
-  // 4. ASSET RESERVATIONS
+  // 4. ASSET RESERVATIONS (idempotent - check before create)
   // ==============================================
   console.log("   📅 Seeding asset reservations...");
 
-  if (laptops[0]) {
+  // Load existing reservations to support append mode
+  const existingReservations = await prisma.assetReservation.findMany({
+    select: { assetId: true },
+  });
+  const existingReservationAssetIds = new Set(
+    existingReservations.map((r) => r.assetId),
+  );
+
+  if (laptops[0] && !existingReservationAssetIds.has(laptops[0].id)) {
     await new AssetReservationFactory({
       assetId: laptops[0].id,
       reservedById: persons[0].id,
@@ -326,7 +378,7 @@ export async function seedLayer3ITAM(prisma: PrismaClient) {
     }).create(prisma);
   }
 
-  if (laptops[1]) {
+  if (laptops[1] && !existingReservationAssetIds.has(laptops[1].id)) {
     await new AssetReservationFactory({
       assetId: laptops[1].id,
       reservedById: persons[2]?.id ?? persons[0].id,
@@ -339,7 +391,7 @@ export async function seedLayer3ITAM(prisma: PrismaClient) {
     }).create(prisma);
   }
 
-  if (phones[0]) {
+  if (phones[0] && !existingReservationAssetIds.has(phones[0].id)) {
     await new AssetReservationFactory({
       assetId: phones[0].id,
       reservedById: persons[1]?.id ?? persons[0].id,
@@ -354,7 +406,7 @@ export async function seedLayer3ITAM(prisma: PrismaClient) {
     }).create(prisma);
   }
 
-  if (laptops[2]) {
+  if (laptops[2] && !existingReservationAssetIds.has(laptops[2].id)) {
     const reservationA = await new AssetReservationFactory({
       assetId: laptops[2].id,
       reservedById: persons[0].id,

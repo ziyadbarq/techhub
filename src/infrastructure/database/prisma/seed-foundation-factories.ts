@@ -21,7 +21,7 @@ export interface LifecycleStateData {
 }
 
 /**
- * Create multiple lifecycle states in batch
+ * Create multiple lifecycle states in batch (idempotent - uses upsert)
  * Reduces duplication and improves performance
  */
 export async function createLifecycleStates(
@@ -29,9 +29,12 @@ export async function createLifecycleStates(
   lifecycleModelId: string,
   states: LifecycleStateData[],
 ) {
-  const createPromises = states.map((state) =>
-    prisma.lifecycleState.create({
-      data: {
+  const upsertPromises = states.map((state) =>
+    prisma.lifecycleState.upsert({
+      where: {
+        lifecycleModelId_code: { lifecycleModelId, code: state.code },
+      },
+      create: {
         lifecycleModelId,
         name: state.name,
         code: state.code,
@@ -42,10 +45,11 @@ export async function createLifecycleStates(
         isTerminalState: state.stateType === "TERMINAL",
         isActive: true,
       },
+      update: {}, // No-op update to preserve existing data
     }),
   );
 
-  return Promise.all(createPromises);
+  return Promise.all(upsertPromises);
 }
 
 // ==============================================
@@ -62,7 +66,7 @@ export interface LifecycleTransitionData {
 }
 
 /**
- * Create multiple lifecycle transitions in batch
+ * Create multiple lifecycle transitions in batch (idempotent - skipDuplicates)
  */
 export async function createLifecycleTransitions(
   prisma: PrismaClient,
@@ -80,6 +84,7 @@ export async function createLifecycleTransitions(
       requiresApproval: t.requiresApproval ?? false,
       isActive: true,
     })),
+    skipDuplicates: true,
   });
 }
 
@@ -98,7 +103,7 @@ export interface VendorData {
 }
 
 /**
- * Create vendors from config data
+ * Create vendors from config data (idempotent - uses upsert)
  */
 export async function createVendors(
   prisma: PrismaClient,
@@ -107,8 +112,9 @@ export async function createVendors(
   const vendorMap = new Map<string, string>();
 
   for (const v of vendors) {
-    const created = await prisma.vendor.create({
-      data: {
+    const created = await prisma.vendor.upsert({
+      where: { code: v.code },
+      create: {
         name: v.name,
         code: v.code,
         vendorType: v.type,
@@ -118,6 +124,7 @@ export async function createVendors(
         phone: v.phone,
         isActive: true,
       },
+      update: {}, // No-op update to preserve existing data
     });
 
     vendorMap.set(v.code, created.id);
@@ -151,7 +158,7 @@ export interface LocationData {
 }
 
 /**
- * Create locations from config data
+ * Create locations from config data (idempotent - skipDuplicates)
  */
 export async function createLocations(
   prisma: PrismaClient,
@@ -168,6 +175,7 @@ export async function createLocations(
       isActive: true,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     })) as any,
+    skipDuplicates: true,
   });
 }
 
@@ -190,7 +198,7 @@ export interface OrgUnitData {
 }
 
 /**
- * Create organization units with multi-pass hierarchy support.
+ * Create organization units with multi-pass hierarchy support (idempotent - uses upsert).
  * Handles 4+ levels by repeatedly processing remaining units until
  * all parents are resolved or no progress can be made.
  */
@@ -202,6 +210,14 @@ export async function createOrganizationUnits(
   let remaining = [...orgUnits];
   let maxPasses = 10; // Safety limit to prevent infinite loops
   let passCount = 0;
+
+  // First, load any existing org units to support append mode
+  const existingUnits = await prisma.organizationUnit.findMany({
+    select: { id: true, code: true, level: true },
+  });
+  for (const unit of existingUnits) {
+    createdUnits.set(unit.code, { id: unit.id, level: unit.level });
+  }
 
   while (remaining.length > 0 && maxPasses > 0) {
     passCount++;
@@ -218,8 +234,9 @@ export async function createOrganizationUnits(
           : undefined;
         const level = parentMeta ? parentMeta.level + 1 : 1;
 
-        const created = await prisma.organizationUnit.create({
-          data: {
+        const created = await prisma.organizationUnit.upsert({
+          where: { code: unit.code },
+          create: {
             name: unit.name,
             code: unit.code,
             description: unit.description ?? null,
@@ -229,6 +246,7 @@ export async function createOrganizationUnits(
             isActive: true,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } as any,
+          update: {}, // No-op update to preserve existing data
         });
 
         createdUnits.set(unit.code, { id: created.id, level });
@@ -262,7 +280,7 @@ export async function createOrganizationUnits(
 
   // Log summary
   console.log(
-    `    Created ${createdUnits.size} org units in ${passCount} pass(es)`,
+    `    Processed ${createdUnits.size} org units in ${passCount} pass(es)`,
   );
 
   const orgUnitIdMap = new Map<string, string>();
@@ -286,7 +304,7 @@ export interface PersonData {
 }
 
 /**
- * Create persons (with org unit mapping)
+ * Create persons (with org unit mapping) - idempotent using upsert
  */
 export async function createPersons(
   prisma: PrismaClient,
@@ -306,6 +324,16 @@ export async function createPersons(
   const nameMap = new Map<string, string>();
   const usedEmails = new Set<string>();
 
+  // Load existing persons to support append mode
+  const existingPersons = await prisma.person.findMany({
+    select: { id: true, email: true, firstName: true, lastName: true },
+  });
+  for (const p of existingPersons) {
+    usedEmails.add(p.email.toLowerCase());
+    emailMap.set(p.email.toLowerCase(), p.id);
+    nameMap.set(`${p.firstName} ${p.lastName}`.toLowerCase(), p.id);
+  }
+
   for (const person of persons) {
     const orgUnitId = person.orgUnitCode
       ? orgUnitMap.get(person.orgUnitCode)
@@ -322,6 +350,12 @@ export async function createPersons(
     if (!email.includes("@")) {
       email = `${person.firstName.toLowerCase()}.${person.lastName.toLowerCase()}@example.com`;
     }
+
+    // Skip if this email already exists (either in DB or from this batch)
+    if (emailMap.has(email)) {
+      continue;
+    }
+
     if (usedEmails.has(email)) {
       const [local, domain] = email.split("@");
       let counter = 2;
@@ -332,8 +366,9 @@ export async function createPersons(
     }
     usedEmails.add(email);
 
-    const created = await prisma.person.create({
-      data: {
+    const created = await prisma.person.upsert({
+      where: { email },
+      create: {
         firstName: person.firstName,
         lastName: person.lastName,
         email,
@@ -343,6 +378,7 @@ export async function createPersons(
         isActive: true,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any,
+      update: {}, // No-op update to preserve existing data
     });
 
     createdPersons.push(created);
@@ -375,7 +411,7 @@ export interface FieldDefinitionData {
 }
 
 /**
- * Create field definitions in batch
+ * Create field definitions in batch (idempotent - skipDuplicates)
  */
 export async function createFieldDefinitions(
   prisma: PrismaClient,
@@ -416,6 +452,7 @@ export async function createFieldDefinitions(
       isActive: true,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     })) as any,
+    skipDuplicates: true,
   });
 }
 
@@ -445,6 +482,18 @@ export async function createVendorContacts(
         `⚠️  Vendor not found for contact ${contact.email}: ${contact.vendorCode}`,
       );
       continue;
+    }
+
+    // Check if contact already exists for this vendor (idempotent)
+    const existing = await prisma.vendorContact.findFirst({
+      where: {
+        vendorId,
+        email: contact.email,
+      },
+    });
+
+    if (existing) {
+      continue; // Skip duplicate
     }
 
     await prisma.vendorContact.create({
@@ -502,6 +551,18 @@ export async function createPersonRoleAssignments(
         `⚠️  Skipping role assignment for ${assignment.personEmail} -> ${assignment.roleName} (missing person or role)`,
       );
       continue;
+    }
+
+    // Check if assignment already exists (idempotent)
+    const existing = await prisma.personRoleAssignment.findFirst({
+      where: {
+        personId,
+        roleId,
+      },
+    });
+
+    if (existing) {
+      continue; // Skip duplicate
     }
 
     await prisma.personRoleAssignment.create({

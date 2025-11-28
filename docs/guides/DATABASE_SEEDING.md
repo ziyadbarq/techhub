@@ -24,7 +24,7 @@ The seed system populates the database with comprehensive, realistic test data f
 - **Factory Pattern**: Type-safe entity builders in `seed-factories/` (8 domain factories) and `seed-foundation-factories.ts`
 - **Shared Utilities**: Common helpers in `seed-utils.ts`
 - **Layered Architecture**: Seeds respect domain layer dependencies
-- **Idempotent Design**: Cleanup handled centrally for safe re-seeding
+- **Fully Idempotent**: Safe to run multiple times - never wipes data, never creates duplicates
 
 ### What Gets Seeded
 
@@ -132,7 +132,7 @@ src/infrastructure/database/prisma/
 1. **Single Responsibility**: Each seed module handles one domain layer
 2. **Dependency Inversion**: Uses abstractions (configs, factories) not concrete data
 3. **DRY**: No duplicate code - shared utilities and factories
-4. **Centralized Cleanup**: Only `seed.ts` performs deletions (proper dependency order)
+4. **Fully Idempotent**: Never wipes data, never creates duplicates (upsert/check-before-create)
 5. **Type Safety**: Full TypeScript with generated Prisma types
 6. **Realistic Data**: Enterprise-grade sample data matching Saudi Arabian context
 
@@ -143,18 +143,31 @@ src/infrastructure/database/prisma/
 ### Quick Commands
 
 ```bash
-# Full setup (install + schema + seed)
-npm run setup
+# Seed with preset (safe to run multiple times - idempotent)
+npm run db:seed              # production preset (RBAC + Foundation + Business Processes)
+npm run db:seed:dev          # dev preset (production + demo assets, warranties, Layer 3)
+npm run db:seed:full         # full preset (all modules)
 
-# Seed only
-npm run db:seed
+# Interactive seeding (choose modules interactively)
+npm run db:seed:interactive
 
-# Reset database and re-seed (DESTRUCTIVE - drops all data!)
-npm run reset
+# Reset database (DESTRUCTIVE - drops ALL data including user data!)
+npm run db:reset             # Wipes database + re-seeds
 
 # Manual seeding (development)
 npx tsx src/infrastructure/database/prisma/seed.ts
+npx tsx src/infrastructure/database/prisma/seed.ts dev
 ```
+
+### Idempotent Behavior
+
+All seed scripts are **fully idempotent**:
+- **Never wipes existing data** - Safe to run on databases with real data
+- **Never creates duplicates** - Uses upsert or check-before-create patterns
+- **Amends missing data** - Adds only what's missing without touching existing records
+- **Safe to run multiple times** - Run `db:seed` as often as needed
+
+**Use `db:reset` when you need a clean slate** - This is the only command that wipes data.
 
 ### Expected Output
 
@@ -1029,24 +1042,36 @@ const data = {
 };
 ```
 
-### Pattern 5: Centralized Cleanup
+### Pattern 5: Idempotent Operations (No Cleanup)
 
 ```typescript
-// ✅ GOOD - Cleanup in seed.ts only
-// seed.ts
-await prisma.asset.deleteMany({});
-await prisma.vendor.deleteMany({});
+// ✅ GOOD - Upsert for unique entities
+await prisma.vendor.upsert({
+  where: { code: vendorData.code },
+  create: { ...vendorData },
+  update: {}, // No-op update to preserve existing data
+});
 
-// seed-assets.ts - No cleanup
-export async function seedAssets(prisma: PrismaClient) {
-  // Just create data
-}
+// ✅ GOOD - Check-before-create pattern
+const existingTasks = await prisma.task.findMany({ select: { title: true } });
+const existingTitles = new Set(existingTasks.map(t => t.title));
+const tasksToCreate = taskData.filter(t => !existingTitles.has(t.title));
+await prisma.task.createMany({ data: tasksToCreate });
 
-// ❌ BAD - Cleanup in individual seeders
+// ✅ GOOD - skipDuplicates for batch inserts
+await prisma.permission.createMany({
+  data: permissionData,
+  skipDuplicates: true,
+});
+
+// ❌ BAD - Deleting before creating (destroys existing data!)
 export async function seedAssets(prisma: PrismaClient) {
-  await prisma.asset.deleteMany({}); // Don't do this!
+  await prisma.asset.deleteMany({}); // NEVER do this!
+  await prisma.asset.createMany({ data: assetData });
 }
 ```
+
+**Key Principle**: Seeders should only ADD missing data, never DELETE existing data. Use `db:reset` when a full wipe is needed.
 
 ### Pattern 6: Realistic Data Generation
 
@@ -1086,21 +1111,21 @@ const asset = await prisma.asset.create({
 
 **Causes**:
 
-- Wrong cleanup order in `seed.ts`
-- Attempting to delete parent entities before children
-- Individual seeders performing cleanup (should only be in `seed.ts`)
+- Seeding entities before their dependencies exist
+- Wrong seeding order (e.g., Assets before Vendors)
+- Missing prerequisite data
 
 **Solution**:
 
+Ensure correct seeding order in `seed.ts` (dependencies first):
+
 ```typescript
-// seed.ts - Correct cleanup order (Layer 3 → Layer 2 → Layer 1)
-await prisma.assetKitCheckoutItem.deleteMany({}); // Most dependent
-await prisma.assetKitCheckout.deleteMany({});
-await prisma.assetKitItem.deleteMany({});
-await prisma.assetKit.deleteMany({});
-// ... continue in dependency order
-await prisma.asset.deleteMany({});
-await prisma.vendor.deleteMany({}); // Least dependent
+// seed.ts - Correct seeding order (Layer 1 → Layer 2 → Layer 3)
+1. seedRBAC()                       // No dependencies
+2. seedFoundation(prisma)           // Requires RBAC (for roles)
+3. seedAssets(prisma)               // Requires Foundation (vendors, lifecycle)
+4. seedWarrantiesMaintenance(prisma)// Requires Assets
+5. seedLayer3ITAM(prisma)           // Requires Assets, Persons, CMDB types
 ```
 
 #### 2. Schema Mismatches
@@ -1186,17 +1211,36 @@ npm run reset
 
 **Symptom**: `Unique constraint failed on the fields: X`
 
-**Cause**: Seed not properly cleaned before re-running
+**Cause**: Seeder not using idempotent patterns (upsert, skipDuplicates, or check-before-create)
 
 **Solution**:
 
-```bash
-# Use reset instead of seed for full cleanup
-npm run reset
+Update the seeder to use idempotent patterns:
 
-# Or manually clear database
-npm run db:push -- --force-reset
-npm run db:seed
+```typescript
+// Option A: Use upsert for entities with unique constraints
+await prisma.vendor.upsert({
+  where: { code: vendorData.code },
+  create: vendorData,
+  update: {}, // No-op preserves existing data
+});
+
+// Option B: Use skipDuplicates for batch inserts
+await prisma.permission.createMany({
+  data: permissionData,
+  skipDuplicates: true,
+});
+
+// Option C: Check-before-create for complex scenarios
+const existing = await prisma.task.findMany({ select: { title: true } });
+const existingTitles = new Set(existing.map(t => t.title));
+const toCreate = taskData.filter(t => !existingTitles.has(t.title));
+await prisma.task.createMany({ data: toCreate });
+```
+
+**If you need a fresh start** (development only):
+```bash
+npm run db:reset  # Wipes ALL data and re-seeds
 ```
 
 ### Debugging Tips
@@ -1355,7 +1399,11 @@ The Barq Assets seed system provides:
 ✅ **Maintainable**: Modular configuration, shared utilities, reusable factories
 ✅ **Realistic**: Enterprise-grade sample data
 ✅ **Layered**: Respects domain architecture and dependencies
-✅ **Idempotent**: Safe to re-run, centralized cleanup
+✅ **Fully Idempotent**: Never wipes data, never creates duplicates, safe to run repeatedly
 ✅ **Extensible**: Easy to add new entities and data
 
 **Total seed data**: 200+ entities across 32+ tables in ~15 seconds.
+
+**Key Commands**:
+- `npm run db:seed` - Safe to run anytime (idempotent, adds missing data only)
+- `npm run db:reset` - Use when you need a clean slate (wipes all data)

@@ -104,6 +104,17 @@ export async function seedGovernance(prisma: PrismaClient) {
     );
   }
 
+  // Load existing ownerships to support append mode
+  const existingOwnerships = await prisma.dataOwnership.findMany({
+    select: { dataDomainId: true, ciClassId: true, assetCategoryId: true },
+  });
+  const existingOwnershipKeys = new Set(
+    existingOwnerships.map(
+      (o) =>
+        `${o.dataDomainId}-${o.ciClassId ?? ""}-${o.assetCategoryId ?? ""}`,
+    ),
+  );
+
   let ownershipCount = 0;
   for (const ownership of DATA_OWNERSHIPS) {
     if (!hasAssetCategories && ownership.targetType === "ASSET_CATEGORY") {
@@ -178,6 +189,13 @@ export async function seedGovernance(prisma: PrismaClient) {
       ownerOrgUnitId = orgUnit.id;
     }
 
+    // Check if ownership already exists (idempotent)
+    const ownershipKey = `${domain.id}-${ciClassId ?? ""}-${assetCategoryId ?? ""}`;
+    if (existingOwnershipKeys.has(ownershipKey)) {
+      ownershipCount++;
+      continue; // Skip duplicate
+    }
+
     // Create ownership
     await prisma.dataOwnership.create({
       data: {
@@ -193,12 +211,18 @@ export async function seedGovernance(prisma: PrismaClient) {
     ownershipCount++;
   }
 
-  logSuccess(`Created ${ownershipCount} data ownerships`);
+  logSuccess(`Processed ${ownershipCount} data ownerships`);
 
   // ==============================================
-  // 3. VERIFICATION CAMPAIGNS
+  // 3. VERIFICATION CAMPAIGNS (idempotent - check before create)
   // ==============================================
   logStep("📋", "Creating verification campaigns...");
+
+  // Load existing campaigns to support append mode
+  const existingCampaigns = await prisma.verificationCampaign.findMany({
+    select: { id: true, name: true },
+  });
+  const existingCampaignNames = new Set(existingCampaigns.map((c) => c.name));
 
   const campaigns = [];
 
@@ -208,6 +232,16 @@ export async function seedGovernance(prisma: PrismaClient) {
     );
   } else {
     for (const campaignTemplate of VERIFICATION_CAMPAIGNS) {
+      // Check if campaign already exists (idempotent)
+      if (existingCampaignNames.has(campaignTemplate.name)) {
+        const existingCampaign = existingCampaigns.find(
+          (c) => c.name === campaignTemplate.name,
+        );
+        if (existingCampaign) {
+          campaigns.push(existingCampaign);
+        }
+        continue; // Skip duplicate
+      }
       // Find creator
       const creator =
         persons.find((p) => p.email === campaignTemplate.creatorEmail) ||
@@ -238,12 +272,20 @@ export async function seedGovernance(prisma: PrismaClient) {
     }
   }
 
-  logSuccess(`Created ${campaigns.length} verification campaigns`);
+  logSuccess(`Processed ${campaigns.length} verification campaigns`);
 
   // ==============================================
-  // 4. VERIFICATION ITEMS
+  // 4. VERIFICATION ITEMS (idempotent - check before create)
   // ==============================================
   logStep("✅", "Creating verification items...");
+
+  // Load existing items to support append mode
+  const existingItems = await prisma.verificationItem.findMany({
+    select: { verificationCampaignId: true, targetId: true },
+  });
+  const existingItemKeys = new Set(
+    existingItems.map((i) => `${i.verificationCampaignId}-${i.targetId}`),
+  );
 
   let itemCount = 0;
 
@@ -260,6 +302,13 @@ export async function seedGovernance(prisma: PrismaClient) {
     });
 
     for (const ci of configurationItems) {
+      // Check if item already exists (idempotent)
+      const itemKey = `${campaign.id}-${ci.id}`;
+      if (existingItemKeys.has(itemKey)) {
+        itemCount++;
+        continue;
+      }
+
       // Assign some items with different statuses
       const statusOptions: Array<
         "PENDING" | "IN_PROGRESS" | "VERIFIED" | "EXCEPTION"
@@ -305,6 +354,13 @@ export async function seedGovernance(prisma: PrismaClient) {
     });
 
     for (const asset of assets) {
+      // Check if item already exists (idempotent)
+      const itemKey = `${campaign.id}-${asset.id}`;
+      if (existingItemKeys.has(itemKey)) {
+        itemCount++;
+        continue;
+      }
+
       const statusOptions: Array<
         "PENDING" | "IN_PROGRESS" | "VERIFIED" | "EXCEPTION"
       > = ["PENDING", "IN_PROGRESS", "VERIFIED"];
@@ -346,6 +402,13 @@ export async function seedGovernance(prisma: PrismaClient) {
     });
 
     for (const ci of paymentCIs) {
+      // Check if item already exists (idempotent)
+      const itemKey = `${campaign.id}-${ci.id}`;
+      if (existingItemKeys.has(itemKey)) {
+        itemCount++;
+        continue;
+      }
+
       await prisma.verificationItem.create({
         data: {
           verificationCampaignId: campaign.id,

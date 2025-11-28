@@ -172,9 +172,10 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 - See [LOGGING.md](docs/guides/LOGGING.md)
 
 **Database Seeding**:
+- **Fully idempotent**: Never wipes data, never creates duplicates, safe to run repeatedly
 - Layered seeders (RBAC → Foundation → Assets → Layer 3)
-- All config in `seed-config.ts`, factories in `seed-factories.ts`, utils in `seed-utils.ts`
-- Cleanup only in `seed.ts` orchestrator (proper dependency order)
+- All config in `seed-config.ts`, factories in `seed-factories/`, utils in `seed-utils.ts`
+- Use `db:seed` for safe seeding (idempotent), `db:reset` when wipe is needed
 - Use `ioredis` package (NOT `redis`)
 - See [DATABASE_SEEDING.md](docs/guides/DATABASE_SEEDING.md)
 
@@ -262,7 +263,7 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 - Configure MDX plugins in components (runtime), not next.config.ts (build-time)
 - Add new seed data to `seed-config.ts` (centralized configuration)
 - Use seed factories for complex entity creation
-- Only perform cleanup in `seed.ts` orchestrator
+- Use idempotent patterns in seeders (upsert, skipDuplicates, check-before-create)
 
 ### ❌ DON'T
 
@@ -282,7 +283,7 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 - Bypass architecture layers
 - Use Docker (macOS native only)
 - Hardcode seed data in seeder files (use `seed-config.ts`)
-- Perform cleanup in individual seeders (only in `seed.ts`)
+- Wipe data in seeders (seeders are idempotent - use `db:reset` for wipes)
 - Duplicate logic across seeders (use utilities and factories)
 
 ## Environment

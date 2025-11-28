@@ -3,6 +3,13 @@
  *
  * Common database operations used by both automatic and interactive seed scripts.
  * Extracted to avoid duplication and ensure consistency.
+ *
+ * NOTE: All seeders are FULLY IDEMPOTENT:
+ * - Never wipe existing data
+ * - Never create duplicates (use upsert/check-before-create)
+ * - Safe to run multiple times
+ *
+ * Use `npm run db:reset` when you need a clean slate (drops ALL data).
  */
 
 import {
@@ -12,6 +19,10 @@ import {
 
 /**
  * Perform full database cleanup (all tables)
+ *
+ * @deprecated Use `npm run db:reset` instead, which uses `prisma db push --force-reset`.
+ * This function is kept for backwards compatibility and testing purposes only.
+ *
  * Order is critical to respect foreign key constraints
  */
 export async function performFullCleanup(prisma: PrismaClient): Promise<void> {
@@ -117,12 +128,9 @@ export async function initializeCodeSequences(
 }
 
 /**
- * Seed example tasks for demonstration
+ * Seed example tasks for demonstration (idempotent - check before create)
  */
 export async function seedExampleTasks(prisma: PrismaClient): Promise<number> {
-  // Delete existing tasks
-  await prisma.task.deleteMany({});
-
   const exampleTasks = [
     {
       title: "Welcome to Barq Assets!",
@@ -163,9 +171,21 @@ export async function seedExampleTasks(prisma: PrismaClient): Promise<number> {
     },
   ];
 
-  await prisma.task.createMany({
-    data: exampleTasks,
+  // Check existing tasks to avoid duplicates (idempotent)
+  const existingTasks = await prisma.task.findMany({
+    select: { title: true },
   });
+  const existingTitles = new Set(existingTasks.map((t) => t.title));
 
-  return exampleTasks.length;
+  const tasksToCreate = exampleTasks.filter(
+    (t) => !existingTitles.has(t.title),
+  );
+
+  if (tasksToCreate.length > 0) {
+    await prisma.task.createMany({
+      data: tasksToCreate,
+    });
+  }
+
+  return tasksToCreate.length;
 }

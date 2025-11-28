@@ -1719,14 +1719,209 @@ export const ORG_UNIT_DATA = [
 ] as const;
 
 // ==============================================
-// Person Data
+// Person Data (Demo)
 // ==============================================
-// Persons are synced from Microsoft Graph - no seed data needed.
+// In production, persons are synced from Microsoft Graph.
+// This demo data enables full seed without Graph sync.
 // The first admin user is created via /register UI and promoted
 // to system-administrator via Prisma Studio/SQL.
-// All other users are synced from Microsoft Entra ID (Azure AD).
 
-export const PERSON_DATA = [] as const;
+export const PERSON_DATA = [
+  // ===========================================
+  // Service Owners (matches seed-config-services-*.ts)
+  // ===========================================
+
+  // Technology Leadership
+  {
+    firstName: "Ahmed",
+    lastName: "Al-Mansour",
+    email: "ahmed.mansour@barq.sa",
+    jobTitle: "Chief Technology Officer",
+    orgUnitCode: "TECH",
+    isActive: true,
+  },
+  // Software Engineering
+  {
+    firstName: "Khalid",
+    lastName: "Al-Ghamdi",
+    email: "khalid.ghamdi@barq.sa",
+    jobTitle: "Senior Software Engineer",
+    orgUnitCode: "TECH-SWE",
+    isActive: true,
+  },
+  {
+    firstName: "Hanan",
+    lastName: "Al-Subai",
+    email: "hanan.subai@barq.sa",
+    jobTitle: "Software Engineer",
+    orgUnitCode: "TECH-SWE",
+    isActive: true,
+  },
+  {
+    firstName: "Maha",
+    lastName: "Al-Otaibi",
+    email: "maha.otaibi@barq.sa",
+    jobTitle: "Mobile Developer",
+    orgUnitCode: "TECH-SWE",
+    isActive: true,
+  },
+  // DevOps & Cloud
+  {
+    firstName: "Tariq",
+    lastName: "Al-Shamrani",
+    email: "tariq.shamrani@barq.sa",
+    jobTitle: "DevOps Engineer",
+    orgUnitCode: "TECH-DEVOPS",
+    isActive: true,
+  },
+  {
+    firstName: "Saud",
+    lastName: "Al-Ajmi",
+    email: "saud.ajmi@barq.sa",
+    jobTitle: "Cloud Engineer",
+    orgUnitCode: "TECH-DEVOPS",
+    isActive: true,
+  },
+  // IT Support
+  {
+    firstName: "Fatima",
+    lastName: "Al-Zahrani",
+    email: "fatima.zahrani@barq.sa",
+    jobTitle: "IT Support Specialist",
+    orgUnitCode: "TECH-ITSUP",
+    isActive: true,
+  },
+  // SRE & Infrastructure
+  {
+    firstName: "Mohammed",
+    lastName: "Al-Qarni",
+    email: "mohammed.qarni@barq.sa",
+    jobTitle: "SRE Engineer",
+    orgUnitCode: "TECH-SRE",
+    isActive: true,
+  },
+  // Data & Analytics
+  {
+    firstName: "Abdullah",
+    lastName: "Al-Harthi",
+    email: "abdullah.harthi@barq.sa",
+    jobTitle: "Data Engineer",
+    orgUnitCode: "TECH-DATA",
+    isActive: true,
+  },
+  // Product Management
+  {
+    firstName: "Layla",
+    lastName: "Al-Dosari",
+    email: "layla.dosari@barq.sa",
+    jobTitle: "Product Manager",
+    orgUnitCode: "TECH-PROD",
+    isActive: true,
+  },
+  {
+    firstName: "Faisal",
+    lastName: "Al-Harbi",
+    email: "faisal.harbi@barq.sa",
+    jobTitle: "Technical Program Manager",
+    orgUnitCode: "TECH-PROD",
+    isActive: true,
+  },
+
+  // ===========================================
+  // Cybersecurity Department
+  // ===========================================
+  {
+    firstName: "Noura",
+    lastName: "Al-Rashid",
+    email: "noura.rashid@barq.sa",
+    jobTitle: "Chief Information Security Officer",
+    orgUnitCode: "SEC",
+    isActive: true,
+  },
+  {
+    firstName: "Omar",
+    lastName: "Al-Shehri",
+    email: "omar.shehri@barq.sa",
+    jobTitle: "Security Architect",
+    orgUnitCode: "SEC-SOC",
+    isActive: true,
+  },
+  {
+    firstName: "Aisha",
+    lastName: "Al-Malki",
+    email: "aisha.malki@barq.sa",
+    jobTitle: "Security Analyst",
+    orgUnitCode: "SEC-SOC",
+    isActive: true,
+  },
+
+  // ===========================================
+  // Other Departments
+  // ===========================================
+  // Marketing
+  {
+    firstName: "Sara",
+    lastName: "Al-Mutairi",
+    email: "sara.mutairi@barq.sa",
+    jobTitle: "Marketing Manager",
+    orgUnitCode: "MCX-MKT",
+    isActive: true,
+  },
+  // HR
+  {
+    firstName: "Maryam",
+    lastName: "Al-Otaibi",
+    email: "maryam.otaibi@barq.sa",
+    jobTitle: "HR Manager",
+    orgUnitCode: "HR",
+    isActive: true,
+  },
+  // Risk & Compliance
+  {
+    firstName: "Rania",
+    lastName: "Al-Ghamdi",
+    email: "rania.ghamdi@barq.sa",
+    jobTitle: "Compliance Officer",
+    orgUnitCode: "RISK",
+    isActive: true,
+  },
+  // Operations
+  {
+    firstName: "Yusuf",
+    lastName: "Al-Harbi",
+    email: "yusuf.harbi@barq.sa",
+    jobTitle: "Operations Manager",
+    orgUnitCode: "OPS",
+    isActive: true,
+  },
+  // Procurement
+  {
+    firstName: "Abdullah",
+    lastName: "Al-Shammari",
+    email: "abdullah.shammari@barq.sa",
+    jobTitle: "Procurement Specialist",
+    orgUnitCode: "PROC",
+    isActive: true,
+  },
+  // Contact Center
+  {
+    firstName: "Hassan",
+    lastName: "Al-Tamimi",
+    email: "hassan.tamimi@barq.sa",
+    jobTitle: "Contact Center Supervisor",
+    orgUnitCode: "CC",
+    isActive: true,
+  },
+  // Business & Partnerships
+  {
+    firstName: "Aisha",
+    lastName: "Al-Sulaiman",
+    email: "aisha.sulaiman@barq.sa",
+    jobTitle: "Business Development Manager",
+    orgUnitCode: "BIZ",
+    isActive: true,
+  },
+] as const;
 
 // ==============================================
 // Person Role Assignments

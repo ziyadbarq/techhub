@@ -1,14 +1,19 @@
 /**
- * Interactive Database Seed Script
+ * Interactive Database Seed Script (Idempotent / Append-Only)
  *
  * Provides a CLI interface for selectively seeding database modules.
  * Features:
  * - Multi-select module picker with dependency resolution
- * - Cleanup strategy options (full/module-specific/append-only)
  * - Preset system (load/save common configurations)
  * - Built-in presets: full, minimal, dev, rbac-only, etc.
  * - Estimated time calculation
  * - Validation with warnings and errors
+ *
+ * IMPORTANT: This seeder is fully IDEMPOTENT:
+ * - Never wipes existing data
+ * - Never creates duplicates (uses upsert/check-before-create)
+ * - Safe to run multiple times
+ * - Amends missing data without affecting existing records
  */
 
 import inquirer from "inquirer";
@@ -18,7 +23,6 @@ import {
   SeedModule,
   MODULE_METADATA,
   resolveDependencies,
-  getTablesToCleanup,
   getMissingDependencies,
   validateSelection,
   calculateEstimatedTime,
@@ -41,7 +45,6 @@ import { seedGovernance } from "./seed-governance.js";
 import { seedBusinessProcesses, seedServices } from "./seed-services.js";
 import { logSection, logSuccess, logStep } from "./seed-utils.js";
 import {
-  performFullCleanup,
   initializeCodeSequences,
   seedExampleTasks,
 } from "./seed-operations.js";
@@ -109,7 +112,6 @@ async function getInitialSelection(args: CLIArgs): Promise<SeedModule[]> {
  */
 async function promptUserSelection(): Promise<{
   selectedModules: SeedModule[];
-  cleanupStrategy: "full" | "module" | "none";
   saveAsPreset: boolean;
   presetName?: string;
   presetDescription?: string;
@@ -241,35 +243,11 @@ async function promptUserSelection(): Promise<{
   console.log(
     chalk.gray(`  Estimated time: ${chalk.bold(estimatedTime + "s")}`),
   );
-
-  // Step 6: Cleanup strategy
-  const tablesToCleanup = getTablesToCleanup(selectedModules);
   console.log(
-    chalk.yellow(
-      `\n⚠️  Cleanup will affect ${tablesToCleanup.length} tables: ${tablesToCleanup.slice(0, 5).join(", ")}${tablesToCleanup.length > 5 ? "..." : ""}`,
-    ),
+    chalk.green(`\n✓ Idempotent mode: Existing data will be preserved`),
   );
 
-  const { cleanupStrategy } = await inquirer.prompt<{
-    cleanupStrategy: "full" | "module" | "none";
-  }>([
-    {
-      type: "rawlist",
-      name: "cleanupStrategy",
-      message: "Cleanup strategy:",
-      choices: [
-        { name: "Full cleanup (delete ALL data)", value: "full" },
-        {
-          name: "Module-specific (delete only selected modules)",
-          value: "module",
-        },
-        { name: "Keep existing (append new data)", value: "none" },
-      ],
-      default: "module",
-    },
-  ]);
-
-  // Step 7: Confirmation
+  // Step 6: Confirmation
   const { confirm } = await inquirer.prompt<{ confirm: boolean }>([
     {
       type: "confirm",
@@ -284,7 +262,7 @@ async function promptUserSelection(): Promise<{
     process.exit(0);
   }
 
-  // Step 8: Save as preset?
+  // Step 7: Save as preset?
   const { saveAsPreset } = await inquirer.prompt<{ saveAsPreset: boolean }>([
     {
       type: "confirm",
@@ -330,7 +308,6 @@ async function promptUserSelection(): Promise<{
 
   return {
     selectedModules,
-    cleanupStrategy,
     saveAsPreset,
     presetName,
     presetDescription,
@@ -338,42 +315,7 @@ async function promptUserSelection(): Promise<{
 }
 
 /**
- * Perform cleanup based on strategy
- */
-async function performCleanup(
-  strategy: "full" | "module" | "none",
-  selectedModules: SeedModule[],
-) {
-  if (strategy === "none") {
-    logStep("ℹ️", "Skipping cleanup (append-only mode)");
-    return;
-  }
-
-  logStep("🧹", "Cleaning up database...");
-
-  if (strategy === "full") {
-    // Full cleanup using shared operation
-    await performFullCleanup(prisma);
-    logSuccess("Full cleanup completed");
-  } else {
-    // Module-specific cleanup
-    const tables = getTablesToCleanup(selectedModules);
-    for (const table of tables) {
-      // Dynamically access prisma models
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const model = (prisma as Record<string, any>)[
-        table.charAt(0).toLowerCase() + table.slice(1)
-      ];
-      if (model) {
-        await model.deleteMany({});
-      }
-    }
-    logSuccess(`Cleaned ${tables.length} tables`);
-  }
-}
-
-/**
- * Initialize code sequences (always needed)
+ * Initialize code sequences (always needed, idempotent)
  */
 async function initCodeSequencesWithLogging() {
   logStep("🔢", "Initializing code sequences...");
@@ -484,7 +426,6 @@ async function main() {
 
       selection = {
         selectedModules: initialSelection,
-        cleanupStrategy: "module",
         saveAsPreset: false,
       };
     } else {
@@ -492,21 +433,17 @@ async function main() {
       selection = await promptUserSelection();
     }
 
-    console.log(chalk.cyan("\n🌱 Starting seed process..."));
+    console.log(chalk.cyan("\n🌱 Starting seed process (idempotent mode)..."));
     console.log(chalk.cyan("━".repeat(60)) + "\n");
 
-    // Step 1: Cleanup
-    await performCleanup(selection.cleanupStrategy, selection.selectedModules);
-    console.log("");
-
-    // Step 2: Initialize code sequences
+    // Step 1: Initialize code sequences (idempotent)
     await initCodeSequencesWithLogging();
     console.log("");
 
-    // Step 3: Execute seeding
+    // Step 2: Execute seeding (idempotent - no duplicates, no overwrites)
     await executeSeed(selection.selectedModules);
 
-    // Step 4: Save preset if requested
+    // Step 3: Save preset if requested
     if (selection.saveAsPreset && selection.presetName) {
       await savePreset(
         selection.presetName,

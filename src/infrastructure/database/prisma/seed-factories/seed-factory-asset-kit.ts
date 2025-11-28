@@ -42,13 +42,16 @@ export class AssetKitFactory {
   }
 
   async create(prisma: PrismaClient) {
-    return prisma.assetKit.create({
-      data: this.build(),
+    const data = this.build();
+    return prisma.assetKit.upsert({
+      where: { code: data.code },
+      create: data,
+      update: {}, // No-op update to preserve existing data
     });
   }
 
   /**
-   * Create kit with predefined items
+   * Create kit with predefined items (idempotent)
    */
   static async createWithItems(
     prisma: PrismaClient,
@@ -63,7 +66,23 @@ export class AssetKitFactory {
   ) {
     const kit = await new AssetKitFactory(kitOptions).create(prisma);
 
+    // Load existing items to support idempotent creation
+    const existingItems = await prisma.assetKitItem.findMany({
+      where: { assetKitId: kit.id },
+      select: { assetCategoryId: true, assetModelId: true },
+    });
+    const existingItemKeys = new Set(
+      existingItems.map(
+        (i) => `${i.assetCategoryId ?? ""}-${i.assetModelId ?? ""}`,
+      ),
+    );
+
     for (const item of items) {
+      const itemKey = `${item.assetCategoryId ?? ""}-${item.assetModelId ?? ""}`;
+      if (existingItemKeys.has(itemKey)) {
+        continue; // Skip duplicate item
+      }
+
       await prisma.assetKitItem.create({
         data: {
           assetKitId: kit.id,

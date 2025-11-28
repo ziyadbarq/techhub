@@ -70,7 +70,7 @@ export async function seedServices(prisma: PrismaClient) {
   );
 
   // ==============================================
-  // Create Services with nested relations
+  // Create Services with nested relations (idempotent - check before create)
   // ==============================================
   logStep("🔧", "Creating services with owners and infrastructure...");
 
@@ -78,7 +78,18 @@ export async function seedServices(prisma: PrismaClient) {
   let ownershipCount = 0;
   let infrastructureCount = 0;
 
+  // Load existing services to support append mode
+  const existingServices = await prisma.service.findMany({
+    select: { id: true, name: true },
+  });
+  const existingServiceNames = new Set(existingServices.map((s) => s.name));
+
   for (const serviceData of SEED_CONFIG.SERVICES) {
+    // Check if service already exists (idempotent)
+    if (existingServiceNames.has(serviceData.name)) {
+      serviceCount++;
+      continue; // Skip duplicate
+    }
     // Resolve vendor ID (optional)
     const vendorCode =
       "vendorCode" in serviceData ? serviceData.vendorCode : undefined;
@@ -209,13 +220,13 @@ export async function seedServices(prisma: PrismaClient) {
 
     // Log progress every 10 services
     if (serviceCount % 10 === 0) {
-      console.log(`   Progress: ${serviceCount} services created...`);
+      console.log(`   Progress: ${serviceCount} services processed...`);
     }
   }
 
-  logSuccess(`Created ${serviceCount} services`);
-  logSuccess(`Created ${ownershipCount} service ownerships`);
-  logSuccess(`Created ${infrastructureCount} service infrastructure records`);
+  logSuccess(`Processed ${serviceCount} services`);
+  logSuccess(`Processed ${ownershipCount} service ownerships`);
+  logSuccess(`Processed ${infrastructureCount} service infrastructure records`);
 
   // ==============================================
   // Summary by Type

@@ -27,33 +27,41 @@ export async function seedFoundation(prisma: PrismaClient) {
   console.log("🏗️  Seeding Foundation layer...");
 
   // ==============================================
-  // 1. LIFECYCLE MODELS
+  // 1. LIFECYCLE MODELS (idempotent - uses upsert)
   // ==============================================
   logStep("📊", "Seeding lifecycle models...");
 
-  const itAssetLifecycle = await prisma.lifecycleModel.create({
-    data: {
+  const itAssetLifecycle = await prisma.lifecycleModel.upsert({
+    where: { name: "IT Asset Lifecycle" },
+    create: {
       name: "IT Asset Lifecycle",
       description:
         "Standard lifecycle model for IT hardware and software assets",
     },
+    update: {}, // No-op update to preserve existing data
   });
 
-  const softwareLicenseLifecycle = await prisma.lifecycleModel.create({
-    data: {
+  const softwareLicenseLifecycle = await prisma.lifecycleModel.upsert({
+    where: { name: "Software License Lifecycle" },
+    create: {
       name: "Software License Lifecycle",
       description: "Lifecycle model for software licenses and subscriptions",
     },
+    update: {}, // No-op update to preserve existing data
   });
 
-  const _facilityAssetLifecycle = await prisma.lifecycleModel.create({
-    data: {
+  const _facilityAssetLifecycle = await prisma.lifecycleModel.upsert({
+    where: { name: "Facility Asset Lifecycle" },
+    create: {
       name: "Facility Asset Lifecycle",
       description: "Lifecycle model for facility and building assets",
     },
+    update: {}, // No-op update to preserve existing data
   });
 
-  logSuccess(`Created ${await prisma.lifecycleModel.count()} lifecycle models`);
+  logSuccess(
+    `Processed ${await prisma.lifecycleModel.count()} lifecycle models`,
+  );
 
   // ==============================================
   // 2. LIFECYCLE STATES (Using Factory)

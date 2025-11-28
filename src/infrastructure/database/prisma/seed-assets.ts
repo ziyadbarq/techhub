@@ -49,7 +49,7 @@ export async function seedAssets(prisma: PrismaClient) {
   const vendorMap = new Map(vendors.map((v) => [v.code, v]));
 
   // ==============================================
-  // 1. Asset Categories
+  // 1. Asset Categories (idempotent - uses upsert)
   // ==============================================
   logStep("📦", "Creating asset categories...");
 
@@ -59,20 +59,22 @@ export async function seedAssets(prisma: PrismaClient) {
   >();
 
   for (const catData of SEED_CONFIG.ASSET_CATEGORIES) {
-    const category = await prisma.assetCategory.create({
-      data: {
+    const category = await prisma.assetCategory.upsert({
+      where: { code: catData.code },
+      create: {
         name: catData.name,
         code: catData.code,
         description: catData.description,
       },
+      update: {}, // No-op update to preserve existing data
     });
     categoryMap.set(catData.code, category);
   }
 
-  logSuccess(`Created ${categoryMap.size} asset categories`);
+  logSuccess(`Processed ${categoryMap.size} asset categories`);
 
   // ==============================================
-  // 2. Asset Models
+  // 2. Asset Models (idempotent - uses upsert)
   // ==============================================
   logStep("🏭", "Creating asset models...");
 
@@ -97,29 +99,37 @@ export async function seedAssets(prisma: PrismaClient) {
         continue;
       }
 
-      const model = await prisma.assetModel.create({
-        data: {
+      const model = await prisma.assetModel.upsert({
+        where: { code: modelData.code },
+        create: {
           ...requireConnect(category.id, "assetCategory"),
           ...requireConnect(vendor.id, "vendor"),
           name: modelData.name,
           code: modelData.code,
           description: modelData.description,
         },
+        update: {}, // No-op update to preserve existing data
       });
 
       modelMap.set(`${categoryCode}-${modelData.code}`, model.id);
     }
   }
 
-  logSuccess(`Created ${modelMap.size} asset models`);
+  logSuccess(`Processed ${modelMap.size} asset models`);
 
   // ==============================================
-  // 3. Assets
+  // 3. Assets (idempotent - uses upsert)
   // ==============================================
   logStep("💻", "Creating assets...");
 
   const assets: Array<{ id: string; categoryCode: string }> = [];
   let totalAssets = 0;
+
+  // Load existing assets to support append mode
+  const existingAssets = await prisma.asset.findMany({
+    select: { id: true, assetTag: true, assetCategoryId: true },
+  });
+  const existingAssetTags = new Set(existingAssets.map((a) => a.assetTag));
 
   for (const [categoryCode, quantity] of Object.entries(
     SEED_CONFIG.QUANTITIES.ASSETS_PER_CATEGORY,
@@ -147,6 +157,19 @@ export async function seedAssets(prisma: PrismaClient) {
         new Date().getFullYear(),
         totalAssets + i,
       );
+
+      // Check if asset already exists (idempotent)
+      if (existingAssetTags.has(assetTag)) {
+        const existingAsset = existingAssets.find(
+          (a) => a.assetTag === assetTag,
+        );
+        if (existingAsset) {
+          assets.push({ id: existingAsset.id, categoryCode });
+        }
+        totalAssets++;
+        continue;
+      }
+
       const modelId =
         categoryModels.length > 0 ? pickRandom(categoryModels) : undefined;
       const purchaseDate = getRelativeDateByYears(-randomInt(1, 3));
@@ -154,8 +177,9 @@ export async function seedAssets(prisma: PrismaClient) {
         lifecycleStates.find((ls) => ls.code === "DEPLOYED") ??
         pickRandom(lifecycleStates);
 
-      const asset = await prisma.asset.create({
-        data: {
+      const asset = await prisma.asset.upsert({
+        where: { assetTag },
+        create: {
           ...requireConnect(category.id, "assetCategory"),
           ...optionalConnect(modelId, "assetModel"),
           assetTag,
@@ -166,6 +190,7 @@ export async function seedAssets(prisma: PrismaClient) {
           ...optionalConnect(lifecycleState?.id, "lifecycleState"),
           condition: pickRandom(["NEW", "GOOD", "FAIR"] as const),
         },
+        update: {}, // No-op update to preserve existing data
       });
 
       assets.push({ id: asset.id, categoryCode });
@@ -174,10 +199,10 @@ export async function seedAssets(prisma: PrismaClient) {
     totalAssets += quantity;
   }
 
-  logSuccess(`Created ${assets.length} assets`);
+  logSuccess(`Processed ${assets.length} assets`);
 
   // ==============================================
-  // 4. Stock Locations
+  // 4. Stock Locations (idempotent - uses upsert)
   // ==============================================
   logStep("📍", "Creating stock locations...");
 
@@ -193,20 +218,22 @@ export async function seedAssets(prisma: PrismaClient) {
   ];
 
   for (const locData of stockLocationData) {
-    const location = await prisma.stockLocation.create({
-      data: {
+    const location = await prisma.stockLocation.upsert({
+      where: { code: locData.code },
+      create: {
         name: locData.name,
         code: locData.code,
         description: locData.description,
       },
+      update: {}, // No-op update to preserve existing data
     });
     stockLocations.push(location);
   }
 
-  logSuccess(`Created ${stockLocations.length} stock locations`);
+  logSuccess(`Processed ${stockLocations.length} stock locations`);
 
   // ==============================================
-  // 5. Stock Movements
+  // 5. Stock Movements (idempotent - check before create)
   // ==============================================
   logStep("📦", "Creating stock movements...");
 
@@ -216,6 +243,20 @@ export async function seedAssets(prisma: PrismaClient) {
   const assetsForMovement = assets.slice(0, Math.floor(assets.length * 0.3)); // 30% have movements
 
   for (const asset of assetsForMovement) {
+    // Check if initial movement already exists for this asset (idempotent)
+    const existingMovement = await prisma.stockMovement.findFirst({
+      where: {
+        assetId: asset.id,
+        movementType: "IN",
+        reason: "Initial stock receipt",
+      },
+    });
+
+    if (existingMovement) {
+      movementCount++;
+      continue; // Skip duplicate
+    }
+
     const stockLocation = pickRandom(stockLocations);
     const person = pickRandom(persons);
 
@@ -233,10 +274,10 @@ export async function seedAssets(prisma: PrismaClient) {
     movementCount++;
   }
 
-  logSuccess(`Created ${movementCount} stock movements`);
+  logSuccess(`Processed ${movementCount} stock movements`);
 
   // ==============================================
-  // 6. Asset Assignments
+  // 6. Asset Assignments (idempotent - check before create)
   // ==============================================
   logStep("👤", "Creating asset assignments...");
 
@@ -250,6 +291,19 @@ export async function seedAssets(prisma: PrismaClient) {
   let assignmentCount = 0;
 
   for (const asset of assetsToAssign) {
+    // Check if active assignment already exists for this asset (idempotent)
+    const existingAssignment = await prisma.assetAssignment.findFirst({
+      where: {
+        assetId: asset.id,
+        endDate: null, // Active assignment
+      },
+    });
+
+    if (existingAssignment) {
+      assignmentCount++;
+      continue; // Skip duplicate
+    }
+
     const person = pickRandom(persons);
 
     await prisma.assetAssignment.create({
@@ -265,7 +319,7 @@ export async function seedAssets(prisma: PrismaClient) {
     assignmentCount++;
   }
 
-  logSuccess(`Created ${assignmentCount} asset assignments`);
+  logSuccess(`Processed ${assignmentCount} asset assignments`);
 
   // ==============================================
   // Summary

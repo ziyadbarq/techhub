@@ -21,7 +21,7 @@ export const SEED_QUANTITIES = {
   VENDORS: 9,
   LOCATIONS: 5, // Barq actual locations
   ORGANIZATION_UNITS: 223, // 1 company + 17 departments + 55 sub-departments + 150 teams
-  PERSONS: 0, // Persons come from Microsoft Graph sync
+  PERSONS: 21, // Demo persons matching service owners (production uses Graph sync)
   LIFECYCLE_STATUSES: 6,
   FIELD_DEFINITIONS: 8,
   EXCHANGE_RATES: 14, // All supported currencies except SAR

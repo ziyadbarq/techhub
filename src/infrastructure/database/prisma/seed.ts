@@ -1,10 +1,16 @@
 /**
- * Database Seed File
+ * Database Seed File (Idempotent / Append-Only)
  *
  * Seeds the database based on selected preset:
  * - production: RBAC, Foundation, Business Processes, CMDB types, Governance (no demo data)
  * - dev: Production + demo assets, warranties, Layer 3 ITAM, AI tasks
  * - full: All modules including services (requires persons)
+ *
+ * IMPORTANT: This seeder is fully IDEMPOTENT:
+ * - Never wipes existing data
+ * - Never creates duplicates (uses upsert/check-before-create)
+ * - Safe to run multiple times
+ * - Amends missing data without affecting existing records
  *
  * Usage:
  *   npm run db:seed           # production preset (default)
@@ -27,7 +33,6 @@ import { seedGovernance } from "./seed-governance.js";
 import { seedBusinessProcesses, seedServices } from "./seed-services.js";
 import { logSection, logSuccess, logStep, logWarning } from "./seed-utils.js";
 import {
-  performFullCleanup,
   initializeCodeSequences,
   seedExampleTasks,
 } from "./seed-operations.js";
@@ -76,13 +81,7 @@ async function main() {
   console.log(`📦 Modules: ${Array.from(modules).join(", ")}\n`);
 
   try {
-    // 0. Cleanup all tables
-    logStep("🧹", "Cleaning up database...");
-    await performFullCleanup(prisma);
-    logSuccess("Database cleaned");
-    console.log("");
-
-    // 0.5. Initialize Code Sequence table
+    // 0. Initialize Code Sequence table (idempotent)
     logSection("Code Sequence Initialization");
     logStep("🔢", "Initializing code sequences for auto-generation...");
     const sequenceCount = await initializeCodeSequences(prisma);
