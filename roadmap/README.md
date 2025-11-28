@@ -24,6 +24,7 @@ This folder contains detailed specifications for planned features that are not y
 - [Universal Data Importer](UNIVERSAL_DATA_IMPORTER.md) - **Status: Partially Complete** - Core complete (7-step wizard, validation engine, fuzzy matching), extensions pending (64 entity configurations, import history, bulk actions for remaining entities). Currently functional for Assets and Persons.
 - [Custom Fields Completion](CUSTOM_FIELDS_COMPLETION.md) - **Status: ✅ Complete** - Dynamic field definitions attached to Asset Categories with full UI integration: category field management, dynamic form rendering (14 data types), asset detail display, and data import support.
 - [Entity Type Select](ENTITY_TYPE_SELECT.md) - **Status: ✅ Complete** - Dynamic entity type selection in Field Definition forms using centralized Entity Registry with 20 business entities across 7 categories.
+- [Person Profile Enhancement](PERSON_PROFILE_ENHANCEMENT.md) - **Status: Planned** - Enhance Person Details Page to fully rich 360-degree profile view with data tables for all 14 incomplete sections (assets, services, governance, activity tabs).
 
 ### Layer 2 (Asset Management)
 
@@ -39,6 +40,8 @@ This folder contains detailed specifications for planned features that are not y
 - None currently
 
 ### Infrastructure & Development (Cross-cutting)
+
+- [Profile Page Enhancement](PROFILE_PAGE_ENHANCEMENT.md) - **Status: Planned** - Unified profile page merging User (auth) and Person (employee) data with My Assets summary, roles/permissions display, and user preferences (notifications, display settings).
 
 ## Adding New Features
 
