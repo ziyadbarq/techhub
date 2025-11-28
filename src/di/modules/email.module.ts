@@ -6,17 +6,17 @@
  * This module is imported by the main DI container and provides
  * email sending capabilities throughout the application.
  *
- * Production TODO:
- * Replace MockEmailService with a real email provider:
- * - SendGrid (@sendgrid/mail)
- * - AWS SES (@aws-sdk/client-ses)
- * - Resend (resend)
- * - Nodemailer (nodemailer)
+ * Available Implementations:
+ * - MockEmailService: Logs emails to console (development/testing)
+ * - MicrosoftGraphEmailService: Sends via Microsoft Graph API (production)
  */
 
 import type { Container } from "inversify";
 import { DI_TOKENS } from "../types";
-import { MockEmailService } from "@/infrastructure/services/email/mock-email.service";
+import {
+  MockEmailService,
+  MicrosoftGraphEmailService,
+} from "@/infrastructure/services/email";
 import type { IEmailService } from "@/core/services";
 import { logger } from "@/lib/logger";
 
@@ -25,33 +25,37 @@ const diLogger = logger.scope("DI");
 /**
  * Binds email service dependencies to the DI container
  *
+ * Uses MicrosoftGraphEmailService when AZURE_EMAIL_FROM is configured,
+ * otherwise falls back to MockEmailService for development/testing.
+ *
  * @param container - InversifyJS container instance
  */
 export function bindEmailDependencies(container: Container): void {
-  // Bind IEmailService to MockEmailService
-  // Singleton scope to reuse service instance across the application
-  container
-    .bind<IEmailService>(DI_TOKENS.IEmailService)
-    .to(MockEmailService)
-    .inSingletonScope();
+  const azureEmailFrom = process.env.AZURE_EMAIL_FROM;
 
-  // Production: Conditionally bind based on environment
-  // if (env.NODE_ENV === 'production') {
-  //   container
-  //     .bind<IEmailService>(DI_TOKENS.IEmailService)
-  //     .to(SendGridEmailService)
-  //     .inSingletonScope();
-  // } else {
-  //   container
-  //     .bind<IEmailService>(DI_TOKENS.IEmailService)
-  //     .to(MockEmailService)
-  //     .inSingletonScope();
-  // }
+  if (azureEmailFrom) {
+    // Production: Use Microsoft Graph API for email sending
+    container
+      .bind<IEmailService>(DI_TOKENS.IEmailService)
+      .to(MicrosoftGraphEmailService)
+      .inSingletonScope();
 
-  diLogger.debug(
-    "bindEmailDependencies",
-    "Email service registered (MockEmailService)",
-  );
+    diLogger.debug(
+      "bindEmailDependencies",
+      `Email service registered (MicrosoftGraphEmailService, from: ${azureEmailFrom})`,
+    );
+  } else {
+    // Development/Testing: Use mock service that logs emails
+    container
+      .bind<IEmailService>(DI_TOKENS.IEmailService)
+      .to(MockEmailService)
+      .inSingletonScope();
+
+    diLogger.debug(
+      "bindEmailDependencies",
+      "Email service registered (MockEmailService - set AZURE_EMAIL_FROM for production)",
+    );
+  }
 }
 
 /**
@@ -60,15 +64,16 @@ export function bindEmailDependencies(container: Container): void {
  * 1. Service Scope:
  *    - IEmailService: Singleton (shared instance, stateless service)
  *    - Mock implementation logs emails instead of sending them
+ *    - MicrosoftGraphEmailService sends via Graph API
  *
- * 2. Production Migration:
- *    - Add email provider SDK to package.json
- *    - Create production implementation in infrastructure/services/email/
- *    - Add environment variables for API keys
- *    - Update binding to use production service
+ * 2. Configuration:
+ *    - Set AZURE_EMAIL_FROM to enable production email sending
+ *    - Requires AZURE_EMAIL_TENANT_ID, AZURE_EMAIL_CLIENT_ID, AZURE_EMAIL_CLIENT_SECRET
+ *    - These are separate from Intune credentials (AZURE_TENANT_ID, etc.)
+ *    - Azure AD app needs Mail.Send application permission
  *
  * 3. Testing:
- *    - MockEmailService includes getStats() for testing
+ *    - Both services include getStats() for testing
  *    - Can verify emails were "sent" in tests
  *    - InversifyJS v7: Use `await container.rebind()` or `container.rebindSync()` to inject test doubles
  *    - Example:

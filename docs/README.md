@@ -103,7 +103,7 @@ Cross-cutting features and utilities:
 - [Database Migrations & Deployment](./guides/DATABASE_MIGRATIONS.md) - Prisma migrations workflow, development vs production, and deployment best practices
 - [Database Seeding Guide](./guides/DATABASE_SEEDING.md) - Comprehensive seed system: architecture, factories, configuration, and layered seeders (see also: [TechHub Layer Dependencies](./architecture/TECHHUB_LAYER_DEPENDENCIES.md) for complete technical reference)
 - [Build Optimization Guide](./guides/BUILD_OPTIMIZATION.md) - Build performance optimization and bundle analysis
-- **[MISSING]** Email Service Integration - Email service setup, templates, and notification delivery
+- Email Service Integration - Microsoft Graph email via `MicrosoftGraphEmailService`, test with `scripts/test-email.ts`
 - **[MISSING]** File Storage System - File upload/download, storage backends, and metadata management
 - **[MISSING]** AI Infrastructure - OpenAI integration, prompt management, caching, and structured outputs (currently disabled)
 
