@@ -134,27 +134,28 @@ export const documentationGroup: NavGroup = {
   items: [
     {
       title: "Getting Started",
-      href: "/docs/getting-started",
+      href: "/docs/getting-started/overview",
       icon: Lightbulb,
       description: "Foundation layer and data management basics",
     },
     {
-      title: "Entity Reference",
-      href: "/docs/entities",
-      icon: Database,
-      description: "Complete guide to all entities",
-    },
-    {
       title: "Workflows",
-      href: "/docs/workflows",
+      href: "/docs/user-guides/workflows",
       icon: GitBranch,
       description: "Common workflows and guides",
     },
     {
       title: "Admin Guide",
-      href: "/docs/admin-guide",
+      href: "/docs/admin-guides/overview",
       icon: ShieldCheck,
       description: "RBAC and user management",
+      permission: PERMISSIONS.USERS_MANAGE,
+    },
+    {
+      title: "Entity Reference",
+      href: "/docs/reference/entities",
+      icon: Database,
+      description: "Complete guide to all entities",
     },
   ],
   visible: true,

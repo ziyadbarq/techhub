@@ -7,6 +7,7 @@
 import { readFileSync, existsSync, readdirSync, statSync } from "fs";
 import { join, basename } from "path";
 import matter from "gray-matter";
+import { logger } from "@/lib/logger";
 import type {
   DocContent,
   DocFrontmatter,
@@ -70,7 +71,9 @@ export function loadCategoryMeta(categoryPath: string): CategoryMeta {
 
     return DEFAULT_CATEGORY_META;
   } catch (error) {
-    console.error(`Error loading category meta from ${metaPath}:`, error);
+    logger
+      .scope("ContentLoader")
+      .error("meta", `Error loading category meta from ${metaPath}`, error);
     return DEFAULT_CATEGORY_META;
   }
 }
@@ -191,7 +194,9 @@ export function getDocsByCategory(category: string): DocContent[] {
       try {
         docs.push(getDocContent(slug));
       } catch (error) {
-        console.error(`Error loading doc: ${slug}`, error);
+        logger
+          .scope("ContentLoader")
+          .error("load", `Error loading doc: ${slug}`, error);
       }
     }
   }
@@ -217,7 +222,9 @@ export function getAllDocs(): DocContent[] {
       try {
         return getDocContent(slug);
       } catch (error) {
-        console.error(`Error loading doc: ${slug}`, error);
+        logger
+          .scope("ContentLoader")
+          .error("load", `Error loading doc: ${slug}`, error);
         return null;
       }
     })

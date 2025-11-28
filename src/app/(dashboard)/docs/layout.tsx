@@ -21,6 +21,8 @@ import {
   getUserEnabledFeatures,
 } from "@/lib/docs";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Documentation | Barq Assets",
   description:

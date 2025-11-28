@@ -20,6 +20,6 @@ export default async function DocsIndexPage() {
     throw error;
   }
 
-  // Redirect to getting-started as the default docs page
-  redirect("/docs/getting-started");
+  // Redirect to getting-started/overview as the default docs page
+  redirect("/docs/getting-started/overview");
 }
