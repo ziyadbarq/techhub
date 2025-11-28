@@ -28,19 +28,24 @@ import type {
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
+interface PaginatedDevicesData {
+  devices: IntuneDeviceDTO[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
 interface IntuneDevicesPageClientProps {
-  initialDevices: IntuneDeviceDTO[];
-  initialTotal: number;
+  initialData: PaginatedDevicesData;
   initialStats?: IntuneComplianceStatsDTO;
 }
 
 export function IntuneDevicesPageClient({
-  initialDevices,
-  initialTotal,
+  initialData,
   initialStats,
 }: IntuneDevicesPageClientProps) {
-  const [devices, setDevices] = useState<IntuneDeviceDTO[]>(initialDevices);
-  const [total, setTotal] = useState(initialTotal);
+  const [data, setData] = useState<PaginatedDevicesData>(initialData);
   const [stats, setStats] = useState<IntuneComplianceStatsDTO | null>(
     initialStats ?? null,
   );
@@ -75,18 +80,17 @@ export function IntuneDevicesPageClient({
   }, []);
 
   const loadDevices = useCallback(
-    async (currentFilters?: IntuneDeviceFiltersDTO) => {
+    async (page: number, currentFilters?: IntuneDeviceFiltersDTO) => {
       setIsLoading(true);
       try {
         const filtersToUse = currentFilters ?? filters;
         const hasFilters = Object.values(filtersToUse).some(Boolean);
         const result = await listIntuneDevicesAction(
           hasFilters ? filtersToUse : undefined,
-          { take: 100 },
+          { page, pageSize: data.pageSize },
         );
         if (result.success) {
-          setDevices(result.data.devices);
-          setTotal(result.data.total);
+          setData(result.data);
         } else {
           toast.error(result.error || "Failed to load devices");
         }
@@ -96,7 +100,14 @@ export function IntuneDevicesPageClient({
         setIsLoading(false);
       }
     },
-    [filters],
+    [filters, data.pageSize],
+  );
+
+  const handlePageChange = useCallback(
+    (page: number) => {
+      loadDevices(page, filters);
+    },
+    [loadDevices, filters],
   );
 
   const handleSync = useCallback(async () => {
@@ -107,8 +118,8 @@ export function IntuneDevicesPageClient({
         toast.success(
           `Sync complete: ${result.data.created} created, ${result.data.updated} updated`,
         );
-        // Reload both devices and stats after sync
-        await Promise.all([loadDevices(filters), loadStats()]);
+        // Reload both devices and stats after sync (reset to page 1)
+        await Promise.all([loadDevices(1, filters), loadStats()]);
       } else {
         toast.error(result.error || "Sync failed");
       }
@@ -119,11 +130,11 @@ export function IntuneDevicesPageClient({
     }
   }, [loadDevices, loadStats, filters]);
 
-  // Handle filter changes
+  // Handle filter changes - reset to page 1
   const handleFiltersChange = useCallback(
     (newFilters: IntuneDeviceFiltersDTO) => {
       setFilters(newFilters);
-      loadDevices(newFilters);
+      loadDevices(1, newFilters);
     },
     [loadDevices],
   );
@@ -142,7 +153,7 @@ export function IntuneDevicesPageClient({
   const handleBulkSuccess = useCallback(() => {
     setShowBulkWizard(false);
     setSelectedDevices([]);
-    loadDevices(filters);
+    loadDevices(1, filters);
     loadStats();
   }, [loadDevices, loadStats, filters]);
 
@@ -186,7 +197,7 @@ export function IntuneDevicesPageClient({
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {stats?.ownership.total ?? total}
+              {stats?.ownership.total ?? data.total}
             </div>
           </CardContent>
         </Card>
@@ -269,15 +280,18 @@ export function IntuneDevicesPageClient({
             osOptions={osOptions}
           />
           <IntuneDevicesTable
-            devices={devices}
+            devices={data.devices}
             isLoading={isLoading}
-            onRefresh={() => loadDevices(filters)}
             selectable={canCreateAssets && canLinkDevices}
             onSelectionChange={handleSelectionChange}
+            totalPages={data.totalPages}
+            currentPage={data.page}
+            pageSize={data.pageSize}
+            onPageChange={handlePageChange}
           />
-          {total > 0 && (
+          {data.total > 0 && (
             <p className="text-muted-foreground text-sm">
-              Showing {devices.length} of {total} devices
+              Showing {data.devices.length} of {data.total} devices
             </p>
           )}
         </CardContent>

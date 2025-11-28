@@ -35,9 +35,13 @@ import {
 interface IntuneDevicesTableProps {
   devices: IntuneDeviceDTO[];
   isLoading?: boolean;
-  onRefresh?: () => void;
   selectable?: boolean;
   onSelectionChange?: (selectedDevices: IntuneDeviceDTO[]) => void;
+  // Pagination props
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
+  onPageChange: (page: number) => void;
 }
 
 export function IntuneDevicesTable({
@@ -45,6 +49,10 @@ export function IntuneDevicesTable({
   isLoading,
   selectable = false,
   onSelectionChange,
+  totalPages,
+  currentPage,
+  pageSize,
+  onPageChange,
 }: IntuneDevicesTableProps) {
   const columns = useMemo<ColumnDef<IntuneDeviceDTO>[]>(
     () => [
@@ -297,6 +305,20 @@ export function IntuneDevicesTable({
       loading={isLoading}
       selectable={selectable}
       onSelectionChange={onSelectionChange}
+      showColumnToggle
+      initialColumnVisibility={{
+        serialNumber: false,
+        lastSyncDateTime: false,
+        linkedAssetTag: false,
+        actions: false,
+      }}
+      pagination={{
+        pageSize,
+        pageIndex: currentPage - 1,
+        pageCount: totalPages,
+        onPageChange: (pageIndex) => onPageChange(pageIndex + 1),
+        manualPagination: true,
+      }}
     />
   );
 }

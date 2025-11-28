@@ -97,8 +97,11 @@ export function IntuneDeviceFilters({
       {/* Search and Filter Row */}
       <div className="flex flex-wrap items-center gap-3">
         {/* Search Input */}
-        <form onSubmit={handleSearchSubmit} className="min-w-[250px] flex-1">
-          <div className="relative">
+        <form
+          onSubmit={handleSearchSubmit}
+          className="flex min-w-[250px] flex-1 gap-2"
+        >
+          <div className="relative flex-1">
             <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
             <Input
               placeholder="Search by device name, serial, user name, or email..."
@@ -107,6 +110,10 @@ export function IntuneDeviceFilters({
               className="pr-4 pl-9"
             />
           </div>
+          <Button type="submit" variant="secondary" size="default">
+            <Search className="mr-2 h-4 w-4" />
+            Search
+          </Button>
         </form>
 
         {/* OS Filter */}

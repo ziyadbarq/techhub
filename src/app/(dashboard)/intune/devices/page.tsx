@@ -33,15 +33,14 @@ export default async function IntuneDevicesPage() {
     throw error;
   }
 
-  // Fetch initial data
-  const result = await listIntuneDevicesAction(undefined, { take: 50 });
-  const initialDevices = result.success ? (result.data?.devices ?? []) : [];
-  const initialTotal = result.success ? (result.data?.total ?? 0) : 0;
+  // Fetch initial data with pagination
+  const result = await listIntuneDevicesAction(undefined, {
+    page: 1,
+    pageSize: 10,
+  });
+  const initialData = result.success
+    ? result.data
+    : { devices: [], total: 0, page: 1, pageSize: 10, totalPages: 0 };
 
-  return (
-    <IntuneDevicesPageClient
-      initialDevices={initialDevices}
-      initialTotal={initialTotal}
-    />
-  );
+  return <IntuneDevicesPageClient initialData={initialData} />;
 }

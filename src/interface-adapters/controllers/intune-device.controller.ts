@@ -150,16 +150,18 @@ function mapFiltersToRepository(
 // ==========================================
 
 /**
- * List Intune devices with optional filters
+ * List Intune devices with optional filters and pagination
  */
 export async function listIntuneDevicesAction(
   filters?: IntuneDeviceFiltersDTO,
-  pagination?: { skip?: number; take?: number },
+  pagination?: { page?: number; pageSize?: number },
 ): Promise<
   ActionResponse<{
     devices: IntuneDeviceDTO[];
     total: number;
-    hasMore: boolean;
+    page: number;
+    pageSize: number;
+    totalPages: number;
   }>
 > {
   try {
@@ -172,6 +174,11 @@ export async function listIntuneDevicesAction(
     // Map DTO filters to repository filters
     const repositoryFilters = mapFiltersToRepository(validatedFilters);
 
+    // Default pagination
+    const page = pagination?.page ?? 1;
+    const pageSize = pagination?.pageSize ?? 10;
+    const skip = (page - 1) * pageSize;
+
     const container = getContainer();
     const listDevicesUseCase = container.get<ListIntuneDevicesUseCase>(
       DI_TOKENS.ListIntuneDevicesUseCase,
@@ -179,18 +186,21 @@ export async function listIntuneDevicesAction(
 
     const result = await listDevicesUseCase.execute({
       filters: repositoryFilters,
-      pagination,
+      pagination: { skip, take: pageSize },
     });
 
     const devices = presentIntuneDevices(result.devices);
     const enrichedDevices = await enrichDevices(devices);
+    const totalPages = Math.ceil(result.total / pageSize);
 
     return {
       success: true,
       data: {
         devices: enrichedDevices,
         total: result.total,
-        hasMore: result.hasMore,
+        page,
+        pageSize,
+        totalPages,
       },
     };
   } catch (error) {
