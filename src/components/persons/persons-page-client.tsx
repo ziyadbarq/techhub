@@ -7,7 +7,15 @@
 "use client";
 
 import { useState, useCallback, useEffect, useRef } from "react";
-import { Table, LayoutGrid, Network, Plus, Users, UserX } from "lucide-react";
+import {
+  Table,
+  LayoutGrid,
+  Network,
+  Plus,
+  Users,
+  UserX,
+  RefreshCw,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,6 +31,10 @@ import {
   deletePersonAction,
   togglePersonExclusionAction,
 } from "@/interface-adapters/controllers/person.controller";
+import {
+  syncUsersFromGraphAction,
+  getPersonSyncDefaultsAction,
+} from "@/interface-adapters/controllers/microsoft-graph.controller";
 import { DirectorySearch } from "@/components/employee-directory/directory-search";
 import {
   DirectoryFilters,
@@ -61,6 +73,7 @@ export function PersonsPageClient({
   const canCreate = hasPermission(PERMISSIONS.PERSONS_CREATE);
   const canUpdate = hasPermission(PERMISSIONS.PERSONS_UPDATE);
   const canDelete = hasPermission(PERMISSIONS.PERSONS_DELETE);
+  const canSync = hasPermission(PERMISSIONS.PERSONS_SYNC);
 
   // Data state
   const [persons, setPersons] =
@@ -69,6 +82,7 @@ export function PersonsPageClient({
   const [excludedCount, setExcludedCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isTogglingExclusion, setIsTogglingExclusion] = useState(false);
+  const [isSyncing, setIsSyncing] = useState(false);
 
   // View state
   const [activeView, setActiveView] = useState<ViewType>("table");
@@ -302,6 +316,41 @@ export function PersonsPageClient({
     setSelectedLocations([]);
   }, []);
 
+  // Handle sync from Microsoft Graph
+  const handleSync = useCallback(async () => {
+    setIsSyncing(true);
+    try {
+      // Fetch defaults for sync (BARQ org unit, viewer role)
+      const defaults = await getPersonSyncDefaultsAction();
+      if (!defaults.success) {
+        toast.error(defaults.error || "Failed to get sync defaults");
+        return;
+      }
+
+      const result = await syncUsersFromGraphAction({
+        includeDisabled: false,
+        includeGuests: false,
+        defaultOrgUnitId: defaults.data.orgUnitId,
+        defaultPrimaryRoleId: defaults.data.roleId,
+        deactivateMissing: true,
+      });
+
+      if (result.success) {
+        toast.success(
+          `Sync complete: ${result.data.created} created, ${result.data.updated} updated`,
+        );
+        reloadData();
+        loadExcludedCount();
+      } else {
+        toast.error(result.error || "Sync failed");
+      }
+    } catch {
+      toast.error("Sync failed");
+    } finally {
+      setIsSyncing(false);
+    }
+  }, [reloadData, loadExcludedCount]);
+
   // Auto-scroll to chart when switching to orgchart view
   useEffect(() => {
     if (activeView === "orgchart" && chartContainerRef.current) {
@@ -342,6 +391,14 @@ export function PersonsPageClient({
           </div>
         </div>
         <div className="flex items-center gap-2">
+          {canSync && statusFilter === "active" && (
+            <Button onClick={handleSync} disabled={isSyncing} variant="outline">
+              <RefreshCw
+                className={`mr-2 h-4 w-4 ${isSyncing ? "animate-spin" : ""}`}
+              />
+              {isSyncing ? "Syncing..." : "Sync Now"}
+            </Button>
+          )}
           {canCreate && statusFilter === "active" && (
             <Button onClick={handleCreate} className="gap-2">
               <Plus className="h-4 w-4" />
