@@ -28,6 +28,11 @@ import {
   type FetchUsersOptions,
   type TransformGraphUserOptions,
 } from "@/lib/schemas/graph-user.schema";
+import type {
+  GraphSyncProgress,
+  GraphSyncProgressCallback,
+  GraphSyncPhase,
+} from "@/lib/schemas/graph-sync-progress.types";
 
 /**
  * Options for the sync operation
@@ -61,6 +66,12 @@ export interface SyncUsersOptions extends FetchUsersOptions {
    * Dry run - don't actually make changes
    */
   dryRun?: boolean;
+
+  /**
+   * Progress callback for real-time updates
+   * Called periodically during sync to report status
+   */
+  onProgress?: GraphSyncProgressCallback;
 }
 
 @injectable()
@@ -84,6 +95,42 @@ export class SyncUsersFromGraphUseCase {
   }
 
   /**
+   * Report progress to callback with batching
+   * Only calls callback every N items or on phase changes
+   */
+  private reportProgress(
+    callback: GraphSyncProgressCallback | undefined,
+    phase: GraphSyncPhase,
+    phaseLabel: string,
+    currentIndex: number,
+    totalItems: number,
+    stats: GraphSyncProgress["stats"],
+    startTime: number,
+    lastReportedIndex: number,
+    reportInterval = 10,
+  ): number {
+    if (!callback) return lastReportedIndex;
+
+    // Report on phase start/end or every reportInterval items
+    const isPhaseChange = currentIndex === 0 || currentIndex === totalItems;
+    const shouldReport =
+      isPhaseChange || currentIndex - lastReportedIndex >= reportInterval;
+
+    if (!shouldReport) return lastReportedIndex;
+
+    callback({
+      phase,
+      phaseLabel,
+      currentIndex,
+      totalItems,
+      stats: { ...stats },
+      elapsedMs: Date.now() - startTime,
+    });
+
+    return currentIndex;
+  }
+
+  /**
    * Execute user sync from Microsoft Graph
    */
   async execute(options?: SyncUsersOptions): Promise<SyncResult> {
@@ -95,24 +142,101 @@ export class SyncUsersFromGraphUseCase {
       errors: [],
     };
 
+    const startTime = Date.now();
+    const onProgress = options?.onProgress;
+    let lastReported = -1;
+
+    // Helper to get stats for progress reporting
+    const getStats = () => ({
+      created: result.created,
+      updated: result.updated,
+      excluded: result.excluded,
+      deactivated: result.deactivated,
+      errors: result.errors.length,
+    });
+
     this.logger.info("Starting user sync from Microsoft Graph", { options });
 
     try {
+      // Report initializing phase
+      this.reportProgress(
+        onProgress,
+        "initializing",
+        "Building lookup maps...",
+        0,
+        1,
+        getStats(),
+        startTime,
+        -1,
+      );
+
       // Build transform options with org unit, location, and role maps
       const transformOptions = await this.buildTransformOptions(options);
 
-      // Pass 1: Fetch and sync all users
+      this.reportProgress(
+        onProgress,
+        "initializing",
+        "Lookup maps ready",
+        1,
+        1,
+        getStats(),
+        startTime,
+        0,
+      );
+
+      // Pass 1: Fetch users from Graph
       this.logger.info("Pass 1: Fetching users from Microsoft Graph");
+      this.reportProgress(
+        onProgress,
+        "fetching-users",
+        "Fetching users from Microsoft Graph...",
+        0,
+        1,
+        getStats(),
+        startTime,
+        -1,
+      );
+
       const graphUsers = await this.graphService.fetchAllUsers({
         includeDisabled: options?.includeDisabled,
         includeGuests: options?.includeGuests,
       });
+
       this.logger.info("Fetched users from Graph", {
         count: graphUsers.length,
       });
 
+      this.reportProgress(
+        onProgress,
+        "fetching-users",
+        `Fetched ${graphUsers.length} users from Microsoft Graph`,
+        1,
+        1,
+        getStats(),
+        startTime,
+        0,
+      );
+
+      // Reset for syncing phase
+      lastReported = -1;
+      const totalUsers = graphUsers.length;
+
       // Process each user
-      for (const graphUser of graphUsers) {
+      for (let i = 0; i < graphUsers.length; i++) {
+        const graphUser = graphUsers[i];
+
+        // Report progress (batched every 10 users)
+        lastReported = this.reportProgress(
+          onProgress,
+          "syncing-users",
+          `Syncing users [${i + 1}/${totalUsers}]`,
+          i + 1,
+          totalUsers,
+          getStats(),
+          startTime,
+          lastReported,
+        );
+
         try {
           // Transform Graph user to Person data with automatic org unit, location, and role assignment
           const personData = transformGraphUserToPerson(
@@ -223,21 +347,80 @@ export class SyncUsersFromGraphUseCase {
       // Pass 2: Link managers (using azureAdId for lookups)
       if (!options?.skipManagerLinking) {
         this.logger.info("Pass 2: Linking managers");
+        this.reportProgress(
+          onProgress,
+          "linking-managers",
+          "Linking manager relationships...",
+          0,
+          totalUsers,
+          getStats(),
+          startTime,
+          -1,
+        );
+
         await this.linkManagers(
           graphUsers.map((u) => u.id),
           options?.dryRun,
+          onProgress,
+          startTime,
+          getStats,
+        );
+
+        this.reportProgress(
+          onProgress,
+          "linking-managers",
+          "Manager relationships linked",
+          totalUsers,
+          totalUsers,
+          getStats(),
+          startTime,
+          0,
         );
       }
 
       // Pass 3: Deactivate users no longer in Graph
       if (options?.deactivateMissing !== false) {
         this.logger.info("Pass 3: Deactivating removed users");
+        this.reportProgress(
+          onProgress,
+          "deactivating-removed",
+          "Checking for removed users...",
+          0,
+          1,
+          getStats(),
+          startTime,
+          -1,
+        );
+
         const deactivatedCount = await this.deactivateRemovedUsers(
           graphUsers.map((u) => u.id),
           options?.dryRun,
         );
         result.deactivated = deactivatedCount;
+
+        this.reportProgress(
+          onProgress,
+          "deactivating-removed",
+          `Deactivated ${deactivatedCount} removed users`,
+          1,
+          1,
+          getStats(),
+          startTime,
+          0,
+        );
       }
+
+      // Report completion
+      this.reportProgress(
+        onProgress,
+        "complete",
+        "Sync complete",
+        1,
+        1,
+        getStats(),
+        startTime,
+        0,
+      );
 
       this.logger.info("User sync completed", {
         created: result.created,
@@ -345,11 +528,35 @@ export class SyncUsersFromGraphUseCase {
   private async linkManagers(
     graphUserIds: string[],
     dryRun?: boolean,
+    onProgress?: GraphSyncProgressCallback,
+    startTime?: number,
+    getStats?: () => GraphSyncProgress["stats"],
   ): Promise<void> {
     const managerMap = await this.graphService.fetchAllManagers(graphUserIds);
 
     let linkedCount = 0;
+    let lastReported = -1;
+    const totalManagers = managerMap.size;
+    let currentIndex = 0;
+
     for (const [userAzureId, managerAzureId] of managerMap) {
+      currentIndex++;
+
+      // Report progress every 20 manager links
+      if (onProgress && startTime && getStats) {
+        lastReported = this.reportProgress(
+          onProgress,
+          "linking-managers",
+          `Linking managers [${currentIndex}/${totalManagers}]`,
+          currentIndex,
+          totalManagers,
+          getStats(),
+          startTime,
+          lastReported,
+          20,
+        );
+      }
+
       try {
         // Find both person and manager by their Azure AD IDs
         const person = await this.personRepository.findByAzureAdId(userAzureId);

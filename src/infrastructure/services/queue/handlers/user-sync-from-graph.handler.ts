@@ -11,6 +11,19 @@ import { DI_TOKENS } from "@/di/types";
 import type { SyncUsersFromGraphUseCase } from "@/core/use-cases/foundation/person";
 import type { ILoggerService } from "@/core/services";
 import type { UserSyncFromGraphJobData } from "@/core/domain/jobs/job-data.types";
+import type { GraphSyncProgress } from "@/lib/schemas/graph-sync-progress.types";
+
+/**
+ * Phase weights for calculating overall job progress (0-100)
+ */
+const PHASE_WEIGHTS = {
+  initializing: { start: 0, end: 5 },
+  "fetching-users": { start: 5, end: 15 },
+  "syncing-users": { start: 15, end: 70 },
+  "linking-managers": { start: 70, end: 90 },
+  "deactivating-removed": { start: 90, end: 98 },
+  complete: { start: 100, end: 100 },
+} as const;
 
 /**
  * Handles Microsoft Graph user sync job.
@@ -42,19 +55,41 @@ export async function handleUserSyncFromGraph(
     deactivateMissing: job.data.deactivateMissing,
   });
 
-  await job.updateProgress(10);
+  await job.updateProgress(5);
 
   try {
-    // Execute user sync
+    // Progress callback that updates BullMQ job progress
+    const onProgress = async (progress: GraphSyncProgress): Promise<void> => {
+      const phaseWeight = PHASE_WEIGHTS[progress.phase];
+      const phaseRange = phaseWeight.end - phaseWeight.start;
+
+      // Calculate progress within phase
+      const phaseProgress =
+        progress.totalItems > 0
+          ? progress.currentIndex / progress.totalItems
+          : progress.currentIndex > 0
+            ? 1
+            : 0;
+
+      // Calculate overall progress
+      const overallProgress = Math.round(
+        phaseWeight.start + phaseRange * phaseProgress,
+      );
+
+      await job.updateProgress(overallProgress);
+    };
+
+    // Execute user sync with progress callback
     const result = await syncUsersUseCase.execute({
       includeDisabled: job.data.includeDisabled ?? false,
       includeGuests: job.data.includeGuests ?? false,
       defaultOrgUnitId: job.data.defaultOrgUnitId,
       defaultPrimaryRoleId: job.data.defaultPrimaryRoleId,
       deactivateMissing: job.data.deactivateMissing ?? true,
+      onProgress,
     });
 
-    await job.updateProgress(90);
+    await job.updateProgress(98);
 
     // Log summary
     const summary = {

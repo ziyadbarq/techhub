@@ -15,13 +15,64 @@ import "reflect-metadata";
 import { prisma, pool } from "../src/infrastructure/database/prisma/client.js";
 import { confirm, select } from "@inquirer/prompts";
 import chalk from "chalk";
+import ora, { type Ora } from "ora";
 import { initContainer, getContainer } from "../src/di/container.js";
 import { DI_TOKENS } from "../src/di/types.js";
 import type { SyncUsersFromGraphUseCase } from "../src/core/use-cases/foundation/person/index.js";
 import { IMicrosoftGraphService } from "../src/core/services/microsoft-graph.service.interface.js";
+import type {
+  GraphSyncProgress,
+  GraphSyncPhase,
+} from "../src/lib/schemas/graph-sync-progress.types.js";
 
 // Global state
 let isDryRun = false;
+let currentSpinner: Ora | null = null;
+let lastPhase: GraphSyncPhase | null = null;
+
+/**
+ * Handle progress updates from the sync use case
+ */
+function handleProgress(progress: GraphSyncProgress): void {
+  const { phase, phaseLabel, currentIndex, totalItems, stats } = progress;
+
+  // Phase changed - complete previous spinner and start new one
+  if (phase !== lastPhase) {
+    if (currentSpinner) {
+      currentSpinner.succeed();
+    }
+
+    // Don't start spinner for 'complete' phase
+    if (phase !== "complete") {
+      currentSpinner = ora({
+        text: phaseLabel,
+        color: "cyan",
+      }).start();
+    }
+
+    lastPhase = phase;
+  } else if (currentSpinner && phase !== "complete") {
+    // Same phase - update spinner text with progress
+    const statsText = buildStatsText(stats);
+    if (totalItems > 1 && currentIndex > 0) {
+      currentSpinner.text = `${phaseLabel} ${statsText}`;
+    } else {
+      currentSpinner.text = phaseLabel;
+    }
+  }
+}
+
+/**
+ * Build stats text for spinner
+ */
+function buildStatsText(stats: GraphSyncProgress["stats"]): string {
+  const parts: string[] = [];
+  if (stats.created > 0) parts.push(chalk.green(`+${stats.created}`));
+  if (stats.updated > 0) parts.push(chalk.blue(`↻${stats.updated}`));
+  if (stats.excluded > 0) parts.push(chalk.gray(`⊖${stats.excluded}`));
+  if (stats.errors > 0) parts.push(chalk.red(`✗${stats.errors}`));
+  return parts.length > 0 ? `(${parts.join(" ")})` : "";
+}
 
 /**
  * Display welcome banner
@@ -367,7 +418,7 @@ async function runSync(): Promise<void> {
   // Confirm before running
   const confirmSync = await confirm({
     message: "Start user synchronization?",
-    default: false,
+    default: true,
   });
 
   if (!confirmSync) {
@@ -377,6 +428,10 @@ async function runSync(): Promise<void> {
 
   // Run sync
   console.log(chalk.gray("\n⏳ Starting user synchronization...\n"));
+
+  // Reset spinner state
+  currentSpinner = null;
+  lastPhase = null;
 
   const container = getContainer();
   const syncUseCase = container.get<SyncUsersFromGraphUseCase>(
@@ -391,6 +446,7 @@ async function runSync(): Promise<void> {
     defaultOrgUnitId,
     defaultPrimaryRoleId,
     deactivateMissing,
+    onProgress: handleProgress,
   });
 
   const duration = ((Date.now() - startTime) / 1000).toFixed(2);
@@ -402,6 +458,11 @@ async function runSync(): Promise<void> {
   console.log(chalk.green(`  ✓ Created:     ${result.created}`));
   console.log(chalk.blue(`  ↻ Updated:     ${result.updated}`));
   console.log(chalk.yellow(`  ⊘ Deactivated: ${result.deactivated}`));
+  if (result.excluded > 0) {
+    console.log(
+      chalk.gray(`  ⊖ Excluded:    ${result.excluded} (no department)`),
+    );
+  }
   if (result.errors.length > 0) {
     console.log(chalk.red(`  ✗ Errors:      ${result.errors.length}`));
   }
