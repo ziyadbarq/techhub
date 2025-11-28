@@ -1,0 +1,428 @@
+---
+title: "Field Definitions"
+description: "Create and manage custom fields for assets and other entities"
+icon: "FormInput"
+order: 2
+taskType: "how-to"
+estimatedTime: "15 minutes"
+keywords: ["custom fields", "field definitions", "data types", "attributes", "dynamic fields", "custom attributes"]
+searchBoost: 8
+relatedDocs: ["getting-started/index", "reference/entities"]
+requiredPermission: "FIELD_DEFINITIONS_VIEW"
+---
+
+# Customize data capture with custom fields
+
+Field Definitions allow you to extend the system with your own data fields—without any code changes. Capture exactly the information your organization needs, from warranty codes to rack positions to compliance certifications.
+
+## Why Field Definitions matter
+
+- **Capture domain-specific data** without waiting for system changes
+- **Ensure consistent data entry** across teams with validation rules
+- **Enable powerful reporting** by structuring your custom data
+- **Adapt to changing requirements** as your needs evolve
+
+<Callout type="info">
+**Example**: A server asset category might need fields like "Rack Position", "CPU Cores", and "BIOS Version" that aren't in the standard asset form. Field Definitions let you add these without custom development.
+</Callout>
+
+---
+
+## Core concepts
+
+### What is a Field Definition?
+
+A **Field Definition** is a template that describes a custom field:
+
+- **Name**: Internal identifier used by the system (e.g., `cpu_cores`)
+- **Label**: What users see in forms (e.g., "CPU Cores")
+- **Data Type**: What kind of data it stores (text, number, date, etc.)
+- **Entity Type**: Which entity it belongs to (Asset, Person, Vendor, etc.)
+- **Validation**: Rules like required, unique, min/max values
+
+Once created, a Field Definition can be attached to specific categories (like "Laptop" or "Server") so those custom fields appear when creating or editing items in that category.
+
+### How it works
+
+```
+1. Create Field Definition    → Define the field template
+       ↓
+2. Attach to Category        → Link it to an Asset Category
+       ↓
+3. Use in Forms              → Field appears in Asset forms
+       ↓
+4. Data is Stored            → Values saved with the asset
+```
+
+---
+
+## Supported data types
+
+Field Definitions support 19 different data types to capture any kind of information:
+
+### Text types
+
+| Type | Description | Use for |
+|------|-------------|---------|
+| **STRING** | Short text (up to 255 characters) | Serial numbers, codes, identifiers, short names |
+| **TEXT** | Long text (multi-line) | Notes, descriptions, detailed comments |
+| **URL** | Web address with validation | Documentation links, vendor portals, support pages |
+| **EMAIL** | Email address with validation | Contact emails, support addresses |
+| **PHONE** | Phone number | Support hotlines, vendor contacts |
+
+### Number types
+
+| Type | Description | Use for |
+|------|-------------|---------|
+| **INTEGER** | Whole numbers | CPU cores, port count, quantity, rack position |
+| **DECIMAL** | Numbers with decimals | Memory (GB), disk space (TB), percentages |
+| **CURRENCY** | Monetary values | Costs, prices, budget amounts |
+
+### Date types
+
+| Type | Description | Use for |
+|------|-------------|---------|
+| **DATE** | Date only (no time) | Warranty end date, purchase date, review date |
+| **DATETIME** | Date with time | Installation timestamp, last audit time |
+
+### Boolean type
+
+| Type | Description | Use for |
+|------|-------------|---------|
+| **BOOLEAN** | Yes/No toggle | Is encrypted?, Has antivirus?, Is production? |
+
+### Selection types
+
+| Type | Description | Use for |
+|------|-------------|---------|
+| **ENUM** | Single selection dropdown | Status, priority level, environment type |
+| **MULTI_SELECT_ENUM** | Multiple selection | Supported protocols, installed features |
+
+### Structured type
+
+| Type | Description | Use for |
+|------|-------------|---------|
+| **JSON** | Complex structured data | Configuration objects, nested metadata |
+
+### Reference types
+
+| Type | Description | Use for |
+|------|-------------|---------|
+| **CI_REFERENCE** | Link to a Configuration Item | Parent system, dependent service |
+| **PERSON_REFERENCE** | Link to a Person | Primary contact, technical owner |
+| **ORG_UNIT_REFERENCE** | Link to an Organization Unit | Owning department, cost center |
+| **LOCATION_REFERENCE** | Link to a Location | Physical location, data center |
+| **ATTACHMENT_REFERENCE** | Link to an Attachment | Related documents, certificates |
+
+---
+
+## Supported entity types
+
+Field Definitions can be created for 20 different entity types across 7 categories:
+
+| Category | Entities |
+|----------|----------|
+| **Asset Management** | Asset, Asset Category, Asset Model, Asset Kit |
+| **People & Organization** | Person, Organization Unit, Role |
+| **Infrastructure** | Location, Stock Location |
+| **Vendors & Contracts** | Vendor, Contract, Contract Type |
+| **Configuration Management** | Configuration Item, CI Class, Service, Business Process |
+| **License Management** | License Product, License Entitlement |
+| **Maintenance** | Maintenance Schedule, Warranty |
+
+---
+
+## Creating a field definition
+
+<Steps>
+  <Step title="Navigate to Field Definitions">
+    Go to **Field Definitions** from the main navigation menu. This page shows all existing field definitions.
+  </Step>
+  <Step title="Click Create Field">
+    Click the **Create Field** button in the top right corner.
+  </Step>
+  <Step title="Fill in basic information">
+    In the **Basic Info** tab:
+
+    - **Name**: Enter a unique identifier using `snake_case` (e.g., `warranty_end_date`, `cpu_cores`)
+    - **Label**: Enter the display name users will see (e.g., "Warranty End Date", "CPU Cores")
+    - **Description**: Optionally add a description to help users understand the field
+    - **Field Type**: Select the appropriate data type from the dropdown
+    - **Entity Type**: Select which entity this field is for (e.g., "Asset")
+  </Step>
+  <Step title="Configure options">
+    Set the field options:
+
+    - **Required**: Check if users must fill in this field
+    - **Unique**: Check if values must be unique across all records
+    - **Active**: Uncheck to temporarily disable the field
+  </Step>
+  <Step title="Set advanced options (optional)">
+    In the **Advanced** tab:
+
+    - **Default Value**: Value used when the field is left empty
+    - **Display Order**: Controls the order fields appear in forms (lower numbers first)
+    - **Validation Rules**: Set minimum/maximum values, patterns, etc.
+  </Step>
+  <Step title="Configure conditional logic (optional)">
+    In the **Conditions** tab, you can make this field:
+
+    - **Visible only when** another field has a certain value
+    - **Required only when** certain conditions are met
+    - **Disabled** based on other field values
+  </Step>
+  <Step title="Save the field">
+    Click **Create** to save the field definition.
+  </Step>
+</Steps>
+
+<Callout type="warning">
+**Important**: The **Name** and **Field Type** cannot be changed after creation. Choose carefully!
+</Callout>
+
+---
+
+## Attaching fields to asset categories
+
+After creating a field definition for the "Asset" entity type, you need to attach it to specific asset categories where you want it to appear.
+
+<Steps>
+  <Step title="Navigate to Asset Categories">
+    Go to **Assets** → **Categories** from the sidebar.
+  </Step>
+  <Step title="Edit a category">
+    Click on the category you want to add custom fields to (e.g., "Laptop", "Server").
+  </Step>
+  <Step title="Go to Custom Fields tab">
+    Select the **Custom Fields** tab in the category detail view.
+  </Step>
+  <Step title="Add fields">
+    Click **Add Field** and select from the available field definitions. You can add multiple fields.
+  </Step>
+  <Step title="Configure per-category settings">
+    For each field, you can override:
+
+    - **Required**: Make a field required for this category even if it's not globally required
+    - **Visible**: Show or hide the field for this category
+    - **Display Order**: Control the order within this category
+  </Step>
+</Steps>
+
+<Callout type="info">
+**Tip**: The same field definition can be attached to multiple categories. For example, a "Serial Number" field could be used in both "Laptop" and "Server" categories.
+</Callout>
+
+---
+
+## Using custom fields
+
+### When creating or editing assets
+
+Once a field definition is attached to an asset category:
+
+1. When you create or edit an asset, select the category first
+2. The custom fields for that category appear in a **Custom Fields** section
+3. Fill in the values as you would any other field
+4. Required fields are marked with a red asterisk (*)
+
+### Viewing custom field values
+
+Custom field values are displayed:
+
+- On the asset detail page in the **Overview** tab
+- Grouped by category for easy scanning
+- Reference fields show clickable links to the related records
+
+### Importing with custom fields
+
+When using the **Data Import** feature:
+
+1. Include columns for your custom fields in the CSV file
+2. Use the field **name** (not label) as the column header
+3. The importer will map values to the correct fields automatically
+
+---
+
+## Configuring dropdown options (ENUM)
+
+When creating a field with the **ENUM** or **MULTI_SELECT_ENUM** type:
+
+<Steps>
+  <Step title="Select the ENUM type">
+    In the Field Type dropdown, select **ENUM** (single selection) or **MULTI_SELECT_ENUM** (multiple selection).
+  </Step>
+  <Step title="Add dropdown options">
+    A new section appears. Type each option and press Enter or click the + button to add it.
+  </Step>
+  <Step title="Manage options">
+    - Click the X next to an option to remove it
+    - Options appear in the order you add them
+    - You can edit options later (existing data will keep its values)
+  </Step>
+</Steps>
+
+**Example options for an "Environment" field:**
+- Development
+- Testing
+- Staging
+- Production
+
+---
+
+## Setting validation rules
+
+In the **Advanced** tab, you can add validation rules based on the field type:
+
+### For text fields (STRING, TEXT)
+
+- **Minimum Length**: Minimum characters required
+- **Maximum Length**: Maximum characters allowed
+- **Pattern**: Regular expression for format validation
+
+### For number fields (INTEGER, DECIMAL)
+
+- **Minimum Value**: Lowest allowed value
+- **Maximum Value**: Highest allowed value
+
+### For date fields
+
+- **Minimum Date**: Earliest allowed date
+- **Maximum Date**: Latest allowed date
+
+<Callout type="info">
+**Pattern Example**: To require a specific format like "XX-YYYY" (2 letters, dash, 4 numbers), use the pattern: `^[A-Z]{2}-\d{4}$`
+</Callout>
+
+---
+
+## Best practices
+
+### Naming conventions
+
+- Use descriptive `snake_case` names: `warranty_end_date`, `cpu_cores`, `bios_version`
+- Keep names concise but meaningful
+- The **label** is what users see, so make it human-friendly: "Warranty End Date"
+
+### Planning your fields
+
+1. **Start with reports**: What data do you need to report on?
+2. **Group logically**: Related fields should use similar naming (e.g., `network_ip`, `network_mac`, `network_hostname`)
+3. **Choose the right type**: Use ENUM instead of STRING when you have a fixed set of options
+
+### When to use each type
+
+| Scenario | Recommended Type |
+|----------|-----------------|
+| Fixed set of 2-10 options | ENUM |
+| Open-ended short text | STRING |
+| Notes or comments | TEXT |
+| Counts, quantities | INTEGER |
+| Measurements with decimals | DECIMAL |
+| Yes/No questions | BOOLEAN |
+| Future dates (warranty, renewal) | DATE |
+| Linking to other records | Reference types |
+
+### Validation tips
+
+- Make fields **required** only when truly necessary
+- Set **reasonable min/max values** to catch data entry errors
+- Use **ENUM** instead of STRING when possible to ensure consistency
+- Add helpful **descriptions** to guide users
+
+---
+
+## Permissions
+
+Access to Field Definitions is controlled by these permissions:
+
+| Permission | Description | Typical Roles |
+|------------|-------------|---------------|
+| `FIELD_DEFINITIONS_VIEW` | View the field definitions list | IT Admin, System Admin |
+| `FIELD_DEFINITIONS_CREATE` | Create new field definitions | IT Admin, System Admin |
+| `FIELD_DEFINITIONS_UPDATE` | Edit existing field definitions | IT Admin, System Admin |
+| `FIELD_DEFINITIONS_DELETE` | Delete field definitions | System Admin |
+
+<Callout type="warning">
+**Deleting fields**: You cannot delete a field definition that is currently in use (attached to categories or has data). You must remove it from all categories first.
+</Callout>
+
+---
+
+## Current status
+
+### Fully implemented
+
+- **Asset custom fields**: Create, edit, view, and import with custom fields
+- **Field definition management**: Full CRUD operations with live preview
+
+### Coming soon
+
+- **Configuration Item custom fields**: Custom fields for CMDB items
+- **License Product custom fields**: Custom fields for software licenses
+- **Advanced search**: Filter and search by custom field values
+
+<Callout type="info">
+**Feature Request**: Have ideas for custom fields improvements? Contact the IT team to share your feedback.
+</Callout>
+
+---
+
+## Troubleshooting
+
+<DocsAccordion>
+  <DocsAccordionItem title="My custom field doesn't appear in the asset form">
+    Make sure the field definition:
+    1. Has the correct **Entity Type** set to "Asset"
+    2. Is **attached to the asset category** you're working with
+    3. Has **Active** checked
+    4. Has **Visible** checked in the category settings
+  </DocsAccordionItem>
+  <DocsAccordionItem title="I can't delete a field definition">
+    Field definitions that are in use cannot be deleted. You must:
+    1. Remove the field from all asset categories
+    2. Note that existing data with values for this field may be affected
+    3. Then delete the field definition
+  </DocsAccordionItem>
+  <DocsAccordionItem title="Users are entering inconsistent data">
+    Consider:
+    - Changing from STRING to ENUM if there's a fixed set of valid options
+    - Adding validation rules (min/max length, patterns)
+    - Marking the field as required if it should always be filled
+  </DocsAccordionItem>
+  <DocsAccordionItem title="Reference field shows 'Not found'">
+    The referenced record may have been deleted or the user may not have permission to view it. Check:
+    1. The referenced record still exists
+    2. The user has VIEW permission for that entity type
+  </DocsAccordionItem>
+</DocsAccordion>
+
+---
+
+## Related features
+
+<CardGrid>
+  <LinkCard
+    title="Asset Categories"
+    description="Organize assets and attach custom fields to categories"
+    href="/asset-categories"
+    icon="Folder"
+  />
+  <LinkCard
+    title="Assets"
+    description="Manage hardware and software assets"
+    href="/assets"
+    icon="Package"
+  />
+  <LinkCard
+    title="Data Import"
+    description="Bulk import assets with custom field values"
+    href="/data-import"
+    icon="Upload"
+  />
+  <LinkCard
+    title="Getting Started"
+    description="Foundation layer and data management basics"
+    href="/docs/getting-started/index"
+    icon="Lightbulb"
+  />
+</CardGrid>
