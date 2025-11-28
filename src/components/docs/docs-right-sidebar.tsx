@@ -26,11 +26,13 @@ export function DocsRightSidebar({
 
   return (
     <aside className={cn("hidden w-56 shrink-0 xl:block", className)}>
-      <div className="sticky top-20 space-y-6">
-        {/* Table of Contents */}
-        <TableOfContents headings={headings} />
+      <div className="sticky top-20 max-h-[calc(100vh-5rem)] overflow-y-auto">
+        <div className="space-y-6 pb-8">
+          {/* Table of Contents */}
+          <TableOfContents headings={headings} />
 
-        {/* Future: Related docs, feedback widget, etc. can go here */}
+          {/* Future: Related docs, feedback widget, etc. can go here */}
+        </div>
       </div>
     </aside>
   );

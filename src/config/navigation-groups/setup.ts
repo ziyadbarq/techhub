@@ -23,6 +23,7 @@ import {
   Warehouse,
   Package,
   Settings2,
+  TrendingUp,
 } from "lucide-react";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { NavGroup } from "../navigation.types";
@@ -108,6 +109,15 @@ export const setupGroup: NavGroup = {
       description: "Manage assets",
       permission: PERMISSIONS.ASSETS_VIEW,
       featureFlag: "ASSETS",
+    },
+    // Depends on Assets (track inventory movements)
+    {
+      title: "Stock Movements",
+      href: "/stock-movements",
+      icon: TrendingUp,
+      description: "Track inventory movements",
+      permission: PERMISSIONS.STOCK_MOVEMENTS_VIEW,
+      featureFlag: "INVENTORY",
     },
   ],
   visible: true,

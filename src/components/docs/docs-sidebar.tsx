@@ -30,7 +30,7 @@ export function DocsSidebar({
 }: DocsSidebarProps) {
   return (
     <aside className={cn("hidden w-64 shrink-0 lg:block", className)}>
-      <div className="sticky top-20 flex flex-col gap-4">
+      <div className="sticky top-20 flex max-h-[calc(100vh-5rem)] flex-col gap-4">
         {/* Search */}
         <Search docs={searchDocs} />
 
@@ -41,8 +41,8 @@ export function DocsSidebar({
         </div>
 
         {/* Navigation Groups */}
-        <ScrollArea className="max-h-[calc(100vh-200px)]">
-          <nav className="space-y-4 pr-4">
+        <ScrollArea className="flex-1">
+          <nav className="space-y-4 pr-4 pb-8">
             {navigation.categories.map((category) => (
               <DocsNavGroup key={category.id} category={category} />
             ))}

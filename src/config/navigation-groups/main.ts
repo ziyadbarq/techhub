@@ -11,6 +11,7 @@ import {
   LayoutDashboard,
   FileText,
   Database,
+  Laptop,
 } from "lucide-react";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { NavGroup } from "../navigation.types";
@@ -25,6 +26,14 @@ export const mainNavGroup: NavGroup = {
       icon: Home,
       description: "Overview and statistics",
       permission: PERMISSIONS.DASHBOARD_VIEW,
+    },
+    {
+      title: "Intune Devices",
+      href: "/intune/devices",
+      icon: Laptop,
+      description: "View and manage Microsoft Intune devices",
+      permission: PERMISSIONS.INTUNE_DEVICES_VIEW,
+      featureFlag: "INTUNE",
     },
     {
       title: "Data Import",

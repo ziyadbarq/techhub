@@ -48,7 +48,7 @@ export const intuneGroup: NavGroup = {
       visible: false, // Coming soon
     },
   ],
-  visible: true,
+  visible: false,
   collapsible: true,
   defaultCollapsed: false,
 };

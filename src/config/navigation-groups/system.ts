@@ -158,7 +158,7 @@ export const documentationGroup: NavGroup = {
       description: "Complete guide to all entities",
     },
   ],
-  visible: true,
+  visible: false,
   collapsible: true,
   defaultCollapsed: true,
 };
