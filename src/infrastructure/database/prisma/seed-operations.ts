@@ -86,6 +86,201 @@ export async function performFullCleanup(prisma: PrismaClient): Promise<void> {
 }
 
 /**
+ * Result of demo data cleanup operation
+ */
+export interface CleanupResult {
+  assets: number;
+  warranties: number;
+  maintenanceSchedules: number;
+  maintenanceRecords: number;
+  assetAssignments: number;
+  stockMovements: number;
+  assetKits: number;
+  assetKitItems: number;
+  assetKitCheckouts: number;
+  assetKitCheckoutItems: number;
+  assetReservations: number;
+  assetReservationConflicts: number;
+  assetDisposals: number;
+  disposalApprovals: number;
+  disposalDocuments: number;
+  configurationItems: number;
+  ciRelationships: number;
+  tasks: number;
+  verificationItems: number;
+  verificationCampaigns: number;
+  dataOwnerships: number;
+  persons: number;
+  promptCompositionBlocks: number;
+  promptCompositions: number;
+  promptBlocks: number;
+  total: number;
+}
+
+/**
+ * Cleanup demo data while preserving system configuration
+ *
+ * This function removes seeded demo data but keeps:
+ * - RBAC (permissions, roles)
+ * - Feature flags
+ * - Services and ownership (real Barq services)
+ * - Vendors, Locations, Organization Units
+ * - Asset Categories & Models (configuration)
+ * - CMDB Classes & Relationship Types (configuration)
+ * - Lifecycle models and states
+ * - Exchange rates
+ * - Business Processes
+ * - Attachment Types
+ * - Code Sequences
+ *
+ * Order is critical to respect foreign key constraints
+ */
+export async function cleanupDemoData(
+  prisma: PrismaClient,
+): Promise<CleanupResult> {
+  const result: CleanupResult = {
+    assets: 0,
+    warranties: 0,
+    maintenanceSchedules: 0,
+    maintenanceRecords: 0,
+    assetAssignments: 0,
+    stockMovements: 0,
+    assetKits: 0,
+    assetKitItems: 0,
+    assetKitCheckouts: 0,
+    assetKitCheckoutItems: 0,
+    assetReservations: 0,
+    assetReservationConflicts: 0,
+    assetDisposals: 0,
+    disposalApprovals: 0,
+    disposalDocuments: 0,
+    configurationItems: 0,
+    ciRelationships: 0,
+    tasks: 0,
+    verificationItems: 0,
+    verificationCampaigns: 0,
+    dataOwnerships: 0,
+    persons: 0,
+    promptCompositionBlocks: 0,
+    promptCompositions: 0,
+    promptBlocks: 0,
+    total: 0,
+  };
+
+  // 1. Asset Kits (deepest first)
+  result.assetKitCheckoutItems = (
+    await prisma.assetKitCheckoutItem.deleteMany({})
+  ).count;
+  result.assetKitCheckouts = (
+    await prisma.assetKitCheckout.deleteMany({})
+  ).count;
+  result.assetKitItems = (await prisma.assetKitItem.deleteMany({})).count;
+  result.assetKits = (await prisma.assetKit.deleteMany({})).count;
+
+  // 2. Asset Reservations
+  result.assetReservationConflicts = (
+    await prisma.assetReservationConflict.deleteMany({})
+  ).count;
+  result.assetReservations = (
+    await prisma.assetReservation.deleteMany({})
+  ).count;
+
+  // 3. Asset Disposals
+  result.disposalDocuments = (
+    await prisma.disposalDocument.deleteMany({})
+  ).count;
+  result.disposalApprovals = (
+    await prisma.disposalApproval.deleteMany({})
+  ).count;
+  result.assetDisposals = (await prisma.assetDisposal.deleteMany({})).count;
+
+  // 4. Configuration Items (demo CIs, not classes/types)
+  result.ciRelationships = (await prisma.cIRelationship.deleteMany({})).count;
+  result.configurationItems = (
+    await prisma.configurationItem.deleteMany({})
+  ).count;
+
+  // 5. Maintenance
+  result.maintenanceRecords = (
+    await prisma.maintenanceRecord.deleteMany({})
+  ).count;
+  result.maintenanceSchedules = (
+    await prisma.maintenanceSchedule.deleteMany({})
+  ).count;
+
+  // 6. Warranties
+  result.warranties = (await prisma.warranty.deleteMany({})).count;
+
+  // 7. Asset Assignments
+  result.assetAssignments = (await prisma.assetAssignment.deleteMany({})).count;
+
+  // 8. Stock Movements
+  result.stockMovements = (await prisma.stockMovement.deleteMany({})).count;
+
+  // 9. Assets (demo assets only)
+  result.assets = (await prisma.asset.deleteMany({})).count;
+
+  // 10. Tasks (example tasks)
+  result.tasks = (await prisma.task.deleteMany({})).count;
+
+  // 11. Governance entities that reference Person
+  result.verificationItems = (
+    await prisma.verificationItem.deleteMany({})
+  ).count;
+  result.verificationCampaigns = (
+    await prisma.verificationCampaign.deleteMany({})
+  ).count;
+  result.dataOwnerships = (await prisma.dataOwnership.deleteMany({})).count;
+
+  // 12. Persons (seeded demo persons - those without Azure AD ID from Graph sync)
+  // Real persons synced from MS Graph have azureAdId populated
+  result.persons = (
+    await prisma.person.deleteMany({
+      where: { azureAdId: null },
+    })
+  ).count;
+
+  // 13. AI Prompt blocks and compositions (in FK order)
+  result.promptCompositionBlocks = (
+    await prisma.promptCompositionBlock.deleteMany({})
+  ).count;
+  result.promptCompositions = (
+    await prisma.promptComposition.deleteMany({})
+  ).count;
+  result.promptBlocks = (await prisma.promptBlock.deleteMany({})).count;
+
+  // Calculate total
+  result.total =
+    result.assets +
+    result.warranties +
+    result.maintenanceSchedules +
+    result.maintenanceRecords +
+    result.assetAssignments +
+    result.stockMovements +
+    result.assetKits +
+    result.assetKitItems +
+    result.assetKitCheckouts +
+    result.assetKitCheckoutItems +
+    result.assetReservations +
+    result.assetReservationConflicts +
+    result.assetDisposals +
+    result.disposalApprovals +
+    result.disposalDocuments +
+    result.configurationItems +
+    result.ciRelationships +
+    result.tasks +
+    result.verificationItems +
+    result.verificationCampaigns +
+    result.dataOwnerships +
+    result.persons +
+    result.promptCompositionBlocks +
+    result.promptCompositions +
+    result.promptBlocks;
+
+  return result;
+}
+
+/**
  * Initialize code sequences for auto-generation
  * Safe to call multiple times (checks if already initialized)
  */

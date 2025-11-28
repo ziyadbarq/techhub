@@ -47,6 +47,8 @@ import { logSection, logSuccess, logStep } from "./seed-utils.js";
 import {
   initializeCodeSequences,
   seedExampleTasks,
+  cleanupDemoData,
+  type CleanupResult,
 } from "./seed-operations.js";
 
 /**
@@ -57,6 +59,7 @@ interface CLIArgs {
   minimal?: boolean;
   full?: boolean;
   dev?: boolean;
+  cleanup?: boolean;
 }
 
 function parseArgs(): CLIArgs {
@@ -74,6 +77,8 @@ function parseArgs(): CLIArgs {
       args.full = true;
     } else if (arg === "--dev") {
       args.dev = true;
+    } else if (arg === "--cleanup") {
+      args.cleanup = true;
     }
   }
 
@@ -387,6 +392,152 @@ async function executeSeed(modules: SeedModule[]) {
 }
 
 /**
+ * Display cleanup result summary
+ */
+function displayCleanupResult(result: CleanupResult) {
+  const items: { label: string; count: number }[] = [
+    { label: "Assets", count: result.assets },
+    { label: "Warranties", count: result.warranties },
+    { label: "Maintenance schedules", count: result.maintenanceSchedules },
+    { label: "Maintenance records", count: result.maintenanceRecords },
+    { label: "Asset assignments", count: result.assetAssignments },
+    { label: "Stock movements", count: result.stockMovements },
+    { label: "Asset kits", count: result.assetKits },
+    { label: "Asset kit items", count: result.assetKitItems },
+    { label: "Asset kit checkouts", count: result.assetKitCheckouts },
+    { label: "Asset kit checkout items", count: result.assetKitCheckoutItems },
+    { label: "Asset reservations", count: result.assetReservations },
+    {
+      label: "Asset reservation conflicts",
+      count: result.assetReservationConflicts,
+    },
+    { label: "Asset disposals", count: result.assetDisposals },
+    { label: "Disposal approvals", count: result.disposalApprovals },
+    { label: "Disposal documents", count: result.disposalDocuments },
+    { label: "Configuration items", count: result.configurationItems },
+    { label: "CI relationships", count: result.ciRelationships },
+    { label: "Tasks", count: result.tasks },
+    { label: "Verification items", count: result.verificationItems },
+    { label: "Verification campaigns", count: result.verificationCampaigns },
+    { label: "Data ownerships", count: result.dataOwnerships },
+    { label: "Persons (demo)", count: result.persons },
+    {
+      label: "Prompt composition blocks",
+      count: result.promptCompositionBlocks,
+    },
+    { label: "Prompt compositions", count: result.promptCompositions },
+    { label: "Prompt blocks", count: result.promptBlocks },
+  ];
+
+  // Only show items with counts > 0
+  const deletedItems = items.filter((i) => i.count > 0);
+
+  if (deletedItems.length === 0) {
+    console.log(chalk.yellow("\n  No demo data found to delete."));
+    return;
+  }
+
+  console.log(chalk.gray("\nDeleted:"));
+  for (const item of deletedItems) {
+    console.log(chalk.gray(`  • ${item.count} ${item.label.toLowerCase()}`));
+  }
+  console.log(chalk.bold(`\n  Total: ${result.total} records deleted`));
+}
+
+/**
+ * Execute cleanup flow
+ */
+async function executeCleanupFlow(): Promise<boolean> {
+  console.log(chalk.yellow.bold("\n⚠️  DEMO DATA CLEANUP"));
+  console.log(chalk.yellow("━".repeat(60)));
+
+  console.log(chalk.white("\nThis will DELETE the following demo data:"));
+  console.log(
+    chalk.gray(
+      "  • Assets and related records (assignments, warranties, maintenance)",
+    ),
+  );
+  console.log(chalk.gray("  • Asset kits, reservations, disposals"));
+  console.log(chalk.gray("  • Configuration items and relationships"));
+  console.log(chalk.gray("  • Example tasks and AI prompt templates"));
+  console.log(chalk.gray("  • Demo persons (without Microsoft ID)"));
+
+  console.log(chalk.white("\nThis will PRESERVE system configuration:"));
+  console.log(chalk.green("  • RBAC (permissions, roles)"));
+  console.log(chalk.green("  • Feature flags"));
+  console.log(chalk.green("  • Services and ownership (real Barq services)"));
+  console.log(chalk.green("  • Vendors, Locations, Organization Units"));
+  console.log(chalk.green("  • Asset Categories & Models"));
+  console.log(chalk.green("  • CMDB Classes & Relationship Types"));
+  console.log(chalk.green("  • Lifecycle models and states"));
+  console.log(chalk.green("  • Exchange rates, Business Processes"));
+
+  const { confirm } = await inquirer.prompt<{ confirm: boolean }>([
+    {
+      type: "confirm",
+      name: "confirm",
+      message: "Are you sure you want to cleanup demo data?",
+      default: false,
+    },
+  ]);
+
+  if (!confirm) {
+    console.log(chalk.gray("\nCancelled."));
+    return false;
+  }
+
+  console.log(chalk.cyan("\n🧹 Cleaning up demo data..."));
+  console.log(chalk.cyan("━".repeat(60)) + "\n");
+
+  const startTime = Date.now();
+
+  try {
+    logStep("🗑️", "Deleting demo data...");
+    const result = await cleanupDemoData(prisma);
+    const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+
+    console.log(chalk.green.bold("\n✅ CLEANUP COMPLETED SUCCESSFULLY!"));
+    console.log(chalk.green("━".repeat(60)));
+
+    displayCleanupResult(result);
+
+    console.log(chalk.gray(`\nCompleted in ${duration}s`));
+    console.log(
+      chalk.gray("\nTo re-seed demo data, run: npm run db:seed:interactive\n"),
+    );
+
+    return true;
+  } catch (error) {
+    console.error(chalk.red.bold("\n❌ CLEANUP FAILED"));
+    console.error(chalk.red("━".repeat(60)));
+    console.error("\nError details:", error);
+    throw error;
+  }
+}
+
+/**
+ * Prompt user to choose between seed and cleanup
+ */
+async function promptAction(): Promise<"seed" | "cleanup"> {
+  const { action } = await inquirer.prompt<{ action: "seed" | "cleanup" }>([
+    {
+      type: "rawlist",
+      name: "action",
+      message: "What would you like to do?",
+      choices: [
+        { name: "🌱 Seed database modules", value: "seed" },
+        {
+          name: "🧹 Cleanup demo data (preserve system config)",
+          value: "cleanup",
+        },
+      ],
+    },
+  ]);
+
+  return action;
+}
+
+/**
  * Main execution
  */
 async function main() {
@@ -394,7 +545,32 @@ async function main() {
 
   try {
     const args = parseArgs();
+
+    // Handle cleanup mode (CLI flag or interactive selection)
+    if (args.cleanup) {
+      // CLI cleanup mode - go directly to cleanup flow
+      console.log(chalk.cyan.bold("\n🌱 Interactive Database Seeding"));
+      console.log(chalk.cyan("━".repeat(60)));
+      await executeCleanupFlow();
+      return;
+    }
+
     const initialSelection = await getInitialSelection(args);
+
+    // If no CLI args, show action selection menu first
+    if (initialSelection.length === 0) {
+      console.log(chalk.cyan.bold("\n🌱 Interactive Database Seeding"));
+      console.log(chalk.cyan("━".repeat(60)));
+      console.log("");
+
+      const action = await promptAction();
+
+      if (action === "cleanup") {
+        await executeCleanupFlow();
+        return;
+      }
+      // Otherwise continue with seeding flow
+    }
 
     let selection: Awaited<ReturnType<typeof promptUserSelection>>;
 
@@ -429,7 +605,7 @@ async function main() {
         saveAsPreset: false,
       };
     } else {
-      // Interactive mode
+      // Interactive mode - continue with module selection
       selection = await promptUserSelection();
     }
 
