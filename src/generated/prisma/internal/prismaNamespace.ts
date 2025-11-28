@@ -421,6 +421,8 @@ export const ModelName = {
   LifecycleState: 'LifecycleState',
   LifecycleTransition: 'LifecycleTransition',
   FieldDefinition: 'FieldDefinition',
+  FieldTemplate: 'FieldTemplate',
+  FieldTemplateItem: 'FieldTemplateItem',
   DataDomain: 'DataDomain',
   DataOwnership: 'DataOwnership',
   VerificationCampaign: 'VerificationCampaign',
@@ -476,7 +478,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "attachmentType" | "attachment" | "user" | "account" | "session" | "verification" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "contractType" | "contract" | "contractLinkedObject" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "organizationUnit" | "person" | "personRoleAssignment" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "intuneDevice" | "intuneComplianceHistory" | "intuneSyncLog" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "maintenanceSchedule" | "maintenanceRecord" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock" | "featureFlag" | "featureFlagAuditLog"
+    modelProps: "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "attachmentType" | "attachment" | "user" | "account" | "session" | "verification" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "contractType" | "contract" | "contractLinkedObject" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "organizationUnit" | "person" | "personRoleAssignment" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "fieldTemplate" | "fieldTemplateItem" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "intuneDevice" | "intuneComplianceHistory" | "intuneSyncLog" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "maintenanceSchedule" | "maintenanceRecord" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock" | "featureFlag" | "featureFlagAuditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3215,6 +3217,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.FieldDefinitionCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.FieldDefinitionCountAggregateOutputType> | number
+        }
+      }
+    }
+    FieldTemplate: {
+      payload: Prisma.$FieldTemplatePayload<ExtArgs>
+      fields: Prisma.FieldTemplateFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FieldTemplateFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplatePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FieldTemplateFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplatePayload>
+        }
+        findFirst: {
+          args: Prisma.FieldTemplateFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplatePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FieldTemplateFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplatePayload>
+        }
+        findMany: {
+          args: Prisma.FieldTemplateFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplatePayload>[]
+        }
+        create: {
+          args: Prisma.FieldTemplateCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplatePayload>
+        }
+        createMany: {
+          args: Prisma.FieldTemplateCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FieldTemplateCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplatePayload>[]
+        }
+        delete: {
+          args: Prisma.FieldTemplateDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplatePayload>
+        }
+        update: {
+          args: Prisma.FieldTemplateUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplatePayload>
+        }
+        deleteMany: {
+          args: Prisma.FieldTemplateDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FieldTemplateUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FieldTemplateUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplatePayload>[]
+        }
+        upsert: {
+          args: Prisma.FieldTemplateUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplatePayload>
+        }
+        aggregate: {
+          args: Prisma.FieldTemplateAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFieldTemplate>
+        }
+        groupBy: {
+          args: Prisma.FieldTemplateGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FieldTemplateGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FieldTemplateCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FieldTemplateCountAggregateOutputType> | number
+        }
+      }
+    }
+    FieldTemplateItem: {
+      payload: Prisma.$FieldTemplateItemPayload<ExtArgs>
+      fields: Prisma.FieldTemplateItemFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FieldTemplateItemFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplateItemPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FieldTemplateItemFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplateItemPayload>
+        }
+        findFirst: {
+          args: Prisma.FieldTemplateItemFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplateItemPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FieldTemplateItemFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplateItemPayload>
+        }
+        findMany: {
+          args: Prisma.FieldTemplateItemFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplateItemPayload>[]
+        }
+        create: {
+          args: Prisma.FieldTemplateItemCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplateItemPayload>
+        }
+        createMany: {
+          args: Prisma.FieldTemplateItemCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FieldTemplateItemCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplateItemPayload>[]
+        }
+        delete: {
+          args: Prisma.FieldTemplateItemDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplateItemPayload>
+        }
+        update: {
+          args: Prisma.FieldTemplateItemUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplateItemPayload>
+        }
+        deleteMany: {
+          args: Prisma.FieldTemplateItemDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FieldTemplateItemUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FieldTemplateItemUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplateItemPayload>[]
+        }
+        upsert: {
+          args: Prisma.FieldTemplateItemUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FieldTemplateItemPayload>
+        }
+        aggregate: {
+          args: Prisma.FieldTemplateItemAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFieldTemplateItem>
+        }
+        groupBy: {
+          args: Prisma.FieldTemplateItemGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FieldTemplateItemGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FieldTemplateItemCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FieldTemplateItemCountAggregateOutputType> | number
         }
       }
     }
@@ -6875,6 +7025,7 @@ export const FieldDefinitionScalarFieldEnum = {
   validationRules: 'validationRules',
   defaultValue: 'defaultValue',
   enumOptions: 'enumOptions',
+  conditionalLogic: 'conditionalLogic',
   uiGroup: 'uiGroup',
   uiOrder: 'uiOrder',
   displayOrder: 'displayOrder',
@@ -6883,10 +7034,59 @@ export const FieldDefinitionScalarFieldEnum = {
   isActive: 'isActive',
   metadata: 'metadata',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById',
+  archivedAt: 'archivedAt',
+  archivedById: 'archivedById',
+  archiveReason: 'archiveReason'
 } as const
 
 export type FieldDefinitionScalarFieldEnum = (typeof FieldDefinitionScalarFieldEnum)[keyof typeof FieldDefinitionScalarFieldEnum]
+
+
+export const FieldTemplateScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  code: 'code',
+  description: 'description',
+  entityType: 'entityType',
+  category: 'category',
+  standard: 'standard',
+  isBuiltIn: 'isBuiltIn',
+  isActive: 'isActive',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdById: 'createdById'
+} as const
+
+export type FieldTemplateScalarFieldEnum = (typeof FieldTemplateScalarFieldEnum)[keyof typeof FieldTemplateScalarFieldEnum]
+
+
+export const FieldTemplateItemScalarFieldEnum = {
+  id: 'id',
+  fieldTemplateId: 'fieldTemplateId',
+  fieldDefinitionId: 'fieldDefinitionId',
+  fieldName: 'fieldName',
+  fieldLabel: 'fieldLabel',
+  fieldDataType: 'fieldDataType',
+  description: 'description',
+  isRequired: 'isRequired',
+  isUnique: 'isUnique',
+  validationRules: 'validationRules',
+  defaultValue: 'defaultValue',
+  enumOptions: 'enumOptions',
+  uiOrder: 'uiOrder',
+  uiGroup: 'uiGroup',
+  isSearchable: 'isSearchable',
+  isFilterable: 'isFilterable',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FieldTemplateItemScalarFieldEnum = (typeof FieldTemplateItemScalarFieldEnum)[keyof typeof FieldTemplateItemScalarFieldEnum]
 
 
 export const DataDomainScalarFieldEnum = {
@@ -8269,6 +8469,8 @@ export type GlobalOmitConfig = {
   lifecycleState?: Prisma.LifecycleStateOmit
   lifecycleTransition?: Prisma.LifecycleTransitionOmit
   fieldDefinition?: Prisma.FieldDefinitionOmit
+  fieldTemplate?: Prisma.FieldTemplateOmit
+  fieldTemplateItem?: Prisma.FieldTemplateItemOmit
   dataDomain?: Prisma.DataDomainOmit
   dataOwnership?: Prisma.DataOwnershipOmit
   verificationCampaign?: Prisma.VerificationCampaignOmit

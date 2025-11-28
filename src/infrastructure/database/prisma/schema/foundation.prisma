@@ -103,6 +103,9 @@ model Person {
   reservationsCancelled         AssetReservation[]     @relation("ReservationCancelledBy")
   serviceOwnerships             ServiceOwnership[]
   intuneDevices                 IntuneDevice[]         @relation("IntuneDevicePerson")
+  deletedFieldDefinitions       FieldDefinition[]      @relation("FieldDefinitionDeletedBy")
+  archivedFieldDefinitions      FieldDefinition[]      @relation("FieldDefinitionArchivedBy")
+  createdFieldTemplates         FieldTemplate[]        @relation("FieldTemplateCreatedBy")
 
   // Indexes
   @@index([azureAdId])
@@ -375,10 +378,11 @@ model FieldDefinition {
   isGlobal        Boolean           @default(false) // true if reusable across many domains
   isRequired      Boolean           @default(false)
   isUnique        Boolean           @default(false)
-  validationRules Json? // min/max, regex, etc.
-  defaultValue    Json?
-  enumOptions     Json? // for ENUM data_type
-  uiGroup         String? // group/tab in UI
+  validationRules  Json? // min/max, regex, etc.
+  defaultValue     Json?
+  enumOptions      Json? // for ENUM data_type
+  conditionalLogic Json? // visibility, required, disabled conditions based on other fields
+  uiGroup          String? // group/tab in UI
   uiOrder         Int               @default(0)
   displayOrder    Int               @default(0)
   isSearchable    Boolean           @default(false)
@@ -388,10 +392,22 @@ model FieldDefinition {
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 
+  // Soft delete fields
+  deletedAt       DateTime?
+  deletedById     String?
+
+  // Archive fields (for unused but preserved fields)
+  archivedAt      DateTime?
+  archivedById    String?
+  archiveReason   String?           @db.Text
+
   // Relations
   ciClassFields        CIClassField[]
   assetCategoryFields  AssetCategoryField[]
   licenseProductFields LicenseProductField[]
+  templateItems        FieldTemplateItem[]
+  deletedBy            Person?               @relation("FieldDefinitionDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  archivedBy           Person?               @relation("FieldDefinitionArchivedBy", fields: [archivedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([name])
@@ -399,7 +415,74 @@ model FieldDefinition {
   @@index([entityType])
   @@index([isGlobal])
   @@index([isActive])
+  @@index([deletedAt])
+  @@index([archivedAt])
   @@map("field_definitions")
+}
+
+// FieldTemplate model
+// Pre-built templates for common field configurations
+model FieldTemplate {
+  id          String              @id @default(cuid())
+  name        String              @unique // Display name: "Laptop Standard Fields"
+  code        String              @unique // Internal code: "LAPTOP_STANDARD"
+  description String?             @db.Text
+  entityType  String // "Asset", "ConfigurationItem", etc.
+  category    String? // Asset type category: "LAPTOP", "SERVER", "NETWORK_DEVICE"
+  standard    String? // "ITIL", "NIST", "ISO27001", "CUSTOM"
+  isBuiltIn   Boolean             @default(false) // System-provided vs user-created
+  isActive    Boolean             @default(true)
+  metadata    Json?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  createdById String?
+
+  // Relations
+  items     FieldTemplateItem[]
+  createdBy Person?               @relation("FieldTemplateCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+
+  // Indexes
+  @@index([entityType])
+  @@index([category])
+  @@index([standard])
+  @@index([isBuiltIn])
+  @@index([isActive])
+  @@map("field_templates")
+}
+
+// FieldTemplateItem model
+// Individual fields within a template
+model FieldTemplateItem {
+  id                String            @id @default(cuid())
+  fieldTemplateId   String
+  fieldDefinitionId String? // Optional link to existing FieldDefinition
+  fieldName         String // Internal name (snake_case)
+  fieldLabel        String // Display label
+  fieldDataType     FieldDataTypeEnum
+  description       String?           @db.Text
+  isRequired        Boolean           @default(false)
+  isUnique          Boolean           @default(false)
+  validationRules   Json?
+  defaultValue      Json?
+  enumOptions       Json?
+  uiOrder           Int               @default(0)
+  uiGroup           String?
+  isSearchable      Boolean           @default(false)
+  isFilterable      Boolean           @default(false)
+  metadata          Json?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  // Relations
+  fieldTemplate   FieldTemplate    @relation(fields: [fieldTemplateId], references: [id], onDelete: Cascade)
+  fieldDefinition FieldDefinition? @relation(fields: [fieldDefinitionId], references: [id], onDelete: SetNull)
+
+  // Indexes
+  @@unique([fieldTemplateId, fieldName])
+  @@index([fieldTemplateId])
+  @@index([fieldDefinitionId])
+  @@index([uiOrder])
+  @@map("field_template_items")
 }
 
 // ============================================

@@ -68,6 +68,7 @@ export const DI_TOKENS = {
     "IPersonRoleAssignmentRepository",
   ),
   IFieldDefinitionRepository: Symbol.for("IFieldDefinitionRepository"),
+  IFieldTemplateRepository: Symbol.for("IFieldTemplateRepository"),
   IExchangeRateRepository: Symbol.for("IExchangeRateRepository"),
 
   // Disposal Repositories
@@ -362,6 +363,16 @@ export const DI_TOKENS = {
   ListFieldDefinitionsUseCase: Symbol.for("ListFieldDefinitionsUseCase"),
   UpdateFieldDefinitionUseCase: Symbol.for("UpdateFieldDefinitionUseCase"),
   DeleteFieldDefinitionUseCase: Symbol.for("DeleteFieldDefinitionUseCase"),
+  GetFieldUsageDashboardUseCase: Symbol.for("GetFieldUsageDashboardUseCase"),
+
+  // Foundation: Field Template Use Cases
+  CreateFieldTemplateUseCase: Symbol.for("CreateFieldTemplateUseCase"),
+  GetFieldTemplateUseCase: Symbol.for("GetFieldTemplateUseCase"),
+  ListFieldTemplatesUseCase: Symbol.for("ListFieldTemplatesUseCase"),
+  UpdateFieldTemplateUseCase: Symbol.for("UpdateFieldTemplateUseCase"),
+  DeleteFieldTemplateUseCase: Symbol.for("DeleteFieldTemplateUseCase"),
+  CloneFieldTemplateUseCase: Symbol.for("CloneFieldTemplateUseCase"),
+  ApplyFieldTemplateUseCase: Symbol.for("ApplyFieldTemplateUseCase"),
 
   // Foundation: Exchange Rate Use Cases
   CreateExchangeRateUseCase: Symbol.for("CreateExchangeRateUseCase"),

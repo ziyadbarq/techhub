@@ -7,6 +7,38 @@ import { z } from "zod";
 import { FieldDataTypeEnum } from "@/core/domain/value-objects/foundation-enums";
 import { getValidEntityKeys } from "@/lib/entity-registry";
 
+// Conditional logic schema for field visibility/required/disabled rules
+const ConditionalOperatorSchema = z.enum([
+  "equals",
+  "notEquals",
+  "contains",
+  "notContains",
+  "isEmpty",
+  "isNotEmpty",
+  "greaterThan",
+  "lessThan",
+  "greaterThanOrEqual",
+  "lessThanOrEqual",
+  "in",
+  "notIn",
+]);
+
+const ConditionalRuleSchema = z.object({
+  sourceField: z.string().min(1, "Source field is required"),
+  operator: ConditionalOperatorSchema,
+  value: z.unknown().optional(),
+  combineWith: z.enum(["AND", "OR"]).optional(),
+});
+
+const FieldConditionalLogicSchema = z
+  .object({
+    visibility: z.array(ConditionalRuleSchema).optional(),
+    required: z.array(ConditionalRuleSchema).optional(),
+    disabled: z.array(ConditionalRuleSchema).optional(),
+  })
+  .optional()
+  .nullable();
+
 export const CreateFieldDefinitionSchema = z.object({
   name: z
     .string()
@@ -41,6 +73,7 @@ export const CreateFieldDefinitionSchema = z.object({
     .default(0),
   isActive: z.boolean().default(true),
   metadata: z.record(z.string(), z.unknown()).optional().nullable(),
+  conditionalLogic: FieldConditionalLogicSchema,
 });
 
 export type CreateFieldDefinitionDTO = z.infer<
@@ -76,6 +109,7 @@ export const UpdateFieldDefinitionSchema = z.object({
     .optional(),
   isActive: z.boolean().optional(),
   metadata: z.record(z.string(), z.unknown()).optional().nullable(),
+  conditionalLogic: FieldConditionalLogicSchema,
 });
 
 export type UpdateFieldDefinitionDTO = z.infer<

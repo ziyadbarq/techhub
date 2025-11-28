@@ -13,6 +13,50 @@ export interface ValidationRules {
   [key: string]: unknown;
 }
 
+/**
+ * Operator for conditional logic comparisons
+ */
+export type ConditionalOperator =
+  | "equals"
+  | "notEquals"
+  | "contains"
+  | "notContains"
+  | "isEmpty"
+  | "isNotEmpty"
+  | "greaterThan"
+  | "lessThan"
+  | "greaterThanOrEqual"
+  | "lessThanOrEqual"
+  | "in"
+  | "notIn";
+
+/**
+ * A single conditional rule that evaluates against another field's value
+ */
+export interface ConditionalRule {
+  /** The field name to check (must exist in same form context) */
+  sourceField: string;
+  /** The comparison operator */
+  operator: ConditionalOperator;
+  /** The value to compare against (not needed for isEmpty/isNotEmpty) */
+  value?: unknown;
+  /** How to combine with other rules (default: AND) */
+  combineWith?: "AND" | "OR";
+}
+
+/**
+ * Conditional logic configuration for a field
+ * Determines when the field is visible, required, or disabled
+ */
+export interface FieldConditionalLogic {
+  /** Visibility conditions - field is shown only when ALL conditions are met */
+  visibility?: ConditionalRule[];
+  /** Required conditions - field becomes required when ALL conditions are met */
+  required?: ConditionalRule[];
+  /** Disabled conditions - field becomes disabled when ALL conditions are met */
+  disabled?: ConditionalRule[];
+}
+
 export interface FieldDefinitionProps {
   id: string;
   name: string; // Internal name (e.g., cpu_cores)
@@ -26,6 +70,7 @@ export interface FieldDefinitionProps {
   validationRules: ValidationRules | null;
   defaultValue: unknown;
   enumOptions: string[] | null; // For ENUM data_type
+  conditionalLogic: FieldConditionalLogic | null; // Visibility, required, disabled conditions
   uiGroup: string | null; // Group/tab in UI
   uiOrder: number;
   displayOrder: number;
@@ -35,6 +80,13 @@ export interface FieldDefinitionProps {
   metadata: Record<string, unknown> | null;
   createdAt: Date;
   updatedAt: Date;
+  // Soft delete fields
+  deletedAt: Date | null;
+  deletedById: string | null;
+  // Archive fields
+  archivedAt: Date | null;
+  archivedById: string | null;
+  archiveReason: string | null;
 }
 
 export interface CreateFieldDefinitionProps {
@@ -49,6 +101,7 @@ export interface CreateFieldDefinitionProps {
   validationRules?: ValidationRules | null;
   defaultValue?: unknown;
   enumOptions?: string[] | null;
+  conditionalLogic?: FieldConditionalLogic | null;
   uiGroup?: string | null;
   uiOrder?: number;
   displayOrder?: number;
@@ -96,6 +149,7 @@ export class FieldDefinition {
       validationRules: props.validationRules || null,
       defaultValue: props.defaultValue ?? null,
       enumOptions: props.enumOptions || null,
+      conditionalLogic: props.conditionalLogic || null,
       uiGroup: props.uiGroup?.trim() || null,
       uiOrder: props.uiOrder ?? 0,
       displayOrder: props.displayOrder ?? 0,
@@ -105,6 +159,11 @@ export class FieldDefinition {
       metadata: props.metadata || null,
       createdAt: now,
       updatedAt: now,
+      deletedAt: null,
+      deletedById: null,
+      archivedAt: null,
+      archivedById: null,
+      archiveReason: null,
     });
   }
 
@@ -112,7 +171,15 @@ export class FieldDefinition {
    * Factory method: Reconstitute from persistence
    */
   static reconstitute(props: FieldDefinitionProps): FieldDefinition {
-    return new FieldDefinition(props);
+    return new FieldDefinition({
+      ...props,
+      // Ensure null values for soft delete fields if not provided
+      deletedAt: props.deletedAt ?? null,
+      deletedById: props.deletedById ?? null,
+      archivedAt: props.archivedAt ?? null,
+      archivedById: props.archivedById ?? null,
+      archiveReason: props.archiveReason ?? null,
+    });
   }
 
   /**
@@ -127,6 +194,7 @@ export class FieldDefinition {
     validationRules?: ValidationRules | null;
     defaultValue?: unknown;
     enumOptions?: string[] | null;
+    conditionalLogic?: FieldConditionalLogic | null;
     uiGroup?: string | null;
     uiOrder?: number;
     displayOrder?: number;
@@ -175,6 +243,10 @@ export class FieldDefinition {
         FieldDefinition.validateEnumOptions(props.enumOptions);
       }
       this.props.enumOptions = props.enumOptions;
+    }
+
+    if (props.conditionalLogic !== undefined) {
+      this.props.conditionalLogic = props.conditionalLogic;
     }
 
     if (props.uiGroup !== undefined) {
@@ -479,6 +551,10 @@ export class FieldDefinition {
     return this.props.enumOptions;
   }
 
+  get conditionalLogic(): FieldConditionalLogic | null {
+    return this.props.conditionalLogic;
+  }
+
   get uiGroup(): string | null {
     return this.props.uiGroup;
   }
@@ -513,6 +589,88 @@ export class FieldDefinition {
 
   get updatedAt(): Date {
     return this.props.updatedAt;
+  }
+
+  get deletedAt(): Date | null {
+    return this.props.deletedAt;
+  }
+
+  get deletedById(): string | null {
+    return this.props.deletedById;
+  }
+
+  get archivedAt(): Date | null {
+    return this.props.archivedAt;
+  }
+
+  get archivedById(): string | null {
+    return this.props.archivedById;
+  }
+
+  get archiveReason(): string | null {
+    return this.props.archiveReason;
+  }
+
+  get isDeleted(): boolean {
+    return this.props.deletedAt !== null;
+  }
+
+  get isArchived(): boolean {
+    return this.props.archivedAt !== null;
+  }
+
+  // Soft delete methods
+
+  /**
+   * Soft delete the field definition
+   */
+  softDelete(deletedById: string): void {
+    if (this.props.deletedAt !== null) {
+      throw new Error("Field definition is already deleted");
+    }
+    this.props.deletedAt = new Date();
+    this.props.deletedById = deletedById;
+    this.props.updatedAt = new Date();
+  }
+
+  /**
+   * Restore a soft-deleted field definition
+   */
+  restore(): void {
+    if (this.props.deletedAt === null) {
+      throw new Error("Field definition is not deleted");
+    }
+    this.props.deletedAt = null;
+    this.props.deletedById = null;
+    this.props.updatedAt = new Date();
+  }
+
+  // Archive methods
+
+  /**
+   * Archive the field definition (for unused but preserved fields)
+   */
+  archive(archivedById: string, reason?: string): void {
+    if (this.props.archivedAt !== null) {
+      throw new Error("Field definition is already archived");
+    }
+    this.props.archivedAt = new Date();
+    this.props.archivedById = archivedById;
+    this.props.archiveReason = reason?.trim() || null;
+    this.props.updatedAt = new Date();
+  }
+
+  /**
+   * Unarchive the field definition
+   */
+  unarchive(): void {
+    if (this.props.archivedAt === null) {
+      throw new Error("Field definition is not archived");
+    }
+    this.props.archivedAt = null;
+    this.props.archivedById = null;
+    this.props.archiveReason = null;
+    this.props.updatedAt = new Date();
   }
 
   // Internal setters (for repository use)

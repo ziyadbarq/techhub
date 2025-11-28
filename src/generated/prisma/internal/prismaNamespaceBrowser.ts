@@ -88,6 +88,8 @@ export const ModelName = {
   LifecycleState: 'LifecycleState',
   LifecycleTransition: 'LifecycleTransition',
   FieldDefinition: 'FieldDefinition',
+  FieldTemplate: 'FieldTemplate',
+  FieldTemplateItem: 'FieldTemplateItem',
   DataDomain: 'DataDomain',
   DataOwnership: 'DataOwnership',
   VerificationCampaign: 'VerificationCampaign',
@@ -804,6 +806,7 @@ export const FieldDefinitionScalarFieldEnum = {
   validationRules: 'validationRules',
   defaultValue: 'defaultValue',
   enumOptions: 'enumOptions',
+  conditionalLogic: 'conditionalLogic',
   uiGroup: 'uiGroup',
   uiOrder: 'uiOrder',
   displayOrder: 'displayOrder',
@@ -812,10 +815,59 @@ export const FieldDefinitionScalarFieldEnum = {
   isActive: 'isActive',
   metadata: 'metadata',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById',
+  archivedAt: 'archivedAt',
+  archivedById: 'archivedById',
+  archiveReason: 'archiveReason'
 } as const
 
 export type FieldDefinitionScalarFieldEnum = (typeof FieldDefinitionScalarFieldEnum)[keyof typeof FieldDefinitionScalarFieldEnum]
+
+
+export const FieldTemplateScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  code: 'code',
+  description: 'description',
+  entityType: 'entityType',
+  category: 'category',
+  standard: 'standard',
+  isBuiltIn: 'isBuiltIn',
+  isActive: 'isActive',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  createdById: 'createdById'
+} as const
+
+export type FieldTemplateScalarFieldEnum = (typeof FieldTemplateScalarFieldEnum)[keyof typeof FieldTemplateScalarFieldEnum]
+
+
+export const FieldTemplateItemScalarFieldEnum = {
+  id: 'id',
+  fieldTemplateId: 'fieldTemplateId',
+  fieldDefinitionId: 'fieldDefinitionId',
+  fieldName: 'fieldName',
+  fieldLabel: 'fieldLabel',
+  fieldDataType: 'fieldDataType',
+  description: 'description',
+  isRequired: 'isRequired',
+  isUnique: 'isUnique',
+  validationRules: 'validationRules',
+  defaultValue: 'defaultValue',
+  enumOptions: 'enumOptions',
+  uiOrder: 'uiOrder',
+  uiGroup: 'uiGroup',
+  isSearchable: 'isSearchable',
+  isFilterable: 'isFilterable',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FieldTemplateItemScalarFieldEnum = (typeof FieldTemplateItemScalarFieldEnum)[keyof typeof FieldTemplateItemScalarFieldEnum]
 
 
 export const DataDomainScalarFieldEnum = {

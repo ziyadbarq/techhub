@@ -1,9 +1,10 @@
 # Custom Fields Feature Completion
 
-**Status**: ✅ Complete (Backend 100%, UI 100%)
+**Status**: ✅ Complete (Backend 100%, UI 100%, Advanced Features 100%)
 **Priority**: High
 **Complexity**: Medium
 **Completed**: November 2025
+**Last Updated**: November 28, 2025 (Phase 5 - Advanced Features)
 
 ## Overview
 
@@ -28,6 +29,7 @@ Complete the Custom Fields feature to allow dynamic field definitions that can b
 | 2 | Dynamic Asset Form Fields | ✅ Complete |
 | 3 | Asset Detail View Enhancement | ✅ Complete |
 | 4 | Data Import Integration | ✅ Complete |
+| 5 | Advanced Features (Conditional Logic, Dashboard, New Types) | ✅ Complete |
 
 ---
 
@@ -35,12 +37,21 @@ Complete the Custom Fields feature to allow dynamic field definitions that can b
 
 ### Hooks
 - `src/hooks/use-category-fields.ts` - Fetches and caches custom fields for a category
+- `src/hooks/use-conditional-field.ts` - Evaluates conditional logic for field visibility/required/disabled
 
 ### Components
 - `src/components/custom-fields/index.ts` - Barrel exports
-- `src/components/custom-fields/custom-field-input.tsx` - Dynamic input component for all 14 data types
+- `src/components/custom-fields/custom-field-input.tsx` - Dynamic input component for all 20 data types
 - `src/components/custom-fields/custom-fields-section.tsx` - Form section with validation
 - `src/components/custom-fields/custom-fields-display.tsx` - Read-only display with formatting
+- `src/components/custom-fields/conditional-custom-field.tsx` - Conditional rendering wrapper component
+
+### Field Definitions UI
+- `src/components/field-definitions/conditional-logic-builder.tsx` - UI for building conditional rules
+- `src/components/field-definitions/field-usage-dashboard.tsx` - Analytics dashboard with charts
+
+### Utilities
+- `src/lib/custom-fields/conditional-logic.ts` - Conditional logic evaluation engine
 
 ### Data Import
 - `src/lib/data-import/custom-field-loader.ts` - Loads category fields as EntityFieldConfig
@@ -77,13 +88,19 @@ Complete the Custom Fields feature to allow dynamic field definitions that can b
 
 **Implemented**:
 - `useCategoryFields` hook with in-memory caching
-- `CustomFieldInput` component supporting all 14 data types:
+- `CustomFieldInput` component supporting all 20 data types:
   - STRING, TEXT → Input/Textarea
   - INTEGER, DECIMAL → Number inputs with validation
   - BOOLEAN → Switch component
   - DATE, DATETIME → DatePicker
   - ENUM → Select with options
+  - MULTI_SELECT_ENUM → Checkbox list with badges (Phase 5)
   - JSON → Textarea with JSON validation
+  - URL → Input with link icon and URL validation (Phase 5)
+  - EMAIL → Input with mail icon and email validation (Phase 5)
+  - PHONE → Input with phone icon (Phase 5)
+  - CURRENCY → Amount input + currency selector (Phase 5)
+  - ATTACHMENT_REFERENCE → Attachment ID input (Phase 5)
   - CI_REFERENCE → ConfigurationItem lookup (by ciKey)
   - PERSON_REFERENCE → Person lookup (by email)
   - ORG_UNIT_REFERENCE → OrganizationUnit lookup (by code)
@@ -151,6 +168,45 @@ Mapped as:
   }
 }
 ```
+
+### Phase 5: Advanced Features ✅
+
+**Implemented**:
+
+#### 5.1 New Data Types
+- URL, EMAIL, PHONE → Specialized inputs with icons and validation
+- MULTI_SELECT_ENUM → Multiple selection with checkbox list and badge display
+- CURRENCY → Amount + currency code (SAR, USD, EUR, etc.)
+- ATTACHMENT_REFERENCE → Reference to attachment entities
+
+#### 5.2 Field Usage Dashboard
+- Summary cards: Total fields, usage rate, entity coverage
+- Data type distribution chart (PieChart)
+- Top used fields ranked list
+- Unused fields tracking for cleanup
+- Integrated as tab in `/field-definitions` page
+
+#### 5.3 Conditional Field Logic
+- **Conditional Logic Types**: visibility, required, disabled
+- **12 Operators**: equals, notEquals, contains, notContains, isEmpty, isNotEmpty, greaterThan, lessThan, greaterThanOrEqual, lessThanOrEqual, in, notIn
+- **AND/OR combination** logic for multiple rules
+- **ConditionalLogicBuilder** UI component for rule management
+- **ConditionalCustomField** component for runtime evaluation
+- **useConditionalField** hook for React integration
+
+#### 5.4 Soft Delete & Archive
+- Fields can be soft-deleted (deletedAt, deletedById)
+- Fields can be archived (archivedAt, archivedById, archiveReason)
+- Separate indexes for efficient querying
+
+**Key Files**:
+- `src/lib/custom-fields/conditional-logic.ts` - Evaluation engine
+- `src/hooks/use-conditional-field.ts` - React hook
+- `src/components/custom-fields/conditional-custom-field.tsx` - Form component
+- `src/components/field-definitions/conditional-logic-builder.tsx` - Builder UI
+- `src/components/field-definitions/field-usage-dashboard.tsx` - Dashboard
+
+**Database Migration**: `20251128111256_add_conditional_logic_to_field_definition`
 
 ---
 
@@ -224,7 +280,7 @@ model FieldDefinition {
   id              String   @id @default(cuid())
   name            String   @unique    // e.g., "os_version"
   label           String              // e.g., "OS Version"
-  dataType        FieldDataTypeEnum   // STRING, BOOLEAN, ENUM, etc.
+  dataType        FieldDataTypeEnum   // STRING, BOOLEAN, ENUM, URL, EMAIL, etc. (20 types)
   entityType      String              // "Asset"
   isGlobal        Boolean
   isRequired      Boolean
@@ -232,9 +288,17 @@ model FieldDefinition {
   validationRules Json?
   defaultValue    Json?
   enumOptions     Json?               // ["Windows", "macOS", "Linux"]
+  conditionalLogic Json?              // Visibility, required, disabled conditions (Phase 5)
   isSearchable    Boolean
   isFilterable    Boolean
   isActive        Boolean
+
+  // Soft delete & archive (Phase 5)
+  deletedAt       DateTime?
+  deletedById     String?
+  archivedAt      DateTime?
+  archivedById    String?
+  archiveReason   String?
 
   assetCategoryFields AssetCategoryField[]
 }
@@ -274,7 +338,7 @@ model Asset {
 
 ---
 
-## Future Enhancements (Phase 5)
+## Future Enhancements (Phase 6)
 
 The following are optional enhancements that can be implemented later:
 
@@ -282,4 +346,7 @@ The following are optional enhancements that can be implemented later:
 - [ ] Index searchable custom fields (if isSearchable=true)
 - [ ] Add custom field columns to asset data table
 - [ ] Drag-and-drop reordering in Category Fields Manager
-- [ ] Advanced validation rules (cross-field, conditional)
+- [ ] Field versioning and change history
+- [ ] Calculated fields (formulas based on other field values)
+- [ ] Field import/export functionality
+- [ ] Field templates for common configurations

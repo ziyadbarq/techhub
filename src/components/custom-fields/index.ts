@@ -11,3 +11,7 @@ export {
   type CustomFieldErrors,
 } from "./custom-fields-section";
 export { CustomFieldsDisplay } from "./custom-fields-display";
+export {
+  ConditionalCustomField,
+  ConditionalCustomFieldsSection,
+} from "./conditional-custom-field";

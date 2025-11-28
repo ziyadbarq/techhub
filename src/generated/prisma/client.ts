@@ -225,6 +225,16 @@ export type LifecycleTransition = Prisma.LifecycleTransitionModel
  */
 export type FieldDefinition = Prisma.FieldDefinitionModel
 /**
+ * Model FieldTemplate
+ * 
+ */
+export type FieldTemplate = Prisma.FieldTemplateModel
+/**
+ * Model FieldTemplateItem
+ * 
+ */
+export type FieldTemplateItem = Prisma.FieldTemplateItemModel
+/**
  * Model DataDomain
  * 
  */

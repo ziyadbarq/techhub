@@ -20,7 +20,9 @@ import {
 import {
   presentFieldDefinition,
   presentFieldDefinitions,
+  presentFieldUsageDashboard,
   type FieldDefinitionDTO,
+  type FieldUsageDashboardDTO,
 } from "../presenters/field-definition.presenter";
 import type {
   CreateFieldDefinitionUseCase,
@@ -28,6 +30,7 @@ import type {
   GetFieldDefinitionUseCase,
   UpdateFieldDefinitionUseCase,
   DeleteFieldDefinitionUseCase,
+  GetFieldUsageDashboardUseCase,
 } from "@/core/use-cases/foundation/field-definition";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
@@ -269,5 +272,35 @@ export async function bulkCreateFieldDefinitionsAction(
       errorCount: 0,
       errors: [],
     };
+  }
+}
+
+/**
+ * Get field usage dashboard statistics
+ * Shows aggregated usage data across all field definitions
+ */
+export async function getFieldUsageDashboardAction(): Promise<
+  ActionResponse<FieldUsageDashboardDTO>
+> {
+  try {
+    await requirePermission(PERMISSIONS.FIELD_DEFINITIONS_VIEW);
+
+    const container = getContainer();
+    const useCase = container.get<GetFieldUsageDashboardUseCase>(
+      DI_TOKENS.GetFieldUsageDashboardUseCase,
+    );
+
+    const dashboardData = await useCase.execute();
+
+    return {
+      success: true,
+      data: presentFieldUsageDashboard(dashboardData),
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getFieldUsageDashboardAction" },
+      "Failed to get field usage dashboard",
+    );
   }
 }

@@ -10,6 +10,16 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import {
+  X,
+  Link as LinkIcon,
+  Mail,
+  Phone as PhoneIcon,
+  DollarSign,
+  Paperclip,
+} from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -199,6 +209,79 @@ export function CustomFieldInput({
     case "LOCATION_REFERENCE":
       return (
         <LocationReferenceInput
+          field={field}
+          value={value as string | null}
+          onChange={onChange}
+          error={error}
+          disabled={disabled}
+          className={className}
+        />
+      );
+
+    // New data types (Phase 3)
+    case "URL":
+      return (
+        <UrlInput
+          field={field}
+          value={value as string | null}
+          onChange={onChange}
+          error={error}
+          disabled={disabled}
+          className={className}
+        />
+      );
+
+    case "EMAIL":
+      return (
+        <EmailInput
+          field={field}
+          value={value as string | null}
+          onChange={onChange}
+          error={error}
+          disabled={disabled}
+          className={className}
+        />
+      );
+
+    case "PHONE":
+      return (
+        <PhoneInput
+          field={field}
+          value={value as string | null}
+          onChange={onChange}
+          error={error}
+          disabled={disabled}
+          className={className}
+        />
+      );
+
+    case "MULTI_SELECT_ENUM":
+      return (
+        <MultiSelectEnumInput
+          field={field}
+          value={value as string[] | null}
+          onChange={onChange}
+          error={error}
+          disabled={disabled}
+          className={className}
+        />
+      );
+
+    case "CURRENCY":
+      return (
+        <CurrencyInput
+          field={field}
+          value={value as { amount: number; currency: string } | null}
+          onChange={onChange}
+          error={error}
+          disabled={disabled}
+          className={className}
+        />
+      );
+
+    case "ATTACHMENT_REFERENCE":
+      return (
+        <AttachmentReferenceInput
           field={field}
           value={value as string | null}
           onChange={onChange}
@@ -772,6 +855,293 @@ function LocationReferenceInput({
         emptyMessage="No locations found"
         disabled={disabled || loading}
       />
+      {error && <p className="text-destructive text-xs">{error}</p>}
+    </div>
+  );
+}
+
+// New data type inputs (Phase 3)
+
+interface UrlInputProps extends BaseInputProps {
+  value: string | null;
+  onChange: (value: unknown) => void;
+}
+
+function UrlInput({
+  field,
+  value,
+  onChange,
+  error,
+  disabled,
+  className,
+}: UrlInputProps) {
+  return (
+    <div className={cn("space-y-2", className)}>
+      <div className="relative">
+        <LinkIcon className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+        <Input
+          type="url"
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value || null)}
+          placeholder={field.fieldDescription || "https://example.com"}
+          disabled={disabled}
+          className={cn("pl-10", error && "border-destructive")}
+        />
+      </div>
+      {error && <p className="text-destructive text-xs">{error}</p>}
+    </div>
+  );
+}
+
+interface EmailInputProps extends BaseInputProps {
+  value: string | null;
+  onChange: (value: unknown) => void;
+}
+
+function EmailInput({
+  field,
+  value,
+  onChange,
+  error,
+  disabled,
+  className,
+}: EmailInputProps) {
+  return (
+    <div className={cn("space-y-2", className)}>
+      <div className="relative">
+        <Mail className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+        <Input
+          type="email"
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value || null)}
+          placeholder={field.fieldDescription || "user@example.com"}
+          disabled={disabled}
+          className={cn("pl-10", error && "border-destructive")}
+        />
+      </div>
+      {error && <p className="text-destructive text-xs">{error}</p>}
+    </div>
+  );
+}
+
+interface PhoneInputProps extends BaseInputProps {
+  value: string | null;
+  onChange: (value: unknown) => void;
+}
+
+function PhoneInput({
+  field,
+  value,
+  onChange,
+  error,
+  disabled,
+  className,
+}: PhoneInputProps) {
+  return (
+    <div className={cn("space-y-2", className)}>
+      <div className="relative">
+        <PhoneIcon className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+        <Input
+          type="tel"
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value || null)}
+          placeholder={field.fieldDescription || "+1 (555) 123-4567"}
+          disabled={disabled}
+          className={cn("pl-10", error && "border-destructive")}
+        />
+      </div>
+      {error && <p className="text-destructive text-xs">{error}</p>}
+    </div>
+  );
+}
+
+interface MultiSelectEnumInputProps extends BaseInputProps {
+  value: string[] | null;
+  onChange: (value: unknown) => void;
+}
+
+function MultiSelectEnumInput({
+  field,
+  value,
+  onChange,
+  error,
+  disabled,
+  className,
+}: MultiSelectEnumInputProps) {
+  const options = field.enumOptions ?? [];
+  const selectedValues = value ?? [];
+
+  const handleToggle = (option: string, checked: boolean) => {
+    if (checked) {
+      onChange([...selectedValues, option]);
+    } else {
+      onChange(selectedValues.filter((v) => v !== option));
+    }
+  };
+
+  const handleRemove = (option: string) => {
+    onChange(selectedValues.filter((v) => v !== option));
+  };
+
+  return (
+    <div className={cn("space-y-3", className)}>
+      {/* Selected values as badges */}
+      {selectedValues.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {selectedValues.map((val) => (
+            <Badge key={val} variant="secondary" className="gap-1">
+              {val}
+              <button
+                type="button"
+                onClick={() => handleRemove(val)}
+                className="hover:bg-muted-foreground/20 ml-1 rounded-full"
+                disabled={disabled}
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      )}
+      {/* Checkbox options */}
+      <div className="grid gap-2 sm:grid-cols-2">
+        {options.map((option) => (
+          <label
+            key={option}
+            className={cn(
+              "flex cursor-pointer items-center gap-2 text-sm",
+              disabled && "cursor-not-allowed opacity-50",
+            )}
+          >
+            <Checkbox
+              checked={selectedValues.includes(option)}
+              onCheckedChange={(checked) => handleToggle(option, !!checked)}
+              disabled={disabled}
+            />
+            {option}
+          </label>
+        ))}
+      </div>
+      {error && <p className="text-destructive text-xs">{error}</p>}
+    </div>
+  );
+}
+
+// Common currencies for the selector
+const COMMON_CURRENCIES = [
+  { code: "SAR", name: "Saudi Riyal" },
+  { code: "USD", name: "US Dollar" },
+  { code: "EUR", name: "Euro" },
+  { code: "GBP", name: "British Pound" },
+  { code: "AED", name: "UAE Dirham" },
+  { code: "INR", name: "Indian Rupee" },
+  { code: "PKR", name: "Pakistani Rupee" },
+  { code: "EGP", name: "Egyptian Pound" },
+];
+
+interface CurrencyInputProps extends BaseInputProps {
+  value: { amount: number; currency: string } | null;
+  onChange: (value: unknown) => void;
+}
+
+function CurrencyInput({
+  field: _field,
+  value,
+  onChange,
+  error,
+  disabled,
+  className,
+}: CurrencyInputProps) {
+  const amount = value?.amount ?? null;
+  const currency = value?.currency ?? "SAR";
+
+  const handleAmountChange = (newAmount: number | null) => {
+    if (newAmount === null) {
+      onChange(null);
+    } else {
+      onChange({ amount: newAmount, currency });
+    }
+  };
+
+  const handleCurrencyChange = (newCurrency: string) => {
+    if (amount === null) {
+      onChange(null);
+    } else {
+      onChange({ amount, currency: newCurrency });
+    }
+  };
+
+  return (
+    <div className={cn("space-y-2", className)}>
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <DollarSign className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+          <Input
+            type="number"
+            step="0.01"
+            value={amount ?? ""}
+            onChange={(e) => {
+              const val = e.target.value;
+              handleAmountChange(val === "" ? null : parseFloat(val));
+            }}
+            placeholder="0.00"
+            disabled={disabled}
+            className={cn("pl-10", error && "border-destructive")}
+          />
+        </div>
+        <Select
+          value={currency}
+          onValueChange={handleCurrencyChange}
+          disabled={disabled}
+        >
+          <SelectTrigger className="w-[120px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {COMMON_CURRENCIES.map((c) => (
+              <SelectItem key={c.code} value={c.code}>
+                {c.code}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      {error && <p className="text-destructive text-xs">{error}</p>}
+    </div>
+  );
+}
+
+interface AttachmentReferenceInputProps extends BaseInputProps {
+  value: string | null;
+  onChange: (value: unknown) => void;
+}
+
+function AttachmentReferenceInput({
+  field,
+  value,
+  onChange,
+  error,
+  disabled,
+  className,
+}: AttachmentReferenceInputProps) {
+  // For now, this is a simple text input for attachment ID
+  // In the future, this could be enhanced with a file picker/uploader
+  return (
+    <div className={cn("space-y-2", className)}>
+      <div className="relative">
+        <Paperclip className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+        <Input
+          type="text"
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value || null)}
+          placeholder={field.fieldDescription || "Attachment ID"}
+          disabled={disabled}
+          className={cn("pl-10", error && "border-destructive")}
+        />
+      </div>
+      <p className="text-muted-foreground text-xs">
+        Enter an existing attachment ID or upload a new attachment
+      </p>
       {error && <p className="text-destructive text-xs">{error}</p>}
     </div>
   );

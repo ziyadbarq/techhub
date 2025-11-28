@@ -24,6 +24,7 @@ import type { ILocationRepository } from "@/core/repositories/location.repositor
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import type { IPersonRoleAssignmentRepository } from "@/core/repositories/person-role-assignment.repository.interface";
 import type { IFieldDefinitionRepository } from "@/core/repositories/field-definition.repository.interface";
+import type { IFieldTemplateRepository } from "@/core/repositories/field-template.repository.interface";
 import type { IExchangeRateRepository } from "@/core/repositories/exchange-rate.repository.interface";
 
 import { PrismaLifecycleModelRepository } from "@/infrastructure/repositories/prisma-lifecycle-model.repository";
@@ -36,6 +37,7 @@ import { PrismaLocationRepository } from "@/infrastructure/repositories/prisma-l
 import { PrismaPersonRepository } from "@/infrastructure/repositories/prisma-person.repository";
 import { PrismaPersonRoleAssignmentRepository } from "@/infrastructure/repositories/prisma-person-role-assignment.repository";
 import { PrismaFieldDefinitionRepository } from "@/infrastructure/repositories/prisma-field-definition.repository";
+import { PrismaFieldTemplateRepository } from "@/infrastructure/repositories/prisma-field-template.repository";
 import { PrismaExchangeRateRepository } from "@/infrastructure/repositories/prisma-exchange-rate.repository";
 
 // SAR Conversion Service
@@ -119,9 +121,21 @@ import { DeletePersonRoleAssignmentUseCase } from "@/core/use-cases/foundation/p
 // Field Definition Use Cases
 import { CreateFieldDefinitionUseCase } from "@/core/use-cases/foundation/field-definition/create-field-definition.use-case";
 import { GetFieldDefinitionUseCase } from "@/core/use-cases/foundation/field-definition/get-field-definition.use-case";
+import { GetFieldUsageDashboardUseCase } from "@/core/use-cases/foundation/field-definition/get-field-usage-dashboard.use-case";
 import { ListFieldDefinitionsUseCase } from "@/core/use-cases/foundation/field-definition/list-field-definitions.use-case";
 import { UpdateFieldDefinitionUseCase } from "@/core/use-cases/foundation/field-definition/update-field-definition.use-case";
 import { DeleteFieldDefinitionUseCase } from "@/core/use-cases/foundation/field-definition/delete-field-definition.use-case";
+
+// Field Template Use Cases
+import {
+  CreateFieldTemplateUseCase,
+  GetFieldTemplateUseCase,
+  ListFieldTemplatesUseCase,
+  UpdateFieldTemplateUseCase,
+  DeleteFieldTemplateUseCase,
+  CloneFieldTemplateUseCase,
+  ApplyFieldTemplateUseCase,
+} from "@/core/use-cases/foundation/field-template";
 
 // Exchange Rate Use Cases
 import { CreateExchangeRateUseCase } from "@/core/use-cases/foundation/exchange-rate/create-exchange-rate.use-case";
@@ -193,6 +207,11 @@ export function bindFoundationDependencies(container: Container): void {
   container
     .bind<IFieldDefinitionRepository>(DI_TOKENS.IFieldDefinitionRepository)
     .to(PrismaFieldDefinitionRepository)
+    .inSingletonScope();
+
+  container
+    .bind<IFieldTemplateRepository>(DI_TOKENS.IFieldTemplateRepository)
+    .to(PrismaFieldTemplateRepository)
     .inSingletonScope();
 
   container
@@ -564,6 +583,52 @@ export function bindFoundationDependencies(container: Container): void {
   container
     .bind<DeleteFieldDefinitionUseCase>(DI_TOKENS.DeleteFieldDefinitionUseCase)
     .to(DeleteFieldDefinitionUseCase)
+    .inTransientScope();
+
+  container
+    .bind<GetFieldUsageDashboardUseCase>(
+      DI_TOKENS.GetFieldUsageDashboardUseCase,
+    )
+    .to(GetFieldUsageDashboardUseCase)
+    .inTransientScope();
+
+  // ==========================================
+  // Field Template Use Cases
+  // ==========================================
+
+  container
+    .bind<CreateFieldTemplateUseCase>(DI_TOKENS.CreateFieldTemplateUseCase)
+    .to(CreateFieldTemplateUseCase)
+    .inTransientScope();
+
+  container
+    .bind<GetFieldTemplateUseCase>(DI_TOKENS.GetFieldTemplateUseCase)
+    .to(GetFieldTemplateUseCase)
+    .inTransientScope();
+
+  container
+    .bind<ListFieldTemplatesUseCase>(DI_TOKENS.ListFieldTemplatesUseCase)
+    .to(ListFieldTemplatesUseCase)
+    .inTransientScope();
+
+  container
+    .bind<UpdateFieldTemplateUseCase>(DI_TOKENS.UpdateFieldTemplateUseCase)
+    .to(UpdateFieldTemplateUseCase)
+    .inTransientScope();
+
+  container
+    .bind<DeleteFieldTemplateUseCase>(DI_TOKENS.DeleteFieldTemplateUseCase)
+    .to(DeleteFieldTemplateUseCase)
+    .inTransientScope();
+
+  container
+    .bind<CloneFieldTemplateUseCase>(DI_TOKENS.CloneFieldTemplateUseCase)
+    .to(CloneFieldTemplateUseCase)
+    .inTransientScope();
+
+  container
+    .bind<ApplyFieldTemplateUseCase>(DI_TOKENS.ApplyFieldTemplateUseCase)
+    .to(ApplyFieldTemplateUseCase)
     .inTransientScope();
 
   // ==========================================

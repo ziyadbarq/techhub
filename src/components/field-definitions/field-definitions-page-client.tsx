@@ -5,13 +5,15 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, List, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { FieldDefinitionDTO } from "@/interface-adapters/presenters/field-definition.presenter";
 import { listFieldDefinitionsAction } from "@/interface-adapters/controllers/field-definition.controller";
 import { FieldDefinitionsTable } from "./field-definitions-table";
 import { FieldDefinitionForm } from "./field-definition-form";
+import { FieldUsageDashboard } from "./field-usage-dashboard";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
@@ -28,6 +30,7 @@ export function FieldDefinitionsPageClient({
   const [editingField, setEditingField] = useState<FieldDefinitionDTO | null>(
     null,
   );
+  const [activeTab, setActiveTab] = useState("list");
 
   const loadFields = async () => {
     setIsLoading(true);
@@ -59,6 +62,10 @@ export function FieldDefinitionsPageClient({
     loadFields();
   };
 
+  const handleViewFieldFromDashboard = (field: FieldDefinitionDTO) => {
+    handleEdit(field);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
@@ -79,12 +86,31 @@ export function FieldDefinitionsPageClient({
         </PermissionGuard>
       </div>
 
-      <FieldDefinitionsTable
-        data={fields}
-        loading={isLoading}
-        onEdit={handleEdit}
-        onRefresh={handleSuccess}
-      />
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList>
+          <TabsTrigger value="list" className="gap-2">
+            <List className="h-4 w-4" />
+            Field List
+          </TabsTrigger>
+          <TabsTrigger value="dashboard" className="gap-2">
+            <BarChart3 className="h-4 w-4" />
+            Usage Dashboard
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="list" className="mt-4">
+          <FieldDefinitionsTable
+            data={fields}
+            loading={isLoading}
+            onEdit={handleEdit}
+            onRefresh={handleSuccess}
+          />
+        </TabsContent>
+
+        <TabsContent value="dashboard" className="mt-4">
+          <FieldUsageDashboard onViewField={handleViewFieldFromDashboard} />
+        </TabsContent>
+      </Tabs>
 
       <FieldDefinitionForm
         open={isFormOpen}

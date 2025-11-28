@@ -10,7 +10,16 @@ import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { ExternalLink, CheckCircle2, XCircle } from "lucide-react";
+import {
+  ExternalLink,
+  CheckCircle2,
+  XCircle,
+  Link as LinkIcon,
+  Mail,
+  Phone,
+  DollarSign,
+  Paperclip,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import { useCategoryFields } from "@/hooks/use-category-fields";
@@ -226,6 +235,89 @@ function FormattedValue({ field, value }: FormattedValueProps) {
 
     case "LOCATION_REFERENCE":
       return <ReferenceValue type="location" id={String(value)} />;
+
+    // New data types (Phase 3)
+    case "URL":
+      return (
+        <a
+          href={String(value)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary inline-flex items-center gap-1 hover:underline"
+        >
+          <LinkIcon className="h-3 w-3" />
+          {String(value)}
+          <ExternalLink className="h-3 w-3" />
+        </a>
+      );
+
+    case "EMAIL":
+      return (
+        <a
+          href={`mailto:${String(value)}`}
+          className="text-primary inline-flex items-center gap-1 hover:underline"
+        >
+          <Mail className="h-3 w-3" />
+          {String(value)}
+        </a>
+      );
+
+    case "PHONE":
+      return (
+        <a
+          href={`tel:${String(value)}`}
+          className="text-primary inline-flex items-center gap-1 hover:underline"
+        >
+          <Phone className="h-3 w-3" />
+          {String(value)}
+        </a>
+      );
+
+    case "MULTI_SELECT_ENUM": {
+      const selectedValues = Array.isArray(value) ? value : [];
+      if (selectedValues.length === 0) {
+        return <span className="text-muted-foreground">—</span>;
+      }
+      return (
+        <div className="flex flex-wrap gap-1">
+          {selectedValues.map((v) => (
+            <Badge key={String(v)} variant="outline">
+              {String(v)}
+            </Badge>
+          ))}
+        </div>
+      );
+    }
+
+    case "CURRENCY": {
+      const currencyValue = value as {
+        amount?: number;
+        currency?: string;
+      } | null;
+      if (!currencyValue?.amount) {
+        return <span className="text-muted-foreground">—</span>;
+      }
+      return (
+        <span className="inline-flex items-center gap-1">
+          <DollarSign className="text-muted-foreground h-3 w-3" />
+          {currencyValue.amount.toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}{" "}
+          <span className="text-muted-foreground">
+            {currencyValue.currency || "SAR"}
+          </span>
+        </span>
+      );
+    }
+
+    case "ATTACHMENT_REFERENCE":
+      return (
+        <span className="text-muted-foreground inline-flex items-center gap-1">
+          <Paperclip className="h-3 w-3" />
+          {String(value)}
+        </span>
+      );
 
     default:
       return <span>{String(value)}</span>;

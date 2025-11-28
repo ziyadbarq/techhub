@@ -213,7 +213,9 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 **Custom Fields**:
 - Dynamic fields attached to Asset Categories via FieldDefinition + AssetCategoryField
 - Use `useCategoryFields(categoryId)` hook to fetch fields for a category
-- Components: `CustomFieldsSection` (form), `CustomFieldsDisplay` (read-only), `CustomFieldInput` (14 data types)
+- Components: `CustomFieldsSection` (form), `CustomFieldsDisplay` (read-only), `CustomFieldInput` (20 data types)
+- Conditional logic: Use `ConditionalCustomField` with `useConditionalField` hook for visibility/required/disabled
+- Field usage dashboard at `/field-definitions` (Usage Dashboard tab)
 - Asset.attributes JSON stores custom field values
 - See [roadmap/CUSTOM_FIELDS_COMPLETION.md](roadmap/CUSTOM_FIELDS_COMPLETION.md)
 

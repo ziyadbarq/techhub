@@ -286,6 +286,13 @@ enum FieldDataTypeEnum {
   PERSON_REFERENCE
   ORG_UNIT_REFERENCE
   LOCATION_REFERENCE
+  // New data types (Phase 3)
+  URL
+  EMAIL
+  PHONE
+  MULTI_SELECT_ENUM
+  CURRENCY
+  ATTACHMENT_REFERENCE
 }
 
 enum WarrantyCoverageType {
