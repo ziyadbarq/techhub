@@ -15,6 +15,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Mail, Calendar, Clock, Shield, Settings } from "lucide-react";
 import Link from "next/link";
+import { EmailVerificationBadge } from "@/components/auth/EmailVerificationBadge";
+import { VerifyEmailButton } from "@/components/auth/VerifyEmailButton";
 
 export const dynamic = "force-dynamic";
 
@@ -109,11 +111,11 @@ export default async function ProfilePage() {
                 <div className="text-muted-foreground mt-2 flex items-center gap-2">
                   <Mail className="h-4 w-4" />
                   <span>{user.email}</span>
-                  {user.emailVerified && (
-                    <Badge variant="secondary" className="ml-2">
-                      Verified
-                    </Badge>
-                  )}
+                  <EmailVerificationBadge
+                    isVerified={isEmailVerified}
+                    showLabel
+                    className="ml-2"
+                  />
                 </div>
               </div>
 
@@ -186,16 +188,17 @@ export default async function ProfilePage() {
           </div>
 
           <div className="flex items-center justify-between rounded-lg border p-4">
-            <div>
-              <p className="font-medium">Email Verification</p>
-              <p className="text-muted-foreground text-sm">
-                {emailVerificationStatus}
-              </p>
+            <div className="flex items-center gap-3">
+              <EmailVerificationBadge isVerified={isEmailVerified} />
+              <div>
+                <p className="font-medium">Email Verification</p>
+                <p className="text-muted-foreground text-sm">
+                  {emailVerificationStatus}
+                </p>
+              </div>
             </div>
-            {!isEmailVerified && (
-              <Button variant="outline" size="sm">
-                Verify Email
-              </Button>
+            {!isEmailVerified && user.email && (
+              <VerifyEmailButton email={user.email} />
             )}
           </div>
         </CardContent>

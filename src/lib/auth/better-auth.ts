@@ -6,6 +6,9 @@ import { createAuthMiddleware } from "better-auth/api";
 import { createId } from "@paralleldrive/cuid2";
 import type { PrismaClient } from "@/generated/prisma/client";
 import { encryptTokens, decryptTokens } from "./encryption";
+import { getContainer } from "@/di/container";
+import { DI_TOKENS } from "@/di/types";
+import type { IEmailService } from "@/core/services/email.service.interface";
 
 /**
  * Prisma Client Extension for Token Encryption
@@ -155,6 +158,15 @@ const parseName = (name?: string | null) => {
   }
   const [first, ...rest] = parts;
   return { firstName: first || "New", lastName: rest.join(" ") || "User" };
+};
+
+/**
+ * Get the email service from DI container
+ * Uses lazy resolution to avoid circular dependencies during module initialization
+ */
+const getEmailService = (): IEmailService => {
+  const container = getContainer();
+  return container.get<IEmailService>(DI_TOKENS.IEmailService);
 };
 
 const ensurePersonLinkedToUser = async (
@@ -565,7 +577,32 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,
-    requireEmailVerification: false,
+    requireEmailVerification: false, // Keep false - verification is optional (badge indicator only)
+    resetPasswordTokenExpiresIn: 60 * 60, // 1 hour
+    sendResetPassword: async ({ user, url }) => {
+      const emailService = getEmailService();
+      await emailService.sendTemplatedEmail(user.email, "password-reset", {
+        name: user.name || "User",
+        resetLink: url,
+        expiresIn: "1 hour",
+      });
+    },
+  },
+
+  // Email verification configuration (optional - doesn't block access)
+  // Auto-sends on signup, users can resend from profile
+  emailVerification: {
+    sendOnSignUp: true,
+    autoSignInAfterVerification: true,
+    expiresIn: 60 * 60 * 24, // 24 hours
+    sendVerificationEmail: async ({ user, url }) => {
+      const emailService = getEmailService();
+      await emailService.sendTemplatedEmail(user.email, "email-verification", {
+        name: user.name || "User",
+        verificationLink: url,
+        expiresIn: "24 hours",
+      });
+    },
   },
 
   socialProviders: {

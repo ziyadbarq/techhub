@@ -184,6 +184,45 @@ export class MockEmailService implements IEmailService {
           </body>
         </html>
       `,
+      "password-reset": `
+        <html>
+          <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #1a1a1a; margin-bottom: 10px;">Reset Your Password</h1>
+            </div>
+            <p style="color: #333; font-size: 16px;">Hi {{name}},</p>
+            <p style="color: #333; font-size: 16px;">We received a request to reset your password. Click the button below to create a new password:</p>
+            <p style="text-align: center; margin: 30px 0;">
+              <a href="{{resetLink}}" style="background-color: #FFD100; color: #1a1a1a; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
+                Reset Password
+              </a>
+            </p>
+            <p style="color: #666; font-size: 14px;">This link expires in {{expiresIn}}.</p>
+            <p style="color: #666; font-size: 14px;">If you didn't request this, you can safely ignore this email. Your password will remain unchanged.</p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+            <p style="color: #999; font-size: 12px; text-align: center;">barq TechHub - IT Asset Management</p>
+          </body>
+        </html>
+      `,
+      "email-verification": `
+        <html>
+          <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #1a1a1a; margin-bottom: 10px;">Verify Your Email</h1>
+            </div>
+            <p style="color: #333; font-size: 16px;">Hi {{name}},</p>
+            <p style="color: #333; font-size: 16px;">Please verify your email address to complete your account setup:</p>
+            <p style="text-align: center; margin: 30px 0;">
+              <a href="{{verificationLink}}" style="background-color: #FFD100; color: #1a1a1a; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
+                Verify Email
+              </a>
+            </p>
+            <p style="color: #666; font-size: 14px;">This link expires in {{expiresIn}}.</p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+            <p style="color: #999; font-size: 12px; text-align: center;">barq TechHub - IT Asset Management</p>
+          </body>
+        </html>
+      `,
     };
 
     let template =

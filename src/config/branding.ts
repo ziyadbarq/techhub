@@ -154,6 +154,18 @@ export const BRANDING = {
       heading: "Welcome Back",
       subheading: "Sign in to access your dashboard",
     },
+    forgotPassword: {
+      heading: "Reset Your Password",
+      subheading: "Enter your email and we'll send you a reset link",
+    },
+    resetPassword: {
+      heading: "Create New Password",
+      subheading: "Choose a strong password for your account",
+    },
+    verifyEmail: {
+      heading: "Email Verified",
+      subheading: "Your email has been successfully verified",
+    },
   },
 } as const;
 

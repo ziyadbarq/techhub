@@ -157,7 +157,7 @@ export const documentationGroup: NavGroup = {
       description: "RBAC and user management",
     },
   ],
-  visible: false,
+  visible: true,
   collapsible: true,
   defaultCollapsed: true,
 };

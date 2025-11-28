@@ -123,9 +123,12 @@ export function LoginForm() {
             >
               Need an account?
             </Link>
-            <span className="text-muted-foreground cursor-not-allowed text-sm">
+            <Link
+              href="/forgot-password"
+              className="text-barq-yellow hover:text-barq-yellow/80 text-sm font-medium underline-offset-4 hover:underline"
+            >
               Forgot password?
-            </span>
+            </Link>
           </div>
         )}
 
