@@ -17,6 +17,9 @@ import { CodeBlock } from "./code-block";
 import { ZoomableImage } from "./zoomable-image";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./tabs";
 import { Steps, Step } from "./steps";
+import { PropertyTable, Property } from "./property-table";
+import { LinkCard, CardGrid } from "./link-card";
+import { DocsAccordion, DocsAccordionItem } from "./docs-accordion";
 
 /**
  * Custom components available in MDX files
@@ -76,6 +79,18 @@ export const customComponents = {
 
   // Zoomable images
   ZoomableImage,
+
+  // Property documentation
+  PropertyTable,
+  Property,
+
+  // Link cards and grids
+  LinkCard,
+  CardGrid,
+
+  // Collapsible content
+  DocsAccordion,
+  DocsAccordionItem,
 };
 
 /**

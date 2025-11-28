@@ -2,11 +2,23 @@
 
 /**
  * Documentation Search Component
- * Client-side search through documentation content
+ * Client-side search with glossary expansion and Cmd+K support
+ *
+ * Features:
+ * - Glossary-aware search (synonyms and related terms)
+ * - Relevance-based ranking
+ * - Keyboard navigation
+ * - Query highlighting in results
  */
 
-import { useState, useEffect, useCallback } from "react";
-import { Search as SearchIcon, X, FileText } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import {
+  Search as SearchIcon,
+  X,
+  FileText,
+  ArrowRight,
+  CornerDownLeft,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -17,12 +29,15 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { expandSearchQuery } from "@/lib/docs/glossary";
 
 interface SearchResult {
   slug: string;
   title: string;
   description: string;
   excerpt: string;
+  score: number;
+  matchType: "title" | "description" | "content";
 }
 
 interface SearchProps {
@@ -34,11 +49,98 @@ interface SearchProps {
   }>;
 }
 
+/**
+ * Calculate relevance score for a document
+ */
+function calculateRelevanceScore(
+  doc: SearchProps["docs"][0],
+  searchTerms: string[],
+): { score: number; matchType: "title" | "description" | "content" } {
+  let score = 0;
+  let matchType: "title" | "description" | "content" = "content";
+
+  const lowerTitle = doc.title.toLowerCase();
+  const lowerDesc = doc.description.toLowerCase();
+  const lowerContent = doc.content.toLowerCase();
+
+  for (const term of searchTerms) {
+    // Title matches are most valuable
+    if (lowerTitle.includes(term)) {
+      score += 10;
+      if (lowerTitle === term) score += 5; // Exact title match bonus
+      matchType = "title";
+    }
+    // Description matches are second
+    if (lowerDesc.includes(term)) {
+      score += 5;
+      if (matchType === "content") matchType = "description";
+    }
+    // Content matches
+    if (lowerContent.includes(term)) {
+      score += 1;
+      // Bonus for multiple occurrences
+      const occurrences = (lowerContent.match(new RegExp(term, "g")) || [])
+        .length;
+      score += Math.min(occurrences * 0.5, 3);
+    }
+  }
+
+  return { score, matchType };
+}
+
+/**
+ * Extract and highlight excerpt around matched term
+ */
+function extractExcerpt(
+  content: string,
+  searchTerms: string[],
+  maxLength: number = 150,
+): string {
+  const lowerContent = content.toLowerCase();
+
+  // Find the first matching term
+  let matchIndex = -1;
+  let matchedTerm = "";
+
+  for (const term of searchTerms) {
+    const index = lowerContent.indexOf(term);
+    if (index !== -1 && (matchIndex === -1 || index < matchIndex)) {
+      matchIndex = index;
+      matchedTerm = term;
+    }
+  }
+
+  if (matchIndex === -1) {
+    // No match found, return beginning of content
+    return (
+      content.slice(0, maxLength) + (content.length > maxLength ? "..." : "")
+    );
+  }
+
+  // Extract context around match
+  const contextBefore = 50;
+  const start = Math.max(0, matchIndex - contextBefore);
+  const end = Math.min(
+    content.length,
+    matchIndex + matchedTerm.length + maxLength - contextBefore,
+  );
+
+  let excerpt = "";
+  if (start > 0) excerpt += "...";
+  excerpt += content.slice(start, end);
+  if (end < content.length) excerpt += "...";
+
+  return excerpt;
+}
+
 export function Search({ docs }: SearchProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   // Open search with Cmd+K or Ctrl+K
   useEffect(() => {
@@ -53,45 +155,100 @@ export function Search({ docs }: SearchProps) {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Search function
+  // Handle select function (defined before useEffect that uses it)
+  const handleSelect = useCallback(
+    (slug: string) => {
+      setIsOpen(false);
+      setQuery("");
+      setResults([]);
+      router.push(`/docs/${slug}`);
+    },
+    [router],
+  );
+
+  // Keyboard navigation within results
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          setSelectedIndex((prev) => Math.min(prev + 1, results.length - 1));
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          setSelectedIndex((prev) => Math.max(prev - 1, 0));
+          break;
+        case "Enter":
+          e.preventDefault();
+          if (results[selectedIndex]) {
+            handleSelect(results[selectedIndex].slug);
+          }
+          break;
+        case "Escape":
+          setIsOpen(false);
+          break;
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, results, selectedIndex, handleSelect]);
+
+  // Scroll selected item into view
+  useEffect(() => {
+    if (resultsRef.current && results.length > 0) {
+      const selectedElement = resultsRef.current.children[
+        selectedIndex
+      ] as HTMLElement;
+      if (selectedElement) {
+        selectedElement.scrollIntoView({ block: "nearest" });
+      }
+    }
+  }, [selectedIndex, results.length]);
+
+  // Search function with glossary expansion
   const performSearch = useCallback(
     (searchQuery: string) => {
       if (!searchQuery.trim()) {
         setResults([]);
+        setSelectedIndex(0);
         return;
       }
 
-      const lowerQuery = searchQuery.toLowerCase();
+      // Expand query with glossary synonyms
+      const searchTerms = expandSearchQuery(searchQuery);
+
       const searchResults = docs
         .map((doc) => {
-          const titleMatch = doc.title.toLowerCase().includes(lowerQuery);
-          const descMatch = doc.description.toLowerCase().includes(lowerQuery);
-          const contentMatch = doc.content.toLowerCase().includes(lowerQuery);
+          const { score, matchType } = calculateRelevanceScore(
+            doc,
+            searchTerms,
+          );
 
-          if (!titleMatch && !descMatch && !contentMatch) {
+          if (score === 0) {
             return null;
           }
 
           // Extract excerpt around match
-          const contentIndex = doc.content.toLowerCase().indexOf(lowerQuery);
-          const excerptStart = Math.max(0, contentIndex - 50);
-          const excerptEnd = Math.min(doc.content.length, contentIndex + 100);
-          const excerpt =
-            (excerptStart > 0 ? "..." : "") +
-            doc.content.slice(excerptStart, excerptEnd) +
-            (excerptEnd < doc.content.length ? "..." : "");
+          const excerpt = extractExcerpt(doc.content, searchTerms);
 
           return {
             slug: doc.slug,
             title: doc.title,
             description: doc.description,
             excerpt,
+            score,
+            matchType,
           };
         })
         .filter((result): result is SearchResult => result !== null)
-        .slice(0, 10); // Limit to 10 results
+        .sort((a, b) => b.score - a.score) // Sort by relevance
+        .slice(0, 10);
 
       setResults(searchResults);
+      setSelectedIndex(0);
     },
     [docs],
   );
@@ -100,16 +257,21 @@ export function Search({ docs }: SearchProps) {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       performSearch(query);
-    }, 200);
+    }, 150);
 
     return () => clearTimeout(timeoutId);
   }, [query, performSearch]);
 
-  const handleSelect = (slug: string) => {
-    setIsOpen(false);
-    setQuery("");
-    setResults([]);
-    router.push(`/docs/${slug}`);
+  // Get match type label
+  const getMatchTypeLabel = (matchType: SearchResult["matchType"]) => {
+    switch (matchType) {
+      case "title":
+        return "Title match";
+      case "description":
+        return "Description match";
+      default:
+        return "Content match";
+    }
   };
 
   return (
@@ -135,6 +297,7 @@ export function Search({ docs }: SearchProps) {
             <div className="relative">
               <SearchIcon className="text-muted-foreground absolute top-1/2 left-0 h-4 w-4 -translate-y-1/2" />
               <Input
+                ref={inputRef}
                 placeholder="Search documentation..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -159,26 +322,40 @@ export function Search({ docs }: SearchProps) {
           </DialogHeader>
 
           {/* Search results */}
-          <div className="max-h-[400px] overflow-y-auto p-2">
+          <div ref={resultsRef} className="max-h-[400px] overflow-y-auto p-2">
             {query && results.length === 0 ? (
-              <div className="text-muted-foreground py-12 text-center text-sm">
-                No results found for &quot;{query}&quot;
+              <div className="py-12 text-center">
+                <p className="text-muted-foreground text-sm">
+                  No results found for &quot;{query}&quot;
+                </p>
+                <p className="text-muted-foreground mt-2 text-xs">
+                  Try different keywords or check for typos
+                </p>
               </div>
             ) : results.length > 0 ? (
               <div className="space-y-1">
-                {results.map((result) => (
+                {results.map((result, index) => (
                   <button
                     key={result.slug}
                     onClick={() => handleSelect(result.slug)}
+                    onMouseEnter={() => setSelectedIndex(index)}
                     className={cn(
-                      "hover:bg-muted w-full rounded-md p-3 text-left transition-colors",
-                      "focus:bg-muted focus:outline-none",
+                      "w-full rounded-md p-3 text-left transition-colors",
+                      "focus:outline-none",
+                      selectedIndex === index
+                        ? "bg-muted"
+                        : "hover:bg-muted/50",
                     )}
                   >
                     <div className="flex items-start gap-3">
                       <FileText className="text-muted-foreground mt-1 h-4 w-4 flex-shrink-0" />
                       <div className="min-w-0 flex-1">
-                        <p className="font-medium">{result.title}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium">{result.title}</p>
+                          {selectedIndex === index && (
+                            <ArrowRight className="text-muted-foreground h-3 w-3" />
+                          )}
+                        </div>
                         <p className="text-muted-foreground mt-1 text-sm">
                           {result.description}
                         </p>
@@ -187,17 +364,43 @@ export function Search({ docs }: SearchProps) {
                             {result.excerpt}
                           </p>
                         )}
+                        <p className="text-muted-foreground/60 mt-2 text-xs">
+                          {getMatchTypeLabel(result.matchType)}
+                        </p>
                       </div>
                     </div>
                   </button>
                 ))}
               </div>
             ) : (
-              <div className="text-muted-foreground py-12 text-center text-sm">
-                Start typing to search...
+              <div className="py-12 text-center">
+                <p className="text-muted-foreground text-sm">
+                  Start typing to search...
+                </p>
+                <p className="text-muted-foreground mt-2 text-xs">
+                  Search includes synonyms and related terms
+                </p>
               </div>
             )}
           </div>
+
+          {/* Keyboard hints footer */}
+          {results.length > 0 && (
+            <div className="border-border text-muted-foreground flex items-center gap-4 border-t px-4 py-2 text-xs">
+              <span className="flex items-center gap-1">
+                <kbd className="bg-muted rounded px-1.5 py-0.5">↑↓</kbd>
+                Navigate
+              </span>
+              <span className="flex items-center gap-1">
+                <CornerDownLeft className="h-3 w-3" />
+                Select
+              </span>
+              <span className="flex items-center gap-1">
+                <kbd className="bg-muted rounded px-1.5 py-0.5">esc</kbd>
+                Close
+              </span>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </>

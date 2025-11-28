@@ -158,7 +158,7 @@ Development tools and utilities:
 Content for public-facing pages:
 
 - **[MISSING]** Landing Page - Marketing site showcasing system capabilities and features
-- **[MISSING]** In-App Documentation System - MDX documentation pages, custom components, and content management
+- [In-App Documentation System](./guides/DOCUMENTATION_SYSTEM.md) - MDX documentation for end-users (`src/content/docs/`), custom components, permission gating, and glossary-aware search
 
 ## 🔗 External Resources
 

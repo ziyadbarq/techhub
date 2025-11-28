@@ -228,6 +228,14 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 - When files exceed 300-500 lines: Extract hooks, create sub-components, use builders
 - See [REFACTORING_PATTERNS.md](docs/guides/REFACTORING_PATTERNS.md)
 
+**End-User Documentation**:
+- Location: `src/content/docs/` (MDX files for in-app help, NOT developer docs)
+- Categories: getting-started, user-guides, admin-guides, modules, reference, troubleshooting
+- Add `_meta.ts` for category config; use frontmatter for doc metadata
+- MDX components: Callout, Steps, Tabs, PropertyTable, LinkCard, CardGrid, DocsAccordion
+- Permission gating: `requiredPermission` in frontmatter or category `_meta.ts`
+- See [DOCUMENTATION_SYSTEM.md](docs/guides/DOCUMENTATION_SYSTEM.md)
+
 ## Architecture Overview
 
 5-layer Clean Architecture: **Presentation** → **Interface Adapters** (Controllers, DTOs, Presenters) → **Use Cases** → **Domain** (Entities, business rules) ← **Infrastructure** (Repositories, external services)
