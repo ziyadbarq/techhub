@@ -5,6 +5,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { type ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, Trash2, Pencil, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
@@ -134,13 +135,16 @@ export function VendorsTable({
         <DataTableColumnHeader column={column} title="Name" />
       ),
       cell: ({ row }) => {
-        const name = row.getValue("name") as string;
+        const vendor = row.original;
         return (
           <div className="flex flex-col gap-1">
-            <span className="font-medium">{name}</span>
-            <span className="text-muted-foreground text-xs">
-              {row.original.code}
-            </span>
+            <Link
+              href={`/vendors/${vendor.id}`}
+              className="text-primary font-medium hover:underline"
+            >
+              {vendor.name}
+            </Link>
+            <span className="text-muted-foreground text-xs">{vendor.code}</span>
           </div>
         );
       },
