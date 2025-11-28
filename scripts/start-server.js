@@ -547,6 +547,15 @@ async function main() {
   console.log(`  🏷️  Mode: ${FLAGS.deploy ? "Full Deployment" : "Server Only"}`);
   console.log("═".repeat(60) + "\n");
 
+  // Stop any existing processes to ensure clean start
+  log("🛑", "Stopping existing processes...");
+  try {
+    execSync("bash scripts/stop-services.sh --force", { stdio: "inherit" });
+  } catch (_error) {
+    // Ignore errors - processes may not be running
+  }
+  console.log("");
+
   // Validate environment first
   validateEnvironment();
 

@@ -42,6 +42,8 @@
     "pm2:restart": "pm2 restart ecosystem.config.cjs --env production",
     "pm2:logs": "pm2 logs",
     "pm2:status": "pm2 status",
+    "stop": "bash scripts/stop-services.sh",
+    "stop:force": "bash scripts/stop-services.sh --force",
     "partykit:dev": "partykit dev",
     "partykit:deploy": "partykit deploy",
     "test": "vitest",
