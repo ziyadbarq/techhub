@@ -467,48 +467,6 @@ export type PersonRoleAssignmentMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type PersonRoleAssignmentCreateNestedManyWithoutRoleInput = {
-  create?: Prisma.XOR<Prisma.PersonRoleAssignmentCreateWithoutRoleInput, Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput> | Prisma.PersonRoleAssignmentCreateWithoutRoleInput[] | Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput[]
-  connectOrCreate?: Prisma.PersonRoleAssignmentCreateOrConnectWithoutRoleInput | Prisma.PersonRoleAssignmentCreateOrConnectWithoutRoleInput[]
-  createMany?: Prisma.PersonRoleAssignmentCreateManyRoleInputEnvelope
-  connect?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
-}
-
-export type PersonRoleAssignmentUncheckedCreateNestedManyWithoutRoleInput = {
-  create?: Prisma.XOR<Prisma.PersonRoleAssignmentCreateWithoutRoleInput, Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput> | Prisma.PersonRoleAssignmentCreateWithoutRoleInput[] | Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput[]
-  connectOrCreate?: Prisma.PersonRoleAssignmentCreateOrConnectWithoutRoleInput | Prisma.PersonRoleAssignmentCreateOrConnectWithoutRoleInput[]
-  createMany?: Prisma.PersonRoleAssignmentCreateManyRoleInputEnvelope
-  connect?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
-}
-
-export type PersonRoleAssignmentUpdateManyWithoutRoleNestedInput = {
-  create?: Prisma.XOR<Prisma.PersonRoleAssignmentCreateWithoutRoleInput, Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput> | Prisma.PersonRoleAssignmentCreateWithoutRoleInput[] | Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput[]
-  connectOrCreate?: Prisma.PersonRoleAssignmentCreateOrConnectWithoutRoleInput | Prisma.PersonRoleAssignmentCreateOrConnectWithoutRoleInput[]
-  upsert?: Prisma.PersonRoleAssignmentUpsertWithWhereUniqueWithoutRoleInput | Prisma.PersonRoleAssignmentUpsertWithWhereUniqueWithoutRoleInput[]
-  createMany?: Prisma.PersonRoleAssignmentCreateManyRoleInputEnvelope
-  set?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
-  disconnect?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
-  delete?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
-  connect?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
-  update?: Prisma.PersonRoleAssignmentUpdateWithWhereUniqueWithoutRoleInput | Prisma.PersonRoleAssignmentUpdateWithWhereUniqueWithoutRoleInput[]
-  updateMany?: Prisma.PersonRoleAssignmentUpdateManyWithWhereWithoutRoleInput | Prisma.PersonRoleAssignmentUpdateManyWithWhereWithoutRoleInput[]
-  deleteMany?: Prisma.PersonRoleAssignmentScalarWhereInput | Prisma.PersonRoleAssignmentScalarWhereInput[]
-}
-
-export type PersonRoleAssignmentUncheckedUpdateManyWithoutRoleNestedInput = {
-  create?: Prisma.XOR<Prisma.PersonRoleAssignmentCreateWithoutRoleInput, Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput> | Prisma.PersonRoleAssignmentCreateWithoutRoleInput[] | Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput[]
-  connectOrCreate?: Prisma.PersonRoleAssignmentCreateOrConnectWithoutRoleInput | Prisma.PersonRoleAssignmentCreateOrConnectWithoutRoleInput[]
-  upsert?: Prisma.PersonRoleAssignmentUpsertWithWhereUniqueWithoutRoleInput | Prisma.PersonRoleAssignmentUpsertWithWhereUniqueWithoutRoleInput[]
-  createMany?: Prisma.PersonRoleAssignmentCreateManyRoleInputEnvelope
-  set?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
-  disconnect?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
-  delete?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
-  connect?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
-  update?: Prisma.PersonRoleAssignmentUpdateWithWhereUniqueWithoutRoleInput | Prisma.PersonRoleAssignmentUpdateWithWhereUniqueWithoutRoleInput[]
-  updateMany?: Prisma.PersonRoleAssignmentUpdateManyWithWhereWithoutRoleInput | Prisma.PersonRoleAssignmentUpdateManyWithWhereWithoutRoleInput[]
-  deleteMany?: Prisma.PersonRoleAssignmentScalarWhereInput | Prisma.PersonRoleAssignmentScalarWhereInput[]
-}
-
 export type PersonRoleAssignmentCreateNestedManyWithoutPersonInput = {
   create?: Prisma.XOR<Prisma.PersonRoleAssignmentCreateWithoutPersonInput, Prisma.PersonRoleAssignmentUncheckedCreateWithoutPersonInput> | Prisma.PersonRoleAssignmentCreateWithoutPersonInput[] | Prisma.PersonRoleAssignmentUncheckedCreateWithoutPersonInput[]
   connectOrCreate?: Prisma.PersonRoleAssignmentCreateOrConnectWithoutPersonInput | Prisma.PersonRoleAssignmentCreateOrConnectWithoutPersonInput[]
@@ -551,76 +509,46 @@ export type PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput = {
   deleteMany?: Prisma.PersonRoleAssignmentScalarWhereInput | Prisma.PersonRoleAssignmentScalarWhereInput[]
 }
 
-export type PersonRoleAssignmentCreateWithoutRoleInput = {
-  id?: string
-  scope?: string | null
-  startDate?: Date | string
-  endDate?: Date | string | null
-  isPrimary?: boolean
-  isActive?: boolean
-  note?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  person: Prisma.PersonCreateNestedOneWithoutRoleAssignmentsInput
+export type PersonRoleAssignmentCreateNestedManyWithoutRoleInput = {
+  create?: Prisma.XOR<Prisma.PersonRoleAssignmentCreateWithoutRoleInput, Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput> | Prisma.PersonRoleAssignmentCreateWithoutRoleInput[] | Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput[]
+  connectOrCreate?: Prisma.PersonRoleAssignmentCreateOrConnectWithoutRoleInput | Prisma.PersonRoleAssignmentCreateOrConnectWithoutRoleInput[]
+  createMany?: Prisma.PersonRoleAssignmentCreateManyRoleInputEnvelope
+  connect?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
 }
 
-export type PersonRoleAssignmentUncheckedCreateWithoutRoleInput = {
-  id?: string
-  personId: string
-  scope?: string | null
-  startDate?: Date | string
-  endDate?: Date | string | null
-  isPrimary?: boolean
-  isActive?: boolean
-  note?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
+export type PersonRoleAssignmentUncheckedCreateNestedManyWithoutRoleInput = {
+  create?: Prisma.XOR<Prisma.PersonRoleAssignmentCreateWithoutRoleInput, Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput> | Prisma.PersonRoleAssignmentCreateWithoutRoleInput[] | Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput[]
+  connectOrCreate?: Prisma.PersonRoleAssignmentCreateOrConnectWithoutRoleInput | Prisma.PersonRoleAssignmentCreateOrConnectWithoutRoleInput[]
+  createMany?: Prisma.PersonRoleAssignmentCreateManyRoleInputEnvelope
+  connect?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
 }
 
-export type PersonRoleAssignmentCreateOrConnectWithoutRoleInput = {
-  where: Prisma.PersonRoleAssignmentWhereUniqueInput
-  create: Prisma.XOR<Prisma.PersonRoleAssignmentCreateWithoutRoleInput, Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput>
+export type PersonRoleAssignmentUpdateManyWithoutRoleNestedInput = {
+  create?: Prisma.XOR<Prisma.PersonRoleAssignmentCreateWithoutRoleInput, Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput> | Prisma.PersonRoleAssignmentCreateWithoutRoleInput[] | Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput[]
+  connectOrCreate?: Prisma.PersonRoleAssignmentCreateOrConnectWithoutRoleInput | Prisma.PersonRoleAssignmentCreateOrConnectWithoutRoleInput[]
+  upsert?: Prisma.PersonRoleAssignmentUpsertWithWhereUniqueWithoutRoleInput | Prisma.PersonRoleAssignmentUpsertWithWhereUniqueWithoutRoleInput[]
+  createMany?: Prisma.PersonRoleAssignmentCreateManyRoleInputEnvelope
+  set?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
+  disconnect?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
+  delete?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
+  connect?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
+  update?: Prisma.PersonRoleAssignmentUpdateWithWhereUniqueWithoutRoleInput | Prisma.PersonRoleAssignmentUpdateWithWhereUniqueWithoutRoleInput[]
+  updateMany?: Prisma.PersonRoleAssignmentUpdateManyWithWhereWithoutRoleInput | Prisma.PersonRoleAssignmentUpdateManyWithWhereWithoutRoleInput[]
+  deleteMany?: Prisma.PersonRoleAssignmentScalarWhereInput | Prisma.PersonRoleAssignmentScalarWhereInput[]
 }
 
-export type PersonRoleAssignmentCreateManyRoleInputEnvelope = {
-  data: Prisma.PersonRoleAssignmentCreateManyRoleInput | Prisma.PersonRoleAssignmentCreateManyRoleInput[]
-  skipDuplicates?: boolean
-}
-
-export type PersonRoleAssignmentUpsertWithWhereUniqueWithoutRoleInput = {
-  where: Prisma.PersonRoleAssignmentWhereUniqueInput
-  update: Prisma.XOR<Prisma.PersonRoleAssignmentUpdateWithoutRoleInput, Prisma.PersonRoleAssignmentUncheckedUpdateWithoutRoleInput>
-  create: Prisma.XOR<Prisma.PersonRoleAssignmentCreateWithoutRoleInput, Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput>
-}
-
-export type PersonRoleAssignmentUpdateWithWhereUniqueWithoutRoleInput = {
-  where: Prisma.PersonRoleAssignmentWhereUniqueInput
-  data: Prisma.XOR<Prisma.PersonRoleAssignmentUpdateWithoutRoleInput, Prisma.PersonRoleAssignmentUncheckedUpdateWithoutRoleInput>
-}
-
-export type PersonRoleAssignmentUpdateManyWithWhereWithoutRoleInput = {
-  where: Prisma.PersonRoleAssignmentScalarWhereInput
-  data: Prisma.XOR<Prisma.PersonRoleAssignmentUpdateManyMutationInput, Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutRoleInput>
-}
-
-export type PersonRoleAssignmentScalarWhereInput = {
-  AND?: Prisma.PersonRoleAssignmentScalarWhereInput | Prisma.PersonRoleAssignmentScalarWhereInput[]
-  OR?: Prisma.PersonRoleAssignmentScalarWhereInput[]
-  NOT?: Prisma.PersonRoleAssignmentScalarWhereInput | Prisma.PersonRoleAssignmentScalarWhereInput[]
-  id?: Prisma.StringFilter<"PersonRoleAssignment"> | string
-  personId?: Prisma.StringFilter<"PersonRoleAssignment"> | string
-  roleId?: Prisma.StringFilter<"PersonRoleAssignment"> | string
-  scope?: Prisma.StringNullableFilter<"PersonRoleAssignment"> | string | null
-  startDate?: Prisma.DateTimeFilter<"PersonRoleAssignment"> | Date | string
-  endDate?: Prisma.DateTimeNullableFilter<"PersonRoleAssignment"> | Date | string | null
-  isPrimary?: Prisma.BoolFilter<"PersonRoleAssignment"> | boolean
-  isActive?: Prisma.BoolFilter<"PersonRoleAssignment"> | boolean
-  note?: Prisma.StringNullableFilter<"PersonRoleAssignment"> | string | null
-  metadata?: Prisma.JsonNullableFilter<"PersonRoleAssignment">
-  createdAt?: Prisma.DateTimeFilter<"PersonRoleAssignment"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"PersonRoleAssignment"> | Date | string
+export type PersonRoleAssignmentUncheckedUpdateManyWithoutRoleNestedInput = {
+  create?: Prisma.XOR<Prisma.PersonRoleAssignmentCreateWithoutRoleInput, Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput> | Prisma.PersonRoleAssignmentCreateWithoutRoleInput[] | Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput[]
+  connectOrCreate?: Prisma.PersonRoleAssignmentCreateOrConnectWithoutRoleInput | Prisma.PersonRoleAssignmentCreateOrConnectWithoutRoleInput[]
+  upsert?: Prisma.PersonRoleAssignmentUpsertWithWhereUniqueWithoutRoleInput | Prisma.PersonRoleAssignmentUpsertWithWhereUniqueWithoutRoleInput[]
+  createMany?: Prisma.PersonRoleAssignmentCreateManyRoleInputEnvelope
+  set?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
+  disconnect?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
+  delete?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
+  connect?: Prisma.PersonRoleAssignmentWhereUniqueInput | Prisma.PersonRoleAssignmentWhereUniqueInput[]
+  update?: Prisma.PersonRoleAssignmentUpdateWithWhereUniqueWithoutRoleInput | Prisma.PersonRoleAssignmentUpdateWithWhereUniqueWithoutRoleInput[]
+  updateMany?: Prisma.PersonRoleAssignmentUpdateManyWithWhereWithoutRoleInput | Prisma.PersonRoleAssignmentUpdateManyWithWhereWithoutRoleInput[]
+  deleteMany?: Prisma.PersonRoleAssignmentScalarWhereInput | Prisma.PersonRoleAssignmentScalarWhereInput[]
 }
 
 export type PersonRoleAssignmentCreateWithoutPersonInput = {
@@ -677,7 +605,39 @@ export type PersonRoleAssignmentUpdateManyWithWhereWithoutPersonInput = {
   data: Prisma.XOR<Prisma.PersonRoleAssignmentUpdateManyMutationInput, Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonInput>
 }
 
-export type PersonRoleAssignmentCreateManyRoleInput = {
+export type PersonRoleAssignmentScalarWhereInput = {
+  AND?: Prisma.PersonRoleAssignmentScalarWhereInput | Prisma.PersonRoleAssignmentScalarWhereInput[]
+  OR?: Prisma.PersonRoleAssignmentScalarWhereInput[]
+  NOT?: Prisma.PersonRoleAssignmentScalarWhereInput | Prisma.PersonRoleAssignmentScalarWhereInput[]
+  id?: Prisma.StringFilter<"PersonRoleAssignment"> | string
+  personId?: Prisma.StringFilter<"PersonRoleAssignment"> | string
+  roleId?: Prisma.StringFilter<"PersonRoleAssignment"> | string
+  scope?: Prisma.StringNullableFilter<"PersonRoleAssignment"> | string | null
+  startDate?: Prisma.DateTimeFilter<"PersonRoleAssignment"> | Date | string
+  endDate?: Prisma.DateTimeNullableFilter<"PersonRoleAssignment"> | Date | string | null
+  isPrimary?: Prisma.BoolFilter<"PersonRoleAssignment"> | boolean
+  isActive?: Prisma.BoolFilter<"PersonRoleAssignment"> | boolean
+  note?: Prisma.StringNullableFilter<"PersonRoleAssignment"> | string | null
+  metadata?: Prisma.JsonNullableFilter<"PersonRoleAssignment">
+  createdAt?: Prisma.DateTimeFilter<"PersonRoleAssignment"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"PersonRoleAssignment"> | Date | string
+}
+
+export type PersonRoleAssignmentCreateWithoutRoleInput = {
+  id?: string
+  scope?: string | null
+  startDate?: Date | string
+  endDate?: Date | string | null
+  isPrimary?: boolean
+  isActive?: boolean
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  person: Prisma.PersonCreateNestedOneWithoutRoleAssignmentsInput
+}
+
+export type PersonRoleAssignmentUncheckedCreateWithoutRoleInput = {
   id?: string
   personId: string
   scope?: string | null
@@ -691,46 +651,30 @@ export type PersonRoleAssignmentCreateManyRoleInput = {
   updatedAt?: Date | string
 }
 
-export type PersonRoleAssignmentUpdateWithoutRoleInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  scope?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  person?: Prisma.PersonUpdateOneRequiredWithoutRoleAssignmentsNestedInput
+export type PersonRoleAssignmentCreateOrConnectWithoutRoleInput = {
+  where: Prisma.PersonRoleAssignmentWhereUniqueInput
+  create: Prisma.XOR<Prisma.PersonRoleAssignmentCreateWithoutRoleInput, Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput>
 }
 
-export type PersonRoleAssignmentUncheckedUpdateWithoutRoleInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  personId?: Prisma.StringFieldUpdateOperationsInput | string
-  scope?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type PersonRoleAssignmentCreateManyRoleInputEnvelope = {
+  data: Prisma.PersonRoleAssignmentCreateManyRoleInput | Prisma.PersonRoleAssignmentCreateManyRoleInput[]
+  skipDuplicates?: boolean
 }
 
-export type PersonRoleAssignmentUncheckedUpdateManyWithoutRoleInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  personId?: Prisma.StringFieldUpdateOperationsInput | string
-  scope?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type PersonRoleAssignmentUpsertWithWhereUniqueWithoutRoleInput = {
+  where: Prisma.PersonRoleAssignmentWhereUniqueInput
+  update: Prisma.XOR<Prisma.PersonRoleAssignmentUpdateWithoutRoleInput, Prisma.PersonRoleAssignmentUncheckedUpdateWithoutRoleInput>
+  create: Prisma.XOR<Prisma.PersonRoleAssignmentCreateWithoutRoleInput, Prisma.PersonRoleAssignmentUncheckedCreateWithoutRoleInput>
+}
+
+export type PersonRoleAssignmentUpdateWithWhereUniqueWithoutRoleInput = {
+  where: Prisma.PersonRoleAssignmentWhereUniqueInput
+  data: Prisma.XOR<Prisma.PersonRoleAssignmentUpdateWithoutRoleInput, Prisma.PersonRoleAssignmentUncheckedUpdateWithoutRoleInput>
+}
+
+export type PersonRoleAssignmentUpdateManyWithWhereWithoutRoleInput = {
+  where: Prisma.PersonRoleAssignmentScalarWhereInput
+  data: Prisma.XOR<Prisma.PersonRoleAssignmentUpdateManyMutationInput, Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutRoleInput>
 }
 
 export type PersonRoleAssignmentCreateManyPersonInput = {
@@ -778,6 +722,62 @@ export type PersonRoleAssignmentUncheckedUpdateWithoutPersonInput = {
 export type PersonRoleAssignmentUncheckedUpdateManyWithoutPersonInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   roleId?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PersonRoleAssignmentCreateManyRoleInput = {
+  id?: string
+  personId: string
+  scope?: string | null
+  startDate?: Date | string
+  endDate?: Date | string | null
+  isPrimary?: boolean
+  isActive?: boolean
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type PersonRoleAssignmentUpdateWithoutRoleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  person?: Prisma.PersonUpdateOneRequiredWithoutRoleAssignmentsNestedInput
+}
+
+export type PersonRoleAssignmentUncheckedUpdateWithoutRoleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  personId?: Prisma.StringFieldUpdateOperationsInput | string
+  scope?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isPrimary?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type PersonRoleAssignmentUncheckedUpdateManyWithoutRoleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  personId?: Prisma.StringFieldUpdateOperationsInput | string
   scope?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null

@@ -532,48 +532,6 @@ export type LifecycleTransitionMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type LifecycleTransitionCreateNestedManyWithoutRequiredRoleInput = {
-  create?: Prisma.XOR<Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput, Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput> | Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput[] | Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput[]
-  connectOrCreate?: Prisma.LifecycleTransitionCreateOrConnectWithoutRequiredRoleInput | Prisma.LifecycleTransitionCreateOrConnectWithoutRequiredRoleInput[]
-  createMany?: Prisma.LifecycleTransitionCreateManyRequiredRoleInputEnvelope
-  connect?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
-}
-
-export type LifecycleTransitionUncheckedCreateNestedManyWithoutRequiredRoleInput = {
-  create?: Prisma.XOR<Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput, Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput> | Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput[] | Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput[]
-  connectOrCreate?: Prisma.LifecycleTransitionCreateOrConnectWithoutRequiredRoleInput | Prisma.LifecycleTransitionCreateOrConnectWithoutRequiredRoleInput[]
-  createMany?: Prisma.LifecycleTransitionCreateManyRequiredRoleInputEnvelope
-  connect?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
-}
-
-export type LifecycleTransitionUpdateManyWithoutRequiredRoleNestedInput = {
-  create?: Prisma.XOR<Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput, Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput> | Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput[] | Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput[]
-  connectOrCreate?: Prisma.LifecycleTransitionCreateOrConnectWithoutRequiredRoleInput | Prisma.LifecycleTransitionCreateOrConnectWithoutRequiredRoleInput[]
-  upsert?: Prisma.LifecycleTransitionUpsertWithWhereUniqueWithoutRequiredRoleInput | Prisma.LifecycleTransitionUpsertWithWhereUniqueWithoutRequiredRoleInput[]
-  createMany?: Prisma.LifecycleTransitionCreateManyRequiredRoleInputEnvelope
-  set?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
-  disconnect?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
-  delete?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
-  connect?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
-  update?: Prisma.LifecycleTransitionUpdateWithWhereUniqueWithoutRequiredRoleInput | Prisma.LifecycleTransitionUpdateWithWhereUniqueWithoutRequiredRoleInput[]
-  updateMany?: Prisma.LifecycleTransitionUpdateManyWithWhereWithoutRequiredRoleInput | Prisma.LifecycleTransitionUpdateManyWithWhereWithoutRequiredRoleInput[]
-  deleteMany?: Prisma.LifecycleTransitionScalarWhereInput | Prisma.LifecycleTransitionScalarWhereInput[]
-}
-
-export type LifecycleTransitionUncheckedUpdateManyWithoutRequiredRoleNestedInput = {
-  create?: Prisma.XOR<Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput, Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput> | Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput[] | Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput[]
-  connectOrCreate?: Prisma.LifecycleTransitionCreateOrConnectWithoutRequiredRoleInput | Prisma.LifecycleTransitionCreateOrConnectWithoutRequiredRoleInput[]
-  upsert?: Prisma.LifecycleTransitionUpsertWithWhereUniqueWithoutRequiredRoleInput | Prisma.LifecycleTransitionUpsertWithWhereUniqueWithoutRequiredRoleInput[]
-  createMany?: Prisma.LifecycleTransitionCreateManyRequiredRoleInputEnvelope
-  set?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
-  disconnect?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
-  delete?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
-  connect?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
-  update?: Prisma.LifecycleTransitionUpdateWithWhereUniqueWithoutRequiredRoleInput | Prisma.LifecycleTransitionUpdateWithWhereUniqueWithoutRequiredRoleInput[]
-  updateMany?: Prisma.LifecycleTransitionUpdateManyWithWhereWithoutRequiredRoleInput | Prisma.LifecycleTransitionUpdateManyWithWhereWithoutRequiredRoleInput[]
-  deleteMany?: Prisma.LifecycleTransitionScalarWhereInput | Prisma.LifecycleTransitionScalarWhereInput[]
-}
-
 export type LifecycleTransitionCreateNestedManyWithoutLifecycleModelInput = {
   create?: Prisma.XOR<Prisma.LifecycleTransitionCreateWithoutLifecycleModelInput, Prisma.LifecycleTransitionUncheckedCreateWithoutLifecycleModelInput> | Prisma.LifecycleTransitionCreateWithoutLifecycleModelInput[] | Prisma.LifecycleTransitionUncheckedCreateWithoutLifecycleModelInput[]
   connectOrCreate?: Prisma.LifecycleTransitionCreateOrConnectWithoutLifecycleModelInput | Prisma.LifecycleTransitionCreateOrConnectWithoutLifecycleModelInput[]
@@ -700,85 +658,46 @@ export type LifecycleTransitionUncheckedUpdateManyWithoutToStateNestedInput = {
   deleteMany?: Prisma.LifecycleTransitionScalarWhereInput | Prisma.LifecycleTransitionScalarWhereInput[]
 }
 
-export type LifecycleTransitionCreateWithoutRequiredRoleInput = {
-  id?: string
-  name: string
-  description?: string | null
-  requiresApproval?: boolean
-  approvalPolicy?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  isAutomated?: boolean
-  isActive?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  lifecycleModel: Prisma.LifecycleModelCreateNestedOneWithoutTransitionsInput
-  fromState: Prisma.LifecycleStateCreateNestedOneWithoutTransitionsFromInput
-  toState: Prisma.LifecycleStateCreateNestedOneWithoutTransitionsToInput
+export type LifecycleTransitionCreateNestedManyWithoutRequiredRoleInput = {
+  create?: Prisma.XOR<Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput, Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput> | Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput[] | Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput[]
+  connectOrCreate?: Prisma.LifecycleTransitionCreateOrConnectWithoutRequiredRoleInput | Prisma.LifecycleTransitionCreateOrConnectWithoutRequiredRoleInput[]
+  createMany?: Prisma.LifecycleTransitionCreateManyRequiredRoleInputEnvelope
+  connect?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
 }
 
-export type LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput = {
-  id?: string
-  lifecycleModelId: string
-  name: string
-  description?: string | null
-  fromStateId: string
-  toStateId: string
-  requiresApproval?: boolean
-  approvalPolicy?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  isAutomated?: boolean
-  isActive?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
+export type LifecycleTransitionUncheckedCreateNestedManyWithoutRequiredRoleInput = {
+  create?: Prisma.XOR<Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput, Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput> | Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput[] | Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput[]
+  connectOrCreate?: Prisma.LifecycleTransitionCreateOrConnectWithoutRequiredRoleInput | Prisma.LifecycleTransitionCreateOrConnectWithoutRequiredRoleInput[]
+  createMany?: Prisma.LifecycleTransitionCreateManyRequiredRoleInputEnvelope
+  connect?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
 }
 
-export type LifecycleTransitionCreateOrConnectWithoutRequiredRoleInput = {
-  where: Prisma.LifecycleTransitionWhereUniqueInput
-  create: Prisma.XOR<Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput, Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput>
+export type LifecycleTransitionUpdateManyWithoutRequiredRoleNestedInput = {
+  create?: Prisma.XOR<Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput, Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput> | Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput[] | Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput[]
+  connectOrCreate?: Prisma.LifecycleTransitionCreateOrConnectWithoutRequiredRoleInput | Prisma.LifecycleTransitionCreateOrConnectWithoutRequiredRoleInput[]
+  upsert?: Prisma.LifecycleTransitionUpsertWithWhereUniqueWithoutRequiredRoleInput | Prisma.LifecycleTransitionUpsertWithWhereUniqueWithoutRequiredRoleInput[]
+  createMany?: Prisma.LifecycleTransitionCreateManyRequiredRoleInputEnvelope
+  set?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
+  disconnect?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
+  delete?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
+  connect?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
+  update?: Prisma.LifecycleTransitionUpdateWithWhereUniqueWithoutRequiredRoleInput | Prisma.LifecycleTransitionUpdateWithWhereUniqueWithoutRequiredRoleInput[]
+  updateMany?: Prisma.LifecycleTransitionUpdateManyWithWhereWithoutRequiredRoleInput | Prisma.LifecycleTransitionUpdateManyWithWhereWithoutRequiredRoleInput[]
+  deleteMany?: Prisma.LifecycleTransitionScalarWhereInput | Prisma.LifecycleTransitionScalarWhereInput[]
 }
 
-export type LifecycleTransitionCreateManyRequiredRoleInputEnvelope = {
-  data: Prisma.LifecycleTransitionCreateManyRequiredRoleInput | Prisma.LifecycleTransitionCreateManyRequiredRoleInput[]
-  skipDuplicates?: boolean
-}
-
-export type LifecycleTransitionUpsertWithWhereUniqueWithoutRequiredRoleInput = {
-  where: Prisma.LifecycleTransitionWhereUniqueInput
-  update: Prisma.XOR<Prisma.LifecycleTransitionUpdateWithoutRequiredRoleInput, Prisma.LifecycleTransitionUncheckedUpdateWithoutRequiredRoleInput>
-  create: Prisma.XOR<Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput, Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput>
-}
-
-export type LifecycleTransitionUpdateWithWhereUniqueWithoutRequiredRoleInput = {
-  where: Prisma.LifecycleTransitionWhereUniqueInput
-  data: Prisma.XOR<Prisma.LifecycleTransitionUpdateWithoutRequiredRoleInput, Prisma.LifecycleTransitionUncheckedUpdateWithoutRequiredRoleInput>
-}
-
-export type LifecycleTransitionUpdateManyWithWhereWithoutRequiredRoleInput = {
-  where: Prisma.LifecycleTransitionScalarWhereInput
-  data: Prisma.XOR<Prisma.LifecycleTransitionUpdateManyMutationInput, Prisma.LifecycleTransitionUncheckedUpdateManyWithoutRequiredRoleInput>
-}
-
-export type LifecycleTransitionScalarWhereInput = {
-  AND?: Prisma.LifecycleTransitionScalarWhereInput | Prisma.LifecycleTransitionScalarWhereInput[]
-  OR?: Prisma.LifecycleTransitionScalarWhereInput[]
-  NOT?: Prisma.LifecycleTransitionScalarWhereInput | Prisma.LifecycleTransitionScalarWhereInput[]
-  id?: Prisma.StringFilter<"LifecycleTransition"> | string
-  lifecycleModelId?: Prisma.StringFilter<"LifecycleTransition"> | string
-  name?: Prisma.StringFilter<"LifecycleTransition"> | string
-  description?: Prisma.StringNullableFilter<"LifecycleTransition"> | string | null
-  fromStateId?: Prisma.StringFilter<"LifecycleTransition"> | string
-  toStateId?: Prisma.StringFilter<"LifecycleTransition"> | string
-  requiredRoleId?: Prisma.StringNullableFilter<"LifecycleTransition"> | string | null
-  requiresApproval?: Prisma.BoolFilter<"LifecycleTransition"> | boolean
-  approvalPolicy?: Prisma.JsonNullableFilter<"LifecycleTransition">
-  conditions?: Prisma.JsonNullableFilter<"LifecycleTransition">
-  isAutomated?: Prisma.BoolFilter<"LifecycleTransition"> | boolean
-  isActive?: Prisma.BoolFilter<"LifecycleTransition"> | boolean
-  metadata?: Prisma.JsonNullableFilter<"LifecycleTransition">
-  createdAt?: Prisma.DateTimeFilter<"LifecycleTransition"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"LifecycleTransition"> | Date | string
+export type LifecycleTransitionUncheckedUpdateManyWithoutRequiredRoleNestedInput = {
+  create?: Prisma.XOR<Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput, Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput> | Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput[] | Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput[]
+  connectOrCreate?: Prisma.LifecycleTransitionCreateOrConnectWithoutRequiredRoleInput | Prisma.LifecycleTransitionCreateOrConnectWithoutRequiredRoleInput[]
+  upsert?: Prisma.LifecycleTransitionUpsertWithWhereUniqueWithoutRequiredRoleInput | Prisma.LifecycleTransitionUpsertWithWhereUniqueWithoutRequiredRoleInput[]
+  createMany?: Prisma.LifecycleTransitionCreateManyRequiredRoleInputEnvelope
+  set?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
+  disconnect?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
+  delete?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
+  connect?: Prisma.LifecycleTransitionWhereUniqueInput | Prisma.LifecycleTransitionWhereUniqueInput[]
+  update?: Prisma.LifecycleTransitionUpdateWithWhereUniqueWithoutRequiredRoleInput | Prisma.LifecycleTransitionUpdateWithWhereUniqueWithoutRequiredRoleInput[]
+  updateMany?: Prisma.LifecycleTransitionUpdateManyWithWhereWithoutRequiredRoleInput | Prisma.LifecycleTransitionUpdateManyWithWhereWithoutRequiredRoleInput[]
+  deleteMany?: Prisma.LifecycleTransitionScalarWhereInput | Prisma.LifecycleTransitionScalarWhereInput[]
 }
 
 export type LifecycleTransitionCreateWithoutLifecycleModelInput = {
@@ -839,6 +758,27 @@ export type LifecycleTransitionUpdateWithWhereUniqueWithoutLifecycleModelInput =
 export type LifecycleTransitionUpdateManyWithWhereWithoutLifecycleModelInput = {
   where: Prisma.LifecycleTransitionScalarWhereInput
   data: Prisma.XOR<Prisma.LifecycleTransitionUpdateManyMutationInput, Prisma.LifecycleTransitionUncheckedUpdateManyWithoutLifecycleModelInput>
+}
+
+export type LifecycleTransitionScalarWhereInput = {
+  AND?: Prisma.LifecycleTransitionScalarWhereInput | Prisma.LifecycleTransitionScalarWhereInput[]
+  OR?: Prisma.LifecycleTransitionScalarWhereInput[]
+  NOT?: Prisma.LifecycleTransitionScalarWhereInput | Prisma.LifecycleTransitionScalarWhereInput[]
+  id?: Prisma.StringFilter<"LifecycleTransition"> | string
+  lifecycleModelId?: Prisma.StringFilter<"LifecycleTransition"> | string
+  name?: Prisma.StringFilter<"LifecycleTransition"> | string
+  description?: Prisma.StringNullableFilter<"LifecycleTransition"> | string | null
+  fromStateId?: Prisma.StringFilter<"LifecycleTransition"> | string
+  toStateId?: Prisma.StringFilter<"LifecycleTransition"> | string
+  requiredRoleId?: Prisma.StringNullableFilter<"LifecycleTransition"> | string | null
+  requiresApproval?: Prisma.BoolFilter<"LifecycleTransition"> | boolean
+  approvalPolicy?: Prisma.JsonNullableFilter<"LifecycleTransition">
+  conditions?: Prisma.JsonNullableFilter<"LifecycleTransition">
+  isAutomated?: Prisma.BoolFilter<"LifecycleTransition"> | boolean
+  isActive?: Prisma.BoolFilter<"LifecycleTransition"> | boolean
+  metadata?: Prisma.JsonNullableFilter<"LifecycleTransition">
+  createdAt?: Prisma.DateTimeFilter<"LifecycleTransition"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"LifecycleTransition"> | Date | string
 }
 
 export type LifecycleTransitionCreateWithoutFromStateInput = {
@@ -961,7 +901,24 @@ export type LifecycleTransitionUpdateManyWithWhereWithoutToStateInput = {
   data: Prisma.XOR<Prisma.LifecycleTransitionUpdateManyMutationInput, Prisma.LifecycleTransitionUncheckedUpdateManyWithoutToStateInput>
 }
 
-export type LifecycleTransitionCreateManyRequiredRoleInput = {
+export type LifecycleTransitionCreateWithoutRequiredRoleInput = {
+  id?: string
+  name: string
+  description?: string | null
+  requiresApproval?: boolean
+  approvalPolicy?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isAutomated?: boolean
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lifecycleModel: Prisma.LifecycleModelCreateNestedOneWithoutTransitionsInput
+  fromState: Prisma.LifecycleStateCreateNestedOneWithoutTransitionsFromInput
+  toState: Prisma.LifecycleStateCreateNestedOneWithoutTransitionsToInput
+}
+
+export type LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput = {
   id?: string
   lifecycleModelId: string
   name: string
@@ -978,55 +935,30 @@ export type LifecycleTransitionCreateManyRequiredRoleInput = {
   updatedAt?: Date | string
 }
 
-export type LifecycleTransitionUpdateWithoutRequiredRoleInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requiresApproval?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  approvalPolicy?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  isAutomated?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lifecycleModel?: Prisma.LifecycleModelUpdateOneRequiredWithoutTransitionsNestedInput
-  fromState?: Prisma.LifecycleStateUpdateOneRequiredWithoutTransitionsFromNestedInput
-  toState?: Prisma.LifecycleStateUpdateOneRequiredWithoutTransitionsToNestedInput
+export type LifecycleTransitionCreateOrConnectWithoutRequiredRoleInput = {
+  where: Prisma.LifecycleTransitionWhereUniqueInput
+  create: Prisma.XOR<Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput, Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput>
 }
 
-export type LifecycleTransitionUncheckedUpdateWithoutRequiredRoleInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  lifecycleModelId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fromStateId?: Prisma.StringFieldUpdateOperationsInput | string
-  toStateId?: Prisma.StringFieldUpdateOperationsInput | string
-  requiresApproval?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  approvalPolicy?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  isAutomated?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type LifecycleTransitionCreateManyRequiredRoleInputEnvelope = {
+  data: Prisma.LifecycleTransitionCreateManyRequiredRoleInput | Prisma.LifecycleTransitionCreateManyRequiredRoleInput[]
+  skipDuplicates?: boolean
 }
 
-export type LifecycleTransitionUncheckedUpdateManyWithoutRequiredRoleInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  lifecycleModelId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fromStateId?: Prisma.StringFieldUpdateOperationsInput | string
-  toStateId?: Prisma.StringFieldUpdateOperationsInput | string
-  requiresApproval?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  approvalPolicy?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  isAutomated?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type LifecycleTransitionUpsertWithWhereUniqueWithoutRequiredRoleInput = {
+  where: Prisma.LifecycleTransitionWhereUniqueInput
+  update: Prisma.XOR<Prisma.LifecycleTransitionUpdateWithoutRequiredRoleInput, Prisma.LifecycleTransitionUncheckedUpdateWithoutRequiredRoleInput>
+  create: Prisma.XOR<Prisma.LifecycleTransitionCreateWithoutRequiredRoleInput, Prisma.LifecycleTransitionUncheckedCreateWithoutRequiredRoleInput>
+}
+
+export type LifecycleTransitionUpdateWithWhereUniqueWithoutRequiredRoleInput = {
+  where: Prisma.LifecycleTransitionWhereUniqueInput
+  data: Prisma.XOR<Prisma.LifecycleTransitionUpdateWithoutRequiredRoleInput, Prisma.LifecycleTransitionUncheckedUpdateWithoutRequiredRoleInput>
+}
+
+export type LifecycleTransitionUpdateManyWithWhereWithoutRequiredRoleInput = {
+  where: Prisma.LifecycleTransitionScalarWhereInput
+  data: Prisma.XOR<Prisma.LifecycleTransitionUpdateManyMutationInput, Prisma.LifecycleTransitionUncheckedUpdateManyWithoutRequiredRoleInput>
 }
 
 export type LifecycleTransitionCreateManyLifecycleModelInput = {
@@ -1223,6 +1155,74 @@ export type LifecycleTransitionUncheckedUpdateManyWithoutToStateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fromStateId?: Prisma.StringFieldUpdateOperationsInput | string
   requiredRoleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requiresApproval?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  approvalPolicy?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isAutomated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type LifecycleTransitionCreateManyRequiredRoleInput = {
+  id?: string
+  lifecycleModelId: string
+  name: string
+  description?: string | null
+  fromStateId: string
+  toStateId: string
+  requiresApproval?: boolean
+  approvalPolicy?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isAutomated?: boolean
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type LifecycleTransitionUpdateWithoutRequiredRoleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requiresApproval?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  approvalPolicy?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isAutomated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lifecycleModel?: Prisma.LifecycleModelUpdateOneRequiredWithoutTransitionsNestedInput
+  fromState?: Prisma.LifecycleStateUpdateOneRequiredWithoutTransitionsFromNestedInput
+  toState?: Prisma.LifecycleStateUpdateOneRequiredWithoutTransitionsToNestedInput
+}
+
+export type LifecycleTransitionUncheckedUpdateWithoutRequiredRoleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycleModelId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fromStateId?: Prisma.StringFieldUpdateOperationsInput | string
+  toStateId?: Prisma.StringFieldUpdateOperationsInput | string
+  requiresApproval?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  approvalPolicy?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isAutomated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type LifecycleTransitionUncheckedUpdateManyWithoutRequiredRoleInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycleModelId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fromStateId?: Prisma.StringFieldUpdateOperationsInput | string
+  toStateId?: Prisma.StringFieldUpdateOperationsInput | string
   requiresApproval?: Prisma.BoolFieldUpdateOperationsInput | boolean
   approvalPolicy?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   conditions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue

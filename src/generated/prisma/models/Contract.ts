@@ -551,6 +551,11 @@ export type ContractUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type ContractNullableScalarRelationFilter = {
+  is?: Prisma.ContractWhereInput | null
+  isNot?: Prisma.ContractWhereInput | null
+}
+
 export type ContractListRelationFilter = {
   every?: Prisma.ContractWhereInput
   some?: Prisma.ContractWhereInput
@@ -559,11 +564,6 @@ export type ContractListRelationFilter = {
 
 export type ContractOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
-}
-
-export type ContractNullableScalarRelationFilter = {
-  is?: Prisma.ContractWhereInput | null
-  isNot?: Prisma.ContractWhereInput | null
 }
 
 export type ContractCountOrderByAggregateInput = {
@@ -634,48 +634,6 @@ export type ContractSumOrderByAggregateInput = {
 export type ContractScalarRelationFilter = {
   is?: Prisma.ContractWhereInput
   isNot?: Prisma.ContractWhereInput
-}
-
-export type ContractCreateNestedManyWithoutVendorInput = {
-  create?: Prisma.XOR<Prisma.ContractCreateWithoutVendorInput, Prisma.ContractUncheckedCreateWithoutVendorInput> | Prisma.ContractCreateWithoutVendorInput[] | Prisma.ContractUncheckedCreateWithoutVendorInput[]
-  connectOrCreate?: Prisma.ContractCreateOrConnectWithoutVendorInput | Prisma.ContractCreateOrConnectWithoutVendorInput[]
-  createMany?: Prisma.ContractCreateManyVendorInputEnvelope
-  connect?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
-}
-
-export type ContractUncheckedCreateNestedManyWithoutVendorInput = {
-  create?: Prisma.XOR<Prisma.ContractCreateWithoutVendorInput, Prisma.ContractUncheckedCreateWithoutVendorInput> | Prisma.ContractCreateWithoutVendorInput[] | Prisma.ContractUncheckedCreateWithoutVendorInput[]
-  connectOrCreate?: Prisma.ContractCreateOrConnectWithoutVendorInput | Prisma.ContractCreateOrConnectWithoutVendorInput[]
-  createMany?: Prisma.ContractCreateManyVendorInputEnvelope
-  connect?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
-}
-
-export type ContractUpdateManyWithoutVendorNestedInput = {
-  create?: Prisma.XOR<Prisma.ContractCreateWithoutVendorInput, Prisma.ContractUncheckedCreateWithoutVendorInput> | Prisma.ContractCreateWithoutVendorInput[] | Prisma.ContractUncheckedCreateWithoutVendorInput[]
-  connectOrCreate?: Prisma.ContractCreateOrConnectWithoutVendorInput | Prisma.ContractCreateOrConnectWithoutVendorInput[]
-  upsert?: Prisma.ContractUpsertWithWhereUniqueWithoutVendorInput | Prisma.ContractUpsertWithWhereUniqueWithoutVendorInput[]
-  createMany?: Prisma.ContractCreateManyVendorInputEnvelope
-  set?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
-  disconnect?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
-  delete?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
-  connect?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
-  update?: Prisma.ContractUpdateWithWhereUniqueWithoutVendorInput | Prisma.ContractUpdateWithWhereUniqueWithoutVendorInput[]
-  updateMany?: Prisma.ContractUpdateManyWithWhereWithoutVendorInput | Prisma.ContractUpdateManyWithWhereWithoutVendorInput[]
-  deleteMany?: Prisma.ContractScalarWhereInput | Prisma.ContractScalarWhereInput[]
-}
-
-export type ContractUncheckedUpdateManyWithoutVendorNestedInput = {
-  create?: Prisma.XOR<Prisma.ContractCreateWithoutVendorInput, Prisma.ContractUncheckedCreateWithoutVendorInput> | Prisma.ContractCreateWithoutVendorInput[] | Prisma.ContractUncheckedCreateWithoutVendorInput[]
-  connectOrCreate?: Prisma.ContractCreateOrConnectWithoutVendorInput | Prisma.ContractCreateOrConnectWithoutVendorInput[]
-  upsert?: Prisma.ContractUpsertWithWhereUniqueWithoutVendorInput | Prisma.ContractUpsertWithWhereUniqueWithoutVendorInput[]
-  createMany?: Prisma.ContractCreateManyVendorInputEnvelope
-  set?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
-  disconnect?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
-  delete?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
-  connect?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
-  update?: Prisma.ContractUpdateWithWhereUniqueWithoutVendorInput | Prisma.ContractUpdateWithWhereUniqueWithoutVendorInput[]
-  updateMany?: Prisma.ContractUpdateManyWithWhereWithoutVendorInput | Prisma.ContractUpdateManyWithWhereWithoutVendorInput[]
-  deleteMany?: Prisma.ContractScalarWhereInput | Prisma.ContractScalarWhereInput[]
 }
 
 export type ContractCreateNestedOneWithoutAssetsInput = {
@@ -750,6 +708,48 @@ export type ContractUpdateOneRequiredWithoutLinkedObjectsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ContractUpdateToOneWithWhereWithoutLinkedObjectsInput, Prisma.ContractUpdateWithoutLinkedObjectsInput>, Prisma.ContractUncheckedUpdateWithoutLinkedObjectsInput>
 }
 
+export type ContractCreateNestedManyWithoutVendorInput = {
+  create?: Prisma.XOR<Prisma.ContractCreateWithoutVendorInput, Prisma.ContractUncheckedCreateWithoutVendorInput> | Prisma.ContractCreateWithoutVendorInput[] | Prisma.ContractUncheckedCreateWithoutVendorInput[]
+  connectOrCreate?: Prisma.ContractCreateOrConnectWithoutVendorInput | Prisma.ContractCreateOrConnectWithoutVendorInput[]
+  createMany?: Prisma.ContractCreateManyVendorInputEnvelope
+  connect?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
+}
+
+export type ContractUncheckedCreateNestedManyWithoutVendorInput = {
+  create?: Prisma.XOR<Prisma.ContractCreateWithoutVendorInput, Prisma.ContractUncheckedCreateWithoutVendorInput> | Prisma.ContractCreateWithoutVendorInput[] | Prisma.ContractUncheckedCreateWithoutVendorInput[]
+  connectOrCreate?: Prisma.ContractCreateOrConnectWithoutVendorInput | Prisma.ContractCreateOrConnectWithoutVendorInput[]
+  createMany?: Prisma.ContractCreateManyVendorInputEnvelope
+  connect?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
+}
+
+export type ContractUpdateManyWithoutVendorNestedInput = {
+  create?: Prisma.XOR<Prisma.ContractCreateWithoutVendorInput, Prisma.ContractUncheckedCreateWithoutVendorInput> | Prisma.ContractCreateWithoutVendorInput[] | Prisma.ContractUncheckedCreateWithoutVendorInput[]
+  connectOrCreate?: Prisma.ContractCreateOrConnectWithoutVendorInput | Prisma.ContractCreateOrConnectWithoutVendorInput[]
+  upsert?: Prisma.ContractUpsertWithWhereUniqueWithoutVendorInput | Prisma.ContractUpsertWithWhereUniqueWithoutVendorInput[]
+  createMany?: Prisma.ContractCreateManyVendorInputEnvelope
+  set?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
+  disconnect?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
+  delete?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
+  connect?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
+  update?: Prisma.ContractUpdateWithWhereUniqueWithoutVendorInput | Prisma.ContractUpdateWithWhereUniqueWithoutVendorInput[]
+  updateMany?: Prisma.ContractUpdateManyWithWhereWithoutVendorInput | Prisma.ContractUpdateManyWithWhereWithoutVendorInput[]
+  deleteMany?: Prisma.ContractScalarWhereInput | Prisma.ContractScalarWhereInput[]
+}
+
+export type ContractUncheckedUpdateManyWithoutVendorNestedInput = {
+  create?: Prisma.XOR<Prisma.ContractCreateWithoutVendorInput, Prisma.ContractUncheckedCreateWithoutVendorInput> | Prisma.ContractCreateWithoutVendorInput[] | Prisma.ContractUncheckedCreateWithoutVendorInput[]
+  connectOrCreate?: Prisma.ContractCreateOrConnectWithoutVendorInput | Prisma.ContractCreateOrConnectWithoutVendorInput[]
+  upsert?: Prisma.ContractUpsertWithWhereUniqueWithoutVendorInput | Prisma.ContractUpsertWithWhereUniqueWithoutVendorInput[]
+  createMany?: Prisma.ContractCreateManyVendorInputEnvelope
+  set?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
+  disconnect?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
+  delete?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
+  connect?: Prisma.ContractWhereUniqueInput | Prisma.ContractWhereUniqueInput[]
+  update?: Prisma.ContractUpdateWithWhereUniqueWithoutVendorInput | Prisma.ContractUpdateWithWhereUniqueWithoutVendorInput[]
+  updateMany?: Prisma.ContractUpdateManyWithWhereWithoutVendorInput | Prisma.ContractUpdateManyWithWhereWithoutVendorInput[]
+  deleteMany?: Prisma.ContractScalarWhereInput | Prisma.ContractScalarWhereInput[]
+}
+
 export type ContractCreateNestedOneWithoutLicenseEntitlementsInput = {
   create?: Prisma.XOR<Prisma.ContractCreateWithoutLicenseEntitlementsInput, Prisma.ContractUncheckedCreateWithoutLicenseEntitlementsInput>
   connectOrCreate?: Prisma.ContractCreateOrConnectWithoutLicenseEntitlementsInput
@@ -764,96 +764,6 @@ export type ContractUpdateOneWithoutLicenseEntitlementsNestedInput = {
   delete?: Prisma.ContractWhereInput | boolean
   connect?: Prisma.ContractWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ContractUpdateToOneWithWhereWithoutLicenseEntitlementsInput, Prisma.ContractUpdateWithoutLicenseEntitlementsInput>, Prisma.ContractUncheckedUpdateWithoutLicenseEntitlementsInput>
-}
-
-export type ContractCreateWithoutVendorInput = {
-  id?: string
-  name: string
-  contractNumber?: string | null
-  startDate: Date | string
-  endDate?: Date | string | null
-  autoRenew?: boolean
-  renewalTerms?: string | null
-  slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  note?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  contractType: Prisma.ContractTypeCreateNestedOneWithoutContractsInput
-  assets?: Prisma.AssetCreateNestedManyWithoutContractInput
-  linkedObjects?: Prisma.ContractLinkedObjectCreateNestedManyWithoutContractInput
-  licenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutContractInput
-}
-
-export type ContractUncheckedCreateWithoutVendorInput = {
-  id?: string
-  contractTypeId: string
-  name: string
-  contractNumber?: string | null
-  startDate: Date | string
-  endDate?: Date | string | null
-  autoRenew?: boolean
-  renewalTerms?: string | null
-  slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  note?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  assets?: Prisma.AssetUncheckedCreateNestedManyWithoutContractInput
-  linkedObjects?: Prisma.ContractLinkedObjectUncheckedCreateNestedManyWithoutContractInput
-  licenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutContractInput
-}
-
-export type ContractCreateOrConnectWithoutVendorInput = {
-  where: Prisma.ContractWhereUniqueInput
-  create: Prisma.XOR<Prisma.ContractCreateWithoutVendorInput, Prisma.ContractUncheckedCreateWithoutVendorInput>
-}
-
-export type ContractCreateManyVendorInputEnvelope = {
-  data: Prisma.ContractCreateManyVendorInput | Prisma.ContractCreateManyVendorInput[]
-  skipDuplicates?: boolean
-}
-
-export type ContractUpsertWithWhereUniqueWithoutVendorInput = {
-  where: Prisma.ContractWhereUniqueInput
-  update: Prisma.XOR<Prisma.ContractUpdateWithoutVendorInput, Prisma.ContractUncheckedUpdateWithoutVendorInput>
-  create: Prisma.XOR<Prisma.ContractCreateWithoutVendorInput, Prisma.ContractUncheckedCreateWithoutVendorInput>
-}
-
-export type ContractUpdateWithWhereUniqueWithoutVendorInput = {
-  where: Prisma.ContractWhereUniqueInput
-  data: Prisma.XOR<Prisma.ContractUpdateWithoutVendorInput, Prisma.ContractUncheckedUpdateWithoutVendorInput>
-}
-
-export type ContractUpdateManyWithWhereWithoutVendorInput = {
-  where: Prisma.ContractScalarWhereInput
-  data: Prisma.XOR<Prisma.ContractUpdateManyMutationInput, Prisma.ContractUncheckedUpdateManyWithoutVendorInput>
-}
-
-export type ContractScalarWhereInput = {
-  AND?: Prisma.ContractScalarWhereInput | Prisma.ContractScalarWhereInput[]
-  OR?: Prisma.ContractScalarWhereInput[]
-  NOT?: Prisma.ContractScalarWhereInput | Prisma.ContractScalarWhereInput[]
-  id?: Prisma.StringFilter<"Contract"> | string
-  contractTypeId?: Prisma.StringFilter<"Contract"> | string
-  vendorId?: Prisma.StringFilter<"Contract"> | string
-  name?: Prisma.StringFilter<"Contract"> | string
-  contractNumber?: Prisma.StringNullableFilter<"Contract"> | string | null
-  startDate?: Prisma.DateTimeFilter<"Contract"> | Date | string
-  endDate?: Prisma.DateTimeNullableFilter<"Contract"> | Date | string | null
-  autoRenew?: Prisma.BoolFilter<"Contract"> | boolean
-  renewalTerms?: Prisma.StringNullableFilter<"Contract"> | string | null
-  slaDefinition?: Prisma.JsonNullableFilter<"Contract">
-  totalValue?: Prisma.DecimalNullableFilter<"Contract"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  totalValueSar?: Prisma.DecimalNullableFilter<"Contract"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.StringNullableFilter<"Contract"> | string | null
-  note?: Prisma.StringNullableFilter<"Contract"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"Contract"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Contract"> | Date | string
 }
 
 export type ContractCreateWithoutAssetsInput = {
@@ -1024,6 +934,28 @@ export type ContractUpdateManyWithWhereWithoutContractTypeInput = {
   data: Prisma.XOR<Prisma.ContractUpdateManyMutationInput, Prisma.ContractUncheckedUpdateManyWithoutContractTypeInput>
 }
 
+export type ContractScalarWhereInput = {
+  AND?: Prisma.ContractScalarWhereInput | Prisma.ContractScalarWhereInput[]
+  OR?: Prisma.ContractScalarWhereInput[]
+  NOT?: Prisma.ContractScalarWhereInput | Prisma.ContractScalarWhereInput[]
+  id?: Prisma.StringFilter<"Contract"> | string
+  contractTypeId?: Prisma.StringFilter<"Contract"> | string
+  vendorId?: Prisma.StringFilter<"Contract"> | string
+  name?: Prisma.StringFilter<"Contract"> | string
+  contractNumber?: Prisma.StringNullableFilter<"Contract"> | string | null
+  startDate?: Prisma.DateTimeFilter<"Contract"> | Date | string
+  endDate?: Prisma.DateTimeNullableFilter<"Contract"> | Date | string | null
+  autoRenew?: Prisma.BoolFilter<"Contract"> | boolean
+  renewalTerms?: Prisma.StringNullableFilter<"Contract"> | string | null
+  slaDefinition?: Prisma.JsonNullableFilter<"Contract">
+  totalValue?: Prisma.DecimalNullableFilter<"Contract"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.DecimalNullableFilter<"Contract"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.StringNullableFilter<"Contract"> | string | null
+  note?: Prisma.StringNullableFilter<"Contract"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"Contract"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Contract"> | Date | string
+}
+
 export type ContractCreateWithoutLinkedObjectsInput = {
   id?: string
   name: string
@@ -1122,6 +1054,74 @@ export type ContractUncheckedUpdateWithoutLinkedObjectsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assets?: Prisma.AssetUncheckedUpdateManyWithoutContractNestedInput
   licenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutContractNestedInput
+}
+
+export type ContractCreateWithoutVendorInput = {
+  id?: string
+  name: string
+  contractNumber?: string | null
+  startDate: Date | string
+  endDate?: Date | string | null
+  autoRenew?: boolean
+  renewalTerms?: string | null
+  slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  contractType: Prisma.ContractTypeCreateNestedOneWithoutContractsInput
+  assets?: Prisma.AssetCreateNestedManyWithoutContractInput
+  linkedObjects?: Prisma.ContractLinkedObjectCreateNestedManyWithoutContractInput
+  licenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutContractInput
+}
+
+export type ContractUncheckedCreateWithoutVendorInput = {
+  id?: string
+  contractTypeId: string
+  name: string
+  contractNumber?: string | null
+  startDate: Date | string
+  endDate?: Date | string | null
+  autoRenew?: boolean
+  renewalTerms?: string | null
+  slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assets?: Prisma.AssetUncheckedCreateNestedManyWithoutContractInput
+  linkedObjects?: Prisma.ContractLinkedObjectUncheckedCreateNestedManyWithoutContractInput
+  licenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutContractInput
+}
+
+export type ContractCreateOrConnectWithoutVendorInput = {
+  where: Prisma.ContractWhereUniqueInput
+  create: Prisma.XOR<Prisma.ContractCreateWithoutVendorInput, Prisma.ContractUncheckedCreateWithoutVendorInput>
+}
+
+export type ContractCreateManyVendorInputEnvelope = {
+  data: Prisma.ContractCreateManyVendorInput | Prisma.ContractCreateManyVendorInput[]
+  skipDuplicates?: boolean
+}
+
+export type ContractUpsertWithWhereUniqueWithoutVendorInput = {
+  where: Prisma.ContractWhereUniqueInput
+  update: Prisma.XOR<Prisma.ContractUpdateWithoutVendorInput, Prisma.ContractUncheckedUpdateWithoutVendorInput>
+  create: Prisma.XOR<Prisma.ContractCreateWithoutVendorInput, Prisma.ContractUncheckedCreateWithoutVendorInput>
+}
+
+export type ContractUpdateWithWhereUniqueWithoutVendorInput = {
+  where: Prisma.ContractWhereUniqueInput
+  data: Prisma.XOR<Prisma.ContractUpdateWithoutVendorInput, Prisma.ContractUncheckedUpdateWithoutVendorInput>
+}
+
+export type ContractUpdateManyWithWhereWithoutVendorInput = {
+  where: Prisma.ContractScalarWhereInput
+  data: Prisma.XOR<Prisma.ContractUpdateManyMutationInput, Prisma.ContractUncheckedUpdateManyWithoutVendorInput>
 }
 
 export type ContractCreateWithoutLicenseEntitlementsInput = {
@@ -1224,84 +1224,6 @@ export type ContractUncheckedUpdateWithoutLicenseEntitlementsInput = {
   linkedObjects?: Prisma.ContractLinkedObjectUncheckedUpdateManyWithoutContractNestedInput
 }
 
-export type ContractCreateManyVendorInput = {
-  id?: string
-  contractTypeId: string
-  name: string
-  contractNumber?: string | null
-  startDate: Date | string
-  endDate?: Date | string | null
-  autoRenew?: boolean
-  renewalTerms?: string | null
-  slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  note?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type ContractUpdateWithoutVendorInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  contractNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  contractType?: Prisma.ContractTypeUpdateOneRequiredWithoutContractsNestedInput
-  assets?: Prisma.AssetUpdateManyWithoutContractNestedInput
-  linkedObjects?: Prisma.ContractLinkedObjectUpdateManyWithoutContractNestedInput
-  licenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutContractNestedInput
-}
-
-export type ContractUncheckedUpdateWithoutVendorInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  contractTypeId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  contractNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assets?: Prisma.AssetUncheckedUpdateManyWithoutContractNestedInput
-  linkedObjects?: Prisma.ContractLinkedObjectUncheckedUpdateManyWithoutContractNestedInput
-  licenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutContractNestedInput
-}
-
-export type ContractUncheckedUpdateManyWithoutVendorInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  contractTypeId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  contractNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
 export type ContractCreateManyContractTypeInput = {
   id?: string
   vendorId: string
@@ -1365,6 +1287,84 @@ export type ContractUncheckedUpdateWithoutContractTypeInput = {
 export type ContractUncheckedUpdateManyWithoutContractTypeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   vendorId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  contractNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ContractCreateManyVendorInput = {
+  id?: string
+  contractTypeId: string
+  name: string
+  contractNumber?: string | null
+  startDate: Date | string
+  endDate?: Date | string | null
+  autoRenew?: boolean
+  renewalTerms?: string | null
+  slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  totalValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ContractUpdateWithoutVendorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  contractNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contractType?: Prisma.ContractTypeUpdateOneRequiredWithoutContractsNestedInput
+  assets?: Prisma.AssetUpdateManyWithoutContractNestedInput
+  linkedObjects?: Prisma.ContractLinkedObjectUpdateManyWithoutContractNestedInput
+  licenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutContractNestedInput
+}
+
+export type ContractUncheckedUpdateWithoutVendorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  contractTypeId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  contractNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  autoRenew?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  renewalTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaDefinition?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  totalValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  totalValueSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assets?: Prisma.AssetUncheckedUpdateManyWithoutContractNestedInput
+  linkedObjects?: Prisma.ContractLinkedObjectUncheckedUpdateManyWithoutContractNestedInput
+  licenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutContractNestedInput
+}
+
+export type ContractUncheckedUpdateManyWithoutVendorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  contractTypeId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   contractNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string

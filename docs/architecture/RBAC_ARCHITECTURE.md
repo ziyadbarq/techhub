@@ -645,7 +645,7 @@ Complete asset lifecycle management from procurement to disposal.
 
 ### Prisma Schema
 
-**Location**: `src/infrastructure/database/prisma/schema.prisma`
+**Location**: `src/infrastructure/database/prisma/schema/rbac.prisma`
 
 ```prisma
 model Role {

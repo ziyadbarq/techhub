@@ -1,0 +1,72 @@
+// ============================================
+// ASSET RESERVATIONS
+// ============================================
+//
+// Models: AssetReservation, AssetReservationConflict
+// Enums: None
+// Layer: Layer 3 (Advanced ITAM)
+// Related DI Module: reservations.module.ts
+// ============================================
+
+// AssetReservation model
+// Reserve assets for future use with conflict detection
+model AssetReservation {
+  id                   String    @id @default(uuid())
+  assetId              String    @map("asset_id")
+  reservedForPersonId  String?   @map("reserved_for_person_id")
+  reservedForOrgUnitId String?   @map("reserved_for_org_unit_id")
+  reservedById         String    @map("reserved_by_id")
+  startDate            DateTime  @map("start_date")
+  endDate              DateTime  @map("end_date")
+  status               String    @default("PENDING") @map("status") // PENDING, CONFIRMED, ACTIVE, COMPLETED, CANCELLED
+  purpose              String?   @db.Text
+  note                 String?   @db.Text
+  confirmationDate     DateTime? @map("confirmation_date")
+  confirmedById        String?   @map("confirmed_by_id")
+  cancellationReason   String?   @map("cancellation_reason") @db.Text
+  cancelledAt          DateTime? @map("cancelled_at")
+  cancelledById        String?   @map("cancelled_by_id")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  asset                   Asset                      @relation(fields: [assetId], references: [id], onDelete: Restrict)
+  reservedForPerson       Person?                    @relation("ReservationForPerson", fields: [reservedForPersonId], references: [id], onDelete: SetNull)
+  reservedForOrgUnit      OrganizationUnit?          @relation("ReservationForOrgUnit", fields: [reservedForOrgUnitId], references: [id], onDelete: SetNull)
+  reservedBy              Person                     @relation("ReservationBy", fields: [reservedById], references: [id], onDelete: Restrict)
+  confirmedBy             Person?                    @relation("ReservationConfirmedBy", fields: [confirmedById], references: [id], onDelete: SetNull)
+  cancelledBy             Person?                    @relation("ReservationCancelledBy", fields: [cancelledById], references: [id], onDelete: SetNull)
+  conflicts               AssetReservationConflict[] @relation("ReservationConflicts")
+  conflictingReservations AssetReservationConflict[] @relation("ConflictingReservations")
+
+  // Indexes
+  @@index([assetId])
+  @@index([reservedForPersonId])
+  @@index([reservedForOrgUnitId])
+  @@index([reservedById])
+  @@index([status])
+  @@index([startDate, endDate])
+  @@index([status, assetId]) // CRITICAL: Asset availability checks
+  @@map("asset_reservations")
+}
+
+// AssetReservationConflict model
+// Tracks conflicts between overlapping reservations
+model AssetReservationConflict {
+  id                       String    @id @default(cuid())
+  reservationId            String    @map("reservation_id")
+  conflictingReservationId String    @map("conflicting_reservation_id")
+  detectedAt               DateTime  @default(now()) @map("detected_at")
+  resolvedAt               DateTime? @map("resolved_at")
+  resolutionNote           String?   @map("resolution_note") @db.Text
+
+  // Relations
+  reservation            AssetReservation @relation("ReservationConflicts", fields: [reservationId], references: [id], onDelete: Cascade)
+  conflictingReservation AssetReservation @relation("ConflictingReservations", fields: [conflictingReservationId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([reservationId])
+  @@index([conflictingReservationId])
+  @@index([resolvedAt])
+  @@map("asset_reservation_conflicts")
+}

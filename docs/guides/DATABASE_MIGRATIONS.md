@@ -41,15 +41,15 @@ This project uses **Prisma 7** with PostgreSQL for database management. Prisma p
 
 ### Schema Location
 
-Schema file: [src/infrastructure/database/prisma/schema.prisma](../../src/infrastructure/database/prisma/schema.prisma)
+Schema folder: [src/infrastructure/database/prisma/schema/](../../src/infrastructure/database/prisma/schema/) (multi-file schema)
 
 Prisma config: [prisma.config.ts](../../prisma.config.ts)
 
 ```typescript
 export default defineConfig({
-  schema: "src/infrastructure/database/prisma/schema.prisma",
+  schema: "src/infrastructure/database/prisma/schema",  // Folder path for multi-file
   migrations: {
-    path: "src/infrastructure/database/prisma/migrations",
+    path: "src/infrastructure/database/prisma/schema/migrations",
     seed: "tsx src/infrastructure/database/prisma/seed.ts",
   },
   datasource: {
@@ -57,6 +57,8 @@ export default defineConfig({
   },
 });
 ```
+
+**See**: [PRISMA_GUIDE.md - Multi-File Schema Organization](PRISMA_GUIDE.md#multi-file-schema-organization) for complete file structure.
 
 ### Connection Pool (Critical)
 
@@ -89,8 +91,8 @@ Use `db:push` for rapid iteration, `migrate dev` when features are stable:
 # 1. During active development - fast iteration
 npm run db:push
 
-# 2. Edit schema as needed
-# src/infrastructure/database/prisma/schema.prisma
+# 2. Edit schema as needed (multi-file in schema/ folder)
+# src/infrastructure/database/prisma/schema/*.prisma
 
 # 3. Apply changes quickly
 npm run db:push
@@ -111,7 +113,7 @@ npm run dev               # Start dev server
 
 # When feature is done
 npx prisma migrate dev --name feature_name
-git add src/infrastructure/database/prisma/migrations/
+git add src/infrastructure/database/prisma/schema/migrations/
 git commit -m "Add migration: feature_name"
 ```
 
@@ -137,7 +139,7 @@ If you've been using `db:push` and want to create a baseline migration:
 npx prisma migrate dev --name init
 
 # This creates:
-# src/infrastructure/database/prisma/migrations/
+# src/infrastructure/database/prisma/schema/migrations/
 #   └─ 20251120203805_init/
 #     └─ migration.sql
 ```
@@ -164,7 +166,7 @@ npx prisma migrate status
 npx prisma migrate dev --name describe_changes
 
 # Commit to git
-git add src/infrastructure/database/prisma/migrations/
+git add src/infrastructure/database/prisma/schema/migrations/
 git commit -m "Add migration: describe_changes"
 ```
 

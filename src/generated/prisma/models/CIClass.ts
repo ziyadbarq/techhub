@@ -441,6 +441,11 @@ export type CIClassUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type CIClassNullableScalarRelationFilter = {
+  is?: Prisma.CIClassWhereInput | null
+  isNot?: Prisma.CIClassWhereInput | null
+}
+
 export type CIClassListRelationFilter = {
   every?: Prisma.CIClassWhereInput
   some?: Prisma.CIClassWhereInput
@@ -449,11 +454,6 @@ export type CIClassListRelationFilter = {
 
 export type CIClassOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
-}
-
-export type CIClassNullableScalarRelationFilter = {
-  is?: Prisma.CIClassWhereInput | null
-  isNot?: Prisma.CIClassWhereInput | null
 }
 
 export type CIClassCountOrderByAggregateInput = {
@@ -501,48 +501,6 @@ export type CIClassMinOrderByAggregateInput = {
 export type CIClassScalarRelationFilter = {
   is?: Prisma.CIClassWhereInput
   isNot?: Prisma.CIClassWhereInput
-}
-
-export type CIClassCreateNestedManyWithoutLifecycleModelInput = {
-  create?: Prisma.XOR<Prisma.CIClassCreateWithoutLifecycleModelInput, Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput> | Prisma.CIClassCreateWithoutLifecycleModelInput[] | Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput[]
-  connectOrCreate?: Prisma.CIClassCreateOrConnectWithoutLifecycleModelInput | Prisma.CIClassCreateOrConnectWithoutLifecycleModelInput[]
-  createMany?: Prisma.CIClassCreateManyLifecycleModelInputEnvelope
-  connect?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
-}
-
-export type CIClassUncheckedCreateNestedManyWithoutLifecycleModelInput = {
-  create?: Prisma.XOR<Prisma.CIClassCreateWithoutLifecycleModelInput, Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput> | Prisma.CIClassCreateWithoutLifecycleModelInput[] | Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput[]
-  connectOrCreate?: Prisma.CIClassCreateOrConnectWithoutLifecycleModelInput | Prisma.CIClassCreateOrConnectWithoutLifecycleModelInput[]
-  createMany?: Prisma.CIClassCreateManyLifecycleModelInputEnvelope
-  connect?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
-}
-
-export type CIClassUpdateManyWithoutLifecycleModelNestedInput = {
-  create?: Prisma.XOR<Prisma.CIClassCreateWithoutLifecycleModelInput, Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput> | Prisma.CIClassCreateWithoutLifecycleModelInput[] | Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput[]
-  connectOrCreate?: Prisma.CIClassCreateOrConnectWithoutLifecycleModelInput | Prisma.CIClassCreateOrConnectWithoutLifecycleModelInput[]
-  upsert?: Prisma.CIClassUpsertWithWhereUniqueWithoutLifecycleModelInput | Prisma.CIClassUpsertWithWhereUniqueWithoutLifecycleModelInput[]
-  createMany?: Prisma.CIClassCreateManyLifecycleModelInputEnvelope
-  set?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
-  disconnect?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
-  delete?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
-  connect?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
-  update?: Prisma.CIClassUpdateWithWhereUniqueWithoutLifecycleModelInput | Prisma.CIClassUpdateWithWhereUniqueWithoutLifecycleModelInput[]
-  updateMany?: Prisma.CIClassUpdateManyWithWhereWithoutLifecycleModelInput | Prisma.CIClassUpdateManyWithWhereWithoutLifecycleModelInput[]
-  deleteMany?: Prisma.CIClassScalarWhereInput | Prisma.CIClassScalarWhereInput[]
-}
-
-export type CIClassUncheckedUpdateManyWithoutLifecycleModelNestedInput = {
-  create?: Prisma.XOR<Prisma.CIClassCreateWithoutLifecycleModelInput, Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput> | Prisma.CIClassCreateWithoutLifecycleModelInput[] | Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput[]
-  connectOrCreate?: Prisma.CIClassCreateOrConnectWithoutLifecycleModelInput | Prisma.CIClassCreateOrConnectWithoutLifecycleModelInput[]
-  upsert?: Prisma.CIClassUpsertWithWhereUniqueWithoutLifecycleModelInput | Prisma.CIClassUpsertWithWhereUniqueWithoutLifecycleModelInput[]
-  createMany?: Prisma.CIClassCreateManyLifecycleModelInputEnvelope
-  set?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
-  disconnect?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
-  delete?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
-  connect?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
-  update?: Prisma.CIClassUpdateWithWhereUniqueWithoutLifecycleModelInput | Prisma.CIClassUpdateWithWhereUniqueWithoutLifecycleModelInput[]
-  updateMany?: Prisma.CIClassUpdateManyWithWhereWithoutLifecycleModelInput | Prisma.CIClassUpdateManyWithWhereWithoutLifecycleModelInput[]
-  deleteMany?: Prisma.CIClassScalarWhereInput | Prisma.CIClassScalarWhereInput[]
 }
 
 export type CIClassCreateNestedOneWithoutChildClassesInput = {
@@ -667,6 +625,48 @@ export type CIClassUpdateOneRequiredWithoutRelationshipTypeScopesToNestedInput =
   update?: Prisma.XOR<Prisma.XOR<Prisma.CIClassUpdateToOneWithWhereWithoutRelationshipTypeScopesToInput, Prisma.CIClassUpdateWithoutRelationshipTypeScopesToInput>, Prisma.CIClassUncheckedUpdateWithoutRelationshipTypeScopesToInput>
 }
 
+export type CIClassCreateNestedManyWithoutLifecycleModelInput = {
+  create?: Prisma.XOR<Prisma.CIClassCreateWithoutLifecycleModelInput, Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput> | Prisma.CIClassCreateWithoutLifecycleModelInput[] | Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput[]
+  connectOrCreate?: Prisma.CIClassCreateOrConnectWithoutLifecycleModelInput | Prisma.CIClassCreateOrConnectWithoutLifecycleModelInput[]
+  createMany?: Prisma.CIClassCreateManyLifecycleModelInputEnvelope
+  connect?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+}
+
+export type CIClassUncheckedCreateNestedManyWithoutLifecycleModelInput = {
+  create?: Prisma.XOR<Prisma.CIClassCreateWithoutLifecycleModelInput, Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput> | Prisma.CIClassCreateWithoutLifecycleModelInput[] | Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput[]
+  connectOrCreate?: Prisma.CIClassCreateOrConnectWithoutLifecycleModelInput | Prisma.CIClassCreateOrConnectWithoutLifecycleModelInput[]
+  createMany?: Prisma.CIClassCreateManyLifecycleModelInputEnvelope
+  connect?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+}
+
+export type CIClassUpdateManyWithoutLifecycleModelNestedInput = {
+  create?: Prisma.XOR<Prisma.CIClassCreateWithoutLifecycleModelInput, Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput> | Prisma.CIClassCreateWithoutLifecycleModelInput[] | Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput[]
+  connectOrCreate?: Prisma.CIClassCreateOrConnectWithoutLifecycleModelInput | Prisma.CIClassCreateOrConnectWithoutLifecycleModelInput[]
+  upsert?: Prisma.CIClassUpsertWithWhereUniqueWithoutLifecycleModelInput | Prisma.CIClassUpsertWithWhereUniqueWithoutLifecycleModelInput[]
+  createMany?: Prisma.CIClassCreateManyLifecycleModelInputEnvelope
+  set?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+  disconnect?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+  delete?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+  connect?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+  update?: Prisma.CIClassUpdateWithWhereUniqueWithoutLifecycleModelInput | Prisma.CIClassUpdateWithWhereUniqueWithoutLifecycleModelInput[]
+  updateMany?: Prisma.CIClassUpdateManyWithWhereWithoutLifecycleModelInput | Prisma.CIClassUpdateManyWithWhereWithoutLifecycleModelInput[]
+  deleteMany?: Prisma.CIClassScalarWhereInput | Prisma.CIClassScalarWhereInput[]
+}
+
+export type CIClassUncheckedUpdateManyWithoutLifecycleModelNestedInput = {
+  create?: Prisma.XOR<Prisma.CIClassCreateWithoutLifecycleModelInput, Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput> | Prisma.CIClassCreateWithoutLifecycleModelInput[] | Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput[]
+  connectOrCreate?: Prisma.CIClassCreateOrConnectWithoutLifecycleModelInput | Prisma.CIClassCreateOrConnectWithoutLifecycleModelInput[]
+  upsert?: Prisma.CIClassUpsertWithWhereUniqueWithoutLifecycleModelInput | Prisma.CIClassUpsertWithWhereUniqueWithoutLifecycleModelInput[]
+  createMany?: Prisma.CIClassCreateManyLifecycleModelInputEnvelope
+  set?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+  disconnect?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+  delete?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+  connect?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+  update?: Prisma.CIClassUpdateWithWhereUniqueWithoutLifecycleModelInput | Prisma.CIClassUpdateWithWhereUniqueWithoutLifecycleModelInput[]
+  updateMany?: Prisma.CIClassUpdateManyWithWhereWithoutLifecycleModelInput | Prisma.CIClassUpdateManyWithWhereWithoutLifecycleModelInput[]
+  deleteMany?: Prisma.CIClassScalarWhereInput | Prisma.CIClassScalarWhereInput[]
+}
+
 export type CIClassCreateNestedOneWithoutDataOwnershipsInput = {
   create?: Prisma.XOR<Prisma.CIClassCreateWithoutDataOwnershipsInput, Prisma.CIClassUncheckedCreateWithoutDataOwnershipsInput>
   connectOrCreate?: Prisma.CIClassCreateOrConnectWithoutDataOwnershipsInput
@@ -681,87 +681,6 @@ export type CIClassUpdateOneWithoutDataOwnershipsNestedInput = {
   delete?: Prisma.CIClassWhereInput | boolean
   connect?: Prisma.CIClassWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.CIClassUpdateToOneWithWhereWithoutDataOwnershipsInput, Prisma.CIClassUpdateWithoutDataOwnershipsInput>, Prisma.CIClassUncheckedUpdateWithoutDataOwnershipsInput>
-}
-
-export type CIClassCreateWithoutLifecycleModelInput = {
-  id?: string
-  name: string
-  code: string
-  description?: string | null
-  defaultCriticality?: $Enums.CriticalityEnum | null
-  defaultEnvironment?: $Enums.EnvironmentEnum | null
-  isDiscoverable?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  parentClass?: Prisma.CIClassCreateNestedOneWithoutChildClassesInput
-  childClasses?: Prisma.CIClassCreateNestedManyWithoutParentClassInput
-  fields?: Prisma.CIClassFieldCreateNestedManyWithoutCiClassInput
-  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutCiClassInput
-  relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutFromCiClassInput
-  relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutToCiClassInput
-  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutCiClassInput
-}
-
-export type CIClassUncheckedCreateWithoutLifecycleModelInput = {
-  id?: string
-  name: string
-  code: string
-  parentClassId?: string | null
-  description?: string | null
-  defaultCriticality?: $Enums.CriticalityEnum | null
-  defaultEnvironment?: $Enums.EnvironmentEnum | null
-  isDiscoverable?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  childClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutParentClassInput
-  fields?: Prisma.CIClassFieldUncheckedCreateNestedManyWithoutCiClassInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutCiClassInput
-  relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUncheckedCreateNestedManyWithoutFromCiClassInput
-  relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeUncheckedCreateNestedManyWithoutToCiClassInput
-  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutCiClassInput
-}
-
-export type CIClassCreateOrConnectWithoutLifecycleModelInput = {
-  where: Prisma.CIClassWhereUniqueInput
-  create: Prisma.XOR<Prisma.CIClassCreateWithoutLifecycleModelInput, Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput>
-}
-
-export type CIClassCreateManyLifecycleModelInputEnvelope = {
-  data: Prisma.CIClassCreateManyLifecycleModelInput | Prisma.CIClassCreateManyLifecycleModelInput[]
-  skipDuplicates?: boolean
-}
-
-export type CIClassUpsertWithWhereUniqueWithoutLifecycleModelInput = {
-  where: Prisma.CIClassWhereUniqueInput
-  update: Prisma.XOR<Prisma.CIClassUpdateWithoutLifecycleModelInput, Prisma.CIClassUncheckedUpdateWithoutLifecycleModelInput>
-  create: Prisma.XOR<Prisma.CIClassCreateWithoutLifecycleModelInput, Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput>
-}
-
-export type CIClassUpdateWithWhereUniqueWithoutLifecycleModelInput = {
-  where: Prisma.CIClassWhereUniqueInput
-  data: Prisma.XOR<Prisma.CIClassUpdateWithoutLifecycleModelInput, Prisma.CIClassUncheckedUpdateWithoutLifecycleModelInput>
-}
-
-export type CIClassUpdateManyWithWhereWithoutLifecycleModelInput = {
-  where: Prisma.CIClassScalarWhereInput
-  data: Prisma.XOR<Prisma.CIClassUpdateManyMutationInput, Prisma.CIClassUncheckedUpdateManyWithoutLifecycleModelInput>
-}
-
-export type CIClassScalarWhereInput = {
-  AND?: Prisma.CIClassScalarWhereInput | Prisma.CIClassScalarWhereInput[]
-  OR?: Prisma.CIClassScalarWhereInput[]
-  NOT?: Prisma.CIClassScalarWhereInput | Prisma.CIClassScalarWhereInput[]
-  id?: Prisma.StringFilter<"CIClass"> | string
-  name?: Prisma.StringFilter<"CIClass"> | string
-  code?: Prisma.StringFilter<"CIClass"> | string
-  parentClassId?: Prisma.StringNullableFilter<"CIClass"> | string | null
-  description?: Prisma.StringNullableFilter<"CIClass"> | string | null
-  lifecycleModelId?: Prisma.StringNullableFilter<"CIClass"> | string | null
-  defaultCriticality?: Prisma.EnumCriticalityEnumNullableFilter<"CIClass"> | $Enums.CriticalityEnum | null
-  defaultEnvironment?: Prisma.EnumEnvironmentEnumNullableFilter<"CIClass"> | $Enums.EnvironmentEnum | null
-  isDiscoverable?: Prisma.BoolFilter<"CIClass"> | boolean
-  createdAt?: Prisma.DateTimeFilter<"CIClass"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"CIClass"> | Date | string
 }
 
 export type CIClassCreateWithoutChildClassesInput = {
@@ -918,6 +837,23 @@ export type CIClassUpdateWithWhereUniqueWithoutParentClassInput = {
 export type CIClassUpdateManyWithWhereWithoutParentClassInput = {
   where: Prisma.CIClassScalarWhereInput
   data: Prisma.XOR<Prisma.CIClassUpdateManyMutationInput, Prisma.CIClassUncheckedUpdateManyWithoutParentClassInput>
+}
+
+export type CIClassScalarWhereInput = {
+  AND?: Prisma.CIClassScalarWhereInput | Prisma.CIClassScalarWhereInput[]
+  OR?: Prisma.CIClassScalarWhereInput[]
+  NOT?: Prisma.CIClassScalarWhereInput | Prisma.CIClassScalarWhereInput[]
+  id?: Prisma.StringFilter<"CIClass"> | string
+  name?: Prisma.StringFilter<"CIClass"> | string
+  code?: Prisma.StringFilter<"CIClass"> | string
+  parentClassId?: Prisma.StringNullableFilter<"CIClass"> | string | null
+  description?: Prisma.StringNullableFilter<"CIClass"> | string | null
+  lifecycleModelId?: Prisma.StringNullableFilter<"CIClass"> | string | null
+  defaultCriticality?: Prisma.EnumCriticalityEnumNullableFilter<"CIClass"> | $Enums.CriticalityEnum | null
+  defaultEnvironment?: Prisma.EnumEnvironmentEnumNullableFilter<"CIClass"> | $Enums.EnvironmentEnum | null
+  isDiscoverable?: Prisma.BoolFilter<"CIClass"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"CIClass"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"CIClass"> | Date | string
 }
 
 export type CIClassCreateWithoutFieldsInput = {
@@ -1288,6 +1224,70 @@ export type CIClassUncheckedUpdateWithoutRelationshipTypeScopesToInput = {
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutCiClassNestedInput
 }
 
+export type CIClassCreateWithoutLifecycleModelInput = {
+  id?: string
+  name: string
+  code: string
+  description?: string | null
+  defaultCriticality?: $Enums.CriticalityEnum | null
+  defaultEnvironment?: $Enums.EnvironmentEnum | null
+  isDiscoverable?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  parentClass?: Prisma.CIClassCreateNestedOneWithoutChildClassesInput
+  childClasses?: Prisma.CIClassCreateNestedManyWithoutParentClassInput
+  fields?: Prisma.CIClassFieldCreateNestedManyWithoutCiClassInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutCiClassInput
+  relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutFromCiClassInput
+  relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutToCiClassInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutCiClassInput
+}
+
+export type CIClassUncheckedCreateWithoutLifecycleModelInput = {
+  id?: string
+  name: string
+  code: string
+  parentClassId?: string | null
+  description?: string | null
+  defaultCriticality?: $Enums.CriticalityEnum | null
+  defaultEnvironment?: $Enums.EnvironmentEnum | null
+  isDiscoverable?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  childClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutParentClassInput
+  fields?: Prisma.CIClassFieldUncheckedCreateNestedManyWithoutCiClassInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutCiClassInput
+  relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUncheckedCreateNestedManyWithoutFromCiClassInput
+  relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeUncheckedCreateNestedManyWithoutToCiClassInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutCiClassInput
+}
+
+export type CIClassCreateOrConnectWithoutLifecycleModelInput = {
+  where: Prisma.CIClassWhereUniqueInput
+  create: Prisma.XOR<Prisma.CIClassCreateWithoutLifecycleModelInput, Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput>
+}
+
+export type CIClassCreateManyLifecycleModelInputEnvelope = {
+  data: Prisma.CIClassCreateManyLifecycleModelInput | Prisma.CIClassCreateManyLifecycleModelInput[]
+  skipDuplicates?: boolean
+}
+
+export type CIClassUpsertWithWhereUniqueWithoutLifecycleModelInput = {
+  where: Prisma.CIClassWhereUniqueInput
+  update: Prisma.XOR<Prisma.CIClassUpdateWithoutLifecycleModelInput, Prisma.CIClassUncheckedUpdateWithoutLifecycleModelInput>
+  create: Prisma.XOR<Prisma.CIClassCreateWithoutLifecycleModelInput, Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput>
+}
+
+export type CIClassUpdateWithWhereUniqueWithoutLifecycleModelInput = {
+  where: Prisma.CIClassWhereUniqueInput
+  data: Prisma.XOR<Prisma.CIClassUpdateWithoutLifecycleModelInput, Prisma.CIClassUncheckedUpdateWithoutLifecycleModelInput>
+}
+
+export type CIClassUpdateManyWithWhereWithoutLifecycleModelInput = {
+  where: Prisma.CIClassScalarWhereInput
+  data: Prisma.XOR<Prisma.CIClassUpdateManyMutationInput, Prisma.CIClassUncheckedUpdateManyWithoutLifecycleModelInput>
+}
+
 export type CIClassCreateWithoutDataOwnershipsInput = {
   id?: string
   name: string
@@ -1380,70 +1380,6 @@ export type CIClassUncheckedUpdateWithoutDataOwnershipsInput = {
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeUncheckedUpdateManyWithoutToCiClassNestedInput
 }
 
-export type CIClassCreateManyLifecycleModelInput = {
-  id?: string
-  name: string
-  code: string
-  parentClassId?: string | null
-  description?: string | null
-  defaultCriticality?: $Enums.CriticalityEnum | null
-  defaultEnvironment?: $Enums.EnvironmentEnum | null
-  isDiscoverable?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type CIClassUpdateWithoutLifecycleModelInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  defaultCriticality?: Prisma.NullableEnumCriticalityEnumFieldUpdateOperationsInput | $Enums.CriticalityEnum | null
-  defaultEnvironment?: Prisma.NullableEnumEnvironmentEnumFieldUpdateOperationsInput | $Enums.EnvironmentEnum | null
-  isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  parentClass?: Prisma.CIClassUpdateOneWithoutChildClassesNestedInput
-  childClasses?: Prisma.CIClassUpdateManyWithoutParentClassNestedInput
-  fields?: Prisma.CIClassFieldUpdateManyWithoutCiClassNestedInput
-  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutCiClassNestedInput
-  relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUpdateManyWithoutFromCiClassNestedInput
-  relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeUpdateManyWithoutToCiClassNestedInput
-  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutCiClassNestedInput
-}
-
-export type CIClassUncheckedUpdateWithoutLifecycleModelInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  parentClassId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  defaultCriticality?: Prisma.NullableEnumCriticalityEnumFieldUpdateOperationsInput | $Enums.CriticalityEnum | null
-  defaultEnvironment?: Prisma.NullableEnumEnvironmentEnumFieldUpdateOperationsInput | $Enums.EnvironmentEnum | null
-  isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  childClasses?: Prisma.CIClassUncheckedUpdateManyWithoutParentClassNestedInput
-  fields?: Prisma.CIClassFieldUncheckedUpdateManyWithoutCiClassNestedInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutCiClassNestedInput
-  relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUncheckedUpdateManyWithoutFromCiClassNestedInput
-  relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeUncheckedUpdateManyWithoutToCiClassNestedInput
-  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutCiClassNestedInput
-}
-
-export type CIClassUncheckedUpdateManyWithoutLifecycleModelInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  parentClassId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  defaultCriticality?: Prisma.NullableEnumCriticalityEnumFieldUpdateOperationsInput | $Enums.CriticalityEnum | null
-  defaultEnvironment?: Prisma.NullableEnumEnvironmentEnumFieldUpdateOperationsInput | $Enums.EnvironmentEnum | null
-  isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
 export type CIClassCreateManyParentClassInput = {
   id?: string
   name: string
@@ -1501,6 +1437,70 @@ export type CIClassUncheckedUpdateManyWithoutParentClassInput = {
   code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lifecycleModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  defaultCriticality?: Prisma.NullableEnumCriticalityEnumFieldUpdateOperationsInput | $Enums.CriticalityEnum | null
+  defaultEnvironment?: Prisma.NullableEnumEnvironmentEnumFieldUpdateOperationsInput | $Enums.EnvironmentEnum | null
+  isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type CIClassCreateManyLifecycleModelInput = {
+  id?: string
+  name: string
+  code: string
+  parentClassId?: string | null
+  description?: string | null
+  defaultCriticality?: $Enums.CriticalityEnum | null
+  defaultEnvironment?: $Enums.EnvironmentEnum | null
+  isDiscoverable?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type CIClassUpdateWithoutLifecycleModelInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  defaultCriticality?: Prisma.NullableEnumCriticalityEnumFieldUpdateOperationsInput | $Enums.CriticalityEnum | null
+  defaultEnvironment?: Prisma.NullableEnumEnvironmentEnumFieldUpdateOperationsInput | $Enums.EnvironmentEnum | null
+  isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  parentClass?: Prisma.CIClassUpdateOneWithoutChildClassesNestedInput
+  childClasses?: Prisma.CIClassUpdateManyWithoutParentClassNestedInput
+  fields?: Prisma.CIClassFieldUpdateManyWithoutCiClassNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutCiClassNestedInput
+  relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUpdateManyWithoutFromCiClassNestedInput
+  relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeUpdateManyWithoutToCiClassNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutCiClassNestedInput
+}
+
+export type CIClassUncheckedUpdateWithoutLifecycleModelInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  parentClassId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  defaultCriticality?: Prisma.NullableEnumCriticalityEnumFieldUpdateOperationsInput | $Enums.CriticalityEnum | null
+  defaultEnvironment?: Prisma.NullableEnumEnvironmentEnumFieldUpdateOperationsInput | $Enums.EnvironmentEnum | null
+  isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  childClasses?: Prisma.CIClassUncheckedUpdateManyWithoutParentClassNestedInput
+  fields?: Prisma.CIClassFieldUncheckedUpdateManyWithoutCiClassNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutCiClassNestedInput
+  relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUncheckedUpdateManyWithoutFromCiClassNestedInput
+  relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeUncheckedUpdateManyWithoutToCiClassNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutCiClassNestedInput
+}
+
+export type CIClassUncheckedUpdateManyWithoutLifecycleModelInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  parentClassId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   defaultCriticality?: Prisma.NullableEnumCriticalityEnumFieldUpdateOperationsInput | $Enums.CriticalityEnum | null
   defaultEnvironment?: Prisma.NullableEnumEnvironmentEnumFieldUpdateOperationsInput | $Enums.EnvironmentEnum | null
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean

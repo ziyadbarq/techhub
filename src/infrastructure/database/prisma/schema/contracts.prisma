@@ -1,0 +1,81 @@
+// ============================================
+// CONTRACT MANAGEMENT
+// ============================================
+//
+// Models: ContractType, Contract, ContractLinkedObject
+// Enums: None (uses TargetObjectTypeEnum from shared-enums.prisma)
+// Layer: Layer 3 (Advanced ITAM)
+// Related DI Module: contracts.module.ts
+// ============================================
+
+// ContractType model
+model ContractType {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String   @unique
+  description String?  @db.Text
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  contracts Contract[]
+
+  // Indexes
+  @@index([code])
+  @@index([isActive])
+  @@map("contract_types")
+}
+
+// Contract model
+model Contract {
+  id             String    @id @default(cuid())
+  contractTypeId String
+  vendorId       String
+  name           String
+  contractNumber String?   @unique
+  startDate      DateTime
+  endDate        DateTime?
+  autoRenew      Boolean   @default(false)
+  renewalTerms   String?   @db.Text
+  slaDefinition  Json? // SLA rules
+  totalValue     Decimal?  @db.Decimal(12, 2)
+  totalValueSar  Decimal?  @db.Decimal(12, 2) // Frozen SAR snapshot at create/update
+  currency       String?
+  note           String?   @db.Text
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Relations
+  contractType        ContractType           @relation(fields: [contractTypeId], references: [id], onDelete: Restrict)
+  vendor              Vendor                 @relation(fields: [vendorId], references: [id], onDelete: Restrict)
+  assets              Asset[]
+  linkedObjects       ContractLinkedObject[]
+  licenseEntitlements LicenseEntitlement[]
+
+  // Indexes
+  @@index([contractTypeId])
+  @@index([vendorId])
+  @@index([contractNumber])
+  @@index([startDate, endDate])
+  @@map("contracts")
+}
+
+// ContractLinkedObject model
+// Polymorphic relation: targetType + targetId handled at application level
+model ContractLinkedObject {
+  id         String               @id @default(cuid())
+  contractId String
+  targetType TargetObjectTypeEnum
+  targetId   String // CI.id / Asset.id / LicenseEntitlement.id (no FK - polymorphic)
+  note       String?              @db.Text
+  createdAt  DateTime             @default(now())
+
+  // Relations
+  contract Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([contractId])
+  @@index([targetType, targetId])
+  @@map("contract_linked_objects")
+}

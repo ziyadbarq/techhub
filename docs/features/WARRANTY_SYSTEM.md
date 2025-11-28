@@ -472,7 +472,7 @@ src/
 │
 ├── infrastructure/
 │   ├── database/prisma/
-│   │   ├── schema.prisma                             ✅ Warranty model
+│   │   ├── schema/assets.prisma                      ✅ Warranty model
 │   │   └── seed-rbac.ts                              ✅ Warranty permissions
 │   ├── repositories/
 │   │   └── prisma-warranty.repository.ts             ✅ Full implementation

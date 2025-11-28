@@ -62,7 +62,7 @@ Foundation entities are implemented across all architectural layers:
 
 ### Prisma Schema Design
 
-**Location**: [`src/infrastructure/database/prisma/schema.prisma`](../../src/infrastructure/database/prisma/schema.prisma)
+**Location**: [`src/infrastructure/database/prisma/schema/foundation.prisma`](../../src/infrastructure/database/prisma/schema/foundation.prisma)
 
 #### Enums
 

@@ -601,48 +601,6 @@ export type MaintenanceRecordSumOrderByAggregateInput = {
   cost?: Prisma.SortOrder
 }
 
-export type MaintenanceRecordCreateNestedManyWithoutPerformedByInput = {
-  create?: Prisma.XOR<Prisma.MaintenanceRecordCreateWithoutPerformedByInput, Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput> | Prisma.MaintenanceRecordCreateWithoutPerformedByInput[] | Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput[]
-  connectOrCreate?: Prisma.MaintenanceRecordCreateOrConnectWithoutPerformedByInput | Prisma.MaintenanceRecordCreateOrConnectWithoutPerformedByInput[]
-  createMany?: Prisma.MaintenanceRecordCreateManyPerformedByInputEnvelope
-  connect?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
-}
-
-export type MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput = {
-  create?: Prisma.XOR<Prisma.MaintenanceRecordCreateWithoutPerformedByInput, Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput> | Prisma.MaintenanceRecordCreateWithoutPerformedByInput[] | Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput[]
-  connectOrCreate?: Prisma.MaintenanceRecordCreateOrConnectWithoutPerformedByInput | Prisma.MaintenanceRecordCreateOrConnectWithoutPerformedByInput[]
-  createMany?: Prisma.MaintenanceRecordCreateManyPerformedByInputEnvelope
-  connect?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
-}
-
-export type MaintenanceRecordUpdateManyWithoutPerformedByNestedInput = {
-  create?: Prisma.XOR<Prisma.MaintenanceRecordCreateWithoutPerformedByInput, Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput> | Prisma.MaintenanceRecordCreateWithoutPerformedByInput[] | Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput[]
-  connectOrCreate?: Prisma.MaintenanceRecordCreateOrConnectWithoutPerformedByInput | Prisma.MaintenanceRecordCreateOrConnectWithoutPerformedByInput[]
-  upsert?: Prisma.MaintenanceRecordUpsertWithWhereUniqueWithoutPerformedByInput | Prisma.MaintenanceRecordUpsertWithWhereUniqueWithoutPerformedByInput[]
-  createMany?: Prisma.MaintenanceRecordCreateManyPerformedByInputEnvelope
-  set?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
-  disconnect?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
-  delete?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
-  connect?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
-  update?: Prisma.MaintenanceRecordUpdateWithWhereUniqueWithoutPerformedByInput | Prisma.MaintenanceRecordUpdateWithWhereUniqueWithoutPerformedByInput[]
-  updateMany?: Prisma.MaintenanceRecordUpdateManyWithWhereWithoutPerformedByInput | Prisma.MaintenanceRecordUpdateManyWithWhereWithoutPerformedByInput[]
-  deleteMany?: Prisma.MaintenanceRecordScalarWhereInput | Prisma.MaintenanceRecordScalarWhereInput[]
-}
-
-export type MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput = {
-  create?: Prisma.XOR<Prisma.MaintenanceRecordCreateWithoutPerformedByInput, Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput> | Prisma.MaintenanceRecordCreateWithoutPerformedByInput[] | Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput[]
-  connectOrCreate?: Prisma.MaintenanceRecordCreateOrConnectWithoutPerformedByInput | Prisma.MaintenanceRecordCreateOrConnectWithoutPerformedByInput[]
-  upsert?: Prisma.MaintenanceRecordUpsertWithWhereUniqueWithoutPerformedByInput | Prisma.MaintenanceRecordUpsertWithWhereUniqueWithoutPerformedByInput[]
-  createMany?: Prisma.MaintenanceRecordCreateManyPerformedByInputEnvelope
-  set?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
-  disconnect?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
-  delete?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
-  connect?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
-  update?: Prisma.MaintenanceRecordUpdateWithWhereUniqueWithoutPerformedByInput | Prisma.MaintenanceRecordUpdateWithWhereUniqueWithoutPerformedByInput[]
-  updateMany?: Prisma.MaintenanceRecordUpdateManyWithWhereWithoutPerformedByInput | Prisma.MaintenanceRecordUpdateManyWithWhereWithoutPerformedByInput[]
-  deleteMany?: Prisma.MaintenanceRecordScalarWhereInput | Prisma.MaintenanceRecordScalarWhereInput[]
-}
-
 export type MaintenanceRecordCreateNestedManyWithoutAssetInput = {
   create?: Prisma.XOR<Prisma.MaintenanceRecordCreateWithoutAssetInput, Prisma.MaintenanceRecordUncheckedCreateWithoutAssetInput> | Prisma.MaintenanceRecordCreateWithoutAssetInput[] | Prisma.MaintenanceRecordUncheckedCreateWithoutAssetInput[]
   connectOrCreate?: Prisma.MaintenanceRecordCreateOrConnectWithoutAssetInput | Prisma.MaintenanceRecordCreateOrConnectWithoutAssetInput[]
@@ -682,6 +640,48 @@ export type MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput = {
   connect?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
   update?: Prisma.MaintenanceRecordUpdateWithWhereUniqueWithoutAssetInput | Prisma.MaintenanceRecordUpdateWithWhereUniqueWithoutAssetInput[]
   updateMany?: Prisma.MaintenanceRecordUpdateManyWithWhereWithoutAssetInput | Prisma.MaintenanceRecordUpdateManyWithWhereWithoutAssetInput[]
+  deleteMany?: Prisma.MaintenanceRecordScalarWhereInput | Prisma.MaintenanceRecordScalarWhereInput[]
+}
+
+export type MaintenanceRecordCreateNestedManyWithoutPerformedByInput = {
+  create?: Prisma.XOR<Prisma.MaintenanceRecordCreateWithoutPerformedByInput, Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput> | Prisma.MaintenanceRecordCreateWithoutPerformedByInput[] | Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput[]
+  connectOrCreate?: Prisma.MaintenanceRecordCreateOrConnectWithoutPerformedByInput | Prisma.MaintenanceRecordCreateOrConnectWithoutPerformedByInput[]
+  createMany?: Prisma.MaintenanceRecordCreateManyPerformedByInputEnvelope
+  connect?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
+}
+
+export type MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput = {
+  create?: Prisma.XOR<Prisma.MaintenanceRecordCreateWithoutPerformedByInput, Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput> | Prisma.MaintenanceRecordCreateWithoutPerformedByInput[] | Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput[]
+  connectOrCreate?: Prisma.MaintenanceRecordCreateOrConnectWithoutPerformedByInput | Prisma.MaintenanceRecordCreateOrConnectWithoutPerformedByInput[]
+  createMany?: Prisma.MaintenanceRecordCreateManyPerformedByInputEnvelope
+  connect?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
+}
+
+export type MaintenanceRecordUpdateManyWithoutPerformedByNestedInput = {
+  create?: Prisma.XOR<Prisma.MaintenanceRecordCreateWithoutPerformedByInput, Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput> | Prisma.MaintenanceRecordCreateWithoutPerformedByInput[] | Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput[]
+  connectOrCreate?: Prisma.MaintenanceRecordCreateOrConnectWithoutPerformedByInput | Prisma.MaintenanceRecordCreateOrConnectWithoutPerformedByInput[]
+  upsert?: Prisma.MaintenanceRecordUpsertWithWhereUniqueWithoutPerformedByInput | Prisma.MaintenanceRecordUpsertWithWhereUniqueWithoutPerformedByInput[]
+  createMany?: Prisma.MaintenanceRecordCreateManyPerformedByInputEnvelope
+  set?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
+  disconnect?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
+  delete?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
+  connect?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
+  update?: Prisma.MaintenanceRecordUpdateWithWhereUniqueWithoutPerformedByInput | Prisma.MaintenanceRecordUpdateWithWhereUniqueWithoutPerformedByInput[]
+  updateMany?: Prisma.MaintenanceRecordUpdateManyWithWhereWithoutPerformedByInput | Prisma.MaintenanceRecordUpdateManyWithWhereWithoutPerformedByInput[]
+  deleteMany?: Prisma.MaintenanceRecordScalarWhereInput | Prisma.MaintenanceRecordScalarWhereInput[]
+}
+
+export type MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput = {
+  create?: Prisma.XOR<Prisma.MaintenanceRecordCreateWithoutPerformedByInput, Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput> | Prisma.MaintenanceRecordCreateWithoutPerformedByInput[] | Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput[]
+  connectOrCreate?: Prisma.MaintenanceRecordCreateOrConnectWithoutPerformedByInput | Prisma.MaintenanceRecordCreateOrConnectWithoutPerformedByInput[]
+  upsert?: Prisma.MaintenanceRecordUpsertWithWhereUniqueWithoutPerformedByInput | Prisma.MaintenanceRecordUpsertWithWhereUniqueWithoutPerformedByInput[]
+  createMany?: Prisma.MaintenanceRecordCreateManyPerformedByInputEnvelope
+  set?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
+  disconnect?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
+  delete?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
+  connect?: Prisma.MaintenanceRecordWhereUniqueInput | Prisma.MaintenanceRecordWhereUniqueInput[]
+  update?: Prisma.MaintenanceRecordUpdateWithWhereUniqueWithoutPerformedByInput | Prisma.MaintenanceRecordUpdateWithWhereUniqueWithoutPerformedByInput[]
+  updateMany?: Prisma.MaintenanceRecordUpdateManyWithWhereWithoutPerformedByInput | Prisma.MaintenanceRecordUpdateManyWithWhereWithoutPerformedByInput[]
   deleteMany?: Prisma.MaintenanceRecordScalarWhereInput | Prisma.MaintenanceRecordScalarWhereInput[]
 }
 
@@ -725,90 +725,6 @@ export type MaintenanceRecordUncheckedUpdateManyWithoutMaintenanceScheduleNested
   update?: Prisma.MaintenanceRecordUpdateWithWhereUniqueWithoutMaintenanceScheduleInput | Prisma.MaintenanceRecordUpdateWithWhereUniqueWithoutMaintenanceScheduleInput[]
   updateMany?: Prisma.MaintenanceRecordUpdateManyWithWhereWithoutMaintenanceScheduleInput | Prisma.MaintenanceRecordUpdateManyWithWhereWithoutMaintenanceScheduleInput[]
   deleteMany?: Prisma.MaintenanceRecordScalarWhereInput | Prisma.MaintenanceRecordScalarWhereInput[]
-}
-
-export type MaintenanceRecordCreateWithoutPerformedByInput = {
-  id?: string
-  title: string
-  description?: string | null
-  scheduledDate: Date | string
-  completedDate?: Date | string | null
-  status?: string
-  notes?: string | null
-  cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  partsUsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  nextMaintenanceDate?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  asset: Prisma.AssetCreateNestedOneWithoutMaintenanceRecordsInput
-  maintenanceSchedule?: Prisma.MaintenanceScheduleCreateNestedOneWithoutMaintenanceRecordsInput
-}
-
-export type MaintenanceRecordUncheckedCreateWithoutPerformedByInput = {
-  id?: string
-  assetId: string
-  maintenanceScheduleId?: string | null
-  title: string
-  description?: string | null
-  scheduledDate: Date | string
-  completedDate?: Date | string | null
-  status?: string
-  notes?: string | null
-  cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  partsUsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  nextMaintenanceDate?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type MaintenanceRecordCreateOrConnectWithoutPerformedByInput = {
-  where: Prisma.MaintenanceRecordWhereUniqueInput
-  create: Prisma.XOR<Prisma.MaintenanceRecordCreateWithoutPerformedByInput, Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput>
-}
-
-export type MaintenanceRecordCreateManyPerformedByInputEnvelope = {
-  data: Prisma.MaintenanceRecordCreateManyPerformedByInput | Prisma.MaintenanceRecordCreateManyPerformedByInput[]
-  skipDuplicates?: boolean
-}
-
-export type MaintenanceRecordUpsertWithWhereUniqueWithoutPerformedByInput = {
-  where: Prisma.MaintenanceRecordWhereUniqueInput
-  update: Prisma.XOR<Prisma.MaintenanceRecordUpdateWithoutPerformedByInput, Prisma.MaintenanceRecordUncheckedUpdateWithoutPerformedByInput>
-  create: Prisma.XOR<Prisma.MaintenanceRecordCreateWithoutPerformedByInput, Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput>
-}
-
-export type MaintenanceRecordUpdateWithWhereUniqueWithoutPerformedByInput = {
-  where: Prisma.MaintenanceRecordWhereUniqueInput
-  data: Prisma.XOR<Prisma.MaintenanceRecordUpdateWithoutPerformedByInput, Prisma.MaintenanceRecordUncheckedUpdateWithoutPerformedByInput>
-}
-
-export type MaintenanceRecordUpdateManyWithWhereWithoutPerformedByInput = {
-  where: Prisma.MaintenanceRecordScalarWhereInput
-  data: Prisma.XOR<Prisma.MaintenanceRecordUpdateManyMutationInput, Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByInput>
-}
-
-export type MaintenanceRecordScalarWhereInput = {
-  AND?: Prisma.MaintenanceRecordScalarWhereInput | Prisma.MaintenanceRecordScalarWhereInput[]
-  OR?: Prisma.MaintenanceRecordScalarWhereInput[]
-  NOT?: Prisma.MaintenanceRecordScalarWhereInput | Prisma.MaintenanceRecordScalarWhereInput[]
-  id?: Prisma.StringFilter<"MaintenanceRecord"> | string
-  assetId?: Prisma.StringFilter<"MaintenanceRecord"> | string
-  maintenanceScheduleId?: Prisma.StringNullableFilter<"MaintenanceRecord"> | string | null
-  title?: Prisma.StringFilter<"MaintenanceRecord"> | string
-  description?: Prisma.StringNullableFilter<"MaintenanceRecord"> | string | null
-  scheduledDate?: Prisma.DateTimeFilter<"MaintenanceRecord"> | Date | string
-  completedDate?: Prisma.DateTimeNullableFilter<"MaintenanceRecord"> | Date | string | null
-  performedById?: Prisma.StringNullableFilter<"MaintenanceRecord"> | string | null
-  status?: Prisma.StringFilter<"MaintenanceRecord"> | string
-  notes?: Prisma.StringNullableFilter<"MaintenanceRecord"> | string | null
-  cost?: Prisma.DecimalNullableFilter<"MaintenanceRecord"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.StringNullableFilter<"MaintenanceRecord"> | string | null
-  partsUsed?: Prisma.JsonNullableFilter<"MaintenanceRecord">
-  nextMaintenanceDate?: Prisma.DateTimeNullableFilter<"MaintenanceRecord"> | Date | string | null
-  createdAt?: Prisma.DateTimeFilter<"MaintenanceRecord"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"MaintenanceRecord"> | Date | string
 }
 
 export type MaintenanceRecordCreateWithoutAssetInput = {
@@ -873,6 +789,90 @@ export type MaintenanceRecordUpdateManyWithWhereWithoutAssetInput = {
   data: Prisma.XOR<Prisma.MaintenanceRecordUpdateManyMutationInput, Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetInput>
 }
 
+export type MaintenanceRecordScalarWhereInput = {
+  AND?: Prisma.MaintenanceRecordScalarWhereInput | Prisma.MaintenanceRecordScalarWhereInput[]
+  OR?: Prisma.MaintenanceRecordScalarWhereInput[]
+  NOT?: Prisma.MaintenanceRecordScalarWhereInput | Prisma.MaintenanceRecordScalarWhereInput[]
+  id?: Prisma.StringFilter<"MaintenanceRecord"> | string
+  assetId?: Prisma.StringFilter<"MaintenanceRecord"> | string
+  maintenanceScheduleId?: Prisma.StringNullableFilter<"MaintenanceRecord"> | string | null
+  title?: Prisma.StringFilter<"MaintenanceRecord"> | string
+  description?: Prisma.StringNullableFilter<"MaintenanceRecord"> | string | null
+  scheduledDate?: Prisma.DateTimeFilter<"MaintenanceRecord"> | Date | string
+  completedDate?: Prisma.DateTimeNullableFilter<"MaintenanceRecord"> | Date | string | null
+  performedById?: Prisma.StringNullableFilter<"MaintenanceRecord"> | string | null
+  status?: Prisma.StringFilter<"MaintenanceRecord"> | string
+  notes?: Prisma.StringNullableFilter<"MaintenanceRecord"> | string | null
+  cost?: Prisma.DecimalNullableFilter<"MaintenanceRecord"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.StringNullableFilter<"MaintenanceRecord"> | string | null
+  partsUsed?: Prisma.JsonNullableFilter<"MaintenanceRecord">
+  nextMaintenanceDate?: Prisma.DateTimeNullableFilter<"MaintenanceRecord"> | Date | string | null
+  createdAt?: Prisma.DateTimeFilter<"MaintenanceRecord"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"MaintenanceRecord"> | Date | string
+}
+
+export type MaintenanceRecordCreateWithoutPerformedByInput = {
+  id?: string
+  title: string
+  description?: string | null
+  scheduledDate: Date | string
+  completedDate?: Date | string | null
+  status?: string
+  notes?: string | null
+  cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  partsUsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  nextMaintenanceDate?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  asset: Prisma.AssetCreateNestedOneWithoutMaintenanceRecordsInput
+  maintenanceSchedule?: Prisma.MaintenanceScheduleCreateNestedOneWithoutMaintenanceRecordsInput
+}
+
+export type MaintenanceRecordUncheckedCreateWithoutPerformedByInput = {
+  id?: string
+  assetId: string
+  maintenanceScheduleId?: string | null
+  title: string
+  description?: string | null
+  scheduledDate: Date | string
+  completedDate?: Date | string | null
+  status?: string
+  notes?: string | null
+  cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  partsUsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  nextMaintenanceDate?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type MaintenanceRecordCreateOrConnectWithoutPerformedByInput = {
+  where: Prisma.MaintenanceRecordWhereUniqueInput
+  create: Prisma.XOR<Prisma.MaintenanceRecordCreateWithoutPerformedByInput, Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput>
+}
+
+export type MaintenanceRecordCreateManyPerformedByInputEnvelope = {
+  data: Prisma.MaintenanceRecordCreateManyPerformedByInput | Prisma.MaintenanceRecordCreateManyPerformedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type MaintenanceRecordUpsertWithWhereUniqueWithoutPerformedByInput = {
+  where: Prisma.MaintenanceRecordWhereUniqueInput
+  update: Prisma.XOR<Prisma.MaintenanceRecordUpdateWithoutPerformedByInput, Prisma.MaintenanceRecordUncheckedUpdateWithoutPerformedByInput>
+  create: Prisma.XOR<Prisma.MaintenanceRecordCreateWithoutPerformedByInput, Prisma.MaintenanceRecordUncheckedCreateWithoutPerformedByInput>
+}
+
+export type MaintenanceRecordUpdateWithWhereUniqueWithoutPerformedByInput = {
+  where: Prisma.MaintenanceRecordWhereUniqueInput
+  data: Prisma.XOR<Prisma.MaintenanceRecordUpdateWithoutPerformedByInput, Prisma.MaintenanceRecordUncheckedUpdateWithoutPerformedByInput>
+}
+
+export type MaintenanceRecordUpdateManyWithWhereWithoutPerformedByInput = {
+  where: Prisma.MaintenanceRecordScalarWhereInput
+  data: Prisma.XOR<Prisma.MaintenanceRecordUpdateManyMutationInput, Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByInput>
+}
+
 export type MaintenanceRecordCreateWithoutMaintenanceScheduleInput = {
   id?: string
   title: string
@@ -933,78 +933,6 @@ export type MaintenanceRecordUpdateWithWhereUniqueWithoutMaintenanceScheduleInpu
 export type MaintenanceRecordUpdateManyWithWhereWithoutMaintenanceScheduleInput = {
   where: Prisma.MaintenanceRecordScalarWhereInput
   data: Prisma.XOR<Prisma.MaintenanceRecordUpdateManyMutationInput, Prisma.MaintenanceRecordUncheckedUpdateManyWithoutMaintenanceScheduleInput>
-}
-
-export type MaintenanceRecordCreateManyPerformedByInput = {
-  id?: string
-  assetId: string
-  maintenanceScheduleId?: string | null
-  title: string
-  description?: string | null
-  scheduledDate: Date | string
-  completedDate?: Date | string | null
-  status?: string
-  notes?: string | null
-  cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  partsUsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  nextMaintenanceDate?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type MaintenanceRecordUpdateWithoutPerformedByInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  partsUsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  nextMaintenanceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  asset?: Prisma.AssetUpdateOneRequiredWithoutMaintenanceRecordsNestedInput
-  maintenanceSchedule?: Prisma.MaintenanceScheduleUpdateOneWithoutMaintenanceRecordsNestedInput
-}
-
-export type MaintenanceRecordUncheckedUpdateWithoutPerformedByInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetId?: Prisma.StringFieldUpdateOperationsInput | string
-  maintenanceScheduleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  partsUsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  nextMaintenanceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type MaintenanceRecordUncheckedUpdateManyWithoutPerformedByInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetId?: Prisma.StringFieldUpdateOperationsInput | string
-  maintenanceScheduleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  partsUsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  nextMaintenanceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MaintenanceRecordCreateManyAssetInput = {
@@ -1069,6 +997,78 @@ export type MaintenanceRecordUncheckedUpdateManyWithoutAssetInput = {
   scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   performedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  partsUsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  nextMaintenanceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type MaintenanceRecordCreateManyPerformedByInput = {
+  id?: string
+  assetId: string
+  maintenanceScheduleId?: string | null
+  title: string
+  description?: string | null
+  scheduledDate: Date | string
+  completedDate?: Date | string | null
+  status?: string
+  notes?: string | null
+  cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  partsUsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  nextMaintenanceDate?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type MaintenanceRecordUpdateWithoutPerformedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  partsUsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  nextMaintenanceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  asset?: Prisma.AssetUpdateOneRequiredWithoutMaintenanceRecordsNestedInput
+  maintenanceSchedule?: Prisma.MaintenanceScheduleUpdateOneWithoutMaintenanceRecordsNestedInput
+}
+
+export type MaintenanceRecordUncheckedUpdateWithoutPerformedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetId?: Prisma.StringFieldUpdateOperationsInput | string
+  maintenanceScheduleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  partsUsed?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  nextMaintenanceDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type MaintenanceRecordUncheckedUpdateManyWithoutPerformedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetId?: Prisma.StringFieldUpdateOperationsInput | string
+  maintenanceScheduleId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.StringFieldUpdateOperationsInput | string
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null

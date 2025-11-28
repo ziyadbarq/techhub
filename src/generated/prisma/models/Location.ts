@@ -724,6 +724,38 @@ export type LocationSumOrderByAggregateInput = {
   longitude?: Prisma.SortOrder
 }
 
+export type LocationCreateNestedOneWithoutStockLocationsInput = {
+  create?: Prisma.XOR<Prisma.LocationCreateWithoutStockLocationsInput, Prisma.LocationUncheckedCreateWithoutStockLocationsInput>
+  connectOrCreate?: Prisma.LocationCreateOrConnectWithoutStockLocationsInput
+  connect?: Prisma.LocationWhereUniqueInput
+}
+
+export type LocationUpdateOneWithoutStockLocationsNestedInput = {
+  create?: Prisma.XOR<Prisma.LocationCreateWithoutStockLocationsInput, Prisma.LocationUncheckedCreateWithoutStockLocationsInput>
+  connectOrCreate?: Prisma.LocationCreateOrConnectWithoutStockLocationsInput
+  upsert?: Prisma.LocationUpsertWithoutStockLocationsInput
+  disconnect?: Prisma.LocationWhereInput | boolean
+  delete?: Prisma.LocationWhereInput | boolean
+  connect?: Prisma.LocationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LocationUpdateToOneWithWhereWithoutStockLocationsInput, Prisma.LocationUpdateWithoutStockLocationsInput>, Prisma.LocationUncheckedUpdateWithoutStockLocationsInput>
+}
+
+export type LocationCreateNestedOneWithoutConfigurationItemsInput = {
+  create?: Prisma.XOR<Prisma.LocationCreateWithoutConfigurationItemsInput, Prisma.LocationUncheckedCreateWithoutConfigurationItemsInput>
+  connectOrCreate?: Prisma.LocationCreateOrConnectWithoutConfigurationItemsInput
+  connect?: Prisma.LocationWhereUniqueInput
+}
+
+export type LocationUpdateOneWithoutConfigurationItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.LocationCreateWithoutConfigurationItemsInput, Prisma.LocationUncheckedCreateWithoutConfigurationItemsInput>
+  connectOrCreate?: Prisma.LocationCreateOrConnectWithoutConfigurationItemsInput
+  upsert?: Prisma.LocationUpsertWithoutConfigurationItemsInput
+  disconnect?: Prisma.LocationWhereInput | boolean
+  delete?: Prisma.LocationWhereInput | boolean
+  connect?: Prisma.LocationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LocationUpdateToOneWithWhereWithoutConfigurationItemsInput, Prisma.LocationUpdateWithoutConfigurationItemsInput>, Prisma.LocationUncheckedUpdateWithoutConfigurationItemsInput>
+}
+
 export type LocationCreateNestedOneWithoutPersonsInput = {
   create?: Prisma.XOR<Prisma.LocationCreateWithoutPersonsInput, Prisma.LocationUncheckedCreateWithoutPersonsInput>
   connectOrCreate?: Prisma.LocationCreateOrConnectWithoutPersonsInput
@@ -764,14 +796,6 @@ export type EnumLocationTypeFieldUpdateOperationsInput = {
   set?: $Enums.LocationType
 }
 
-export type NullableDecimalFieldUpdateOperationsInput = {
-  set?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
-}
-
 export type LocationUpdateOneWithoutChildrenNestedInput = {
   create?: Prisma.XOR<Prisma.LocationCreateWithoutChildrenInput, Prisma.LocationUncheckedCreateWithoutChildrenInput>
   connectOrCreate?: Prisma.LocationCreateOrConnectWithoutChildrenInput
@@ -810,36 +834,244 @@ export type LocationUncheckedUpdateManyWithoutParentNestedInput = {
   deleteMany?: Prisma.LocationScalarWhereInput | Prisma.LocationScalarWhereInput[]
 }
 
-export type LocationCreateNestedOneWithoutConfigurationItemsInput = {
-  create?: Prisma.XOR<Prisma.LocationCreateWithoutConfigurationItemsInput, Prisma.LocationUncheckedCreateWithoutConfigurationItemsInput>
-  connectOrCreate?: Prisma.LocationCreateOrConnectWithoutConfigurationItemsInput
-  connect?: Prisma.LocationWhereUniqueInput
+export type LocationCreateWithoutStockLocationsInput = {
+  id?: string
+  name: string
+  code: string
+  description?: string | null
+  locationType: $Enums.LocationType
+  address?: string | null
+  addressLine1?: string | null
+  addressLine2?: string | null
+  city?: string | null
+  state?: string | null
+  country?: string | null
+  postalCode?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  timeZone?: string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  parent?: Prisma.LocationCreateNestedOneWithoutChildrenInput
+  children?: Prisma.LocationCreateNestedManyWithoutParentInput
+  persons?: Prisma.PersonCreateNestedManyWithoutLocationInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLocationInput
 }
 
-export type LocationUpdateOneWithoutConfigurationItemsNestedInput = {
-  create?: Prisma.XOR<Prisma.LocationCreateWithoutConfigurationItemsInput, Prisma.LocationUncheckedCreateWithoutConfigurationItemsInput>
-  connectOrCreate?: Prisma.LocationCreateOrConnectWithoutConfigurationItemsInput
-  upsert?: Prisma.LocationUpsertWithoutConfigurationItemsInput
-  disconnect?: Prisma.LocationWhereInput | boolean
-  delete?: Prisma.LocationWhereInput | boolean
-  connect?: Prisma.LocationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.LocationUpdateToOneWithWhereWithoutConfigurationItemsInput, Prisma.LocationUpdateWithoutConfigurationItemsInput>, Prisma.LocationUncheckedUpdateWithoutConfigurationItemsInput>
+export type LocationUncheckedCreateWithoutStockLocationsInput = {
+  id?: string
+  parentId?: string | null
+  name: string
+  code: string
+  description?: string | null
+  locationType: $Enums.LocationType
+  address?: string | null
+  addressLine1?: string | null
+  addressLine2?: string | null
+  city?: string | null
+  state?: string | null
+  country?: string | null
+  postalCode?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  timeZone?: string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  children?: Prisma.LocationUncheckedCreateNestedManyWithoutParentInput
+  persons?: Prisma.PersonUncheckedCreateNestedManyWithoutLocationInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLocationInput
 }
 
-export type LocationCreateNestedOneWithoutStockLocationsInput = {
-  create?: Prisma.XOR<Prisma.LocationCreateWithoutStockLocationsInput, Prisma.LocationUncheckedCreateWithoutStockLocationsInput>
-  connectOrCreate?: Prisma.LocationCreateOrConnectWithoutStockLocationsInput
-  connect?: Prisma.LocationWhereUniqueInput
+export type LocationCreateOrConnectWithoutStockLocationsInput = {
+  where: Prisma.LocationWhereUniqueInput
+  create: Prisma.XOR<Prisma.LocationCreateWithoutStockLocationsInput, Prisma.LocationUncheckedCreateWithoutStockLocationsInput>
 }
 
-export type LocationUpdateOneWithoutStockLocationsNestedInput = {
-  create?: Prisma.XOR<Prisma.LocationCreateWithoutStockLocationsInput, Prisma.LocationUncheckedCreateWithoutStockLocationsInput>
-  connectOrCreate?: Prisma.LocationCreateOrConnectWithoutStockLocationsInput
-  upsert?: Prisma.LocationUpsertWithoutStockLocationsInput
-  disconnect?: Prisma.LocationWhereInput | boolean
-  delete?: Prisma.LocationWhereInput | boolean
-  connect?: Prisma.LocationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.LocationUpdateToOneWithWhereWithoutStockLocationsInput, Prisma.LocationUpdateWithoutStockLocationsInput>, Prisma.LocationUncheckedUpdateWithoutStockLocationsInput>
+export type LocationUpsertWithoutStockLocationsInput = {
+  update: Prisma.XOR<Prisma.LocationUpdateWithoutStockLocationsInput, Prisma.LocationUncheckedUpdateWithoutStockLocationsInput>
+  create: Prisma.XOR<Prisma.LocationCreateWithoutStockLocationsInput, Prisma.LocationUncheckedCreateWithoutStockLocationsInput>
+  where?: Prisma.LocationWhereInput
+}
+
+export type LocationUpdateToOneWithWhereWithoutStockLocationsInput = {
+  where?: Prisma.LocationWhereInput
+  data: Prisma.XOR<Prisma.LocationUpdateWithoutStockLocationsInput, Prisma.LocationUncheckedUpdateWithoutStockLocationsInput>
+}
+
+export type LocationUpdateWithoutStockLocationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationType?: Prisma.EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  parent?: Prisma.LocationUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.LocationUpdateManyWithoutParentNestedInput
+  persons?: Prisma.PersonUpdateManyWithoutLocationNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutLocationNestedInput
+}
+
+export type LocationUncheckedUpdateWithoutStockLocationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationType?: Prisma.EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  children?: Prisma.LocationUncheckedUpdateManyWithoutParentNestedInput
+  persons?: Prisma.PersonUncheckedUpdateManyWithoutLocationNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLocationNestedInput
+}
+
+export type LocationCreateWithoutConfigurationItemsInput = {
+  id?: string
+  name: string
+  code: string
+  description?: string | null
+  locationType: $Enums.LocationType
+  address?: string | null
+  addressLine1?: string | null
+  addressLine2?: string | null
+  city?: string | null
+  state?: string | null
+  country?: string | null
+  postalCode?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  timeZone?: string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  parent?: Prisma.LocationCreateNestedOneWithoutChildrenInput
+  children?: Prisma.LocationCreateNestedManyWithoutParentInput
+  persons?: Prisma.PersonCreateNestedManyWithoutLocationInput
+  stockLocations?: Prisma.StockLocationCreateNestedManyWithoutLocationInput
+}
+
+export type LocationUncheckedCreateWithoutConfigurationItemsInput = {
+  id?: string
+  parentId?: string | null
+  name: string
+  code: string
+  description?: string | null
+  locationType: $Enums.LocationType
+  address?: string | null
+  addressLine1?: string | null
+  addressLine2?: string | null
+  city?: string | null
+  state?: string | null
+  country?: string | null
+  postalCode?: string | null
+  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  timeZone?: string | null
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  children?: Prisma.LocationUncheckedCreateNestedManyWithoutParentInput
+  persons?: Prisma.PersonUncheckedCreateNestedManyWithoutLocationInput
+  stockLocations?: Prisma.StockLocationUncheckedCreateNestedManyWithoutLocationInput
+}
+
+export type LocationCreateOrConnectWithoutConfigurationItemsInput = {
+  where: Prisma.LocationWhereUniqueInput
+  create: Prisma.XOR<Prisma.LocationCreateWithoutConfigurationItemsInput, Prisma.LocationUncheckedCreateWithoutConfigurationItemsInput>
+}
+
+export type LocationUpsertWithoutConfigurationItemsInput = {
+  update: Prisma.XOR<Prisma.LocationUpdateWithoutConfigurationItemsInput, Prisma.LocationUncheckedUpdateWithoutConfigurationItemsInput>
+  create: Prisma.XOR<Prisma.LocationCreateWithoutConfigurationItemsInput, Prisma.LocationUncheckedCreateWithoutConfigurationItemsInput>
+  where?: Prisma.LocationWhereInput
+}
+
+export type LocationUpdateToOneWithWhereWithoutConfigurationItemsInput = {
+  where?: Prisma.LocationWhereInput
+  data: Prisma.XOR<Prisma.LocationUpdateWithoutConfigurationItemsInput, Prisma.LocationUncheckedUpdateWithoutConfigurationItemsInput>
+}
+
+export type LocationUpdateWithoutConfigurationItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationType?: Prisma.EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  parent?: Prisma.LocationUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.LocationUpdateManyWithoutParentNestedInput
+  persons?: Prisma.PersonUpdateManyWithoutLocationNestedInput
+  stockLocations?: Prisma.StockLocationUpdateManyWithoutLocationNestedInput
+}
+
+export type LocationUncheckedUpdateWithoutConfigurationItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationType?: Prisma.EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  children?: Prisma.LocationUncheckedUpdateManyWithoutParentNestedInput
+  persons?: Prisma.PersonUncheckedUpdateManyWithoutLocationNestedInput
+  stockLocations?: Prisma.StockLocationUncheckedUpdateManyWithoutLocationNestedInput
 }
 
 export type LocationCreateWithoutPersonsInput = {
@@ -1184,246 +1416,6 @@ export type LocationScalarWhereInput = {
   metadata?: Prisma.JsonNullableFilter<"Location">
   createdAt?: Prisma.DateTimeFilter<"Location"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Location"> | Date | string
-}
-
-export type LocationCreateWithoutConfigurationItemsInput = {
-  id?: string
-  name: string
-  code: string
-  description?: string | null
-  locationType: $Enums.LocationType
-  address?: string | null
-  addressLine1?: string | null
-  addressLine2?: string | null
-  city?: string | null
-  state?: string | null
-  country?: string | null
-  postalCode?: string | null
-  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  timeZone?: string | null
-  isActive?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  parent?: Prisma.LocationCreateNestedOneWithoutChildrenInput
-  children?: Prisma.LocationCreateNestedManyWithoutParentInput
-  persons?: Prisma.PersonCreateNestedManyWithoutLocationInput
-  stockLocations?: Prisma.StockLocationCreateNestedManyWithoutLocationInput
-}
-
-export type LocationUncheckedCreateWithoutConfigurationItemsInput = {
-  id?: string
-  parentId?: string | null
-  name: string
-  code: string
-  description?: string | null
-  locationType: $Enums.LocationType
-  address?: string | null
-  addressLine1?: string | null
-  addressLine2?: string | null
-  city?: string | null
-  state?: string | null
-  country?: string | null
-  postalCode?: string | null
-  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  timeZone?: string | null
-  isActive?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  children?: Prisma.LocationUncheckedCreateNestedManyWithoutParentInput
-  persons?: Prisma.PersonUncheckedCreateNestedManyWithoutLocationInput
-  stockLocations?: Prisma.StockLocationUncheckedCreateNestedManyWithoutLocationInput
-}
-
-export type LocationCreateOrConnectWithoutConfigurationItemsInput = {
-  where: Prisma.LocationWhereUniqueInput
-  create: Prisma.XOR<Prisma.LocationCreateWithoutConfigurationItemsInput, Prisma.LocationUncheckedCreateWithoutConfigurationItemsInput>
-}
-
-export type LocationUpsertWithoutConfigurationItemsInput = {
-  update: Prisma.XOR<Prisma.LocationUpdateWithoutConfigurationItemsInput, Prisma.LocationUncheckedUpdateWithoutConfigurationItemsInput>
-  create: Prisma.XOR<Prisma.LocationCreateWithoutConfigurationItemsInput, Prisma.LocationUncheckedCreateWithoutConfigurationItemsInput>
-  where?: Prisma.LocationWhereInput
-}
-
-export type LocationUpdateToOneWithWhereWithoutConfigurationItemsInput = {
-  where?: Prisma.LocationWhereInput
-  data: Prisma.XOR<Prisma.LocationUpdateWithoutConfigurationItemsInput, Prisma.LocationUncheckedUpdateWithoutConfigurationItemsInput>
-}
-
-export type LocationUpdateWithoutConfigurationItemsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  locationType?: Prisma.EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  addressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  parent?: Prisma.LocationUpdateOneWithoutChildrenNestedInput
-  children?: Prisma.LocationUpdateManyWithoutParentNestedInput
-  persons?: Prisma.PersonUpdateManyWithoutLocationNestedInput
-  stockLocations?: Prisma.StockLocationUpdateManyWithoutLocationNestedInput
-}
-
-export type LocationUncheckedUpdateWithoutConfigurationItemsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  locationType?: Prisma.EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  addressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  children?: Prisma.LocationUncheckedUpdateManyWithoutParentNestedInput
-  persons?: Prisma.PersonUncheckedUpdateManyWithoutLocationNestedInput
-  stockLocations?: Prisma.StockLocationUncheckedUpdateManyWithoutLocationNestedInput
-}
-
-export type LocationCreateWithoutStockLocationsInput = {
-  id?: string
-  name: string
-  code: string
-  description?: string | null
-  locationType: $Enums.LocationType
-  address?: string | null
-  addressLine1?: string | null
-  addressLine2?: string | null
-  city?: string | null
-  state?: string | null
-  country?: string | null
-  postalCode?: string | null
-  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  timeZone?: string | null
-  isActive?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  parent?: Prisma.LocationCreateNestedOneWithoutChildrenInput
-  children?: Prisma.LocationCreateNestedManyWithoutParentInput
-  persons?: Prisma.PersonCreateNestedManyWithoutLocationInput
-  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLocationInput
-}
-
-export type LocationUncheckedCreateWithoutStockLocationsInput = {
-  id?: string
-  parentId?: string | null
-  name: string
-  code: string
-  description?: string | null
-  locationType: $Enums.LocationType
-  address?: string | null
-  addressLine1?: string | null
-  addressLine2?: string | null
-  city?: string | null
-  state?: string | null
-  country?: string | null
-  postalCode?: string | null
-  latitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  timeZone?: string | null
-  isActive?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  children?: Prisma.LocationUncheckedCreateNestedManyWithoutParentInput
-  persons?: Prisma.PersonUncheckedCreateNestedManyWithoutLocationInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLocationInput
-}
-
-export type LocationCreateOrConnectWithoutStockLocationsInput = {
-  where: Prisma.LocationWhereUniqueInput
-  create: Prisma.XOR<Prisma.LocationCreateWithoutStockLocationsInput, Prisma.LocationUncheckedCreateWithoutStockLocationsInput>
-}
-
-export type LocationUpsertWithoutStockLocationsInput = {
-  update: Prisma.XOR<Prisma.LocationUpdateWithoutStockLocationsInput, Prisma.LocationUncheckedUpdateWithoutStockLocationsInput>
-  create: Prisma.XOR<Prisma.LocationCreateWithoutStockLocationsInput, Prisma.LocationUncheckedCreateWithoutStockLocationsInput>
-  where?: Prisma.LocationWhereInput
-}
-
-export type LocationUpdateToOneWithWhereWithoutStockLocationsInput = {
-  where?: Prisma.LocationWhereInput
-  data: Prisma.XOR<Prisma.LocationUpdateWithoutStockLocationsInput, Prisma.LocationUncheckedUpdateWithoutStockLocationsInput>
-}
-
-export type LocationUpdateWithoutStockLocationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  locationType?: Prisma.EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  addressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  parent?: Prisma.LocationUpdateOneWithoutChildrenNestedInput
-  children?: Prisma.LocationUpdateManyWithoutParentNestedInput
-  persons?: Prisma.PersonUpdateManyWithoutLocationNestedInput
-  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutLocationNestedInput
-}
-
-export type LocationUncheckedUpdateWithoutStockLocationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  locationType?: Prisma.EnumLocationTypeFieldUpdateOperationsInput | $Enums.LocationType
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  addressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  addressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  latitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  longitude?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  timeZone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  children?: Prisma.LocationUncheckedUpdateManyWithoutParentNestedInput
-  persons?: Prisma.PersonUncheckedUpdateManyWithoutLocationNestedInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLocationNestedInput
 }
 
 export type LocationCreateManyParentInput = {

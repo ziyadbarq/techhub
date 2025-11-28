@@ -413,6 +413,90 @@ export type DataOwnershipMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
+export type DataOwnershipCreateNestedManyWithoutAssetCategoryInput = {
+  create?: Prisma.XOR<Prisma.DataOwnershipCreateWithoutAssetCategoryInput, Prisma.DataOwnershipUncheckedCreateWithoutAssetCategoryInput> | Prisma.DataOwnershipCreateWithoutAssetCategoryInput[] | Prisma.DataOwnershipUncheckedCreateWithoutAssetCategoryInput[]
+  connectOrCreate?: Prisma.DataOwnershipCreateOrConnectWithoutAssetCategoryInput | Prisma.DataOwnershipCreateOrConnectWithoutAssetCategoryInput[]
+  createMany?: Prisma.DataOwnershipCreateManyAssetCategoryInputEnvelope
+  connect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+}
+
+export type DataOwnershipUncheckedCreateNestedManyWithoutAssetCategoryInput = {
+  create?: Prisma.XOR<Prisma.DataOwnershipCreateWithoutAssetCategoryInput, Prisma.DataOwnershipUncheckedCreateWithoutAssetCategoryInput> | Prisma.DataOwnershipCreateWithoutAssetCategoryInput[] | Prisma.DataOwnershipUncheckedCreateWithoutAssetCategoryInput[]
+  connectOrCreate?: Prisma.DataOwnershipCreateOrConnectWithoutAssetCategoryInput | Prisma.DataOwnershipCreateOrConnectWithoutAssetCategoryInput[]
+  createMany?: Prisma.DataOwnershipCreateManyAssetCategoryInputEnvelope
+  connect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+}
+
+export type DataOwnershipUpdateManyWithoutAssetCategoryNestedInput = {
+  create?: Prisma.XOR<Prisma.DataOwnershipCreateWithoutAssetCategoryInput, Prisma.DataOwnershipUncheckedCreateWithoutAssetCategoryInput> | Prisma.DataOwnershipCreateWithoutAssetCategoryInput[] | Prisma.DataOwnershipUncheckedCreateWithoutAssetCategoryInput[]
+  connectOrCreate?: Prisma.DataOwnershipCreateOrConnectWithoutAssetCategoryInput | Prisma.DataOwnershipCreateOrConnectWithoutAssetCategoryInput[]
+  upsert?: Prisma.DataOwnershipUpsertWithWhereUniqueWithoutAssetCategoryInput | Prisma.DataOwnershipUpsertWithWhereUniqueWithoutAssetCategoryInput[]
+  createMany?: Prisma.DataOwnershipCreateManyAssetCategoryInputEnvelope
+  set?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+  disconnect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+  delete?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+  connect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+  update?: Prisma.DataOwnershipUpdateWithWhereUniqueWithoutAssetCategoryInput | Prisma.DataOwnershipUpdateWithWhereUniqueWithoutAssetCategoryInput[]
+  updateMany?: Prisma.DataOwnershipUpdateManyWithWhereWithoutAssetCategoryInput | Prisma.DataOwnershipUpdateManyWithWhereWithoutAssetCategoryInput[]
+  deleteMany?: Prisma.DataOwnershipScalarWhereInput | Prisma.DataOwnershipScalarWhereInput[]
+}
+
+export type DataOwnershipUncheckedUpdateManyWithoutAssetCategoryNestedInput = {
+  create?: Prisma.XOR<Prisma.DataOwnershipCreateWithoutAssetCategoryInput, Prisma.DataOwnershipUncheckedCreateWithoutAssetCategoryInput> | Prisma.DataOwnershipCreateWithoutAssetCategoryInput[] | Prisma.DataOwnershipUncheckedCreateWithoutAssetCategoryInput[]
+  connectOrCreate?: Prisma.DataOwnershipCreateOrConnectWithoutAssetCategoryInput | Prisma.DataOwnershipCreateOrConnectWithoutAssetCategoryInput[]
+  upsert?: Prisma.DataOwnershipUpsertWithWhereUniqueWithoutAssetCategoryInput | Prisma.DataOwnershipUpsertWithWhereUniqueWithoutAssetCategoryInput[]
+  createMany?: Prisma.DataOwnershipCreateManyAssetCategoryInputEnvelope
+  set?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+  disconnect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+  delete?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+  connect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+  update?: Prisma.DataOwnershipUpdateWithWhereUniqueWithoutAssetCategoryInput | Prisma.DataOwnershipUpdateWithWhereUniqueWithoutAssetCategoryInput[]
+  updateMany?: Prisma.DataOwnershipUpdateManyWithWhereWithoutAssetCategoryInput | Prisma.DataOwnershipUpdateManyWithWhereWithoutAssetCategoryInput[]
+  deleteMany?: Prisma.DataOwnershipScalarWhereInput | Prisma.DataOwnershipScalarWhereInput[]
+}
+
+export type DataOwnershipCreateNestedManyWithoutCiClassInput = {
+  create?: Prisma.XOR<Prisma.DataOwnershipCreateWithoutCiClassInput, Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput> | Prisma.DataOwnershipCreateWithoutCiClassInput[] | Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput[]
+  connectOrCreate?: Prisma.DataOwnershipCreateOrConnectWithoutCiClassInput | Prisma.DataOwnershipCreateOrConnectWithoutCiClassInput[]
+  createMany?: Prisma.DataOwnershipCreateManyCiClassInputEnvelope
+  connect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+}
+
+export type DataOwnershipUncheckedCreateNestedManyWithoutCiClassInput = {
+  create?: Prisma.XOR<Prisma.DataOwnershipCreateWithoutCiClassInput, Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput> | Prisma.DataOwnershipCreateWithoutCiClassInput[] | Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput[]
+  connectOrCreate?: Prisma.DataOwnershipCreateOrConnectWithoutCiClassInput | Prisma.DataOwnershipCreateOrConnectWithoutCiClassInput[]
+  createMany?: Prisma.DataOwnershipCreateManyCiClassInputEnvelope
+  connect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+}
+
+export type DataOwnershipUpdateManyWithoutCiClassNestedInput = {
+  create?: Prisma.XOR<Prisma.DataOwnershipCreateWithoutCiClassInput, Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput> | Prisma.DataOwnershipCreateWithoutCiClassInput[] | Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput[]
+  connectOrCreate?: Prisma.DataOwnershipCreateOrConnectWithoutCiClassInput | Prisma.DataOwnershipCreateOrConnectWithoutCiClassInput[]
+  upsert?: Prisma.DataOwnershipUpsertWithWhereUniqueWithoutCiClassInput | Prisma.DataOwnershipUpsertWithWhereUniqueWithoutCiClassInput[]
+  createMany?: Prisma.DataOwnershipCreateManyCiClassInputEnvelope
+  set?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+  disconnect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+  delete?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+  connect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+  update?: Prisma.DataOwnershipUpdateWithWhereUniqueWithoutCiClassInput | Prisma.DataOwnershipUpdateWithWhereUniqueWithoutCiClassInput[]
+  updateMany?: Prisma.DataOwnershipUpdateManyWithWhereWithoutCiClassInput | Prisma.DataOwnershipUpdateManyWithWhereWithoutCiClassInput[]
+  deleteMany?: Prisma.DataOwnershipScalarWhereInput | Prisma.DataOwnershipScalarWhereInput[]
+}
+
+export type DataOwnershipUncheckedUpdateManyWithoutCiClassNestedInput = {
+  create?: Prisma.XOR<Prisma.DataOwnershipCreateWithoutCiClassInput, Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput> | Prisma.DataOwnershipCreateWithoutCiClassInput[] | Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput[]
+  connectOrCreate?: Prisma.DataOwnershipCreateOrConnectWithoutCiClassInput | Prisma.DataOwnershipCreateOrConnectWithoutCiClassInput[]
+  upsert?: Prisma.DataOwnershipUpsertWithWhereUniqueWithoutCiClassInput | Prisma.DataOwnershipUpsertWithWhereUniqueWithoutCiClassInput[]
+  createMany?: Prisma.DataOwnershipCreateManyCiClassInputEnvelope
+  set?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+  disconnect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+  delete?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+  connect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
+  update?: Prisma.DataOwnershipUpdateWithWhereUniqueWithoutCiClassInput | Prisma.DataOwnershipUpdateWithWhereUniqueWithoutCiClassInput[]
+  updateMany?: Prisma.DataOwnershipUpdateManyWithWhereWithoutCiClassInput | Prisma.DataOwnershipUpdateManyWithWhereWithoutCiClassInput[]
+  deleteMany?: Prisma.DataOwnershipScalarWhereInput | Prisma.DataOwnershipScalarWhereInput[]
+}
+
 export type DataOwnershipCreateNestedManyWithoutOwnerOrgUnitInput = {
   create?: Prisma.XOR<Prisma.DataOwnershipCreateWithoutOwnerOrgUnitInput, Prisma.DataOwnershipUncheckedCreateWithoutOwnerOrgUnitInput> | Prisma.DataOwnershipCreateWithoutOwnerOrgUnitInput[] | Prisma.DataOwnershipUncheckedCreateWithoutOwnerOrgUnitInput[]
   connectOrCreate?: Prisma.DataOwnershipCreateOrConnectWithoutOwnerOrgUnitInput | Prisma.DataOwnershipCreateOrConnectWithoutOwnerOrgUnitInput[]
@@ -497,90 +581,6 @@ export type DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput = {
   deleteMany?: Prisma.DataOwnershipScalarWhereInput | Prisma.DataOwnershipScalarWhereInput[]
 }
 
-export type DataOwnershipCreateNestedManyWithoutCiClassInput = {
-  create?: Prisma.XOR<Prisma.DataOwnershipCreateWithoutCiClassInput, Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput> | Prisma.DataOwnershipCreateWithoutCiClassInput[] | Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput[]
-  connectOrCreate?: Prisma.DataOwnershipCreateOrConnectWithoutCiClassInput | Prisma.DataOwnershipCreateOrConnectWithoutCiClassInput[]
-  createMany?: Prisma.DataOwnershipCreateManyCiClassInputEnvelope
-  connect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-}
-
-export type DataOwnershipUncheckedCreateNestedManyWithoutCiClassInput = {
-  create?: Prisma.XOR<Prisma.DataOwnershipCreateWithoutCiClassInput, Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput> | Prisma.DataOwnershipCreateWithoutCiClassInput[] | Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput[]
-  connectOrCreate?: Prisma.DataOwnershipCreateOrConnectWithoutCiClassInput | Prisma.DataOwnershipCreateOrConnectWithoutCiClassInput[]
-  createMany?: Prisma.DataOwnershipCreateManyCiClassInputEnvelope
-  connect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-}
-
-export type DataOwnershipUpdateManyWithoutCiClassNestedInput = {
-  create?: Prisma.XOR<Prisma.DataOwnershipCreateWithoutCiClassInput, Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput> | Prisma.DataOwnershipCreateWithoutCiClassInput[] | Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput[]
-  connectOrCreate?: Prisma.DataOwnershipCreateOrConnectWithoutCiClassInput | Prisma.DataOwnershipCreateOrConnectWithoutCiClassInput[]
-  upsert?: Prisma.DataOwnershipUpsertWithWhereUniqueWithoutCiClassInput | Prisma.DataOwnershipUpsertWithWhereUniqueWithoutCiClassInput[]
-  createMany?: Prisma.DataOwnershipCreateManyCiClassInputEnvelope
-  set?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-  disconnect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-  delete?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-  connect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-  update?: Prisma.DataOwnershipUpdateWithWhereUniqueWithoutCiClassInput | Prisma.DataOwnershipUpdateWithWhereUniqueWithoutCiClassInput[]
-  updateMany?: Prisma.DataOwnershipUpdateManyWithWhereWithoutCiClassInput | Prisma.DataOwnershipUpdateManyWithWhereWithoutCiClassInput[]
-  deleteMany?: Prisma.DataOwnershipScalarWhereInput | Prisma.DataOwnershipScalarWhereInput[]
-}
-
-export type DataOwnershipUncheckedUpdateManyWithoutCiClassNestedInput = {
-  create?: Prisma.XOR<Prisma.DataOwnershipCreateWithoutCiClassInput, Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput> | Prisma.DataOwnershipCreateWithoutCiClassInput[] | Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput[]
-  connectOrCreate?: Prisma.DataOwnershipCreateOrConnectWithoutCiClassInput | Prisma.DataOwnershipCreateOrConnectWithoutCiClassInput[]
-  upsert?: Prisma.DataOwnershipUpsertWithWhereUniqueWithoutCiClassInput | Prisma.DataOwnershipUpsertWithWhereUniqueWithoutCiClassInput[]
-  createMany?: Prisma.DataOwnershipCreateManyCiClassInputEnvelope
-  set?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-  disconnect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-  delete?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-  connect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-  update?: Prisma.DataOwnershipUpdateWithWhereUniqueWithoutCiClassInput | Prisma.DataOwnershipUpdateWithWhereUniqueWithoutCiClassInput[]
-  updateMany?: Prisma.DataOwnershipUpdateManyWithWhereWithoutCiClassInput | Prisma.DataOwnershipUpdateManyWithWhereWithoutCiClassInput[]
-  deleteMany?: Prisma.DataOwnershipScalarWhereInput | Prisma.DataOwnershipScalarWhereInput[]
-}
-
-export type DataOwnershipCreateNestedManyWithoutAssetCategoryInput = {
-  create?: Prisma.XOR<Prisma.DataOwnershipCreateWithoutAssetCategoryInput, Prisma.DataOwnershipUncheckedCreateWithoutAssetCategoryInput> | Prisma.DataOwnershipCreateWithoutAssetCategoryInput[] | Prisma.DataOwnershipUncheckedCreateWithoutAssetCategoryInput[]
-  connectOrCreate?: Prisma.DataOwnershipCreateOrConnectWithoutAssetCategoryInput | Prisma.DataOwnershipCreateOrConnectWithoutAssetCategoryInput[]
-  createMany?: Prisma.DataOwnershipCreateManyAssetCategoryInputEnvelope
-  connect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-}
-
-export type DataOwnershipUncheckedCreateNestedManyWithoutAssetCategoryInput = {
-  create?: Prisma.XOR<Prisma.DataOwnershipCreateWithoutAssetCategoryInput, Prisma.DataOwnershipUncheckedCreateWithoutAssetCategoryInput> | Prisma.DataOwnershipCreateWithoutAssetCategoryInput[] | Prisma.DataOwnershipUncheckedCreateWithoutAssetCategoryInput[]
-  connectOrCreate?: Prisma.DataOwnershipCreateOrConnectWithoutAssetCategoryInput | Prisma.DataOwnershipCreateOrConnectWithoutAssetCategoryInput[]
-  createMany?: Prisma.DataOwnershipCreateManyAssetCategoryInputEnvelope
-  connect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-}
-
-export type DataOwnershipUpdateManyWithoutAssetCategoryNestedInput = {
-  create?: Prisma.XOR<Prisma.DataOwnershipCreateWithoutAssetCategoryInput, Prisma.DataOwnershipUncheckedCreateWithoutAssetCategoryInput> | Prisma.DataOwnershipCreateWithoutAssetCategoryInput[] | Prisma.DataOwnershipUncheckedCreateWithoutAssetCategoryInput[]
-  connectOrCreate?: Prisma.DataOwnershipCreateOrConnectWithoutAssetCategoryInput | Prisma.DataOwnershipCreateOrConnectWithoutAssetCategoryInput[]
-  upsert?: Prisma.DataOwnershipUpsertWithWhereUniqueWithoutAssetCategoryInput | Prisma.DataOwnershipUpsertWithWhereUniqueWithoutAssetCategoryInput[]
-  createMany?: Prisma.DataOwnershipCreateManyAssetCategoryInputEnvelope
-  set?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-  disconnect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-  delete?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-  connect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-  update?: Prisma.DataOwnershipUpdateWithWhereUniqueWithoutAssetCategoryInput | Prisma.DataOwnershipUpdateWithWhereUniqueWithoutAssetCategoryInput[]
-  updateMany?: Prisma.DataOwnershipUpdateManyWithWhereWithoutAssetCategoryInput | Prisma.DataOwnershipUpdateManyWithWhereWithoutAssetCategoryInput[]
-  deleteMany?: Prisma.DataOwnershipScalarWhereInput | Prisma.DataOwnershipScalarWhereInput[]
-}
-
-export type DataOwnershipUncheckedUpdateManyWithoutAssetCategoryNestedInput = {
-  create?: Prisma.XOR<Prisma.DataOwnershipCreateWithoutAssetCategoryInput, Prisma.DataOwnershipUncheckedCreateWithoutAssetCategoryInput> | Prisma.DataOwnershipCreateWithoutAssetCategoryInput[] | Prisma.DataOwnershipUncheckedCreateWithoutAssetCategoryInput[]
-  connectOrCreate?: Prisma.DataOwnershipCreateOrConnectWithoutAssetCategoryInput | Prisma.DataOwnershipCreateOrConnectWithoutAssetCategoryInput[]
-  upsert?: Prisma.DataOwnershipUpsertWithWhereUniqueWithoutAssetCategoryInput | Prisma.DataOwnershipUpsertWithWhereUniqueWithoutAssetCategoryInput[]
-  createMany?: Prisma.DataOwnershipCreateManyAssetCategoryInputEnvelope
-  set?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-  disconnect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-  delete?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-  connect?: Prisma.DataOwnershipWhereUniqueInput | Prisma.DataOwnershipWhereUniqueInput[]
-  update?: Prisma.DataOwnershipUpdateWithWhereUniqueWithoutAssetCategoryInput | Prisma.DataOwnershipUpdateWithWhereUniqueWithoutAssetCategoryInput[]
-  updateMany?: Prisma.DataOwnershipUpdateManyWithWhereWithoutAssetCategoryInput | Prisma.DataOwnershipUpdateManyWithWhereWithoutAssetCategoryInput[]
-  deleteMany?: Prisma.DataOwnershipScalarWhereInput | Prisma.DataOwnershipScalarWhereInput[]
-}
-
 export type DataOwnershipCreateNestedManyWithoutDataDomainInput = {
   create?: Prisma.XOR<Prisma.DataOwnershipCreateWithoutDataDomainInput, Prisma.DataOwnershipUncheckedCreateWithoutDataDomainInput> | Prisma.DataOwnershipCreateWithoutDataDomainInput[] | Prisma.DataOwnershipUncheckedCreateWithoutDataDomainInput[]
   connectOrCreate?: Prisma.DataOwnershipCreateOrConnectWithoutDataDomainInput | Prisma.DataOwnershipCreateOrConnectWithoutDataDomainInput[]
@@ -621,165 +621,6 @@ export type DataOwnershipUncheckedUpdateManyWithoutDataDomainNestedInput = {
   update?: Prisma.DataOwnershipUpdateWithWhereUniqueWithoutDataDomainInput | Prisma.DataOwnershipUpdateWithWhereUniqueWithoutDataDomainInput[]
   updateMany?: Prisma.DataOwnershipUpdateManyWithWhereWithoutDataDomainInput | Prisma.DataOwnershipUpdateManyWithWhereWithoutDataDomainInput[]
   deleteMany?: Prisma.DataOwnershipScalarWhereInput | Prisma.DataOwnershipScalarWhereInput[]
-}
-
-export type DataOwnershipCreateWithoutOwnerOrgUnitInput = {
-  id?: string
-  note?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  dataDomain: Prisma.DataDomainCreateNestedOneWithoutDataOwnershipsInput
-  ciClass?: Prisma.CIClassCreateNestedOneWithoutDataOwnershipsInput
-  assetCategory?: Prisma.AssetCategoryCreateNestedOneWithoutDataOwnershipsInput
-  ownerPerson?: Prisma.PersonCreateNestedOneWithoutDataOwnershipsInput
-}
-
-export type DataOwnershipUncheckedCreateWithoutOwnerOrgUnitInput = {
-  id?: string
-  dataDomainId: string
-  ciClassId?: string | null
-  assetCategoryId?: string | null
-  ownerPersonId?: string | null
-  note?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type DataOwnershipCreateOrConnectWithoutOwnerOrgUnitInput = {
-  where: Prisma.DataOwnershipWhereUniqueInput
-  create: Prisma.XOR<Prisma.DataOwnershipCreateWithoutOwnerOrgUnitInput, Prisma.DataOwnershipUncheckedCreateWithoutOwnerOrgUnitInput>
-}
-
-export type DataOwnershipCreateManyOwnerOrgUnitInputEnvelope = {
-  data: Prisma.DataOwnershipCreateManyOwnerOrgUnitInput | Prisma.DataOwnershipCreateManyOwnerOrgUnitInput[]
-  skipDuplicates?: boolean
-}
-
-export type DataOwnershipUpsertWithWhereUniqueWithoutOwnerOrgUnitInput = {
-  where: Prisma.DataOwnershipWhereUniqueInput
-  update: Prisma.XOR<Prisma.DataOwnershipUpdateWithoutOwnerOrgUnitInput, Prisma.DataOwnershipUncheckedUpdateWithoutOwnerOrgUnitInput>
-  create: Prisma.XOR<Prisma.DataOwnershipCreateWithoutOwnerOrgUnitInput, Prisma.DataOwnershipUncheckedCreateWithoutOwnerOrgUnitInput>
-}
-
-export type DataOwnershipUpdateWithWhereUniqueWithoutOwnerOrgUnitInput = {
-  where: Prisma.DataOwnershipWhereUniqueInput
-  data: Prisma.XOR<Prisma.DataOwnershipUpdateWithoutOwnerOrgUnitInput, Prisma.DataOwnershipUncheckedUpdateWithoutOwnerOrgUnitInput>
-}
-
-export type DataOwnershipUpdateManyWithWhereWithoutOwnerOrgUnitInput = {
-  where: Prisma.DataOwnershipScalarWhereInput
-  data: Prisma.XOR<Prisma.DataOwnershipUpdateManyMutationInput, Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerOrgUnitInput>
-}
-
-export type DataOwnershipScalarWhereInput = {
-  AND?: Prisma.DataOwnershipScalarWhereInput | Prisma.DataOwnershipScalarWhereInput[]
-  OR?: Prisma.DataOwnershipScalarWhereInput[]
-  NOT?: Prisma.DataOwnershipScalarWhereInput | Prisma.DataOwnershipScalarWhereInput[]
-  id?: Prisma.StringFilter<"DataOwnership"> | string
-  dataDomainId?: Prisma.StringFilter<"DataOwnership"> | string
-  ciClassId?: Prisma.StringNullableFilter<"DataOwnership"> | string | null
-  assetCategoryId?: Prisma.StringNullableFilter<"DataOwnership"> | string | null
-  ownerPersonId?: Prisma.StringNullableFilter<"DataOwnership"> | string | null
-  ownerOrgUnitId?: Prisma.StringNullableFilter<"DataOwnership"> | string | null
-  note?: Prisma.StringNullableFilter<"DataOwnership"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"DataOwnership"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"DataOwnership"> | Date | string
-}
-
-export type DataOwnershipCreateWithoutOwnerPersonInput = {
-  id?: string
-  note?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  dataDomain: Prisma.DataDomainCreateNestedOneWithoutDataOwnershipsInput
-  ciClass?: Prisma.CIClassCreateNestedOneWithoutDataOwnershipsInput
-  assetCategory?: Prisma.AssetCategoryCreateNestedOneWithoutDataOwnershipsInput
-  ownerOrgUnit?: Prisma.OrganizationUnitCreateNestedOneWithoutDataOwnershipsInput
-}
-
-export type DataOwnershipUncheckedCreateWithoutOwnerPersonInput = {
-  id?: string
-  dataDomainId: string
-  ciClassId?: string | null
-  assetCategoryId?: string | null
-  ownerOrgUnitId?: string | null
-  note?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type DataOwnershipCreateOrConnectWithoutOwnerPersonInput = {
-  where: Prisma.DataOwnershipWhereUniqueInput
-  create: Prisma.XOR<Prisma.DataOwnershipCreateWithoutOwnerPersonInput, Prisma.DataOwnershipUncheckedCreateWithoutOwnerPersonInput>
-}
-
-export type DataOwnershipCreateManyOwnerPersonInputEnvelope = {
-  data: Prisma.DataOwnershipCreateManyOwnerPersonInput | Prisma.DataOwnershipCreateManyOwnerPersonInput[]
-  skipDuplicates?: boolean
-}
-
-export type DataOwnershipUpsertWithWhereUniqueWithoutOwnerPersonInput = {
-  where: Prisma.DataOwnershipWhereUniqueInput
-  update: Prisma.XOR<Prisma.DataOwnershipUpdateWithoutOwnerPersonInput, Prisma.DataOwnershipUncheckedUpdateWithoutOwnerPersonInput>
-  create: Prisma.XOR<Prisma.DataOwnershipCreateWithoutOwnerPersonInput, Prisma.DataOwnershipUncheckedCreateWithoutOwnerPersonInput>
-}
-
-export type DataOwnershipUpdateWithWhereUniqueWithoutOwnerPersonInput = {
-  where: Prisma.DataOwnershipWhereUniqueInput
-  data: Prisma.XOR<Prisma.DataOwnershipUpdateWithoutOwnerPersonInput, Prisma.DataOwnershipUncheckedUpdateWithoutOwnerPersonInput>
-}
-
-export type DataOwnershipUpdateManyWithWhereWithoutOwnerPersonInput = {
-  where: Prisma.DataOwnershipScalarWhereInput
-  data: Prisma.XOR<Prisma.DataOwnershipUpdateManyMutationInput, Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonInput>
-}
-
-export type DataOwnershipCreateWithoutCiClassInput = {
-  id?: string
-  note?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  dataDomain: Prisma.DataDomainCreateNestedOneWithoutDataOwnershipsInput
-  assetCategory?: Prisma.AssetCategoryCreateNestedOneWithoutDataOwnershipsInput
-  ownerPerson?: Prisma.PersonCreateNestedOneWithoutDataOwnershipsInput
-  ownerOrgUnit?: Prisma.OrganizationUnitCreateNestedOneWithoutDataOwnershipsInput
-}
-
-export type DataOwnershipUncheckedCreateWithoutCiClassInput = {
-  id?: string
-  dataDomainId: string
-  assetCategoryId?: string | null
-  ownerPersonId?: string | null
-  ownerOrgUnitId?: string | null
-  note?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type DataOwnershipCreateOrConnectWithoutCiClassInput = {
-  where: Prisma.DataOwnershipWhereUniqueInput
-  create: Prisma.XOR<Prisma.DataOwnershipCreateWithoutCiClassInput, Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput>
-}
-
-export type DataOwnershipCreateManyCiClassInputEnvelope = {
-  data: Prisma.DataOwnershipCreateManyCiClassInput | Prisma.DataOwnershipCreateManyCiClassInput[]
-  skipDuplicates?: boolean
-}
-
-export type DataOwnershipUpsertWithWhereUniqueWithoutCiClassInput = {
-  where: Prisma.DataOwnershipWhereUniqueInput
-  update: Prisma.XOR<Prisma.DataOwnershipUpdateWithoutCiClassInput, Prisma.DataOwnershipUncheckedUpdateWithoutCiClassInput>
-  create: Prisma.XOR<Prisma.DataOwnershipCreateWithoutCiClassInput, Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput>
-}
-
-export type DataOwnershipUpdateWithWhereUniqueWithoutCiClassInput = {
-  where: Prisma.DataOwnershipWhereUniqueInput
-  data: Prisma.XOR<Prisma.DataOwnershipUpdateWithoutCiClassInput, Prisma.DataOwnershipUncheckedUpdateWithoutCiClassInput>
-}
-
-export type DataOwnershipUpdateManyWithWhereWithoutCiClassInput = {
-  where: Prisma.DataOwnershipScalarWhereInput
-  data: Prisma.XOR<Prisma.DataOwnershipUpdateManyMutationInput, Prisma.DataOwnershipUncheckedUpdateManyWithoutCiClassInput>
 }
 
 export type DataOwnershipCreateWithoutAssetCategoryInput = {
@@ -830,6 +671,165 @@ export type DataOwnershipUpdateManyWithWhereWithoutAssetCategoryInput = {
   data: Prisma.XOR<Prisma.DataOwnershipUpdateManyMutationInput, Prisma.DataOwnershipUncheckedUpdateManyWithoutAssetCategoryInput>
 }
 
+export type DataOwnershipScalarWhereInput = {
+  AND?: Prisma.DataOwnershipScalarWhereInput | Prisma.DataOwnershipScalarWhereInput[]
+  OR?: Prisma.DataOwnershipScalarWhereInput[]
+  NOT?: Prisma.DataOwnershipScalarWhereInput | Prisma.DataOwnershipScalarWhereInput[]
+  id?: Prisma.StringFilter<"DataOwnership"> | string
+  dataDomainId?: Prisma.StringFilter<"DataOwnership"> | string
+  ciClassId?: Prisma.StringNullableFilter<"DataOwnership"> | string | null
+  assetCategoryId?: Prisma.StringNullableFilter<"DataOwnership"> | string | null
+  ownerPersonId?: Prisma.StringNullableFilter<"DataOwnership"> | string | null
+  ownerOrgUnitId?: Prisma.StringNullableFilter<"DataOwnership"> | string | null
+  note?: Prisma.StringNullableFilter<"DataOwnership"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"DataOwnership"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"DataOwnership"> | Date | string
+}
+
+export type DataOwnershipCreateWithoutCiClassInput = {
+  id?: string
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  dataDomain: Prisma.DataDomainCreateNestedOneWithoutDataOwnershipsInput
+  assetCategory?: Prisma.AssetCategoryCreateNestedOneWithoutDataOwnershipsInput
+  ownerPerson?: Prisma.PersonCreateNestedOneWithoutDataOwnershipsInput
+  ownerOrgUnit?: Prisma.OrganizationUnitCreateNestedOneWithoutDataOwnershipsInput
+}
+
+export type DataOwnershipUncheckedCreateWithoutCiClassInput = {
+  id?: string
+  dataDomainId: string
+  assetCategoryId?: string | null
+  ownerPersonId?: string | null
+  ownerOrgUnitId?: string | null
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type DataOwnershipCreateOrConnectWithoutCiClassInput = {
+  where: Prisma.DataOwnershipWhereUniqueInput
+  create: Prisma.XOR<Prisma.DataOwnershipCreateWithoutCiClassInput, Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput>
+}
+
+export type DataOwnershipCreateManyCiClassInputEnvelope = {
+  data: Prisma.DataOwnershipCreateManyCiClassInput | Prisma.DataOwnershipCreateManyCiClassInput[]
+  skipDuplicates?: boolean
+}
+
+export type DataOwnershipUpsertWithWhereUniqueWithoutCiClassInput = {
+  where: Prisma.DataOwnershipWhereUniqueInput
+  update: Prisma.XOR<Prisma.DataOwnershipUpdateWithoutCiClassInput, Prisma.DataOwnershipUncheckedUpdateWithoutCiClassInput>
+  create: Prisma.XOR<Prisma.DataOwnershipCreateWithoutCiClassInput, Prisma.DataOwnershipUncheckedCreateWithoutCiClassInput>
+}
+
+export type DataOwnershipUpdateWithWhereUniqueWithoutCiClassInput = {
+  where: Prisma.DataOwnershipWhereUniqueInput
+  data: Prisma.XOR<Prisma.DataOwnershipUpdateWithoutCiClassInput, Prisma.DataOwnershipUncheckedUpdateWithoutCiClassInput>
+}
+
+export type DataOwnershipUpdateManyWithWhereWithoutCiClassInput = {
+  where: Prisma.DataOwnershipScalarWhereInput
+  data: Prisma.XOR<Prisma.DataOwnershipUpdateManyMutationInput, Prisma.DataOwnershipUncheckedUpdateManyWithoutCiClassInput>
+}
+
+export type DataOwnershipCreateWithoutOwnerOrgUnitInput = {
+  id?: string
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  dataDomain: Prisma.DataDomainCreateNestedOneWithoutDataOwnershipsInput
+  ciClass?: Prisma.CIClassCreateNestedOneWithoutDataOwnershipsInput
+  assetCategory?: Prisma.AssetCategoryCreateNestedOneWithoutDataOwnershipsInput
+  ownerPerson?: Prisma.PersonCreateNestedOneWithoutDataOwnershipsInput
+}
+
+export type DataOwnershipUncheckedCreateWithoutOwnerOrgUnitInput = {
+  id?: string
+  dataDomainId: string
+  ciClassId?: string | null
+  assetCategoryId?: string | null
+  ownerPersonId?: string | null
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type DataOwnershipCreateOrConnectWithoutOwnerOrgUnitInput = {
+  where: Prisma.DataOwnershipWhereUniqueInput
+  create: Prisma.XOR<Prisma.DataOwnershipCreateWithoutOwnerOrgUnitInput, Prisma.DataOwnershipUncheckedCreateWithoutOwnerOrgUnitInput>
+}
+
+export type DataOwnershipCreateManyOwnerOrgUnitInputEnvelope = {
+  data: Prisma.DataOwnershipCreateManyOwnerOrgUnitInput | Prisma.DataOwnershipCreateManyOwnerOrgUnitInput[]
+  skipDuplicates?: boolean
+}
+
+export type DataOwnershipUpsertWithWhereUniqueWithoutOwnerOrgUnitInput = {
+  where: Prisma.DataOwnershipWhereUniqueInput
+  update: Prisma.XOR<Prisma.DataOwnershipUpdateWithoutOwnerOrgUnitInput, Prisma.DataOwnershipUncheckedUpdateWithoutOwnerOrgUnitInput>
+  create: Prisma.XOR<Prisma.DataOwnershipCreateWithoutOwnerOrgUnitInput, Prisma.DataOwnershipUncheckedCreateWithoutOwnerOrgUnitInput>
+}
+
+export type DataOwnershipUpdateWithWhereUniqueWithoutOwnerOrgUnitInput = {
+  where: Prisma.DataOwnershipWhereUniqueInput
+  data: Prisma.XOR<Prisma.DataOwnershipUpdateWithoutOwnerOrgUnitInput, Prisma.DataOwnershipUncheckedUpdateWithoutOwnerOrgUnitInput>
+}
+
+export type DataOwnershipUpdateManyWithWhereWithoutOwnerOrgUnitInput = {
+  where: Prisma.DataOwnershipScalarWhereInput
+  data: Prisma.XOR<Prisma.DataOwnershipUpdateManyMutationInput, Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerOrgUnitInput>
+}
+
+export type DataOwnershipCreateWithoutOwnerPersonInput = {
+  id?: string
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  dataDomain: Prisma.DataDomainCreateNestedOneWithoutDataOwnershipsInput
+  ciClass?: Prisma.CIClassCreateNestedOneWithoutDataOwnershipsInput
+  assetCategory?: Prisma.AssetCategoryCreateNestedOneWithoutDataOwnershipsInput
+  ownerOrgUnit?: Prisma.OrganizationUnitCreateNestedOneWithoutDataOwnershipsInput
+}
+
+export type DataOwnershipUncheckedCreateWithoutOwnerPersonInput = {
+  id?: string
+  dataDomainId: string
+  ciClassId?: string | null
+  assetCategoryId?: string | null
+  ownerOrgUnitId?: string | null
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type DataOwnershipCreateOrConnectWithoutOwnerPersonInput = {
+  where: Prisma.DataOwnershipWhereUniqueInput
+  create: Prisma.XOR<Prisma.DataOwnershipCreateWithoutOwnerPersonInput, Prisma.DataOwnershipUncheckedCreateWithoutOwnerPersonInput>
+}
+
+export type DataOwnershipCreateManyOwnerPersonInputEnvelope = {
+  data: Prisma.DataOwnershipCreateManyOwnerPersonInput | Prisma.DataOwnershipCreateManyOwnerPersonInput[]
+  skipDuplicates?: boolean
+}
+
+export type DataOwnershipUpsertWithWhereUniqueWithoutOwnerPersonInput = {
+  where: Prisma.DataOwnershipWhereUniqueInput
+  update: Prisma.XOR<Prisma.DataOwnershipUpdateWithoutOwnerPersonInput, Prisma.DataOwnershipUncheckedUpdateWithoutOwnerPersonInput>
+  create: Prisma.XOR<Prisma.DataOwnershipCreateWithoutOwnerPersonInput, Prisma.DataOwnershipUncheckedCreateWithoutOwnerPersonInput>
+}
+
+export type DataOwnershipUpdateWithWhereUniqueWithoutOwnerPersonInput = {
+  where: Prisma.DataOwnershipWhereUniqueInput
+  data: Prisma.XOR<Prisma.DataOwnershipUpdateWithoutOwnerPersonInput, Prisma.DataOwnershipUncheckedUpdateWithoutOwnerPersonInput>
+}
+
+export type DataOwnershipUpdateManyWithWhereWithoutOwnerPersonInput = {
+  where: Prisma.DataOwnershipScalarWhereInput
+  data: Prisma.XOR<Prisma.DataOwnershipUpdateManyMutationInput, Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonInput>
+}
+
 export type DataOwnershipCreateWithoutDataDomainInput = {
   id?: string
   note?: string | null
@@ -876,6 +876,94 @@ export type DataOwnershipUpdateWithWhereUniqueWithoutDataDomainInput = {
 export type DataOwnershipUpdateManyWithWhereWithoutDataDomainInput = {
   where: Prisma.DataOwnershipScalarWhereInput
   data: Prisma.XOR<Prisma.DataOwnershipUpdateManyMutationInput, Prisma.DataOwnershipUncheckedUpdateManyWithoutDataDomainInput>
+}
+
+export type DataOwnershipCreateManyAssetCategoryInput = {
+  id?: string
+  dataDomainId: string
+  ciClassId?: string | null
+  ownerPersonId?: string | null
+  ownerOrgUnitId?: string | null
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type DataOwnershipUpdateWithoutAssetCategoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dataDomain?: Prisma.DataDomainUpdateOneRequiredWithoutDataOwnershipsNestedInput
+  ciClass?: Prisma.CIClassUpdateOneWithoutDataOwnershipsNestedInput
+  ownerPerson?: Prisma.PersonUpdateOneWithoutDataOwnershipsNestedInput
+  ownerOrgUnit?: Prisma.OrganizationUnitUpdateOneWithoutDataOwnershipsNestedInput
+}
+
+export type DataOwnershipUncheckedUpdateWithoutAssetCategoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  dataDomainId?: Prisma.StringFieldUpdateOperationsInput | string
+  ciClassId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type DataOwnershipUncheckedUpdateManyWithoutAssetCategoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  dataDomainId?: Prisma.StringFieldUpdateOperationsInput | string
+  ciClassId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type DataOwnershipCreateManyCiClassInput = {
+  id?: string
+  dataDomainId: string
+  assetCategoryId?: string | null
+  ownerPersonId?: string | null
+  ownerOrgUnitId?: string | null
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type DataOwnershipUpdateWithoutCiClassInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dataDomain?: Prisma.DataDomainUpdateOneRequiredWithoutDataOwnershipsNestedInput
+  assetCategory?: Prisma.AssetCategoryUpdateOneWithoutDataOwnershipsNestedInput
+  ownerPerson?: Prisma.PersonUpdateOneWithoutDataOwnershipsNestedInput
+  ownerOrgUnit?: Prisma.OrganizationUnitUpdateOneWithoutDataOwnershipsNestedInput
+}
+
+export type DataOwnershipUncheckedUpdateWithoutCiClassInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  dataDomainId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type DataOwnershipUncheckedUpdateManyWithoutCiClassInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  dataDomainId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ownerOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type DataOwnershipCreateManyOwnerOrgUnitInput = {
@@ -960,94 +1048,6 @@ export type DataOwnershipUncheckedUpdateManyWithoutOwnerPersonInput = {
   dataDomainId?: Prisma.StringFieldUpdateOperationsInput | string
   ciClassId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assetCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ownerOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type DataOwnershipCreateManyCiClassInput = {
-  id?: string
-  dataDomainId: string
-  assetCategoryId?: string | null
-  ownerPersonId?: string | null
-  ownerOrgUnitId?: string | null
-  note?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type DataOwnershipUpdateWithoutCiClassInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  dataDomain?: Prisma.DataDomainUpdateOneRequiredWithoutDataOwnershipsNestedInput
-  assetCategory?: Prisma.AssetCategoryUpdateOneWithoutDataOwnershipsNestedInput
-  ownerPerson?: Prisma.PersonUpdateOneWithoutDataOwnershipsNestedInput
-  ownerOrgUnit?: Prisma.OrganizationUnitUpdateOneWithoutDataOwnershipsNestedInput
-}
-
-export type DataOwnershipUncheckedUpdateWithoutCiClassInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  dataDomainId?: Prisma.StringFieldUpdateOperationsInput | string
-  assetCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ownerPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ownerOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type DataOwnershipUncheckedUpdateManyWithoutCiClassInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  dataDomainId?: Prisma.StringFieldUpdateOperationsInput | string
-  assetCategoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ownerPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ownerOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type DataOwnershipCreateManyAssetCategoryInput = {
-  id?: string
-  dataDomainId: string
-  ciClassId?: string | null
-  ownerPersonId?: string | null
-  ownerOrgUnitId?: string | null
-  note?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type DataOwnershipUpdateWithoutAssetCategoryInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  dataDomain?: Prisma.DataDomainUpdateOneRequiredWithoutDataOwnershipsNestedInput
-  ciClass?: Prisma.CIClassUpdateOneWithoutDataOwnershipsNestedInput
-  ownerPerson?: Prisma.PersonUpdateOneWithoutDataOwnershipsNestedInput
-  ownerOrgUnit?: Prisma.OrganizationUnitUpdateOneWithoutDataOwnershipsNestedInput
-}
-
-export type DataOwnershipUncheckedUpdateWithoutAssetCategoryInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  dataDomainId?: Prisma.StringFieldUpdateOperationsInput | string
-  ciClassId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ownerPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ownerOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type DataOwnershipUncheckedUpdateManyWithoutAssetCategoryInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  dataDomainId?: Prisma.StringFieldUpdateOperationsInput | string
-  ciClassId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  ownerPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   ownerOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string

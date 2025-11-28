@@ -18,6 +18,56 @@ export { Prisma }
 export * as $Enums from './enums.ts'
 export * from './enums.ts';
 /**
+ * Model AssetCategory
+ * 
+ */
+export type AssetCategory = Prisma.AssetCategoryModel
+/**
+ * Model AssetCategoryField
+ * 
+ */
+export type AssetCategoryField = Prisma.AssetCategoryFieldModel
+/**
+ * Model AssetModel
+ * 
+ */
+export type AssetModel = Prisma.AssetModelModel
+/**
+ * Model StockLocation
+ * 
+ */
+export type StockLocation = Prisma.StockLocationModel
+/**
+ * Model StockMovement
+ * 
+ */
+export type StockMovement = Prisma.StockMovementModel
+/**
+ * Model Asset
+ * 
+ */
+export type Asset = Prisma.AssetModel
+/**
+ * Model AssetAssignment
+ * 
+ */
+export type AssetAssignment = Prisma.AssetAssignmentModel
+/**
+ * Model Warranty
+ * 
+ */
+export type Warranty = Prisma.WarrantyModel
+/**
+ * Model AttachmentType
+ * 
+ */
+export type AttachmentType = Prisma.AttachmentTypeModel
+/**
+ * Model Attachment
+ * 
+ */
+export type Attachment = Prisma.AttachmentModel
+/**
  * Model User
  * 
  */
@@ -38,35 +88,65 @@ export type Session = Prisma.SessionModel
  */
 export type Verification = Prisma.VerificationModel
 /**
- * Model Role
+ * Model CIClass
  * 
  */
-export type Role = Prisma.RoleModel
+export type CIClass = Prisma.CIClassModel
 /**
- * Model Permission
+ * Model CIClassField
  * 
  */
-export type Permission = Prisma.PermissionModel
+export type CIClassField = Prisma.CIClassFieldModel
 /**
- * Model RolePermission
+ * Model ConfigurationItem
  * 
  */
-export type RolePermission = Prisma.RolePermissionModel
+export type ConfigurationItem = Prisma.ConfigurationItemModel
 /**
- * Model UserRole
+ * Model RelationshipType
  * 
  */
-export type UserRole = Prisma.UserRoleModel
+export type RelationshipType = Prisma.RelationshipTypeModel
 /**
- * Model AuditLog
+ * Model RelationshipTypeScope
  * 
  */
-export type AuditLog = Prisma.AuditLogModel
+export type RelationshipTypeScope = Prisma.RelationshipTypeScopeModel
 /**
- * Model CodeSequence
+ * Model CIRelationship
  * 
  */
-export type CodeSequence = Prisma.CodeSequenceModel
+export type CIRelationship = Prisma.CIRelationshipModel
+/**
+ * Model ContractType
+ * 
+ */
+export type ContractType = Prisma.ContractTypeModel
+/**
+ * Model Contract
+ * 
+ */
+export type Contract = Prisma.ContractModel
+/**
+ * Model ContractLinkedObject
+ * 
+ */
+export type ContractLinkedObject = Prisma.ContractLinkedObjectModel
+/**
+ * Model AssetDisposal
+ * 
+ */
+export type AssetDisposal = Prisma.AssetDisposalModel
+/**
+ * Model DisposalApproval
+ * 
+ */
+export type DisposalApproval = Prisma.DisposalApprovalModel
+/**
+ * Model DisposalDocument
+ * 
+ */
+export type DisposalDocument = Prisma.DisposalDocumentModel
 /**
  * Model OrganizationUnit
  * 
@@ -123,100 +203,45 @@ export type LifecycleTransition = Prisma.LifecycleTransitionModel
  */
 export type FieldDefinition = Prisma.FieldDefinitionModel
 /**
- * Model CIClass
+ * Model DataDomain
  * 
  */
-export type CIClass = Prisma.CIClassModel
+export type DataDomain = Prisma.DataDomainModel
 /**
- * Model CIClassField
+ * Model DataOwnership
  * 
  */
-export type CIClassField = Prisma.CIClassFieldModel
+export type DataOwnership = Prisma.DataOwnershipModel
 /**
- * Model ConfigurationItem
+ * Model VerificationCampaign
  * 
  */
-export type ConfigurationItem = Prisma.ConfigurationItemModel
+export type VerificationCampaign = Prisma.VerificationCampaignModel
 /**
- * Model RelationshipType
+ * Model VerificationItem
  * 
  */
-export type RelationshipType = Prisma.RelationshipTypeModel
+export type VerificationItem = Prisma.VerificationItemModel
 /**
- * Model RelationshipTypeScope
+ * Model AuditLogEntry
  * 
  */
-export type RelationshipTypeScope = Prisma.RelationshipTypeScopeModel
+export type AuditLogEntry = Prisma.AuditLogEntryModel
 /**
- * Model CIRelationship
+ * Model IntuneDevice
  * 
  */
-export type CIRelationship = Prisma.CIRelationshipModel
+export type IntuneDevice = Prisma.IntuneDeviceModel
 /**
- * Model AssetCategory
+ * Model IntuneComplianceHistory
  * 
  */
-export type AssetCategory = Prisma.AssetCategoryModel
+export type IntuneComplianceHistory = Prisma.IntuneComplianceHistoryModel
 /**
- * Model AssetCategoryField
+ * Model IntuneSyncLog
  * 
  */
-export type AssetCategoryField = Prisma.AssetCategoryFieldModel
-/**
- * Model AssetModel
- * 
- */
-export type AssetModel = Prisma.AssetModelModel
-/**
- * Model StockLocation
- * 
- */
-export type StockLocation = Prisma.StockLocationModel
-/**
- * Model StockMovement
- * 
- */
-export type StockMovement = Prisma.StockMovementModel
-/**
- * Model Asset
- * 
- */
-export type Asset = Prisma.AssetModel
-/**
- * Model AssetAssignment
- * 
- */
-export type AssetAssignment = Prisma.AssetAssignmentModel
-/**
- * Model Warranty
- * 
- */
-export type Warranty = Prisma.WarrantyModel
-/**
- * Model MaintenanceSchedule
- * 
- */
-export type MaintenanceSchedule = Prisma.MaintenanceScheduleModel
-/**
- * Model MaintenanceRecord
- * 
- */
-export type MaintenanceRecord = Prisma.MaintenanceRecordModel
-/**
- * Model AssetDisposal
- * 
- */
-export type AssetDisposal = Prisma.AssetDisposalModel
-/**
- * Model DisposalApproval
- * 
- */
-export type DisposalApproval = Prisma.DisposalApprovalModel
-/**
- * Model DisposalDocument
- * 
- */
-export type DisposalDocument = Prisma.DisposalDocumentModel
+export type IntuneSyncLog = Prisma.IntuneSyncLogModel
 /**
  * Model AssetKit
  * 
@@ -237,6 +262,76 @@ export type AssetKitCheckout = Prisma.AssetKitCheckoutModel
  * 
  */
 export type AssetKitCheckoutItem = Prisma.AssetKitCheckoutItemModel
+/**
+ * Model LicenseProduct
+ * 
+ */
+export type LicenseProduct = Prisma.LicenseProductModel
+/**
+ * Model LicenseProductField
+ * 
+ */
+export type LicenseProductField = Prisma.LicenseProductFieldModel
+/**
+ * Model LicenseEntitlement
+ * 
+ */
+export type LicenseEntitlement = Prisma.LicenseEntitlementModel
+/**
+ * Model LicenseAllocation
+ * 
+ */
+export type LicenseAllocation = Prisma.LicenseAllocationModel
+/**
+ * Model LicenseAddon
+ * 
+ */
+export type LicenseAddon = Prisma.LicenseAddonModel
+/**
+ * Model LicenseEntitlementAddon
+ * 
+ */
+export type LicenseEntitlementAddon = Prisma.LicenseEntitlementAddonModel
+/**
+ * Model MaintenanceSchedule
+ * 
+ */
+export type MaintenanceSchedule = Prisma.MaintenanceScheduleModel
+/**
+ * Model MaintenanceRecord
+ * 
+ */
+export type MaintenanceRecord = Prisma.MaintenanceRecordModel
+/**
+ * Model Role
+ * 
+ */
+export type Role = Prisma.RoleModel
+/**
+ * Model Permission
+ * 
+ */
+export type Permission = Prisma.PermissionModel
+/**
+ * Model RolePermission
+ * 
+ */
+export type RolePermission = Prisma.RolePermissionModel
+/**
+ * Model UserRole
+ * 
+ */
+export type UserRole = Prisma.UserRoleModel
+/**
+ * Model AuditLog
+ * 
+ */
+export type AuditLog = Prisma.AuditLogModel
+/**
+ * Model CodeSequence
+ * 
+ */
+export type CodeSequence = Prisma.CodeSequenceModel
 /**
  * Model AssetReservation
  * 
@@ -278,86 +373,6 @@ export type ServiceAsset = Prisma.ServiceAssetModel
  */
 export type ServiceRelationship = Prisma.ServiceRelationshipModel
 /**
- * Model ContractType
- * 
- */
-export type ContractType = Prisma.ContractTypeModel
-/**
- * Model Contract
- * 
- */
-export type Contract = Prisma.ContractModel
-/**
- * Model ContractLinkedObject
- * 
- */
-export type ContractLinkedObject = Prisma.ContractLinkedObjectModel
-/**
- * Model LicenseProduct
- * 
- */
-export type LicenseProduct = Prisma.LicenseProductModel
-/**
- * Model LicenseProductField
- * 
- */
-export type LicenseProductField = Prisma.LicenseProductFieldModel
-/**
- * Model LicenseEntitlement
- * 
- */
-export type LicenseEntitlement = Prisma.LicenseEntitlementModel
-/**
- * Model LicenseAllocation
- * 
- */
-export type LicenseAllocation = Prisma.LicenseAllocationModel
-/**
- * Model LicenseAddon
- * 
- */
-export type LicenseAddon = Prisma.LicenseAddonModel
-/**
- * Model LicenseEntitlementAddon
- * 
- */
-export type LicenseEntitlementAddon = Prisma.LicenseEntitlementAddonModel
-/**
- * Model DataDomain
- * 
- */
-export type DataDomain = Prisma.DataDomainModel
-/**
- * Model DataOwnership
- * 
- */
-export type DataOwnership = Prisma.DataOwnershipModel
-/**
- * Model VerificationCampaign
- * 
- */
-export type VerificationCampaign = Prisma.VerificationCampaignModel
-/**
- * Model VerificationItem
- * 
- */
-export type VerificationItem = Prisma.VerificationItemModel
-/**
- * Model AuditLogEntry
- * 
- */
-export type AuditLogEntry = Prisma.AuditLogEntryModel
-/**
- * Model AttachmentType
- * 
- */
-export type AttachmentType = Prisma.AttachmentTypeModel
-/**
- * Model Attachment
- * 
- */
-export type Attachment = Prisma.AttachmentModel
-/**
  * Model Task
  * 
  */
@@ -377,21 +392,6 @@ export type PromptComposition = Prisma.PromptCompositionModel
  * 
  */
 export type PromptCompositionBlock = Prisma.PromptCompositionBlockModel
-/**
- * Model IntuneDevice
- * 
- */
-export type IntuneDevice = Prisma.IntuneDeviceModel
-/**
- * Model IntuneComplianceHistory
- * 
- */
-export type IntuneComplianceHistory = Prisma.IntuneComplianceHistoryModel
-/**
- * Model IntuneSyncLog
- * 
- */
-export type IntuneSyncLog = Prisma.IntuneSyncLogModel
 /**
  * Model FeatureFlag
  * 

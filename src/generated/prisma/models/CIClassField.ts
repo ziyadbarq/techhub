@@ -495,48 +495,6 @@ export type CIClassFieldSumOrderByAggregateInput = {
   uiOrder?: Prisma.SortOrder
 }
 
-export type CIClassFieldCreateNestedManyWithoutFieldDefinitionInput = {
-  create?: Prisma.XOR<Prisma.CIClassFieldCreateWithoutFieldDefinitionInput, Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput> | Prisma.CIClassFieldCreateWithoutFieldDefinitionInput[] | Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput[]
-  connectOrCreate?: Prisma.CIClassFieldCreateOrConnectWithoutFieldDefinitionInput | Prisma.CIClassFieldCreateOrConnectWithoutFieldDefinitionInput[]
-  createMany?: Prisma.CIClassFieldCreateManyFieldDefinitionInputEnvelope
-  connect?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
-}
-
-export type CIClassFieldUncheckedCreateNestedManyWithoutFieldDefinitionInput = {
-  create?: Prisma.XOR<Prisma.CIClassFieldCreateWithoutFieldDefinitionInput, Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput> | Prisma.CIClassFieldCreateWithoutFieldDefinitionInput[] | Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput[]
-  connectOrCreate?: Prisma.CIClassFieldCreateOrConnectWithoutFieldDefinitionInput | Prisma.CIClassFieldCreateOrConnectWithoutFieldDefinitionInput[]
-  createMany?: Prisma.CIClassFieldCreateManyFieldDefinitionInputEnvelope
-  connect?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
-}
-
-export type CIClassFieldUpdateManyWithoutFieldDefinitionNestedInput = {
-  create?: Prisma.XOR<Prisma.CIClassFieldCreateWithoutFieldDefinitionInput, Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput> | Prisma.CIClassFieldCreateWithoutFieldDefinitionInput[] | Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput[]
-  connectOrCreate?: Prisma.CIClassFieldCreateOrConnectWithoutFieldDefinitionInput | Prisma.CIClassFieldCreateOrConnectWithoutFieldDefinitionInput[]
-  upsert?: Prisma.CIClassFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput | Prisma.CIClassFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput[]
-  createMany?: Prisma.CIClassFieldCreateManyFieldDefinitionInputEnvelope
-  set?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
-  disconnect?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
-  delete?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
-  connect?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
-  update?: Prisma.CIClassFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput | Prisma.CIClassFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput[]
-  updateMany?: Prisma.CIClassFieldUpdateManyWithWhereWithoutFieldDefinitionInput | Prisma.CIClassFieldUpdateManyWithWhereWithoutFieldDefinitionInput[]
-  deleteMany?: Prisma.CIClassFieldScalarWhereInput | Prisma.CIClassFieldScalarWhereInput[]
-}
-
-export type CIClassFieldUncheckedUpdateManyWithoutFieldDefinitionNestedInput = {
-  create?: Prisma.XOR<Prisma.CIClassFieldCreateWithoutFieldDefinitionInput, Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput> | Prisma.CIClassFieldCreateWithoutFieldDefinitionInput[] | Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput[]
-  connectOrCreate?: Prisma.CIClassFieldCreateOrConnectWithoutFieldDefinitionInput | Prisma.CIClassFieldCreateOrConnectWithoutFieldDefinitionInput[]
-  upsert?: Prisma.CIClassFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput | Prisma.CIClassFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput[]
-  createMany?: Prisma.CIClassFieldCreateManyFieldDefinitionInputEnvelope
-  set?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
-  disconnect?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
-  delete?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
-  connect?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
-  update?: Prisma.CIClassFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput | Prisma.CIClassFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput[]
-  updateMany?: Prisma.CIClassFieldUpdateManyWithWhereWithoutFieldDefinitionInput | Prisma.CIClassFieldUpdateManyWithWhereWithoutFieldDefinitionInput[]
-  deleteMany?: Prisma.CIClassFieldScalarWhereInput | Prisma.CIClassFieldScalarWhereInput[]
-}
-
 export type CIClassFieldCreateNestedManyWithoutCiClassInput = {
   create?: Prisma.XOR<Prisma.CIClassFieldCreateWithoutCiClassInput, Prisma.CIClassFieldUncheckedCreateWithoutCiClassInput> | Prisma.CIClassFieldCreateWithoutCiClassInput[] | Prisma.CIClassFieldUncheckedCreateWithoutCiClassInput[]
   connectOrCreate?: Prisma.CIClassFieldCreateOrConnectWithoutCiClassInput | Prisma.CIClassFieldCreateOrConnectWithoutCiClassInput[]
@@ -579,73 +537,46 @@ export type CIClassFieldUncheckedUpdateManyWithoutCiClassNestedInput = {
   deleteMany?: Prisma.CIClassFieldScalarWhereInput | Prisma.CIClassFieldScalarWhereInput[]
 }
 
-export type CIClassFieldCreateWithoutFieldDefinitionInput = {
-  id?: string
-  isRequired?: boolean
-  isUnique?: boolean
-  isVisible?: boolean
-  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  uiOrder?: number
-  note?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  ciClass: Prisma.CIClassCreateNestedOneWithoutFieldsInput
+export type CIClassFieldCreateNestedManyWithoutFieldDefinitionInput = {
+  create?: Prisma.XOR<Prisma.CIClassFieldCreateWithoutFieldDefinitionInput, Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput> | Prisma.CIClassFieldCreateWithoutFieldDefinitionInput[] | Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput[]
+  connectOrCreate?: Prisma.CIClassFieldCreateOrConnectWithoutFieldDefinitionInput | Prisma.CIClassFieldCreateOrConnectWithoutFieldDefinitionInput[]
+  createMany?: Prisma.CIClassFieldCreateManyFieldDefinitionInputEnvelope
+  connect?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
 }
 
-export type CIClassFieldUncheckedCreateWithoutFieldDefinitionInput = {
-  id?: string
-  ciClassId: string
-  isRequired?: boolean
-  isUnique?: boolean
-  isVisible?: boolean
-  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  uiOrder?: number
-  note?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
+export type CIClassFieldUncheckedCreateNestedManyWithoutFieldDefinitionInput = {
+  create?: Prisma.XOR<Prisma.CIClassFieldCreateWithoutFieldDefinitionInput, Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput> | Prisma.CIClassFieldCreateWithoutFieldDefinitionInput[] | Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput[]
+  connectOrCreate?: Prisma.CIClassFieldCreateOrConnectWithoutFieldDefinitionInput | Prisma.CIClassFieldCreateOrConnectWithoutFieldDefinitionInput[]
+  createMany?: Prisma.CIClassFieldCreateManyFieldDefinitionInputEnvelope
+  connect?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
 }
 
-export type CIClassFieldCreateOrConnectWithoutFieldDefinitionInput = {
-  where: Prisma.CIClassFieldWhereUniqueInput
-  create: Prisma.XOR<Prisma.CIClassFieldCreateWithoutFieldDefinitionInput, Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput>
+export type CIClassFieldUpdateManyWithoutFieldDefinitionNestedInput = {
+  create?: Prisma.XOR<Prisma.CIClassFieldCreateWithoutFieldDefinitionInput, Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput> | Prisma.CIClassFieldCreateWithoutFieldDefinitionInput[] | Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput[]
+  connectOrCreate?: Prisma.CIClassFieldCreateOrConnectWithoutFieldDefinitionInput | Prisma.CIClassFieldCreateOrConnectWithoutFieldDefinitionInput[]
+  upsert?: Prisma.CIClassFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput | Prisma.CIClassFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput[]
+  createMany?: Prisma.CIClassFieldCreateManyFieldDefinitionInputEnvelope
+  set?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
+  disconnect?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
+  delete?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
+  connect?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
+  update?: Prisma.CIClassFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput | Prisma.CIClassFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput[]
+  updateMany?: Prisma.CIClassFieldUpdateManyWithWhereWithoutFieldDefinitionInput | Prisma.CIClassFieldUpdateManyWithWhereWithoutFieldDefinitionInput[]
+  deleteMany?: Prisma.CIClassFieldScalarWhereInput | Prisma.CIClassFieldScalarWhereInput[]
 }
 
-export type CIClassFieldCreateManyFieldDefinitionInputEnvelope = {
-  data: Prisma.CIClassFieldCreateManyFieldDefinitionInput | Prisma.CIClassFieldCreateManyFieldDefinitionInput[]
-  skipDuplicates?: boolean
-}
-
-export type CIClassFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput = {
-  where: Prisma.CIClassFieldWhereUniqueInput
-  update: Prisma.XOR<Prisma.CIClassFieldUpdateWithoutFieldDefinitionInput, Prisma.CIClassFieldUncheckedUpdateWithoutFieldDefinitionInput>
-  create: Prisma.XOR<Prisma.CIClassFieldCreateWithoutFieldDefinitionInput, Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput>
-}
-
-export type CIClassFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput = {
-  where: Prisma.CIClassFieldWhereUniqueInput
-  data: Prisma.XOR<Prisma.CIClassFieldUpdateWithoutFieldDefinitionInput, Prisma.CIClassFieldUncheckedUpdateWithoutFieldDefinitionInput>
-}
-
-export type CIClassFieldUpdateManyWithWhereWithoutFieldDefinitionInput = {
-  where: Prisma.CIClassFieldScalarWhereInput
-  data: Prisma.XOR<Prisma.CIClassFieldUpdateManyMutationInput, Prisma.CIClassFieldUncheckedUpdateManyWithoutFieldDefinitionInput>
-}
-
-export type CIClassFieldScalarWhereInput = {
-  AND?: Prisma.CIClassFieldScalarWhereInput | Prisma.CIClassFieldScalarWhereInput[]
-  OR?: Prisma.CIClassFieldScalarWhereInput[]
-  NOT?: Prisma.CIClassFieldScalarWhereInput | Prisma.CIClassFieldScalarWhereInput[]
-  id?: Prisma.StringFilter<"CIClassField"> | string
-  ciClassId?: Prisma.StringFilter<"CIClassField"> | string
-  fieldDefinitionId?: Prisma.StringFilter<"CIClassField"> | string
-  isRequired?: Prisma.BoolFilter<"CIClassField"> | boolean
-  isUnique?: Prisma.BoolFilter<"CIClassField"> | boolean
-  isVisible?: Prisma.BoolFilter<"CIClassField"> | boolean
-  defaultValue?: Prisma.JsonNullableFilter<"CIClassField">
-  uiOrder?: Prisma.IntFilter<"CIClassField"> | number
-  note?: Prisma.StringNullableFilter<"CIClassField"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"CIClassField"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"CIClassField"> | Date | string
+export type CIClassFieldUncheckedUpdateManyWithoutFieldDefinitionNestedInput = {
+  create?: Prisma.XOR<Prisma.CIClassFieldCreateWithoutFieldDefinitionInput, Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput> | Prisma.CIClassFieldCreateWithoutFieldDefinitionInput[] | Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput[]
+  connectOrCreate?: Prisma.CIClassFieldCreateOrConnectWithoutFieldDefinitionInput | Prisma.CIClassFieldCreateOrConnectWithoutFieldDefinitionInput[]
+  upsert?: Prisma.CIClassFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput | Prisma.CIClassFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput[]
+  createMany?: Prisma.CIClassFieldCreateManyFieldDefinitionInputEnvelope
+  set?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
+  disconnect?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
+  delete?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
+  connect?: Prisma.CIClassFieldWhereUniqueInput | Prisma.CIClassFieldWhereUniqueInput[]
+  update?: Prisma.CIClassFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput | Prisma.CIClassFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput[]
+  updateMany?: Prisma.CIClassFieldUpdateManyWithWhereWithoutFieldDefinitionInput | Prisma.CIClassFieldUpdateManyWithWhereWithoutFieldDefinitionInput[]
+  deleteMany?: Prisma.CIClassFieldScalarWhereInput | Prisma.CIClassFieldScalarWhereInput[]
 }
 
 export type CIClassFieldCreateWithoutCiClassInput = {
@@ -700,7 +631,37 @@ export type CIClassFieldUpdateManyWithWhereWithoutCiClassInput = {
   data: Prisma.XOR<Prisma.CIClassFieldUpdateManyMutationInput, Prisma.CIClassFieldUncheckedUpdateManyWithoutCiClassInput>
 }
 
-export type CIClassFieldCreateManyFieldDefinitionInput = {
+export type CIClassFieldScalarWhereInput = {
+  AND?: Prisma.CIClassFieldScalarWhereInput | Prisma.CIClassFieldScalarWhereInput[]
+  OR?: Prisma.CIClassFieldScalarWhereInput[]
+  NOT?: Prisma.CIClassFieldScalarWhereInput | Prisma.CIClassFieldScalarWhereInput[]
+  id?: Prisma.StringFilter<"CIClassField"> | string
+  ciClassId?: Prisma.StringFilter<"CIClassField"> | string
+  fieldDefinitionId?: Prisma.StringFilter<"CIClassField"> | string
+  isRequired?: Prisma.BoolFilter<"CIClassField"> | boolean
+  isUnique?: Prisma.BoolFilter<"CIClassField"> | boolean
+  isVisible?: Prisma.BoolFilter<"CIClassField"> | boolean
+  defaultValue?: Prisma.JsonNullableFilter<"CIClassField">
+  uiOrder?: Prisma.IntFilter<"CIClassField"> | number
+  note?: Prisma.StringNullableFilter<"CIClassField"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"CIClassField"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"CIClassField"> | Date | string
+}
+
+export type CIClassFieldCreateWithoutFieldDefinitionInput = {
+  id?: string
+  isRequired?: boolean
+  isUnique?: boolean
+  isVisible?: boolean
+  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  uiOrder?: number
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  ciClass: Prisma.CIClassCreateNestedOneWithoutFieldsInput
+}
+
+export type CIClassFieldUncheckedCreateWithoutFieldDefinitionInput = {
   id?: string
   ciClassId: string
   isRequired?: boolean
@@ -713,43 +674,30 @@ export type CIClassFieldCreateManyFieldDefinitionInput = {
   updatedAt?: Date | string
 }
 
-export type CIClassFieldUpdateWithoutFieldDefinitionInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnique?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  uiOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ciClass?: Prisma.CIClassUpdateOneRequiredWithoutFieldsNestedInput
+export type CIClassFieldCreateOrConnectWithoutFieldDefinitionInput = {
+  where: Prisma.CIClassFieldWhereUniqueInput
+  create: Prisma.XOR<Prisma.CIClassFieldCreateWithoutFieldDefinitionInput, Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput>
 }
 
-export type CIClassFieldUncheckedUpdateWithoutFieldDefinitionInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  ciClassId?: Prisma.StringFieldUpdateOperationsInput | string
-  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnique?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  uiOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type CIClassFieldCreateManyFieldDefinitionInputEnvelope = {
+  data: Prisma.CIClassFieldCreateManyFieldDefinitionInput | Prisma.CIClassFieldCreateManyFieldDefinitionInput[]
+  skipDuplicates?: boolean
 }
 
-export type CIClassFieldUncheckedUpdateManyWithoutFieldDefinitionInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  ciClassId?: Prisma.StringFieldUpdateOperationsInput | string
-  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnique?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  uiOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type CIClassFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput = {
+  where: Prisma.CIClassFieldWhereUniqueInput
+  update: Prisma.XOR<Prisma.CIClassFieldUpdateWithoutFieldDefinitionInput, Prisma.CIClassFieldUncheckedUpdateWithoutFieldDefinitionInput>
+  create: Prisma.XOR<Prisma.CIClassFieldCreateWithoutFieldDefinitionInput, Prisma.CIClassFieldUncheckedCreateWithoutFieldDefinitionInput>
+}
+
+export type CIClassFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput = {
+  where: Prisma.CIClassFieldWhereUniqueInput
+  data: Prisma.XOR<Prisma.CIClassFieldUpdateWithoutFieldDefinitionInput, Prisma.CIClassFieldUncheckedUpdateWithoutFieldDefinitionInput>
+}
+
+export type CIClassFieldUpdateManyWithWhereWithoutFieldDefinitionInput = {
+  where: Prisma.CIClassFieldScalarWhereInput
+  data: Prisma.XOR<Prisma.CIClassFieldUpdateManyMutationInput, Prisma.CIClassFieldUncheckedUpdateManyWithoutFieldDefinitionInput>
 }
 
 export type CIClassFieldCreateManyCiClassInput = {
@@ -794,6 +742,58 @@ export type CIClassFieldUncheckedUpdateWithoutCiClassInput = {
 export type CIClassFieldUncheckedUpdateManyWithoutCiClassInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   fieldDefinitionId?: Prisma.StringFieldUpdateOperationsInput | string
+  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnique?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  uiOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type CIClassFieldCreateManyFieldDefinitionInput = {
+  id?: string
+  ciClassId: string
+  isRequired?: boolean
+  isUnique?: boolean
+  isVisible?: boolean
+  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  uiOrder?: number
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type CIClassFieldUpdateWithoutFieldDefinitionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnique?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  uiOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ciClass?: Prisma.CIClassUpdateOneRequiredWithoutFieldsNestedInput
+}
+
+export type CIClassFieldUncheckedUpdateWithoutFieldDefinitionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  ciClassId?: Prisma.StringFieldUpdateOperationsInput | string
+  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnique?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  uiOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type CIClassFieldUncheckedUpdateManyWithoutFieldDefinitionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  ciClassId?: Prisma.StringFieldUpdateOperationsInput | string
   isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isUnique?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean

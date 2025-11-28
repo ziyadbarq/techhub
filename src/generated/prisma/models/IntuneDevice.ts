@@ -831,6 +831,11 @@ export type IntuneDeviceUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type IntuneDeviceNullableScalarRelationFilter = {
+  is?: Prisma.IntuneDeviceWhereInput | null
+  isNot?: Prisma.IntuneDeviceWhereInput | null
+}
+
 export type IntuneDeviceListRelationFilter = {
   every?: Prisma.IntuneDeviceWhereInput
   some?: Prisma.IntuneDeviceWhereInput
@@ -839,11 +844,6 @@ export type IntuneDeviceListRelationFilter = {
 
 export type IntuneDeviceOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
-}
-
-export type IntuneDeviceNullableScalarRelationFilter = {
-  is?: Prisma.IntuneDeviceWhereInput | null
-  isNot?: Prisma.IntuneDeviceWhereInput | null
 }
 
 export type IntuneDeviceCountOrderByAggregateInput = {
@@ -959,6 +959,38 @@ export type IntuneDeviceScalarRelationFilter = {
   isNot?: Prisma.IntuneDeviceWhereInput
 }
 
+export type IntuneDeviceCreateNestedOneWithoutLinkedAssetInput = {
+  create?: Prisma.XOR<Prisma.IntuneDeviceCreateWithoutLinkedAssetInput, Prisma.IntuneDeviceUncheckedCreateWithoutLinkedAssetInput>
+  connectOrCreate?: Prisma.IntuneDeviceCreateOrConnectWithoutLinkedAssetInput
+  connect?: Prisma.IntuneDeviceWhereUniqueInput
+}
+
+export type IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput = {
+  create?: Prisma.XOR<Prisma.IntuneDeviceCreateWithoutLinkedAssetInput, Prisma.IntuneDeviceUncheckedCreateWithoutLinkedAssetInput>
+  connectOrCreate?: Prisma.IntuneDeviceCreateOrConnectWithoutLinkedAssetInput
+  connect?: Prisma.IntuneDeviceWhereUniqueInput
+}
+
+export type IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.IntuneDeviceCreateWithoutLinkedAssetInput, Prisma.IntuneDeviceUncheckedCreateWithoutLinkedAssetInput>
+  connectOrCreate?: Prisma.IntuneDeviceCreateOrConnectWithoutLinkedAssetInput
+  upsert?: Prisma.IntuneDeviceUpsertWithoutLinkedAssetInput
+  disconnect?: Prisma.IntuneDeviceWhereInput | boolean
+  delete?: Prisma.IntuneDeviceWhereInput | boolean
+  connect?: Prisma.IntuneDeviceWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.IntuneDeviceUpdateToOneWithWhereWithoutLinkedAssetInput, Prisma.IntuneDeviceUpdateWithoutLinkedAssetInput>, Prisma.IntuneDeviceUncheckedUpdateWithoutLinkedAssetInput>
+}
+
+export type IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.IntuneDeviceCreateWithoutLinkedAssetInput, Prisma.IntuneDeviceUncheckedCreateWithoutLinkedAssetInput>
+  connectOrCreate?: Prisma.IntuneDeviceCreateOrConnectWithoutLinkedAssetInput
+  upsert?: Prisma.IntuneDeviceUpsertWithoutLinkedAssetInput
+  disconnect?: Prisma.IntuneDeviceWhereInput | boolean
+  delete?: Prisma.IntuneDeviceWhereInput | boolean
+  connect?: Prisma.IntuneDeviceWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.IntuneDeviceUpdateToOneWithWhereWithoutLinkedAssetInput, Prisma.IntuneDeviceUpdateWithoutLinkedAssetInput>, Prisma.IntuneDeviceUncheckedUpdateWithoutLinkedAssetInput>
+}
+
 export type IntuneDeviceCreateNestedManyWithoutLinkedPersonInput = {
   create?: Prisma.XOR<Prisma.IntuneDeviceCreateWithoutLinkedPersonInput, Prisma.IntuneDeviceUncheckedCreateWithoutLinkedPersonInput> | Prisma.IntuneDeviceCreateWithoutLinkedPersonInput[] | Prisma.IntuneDeviceUncheckedCreateWithoutLinkedPersonInput[]
   connectOrCreate?: Prisma.IntuneDeviceCreateOrConnectWithoutLinkedPersonInput | Prisma.IntuneDeviceCreateOrConnectWithoutLinkedPersonInput[]
@@ -1001,38 +1033,6 @@ export type IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput = {
   deleteMany?: Prisma.IntuneDeviceScalarWhereInput | Prisma.IntuneDeviceScalarWhereInput[]
 }
 
-export type IntuneDeviceCreateNestedOneWithoutLinkedAssetInput = {
-  create?: Prisma.XOR<Prisma.IntuneDeviceCreateWithoutLinkedAssetInput, Prisma.IntuneDeviceUncheckedCreateWithoutLinkedAssetInput>
-  connectOrCreate?: Prisma.IntuneDeviceCreateOrConnectWithoutLinkedAssetInput
-  connect?: Prisma.IntuneDeviceWhereUniqueInput
-}
-
-export type IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput = {
-  create?: Prisma.XOR<Prisma.IntuneDeviceCreateWithoutLinkedAssetInput, Prisma.IntuneDeviceUncheckedCreateWithoutLinkedAssetInput>
-  connectOrCreate?: Prisma.IntuneDeviceCreateOrConnectWithoutLinkedAssetInput
-  connect?: Prisma.IntuneDeviceWhereUniqueInput
-}
-
-export type IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput = {
-  create?: Prisma.XOR<Prisma.IntuneDeviceCreateWithoutLinkedAssetInput, Prisma.IntuneDeviceUncheckedCreateWithoutLinkedAssetInput>
-  connectOrCreate?: Prisma.IntuneDeviceCreateOrConnectWithoutLinkedAssetInput
-  upsert?: Prisma.IntuneDeviceUpsertWithoutLinkedAssetInput
-  disconnect?: Prisma.IntuneDeviceWhereInput | boolean
-  delete?: Prisma.IntuneDeviceWhereInput | boolean
-  connect?: Prisma.IntuneDeviceWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.IntuneDeviceUpdateToOneWithWhereWithoutLinkedAssetInput, Prisma.IntuneDeviceUpdateWithoutLinkedAssetInput>, Prisma.IntuneDeviceUncheckedUpdateWithoutLinkedAssetInput>
-}
-
-export type IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput = {
-  create?: Prisma.XOR<Prisma.IntuneDeviceCreateWithoutLinkedAssetInput, Prisma.IntuneDeviceUncheckedCreateWithoutLinkedAssetInput>
-  connectOrCreate?: Prisma.IntuneDeviceCreateOrConnectWithoutLinkedAssetInput
-  upsert?: Prisma.IntuneDeviceUpsertWithoutLinkedAssetInput
-  disconnect?: Prisma.IntuneDeviceWhereInput | boolean
-  delete?: Prisma.IntuneDeviceWhereInput | boolean
-  connect?: Prisma.IntuneDeviceWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.IntuneDeviceUpdateToOneWithWhereWithoutLinkedAssetInput, Prisma.IntuneDeviceUpdateWithoutLinkedAssetInput>, Prisma.IntuneDeviceUncheckedUpdateWithoutLinkedAssetInput>
-}
-
 export type EnumIntuneDeviceOwnershipTypeFieldUpdateOperationsInput = {
   set?: $Enums.IntuneDeviceOwnershipType
 }
@@ -1073,145 +1073,6 @@ export type IntuneDeviceUpdateOneWithoutSyncLogsNestedInput = {
   delete?: Prisma.IntuneDeviceWhereInput | boolean
   connect?: Prisma.IntuneDeviceWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.IntuneDeviceUpdateToOneWithWhereWithoutSyncLogsInput, Prisma.IntuneDeviceUpdateWithoutSyncLogsInput>, Prisma.IntuneDeviceUncheckedUpdateWithoutSyncLogsInput>
-}
-
-export type IntuneDeviceCreateWithoutLinkedPersonInput = {
-  id?: string
-  intuneDeviceId: string
-  azureAdDeviceId?: string | null
-  deviceName: string
-  serialNumber?: string | null
-  manufacturer?: string | null
-  model?: string | null
-  operatingSystem?: string | null
-  osVersion?: string | null
-  imei?: string | null
-  wiFiMacAddress?: string | null
-  ethernetMacAddress?: string | null
-  intuneUserId?: string | null
-  userPrincipalName?: string | null
-  userDisplayName?: string | null
-  ownershipType?: $Enums.IntuneDeviceOwnershipType
-  complianceState?: $Enums.IntuneComplianceState
-  managementState?: $Enums.IntuneManagementState
-  isEncrypted?: boolean
-  isSupervised?: boolean
-  isJailBroken?: boolean
-  enrolledDateTime?: Date | string | null
-  lastSyncDateTime?: Date | string | null
-  assetLinkMethod?: string | null
-  assetLinkedAt?: Date | string | null
-  personLinkMethod?: string | null
-  personLinkedAt?: Date | string | null
-  lastSyncedFromIntune?: Date | string | null
-  isActive?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  linkedAsset?: Prisma.AssetCreateNestedOneWithoutIntuneDeviceInput
-  complianceHistory?: Prisma.IntuneComplianceHistoryCreateNestedManyWithoutIntuneDeviceInput
-  syncLogs?: Prisma.IntuneSyncLogCreateNestedManyWithoutIntuneDeviceInput
-}
-
-export type IntuneDeviceUncheckedCreateWithoutLinkedPersonInput = {
-  id?: string
-  intuneDeviceId: string
-  azureAdDeviceId?: string | null
-  deviceName: string
-  serialNumber?: string | null
-  manufacturer?: string | null
-  model?: string | null
-  operatingSystem?: string | null
-  osVersion?: string | null
-  imei?: string | null
-  wiFiMacAddress?: string | null
-  ethernetMacAddress?: string | null
-  intuneUserId?: string | null
-  userPrincipalName?: string | null
-  userDisplayName?: string | null
-  ownershipType?: $Enums.IntuneDeviceOwnershipType
-  complianceState?: $Enums.IntuneComplianceState
-  managementState?: $Enums.IntuneManagementState
-  isEncrypted?: boolean
-  isSupervised?: boolean
-  isJailBroken?: boolean
-  enrolledDateTime?: Date | string | null
-  lastSyncDateTime?: Date | string | null
-  linkedAssetId?: string | null
-  assetLinkMethod?: string | null
-  assetLinkedAt?: Date | string | null
-  personLinkMethod?: string | null
-  personLinkedAt?: Date | string | null
-  lastSyncedFromIntune?: Date | string | null
-  isActive?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  complianceHistory?: Prisma.IntuneComplianceHistoryUncheckedCreateNestedManyWithoutIntuneDeviceInput
-  syncLogs?: Prisma.IntuneSyncLogUncheckedCreateNestedManyWithoutIntuneDeviceInput
-}
-
-export type IntuneDeviceCreateOrConnectWithoutLinkedPersonInput = {
-  where: Prisma.IntuneDeviceWhereUniqueInput
-  create: Prisma.XOR<Prisma.IntuneDeviceCreateWithoutLinkedPersonInput, Prisma.IntuneDeviceUncheckedCreateWithoutLinkedPersonInput>
-}
-
-export type IntuneDeviceCreateManyLinkedPersonInputEnvelope = {
-  data: Prisma.IntuneDeviceCreateManyLinkedPersonInput | Prisma.IntuneDeviceCreateManyLinkedPersonInput[]
-  skipDuplicates?: boolean
-}
-
-export type IntuneDeviceUpsertWithWhereUniqueWithoutLinkedPersonInput = {
-  where: Prisma.IntuneDeviceWhereUniqueInput
-  update: Prisma.XOR<Prisma.IntuneDeviceUpdateWithoutLinkedPersonInput, Prisma.IntuneDeviceUncheckedUpdateWithoutLinkedPersonInput>
-  create: Prisma.XOR<Prisma.IntuneDeviceCreateWithoutLinkedPersonInput, Prisma.IntuneDeviceUncheckedCreateWithoutLinkedPersonInput>
-}
-
-export type IntuneDeviceUpdateWithWhereUniqueWithoutLinkedPersonInput = {
-  where: Prisma.IntuneDeviceWhereUniqueInput
-  data: Prisma.XOR<Prisma.IntuneDeviceUpdateWithoutLinkedPersonInput, Prisma.IntuneDeviceUncheckedUpdateWithoutLinkedPersonInput>
-}
-
-export type IntuneDeviceUpdateManyWithWhereWithoutLinkedPersonInput = {
-  where: Prisma.IntuneDeviceScalarWhereInput
-  data: Prisma.XOR<Prisma.IntuneDeviceUpdateManyMutationInput, Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonInput>
-}
-
-export type IntuneDeviceScalarWhereInput = {
-  AND?: Prisma.IntuneDeviceScalarWhereInput | Prisma.IntuneDeviceScalarWhereInput[]
-  OR?: Prisma.IntuneDeviceScalarWhereInput[]
-  NOT?: Prisma.IntuneDeviceScalarWhereInput | Prisma.IntuneDeviceScalarWhereInput[]
-  id?: Prisma.StringFilter<"IntuneDevice"> | string
-  intuneDeviceId?: Prisma.StringFilter<"IntuneDevice"> | string
-  azureAdDeviceId?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
-  deviceName?: Prisma.StringFilter<"IntuneDevice"> | string
-  serialNumber?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
-  manufacturer?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
-  model?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
-  operatingSystem?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
-  osVersion?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
-  imei?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
-  wiFiMacAddress?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
-  ethernetMacAddress?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
-  intuneUserId?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
-  userPrincipalName?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
-  userDisplayName?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
-  ownershipType?: Prisma.EnumIntuneDeviceOwnershipTypeFilter<"IntuneDevice"> | $Enums.IntuneDeviceOwnershipType
-  complianceState?: Prisma.EnumIntuneComplianceStateFilter<"IntuneDevice"> | $Enums.IntuneComplianceState
-  managementState?: Prisma.EnumIntuneManagementStateFilter<"IntuneDevice"> | $Enums.IntuneManagementState
-  isEncrypted?: Prisma.BoolFilter<"IntuneDevice"> | boolean
-  isSupervised?: Prisma.BoolFilter<"IntuneDevice"> | boolean
-  isJailBroken?: Prisma.BoolFilter<"IntuneDevice"> | boolean
-  enrolledDateTime?: Prisma.DateTimeNullableFilter<"IntuneDevice"> | Date | string | null
-  lastSyncDateTime?: Prisma.DateTimeNullableFilter<"IntuneDevice"> | Date | string | null
-  linkedAssetId?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
-  linkedPersonId?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
-  assetLinkMethod?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
-  assetLinkedAt?: Prisma.DateTimeNullableFilter<"IntuneDevice"> | Date | string | null
-  personLinkMethod?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
-  personLinkedAt?: Prisma.DateTimeNullableFilter<"IntuneDevice"> | Date | string | null
-  lastSyncedFromIntune?: Prisma.DateTimeNullableFilter<"IntuneDevice"> | Date | string | null
-  isActive?: Prisma.BoolFilter<"IntuneDevice"> | boolean
-  createdAt?: Prisma.DateTimeFilter<"IntuneDevice"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"IntuneDevice"> | Date | string
 }
 
 export type IntuneDeviceCreateWithoutLinkedAssetInput = {
@@ -1376,6 +1237,145 @@ export type IntuneDeviceUncheckedUpdateWithoutLinkedAssetInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   complianceHistory?: Prisma.IntuneComplianceHistoryUncheckedUpdateManyWithoutIntuneDeviceNestedInput
   syncLogs?: Prisma.IntuneSyncLogUncheckedUpdateManyWithoutIntuneDeviceNestedInput
+}
+
+export type IntuneDeviceCreateWithoutLinkedPersonInput = {
+  id?: string
+  intuneDeviceId: string
+  azureAdDeviceId?: string | null
+  deviceName: string
+  serialNumber?: string | null
+  manufacturer?: string | null
+  model?: string | null
+  operatingSystem?: string | null
+  osVersion?: string | null
+  imei?: string | null
+  wiFiMacAddress?: string | null
+  ethernetMacAddress?: string | null
+  intuneUserId?: string | null
+  userPrincipalName?: string | null
+  userDisplayName?: string | null
+  ownershipType?: $Enums.IntuneDeviceOwnershipType
+  complianceState?: $Enums.IntuneComplianceState
+  managementState?: $Enums.IntuneManagementState
+  isEncrypted?: boolean
+  isSupervised?: boolean
+  isJailBroken?: boolean
+  enrolledDateTime?: Date | string | null
+  lastSyncDateTime?: Date | string | null
+  assetLinkMethod?: string | null
+  assetLinkedAt?: Date | string | null
+  personLinkMethod?: string | null
+  personLinkedAt?: Date | string | null
+  lastSyncedFromIntune?: Date | string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  linkedAsset?: Prisma.AssetCreateNestedOneWithoutIntuneDeviceInput
+  complianceHistory?: Prisma.IntuneComplianceHistoryCreateNestedManyWithoutIntuneDeviceInput
+  syncLogs?: Prisma.IntuneSyncLogCreateNestedManyWithoutIntuneDeviceInput
+}
+
+export type IntuneDeviceUncheckedCreateWithoutLinkedPersonInput = {
+  id?: string
+  intuneDeviceId: string
+  azureAdDeviceId?: string | null
+  deviceName: string
+  serialNumber?: string | null
+  manufacturer?: string | null
+  model?: string | null
+  operatingSystem?: string | null
+  osVersion?: string | null
+  imei?: string | null
+  wiFiMacAddress?: string | null
+  ethernetMacAddress?: string | null
+  intuneUserId?: string | null
+  userPrincipalName?: string | null
+  userDisplayName?: string | null
+  ownershipType?: $Enums.IntuneDeviceOwnershipType
+  complianceState?: $Enums.IntuneComplianceState
+  managementState?: $Enums.IntuneManagementState
+  isEncrypted?: boolean
+  isSupervised?: boolean
+  isJailBroken?: boolean
+  enrolledDateTime?: Date | string | null
+  lastSyncDateTime?: Date | string | null
+  linkedAssetId?: string | null
+  assetLinkMethod?: string | null
+  assetLinkedAt?: Date | string | null
+  personLinkMethod?: string | null
+  personLinkedAt?: Date | string | null
+  lastSyncedFromIntune?: Date | string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  complianceHistory?: Prisma.IntuneComplianceHistoryUncheckedCreateNestedManyWithoutIntuneDeviceInput
+  syncLogs?: Prisma.IntuneSyncLogUncheckedCreateNestedManyWithoutIntuneDeviceInput
+}
+
+export type IntuneDeviceCreateOrConnectWithoutLinkedPersonInput = {
+  where: Prisma.IntuneDeviceWhereUniqueInput
+  create: Prisma.XOR<Prisma.IntuneDeviceCreateWithoutLinkedPersonInput, Prisma.IntuneDeviceUncheckedCreateWithoutLinkedPersonInput>
+}
+
+export type IntuneDeviceCreateManyLinkedPersonInputEnvelope = {
+  data: Prisma.IntuneDeviceCreateManyLinkedPersonInput | Prisma.IntuneDeviceCreateManyLinkedPersonInput[]
+  skipDuplicates?: boolean
+}
+
+export type IntuneDeviceUpsertWithWhereUniqueWithoutLinkedPersonInput = {
+  where: Prisma.IntuneDeviceWhereUniqueInput
+  update: Prisma.XOR<Prisma.IntuneDeviceUpdateWithoutLinkedPersonInput, Prisma.IntuneDeviceUncheckedUpdateWithoutLinkedPersonInput>
+  create: Prisma.XOR<Prisma.IntuneDeviceCreateWithoutLinkedPersonInput, Prisma.IntuneDeviceUncheckedCreateWithoutLinkedPersonInput>
+}
+
+export type IntuneDeviceUpdateWithWhereUniqueWithoutLinkedPersonInput = {
+  where: Prisma.IntuneDeviceWhereUniqueInput
+  data: Prisma.XOR<Prisma.IntuneDeviceUpdateWithoutLinkedPersonInput, Prisma.IntuneDeviceUncheckedUpdateWithoutLinkedPersonInput>
+}
+
+export type IntuneDeviceUpdateManyWithWhereWithoutLinkedPersonInput = {
+  where: Prisma.IntuneDeviceScalarWhereInput
+  data: Prisma.XOR<Prisma.IntuneDeviceUpdateManyMutationInput, Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonInput>
+}
+
+export type IntuneDeviceScalarWhereInput = {
+  AND?: Prisma.IntuneDeviceScalarWhereInput | Prisma.IntuneDeviceScalarWhereInput[]
+  OR?: Prisma.IntuneDeviceScalarWhereInput[]
+  NOT?: Prisma.IntuneDeviceScalarWhereInput | Prisma.IntuneDeviceScalarWhereInput[]
+  id?: Prisma.StringFilter<"IntuneDevice"> | string
+  intuneDeviceId?: Prisma.StringFilter<"IntuneDevice"> | string
+  azureAdDeviceId?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
+  deviceName?: Prisma.StringFilter<"IntuneDevice"> | string
+  serialNumber?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
+  manufacturer?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
+  model?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
+  operatingSystem?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
+  osVersion?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
+  imei?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
+  wiFiMacAddress?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
+  ethernetMacAddress?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
+  intuneUserId?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
+  userPrincipalName?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
+  userDisplayName?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
+  ownershipType?: Prisma.EnumIntuneDeviceOwnershipTypeFilter<"IntuneDevice"> | $Enums.IntuneDeviceOwnershipType
+  complianceState?: Prisma.EnumIntuneComplianceStateFilter<"IntuneDevice"> | $Enums.IntuneComplianceState
+  managementState?: Prisma.EnumIntuneManagementStateFilter<"IntuneDevice"> | $Enums.IntuneManagementState
+  isEncrypted?: Prisma.BoolFilter<"IntuneDevice"> | boolean
+  isSupervised?: Prisma.BoolFilter<"IntuneDevice"> | boolean
+  isJailBroken?: Prisma.BoolFilter<"IntuneDevice"> | boolean
+  enrolledDateTime?: Prisma.DateTimeNullableFilter<"IntuneDevice"> | Date | string | null
+  lastSyncDateTime?: Prisma.DateTimeNullableFilter<"IntuneDevice"> | Date | string | null
+  linkedAssetId?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
+  linkedPersonId?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
+  assetLinkMethod?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
+  assetLinkedAt?: Prisma.DateTimeNullableFilter<"IntuneDevice"> | Date | string | null
+  personLinkMethod?: Prisma.StringNullableFilter<"IntuneDevice"> | string | null
+  personLinkedAt?: Prisma.DateTimeNullableFilter<"IntuneDevice"> | Date | string | null
+  lastSyncedFromIntune?: Prisma.DateTimeNullableFilter<"IntuneDevice"> | Date | string | null
+  isActive?: Prisma.BoolFilter<"IntuneDevice"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"IntuneDevice"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"IntuneDevice"> | Date | string
 }
 
 export type IntuneDeviceCreateWithoutComplianceHistoryInput = {

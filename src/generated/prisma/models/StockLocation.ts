@@ -342,16 +342,6 @@ export type StockLocationUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type StockLocationListRelationFilter = {
-  every?: Prisma.StockLocationWhereInput
-  some?: Prisma.StockLocationWhereInput
-  none?: Prisma.StockLocationWhereInput
-}
-
-export type StockLocationOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
 export type StockLocationCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -387,46 +377,14 @@ export type StockLocationNullableScalarRelationFilter = {
   isNot?: Prisma.StockLocationWhereInput | null
 }
 
-export type StockLocationCreateNestedManyWithoutLocationInput = {
-  create?: Prisma.XOR<Prisma.StockLocationCreateWithoutLocationInput, Prisma.StockLocationUncheckedCreateWithoutLocationInput> | Prisma.StockLocationCreateWithoutLocationInput[] | Prisma.StockLocationUncheckedCreateWithoutLocationInput[]
-  connectOrCreate?: Prisma.StockLocationCreateOrConnectWithoutLocationInput | Prisma.StockLocationCreateOrConnectWithoutLocationInput[]
-  createMany?: Prisma.StockLocationCreateManyLocationInputEnvelope
-  connect?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
+export type StockLocationListRelationFilter = {
+  every?: Prisma.StockLocationWhereInput
+  some?: Prisma.StockLocationWhereInput
+  none?: Prisma.StockLocationWhereInput
 }
 
-export type StockLocationUncheckedCreateNestedManyWithoutLocationInput = {
-  create?: Prisma.XOR<Prisma.StockLocationCreateWithoutLocationInput, Prisma.StockLocationUncheckedCreateWithoutLocationInput> | Prisma.StockLocationCreateWithoutLocationInput[] | Prisma.StockLocationUncheckedCreateWithoutLocationInput[]
-  connectOrCreate?: Prisma.StockLocationCreateOrConnectWithoutLocationInput | Prisma.StockLocationCreateOrConnectWithoutLocationInput[]
-  createMany?: Prisma.StockLocationCreateManyLocationInputEnvelope
-  connect?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
-}
-
-export type StockLocationUpdateManyWithoutLocationNestedInput = {
-  create?: Prisma.XOR<Prisma.StockLocationCreateWithoutLocationInput, Prisma.StockLocationUncheckedCreateWithoutLocationInput> | Prisma.StockLocationCreateWithoutLocationInput[] | Prisma.StockLocationUncheckedCreateWithoutLocationInput[]
-  connectOrCreate?: Prisma.StockLocationCreateOrConnectWithoutLocationInput | Prisma.StockLocationCreateOrConnectWithoutLocationInput[]
-  upsert?: Prisma.StockLocationUpsertWithWhereUniqueWithoutLocationInput | Prisma.StockLocationUpsertWithWhereUniqueWithoutLocationInput[]
-  createMany?: Prisma.StockLocationCreateManyLocationInputEnvelope
-  set?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
-  disconnect?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
-  delete?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
-  connect?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
-  update?: Prisma.StockLocationUpdateWithWhereUniqueWithoutLocationInput | Prisma.StockLocationUpdateWithWhereUniqueWithoutLocationInput[]
-  updateMany?: Prisma.StockLocationUpdateManyWithWhereWithoutLocationInput | Prisma.StockLocationUpdateManyWithWhereWithoutLocationInput[]
-  deleteMany?: Prisma.StockLocationScalarWhereInput | Prisma.StockLocationScalarWhereInput[]
-}
-
-export type StockLocationUncheckedUpdateManyWithoutLocationNestedInput = {
-  create?: Prisma.XOR<Prisma.StockLocationCreateWithoutLocationInput, Prisma.StockLocationUncheckedCreateWithoutLocationInput> | Prisma.StockLocationCreateWithoutLocationInput[] | Prisma.StockLocationUncheckedCreateWithoutLocationInput[]
-  connectOrCreate?: Prisma.StockLocationCreateOrConnectWithoutLocationInput | Prisma.StockLocationCreateOrConnectWithoutLocationInput[]
-  upsert?: Prisma.StockLocationUpsertWithWhereUniqueWithoutLocationInput | Prisma.StockLocationUpsertWithWhereUniqueWithoutLocationInput[]
-  createMany?: Prisma.StockLocationCreateManyLocationInputEnvelope
-  set?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
-  disconnect?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
-  delete?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
-  connect?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
-  update?: Prisma.StockLocationUpdateWithWhereUniqueWithoutLocationInput | Prisma.StockLocationUpdateWithWhereUniqueWithoutLocationInput[]
-  updateMany?: Prisma.StockLocationUpdateManyWithWhereWithoutLocationInput | Prisma.StockLocationUpdateManyWithWhereWithoutLocationInput[]
-  deleteMany?: Prisma.StockLocationScalarWhereInput | Prisma.StockLocationScalarWhereInput[]
+export type StockLocationOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type StockLocationCreateNestedOneWithoutStockMovementsFromInput = {
@@ -477,67 +435,46 @@ export type StockLocationUpdateOneWithoutAssetsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.StockLocationUpdateToOneWithWhereWithoutAssetsInput, Prisma.StockLocationUpdateWithoutAssetsInput>, Prisma.StockLocationUncheckedUpdateWithoutAssetsInput>
 }
 
-export type StockLocationCreateWithoutLocationInput = {
-  id?: string
-  name: string
-  code: string
-  description?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  assets?: Prisma.AssetCreateNestedManyWithoutCurrentStockLocationInput
-  stockMovementsFrom?: Prisma.StockMovementCreateNestedManyWithoutStockLocationFromInput
-  stockMovementsTo?: Prisma.StockMovementCreateNestedManyWithoutStockLocationToInput
+export type StockLocationCreateNestedManyWithoutLocationInput = {
+  create?: Prisma.XOR<Prisma.StockLocationCreateWithoutLocationInput, Prisma.StockLocationUncheckedCreateWithoutLocationInput> | Prisma.StockLocationCreateWithoutLocationInput[] | Prisma.StockLocationUncheckedCreateWithoutLocationInput[]
+  connectOrCreate?: Prisma.StockLocationCreateOrConnectWithoutLocationInput | Prisma.StockLocationCreateOrConnectWithoutLocationInput[]
+  createMany?: Prisma.StockLocationCreateManyLocationInputEnvelope
+  connect?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
 }
 
-export type StockLocationUncheckedCreateWithoutLocationInput = {
-  id?: string
-  name: string
-  code: string
-  description?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  assets?: Prisma.AssetUncheckedCreateNestedManyWithoutCurrentStockLocationInput
-  stockMovementsFrom?: Prisma.StockMovementUncheckedCreateNestedManyWithoutStockLocationFromInput
-  stockMovementsTo?: Prisma.StockMovementUncheckedCreateNestedManyWithoutStockLocationToInput
+export type StockLocationUncheckedCreateNestedManyWithoutLocationInput = {
+  create?: Prisma.XOR<Prisma.StockLocationCreateWithoutLocationInput, Prisma.StockLocationUncheckedCreateWithoutLocationInput> | Prisma.StockLocationCreateWithoutLocationInput[] | Prisma.StockLocationUncheckedCreateWithoutLocationInput[]
+  connectOrCreate?: Prisma.StockLocationCreateOrConnectWithoutLocationInput | Prisma.StockLocationCreateOrConnectWithoutLocationInput[]
+  createMany?: Prisma.StockLocationCreateManyLocationInputEnvelope
+  connect?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
 }
 
-export type StockLocationCreateOrConnectWithoutLocationInput = {
-  where: Prisma.StockLocationWhereUniqueInput
-  create: Prisma.XOR<Prisma.StockLocationCreateWithoutLocationInput, Prisma.StockLocationUncheckedCreateWithoutLocationInput>
+export type StockLocationUpdateManyWithoutLocationNestedInput = {
+  create?: Prisma.XOR<Prisma.StockLocationCreateWithoutLocationInput, Prisma.StockLocationUncheckedCreateWithoutLocationInput> | Prisma.StockLocationCreateWithoutLocationInput[] | Prisma.StockLocationUncheckedCreateWithoutLocationInput[]
+  connectOrCreate?: Prisma.StockLocationCreateOrConnectWithoutLocationInput | Prisma.StockLocationCreateOrConnectWithoutLocationInput[]
+  upsert?: Prisma.StockLocationUpsertWithWhereUniqueWithoutLocationInput | Prisma.StockLocationUpsertWithWhereUniqueWithoutLocationInput[]
+  createMany?: Prisma.StockLocationCreateManyLocationInputEnvelope
+  set?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
+  disconnect?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
+  delete?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
+  connect?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
+  update?: Prisma.StockLocationUpdateWithWhereUniqueWithoutLocationInput | Prisma.StockLocationUpdateWithWhereUniqueWithoutLocationInput[]
+  updateMany?: Prisma.StockLocationUpdateManyWithWhereWithoutLocationInput | Prisma.StockLocationUpdateManyWithWhereWithoutLocationInput[]
+  deleteMany?: Prisma.StockLocationScalarWhereInput | Prisma.StockLocationScalarWhereInput[]
 }
 
-export type StockLocationCreateManyLocationInputEnvelope = {
-  data: Prisma.StockLocationCreateManyLocationInput | Prisma.StockLocationCreateManyLocationInput[]
-  skipDuplicates?: boolean
-}
-
-export type StockLocationUpsertWithWhereUniqueWithoutLocationInput = {
-  where: Prisma.StockLocationWhereUniqueInput
-  update: Prisma.XOR<Prisma.StockLocationUpdateWithoutLocationInput, Prisma.StockLocationUncheckedUpdateWithoutLocationInput>
-  create: Prisma.XOR<Prisma.StockLocationCreateWithoutLocationInput, Prisma.StockLocationUncheckedCreateWithoutLocationInput>
-}
-
-export type StockLocationUpdateWithWhereUniqueWithoutLocationInput = {
-  where: Prisma.StockLocationWhereUniqueInput
-  data: Prisma.XOR<Prisma.StockLocationUpdateWithoutLocationInput, Prisma.StockLocationUncheckedUpdateWithoutLocationInput>
-}
-
-export type StockLocationUpdateManyWithWhereWithoutLocationInput = {
-  where: Prisma.StockLocationScalarWhereInput
-  data: Prisma.XOR<Prisma.StockLocationUpdateManyMutationInput, Prisma.StockLocationUncheckedUpdateManyWithoutLocationInput>
-}
-
-export type StockLocationScalarWhereInput = {
-  AND?: Prisma.StockLocationScalarWhereInput | Prisma.StockLocationScalarWhereInput[]
-  OR?: Prisma.StockLocationScalarWhereInput[]
-  NOT?: Prisma.StockLocationScalarWhereInput | Prisma.StockLocationScalarWhereInput[]
-  id?: Prisma.StringFilter<"StockLocation"> | string
-  name?: Prisma.StringFilter<"StockLocation"> | string
-  code?: Prisma.StringFilter<"StockLocation"> | string
-  locationId?: Prisma.StringNullableFilter<"StockLocation"> | string | null
-  description?: Prisma.StringNullableFilter<"StockLocation"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"StockLocation"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"StockLocation"> | Date | string
+export type StockLocationUncheckedUpdateManyWithoutLocationNestedInput = {
+  create?: Prisma.XOR<Prisma.StockLocationCreateWithoutLocationInput, Prisma.StockLocationUncheckedCreateWithoutLocationInput> | Prisma.StockLocationCreateWithoutLocationInput[] | Prisma.StockLocationUncheckedCreateWithoutLocationInput[]
+  connectOrCreate?: Prisma.StockLocationCreateOrConnectWithoutLocationInput | Prisma.StockLocationCreateOrConnectWithoutLocationInput[]
+  upsert?: Prisma.StockLocationUpsertWithWhereUniqueWithoutLocationInput | Prisma.StockLocationUpsertWithWhereUniqueWithoutLocationInput[]
+  createMany?: Prisma.StockLocationCreateManyLocationInputEnvelope
+  set?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
+  disconnect?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
+  delete?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
+  connect?: Prisma.StockLocationWhereUniqueInput | Prisma.StockLocationWhereUniqueInput[]
+  update?: Prisma.StockLocationUpdateWithWhereUniqueWithoutLocationInput | Prisma.StockLocationUpdateWithWhereUniqueWithoutLocationInput[]
+  updateMany?: Prisma.StockLocationUpdateManyWithWhereWithoutLocationInput | Prisma.StockLocationUpdateManyWithWhereWithoutLocationInput[]
+  deleteMany?: Prisma.StockLocationScalarWhereInput | Prisma.StockLocationScalarWhereInput[]
 }
 
 export type StockLocationCreateWithoutStockMovementsFromInput = {
@@ -730,6 +667,69 @@ export type StockLocationUncheckedUpdateWithoutAssetsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stockMovementsFrom?: Prisma.StockMovementUncheckedUpdateManyWithoutStockLocationFromNestedInput
   stockMovementsTo?: Prisma.StockMovementUncheckedUpdateManyWithoutStockLocationToNestedInput
+}
+
+export type StockLocationCreateWithoutLocationInput = {
+  id?: string
+  name: string
+  code: string
+  description?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assets?: Prisma.AssetCreateNestedManyWithoutCurrentStockLocationInput
+  stockMovementsFrom?: Prisma.StockMovementCreateNestedManyWithoutStockLocationFromInput
+  stockMovementsTo?: Prisma.StockMovementCreateNestedManyWithoutStockLocationToInput
+}
+
+export type StockLocationUncheckedCreateWithoutLocationInput = {
+  id?: string
+  name: string
+  code: string
+  description?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assets?: Prisma.AssetUncheckedCreateNestedManyWithoutCurrentStockLocationInput
+  stockMovementsFrom?: Prisma.StockMovementUncheckedCreateNestedManyWithoutStockLocationFromInput
+  stockMovementsTo?: Prisma.StockMovementUncheckedCreateNestedManyWithoutStockLocationToInput
+}
+
+export type StockLocationCreateOrConnectWithoutLocationInput = {
+  where: Prisma.StockLocationWhereUniqueInput
+  create: Prisma.XOR<Prisma.StockLocationCreateWithoutLocationInput, Prisma.StockLocationUncheckedCreateWithoutLocationInput>
+}
+
+export type StockLocationCreateManyLocationInputEnvelope = {
+  data: Prisma.StockLocationCreateManyLocationInput | Prisma.StockLocationCreateManyLocationInput[]
+  skipDuplicates?: boolean
+}
+
+export type StockLocationUpsertWithWhereUniqueWithoutLocationInput = {
+  where: Prisma.StockLocationWhereUniqueInput
+  update: Prisma.XOR<Prisma.StockLocationUpdateWithoutLocationInput, Prisma.StockLocationUncheckedUpdateWithoutLocationInput>
+  create: Prisma.XOR<Prisma.StockLocationCreateWithoutLocationInput, Prisma.StockLocationUncheckedCreateWithoutLocationInput>
+}
+
+export type StockLocationUpdateWithWhereUniqueWithoutLocationInput = {
+  where: Prisma.StockLocationWhereUniqueInput
+  data: Prisma.XOR<Prisma.StockLocationUpdateWithoutLocationInput, Prisma.StockLocationUncheckedUpdateWithoutLocationInput>
+}
+
+export type StockLocationUpdateManyWithWhereWithoutLocationInput = {
+  where: Prisma.StockLocationScalarWhereInput
+  data: Prisma.XOR<Prisma.StockLocationUpdateManyMutationInput, Prisma.StockLocationUncheckedUpdateManyWithoutLocationInput>
+}
+
+export type StockLocationScalarWhereInput = {
+  AND?: Prisma.StockLocationScalarWhereInput | Prisma.StockLocationScalarWhereInput[]
+  OR?: Prisma.StockLocationScalarWhereInput[]
+  NOT?: Prisma.StockLocationScalarWhereInput | Prisma.StockLocationScalarWhereInput[]
+  id?: Prisma.StringFilter<"StockLocation"> | string
+  name?: Prisma.StringFilter<"StockLocation"> | string
+  code?: Prisma.StringFilter<"StockLocation"> | string
+  locationId?: Prisma.StringNullableFilter<"StockLocation"> | string | null
+  description?: Prisma.StringNullableFilter<"StockLocation"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"StockLocation"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"StockLocation"> | Date | string
 }
 
 export type StockLocationCreateManyLocationInput = {

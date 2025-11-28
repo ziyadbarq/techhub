@@ -1,0 +1,165 @@
+// ============================================
+// LICENSE MANAGEMENT
+// ============================================
+//
+// Models: LicenseProduct, LicenseProductField, LicenseEntitlement, LicenseAllocation, LicenseAddon, LicenseEntitlementAddon
+// Enums: AllocationTargetTypeEnum
+// Layer: Layer 3 (Advanced ITAM)
+// Related DI Module: licenses.module.ts
+// ============================================
+
+// LicenseProduct model
+model LicenseProduct {
+  id               String   @id @default(cuid())
+  name             String   @unique
+  code             String   @unique
+  vendorId         String
+  metricType       String // per_device, per_user, per_core, per_vm, per_cluster
+  description      String?  @db.Text
+  lifecycleModelId String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  vendor              Vendor                @relation(fields: [vendorId], references: [id], onDelete: Restrict)
+  lifecycleModel      LifecycleModel?       @relation(fields: [lifecycleModelId], references: [id], onDelete: SetNull)
+  fields              LicenseProductField[]
+  licenseEntitlements LicenseEntitlement[]
+  addons              LicenseAddon[]
+
+  // Indexes
+  @@index([code])
+  @@index([vendorId])
+  @@index([lifecycleModelId])
+  @@map("license_products")
+}
+
+// LicenseProductField model
+model LicenseProductField {
+  id                String   @id @default(cuid())
+  licenseProductId  String
+  fieldDefinitionId String
+  isRequired        Boolean  @default(false)
+  isVisible         Boolean  @default(true)
+  uiOrder           Int      @default(0)
+  defaultValue      Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  licenseProduct  LicenseProduct  @relation(fields: [licenseProductId], references: [id], onDelete: Cascade)
+  fieldDefinition FieldDefinition @relation(fields: [fieldDefinitionId], references: [id], onDelete: Restrict)
+
+  // Indexes
+  @@unique([licenseProductId, fieldDefinitionId])
+  @@index([licenseProductId])
+  @@index([fieldDefinitionId])
+  @@map("license_product_fields")
+}
+
+// LicenseEntitlement model
+model LicenseEntitlement {
+  id                String    @id @default(cuid())
+  licenseProductId  String
+  contractId        String?
+  purchasedQuantity Int
+  effectiveStart    DateTime
+  effectiveEnd      DateTime?
+  allowedScope      Json? // e.g. regions, departments, environments
+  note              String?   @db.Text
+  unitCost          Decimal?  @db.Decimal(12, 2) // Cost per license unit
+  currency          String? // ISO 3-letter currency code (USD, SAR, etc.)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relations
+  licenseProduct    LicenseProduct            @relation(fields: [licenseProductId], references: [id], onDelete: Restrict)
+  contract          Contract?                 @relation(fields: [contractId], references: [id], onDelete: SetNull)
+  allocations       LicenseAllocation[]
+  entitlementAddons LicenseEntitlementAddon[]
+
+  // Indexes
+  @@index([licenseProductId])
+  @@index([contractId])
+  @@index([effectiveStart, effectiveEnd])
+  @@map("license_entitlements")
+}
+
+// LicenseAllocation model
+// Polymorphic relation: targetType + targetId handled at application level
+model LicenseAllocation {
+  id                   String                   @id @default(cuid())
+  licenseEntitlementId String
+  targetType           AllocationTargetTypeEnum
+  targetId             String // Person.id / ConfigurationItem.id / Asset.id (no FK - polymorphic)
+  allocatedQuantity    Int
+  allocatedAt          DateTime                 @default(now())
+  deallocatedAt        DateTime?
+  note                 String?                  @db.Text
+  createdAt            DateTime                 @default(now())
+  updatedAt            DateTime                 @updatedAt
+
+  // Relations
+  licenseEntitlement LicenseEntitlement @relation(fields: [licenseEntitlementId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([licenseEntitlementId])
+  @@index([targetType, targetId])
+  @@index([allocatedAt])
+  @@index([deallocatedAt]) // Medium-priority: Deallocation tracking
+  @@map("license_allocations")
+}
+
+// LicenseAddon model - product-level addon templates (e.g., premium support, training)
+model LicenseAddon {
+  id               String   @id @default(cuid())
+  licenseProductId String
+  name             String
+  code             String
+  description      String?  @db.Text
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  licenseProduct LicenseProduct            @relation(fields: [licenseProductId], references: [id], onDelete: Cascade)
+  entitlements   LicenseEntitlementAddon[]
+
+  // Indexes
+  @@unique([licenseProductId, code])
+  @@index([licenseProductId])
+  @@index([isActive])
+  @@map("license_addons")
+}
+
+// LicenseEntitlementAddon model - junction table linking addons to entitlements with cost
+model LicenseEntitlementAddon {
+  id                   String   @id @default(cuid())
+  licenseEntitlementId String
+  licenseAddonId       String
+  cost                 Decimal? @db.Decimal(12, 2) // Cost for this addon on this entitlement
+  currency             String? // ISO 3-letter currency code
+  note                 String?  @db.Text
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  // Relations
+  licenseEntitlement LicenseEntitlement @relation(fields: [licenseEntitlementId], references: [id], onDelete: Cascade)
+  licenseAddon       LicenseAddon       @relation(fields: [licenseAddonId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@unique([licenseEntitlementId, licenseAddonId])
+  @@index([licenseEntitlementId])
+  @@index([licenseAddonId])
+  @@map("license_entitlement_addons")
+}
+
+// ============================================
+// LICENSE MANAGEMENT ENUMS
+// ============================================
+
+enum AllocationTargetTypeEnum {
+  PERSON
+  CI
+  ASSET
+}

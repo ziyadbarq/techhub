@@ -1,0 +1,53 @@
+// ============================================
+// SHARED ENUMS (Cross-Domain)
+// ============================================
+//
+// Enums: TargetObjectTypeEnum
+// Purpose: Enums used across multiple domains for polymorphic relations
+// Used by: contracts.prisma, governance.prisma, attachments.prisma
+// ============================================
+
+// Polymorphic target object types
+// Used for linking objects across different domains (attachments, verifications, audit logs)
+enum TargetObjectTypeEnum {
+  // Foundation Layer
+  ORGANIZATION_UNIT
+  PERSON
+  LOCATION
+  VENDOR
+  LIFECYCLE_STATE
+  LIFECYCLE_TRANSITION
+
+  // CMDB
+  CI
+  CI_RELATIONSHIP
+  RELATIONSHIP_TYPE
+
+  // Asset Layer
+  ASSET
+  ASSET_ASSIGNMENT
+  WARRANTY
+  MAINTENANCE_SCHEDULE
+  MAINTENANCE_RECORD
+  STOCK_MOVEMENT
+
+  // Asset Disposals
+  ASSET_DISPOSAL
+  DISPOSAL_APPROVAL
+  DISPOSAL_DOCUMENT
+
+  // Asset Kits
+  ASSET_KIT
+  ASSET_KIT_ITEM
+  ASSET_KIT_CHECKOUT
+  ASSET_KIT_CHECKOUT_ITEM
+
+  // Asset Reservations
+  ASSET_RESERVATION
+  ASSET_RESERVATION_CONFLICT
+
+  // Contracts & Licenses
+  CONTRACT
+  LICENSE_ENTITLEMENT
+  LICENSE_ALLOCATION
+}

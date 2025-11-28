@@ -671,12 +671,14 @@ export type VendorUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type StringNullableListFilter<$PrismaModel = never> = {
-  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
-  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
-  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
-  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
-  isEmpty?: boolean
+export type VendorScalarRelationFilter = {
+  is?: Prisma.VendorWhereInput
+  isNot?: Prisma.VendorWhereInput
+}
+
+export type VendorNullableScalarRelationFilter = {
+  is?: Prisma.VendorWhereInput | null
+  isNot?: Prisma.VendorWhereInput | null
 }
 
 export type VendorCountOrderByAggregateInput = {
@@ -753,43 +755,6 @@ export type VendorMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type VendorScalarRelationFilter = {
-  is?: Prisma.VendorWhereInput
-  isNot?: Prisma.VendorWhereInput
-}
-
-export type VendorNullableScalarRelationFilter = {
-  is?: Prisma.VendorWhereInput | null
-  isNot?: Prisma.VendorWhereInput | null
-}
-
-export type VendorCreatetagsInput = {
-  set: string[]
-}
-
-export type EnumVendorTypeFieldUpdateOperationsInput = {
-  set?: $Enums.VendorType
-}
-
-export type VendorUpdatetagsInput = {
-  set?: string[]
-  push?: string | string[]
-}
-
-export type VendorCreateNestedOneWithoutContactsInput = {
-  create?: Prisma.XOR<Prisma.VendorCreateWithoutContactsInput, Prisma.VendorUncheckedCreateWithoutContactsInput>
-  connectOrCreate?: Prisma.VendorCreateOrConnectWithoutContactsInput
-  connect?: Prisma.VendorWhereUniqueInput
-}
-
-export type VendorUpdateOneRequiredWithoutContactsNestedInput = {
-  create?: Prisma.XOR<Prisma.VendorCreateWithoutContactsInput, Prisma.VendorUncheckedCreateWithoutContactsInput>
-  connectOrCreate?: Prisma.VendorCreateOrConnectWithoutContactsInput
-  upsert?: Prisma.VendorUpsertWithoutContactsInput
-  connect?: Prisma.VendorWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.VendorUpdateToOneWithWhereWithoutContactsInput, Prisma.VendorUpdateWithoutContactsInput>, Prisma.VendorUncheckedUpdateWithoutContactsInput>
-}
-
 export type VendorCreateNestedOneWithoutAssetModelsInput = {
   create?: Prisma.XOR<Prisma.VendorCreateWithoutAssetModelsInput, Prisma.VendorUncheckedCreateWithoutAssetModelsInput>
   connectOrCreate?: Prisma.VendorCreateOrConnectWithoutAssetModelsInput
@@ -836,6 +801,20 @@ export type VendorUpdateOneWithoutWarrantiesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.VendorUpdateToOneWithWhereWithoutWarrantiesInput, Prisma.VendorUpdateWithoutWarrantiesInput>, Prisma.VendorUncheckedUpdateWithoutWarrantiesInput>
 }
 
+export type VendorCreateNestedOneWithoutContractsInput = {
+  create?: Prisma.XOR<Prisma.VendorCreateWithoutContractsInput, Prisma.VendorUncheckedCreateWithoutContractsInput>
+  connectOrCreate?: Prisma.VendorCreateOrConnectWithoutContractsInput
+  connect?: Prisma.VendorWhereUniqueInput
+}
+
+export type VendorUpdateOneRequiredWithoutContractsNestedInput = {
+  create?: Prisma.XOR<Prisma.VendorCreateWithoutContractsInput, Prisma.VendorUncheckedCreateWithoutContractsInput>
+  connectOrCreate?: Prisma.VendorCreateOrConnectWithoutContractsInput
+  upsert?: Prisma.VendorUpsertWithoutContractsInput
+  connect?: Prisma.VendorWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.VendorUpdateToOneWithWhereWithoutContractsInput, Prisma.VendorUpdateWithoutContractsInput>, Prisma.VendorUncheckedUpdateWithoutContractsInput>
+}
+
 export type VendorCreateNestedOneWithoutDisposalsInput = {
   create?: Prisma.XOR<Prisma.VendorCreateWithoutDisposalsInput, Prisma.VendorUncheckedCreateWithoutDisposalsInput>
   connectOrCreate?: Prisma.VendorCreateOrConnectWithoutDisposalsInput
@@ -852,34 +831,31 @@ export type VendorUpdateOneWithoutDisposalsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.VendorUpdateToOneWithWhereWithoutDisposalsInput, Prisma.VendorUpdateWithoutDisposalsInput>, Prisma.VendorUncheckedUpdateWithoutDisposalsInput>
 }
 
-export type VendorCreateNestedOneWithoutServicesInput = {
-  create?: Prisma.XOR<Prisma.VendorCreateWithoutServicesInput, Prisma.VendorUncheckedCreateWithoutServicesInput>
-  connectOrCreate?: Prisma.VendorCreateOrConnectWithoutServicesInput
+export type VendorCreatetagsInput = {
+  set: string[]
+}
+
+export type EnumVendorTypeFieldUpdateOperationsInput = {
+  set?: $Enums.VendorType
+}
+
+export type VendorUpdatetagsInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
+export type VendorCreateNestedOneWithoutContactsInput = {
+  create?: Prisma.XOR<Prisma.VendorCreateWithoutContactsInput, Prisma.VendorUncheckedCreateWithoutContactsInput>
+  connectOrCreate?: Prisma.VendorCreateOrConnectWithoutContactsInput
   connect?: Prisma.VendorWhereUniqueInput
 }
 
-export type VendorUpdateOneWithoutServicesNestedInput = {
-  create?: Prisma.XOR<Prisma.VendorCreateWithoutServicesInput, Prisma.VendorUncheckedCreateWithoutServicesInput>
-  connectOrCreate?: Prisma.VendorCreateOrConnectWithoutServicesInput
-  upsert?: Prisma.VendorUpsertWithoutServicesInput
-  disconnect?: Prisma.VendorWhereInput | boolean
-  delete?: Prisma.VendorWhereInput | boolean
+export type VendorUpdateOneRequiredWithoutContactsNestedInput = {
+  create?: Prisma.XOR<Prisma.VendorCreateWithoutContactsInput, Prisma.VendorUncheckedCreateWithoutContactsInput>
+  connectOrCreate?: Prisma.VendorCreateOrConnectWithoutContactsInput
+  upsert?: Prisma.VendorUpsertWithoutContactsInput
   connect?: Prisma.VendorWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.VendorUpdateToOneWithWhereWithoutServicesInput, Prisma.VendorUpdateWithoutServicesInput>, Prisma.VendorUncheckedUpdateWithoutServicesInput>
-}
-
-export type VendorCreateNestedOneWithoutContractsInput = {
-  create?: Prisma.XOR<Prisma.VendorCreateWithoutContractsInput, Prisma.VendorUncheckedCreateWithoutContractsInput>
-  connectOrCreate?: Prisma.VendorCreateOrConnectWithoutContractsInput
-  connect?: Prisma.VendorWhereUniqueInput
-}
-
-export type VendorUpdateOneRequiredWithoutContractsNestedInput = {
-  create?: Prisma.XOR<Prisma.VendorCreateWithoutContractsInput, Prisma.VendorUncheckedCreateWithoutContractsInput>
-  connectOrCreate?: Prisma.VendorCreateOrConnectWithoutContractsInput
-  upsert?: Prisma.VendorUpsertWithoutContractsInput
-  connect?: Prisma.VendorWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.VendorUpdateToOneWithWhereWithoutContractsInput, Prisma.VendorUpdateWithoutContractsInput>, Prisma.VendorUncheckedUpdateWithoutContractsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.VendorUpdateToOneWithWhereWithoutContactsInput, Prisma.VendorUpdateWithoutContactsInput>, Prisma.VendorUncheckedUpdateWithoutContactsInput>
 }
 
 export type VendorCreateNestedOneWithoutLicenseProductsInput = {
@@ -896,152 +872,20 @@ export type VendorUpdateOneRequiredWithoutLicenseProductsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.VendorUpdateToOneWithWhereWithoutLicenseProductsInput, Prisma.VendorUpdateWithoutLicenseProductsInput>, Prisma.VendorUncheckedUpdateWithoutLicenseProductsInput>
 }
 
-export type VendorCreateWithoutContactsInput = {
-  id?: string
-  name: string
-  code: string
-  legalName?: string | null
-  description?: string | null
-  vendorType?: $Enums.VendorType
-  taxId?: string | null
-  website?: string | null
-  email?: string | null
-  phone?: string | null
-  address?: string | null
-  city?: string | null
-  state?: string | null
-  country?: string | null
-  postalCode?: string | null
-  paymentTerms?: string | null
-  isPreferred?: boolean
-  isActive?: boolean
-  tags?: Prisma.VendorCreatetagsInput | string[]
-  note?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  assetModels?: Prisma.AssetModelCreateNestedManyWithoutVendorInput
-  assets?: Prisma.AssetCreateNestedManyWithoutVendorInput
-  warranties?: Prisma.WarrantyCreateNestedManyWithoutVendorInput
-  contracts?: Prisma.ContractCreateNestedManyWithoutVendorInput
-  licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutVendorInput
-  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutDisposalVendorInput
-  services?: Prisma.ServiceCreateNestedManyWithoutVendorInput
+export type VendorCreateNestedOneWithoutServicesInput = {
+  create?: Prisma.XOR<Prisma.VendorCreateWithoutServicesInput, Prisma.VendorUncheckedCreateWithoutServicesInput>
+  connectOrCreate?: Prisma.VendorCreateOrConnectWithoutServicesInput
+  connect?: Prisma.VendorWhereUniqueInput
 }
 
-export type VendorUncheckedCreateWithoutContactsInput = {
-  id?: string
-  name: string
-  code: string
-  legalName?: string | null
-  description?: string | null
-  vendorType?: $Enums.VendorType
-  taxId?: string | null
-  website?: string | null
-  email?: string | null
-  phone?: string | null
-  address?: string | null
-  city?: string | null
-  state?: string | null
-  country?: string | null
-  postalCode?: string | null
-  paymentTerms?: string | null
-  isPreferred?: boolean
-  isActive?: boolean
-  tags?: Prisma.VendorCreatetagsInput | string[]
-  note?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  assetModels?: Prisma.AssetModelUncheckedCreateNestedManyWithoutVendorInput
-  assets?: Prisma.AssetUncheckedCreateNestedManyWithoutVendorInput
-  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutVendorInput
-  contracts?: Prisma.ContractUncheckedCreateNestedManyWithoutVendorInput
-  licenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutVendorInput
-  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutDisposalVendorInput
-  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutVendorInput
-}
-
-export type VendorCreateOrConnectWithoutContactsInput = {
-  where: Prisma.VendorWhereUniqueInput
-  create: Prisma.XOR<Prisma.VendorCreateWithoutContactsInput, Prisma.VendorUncheckedCreateWithoutContactsInput>
-}
-
-export type VendorUpsertWithoutContactsInput = {
-  update: Prisma.XOR<Prisma.VendorUpdateWithoutContactsInput, Prisma.VendorUncheckedUpdateWithoutContactsInput>
-  create: Prisma.XOR<Prisma.VendorCreateWithoutContactsInput, Prisma.VendorUncheckedCreateWithoutContactsInput>
-  where?: Prisma.VendorWhereInput
-}
-
-export type VendorUpdateToOneWithWhereWithoutContactsInput = {
-  where?: Prisma.VendorWhereInput
-  data: Prisma.XOR<Prisma.VendorUpdateWithoutContactsInput, Prisma.VendorUncheckedUpdateWithoutContactsInput>
-}
-
-export type VendorUpdateWithoutContactsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  legalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vendorType?: Prisma.EnumVendorTypeFieldUpdateOperationsInput | $Enums.VendorType
-  taxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPreferred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  tags?: Prisma.VendorUpdatetagsInput | string[]
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assetModels?: Prisma.AssetModelUpdateManyWithoutVendorNestedInput
-  assets?: Prisma.AssetUpdateManyWithoutVendorNestedInput
-  warranties?: Prisma.WarrantyUpdateManyWithoutVendorNestedInput
-  contracts?: Prisma.ContractUpdateManyWithoutVendorNestedInput
-  licenseProducts?: Prisma.LicenseProductUpdateManyWithoutVendorNestedInput
-  disposals?: Prisma.AssetDisposalUpdateManyWithoutDisposalVendorNestedInput
-  services?: Prisma.ServiceUpdateManyWithoutVendorNestedInput
-}
-
-export type VendorUncheckedUpdateWithoutContactsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  legalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vendorType?: Prisma.EnumVendorTypeFieldUpdateOperationsInput | $Enums.VendorType
-  taxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPreferred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  tags?: Prisma.VendorUpdatetagsInput | string[]
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assetModels?: Prisma.AssetModelUncheckedUpdateManyWithoutVendorNestedInput
-  assets?: Prisma.AssetUncheckedUpdateManyWithoutVendorNestedInput
-  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutVendorNestedInput
-  contracts?: Prisma.ContractUncheckedUpdateManyWithoutVendorNestedInput
-  licenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutVendorNestedInput
-  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutDisposalVendorNestedInput
-  services?: Prisma.ServiceUncheckedUpdateManyWithoutVendorNestedInput
+export type VendorUpdateOneWithoutServicesNestedInput = {
+  create?: Prisma.XOR<Prisma.VendorCreateWithoutServicesInput, Prisma.VendorUncheckedCreateWithoutServicesInput>
+  connectOrCreate?: Prisma.VendorCreateOrConnectWithoutServicesInput
+  upsert?: Prisma.VendorUpsertWithoutServicesInput
+  disconnect?: Prisma.VendorWhereInput | boolean
+  delete?: Prisma.VendorWhereInput | boolean
+  connect?: Prisma.VendorWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.VendorUpdateToOneWithWhereWithoutServicesInput, Prisma.VendorUpdateWithoutServicesInput>, Prisma.VendorUncheckedUpdateWithoutServicesInput>
 }
 
 export type VendorCreateWithoutAssetModelsInput = {
@@ -1488,6 +1332,154 @@ export type VendorUncheckedUpdateWithoutWarrantiesInput = {
   services?: Prisma.ServiceUncheckedUpdateManyWithoutVendorNestedInput
 }
 
+export type VendorCreateWithoutContractsInput = {
+  id?: string
+  name: string
+  code: string
+  legalName?: string | null
+  description?: string | null
+  vendorType?: $Enums.VendorType
+  taxId?: string | null
+  website?: string | null
+  email?: string | null
+  phone?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  country?: string | null
+  postalCode?: string | null
+  paymentTerms?: string | null
+  isPreferred?: boolean
+  isActive?: boolean
+  tags?: Prisma.VendorCreatetagsInput | string[]
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  contacts?: Prisma.VendorContactCreateNestedManyWithoutVendorInput
+  assetModels?: Prisma.AssetModelCreateNestedManyWithoutVendorInput
+  assets?: Prisma.AssetCreateNestedManyWithoutVendorInput
+  warranties?: Prisma.WarrantyCreateNestedManyWithoutVendorInput
+  licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutVendorInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutDisposalVendorInput
+  services?: Prisma.ServiceCreateNestedManyWithoutVendorInput
+}
+
+export type VendorUncheckedCreateWithoutContractsInput = {
+  id?: string
+  name: string
+  code: string
+  legalName?: string | null
+  description?: string | null
+  vendorType?: $Enums.VendorType
+  taxId?: string | null
+  website?: string | null
+  email?: string | null
+  phone?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  country?: string | null
+  postalCode?: string | null
+  paymentTerms?: string | null
+  isPreferred?: boolean
+  isActive?: boolean
+  tags?: Prisma.VendorCreatetagsInput | string[]
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  contacts?: Prisma.VendorContactUncheckedCreateNestedManyWithoutVendorInput
+  assetModels?: Prisma.AssetModelUncheckedCreateNestedManyWithoutVendorInput
+  assets?: Prisma.AssetUncheckedCreateNestedManyWithoutVendorInput
+  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutVendorInput
+  licenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutVendorInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutDisposalVendorInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutVendorInput
+}
+
+export type VendorCreateOrConnectWithoutContractsInput = {
+  where: Prisma.VendorWhereUniqueInput
+  create: Prisma.XOR<Prisma.VendorCreateWithoutContractsInput, Prisma.VendorUncheckedCreateWithoutContractsInput>
+}
+
+export type VendorUpsertWithoutContractsInput = {
+  update: Prisma.XOR<Prisma.VendorUpdateWithoutContractsInput, Prisma.VendorUncheckedUpdateWithoutContractsInput>
+  create: Prisma.XOR<Prisma.VendorCreateWithoutContractsInput, Prisma.VendorUncheckedCreateWithoutContractsInput>
+  where?: Prisma.VendorWhereInput
+}
+
+export type VendorUpdateToOneWithWhereWithoutContractsInput = {
+  where?: Prisma.VendorWhereInput
+  data: Prisma.XOR<Prisma.VendorUpdateWithoutContractsInput, Prisma.VendorUncheckedUpdateWithoutContractsInput>
+}
+
+export type VendorUpdateWithoutContractsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  legalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorType?: Prisma.EnumVendorTypeFieldUpdateOperationsInput | $Enums.VendorType
+  taxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPreferred?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tags?: Prisma.VendorUpdatetagsInput | string[]
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacts?: Prisma.VendorContactUpdateManyWithoutVendorNestedInput
+  assetModels?: Prisma.AssetModelUpdateManyWithoutVendorNestedInput
+  assets?: Prisma.AssetUpdateManyWithoutVendorNestedInput
+  warranties?: Prisma.WarrantyUpdateManyWithoutVendorNestedInput
+  licenseProducts?: Prisma.LicenseProductUpdateManyWithoutVendorNestedInput
+  disposals?: Prisma.AssetDisposalUpdateManyWithoutDisposalVendorNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutVendorNestedInput
+}
+
+export type VendorUncheckedUpdateWithoutContractsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  legalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorType?: Prisma.EnumVendorTypeFieldUpdateOperationsInput | $Enums.VendorType
+  taxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPreferred?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tags?: Prisma.VendorUpdatetagsInput | string[]
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacts?: Prisma.VendorContactUncheckedUpdateManyWithoutVendorNestedInput
+  assetModels?: Prisma.AssetModelUncheckedUpdateManyWithoutVendorNestedInput
+  assets?: Prisma.AssetUncheckedUpdateManyWithoutVendorNestedInput
+  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutVendorNestedInput
+  licenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutVendorNestedInput
+  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutDisposalVendorNestedInput
+  services?: Prisma.ServiceUncheckedUpdateManyWithoutVendorNestedInput
+}
+
 export type VendorCreateWithoutDisposalsInput = {
   id?: string
   name: string
@@ -1636,7 +1628,7 @@ export type VendorUncheckedUpdateWithoutDisposalsInput = {
   services?: Prisma.ServiceUncheckedUpdateManyWithoutVendorNestedInput
 }
 
-export type VendorCreateWithoutServicesInput = {
+export type VendorCreateWithoutContactsInput = {
   id?: string
   name: string
   code: string
@@ -1660,16 +1652,16 @@ export type VendorCreateWithoutServicesInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  contacts?: Prisma.VendorContactCreateNestedManyWithoutVendorInput
   assetModels?: Prisma.AssetModelCreateNestedManyWithoutVendorInput
   assets?: Prisma.AssetCreateNestedManyWithoutVendorInput
   warranties?: Prisma.WarrantyCreateNestedManyWithoutVendorInput
   contracts?: Prisma.ContractCreateNestedManyWithoutVendorInput
   licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutVendorInput
   disposals?: Prisma.AssetDisposalCreateNestedManyWithoutDisposalVendorInput
+  services?: Prisma.ServiceCreateNestedManyWithoutVendorInput
 }
 
-export type VendorUncheckedCreateWithoutServicesInput = {
+export type VendorUncheckedCreateWithoutContactsInput = {
   id?: string
   name: string
   code: string
@@ -1693,32 +1685,32 @@ export type VendorUncheckedCreateWithoutServicesInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  contacts?: Prisma.VendorContactUncheckedCreateNestedManyWithoutVendorInput
   assetModels?: Prisma.AssetModelUncheckedCreateNestedManyWithoutVendorInput
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutVendorInput
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutVendorInput
   contracts?: Prisma.ContractUncheckedCreateNestedManyWithoutVendorInput
   licenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutVendorInput
   disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutDisposalVendorInput
+  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutVendorInput
 }
 
-export type VendorCreateOrConnectWithoutServicesInput = {
+export type VendorCreateOrConnectWithoutContactsInput = {
   where: Prisma.VendorWhereUniqueInput
-  create: Prisma.XOR<Prisma.VendorCreateWithoutServicesInput, Prisma.VendorUncheckedCreateWithoutServicesInput>
+  create: Prisma.XOR<Prisma.VendorCreateWithoutContactsInput, Prisma.VendorUncheckedCreateWithoutContactsInput>
 }
 
-export type VendorUpsertWithoutServicesInput = {
-  update: Prisma.XOR<Prisma.VendorUpdateWithoutServicesInput, Prisma.VendorUncheckedUpdateWithoutServicesInput>
-  create: Prisma.XOR<Prisma.VendorCreateWithoutServicesInput, Prisma.VendorUncheckedCreateWithoutServicesInput>
+export type VendorUpsertWithoutContactsInput = {
+  update: Prisma.XOR<Prisma.VendorUpdateWithoutContactsInput, Prisma.VendorUncheckedUpdateWithoutContactsInput>
+  create: Prisma.XOR<Prisma.VendorCreateWithoutContactsInput, Prisma.VendorUncheckedCreateWithoutContactsInput>
   where?: Prisma.VendorWhereInput
 }
 
-export type VendorUpdateToOneWithWhereWithoutServicesInput = {
+export type VendorUpdateToOneWithWhereWithoutContactsInput = {
   where?: Prisma.VendorWhereInput
-  data: Prisma.XOR<Prisma.VendorUpdateWithoutServicesInput, Prisma.VendorUncheckedUpdateWithoutServicesInput>
+  data: Prisma.XOR<Prisma.VendorUpdateWithoutContactsInput, Prisma.VendorUncheckedUpdateWithoutContactsInput>
 }
 
-export type VendorUpdateWithoutServicesInput = {
+export type VendorUpdateWithoutContactsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1742,16 +1734,16 @@ export type VendorUpdateWithoutServicesInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  contacts?: Prisma.VendorContactUpdateManyWithoutVendorNestedInput
   assetModels?: Prisma.AssetModelUpdateManyWithoutVendorNestedInput
   assets?: Prisma.AssetUpdateManyWithoutVendorNestedInput
   warranties?: Prisma.WarrantyUpdateManyWithoutVendorNestedInput
   contracts?: Prisma.ContractUpdateManyWithoutVendorNestedInput
   licenseProducts?: Prisma.LicenseProductUpdateManyWithoutVendorNestedInput
   disposals?: Prisma.AssetDisposalUpdateManyWithoutDisposalVendorNestedInput
+  services?: Prisma.ServiceUpdateManyWithoutVendorNestedInput
 }
 
-export type VendorUncheckedUpdateWithoutServicesInput = {
+export type VendorUncheckedUpdateWithoutContactsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1775,158 +1767,10 @@ export type VendorUncheckedUpdateWithoutServicesInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  contacts?: Prisma.VendorContactUncheckedUpdateManyWithoutVendorNestedInput
   assetModels?: Prisma.AssetModelUncheckedUpdateManyWithoutVendorNestedInput
   assets?: Prisma.AssetUncheckedUpdateManyWithoutVendorNestedInput
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutVendorNestedInput
   contracts?: Prisma.ContractUncheckedUpdateManyWithoutVendorNestedInput
-  licenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutVendorNestedInput
-  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutDisposalVendorNestedInput
-}
-
-export type VendorCreateWithoutContractsInput = {
-  id?: string
-  name: string
-  code: string
-  legalName?: string | null
-  description?: string | null
-  vendorType?: $Enums.VendorType
-  taxId?: string | null
-  website?: string | null
-  email?: string | null
-  phone?: string | null
-  address?: string | null
-  city?: string | null
-  state?: string | null
-  country?: string | null
-  postalCode?: string | null
-  paymentTerms?: string | null
-  isPreferred?: boolean
-  isActive?: boolean
-  tags?: Prisma.VendorCreatetagsInput | string[]
-  note?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  contacts?: Prisma.VendorContactCreateNestedManyWithoutVendorInput
-  assetModels?: Prisma.AssetModelCreateNestedManyWithoutVendorInput
-  assets?: Prisma.AssetCreateNestedManyWithoutVendorInput
-  warranties?: Prisma.WarrantyCreateNestedManyWithoutVendorInput
-  licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutVendorInput
-  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutDisposalVendorInput
-  services?: Prisma.ServiceCreateNestedManyWithoutVendorInput
-}
-
-export type VendorUncheckedCreateWithoutContractsInput = {
-  id?: string
-  name: string
-  code: string
-  legalName?: string | null
-  description?: string | null
-  vendorType?: $Enums.VendorType
-  taxId?: string | null
-  website?: string | null
-  email?: string | null
-  phone?: string | null
-  address?: string | null
-  city?: string | null
-  state?: string | null
-  country?: string | null
-  postalCode?: string | null
-  paymentTerms?: string | null
-  isPreferred?: boolean
-  isActive?: boolean
-  tags?: Prisma.VendorCreatetagsInput | string[]
-  note?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  contacts?: Prisma.VendorContactUncheckedCreateNestedManyWithoutVendorInput
-  assetModels?: Prisma.AssetModelUncheckedCreateNestedManyWithoutVendorInput
-  assets?: Prisma.AssetUncheckedCreateNestedManyWithoutVendorInput
-  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutVendorInput
-  licenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutVendorInput
-  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutDisposalVendorInput
-  services?: Prisma.ServiceUncheckedCreateNestedManyWithoutVendorInput
-}
-
-export type VendorCreateOrConnectWithoutContractsInput = {
-  where: Prisma.VendorWhereUniqueInput
-  create: Prisma.XOR<Prisma.VendorCreateWithoutContractsInput, Prisma.VendorUncheckedCreateWithoutContractsInput>
-}
-
-export type VendorUpsertWithoutContractsInput = {
-  update: Prisma.XOR<Prisma.VendorUpdateWithoutContractsInput, Prisma.VendorUncheckedUpdateWithoutContractsInput>
-  create: Prisma.XOR<Prisma.VendorCreateWithoutContractsInput, Prisma.VendorUncheckedCreateWithoutContractsInput>
-  where?: Prisma.VendorWhereInput
-}
-
-export type VendorUpdateToOneWithWhereWithoutContractsInput = {
-  where?: Prisma.VendorWhereInput
-  data: Prisma.XOR<Prisma.VendorUpdateWithoutContractsInput, Prisma.VendorUncheckedUpdateWithoutContractsInput>
-}
-
-export type VendorUpdateWithoutContractsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  legalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vendorType?: Prisma.EnumVendorTypeFieldUpdateOperationsInput | $Enums.VendorType
-  taxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPreferred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  tags?: Prisma.VendorUpdatetagsInput | string[]
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  contacts?: Prisma.VendorContactUpdateManyWithoutVendorNestedInput
-  assetModels?: Prisma.AssetModelUpdateManyWithoutVendorNestedInput
-  assets?: Prisma.AssetUpdateManyWithoutVendorNestedInput
-  warranties?: Prisma.WarrantyUpdateManyWithoutVendorNestedInput
-  licenseProducts?: Prisma.LicenseProductUpdateManyWithoutVendorNestedInput
-  disposals?: Prisma.AssetDisposalUpdateManyWithoutDisposalVendorNestedInput
-  services?: Prisma.ServiceUpdateManyWithoutVendorNestedInput
-}
-
-export type VendorUncheckedUpdateWithoutContractsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  legalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vendorType?: Prisma.EnumVendorTypeFieldUpdateOperationsInput | $Enums.VendorType
-  taxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPreferred?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  tags?: Prisma.VendorUpdatetagsInput | string[]
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  contacts?: Prisma.VendorContactUncheckedUpdateManyWithoutVendorNestedInput
-  assetModels?: Prisma.AssetModelUncheckedUpdateManyWithoutVendorNestedInput
-  assets?: Prisma.AssetUncheckedUpdateManyWithoutVendorNestedInput
-  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutVendorNestedInput
   licenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutVendorNestedInput
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutDisposalVendorNestedInput
   services?: Prisma.ServiceUncheckedUpdateManyWithoutVendorNestedInput
@@ -2078,6 +1922,154 @@ export type VendorUncheckedUpdateWithoutLicenseProductsInput = {
   contracts?: Prisma.ContractUncheckedUpdateManyWithoutVendorNestedInput
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutDisposalVendorNestedInput
   services?: Prisma.ServiceUncheckedUpdateManyWithoutVendorNestedInput
+}
+
+export type VendorCreateWithoutServicesInput = {
+  id?: string
+  name: string
+  code: string
+  legalName?: string | null
+  description?: string | null
+  vendorType?: $Enums.VendorType
+  taxId?: string | null
+  website?: string | null
+  email?: string | null
+  phone?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  country?: string | null
+  postalCode?: string | null
+  paymentTerms?: string | null
+  isPreferred?: boolean
+  isActive?: boolean
+  tags?: Prisma.VendorCreatetagsInput | string[]
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  contacts?: Prisma.VendorContactCreateNestedManyWithoutVendorInput
+  assetModels?: Prisma.AssetModelCreateNestedManyWithoutVendorInput
+  assets?: Prisma.AssetCreateNestedManyWithoutVendorInput
+  warranties?: Prisma.WarrantyCreateNestedManyWithoutVendorInput
+  contracts?: Prisma.ContractCreateNestedManyWithoutVendorInput
+  licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutVendorInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutDisposalVendorInput
+}
+
+export type VendorUncheckedCreateWithoutServicesInput = {
+  id?: string
+  name: string
+  code: string
+  legalName?: string | null
+  description?: string | null
+  vendorType?: $Enums.VendorType
+  taxId?: string | null
+  website?: string | null
+  email?: string | null
+  phone?: string | null
+  address?: string | null
+  city?: string | null
+  state?: string | null
+  country?: string | null
+  postalCode?: string | null
+  paymentTerms?: string | null
+  isPreferred?: boolean
+  isActive?: boolean
+  tags?: Prisma.VendorCreatetagsInput | string[]
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  contacts?: Prisma.VendorContactUncheckedCreateNestedManyWithoutVendorInput
+  assetModels?: Prisma.AssetModelUncheckedCreateNestedManyWithoutVendorInput
+  assets?: Prisma.AssetUncheckedCreateNestedManyWithoutVendorInput
+  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutVendorInput
+  contracts?: Prisma.ContractUncheckedCreateNestedManyWithoutVendorInput
+  licenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutVendorInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutDisposalVendorInput
+}
+
+export type VendorCreateOrConnectWithoutServicesInput = {
+  where: Prisma.VendorWhereUniqueInput
+  create: Prisma.XOR<Prisma.VendorCreateWithoutServicesInput, Prisma.VendorUncheckedCreateWithoutServicesInput>
+}
+
+export type VendorUpsertWithoutServicesInput = {
+  update: Prisma.XOR<Prisma.VendorUpdateWithoutServicesInput, Prisma.VendorUncheckedUpdateWithoutServicesInput>
+  create: Prisma.XOR<Prisma.VendorCreateWithoutServicesInput, Prisma.VendorUncheckedCreateWithoutServicesInput>
+  where?: Prisma.VendorWhereInput
+}
+
+export type VendorUpdateToOneWithWhereWithoutServicesInput = {
+  where?: Prisma.VendorWhereInput
+  data: Prisma.XOR<Prisma.VendorUpdateWithoutServicesInput, Prisma.VendorUncheckedUpdateWithoutServicesInput>
+}
+
+export type VendorUpdateWithoutServicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  legalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorType?: Prisma.EnumVendorTypeFieldUpdateOperationsInput | $Enums.VendorType
+  taxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPreferred?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tags?: Prisma.VendorUpdatetagsInput | string[]
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacts?: Prisma.VendorContactUpdateManyWithoutVendorNestedInput
+  assetModels?: Prisma.AssetModelUpdateManyWithoutVendorNestedInput
+  assets?: Prisma.AssetUpdateManyWithoutVendorNestedInput
+  warranties?: Prisma.WarrantyUpdateManyWithoutVendorNestedInput
+  contracts?: Prisma.ContractUpdateManyWithoutVendorNestedInput
+  licenseProducts?: Prisma.LicenseProductUpdateManyWithoutVendorNestedInput
+  disposals?: Prisma.AssetDisposalUpdateManyWithoutDisposalVendorNestedInput
+}
+
+export type VendorUncheckedUpdateWithoutServicesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  legalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorType?: Prisma.EnumVendorTypeFieldUpdateOperationsInput | $Enums.VendorType
+  taxId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  website?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  state?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  postalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentTerms?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPreferred?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tags?: Prisma.VendorUpdatetagsInput | string[]
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  contacts?: Prisma.VendorContactUncheckedUpdateManyWithoutVendorNestedInput
+  assetModels?: Prisma.AssetModelUncheckedUpdateManyWithoutVendorNestedInput
+  assets?: Prisma.AssetUncheckedUpdateManyWithoutVendorNestedInput
+  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutVendorNestedInput
+  contracts?: Prisma.ContractUncheckedUpdateManyWithoutVendorNestedInput
+  licenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutVendorNestedInput
+  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutDisposalVendorNestedInput
 }
 
 

@@ -316,6 +316,11 @@ export type LifecycleModelUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type LifecycleModelNullableScalarRelationFilter = {
+  is?: Prisma.LifecycleModelWhereInput | null
+  isNot?: Prisma.LifecycleModelWhereInput | null
+}
+
 export type LifecycleModelCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -345,9 +350,36 @@ export type LifecycleModelScalarRelationFilter = {
   isNot?: Prisma.LifecycleModelWhereInput
 }
 
-export type LifecycleModelNullableScalarRelationFilter = {
-  is?: Prisma.LifecycleModelWhereInput | null
-  isNot?: Prisma.LifecycleModelWhereInput | null
+export type LifecycleModelCreateNestedOneWithoutAssetCategoriesInput = {
+  create?: Prisma.XOR<Prisma.LifecycleModelCreateWithoutAssetCategoriesInput, Prisma.LifecycleModelUncheckedCreateWithoutAssetCategoriesInput>
+  connectOrCreate?: Prisma.LifecycleModelCreateOrConnectWithoutAssetCategoriesInput
+  connect?: Prisma.LifecycleModelWhereUniqueInput
+}
+
+export type LifecycleModelUpdateOneWithoutAssetCategoriesNestedInput = {
+  create?: Prisma.XOR<Prisma.LifecycleModelCreateWithoutAssetCategoriesInput, Prisma.LifecycleModelUncheckedCreateWithoutAssetCategoriesInput>
+  connectOrCreate?: Prisma.LifecycleModelCreateOrConnectWithoutAssetCategoriesInput
+  upsert?: Prisma.LifecycleModelUpsertWithoutAssetCategoriesInput
+  disconnect?: Prisma.LifecycleModelWhereInput | boolean
+  delete?: Prisma.LifecycleModelWhereInput | boolean
+  connect?: Prisma.LifecycleModelWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LifecycleModelUpdateToOneWithWhereWithoutAssetCategoriesInput, Prisma.LifecycleModelUpdateWithoutAssetCategoriesInput>, Prisma.LifecycleModelUncheckedUpdateWithoutAssetCategoriesInput>
+}
+
+export type LifecycleModelCreateNestedOneWithoutCiClassesInput = {
+  create?: Prisma.XOR<Prisma.LifecycleModelCreateWithoutCiClassesInput, Prisma.LifecycleModelUncheckedCreateWithoutCiClassesInput>
+  connectOrCreate?: Prisma.LifecycleModelCreateOrConnectWithoutCiClassesInput
+  connect?: Prisma.LifecycleModelWhereUniqueInput
+}
+
+export type LifecycleModelUpdateOneWithoutCiClassesNestedInput = {
+  create?: Prisma.XOR<Prisma.LifecycleModelCreateWithoutCiClassesInput, Prisma.LifecycleModelUncheckedCreateWithoutCiClassesInput>
+  connectOrCreate?: Prisma.LifecycleModelCreateOrConnectWithoutCiClassesInput
+  upsert?: Prisma.LifecycleModelUpsertWithoutCiClassesInput
+  disconnect?: Prisma.LifecycleModelWhereInput | boolean
+  delete?: Prisma.LifecycleModelWhereInput | boolean
+  connect?: Prisma.LifecycleModelWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LifecycleModelUpdateToOneWithWhereWithoutCiClassesInput, Prisma.LifecycleModelUpdateWithoutCiClassesInput>, Prisma.LifecycleModelUncheckedUpdateWithoutCiClassesInput>
 }
 
 export type LifecycleModelCreateNestedOneWithoutStatesInput = {
@@ -378,38 +410,6 @@ export type LifecycleModelUpdateOneRequiredWithoutTransitionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.LifecycleModelUpdateToOneWithWhereWithoutTransitionsInput, Prisma.LifecycleModelUpdateWithoutTransitionsInput>, Prisma.LifecycleModelUncheckedUpdateWithoutTransitionsInput>
 }
 
-export type LifecycleModelCreateNestedOneWithoutCiClassesInput = {
-  create?: Prisma.XOR<Prisma.LifecycleModelCreateWithoutCiClassesInput, Prisma.LifecycleModelUncheckedCreateWithoutCiClassesInput>
-  connectOrCreate?: Prisma.LifecycleModelCreateOrConnectWithoutCiClassesInput
-  connect?: Prisma.LifecycleModelWhereUniqueInput
-}
-
-export type LifecycleModelUpdateOneWithoutCiClassesNestedInput = {
-  create?: Prisma.XOR<Prisma.LifecycleModelCreateWithoutCiClassesInput, Prisma.LifecycleModelUncheckedCreateWithoutCiClassesInput>
-  connectOrCreate?: Prisma.LifecycleModelCreateOrConnectWithoutCiClassesInput
-  upsert?: Prisma.LifecycleModelUpsertWithoutCiClassesInput
-  disconnect?: Prisma.LifecycleModelWhereInput | boolean
-  delete?: Prisma.LifecycleModelWhereInput | boolean
-  connect?: Prisma.LifecycleModelWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.LifecycleModelUpdateToOneWithWhereWithoutCiClassesInput, Prisma.LifecycleModelUpdateWithoutCiClassesInput>, Prisma.LifecycleModelUncheckedUpdateWithoutCiClassesInput>
-}
-
-export type LifecycleModelCreateNestedOneWithoutAssetCategoriesInput = {
-  create?: Prisma.XOR<Prisma.LifecycleModelCreateWithoutAssetCategoriesInput, Prisma.LifecycleModelUncheckedCreateWithoutAssetCategoriesInput>
-  connectOrCreate?: Prisma.LifecycleModelCreateOrConnectWithoutAssetCategoriesInput
-  connect?: Prisma.LifecycleModelWhereUniqueInput
-}
-
-export type LifecycleModelUpdateOneWithoutAssetCategoriesNestedInput = {
-  create?: Prisma.XOR<Prisma.LifecycleModelCreateWithoutAssetCategoriesInput, Prisma.LifecycleModelUncheckedCreateWithoutAssetCategoriesInput>
-  connectOrCreate?: Prisma.LifecycleModelCreateOrConnectWithoutAssetCategoriesInput
-  upsert?: Prisma.LifecycleModelUpsertWithoutAssetCategoriesInput
-  disconnect?: Prisma.LifecycleModelWhereInput | boolean
-  delete?: Prisma.LifecycleModelWhereInput | boolean
-  connect?: Prisma.LifecycleModelWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.LifecycleModelUpdateToOneWithWhereWithoutAssetCategoriesInput, Prisma.LifecycleModelUpdateWithoutAssetCategoriesInput>, Prisma.LifecycleModelUncheckedUpdateWithoutAssetCategoriesInput>
-}
-
 export type LifecycleModelCreateNestedOneWithoutLicenseProductsInput = {
   create?: Prisma.XOR<Prisma.LifecycleModelCreateWithoutLicenseProductsInput, Prisma.LifecycleModelUncheckedCreateWithoutLicenseProductsInput>
   connectOrCreate?: Prisma.LifecycleModelCreateOrConnectWithoutLicenseProductsInput
@@ -424,6 +424,134 @@ export type LifecycleModelUpdateOneWithoutLicenseProductsNestedInput = {
   delete?: Prisma.LifecycleModelWhereInput | boolean
   connect?: Prisma.LifecycleModelWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.LifecycleModelUpdateToOneWithWhereWithoutLicenseProductsInput, Prisma.LifecycleModelUpdateWithoutLicenseProductsInput>, Prisma.LifecycleModelUncheckedUpdateWithoutLicenseProductsInput>
+}
+
+export type LifecycleModelCreateWithoutAssetCategoriesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  states?: Prisma.LifecycleStateCreateNestedManyWithoutLifecycleModelInput
+  transitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutLifecycleModelInput
+  ciClasses?: Prisma.CIClassCreateNestedManyWithoutLifecycleModelInput
+  licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutLifecycleModelInput
+}
+
+export type LifecycleModelUncheckedCreateWithoutAssetCategoriesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  states?: Prisma.LifecycleStateUncheckedCreateNestedManyWithoutLifecycleModelInput
+  transitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutLifecycleModelInput
+  ciClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutLifecycleModelInput
+  licenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutLifecycleModelInput
+}
+
+export type LifecycleModelCreateOrConnectWithoutAssetCategoriesInput = {
+  where: Prisma.LifecycleModelWhereUniqueInput
+  create: Prisma.XOR<Prisma.LifecycleModelCreateWithoutAssetCategoriesInput, Prisma.LifecycleModelUncheckedCreateWithoutAssetCategoriesInput>
+}
+
+export type LifecycleModelUpsertWithoutAssetCategoriesInput = {
+  update: Prisma.XOR<Prisma.LifecycleModelUpdateWithoutAssetCategoriesInput, Prisma.LifecycleModelUncheckedUpdateWithoutAssetCategoriesInput>
+  create: Prisma.XOR<Prisma.LifecycleModelCreateWithoutAssetCategoriesInput, Prisma.LifecycleModelUncheckedCreateWithoutAssetCategoriesInput>
+  where?: Prisma.LifecycleModelWhereInput
+}
+
+export type LifecycleModelUpdateToOneWithWhereWithoutAssetCategoriesInput = {
+  where?: Prisma.LifecycleModelWhereInput
+  data: Prisma.XOR<Prisma.LifecycleModelUpdateWithoutAssetCategoriesInput, Prisma.LifecycleModelUncheckedUpdateWithoutAssetCategoriesInput>
+}
+
+export type LifecycleModelUpdateWithoutAssetCategoriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  states?: Prisma.LifecycleStateUpdateManyWithoutLifecycleModelNestedInput
+  transitions?: Prisma.LifecycleTransitionUpdateManyWithoutLifecycleModelNestedInput
+  ciClasses?: Prisma.CIClassUpdateManyWithoutLifecycleModelNestedInput
+  licenseProducts?: Prisma.LicenseProductUpdateManyWithoutLifecycleModelNestedInput
+}
+
+export type LifecycleModelUncheckedUpdateWithoutAssetCategoriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  states?: Prisma.LifecycleStateUncheckedUpdateManyWithoutLifecycleModelNestedInput
+  transitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutLifecycleModelNestedInput
+  ciClasses?: Prisma.CIClassUncheckedUpdateManyWithoutLifecycleModelNestedInput
+  licenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutLifecycleModelNestedInput
+}
+
+export type LifecycleModelCreateWithoutCiClassesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  states?: Prisma.LifecycleStateCreateNestedManyWithoutLifecycleModelInput
+  transitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutLifecycleModelInput
+  assetCategories?: Prisma.AssetCategoryCreateNestedManyWithoutLifecycleModelInput
+  licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutLifecycleModelInput
+}
+
+export type LifecycleModelUncheckedCreateWithoutCiClassesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  states?: Prisma.LifecycleStateUncheckedCreateNestedManyWithoutLifecycleModelInput
+  transitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutLifecycleModelInput
+  assetCategories?: Prisma.AssetCategoryUncheckedCreateNestedManyWithoutLifecycleModelInput
+  licenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutLifecycleModelInput
+}
+
+export type LifecycleModelCreateOrConnectWithoutCiClassesInput = {
+  where: Prisma.LifecycleModelWhereUniqueInput
+  create: Prisma.XOR<Prisma.LifecycleModelCreateWithoutCiClassesInput, Prisma.LifecycleModelUncheckedCreateWithoutCiClassesInput>
+}
+
+export type LifecycleModelUpsertWithoutCiClassesInput = {
+  update: Prisma.XOR<Prisma.LifecycleModelUpdateWithoutCiClassesInput, Prisma.LifecycleModelUncheckedUpdateWithoutCiClassesInput>
+  create: Prisma.XOR<Prisma.LifecycleModelCreateWithoutCiClassesInput, Prisma.LifecycleModelUncheckedCreateWithoutCiClassesInput>
+  where?: Prisma.LifecycleModelWhereInput
+}
+
+export type LifecycleModelUpdateToOneWithWhereWithoutCiClassesInput = {
+  where?: Prisma.LifecycleModelWhereInput
+  data: Prisma.XOR<Prisma.LifecycleModelUpdateWithoutCiClassesInput, Prisma.LifecycleModelUncheckedUpdateWithoutCiClassesInput>
+}
+
+export type LifecycleModelUpdateWithoutCiClassesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  states?: Prisma.LifecycleStateUpdateManyWithoutLifecycleModelNestedInput
+  transitions?: Prisma.LifecycleTransitionUpdateManyWithoutLifecycleModelNestedInput
+  assetCategories?: Prisma.AssetCategoryUpdateManyWithoutLifecycleModelNestedInput
+  licenseProducts?: Prisma.LicenseProductUpdateManyWithoutLifecycleModelNestedInput
+}
+
+export type LifecycleModelUncheckedUpdateWithoutCiClassesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  states?: Prisma.LifecycleStateUncheckedUpdateManyWithoutLifecycleModelNestedInput
+  transitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutLifecycleModelNestedInput
+  assetCategories?: Prisma.AssetCategoryUncheckedUpdateManyWithoutLifecycleModelNestedInput
+  licenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutLifecycleModelNestedInput
 }
 
 export type LifecycleModelCreateWithoutStatesInput = {
@@ -551,134 +679,6 @@ export type LifecycleModelUncheckedUpdateWithoutTransitionsInput = {
   states?: Prisma.LifecycleStateUncheckedUpdateManyWithoutLifecycleModelNestedInput
   ciClasses?: Prisma.CIClassUncheckedUpdateManyWithoutLifecycleModelNestedInput
   assetCategories?: Prisma.AssetCategoryUncheckedUpdateManyWithoutLifecycleModelNestedInput
-  licenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutLifecycleModelNestedInput
-}
-
-export type LifecycleModelCreateWithoutCiClassesInput = {
-  id?: string
-  name: string
-  description?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  states?: Prisma.LifecycleStateCreateNestedManyWithoutLifecycleModelInput
-  transitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutLifecycleModelInput
-  assetCategories?: Prisma.AssetCategoryCreateNestedManyWithoutLifecycleModelInput
-  licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutLifecycleModelInput
-}
-
-export type LifecycleModelUncheckedCreateWithoutCiClassesInput = {
-  id?: string
-  name: string
-  description?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  states?: Prisma.LifecycleStateUncheckedCreateNestedManyWithoutLifecycleModelInput
-  transitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutLifecycleModelInput
-  assetCategories?: Prisma.AssetCategoryUncheckedCreateNestedManyWithoutLifecycleModelInput
-  licenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutLifecycleModelInput
-}
-
-export type LifecycleModelCreateOrConnectWithoutCiClassesInput = {
-  where: Prisma.LifecycleModelWhereUniqueInput
-  create: Prisma.XOR<Prisma.LifecycleModelCreateWithoutCiClassesInput, Prisma.LifecycleModelUncheckedCreateWithoutCiClassesInput>
-}
-
-export type LifecycleModelUpsertWithoutCiClassesInput = {
-  update: Prisma.XOR<Prisma.LifecycleModelUpdateWithoutCiClassesInput, Prisma.LifecycleModelUncheckedUpdateWithoutCiClassesInput>
-  create: Prisma.XOR<Prisma.LifecycleModelCreateWithoutCiClassesInput, Prisma.LifecycleModelUncheckedCreateWithoutCiClassesInput>
-  where?: Prisma.LifecycleModelWhereInput
-}
-
-export type LifecycleModelUpdateToOneWithWhereWithoutCiClassesInput = {
-  where?: Prisma.LifecycleModelWhereInput
-  data: Prisma.XOR<Prisma.LifecycleModelUpdateWithoutCiClassesInput, Prisma.LifecycleModelUncheckedUpdateWithoutCiClassesInput>
-}
-
-export type LifecycleModelUpdateWithoutCiClassesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  states?: Prisma.LifecycleStateUpdateManyWithoutLifecycleModelNestedInput
-  transitions?: Prisma.LifecycleTransitionUpdateManyWithoutLifecycleModelNestedInput
-  assetCategories?: Prisma.AssetCategoryUpdateManyWithoutLifecycleModelNestedInput
-  licenseProducts?: Prisma.LicenseProductUpdateManyWithoutLifecycleModelNestedInput
-}
-
-export type LifecycleModelUncheckedUpdateWithoutCiClassesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  states?: Prisma.LifecycleStateUncheckedUpdateManyWithoutLifecycleModelNestedInput
-  transitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutLifecycleModelNestedInput
-  assetCategories?: Prisma.AssetCategoryUncheckedUpdateManyWithoutLifecycleModelNestedInput
-  licenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutLifecycleModelNestedInput
-}
-
-export type LifecycleModelCreateWithoutAssetCategoriesInput = {
-  id?: string
-  name: string
-  description?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  states?: Prisma.LifecycleStateCreateNestedManyWithoutLifecycleModelInput
-  transitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutLifecycleModelInput
-  ciClasses?: Prisma.CIClassCreateNestedManyWithoutLifecycleModelInput
-  licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutLifecycleModelInput
-}
-
-export type LifecycleModelUncheckedCreateWithoutAssetCategoriesInput = {
-  id?: string
-  name: string
-  description?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  states?: Prisma.LifecycleStateUncheckedCreateNestedManyWithoutLifecycleModelInput
-  transitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutLifecycleModelInput
-  ciClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutLifecycleModelInput
-  licenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutLifecycleModelInput
-}
-
-export type LifecycleModelCreateOrConnectWithoutAssetCategoriesInput = {
-  where: Prisma.LifecycleModelWhereUniqueInput
-  create: Prisma.XOR<Prisma.LifecycleModelCreateWithoutAssetCategoriesInput, Prisma.LifecycleModelUncheckedCreateWithoutAssetCategoriesInput>
-}
-
-export type LifecycleModelUpsertWithoutAssetCategoriesInput = {
-  update: Prisma.XOR<Prisma.LifecycleModelUpdateWithoutAssetCategoriesInput, Prisma.LifecycleModelUncheckedUpdateWithoutAssetCategoriesInput>
-  create: Prisma.XOR<Prisma.LifecycleModelCreateWithoutAssetCategoriesInput, Prisma.LifecycleModelUncheckedCreateWithoutAssetCategoriesInput>
-  where?: Prisma.LifecycleModelWhereInput
-}
-
-export type LifecycleModelUpdateToOneWithWhereWithoutAssetCategoriesInput = {
-  where?: Prisma.LifecycleModelWhereInput
-  data: Prisma.XOR<Prisma.LifecycleModelUpdateWithoutAssetCategoriesInput, Prisma.LifecycleModelUncheckedUpdateWithoutAssetCategoriesInput>
-}
-
-export type LifecycleModelUpdateWithoutAssetCategoriesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  states?: Prisma.LifecycleStateUpdateManyWithoutLifecycleModelNestedInput
-  transitions?: Prisma.LifecycleTransitionUpdateManyWithoutLifecycleModelNestedInput
-  ciClasses?: Prisma.CIClassUpdateManyWithoutLifecycleModelNestedInput
-  licenseProducts?: Prisma.LicenseProductUpdateManyWithoutLifecycleModelNestedInput
-}
-
-export type LifecycleModelUncheckedUpdateWithoutAssetCategoriesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  states?: Prisma.LifecycleStateUncheckedUpdateManyWithoutLifecycleModelNestedInput
-  transitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutLifecycleModelNestedInput
-  ciClasses?: Prisma.CIClassUncheckedUpdateManyWithoutLifecycleModelNestedInput
   licenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutLifecycleModelNestedInput
 }
 

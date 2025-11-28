@@ -610,12 +610,12 @@ const config = deserializeJsonField<FieldConfig>(field.config); // Type-safe wit
 ### Migration Workflow
 
 ```bash
-# 1. Modify schema.prisma
+# 1. Modify schema file in schema/ folder
 # 2. Generate migration
 npx prisma migrate dev --name descriptive_migration_name
 
 # 3. Review generated SQL
-cat src/infrastructure/database/prisma/migrations/XXXXXX_descriptive_migration_name/migration.sql
+cat src/infrastructure/database/prisma/schema/migrations/XXXXXX_descriptive_migration_name/migration.sql
 
 # 4. Test migration on copy of production data
 # 5. Apply to production

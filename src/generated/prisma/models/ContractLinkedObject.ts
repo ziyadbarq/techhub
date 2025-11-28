@@ -381,10 +381,6 @@ export type ContractLinkedObjectUncheckedUpdateManyWithoutContractNestedInput = 
   deleteMany?: Prisma.ContractLinkedObjectScalarWhereInput | Prisma.ContractLinkedObjectScalarWhereInput[]
 }
 
-export type EnumTargetObjectTypeEnumFieldUpdateOperationsInput = {
-  set?: $Enums.TargetObjectTypeEnum
-}
-
 export type ContractLinkedObjectCreateWithoutContractInput = {
   id?: string
   targetType: $Enums.TargetObjectTypeEnum

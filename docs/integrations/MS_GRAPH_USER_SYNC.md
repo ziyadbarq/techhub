@@ -113,7 +113,7 @@ npm install @azure/identity @microsoft/microsoft-graph-client
 
 ### Required Changes to Person Model
 
-**Current schema** (in `schema.prisma`):
+**Current schema** (in `schema/foundation.prisma`):
 ```prisma
 model Person {
   // ... existing fields
@@ -143,7 +143,7 @@ model Person {
 npx dotenv -e .env.local -- prisma db push
 ```
 
-Add to schema.prisma:
+Add to `schema/foundation.prisma`:
 ```prisma
 model Person {
   id              String    @id @default(cuid())
@@ -227,14 +227,14 @@ model Person {
 
 ```bash
 # 1. Add azureAdId and office fields (keep email @unique temporarily)
-# Edit schema.prisma, then:
+# Edit schema/foundation.prisma, then:
 npm run db:push
 npm run db:generate
 
 # 2. Run backfill script to populate azureAdId for existing persons
 npx dotenv -e .env.local -- npx tsx scripts/backfill-azure-ad-ids.ts
 
-# 3. Remove @unique from email in schema.prisma, then:
+# 3. Remove @unique from email in schema/foundation.prisma, then:
 npm run db:push
 npm run db:generate
 
@@ -1487,7 +1487,7 @@ Persons without a Graph match may be:
 npm install @azure/identity @microsoft/microsoft-graph-client
 
 # 2. Update schema and migrate
-# Edit schema.prisma to add azureAdId and office fields
+# Edit schema/foundation.prisma to add azureAdId and office fields
 npm run db:push
 npm run db:generate
 

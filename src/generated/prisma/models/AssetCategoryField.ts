@@ -473,48 +473,6 @@ export type AssetCategoryFieldSumOrderByAggregateInput = {
   uiOrder?: Prisma.SortOrder
 }
 
-export type AssetCategoryFieldCreateNestedManyWithoutFieldDefinitionInput = {
-  create?: Prisma.XOR<Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput, Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput> | Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput[] | Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput[]
-  connectOrCreate?: Prisma.AssetCategoryFieldCreateOrConnectWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldCreateOrConnectWithoutFieldDefinitionInput[]
-  createMany?: Prisma.AssetCategoryFieldCreateManyFieldDefinitionInputEnvelope
-  connect?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
-}
-
-export type AssetCategoryFieldUncheckedCreateNestedManyWithoutFieldDefinitionInput = {
-  create?: Prisma.XOR<Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput, Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput> | Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput[] | Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput[]
-  connectOrCreate?: Prisma.AssetCategoryFieldCreateOrConnectWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldCreateOrConnectWithoutFieldDefinitionInput[]
-  createMany?: Prisma.AssetCategoryFieldCreateManyFieldDefinitionInputEnvelope
-  connect?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
-}
-
-export type AssetCategoryFieldUpdateManyWithoutFieldDefinitionNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput, Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput> | Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput[] | Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput[]
-  connectOrCreate?: Prisma.AssetCategoryFieldCreateOrConnectWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldCreateOrConnectWithoutFieldDefinitionInput[]
-  upsert?: Prisma.AssetCategoryFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput[]
-  createMany?: Prisma.AssetCategoryFieldCreateManyFieldDefinitionInputEnvelope
-  set?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
-  disconnect?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
-  delete?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
-  connect?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
-  update?: Prisma.AssetCategoryFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput[]
-  updateMany?: Prisma.AssetCategoryFieldUpdateManyWithWhereWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldUpdateManyWithWhereWithoutFieldDefinitionInput[]
-  deleteMany?: Prisma.AssetCategoryFieldScalarWhereInput | Prisma.AssetCategoryFieldScalarWhereInput[]
-}
-
-export type AssetCategoryFieldUncheckedUpdateManyWithoutFieldDefinitionNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput, Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput> | Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput[] | Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput[]
-  connectOrCreate?: Prisma.AssetCategoryFieldCreateOrConnectWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldCreateOrConnectWithoutFieldDefinitionInput[]
-  upsert?: Prisma.AssetCategoryFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput[]
-  createMany?: Prisma.AssetCategoryFieldCreateManyFieldDefinitionInputEnvelope
-  set?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
-  disconnect?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
-  delete?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
-  connect?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
-  update?: Prisma.AssetCategoryFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput[]
-  updateMany?: Prisma.AssetCategoryFieldUpdateManyWithWhereWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldUpdateManyWithWhereWithoutFieldDefinitionInput[]
-  deleteMany?: Prisma.AssetCategoryFieldScalarWhereInput | Prisma.AssetCategoryFieldScalarWhereInput[]
-}
-
 export type AssetCategoryFieldCreateNestedManyWithoutAssetCategoryInput = {
   create?: Prisma.XOR<Prisma.AssetCategoryFieldCreateWithoutAssetCategoryInput, Prisma.AssetCategoryFieldUncheckedCreateWithoutAssetCategoryInput> | Prisma.AssetCategoryFieldCreateWithoutAssetCategoryInput[] | Prisma.AssetCategoryFieldUncheckedCreateWithoutAssetCategoryInput[]
   connectOrCreate?: Prisma.AssetCategoryFieldCreateOrConnectWithoutAssetCategoryInput | Prisma.AssetCategoryFieldCreateOrConnectWithoutAssetCategoryInput[]
@@ -557,70 +515,54 @@ export type AssetCategoryFieldUncheckedUpdateManyWithoutAssetCategoryNestedInput
   deleteMany?: Prisma.AssetCategoryFieldScalarWhereInput | Prisma.AssetCategoryFieldScalarWhereInput[]
 }
 
-export type AssetCategoryFieldCreateWithoutFieldDefinitionInput = {
-  id?: string
-  isRequired?: boolean
-  isUnique?: boolean
-  isVisible?: boolean
-  uiOrder?: number
-  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutFieldsInput
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
-export type AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput = {
-  id?: string
-  assetCategoryId: string
-  isRequired?: boolean
-  isUnique?: boolean
-  isVisible?: boolean
-  uiOrder?: number
-  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
+export type AssetCategoryFieldCreateNestedManyWithoutFieldDefinitionInput = {
+  create?: Prisma.XOR<Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput, Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput> | Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput[] | Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput[]
+  connectOrCreate?: Prisma.AssetCategoryFieldCreateOrConnectWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldCreateOrConnectWithoutFieldDefinitionInput[]
+  createMany?: Prisma.AssetCategoryFieldCreateManyFieldDefinitionInputEnvelope
+  connect?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
 }
 
-export type AssetCategoryFieldCreateOrConnectWithoutFieldDefinitionInput = {
-  where: Prisma.AssetCategoryFieldWhereUniqueInput
-  create: Prisma.XOR<Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput, Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput>
+export type AssetCategoryFieldUncheckedCreateNestedManyWithoutFieldDefinitionInput = {
+  create?: Prisma.XOR<Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput, Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput> | Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput[] | Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput[]
+  connectOrCreate?: Prisma.AssetCategoryFieldCreateOrConnectWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldCreateOrConnectWithoutFieldDefinitionInput[]
+  createMany?: Prisma.AssetCategoryFieldCreateManyFieldDefinitionInputEnvelope
+  connect?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
 }
 
-export type AssetCategoryFieldCreateManyFieldDefinitionInputEnvelope = {
-  data: Prisma.AssetCategoryFieldCreateManyFieldDefinitionInput | Prisma.AssetCategoryFieldCreateManyFieldDefinitionInput[]
-  skipDuplicates?: boolean
+export type AssetCategoryFieldUpdateManyWithoutFieldDefinitionNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput, Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput> | Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput[] | Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput[]
+  connectOrCreate?: Prisma.AssetCategoryFieldCreateOrConnectWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldCreateOrConnectWithoutFieldDefinitionInput[]
+  upsert?: Prisma.AssetCategoryFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput[]
+  createMany?: Prisma.AssetCategoryFieldCreateManyFieldDefinitionInputEnvelope
+  set?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
+  disconnect?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
+  delete?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
+  connect?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
+  update?: Prisma.AssetCategoryFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput[]
+  updateMany?: Prisma.AssetCategoryFieldUpdateManyWithWhereWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldUpdateManyWithWhereWithoutFieldDefinitionInput[]
+  deleteMany?: Prisma.AssetCategoryFieldScalarWhereInput | Prisma.AssetCategoryFieldScalarWhereInput[]
 }
 
-export type AssetCategoryFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput = {
-  where: Prisma.AssetCategoryFieldWhereUniqueInput
-  update: Prisma.XOR<Prisma.AssetCategoryFieldUpdateWithoutFieldDefinitionInput, Prisma.AssetCategoryFieldUncheckedUpdateWithoutFieldDefinitionInput>
-  create: Prisma.XOR<Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput, Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput>
-}
-
-export type AssetCategoryFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput = {
-  where: Prisma.AssetCategoryFieldWhereUniqueInput
-  data: Prisma.XOR<Prisma.AssetCategoryFieldUpdateWithoutFieldDefinitionInput, Prisma.AssetCategoryFieldUncheckedUpdateWithoutFieldDefinitionInput>
-}
-
-export type AssetCategoryFieldUpdateManyWithWhereWithoutFieldDefinitionInput = {
-  where: Prisma.AssetCategoryFieldScalarWhereInput
-  data: Prisma.XOR<Prisma.AssetCategoryFieldUpdateManyMutationInput, Prisma.AssetCategoryFieldUncheckedUpdateManyWithoutFieldDefinitionInput>
-}
-
-export type AssetCategoryFieldScalarWhereInput = {
-  AND?: Prisma.AssetCategoryFieldScalarWhereInput | Prisma.AssetCategoryFieldScalarWhereInput[]
-  OR?: Prisma.AssetCategoryFieldScalarWhereInput[]
-  NOT?: Prisma.AssetCategoryFieldScalarWhereInput | Prisma.AssetCategoryFieldScalarWhereInput[]
-  id?: Prisma.StringFilter<"AssetCategoryField"> | string
-  assetCategoryId?: Prisma.StringFilter<"AssetCategoryField"> | string
-  fieldDefinitionId?: Prisma.StringFilter<"AssetCategoryField"> | string
-  isRequired?: Prisma.BoolFilter<"AssetCategoryField"> | boolean
-  isUnique?: Prisma.BoolFilter<"AssetCategoryField"> | boolean
-  isVisible?: Prisma.BoolFilter<"AssetCategoryField"> | boolean
-  uiOrder?: Prisma.IntFilter<"AssetCategoryField"> | number
-  defaultValue?: Prisma.JsonNullableFilter<"AssetCategoryField">
-  createdAt?: Prisma.DateTimeFilter<"AssetCategoryField"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"AssetCategoryField"> | Date | string
+export type AssetCategoryFieldUncheckedUpdateManyWithoutFieldDefinitionNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput, Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput> | Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput[] | Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput[]
+  connectOrCreate?: Prisma.AssetCategoryFieldCreateOrConnectWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldCreateOrConnectWithoutFieldDefinitionInput[]
+  upsert?: Prisma.AssetCategoryFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput[]
+  createMany?: Prisma.AssetCategoryFieldCreateManyFieldDefinitionInputEnvelope
+  set?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
+  disconnect?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
+  delete?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
+  connect?: Prisma.AssetCategoryFieldWhereUniqueInput | Prisma.AssetCategoryFieldWhereUniqueInput[]
+  update?: Prisma.AssetCategoryFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput[]
+  updateMany?: Prisma.AssetCategoryFieldUpdateManyWithWhereWithoutFieldDefinitionInput | Prisma.AssetCategoryFieldUpdateManyWithWhereWithoutFieldDefinitionInput[]
+  deleteMany?: Prisma.AssetCategoryFieldScalarWhereInput | Prisma.AssetCategoryFieldScalarWhereInput[]
 }
 
 export type AssetCategoryFieldCreateWithoutAssetCategoryInput = {
@@ -673,7 +615,35 @@ export type AssetCategoryFieldUpdateManyWithWhereWithoutAssetCategoryInput = {
   data: Prisma.XOR<Prisma.AssetCategoryFieldUpdateManyMutationInput, Prisma.AssetCategoryFieldUncheckedUpdateManyWithoutAssetCategoryInput>
 }
 
-export type AssetCategoryFieldCreateManyFieldDefinitionInput = {
+export type AssetCategoryFieldScalarWhereInput = {
+  AND?: Prisma.AssetCategoryFieldScalarWhereInput | Prisma.AssetCategoryFieldScalarWhereInput[]
+  OR?: Prisma.AssetCategoryFieldScalarWhereInput[]
+  NOT?: Prisma.AssetCategoryFieldScalarWhereInput | Prisma.AssetCategoryFieldScalarWhereInput[]
+  id?: Prisma.StringFilter<"AssetCategoryField"> | string
+  assetCategoryId?: Prisma.StringFilter<"AssetCategoryField"> | string
+  fieldDefinitionId?: Prisma.StringFilter<"AssetCategoryField"> | string
+  isRequired?: Prisma.BoolFilter<"AssetCategoryField"> | boolean
+  isUnique?: Prisma.BoolFilter<"AssetCategoryField"> | boolean
+  isVisible?: Prisma.BoolFilter<"AssetCategoryField"> | boolean
+  uiOrder?: Prisma.IntFilter<"AssetCategoryField"> | number
+  defaultValue?: Prisma.JsonNullableFilter<"AssetCategoryField">
+  createdAt?: Prisma.DateTimeFilter<"AssetCategoryField"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"AssetCategoryField"> | Date | string
+}
+
+export type AssetCategoryFieldCreateWithoutFieldDefinitionInput = {
+  id?: string
+  isRequired?: boolean
+  isUnique?: boolean
+  isVisible?: boolean
+  uiOrder?: number
+  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutFieldsInput
+}
+
+export type AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput = {
   id?: string
   assetCategoryId: string
   isRequired?: boolean
@@ -685,40 +655,30 @@ export type AssetCategoryFieldCreateManyFieldDefinitionInput = {
   updatedAt?: Date | string
 }
 
-export type AssetCategoryFieldUpdateWithoutFieldDefinitionInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnique?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  uiOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutFieldsNestedInput
+export type AssetCategoryFieldCreateOrConnectWithoutFieldDefinitionInput = {
+  where: Prisma.AssetCategoryFieldWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput, Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput>
 }
 
-export type AssetCategoryFieldUncheckedUpdateWithoutFieldDefinitionInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
-  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnique?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  uiOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type AssetCategoryFieldCreateManyFieldDefinitionInputEnvelope = {
+  data: Prisma.AssetCategoryFieldCreateManyFieldDefinitionInput | Prisma.AssetCategoryFieldCreateManyFieldDefinitionInput[]
+  skipDuplicates?: boolean
 }
 
-export type AssetCategoryFieldUncheckedUpdateManyWithoutFieldDefinitionInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
-  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnique?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  uiOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type AssetCategoryFieldUpsertWithWhereUniqueWithoutFieldDefinitionInput = {
+  where: Prisma.AssetCategoryFieldWhereUniqueInput
+  update: Prisma.XOR<Prisma.AssetCategoryFieldUpdateWithoutFieldDefinitionInput, Prisma.AssetCategoryFieldUncheckedUpdateWithoutFieldDefinitionInput>
+  create: Prisma.XOR<Prisma.AssetCategoryFieldCreateWithoutFieldDefinitionInput, Prisma.AssetCategoryFieldUncheckedCreateWithoutFieldDefinitionInput>
+}
+
+export type AssetCategoryFieldUpdateWithWhereUniqueWithoutFieldDefinitionInput = {
+  where: Prisma.AssetCategoryFieldWhereUniqueInput
+  data: Prisma.XOR<Prisma.AssetCategoryFieldUpdateWithoutFieldDefinitionInput, Prisma.AssetCategoryFieldUncheckedUpdateWithoutFieldDefinitionInput>
+}
+
+export type AssetCategoryFieldUpdateManyWithWhereWithoutFieldDefinitionInput = {
+  where: Prisma.AssetCategoryFieldScalarWhereInput
+  data: Prisma.XOR<Prisma.AssetCategoryFieldUpdateManyMutationInput, Prisma.AssetCategoryFieldUncheckedUpdateManyWithoutFieldDefinitionInput>
 }
 
 export type AssetCategoryFieldCreateManyAssetCategoryInput = {
@@ -760,6 +720,54 @@ export type AssetCategoryFieldUncheckedUpdateWithoutAssetCategoryInput = {
 export type AssetCategoryFieldUncheckedUpdateManyWithoutAssetCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   fieldDefinitionId?: Prisma.StringFieldUpdateOperationsInput | string
+  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnique?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  uiOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type AssetCategoryFieldCreateManyFieldDefinitionInput = {
+  id?: string
+  assetCategoryId: string
+  isRequired?: boolean
+  isUnique?: boolean
+  isVisible?: boolean
+  uiOrder?: number
+  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type AssetCategoryFieldUpdateWithoutFieldDefinitionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnique?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  uiOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutFieldsNestedInput
+}
+
+export type AssetCategoryFieldUncheckedUpdateWithoutFieldDefinitionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnique?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  uiOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type AssetCategoryFieldUncheckedUpdateManyWithoutFieldDefinitionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
   isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isUnique?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isVisible?: Prisma.BoolFieldUpdateOperationsInput | boolean

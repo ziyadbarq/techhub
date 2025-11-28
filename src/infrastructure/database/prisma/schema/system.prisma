@@ -1,0 +1,179 @@
+// ============================================
+// SYSTEM MODELS (Tasks, Prompts, Feature Flags)
+// ============================================
+//
+// Models: Task, PromptBlock, PromptComposition, PromptCompositionBlock, FeatureFlag, FeatureFlagAuditLog
+// Enums: TaskStatus, PromptBlockCategory, PromptPurpose, FeatureFlagCategory, FeatureFlagAction
+// Layer: System (Cross-cutting)
+// Related DI Module: Various system modules
+// ============================================
+
+// ============================================
+// TASK MODEL (Example CRUD - kept as reference)
+// ============================================
+
+// Task model
+// Demonstrates Clean Architecture CRUD patterns
+model Task {
+  id          String     @id @default(cuid())
+  title       String
+  description String?    @db.Text
+  status      TaskStatus @default(PENDING)
+  createdBy   String? // User ID of task creator (for ownership checks)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Indexes
+  @@index([status])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([createdBy])
+  @@map("tasks")
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+// ============================================
+// MODULAR PROMPT SYSTEM (AI Infrastructure)
+// ============================================
+
+// PromptBlock model
+// Atomic, reusable prompt blocks (DRY principle)
+model PromptBlock {
+  id          String              @id @default(cuid())
+  name        String              @unique
+  category    PromptBlockCategory
+  content     String              @db.Text
+  description String?
+  metadata    Json?
+  version     Int                 @default(1)
+  isActive    Boolean             @default(true)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  // Self-referential for inheritance
+  parentBlockId String?
+  parentBlock   PromptBlock?  @relation("BlockInheritance", fields: [parentBlockId], references: [id], onDelete: SetNull)
+  childBlocks   PromptBlock[] @relation("BlockInheritance")
+
+  // Relations
+  usedInCompositions PromptCompositionBlock[]
+
+  // Indexes
+  @@index([category, isActive])
+  @@index([name])
+  @@map("prompt_blocks")
+}
+
+// PromptComposition model
+// Ordered composition of blocks that form complete prompts
+model PromptComposition {
+  id          String        @id @default(cuid())
+  name        String        @unique
+  purpose     PromptPurpose
+  description String?
+  variables   Json?
+  version     Int           @default(1)
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  blocks PromptCompositionBlock[]
+
+  // Indexes
+  @@index([purpose, isActive])
+  @@map("prompt_compositions")
+}
+
+// PromptCompositionBlock model
+// Join table with ordering for composition
+model PromptCompositionBlock {
+  id            String            @id @default(cuid())
+  compositionId String
+  composition   PromptComposition @relation(fields: [compositionId], references: [id], onDelete: Cascade)
+  blockId       String
+  block         PromptBlock       @relation(fields: [blockId], references: [id], onDelete: Restrict)
+  order         Int
+  overrides     Json?
+
+  // Indexes
+  @@unique([compositionId, blockId])
+  @@index([compositionId, order])
+  @@map("prompt_composition_blocks")
+}
+
+// Prompt block categories (granular, reusable blocks)
+enum PromptBlockCategory {
+  CORE_SYNTAX
+  CONTENT_GUIDELINES
+  VALIDATION
+  ADVANCED_FEATURES
+}
+
+// Prompt composition purposes (high-level use cases)
+enum PromptPurpose {
+  OUTLINE
+  CONTENT
+  THEME
+  REVIEW
+  REFINEMENT
+}
+
+// ============================================
+// FEATURE FLAGS
+// ============================================
+
+model FeatureFlag {
+  id          String   @id @default(cuid())
+  name        String   @unique // CONTRACTS, LICENSES, CMDB, etc.
+  displayName String // "Contract Management"
+  description String   @db.Text
+  category    FeatureFlagCategory
+  isEnabled   Boolean  @default(false) // Default: DISABLED (admin must enable)
+  isSystem    Boolean  @default(false) // System flags (e.g., MAINTENANCE_MODE)
+
+  // Dependencies (array of feature names)
+  dependsOn String[] @default([])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isEnabled])
+  @@index([category])
+  @@map("feature_flags")
+}
+
+// Audit log for feature flag changes
+model FeatureFlagAuditLog {
+  id          String            @id @default(cuid())
+  featureName String
+  action      FeatureFlagAction
+  userId      String
+  userEmail   String
+  reason      String?           @db.Text
+  createdAt   DateTime          @default(now())
+
+  @@index([featureName])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("feature_flag_audit_logs")
+}
+
+// Feature flag category
+enum FeatureFlagCategory {
+  SYSTEM
+  LAYER_1
+  LAYER_2
+  LAYER_3
+}
+
+// Feature flag action
+enum FeatureFlagAction {
+  ENABLED
+  DISABLED
+}

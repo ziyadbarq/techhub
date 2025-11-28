@@ -174,7 +174,7 @@ src/
 │
 ├── infrastructure/               # External implementations
 │   ├── database/prisma/
-│   │   ├── schema.prisma         # Database schema
+│   │   ├── schema/               # Multi-file schema (17 domain files)
 │   │   └── seed.ts               # Database seeder
 │   ├── repositories/             # Prisma repository implementations
 │   └── services/ai/              # OpenAI service implementations
@@ -307,7 +307,7 @@ npm run db:studio
 
 ### Adding a New Model
 
-1. **Update Prisma schema** (`src/infrastructure/database/prisma/schema.prisma`)
+1. **Update Prisma schema** (add to appropriate file in `src/infrastructure/database/prisma/schema/`)
 2. **Create domain entity** (`src/core/domain/entities/`)
 3. **Create repository interface** (`src/core/repositories/`)
 4. **Implement Prisma repository** (`src/infrastructure/repositories/`)

@@ -5,6 +5,7 @@ Complete guide for working with Prisma 7 in this project, including connection p
 ## Table of Contents
 
 - [Prisma 7 Overview](#prisma-7-overview)
+- [Multi-File Schema Organization](#multi-file-schema-organization)
 - [Connection Pool Management](#connection-pool-management)
 - [Type-Safe Imports](#type-safe-imports)
 - [Repository Implementation Patterns](#repository-implementation-patterns)
@@ -42,12 +43,100 @@ generator client {
 - `output` path is required in Prisma 7
 - `engineType = "client"` enables the new Rust-free client (90% smaller bundle, 3x faster)
 - All commands auto-detect schema location via `prisma.config.ts`
+- Multi-file schemas supported: set `schema` to a folder path (see next section)
 
 **Environment Variables** (`.env.local`):
 
 ```bash
 DATABASE_URL="postgresql://user:password@localhost:5432/dbname"
 PRISMA_VERBOSE_LOGS=true  # Optional: emit sanitized Prisma query/warn/error events
+```
+
+## Multi-File Schema Organization
+
+This project uses Prisma 7's multi-file schema support to organize 59 models and 34 enums into domain-aligned files. This approach improves maintainability and aligns with Clean Architecture layers.
+
+### Schema Structure
+
+The schema is located at `src/infrastructure/database/prisma/schema/`:
+
+```
+schema/
+├── schema.prisma          # Main config: generator + datasource only
+├── shared-enums.prisma    # Cross-domain enums (TargetObjectTypeEnum)
+├── auth.prisma            # Auth Layer: User, Account, Session, Verification
+├── rbac.prisma            # RBAC: Role, Permission, RolePermission, UserRole, AuditLog, CodeSequence
+├── foundation.prisma      # Layer 1: OrganizationUnit, Person, Location, Vendor, Lifecycle models
+├── cmdb.prisma            # Layer 2: CIClass, ConfigurationItem, CIRelationship, RelationshipType
+├── assets.prisma          # Layer 2: Asset, AssetCategory, AssetModel, AssetAssignment, Stock models
+├── maintenance.prisma     # Layer 2: MaintenanceSchedule, MaintenanceRecord
+├── contracts.prisma       # Layer 3: ContractType, Contract, ContractLinkedObject
+├── licenses.prisma        # Layer 3: LicenseProduct, LicenseEntitlement, LicenseAllocation, LicenseAddon
+├── disposal.prisma        # Layer 3: AssetDisposal, DisposalApproval, DisposalDocument
+├── kits.prisma            # Layer 3: AssetKit, AssetKitItem, AssetKitCheckout
+├── reservations.prisma    # Layer 3: AssetReservation, AssetReservationConflict
+├── governance.prisma      # Layer 3: DataDomain, DataOwnership, VerificationCampaign, AuditLogEntry
+├── attachments.prisma     # Layer 3: AttachmentType, Attachment
+├── services.prisma        # Layer 3: Service, ServiceOwnership, BusinessProcess, ServiceInfrastructure
+├── intune.prisma          # Integration: IntuneDevice, IntuneComplianceHistory, IntuneSyncLog
+├── system.prisma          # System: Task, PromptBlock, FeatureFlag models
+└── migrations/            # Migration files (next to datasource per Prisma convention)
+```
+
+### Configuration
+
+**prisma.config.ts**:
+
+```typescript
+import { defineConfig } from "prisma/config";
+import { env } from "node:process";
+
+export default defineConfig({
+  schema: "src/infrastructure/database/prisma/schema",  // Folder path for multi-file
+  migrations: {
+    path: "src/infrastructure/database/prisma/schema/migrations",
+    seed: "tsx src/infrastructure/database/prisma/seed.ts",
+  },
+  datasource: {
+    url: env("DATABASE_URL"),
+  },
+});
+```
+
+### Key Rules
+
+1. **`generator` and `datasource` blocks**: Must be in ONE file only (`schema.prisma`)
+2. **Migrations folder**: Must be next to the file containing `datasource` block
+3. **Models and enums**: Can be split across any `.prisma` files
+4. **Cross-file references**: Prisma automatically resolves references across files
+5. **Domain-specific enums**: Keep enums with their domain (e.g., `ServiceType` in `services.prisma`)
+6. **Shared enums**: Cross-domain enums go in `shared-enums.prisma` (e.g., `TargetObjectTypeEnum`)
+
+### Adding New Models
+
+When adding new models:
+
+1. **Identify the domain**: Which layer/module does this belong to?
+2. **Choose the file**: Add to the appropriate domain file
+3. **Domain-specific enums**: Define in the same file
+4. **Cross-domain enums**: Add to `shared-enums.prisma`
+5. **Validate**: Run `npx prisma validate`
+6. **Generate**: Run `npm run db:generate`
+
+### File Header Convention
+
+Each domain file includes a header comment:
+
+```prisma
+// ============================================
+// DOMAIN NAME
+// ============================================
+//
+// Models: Model1, Model2, Model3
+// Enums: Enum1, Enum2
+// Layer: Layer X (Description)
+// Related DI Module: domain.module.ts
+// ============================================
 ```
 
 ## Connection Pool Management

@@ -1,0 +1,56 @@
+// ============================================
+// ATTACHMENTS (DIAGRAMS, INVOICES, DOCUMENTS)
+// ============================================
+//
+// Models: AttachmentType, Attachment
+// Enums: None (uses TargetObjectTypeEnum from shared-enums.prisma)
+// Layer: Layer 3 (Advanced ITAM)
+// Related DI Module: attachments.module.ts
+// ============================================
+
+// AttachmentType model
+model AttachmentType {
+  id                String   @id @default(cuid())
+  name              String   @unique
+  code              String   @unique
+  description       String?  @db.Text
+  allowedExtensions String[] // e.g., ["pdf", "jpg", "png"]
+  maxFileSizeMB     Int // Maximum file size in megabytes
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  attachments Attachment[]
+
+  // Indexes
+  @@index([code])
+  @@index([isActive])
+  @@map("attachment_types")
+}
+
+// Attachment model
+model Attachment {
+  id               String               @id @default(cuid())
+  attachmentTypeId String
+  targetType       TargetObjectTypeEnum
+  targetId         String // CI / Asset / Contract / LicenseEntitlement
+  fileName         String
+  filePath         String // or external URL if stored in object storage/DMS
+  mimeType         String?
+  sizeBytes        BigInt?
+  uploadedById     String
+  uploadedAt       DateTime             @default(now())
+  note             String?              @db.Text
+
+  // Relations
+  attachmentType AttachmentType @relation(fields: [attachmentTypeId], references: [id], onDelete: Restrict)
+  uploadedBy     Person         @relation(fields: [uploadedById], references: [id], onDelete: Restrict)
+
+  // Indexes
+  @@index([attachmentTypeId])
+  @@index([targetType, targetId])
+  @@index([uploadedById])
+  @@index([uploadedAt])
+  @@map("attachments")
+}

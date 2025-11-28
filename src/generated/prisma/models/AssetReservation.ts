@@ -610,6 +610,48 @@ export type AssetReservationScalarRelationFilter = {
   isNot?: Prisma.AssetReservationWhereInput
 }
 
+export type AssetReservationCreateNestedManyWithoutAssetInput = {
+  create?: Prisma.XOR<Prisma.AssetReservationCreateWithoutAssetInput, Prisma.AssetReservationUncheckedCreateWithoutAssetInput> | Prisma.AssetReservationCreateWithoutAssetInput[] | Prisma.AssetReservationUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.AssetReservationCreateOrConnectWithoutAssetInput | Prisma.AssetReservationCreateOrConnectWithoutAssetInput[]
+  createMany?: Prisma.AssetReservationCreateManyAssetInputEnvelope
+  connect?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
+}
+
+export type AssetReservationUncheckedCreateNestedManyWithoutAssetInput = {
+  create?: Prisma.XOR<Prisma.AssetReservationCreateWithoutAssetInput, Prisma.AssetReservationUncheckedCreateWithoutAssetInput> | Prisma.AssetReservationCreateWithoutAssetInput[] | Prisma.AssetReservationUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.AssetReservationCreateOrConnectWithoutAssetInput | Prisma.AssetReservationCreateOrConnectWithoutAssetInput[]
+  createMany?: Prisma.AssetReservationCreateManyAssetInputEnvelope
+  connect?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
+}
+
+export type AssetReservationUpdateManyWithoutAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetReservationCreateWithoutAssetInput, Prisma.AssetReservationUncheckedCreateWithoutAssetInput> | Prisma.AssetReservationCreateWithoutAssetInput[] | Prisma.AssetReservationUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.AssetReservationCreateOrConnectWithoutAssetInput | Prisma.AssetReservationCreateOrConnectWithoutAssetInput[]
+  upsert?: Prisma.AssetReservationUpsertWithWhereUniqueWithoutAssetInput | Prisma.AssetReservationUpsertWithWhereUniqueWithoutAssetInput[]
+  createMany?: Prisma.AssetReservationCreateManyAssetInputEnvelope
+  set?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
+  disconnect?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
+  delete?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
+  connect?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
+  update?: Prisma.AssetReservationUpdateWithWhereUniqueWithoutAssetInput | Prisma.AssetReservationUpdateWithWhereUniqueWithoutAssetInput[]
+  updateMany?: Prisma.AssetReservationUpdateManyWithWhereWithoutAssetInput | Prisma.AssetReservationUpdateManyWithWhereWithoutAssetInput[]
+  deleteMany?: Prisma.AssetReservationScalarWhereInput | Prisma.AssetReservationScalarWhereInput[]
+}
+
+export type AssetReservationUncheckedUpdateManyWithoutAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetReservationCreateWithoutAssetInput, Prisma.AssetReservationUncheckedCreateWithoutAssetInput> | Prisma.AssetReservationCreateWithoutAssetInput[] | Prisma.AssetReservationUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.AssetReservationCreateOrConnectWithoutAssetInput | Prisma.AssetReservationCreateOrConnectWithoutAssetInput[]
+  upsert?: Prisma.AssetReservationUpsertWithWhereUniqueWithoutAssetInput | Prisma.AssetReservationUpsertWithWhereUniqueWithoutAssetInput[]
+  createMany?: Prisma.AssetReservationCreateManyAssetInputEnvelope
+  set?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
+  disconnect?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
+  delete?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
+  connect?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
+  update?: Prisma.AssetReservationUpdateWithWhereUniqueWithoutAssetInput | Prisma.AssetReservationUpdateWithWhereUniqueWithoutAssetInput[]
+  updateMany?: Prisma.AssetReservationUpdateManyWithWhereWithoutAssetInput | Prisma.AssetReservationUpdateManyWithWhereWithoutAssetInput[]
+  deleteMany?: Prisma.AssetReservationScalarWhereInput | Prisma.AssetReservationScalarWhereInput[]
+}
+
 export type AssetReservationCreateNestedManyWithoutReservedForOrgUnitInput = {
   create?: Prisma.XOR<Prisma.AssetReservationCreateWithoutReservedForOrgUnitInput, Prisma.AssetReservationUncheckedCreateWithoutReservedForOrgUnitInput> | Prisma.AssetReservationCreateWithoutReservedForOrgUnitInput[] | Prisma.AssetReservationUncheckedCreateWithoutReservedForOrgUnitInput[]
   connectOrCreate?: Prisma.AssetReservationCreateOrConnectWithoutReservedForOrgUnitInput | Prisma.AssetReservationCreateOrConnectWithoutReservedForOrgUnitInput[]
@@ -820,48 +862,6 @@ export type AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput = {
   deleteMany?: Prisma.AssetReservationScalarWhereInput | Prisma.AssetReservationScalarWhereInput[]
 }
 
-export type AssetReservationCreateNestedManyWithoutAssetInput = {
-  create?: Prisma.XOR<Prisma.AssetReservationCreateWithoutAssetInput, Prisma.AssetReservationUncheckedCreateWithoutAssetInput> | Prisma.AssetReservationCreateWithoutAssetInput[] | Prisma.AssetReservationUncheckedCreateWithoutAssetInput[]
-  connectOrCreate?: Prisma.AssetReservationCreateOrConnectWithoutAssetInput | Prisma.AssetReservationCreateOrConnectWithoutAssetInput[]
-  createMany?: Prisma.AssetReservationCreateManyAssetInputEnvelope
-  connect?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
-}
-
-export type AssetReservationUncheckedCreateNestedManyWithoutAssetInput = {
-  create?: Prisma.XOR<Prisma.AssetReservationCreateWithoutAssetInput, Prisma.AssetReservationUncheckedCreateWithoutAssetInput> | Prisma.AssetReservationCreateWithoutAssetInput[] | Prisma.AssetReservationUncheckedCreateWithoutAssetInput[]
-  connectOrCreate?: Prisma.AssetReservationCreateOrConnectWithoutAssetInput | Prisma.AssetReservationCreateOrConnectWithoutAssetInput[]
-  createMany?: Prisma.AssetReservationCreateManyAssetInputEnvelope
-  connect?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
-}
-
-export type AssetReservationUpdateManyWithoutAssetNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetReservationCreateWithoutAssetInput, Prisma.AssetReservationUncheckedCreateWithoutAssetInput> | Prisma.AssetReservationCreateWithoutAssetInput[] | Prisma.AssetReservationUncheckedCreateWithoutAssetInput[]
-  connectOrCreate?: Prisma.AssetReservationCreateOrConnectWithoutAssetInput | Prisma.AssetReservationCreateOrConnectWithoutAssetInput[]
-  upsert?: Prisma.AssetReservationUpsertWithWhereUniqueWithoutAssetInput | Prisma.AssetReservationUpsertWithWhereUniqueWithoutAssetInput[]
-  createMany?: Prisma.AssetReservationCreateManyAssetInputEnvelope
-  set?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
-  disconnect?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
-  delete?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
-  connect?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
-  update?: Prisma.AssetReservationUpdateWithWhereUniqueWithoutAssetInput | Prisma.AssetReservationUpdateWithWhereUniqueWithoutAssetInput[]
-  updateMany?: Prisma.AssetReservationUpdateManyWithWhereWithoutAssetInput | Prisma.AssetReservationUpdateManyWithWhereWithoutAssetInput[]
-  deleteMany?: Prisma.AssetReservationScalarWhereInput | Prisma.AssetReservationScalarWhereInput[]
-}
-
-export type AssetReservationUncheckedUpdateManyWithoutAssetNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetReservationCreateWithoutAssetInput, Prisma.AssetReservationUncheckedCreateWithoutAssetInput> | Prisma.AssetReservationCreateWithoutAssetInput[] | Prisma.AssetReservationUncheckedCreateWithoutAssetInput[]
-  connectOrCreate?: Prisma.AssetReservationCreateOrConnectWithoutAssetInput | Prisma.AssetReservationCreateOrConnectWithoutAssetInput[]
-  upsert?: Prisma.AssetReservationUpsertWithWhereUniqueWithoutAssetInput | Prisma.AssetReservationUpsertWithWhereUniqueWithoutAssetInput[]
-  createMany?: Prisma.AssetReservationCreateManyAssetInputEnvelope
-  set?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
-  disconnect?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
-  delete?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
-  connect?: Prisma.AssetReservationWhereUniqueInput | Prisma.AssetReservationWhereUniqueInput[]
-  update?: Prisma.AssetReservationUpdateWithWhereUniqueWithoutAssetInput | Prisma.AssetReservationUpdateWithWhereUniqueWithoutAssetInput[]
-  updateMany?: Prisma.AssetReservationUpdateManyWithWhereWithoutAssetInput | Prisma.AssetReservationUpdateManyWithWhereWithoutAssetInput[]
-  deleteMany?: Prisma.AssetReservationScalarWhereInput | Prisma.AssetReservationScalarWhereInput[]
-}
-
 export type AssetReservationCreateNestedOneWithoutConflictsInput = {
   create?: Prisma.XOR<Prisma.AssetReservationCreateWithoutConflictsInput, Prisma.AssetReservationUncheckedCreateWithoutConflictsInput>
   connectOrCreate?: Prisma.AssetReservationCreateOrConnectWithoutConflictsInput
@@ -888,6 +888,97 @@ export type AssetReservationUpdateOneRequiredWithoutConflictingReservationsNeste
   upsert?: Prisma.AssetReservationUpsertWithoutConflictingReservationsInput
   connect?: Prisma.AssetReservationWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.AssetReservationUpdateToOneWithWhereWithoutConflictingReservationsInput, Prisma.AssetReservationUpdateWithoutConflictingReservationsInput>, Prisma.AssetReservationUncheckedUpdateWithoutConflictingReservationsInput>
+}
+
+export type AssetReservationCreateWithoutAssetInput = {
+  id?: string
+  startDate: Date | string
+  endDate: Date | string
+  status?: string
+  purpose?: string | null
+  note?: string | null
+  confirmationDate?: Date | string | null
+  cancellationReason?: string | null
+  cancelledAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  reservedForPerson?: Prisma.PersonCreateNestedOneWithoutReservationsForInput
+  reservedForOrgUnit?: Prisma.OrganizationUnitCreateNestedOneWithoutReservationsInput
+  reservedBy: Prisma.PersonCreateNestedOneWithoutReservationsCreatedInput
+  confirmedBy?: Prisma.PersonCreateNestedOneWithoutReservationsConfirmedInput
+  cancelledBy?: Prisma.PersonCreateNestedOneWithoutReservationsCancelledInput
+  conflicts?: Prisma.AssetReservationConflictCreateNestedManyWithoutReservationInput
+  conflictingReservations?: Prisma.AssetReservationConflictCreateNestedManyWithoutConflictingReservationInput
+}
+
+export type AssetReservationUncheckedCreateWithoutAssetInput = {
+  id?: string
+  reservedForPersonId?: string | null
+  reservedForOrgUnitId?: string | null
+  reservedById: string
+  startDate: Date | string
+  endDate: Date | string
+  status?: string
+  purpose?: string | null
+  note?: string | null
+  confirmationDate?: Date | string | null
+  confirmedById?: string | null
+  cancellationReason?: string | null
+  cancelledAt?: Date | string | null
+  cancelledById?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  conflicts?: Prisma.AssetReservationConflictUncheckedCreateNestedManyWithoutReservationInput
+  conflictingReservations?: Prisma.AssetReservationConflictUncheckedCreateNestedManyWithoutConflictingReservationInput
+}
+
+export type AssetReservationCreateOrConnectWithoutAssetInput = {
+  where: Prisma.AssetReservationWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetReservationCreateWithoutAssetInput, Prisma.AssetReservationUncheckedCreateWithoutAssetInput>
+}
+
+export type AssetReservationCreateManyAssetInputEnvelope = {
+  data: Prisma.AssetReservationCreateManyAssetInput | Prisma.AssetReservationCreateManyAssetInput[]
+  skipDuplicates?: boolean
+}
+
+export type AssetReservationUpsertWithWhereUniqueWithoutAssetInput = {
+  where: Prisma.AssetReservationWhereUniqueInput
+  update: Prisma.XOR<Prisma.AssetReservationUpdateWithoutAssetInput, Prisma.AssetReservationUncheckedUpdateWithoutAssetInput>
+  create: Prisma.XOR<Prisma.AssetReservationCreateWithoutAssetInput, Prisma.AssetReservationUncheckedCreateWithoutAssetInput>
+}
+
+export type AssetReservationUpdateWithWhereUniqueWithoutAssetInput = {
+  where: Prisma.AssetReservationWhereUniqueInput
+  data: Prisma.XOR<Prisma.AssetReservationUpdateWithoutAssetInput, Prisma.AssetReservationUncheckedUpdateWithoutAssetInput>
+}
+
+export type AssetReservationUpdateManyWithWhereWithoutAssetInput = {
+  where: Prisma.AssetReservationScalarWhereInput
+  data: Prisma.XOR<Prisma.AssetReservationUpdateManyMutationInput, Prisma.AssetReservationUncheckedUpdateManyWithoutAssetInput>
+}
+
+export type AssetReservationScalarWhereInput = {
+  AND?: Prisma.AssetReservationScalarWhereInput | Prisma.AssetReservationScalarWhereInput[]
+  OR?: Prisma.AssetReservationScalarWhereInput[]
+  NOT?: Prisma.AssetReservationScalarWhereInput | Prisma.AssetReservationScalarWhereInput[]
+  id?: Prisma.StringFilter<"AssetReservation"> | string
+  assetId?: Prisma.StringFilter<"AssetReservation"> | string
+  reservedForPersonId?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
+  reservedForOrgUnitId?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
+  reservedById?: Prisma.StringFilter<"AssetReservation"> | string
+  startDate?: Prisma.DateTimeFilter<"AssetReservation"> | Date | string
+  endDate?: Prisma.DateTimeFilter<"AssetReservation"> | Date | string
+  status?: Prisma.StringFilter<"AssetReservation"> | string
+  purpose?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
+  note?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
+  confirmationDate?: Prisma.DateTimeNullableFilter<"AssetReservation"> | Date | string | null
+  confirmedById?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
+  cancellationReason?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
+  cancelledAt?: Prisma.DateTimeNullableFilter<"AssetReservation"> | Date | string | null
+  cancelledById?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"AssetReservation"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"AssetReservation"> | Date | string
 }
 
 export type AssetReservationCreateWithoutReservedForOrgUnitInput = {
@@ -956,29 +1047,6 @@ export type AssetReservationUpdateWithWhereUniqueWithoutReservedForOrgUnitInput 
 export type AssetReservationUpdateManyWithWhereWithoutReservedForOrgUnitInput = {
   where: Prisma.AssetReservationScalarWhereInput
   data: Prisma.XOR<Prisma.AssetReservationUpdateManyMutationInput, Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForOrgUnitInput>
-}
-
-export type AssetReservationScalarWhereInput = {
-  AND?: Prisma.AssetReservationScalarWhereInput | Prisma.AssetReservationScalarWhereInput[]
-  OR?: Prisma.AssetReservationScalarWhereInput[]
-  NOT?: Prisma.AssetReservationScalarWhereInput | Prisma.AssetReservationScalarWhereInput[]
-  id?: Prisma.StringFilter<"AssetReservation"> | string
-  assetId?: Prisma.StringFilter<"AssetReservation"> | string
-  reservedForPersonId?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
-  reservedForOrgUnitId?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
-  reservedById?: Prisma.StringFilter<"AssetReservation"> | string
-  startDate?: Prisma.DateTimeFilter<"AssetReservation"> | Date | string
-  endDate?: Prisma.DateTimeFilter<"AssetReservation"> | Date | string
-  status?: Prisma.StringFilter<"AssetReservation"> | string
-  purpose?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
-  note?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
-  confirmationDate?: Prisma.DateTimeNullableFilter<"AssetReservation"> | Date | string | null
-  confirmedById?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
-  cancellationReason?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
-  cancelledAt?: Prisma.DateTimeNullableFilter<"AssetReservation"> | Date | string | null
-  cancelledById?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"AssetReservation"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"AssetReservation"> | Date | string
 }
 
 export type AssetReservationCreateWithoutReservedForPersonInput = {
@@ -1253,74 +1321,6 @@ export type AssetReservationUpdateManyWithWhereWithoutCancelledByInput = {
   data: Prisma.XOR<Prisma.AssetReservationUpdateManyMutationInput, Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByInput>
 }
 
-export type AssetReservationCreateWithoutAssetInput = {
-  id?: string
-  startDate: Date | string
-  endDate: Date | string
-  status?: string
-  purpose?: string | null
-  note?: string | null
-  confirmationDate?: Date | string | null
-  cancellationReason?: string | null
-  cancelledAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  reservedForPerson?: Prisma.PersonCreateNestedOneWithoutReservationsForInput
-  reservedForOrgUnit?: Prisma.OrganizationUnitCreateNestedOneWithoutReservationsInput
-  reservedBy: Prisma.PersonCreateNestedOneWithoutReservationsCreatedInput
-  confirmedBy?: Prisma.PersonCreateNestedOneWithoutReservationsConfirmedInput
-  cancelledBy?: Prisma.PersonCreateNestedOneWithoutReservationsCancelledInput
-  conflicts?: Prisma.AssetReservationConflictCreateNestedManyWithoutReservationInput
-  conflictingReservations?: Prisma.AssetReservationConflictCreateNestedManyWithoutConflictingReservationInput
-}
-
-export type AssetReservationUncheckedCreateWithoutAssetInput = {
-  id?: string
-  reservedForPersonId?: string | null
-  reservedForOrgUnitId?: string | null
-  reservedById: string
-  startDate: Date | string
-  endDate: Date | string
-  status?: string
-  purpose?: string | null
-  note?: string | null
-  confirmationDate?: Date | string | null
-  confirmedById?: string | null
-  cancellationReason?: string | null
-  cancelledAt?: Date | string | null
-  cancelledById?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  conflicts?: Prisma.AssetReservationConflictUncheckedCreateNestedManyWithoutReservationInput
-  conflictingReservations?: Prisma.AssetReservationConflictUncheckedCreateNestedManyWithoutConflictingReservationInput
-}
-
-export type AssetReservationCreateOrConnectWithoutAssetInput = {
-  where: Prisma.AssetReservationWhereUniqueInput
-  create: Prisma.XOR<Prisma.AssetReservationCreateWithoutAssetInput, Prisma.AssetReservationUncheckedCreateWithoutAssetInput>
-}
-
-export type AssetReservationCreateManyAssetInputEnvelope = {
-  data: Prisma.AssetReservationCreateManyAssetInput | Prisma.AssetReservationCreateManyAssetInput[]
-  skipDuplicates?: boolean
-}
-
-export type AssetReservationUpsertWithWhereUniqueWithoutAssetInput = {
-  where: Prisma.AssetReservationWhereUniqueInput
-  update: Prisma.XOR<Prisma.AssetReservationUpdateWithoutAssetInput, Prisma.AssetReservationUncheckedUpdateWithoutAssetInput>
-  create: Prisma.XOR<Prisma.AssetReservationCreateWithoutAssetInput, Prisma.AssetReservationUncheckedCreateWithoutAssetInput>
-}
-
-export type AssetReservationUpdateWithWhereUniqueWithoutAssetInput = {
-  where: Prisma.AssetReservationWhereUniqueInput
-  data: Prisma.XOR<Prisma.AssetReservationUpdateWithoutAssetInput, Prisma.AssetReservationUncheckedUpdateWithoutAssetInput>
-}
-
-export type AssetReservationUpdateManyWithWhereWithoutAssetInput = {
-  where: Prisma.AssetReservationScalarWhereInput
-  data: Prisma.XOR<Prisma.AssetReservationUpdateManyMutationInput, Prisma.AssetReservationUncheckedUpdateManyWithoutAssetInput>
-}
-
 export type AssetReservationCreateWithoutConflictsInput = {
   id?: string
   startDate: Date | string
@@ -1519,6 +1519,86 @@ export type AssetReservationUncheckedUpdateWithoutConflictingReservationsInput =
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   conflicts?: Prisma.AssetReservationConflictUncheckedUpdateManyWithoutReservationNestedInput
+}
+
+export type AssetReservationCreateManyAssetInput = {
+  id?: string
+  reservedForPersonId?: string | null
+  reservedForOrgUnitId?: string | null
+  reservedById: string
+  startDate: Date | string
+  endDate: Date | string
+  status?: string
+  purpose?: string | null
+  note?: string | null
+  confirmationDate?: Date | string | null
+  confirmedById?: string | null
+  cancellationReason?: string | null
+  cancelledAt?: Date | string | null
+  cancelledById?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type AssetReservationUpdateWithoutAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  reservedForPerson?: Prisma.PersonUpdateOneWithoutReservationsForNestedInput
+  reservedForOrgUnit?: Prisma.OrganizationUnitUpdateOneWithoutReservationsNestedInput
+  reservedBy?: Prisma.PersonUpdateOneRequiredWithoutReservationsCreatedNestedInput
+  confirmedBy?: Prisma.PersonUpdateOneWithoutReservationsConfirmedNestedInput
+  cancelledBy?: Prisma.PersonUpdateOneWithoutReservationsCancelledNestedInput
+  conflicts?: Prisma.AssetReservationConflictUpdateManyWithoutReservationNestedInput
+  conflictingReservations?: Prisma.AssetReservationConflictUpdateManyWithoutConflictingReservationNestedInput
+}
+
+export type AssetReservationUncheckedUpdateWithoutAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  reservedForPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reservedForOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reservedById?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  conflicts?: Prisma.AssetReservationConflictUncheckedUpdateManyWithoutReservationNestedInput
+  conflictingReservations?: Prisma.AssetReservationConflictUncheckedUpdateManyWithoutConflictingReservationNestedInput
+}
+
+export type AssetReservationUncheckedUpdateManyWithoutAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  reservedForPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reservedForOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  reservedById?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  confirmedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type AssetReservationCreateManyReservedForOrgUnitInput = {
@@ -1917,86 +1997,6 @@ export type AssetReservationUncheckedUpdateManyWithoutCancelledByInput = {
   confirmedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type AssetReservationCreateManyAssetInput = {
-  id?: string
-  reservedForPersonId?: string | null
-  reservedForOrgUnitId?: string | null
-  reservedById: string
-  startDate: Date | string
-  endDate: Date | string
-  status?: string
-  purpose?: string | null
-  note?: string | null
-  confirmationDate?: Date | string | null
-  confirmedById?: string | null
-  cancellationReason?: string | null
-  cancelledAt?: Date | string | null
-  cancelledById?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type AssetReservationUpdateWithoutAssetInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  reservedForPerson?: Prisma.PersonUpdateOneWithoutReservationsForNestedInput
-  reservedForOrgUnit?: Prisma.OrganizationUnitUpdateOneWithoutReservationsNestedInput
-  reservedBy?: Prisma.PersonUpdateOneRequiredWithoutReservationsCreatedNestedInput
-  confirmedBy?: Prisma.PersonUpdateOneWithoutReservationsConfirmedNestedInput
-  cancelledBy?: Prisma.PersonUpdateOneWithoutReservationsCancelledNestedInput
-  conflicts?: Prisma.AssetReservationConflictUpdateManyWithoutReservationNestedInput
-  conflictingReservations?: Prisma.AssetReservationConflictUpdateManyWithoutConflictingReservationNestedInput
-}
-
-export type AssetReservationUncheckedUpdateWithoutAssetInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  reservedForPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reservedForOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reservedById?: Prisma.StringFieldUpdateOperationsInput | string
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  confirmedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  cancelledById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  conflicts?: Prisma.AssetReservationConflictUncheckedUpdateManyWithoutReservationNestedInput
-  conflictingReservations?: Prisma.AssetReservationConflictUncheckedUpdateManyWithoutConflictingReservationNestedInput
-}
-
-export type AssetReservationUncheckedUpdateManyWithoutAssetInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  reservedForPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reservedForOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reservedById?: Prisma.StringFieldUpdateOperationsInput | string
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  confirmedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  cancellationReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  cancelledById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }

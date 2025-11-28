@@ -854,106 +854,6 @@ export type AssetScalarRelationFilter = {
   isNot?: Prisma.AssetWhereInput
 }
 
-export type AssetCreateNestedManyWithoutVendorInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutVendorInput, Prisma.AssetUncheckedCreateWithoutVendorInput> | Prisma.AssetCreateWithoutVendorInput[] | Prisma.AssetUncheckedCreateWithoutVendorInput[]
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutVendorInput | Prisma.AssetCreateOrConnectWithoutVendorInput[]
-  createMany?: Prisma.AssetCreateManyVendorInputEnvelope
-  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-}
-
-export type AssetUncheckedCreateNestedManyWithoutVendorInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutVendorInput, Prisma.AssetUncheckedCreateWithoutVendorInput> | Prisma.AssetCreateWithoutVendorInput[] | Prisma.AssetUncheckedCreateWithoutVendorInput[]
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutVendorInput | Prisma.AssetCreateOrConnectWithoutVendorInput[]
-  createMany?: Prisma.AssetCreateManyVendorInputEnvelope
-  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-}
-
-export type AssetUpdateManyWithoutVendorNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutVendorInput, Prisma.AssetUncheckedCreateWithoutVendorInput> | Prisma.AssetCreateWithoutVendorInput[] | Prisma.AssetUncheckedCreateWithoutVendorInput[]
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutVendorInput | Prisma.AssetCreateOrConnectWithoutVendorInput[]
-  upsert?: Prisma.AssetUpsertWithWhereUniqueWithoutVendorInput | Prisma.AssetUpsertWithWhereUniqueWithoutVendorInput[]
-  createMany?: Prisma.AssetCreateManyVendorInputEnvelope
-  set?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-  disconnect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-  delete?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-  update?: Prisma.AssetUpdateWithWhereUniqueWithoutVendorInput | Prisma.AssetUpdateWithWhereUniqueWithoutVendorInput[]
-  updateMany?: Prisma.AssetUpdateManyWithWhereWithoutVendorInput | Prisma.AssetUpdateManyWithWhereWithoutVendorInput[]
-  deleteMany?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
-}
-
-export type AssetUncheckedUpdateManyWithoutVendorNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutVendorInput, Prisma.AssetUncheckedCreateWithoutVendorInput> | Prisma.AssetCreateWithoutVendorInput[] | Prisma.AssetUncheckedCreateWithoutVendorInput[]
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutVendorInput | Prisma.AssetCreateOrConnectWithoutVendorInput[]
-  upsert?: Prisma.AssetUpsertWithWhereUniqueWithoutVendorInput | Prisma.AssetUpsertWithWhereUniqueWithoutVendorInput[]
-  createMany?: Prisma.AssetCreateManyVendorInputEnvelope
-  set?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-  disconnect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-  delete?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-  update?: Prisma.AssetUpdateWithWhereUniqueWithoutVendorInput | Prisma.AssetUpdateWithWhereUniqueWithoutVendorInput[]
-  updateMany?: Prisma.AssetUpdateManyWithWhereWithoutVendorInput | Prisma.AssetUpdateManyWithWhereWithoutVendorInput[]
-  deleteMany?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
-}
-
-export type AssetCreateNestedManyWithoutLifecycleStateInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutLifecycleStateInput, Prisma.AssetUncheckedCreateWithoutLifecycleStateInput> | Prisma.AssetCreateWithoutLifecycleStateInput[] | Prisma.AssetUncheckedCreateWithoutLifecycleStateInput[]
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutLifecycleStateInput | Prisma.AssetCreateOrConnectWithoutLifecycleStateInput[]
-  createMany?: Prisma.AssetCreateManyLifecycleStateInputEnvelope
-  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-}
-
-export type AssetUncheckedCreateNestedManyWithoutLifecycleStateInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutLifecycleStateInput, Prisma.AssetUncheckedCreateWithoutLifecycleStateInput> | Prisma.AssetCreateWithoutLifecycleStateInput[] | Prisma.AssetUncheckedCreateWithoutLifecycleStateInput[]
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutLifecycleStateInput | Prisma.AssetCreateOrConnectWithoutLifecycleStateInput[]
-  createMany?: Prisma.AssetCreateManyLifecycleStateInputEnvelope
-  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-}
-
-export type AssetUpdateManyWithoutLifecycleStateNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutLifecycleStateInput, Prisma.AssetUncheckedCreateWithoutLifecycleStateInput> | Prisma.AssetCreateWithoutLifecycleStateInput[] | Prisma.AssetUncheckedCreateWithoutLifecycleStateInput[]
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutLifecycleStateInput | Prisma.AssetCreateOrConnectWithoutLifecycleStateInput[]
-  upsert?: Prisma.AssetUpsertWithWhereUniqueWithoutLifecycleStateInput | Prisma.AssetUpsertWithWhereUniqueWithoutLifecycleStateInput[]
-  createMany?: Prisma.AssetCreateManyLifecycleStateInputEnvelope
-  set?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-  disconnect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-  delete?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-  update?: Prisma.AssetUpdateWithWhereUniqueWithoutLifecycleStateInput | Prisma.AssetUpdateWithWhereUniqueWithoutLifecycleStateInput[]
-  updateMany?: Prisma.AssetUpdateManyWithWhereWithoutLifecycleStateInput | Prisma.AssetUpdateManyWithWhereWithoutLifecycleStateInput[]
-  deleteMany?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
-}
-
-export type AssetUncheckedUpdateManyWithoutLifecycleStateNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutLifecycleStateInput, Prisma.AssetUncheckedCreateWithoutLifecycleStateInput> | Prisma.AssetCreateWithoutLifecycleStateInput[] | Prisma.AssetUncheckedCreateWithoutLifecycleStateInput[]
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutLifecycleStateInput | Prisma.AssetCreateOrConnectWithoutLifecycleStateInput[]
-  upsert?: Prisma.AssetUpsertWithWhereUniqueWithoutLifecycleStateInput | Prisma.AssetUpsertWithWhereUniqueWithoutLifecycleStateInput[]
-  createMany?: Prisma.AssetCreateManyLifecycleStateInputEnvelope
-  set?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-  disconnect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-  delete?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
-  update?: Prisma.AssetUpdateWithWhereUniqueWithoutLifecycleStateInput | Prisma.AssetUpdateWithWhereUniqueWithoutLifecycleStateInput[]
-  updateMany?: Prisma.AssetUpdateManyWithWhereWithoutLifecycleStateInput | Prisma.AssetUpdateManyWithWhereWithoutLifecycleStateInput[]
-  deleteMany?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
-}
-
-export type AssetCreateNestedOneWithoutConfigurationItemsInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutConfigurationItemsInput, Prisma.AssetUncheckedCreateWithoutConfigurationItemsInput>
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutConfigurationItemsInput
-  connect?: Prisma.AssetWhereUniqueInput
-}
-
-export type AssetUpdateOneWithoutConfigurationItemsNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutConfigurationItemsInput, Prisma.AssetUncheckedCreateWithoutConfigurationItemsInput>
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutConfigurationItemsInput
-  upsert?: Prisma.AssetUpsertWithoutConfigurationItemsInput
-  disconnect?: Prisma.AssetWhereInput | boolean
-  delete?: Prisma.AssetWhereInput | boolean
-  connect?: Prisma.AssetWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutConfigurationItemsInput, Prisma.AssetUpdateWithoutConfigurationItemsInput>, Prisma.AssetUncheckedUpdateWithoutConfigurationItemsInput>
-}
-
 export type AssetCreateNestedManyWithoutAssetCategoryInput = {
   create?: Prisma.XOR<Prisma.AssetCreateWithoutAssetCategoryInput, Prisma.AssetUncheckedCreateWithoutAssetCategoryInput> | Prisma.AssetCreateWithoutAssetCategoryInput[] | Prisma.AssetUncheckedCreateWithoutAssetCategoryInput[]
   connectOrCreate?: Prisma.AssetCreateOrConnectWithoutAssetCategoryInput | Prisma.AssetCreateOrConnectWithoutAssetCategoryInput[]
@@ -1096,6 +996,18 @@ export type AssetUpdateOneWithoutStockMovementsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutStockMovementsInput, Prisma.AssetUpdateWithoutStockMovementsInput>, Prisma.AssetUncheckedUpdateWithoutStockMovementsInput>
 }
 
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
+export type NullableDecimalFieldUpdateOperationsInput = {
+  set?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
+}
+
 export type AssetCreateNestedOneWithoutAssetAssignmentsInput = {
   create?: Prisma.XOR<Prisma.AssetCreateWithoutAssetAssignmentsInput, Prisma.AssetUncheckedCreateWithoutAssetAssignmentsInput>
   connectOrCreate?: Prisma.AssetCreateOrConnectWithoutAssetAssignmentsInput
@@ -1124,90 +1036,20 @@ export type AssetUpdateOneRequiredWithoutWarrantiesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutWarrantiesInput, Prisma.AssetUpdateWithoutWarrantiesInput>, Prisma.AssetUncheckedUpdateWithoutWarrantiesInput>
 }
 
-export type AssetCreateNestedOneWithoutMaintenanceSchedulesInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutMaintenanceSchedulesInput, Prisma.AssetUncheckedCreateWithoutMaintenanceSchedulesInput>
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutMaintenanceSchedulesInput
+export type AssetCreateNestedOneWithoutConfigurationItemsInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutConfigurationItemsInput, Prisma.AssetUncheckedCreateWithoutConfigurationItemsInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutConfigurationItemsInput
   connect?: Prisma.AssetWhereUniqueInput
 }
 
-export type AssetUpdateOneRequiredWithoutMaintenanceSchedulesNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutMaintenanceSchedulesInput, Prisma.AssetUncheckedCreateWithoutMaintenanceSchedulesInput>
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutMaintenanceSchedulesInput
-  upsert?: Prisma.AssetUpsertWithoutMaintenanceSchedulesInput
-  connect?: Prisma.AssetWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutMaintenanceSchedulesInput, Prisma.AssetUpdateWithoutMaintenanceSchedulesInput>, Prisma.AssetUncheckedUpdateWithoutMaintenanceSchedulesInput>
-}
-
-export type AssetCreateNestedOneWithoutMaintenanceRecordsInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutMaintenanceRecordsInput, Prisma.AssetUncheckedCreateWithoutMaintenanceRecordsInput>
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutMaintenanceRecordsInput
-  connect?: Prisma.AssetWhereUniqueInput
-}
-
-export type AssetUpdateOneRequiredWithoutMaintenanceRecordsNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutMaintenanceRecordsInput, Prisma.AssetUncheckedCreateWithoutMaintenanceRecordsInput>
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutMaintenanceRecordsInput
-  upsert?: Prisma.AssetUpsertWithoutMaintenanceRecordsInput
-  connect?: Prisma.AssetWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutMaintenanceRecordsInput, Prisma.AssetUpdateWithoutMaintenanceRecordsInput>, Prisma.AssetUncheckedUpdateWithoutMaintenanceRecordsInput>
-}
-
-export type AssetCreateNestedOneWithoutDisposalsInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutDisposalsInput, Prisma.AssetUncheckedCreateWithoutDisposalsInput>
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutDisposalsInput
-  connect?: Prisma.AssetWhereUniqueInput
-}
-
-export type AssetUpdateOneRequiredWithoutDisposalsNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutDisposalsInput, Prisma.AssetUncheckedCreateWithoutDisposalsInput>
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutDisposalsInput
-  upsert?: Prisma.AssetUpsertWithoutDisposalsInput
-  connect?: Prisma.AssetWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutDisposalsInput, Prisma.AssetUpdateWithoutDisposalsInput>, Prisma.AssetUncheckedUpdateWithoutDisposalsInput>
-}
-
-export type AssetCreateNestedOneWithoutKitCheckoutItemsInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutKitCheckoutItemsInput, Prisma.AssetUncheckedCreateWithoutKitCheckoutItemsInput>
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutKitCheckoutItemsInput
-  connect?: Prisma.AssetWhereUniqueInput
-}
-
-export type AssetUpdateOneRequiredWithoutKitCheckoutItemsNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutKitCheckoutItemsInput, Prisma.AssetUncheckedCreateWithoutKitCheckoutItemsInput>
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutKitCheckoutItemsInput
-  upsert?: Prisma.AssetUpsertWithoutKitCheckoutItemsInput
-  connect?: Prisma.AssetWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutKitCheckoutItemsInput, Prisma.AssetUpdateWithoutKitCheckoutItemsInput>, Prisma.AssetUncheckedUpdateWithoutKitCheckoutItemsInput>
-}
-
-export type AssetCreateNestedOneWithoutReservationsInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutReservationsInput, Prisma.AssetUncheckedCreateWithoutReservationsInput>
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutReservationsInput
-  connect?: Prisma.AssetWhereUniqueInput
-}
-
-export type AssetUpdateOneRequiredWithoutReservationsNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutReservationsInput, Prisma.AssetUncheckedCreateWithoutReservationsInput>
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutReservationsInput
-  upsert?: Prisma.AssetUpsertWithoutReservationsInput
-  connect?: Prisma.AssetWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutReservationsInput, Prisma.AssetUpdateWithoutReservationsInput>, Prisma.AssetUncheckedUpdateWithoutReservationsInput>
-}
-
-export type AssetCreateNestedOneWithoutServiceAssetsInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutServiceAssetsInput, Prisma.AssetUncheckedCreateWithoutServiceAssetsInput>
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutServiceAssetsInput
-  connect?: Prisma.AssetWhereUniqueInput
-}
-
-export type AssetUpdateOneWithoutServiceAssetsNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetCreateWithoutServiceAssetsInput, Prisma.AssetUncheckedCreateWithoutServiceAssetsInput>
-  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutServiceAssetsInput
-  upsert?: Prisma.AssetUpsertWithoutServiceAssetsInput
+export type AssetUpdateOneWithoutConfigurationItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutConfigurationItemsInput, Prisma.AssetUncheckedCreateWithoutConfigurationItemsInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutConfigurationItemsInput
+  upsert?: Prisma.AssetUpsertWithoutConfigurationItemsInput
   disconnect?: Prisma.AssetWhereInput | boolean
   delete?: Prisma.AssetWhereInput | boolean
   connect?: Prisma.AssetWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutServiceAssetsInput, Prisma.AssetUpdateWithoutServiceAssetsInput>, Prisma.AssetUncheckedUpdateWithoutServiceAssetsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutConfigurationItemsInput, Prisma.AssetUpdateWithoutConfigurationItemsInput>, Prisma.AssetUncheckedUpdateWithoutConfigurationItemsInput>
 }
 
 export type AssetCreateNestedManyWithoutContractInput = {
@@ -1252,6 +1094,104 @@ export type AssetUncheckedUpdateManyWithoutContractNestedInput = {
   deleteMany?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
 }
 
+export type AssetCreateNestedOneWithoutDisposalsInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutDisposalsInput, Prisma.AssetUncheckedCreateWithoutDisposalsInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutDisposalsInput
+  connect?: Prisma.AssetWhereUniqueInput
+}
+
+export type AssetUpdateOneRequiredWithoutDisposalsNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutDisposalsInput, Prisma.AssetUncheckedCreateWithoutDisposalsInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutDisposalsInput
+  upsert?: Prisma.AssetUpsertWithoutDisposalsInput
+  connect?: Prisma.AssetWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutDisposalsInput, Prisma.AssetUpdateWithoutDisposalsInput>, Prisma.AssetUncheckedUpdateWithoutDisposalsInput>
+}
+
+export type AssetCreateNestedManyWithoutVendorInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutVendorInput, Prisma.AssetUncheckedCreateWithoutVendorInput> | Prisma.AssetCreateWithoutVendorInput[] | Prisma.AssetUncheckedCreateWithoutVendorInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutVendorInput | Prisma.AssetCreateOrConnectWithoutVendorInput[]
+  createMany?: Prisma.AssetCreateManyVendorInputEnvelope
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+}
+
+export type AssetUncheckedCreateNestedManyWithoutVendorInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutVendorInput, Prisma.AssetUncheckedCreateWithoutVendorInput> | Prisma.AssetCreateWithoutVendorInput[] | Prisma.AssetUncheckedCreateWithoutVendorInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutVendorInput | Prisma.AssetCreateOrConnectWithoutVendorInput[]
+  createMany?: Prisma.AssetCreateManyVendorInputEnvelope
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+}
+
+export type AssetUpdateManyWithoutVendorNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutVendorInput, Prisma.AssetUncheckedCreateWithoutVendorInput> | Prisma.AssetCreateWithoutVendorInput[] | Prisma.AssetUncheckedCreateWithoutVendorInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutVendorInput | Prisma.AssetCreateOrConnectWithoutVendorInput[]
+  upsert?: Prisma.AssetUpsertWithWhereUniqueWithoutVendorInput | Prisma.AssetUpsertWithWhereUniqueWithoutVendorInput[]
+  createMany?: Prisma.AssetCreateManyVendorInputEnvelope
+  set?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  disconnect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  delete?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  update?: Prisma.AssetUpdateWithWhereUniqueWithoutVendorInput | Prisma.AssetUpdateWithWhereUniqueWithoutVendorInput[]
+  updateMany?: Prisma.AssetUpdateManyWithWhereWithoutVendorInput | Prisma.AssetUpdateManyWithWhereWithoutVendorInput[]
+  deleteMany?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
+}
+
+export type AssetUncheckedUpdateManyWithoutVendorNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutVendorInput, Prisma.AssetUncheckedCreateWithoutVendorInput> | Prisma.AssetCreateWithoutVendorInput[] | Prisma.AssetUncheckedCreateWithoutVendorInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutVendorInput | Prisma.AssetCreateOrConnectWithoutVendorInput[]
+  upsert?: Prisma.AssetUpsertWithWhereUniqueWithoutVendorInput | Prisma.AssetUpsertWithWhereUniqueWithoutVendorInput[]
+  createMany?: Prisma.AssetCreateManyVendorInputEnvelope
+  set?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  disconnect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  delete?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  update?: Prisma.AssetUpdateWithWhereUniqueWithoutVendorInput | Prisma.AssetUpdateWithWhereUniqueWithoutVendorInput[]
+  updateMany?: Prisma.AssetUpdateManyWithWhereWithoutVendorInput | Prisma.AssetUpdateManyWithWhereWithoutVendorInput[]
+  deleteMany?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
+}
+
+export type AssetCreateNestedManyWithoutLifecycleStateInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutLifecycleStateInput, Prisma.AssetUncheckedCreateWithoutLifecycleStateInput> | Prisma.AssetCreateWithoutLifecycleStateInput[] | Prisma.AssetUncheckedCreateWithoutLifecycleStateInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutLifecycleStateInput | Prisma.AssetCreateOrConnectWithoutLifecycleStateInput[]
+  createMany?: Prisma.AssetCreateManyLifecycleStateInputEnvelope
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+}
+
+export type AssetUncheckedCreateNestedManyWithoutLifecycleStateInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutLifecycleStateInput, Prisma.AssetUncheckedCreateWithoutLifecycleStateInput> | Prisma.AssetCreateWithoutLifecycleStateInput[] | Prisma.AssetUncheckedCreateWithoutLifecycleStateInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutLifecycleStateInput | Prisma.AssetCreateOrConnectWithoutLifecycleStateInput[]
+  createMany?: Prisma.AssetCreateManyLifecycleStateInputEnvelope
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+}
+
+export type AssetUpdateManyWithoutLifecycleStateNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutLifecycleStateInput, Prisma.AssetUncheckedCreateWithoutLifecycleStateInput> | Prisma.AssetCreateWithoutLifecycleStateInput[] | Prisma.AssetUncheckedCreateWithoutLifecycleStateInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutLifecycleStateInput | Prisma.AssetCreateOrConnectWithoutLifecycleStateInput[]
+  upsert?: Prisma.AssetUpsertWithWhereUniqueWithoutLifecycleStateInput | Prisma.AssetUpsertWithWhereUniqueWithoutLifecycleStateInput[]
+  createMany?: Prisma.AssetCreateManyLifecycleStateInputEnvelope
+  set?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  disconnect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  delete?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  update?: Prisma.AssetUpdateWithWhereUniqueWithoutLifecycleStateInput | Prisma.AssetUpdateWithWhereUniqueWithoutLifecycleStateInput[]
+  updateMany?: Prisma.AssetUpdateManyWithWhereWithoutLifecycleStateInput | Prisma.AssetUpdateManyWithWhereWithoutLifecycleStateInput[]
+  deleteMany?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
+}
+
+export type AssetUncheckedUpdateManyWithoutLifecycleStateNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutLifecycleStateInput, Prisma.AssetUncheckedCreateWithoutLifecycleStateInput> | Prisma.AssetCreateWithoutLifecycleStateInput[] | Prisma.AssetUncheckedCreateWithoutLifecycleStateInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutLifecycleStateInput | Prisma.AssetCreateOrConnectWithoutLifecycleStateInput[]
+  upsert?: Prisma.AssetUpsertWithWhereUniqueWithoutLifecycleStateInput | Prisma.AssetUpsertWithWhereUniqueWithoutLifecycleStateInput[]
+  createMany?: Prisma.AssetCreateManyLifecycleStateInputEnvelope
+  set?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  disconnect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  delete?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  update?: Prisma.AssetUpdateWithWhereUniqueWithoutLifecycleStateInput | Prisma.AssetUpdateWithWhereUniqueWithoutLifecycleStateInput[]
+  updateMany?: Prisma.AssetUpdateManyWithWhereWithoutLifecycleStateInput | Prisma.AssetUpdateManyWithWhereWithoutLifecycleStateInput[]
+  deleteMany?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
+}
+
 export type AssetCreateNestedOneWithoutIntuneDeviceInput = {
   create?: Prisma.XOR<Prisma.AssetCreateWithoutIntuneDeviceInput, Prisma.AssetUncheckedCreateWithoutIntuneDeviceInput>
   connectOrCreate?: Prisma.AssetCreateOrConnectWithoutIntuneDeviceInput
@@ -1268,389 +1208,76 @@ export type AssetUpdateOneWithoutIntuneDeviceNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutIntuneDeviceInput, Prisma.AssetUpdateWithoutIntuneDeviceInput>, Prisma.AssetUncheckedUpdateWithoutIntuneDeviceInput>
 }
 
-export type AssetCreateWithoutVendorInput = {
-  id?: string
-  assetTag: string
-  serialNumber?: string | null
-  purchaseDate?: Date | string | null
-  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  depreciationModel?: string | null
-  depreciationStart?: Date | string | null
-  depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: string | null
-  deletedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
-  assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
-  contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
-  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutAssetsInput
-  currentStockLocation?: Prisma.StockLocationCreateNestedOneWithoutAssetsInput
-  warranties?: Prisma.WarrantyCreateNestedManyWithoutAssetInput
-  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLinkedAssetInput
-  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutAssetInput
-  assetAssignments?: Prisma.AssetAssignmentCreateNestedManyWithoutAssetInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
-  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
-  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
-  reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
-  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
-  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+export type AssetCreateNestedOneWithoutKitCheckoutItemsInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutKitCheckoutItemsInput, Prisma.AssetUncheckedCreateWithoutKitCheckoutItemsInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutKitCheckoutItemsInput
+  connect?: Prisma.AssetWhereUniqueInput
 }
 
-export type AssetUncheckedCreateWithoutVendorInput = {
-  id?: string
-  assetTag: string
-  assetCategoryId: string
-  assetModelId?: string | null
-  contractId?: string | null
-  lifecycleStateId?: string | null
-  serialNumber?: string | null
-  purchaseDate?: Date | string | null
-  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  depreciationModel?: string | null
-  depreciationStart?: Date | string | null
-  depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
-  currentStockLocationId?: string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: string | null
-  deletedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
-  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
-  assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
-  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
-  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
-  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
-  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
+export type AssetUpdateOneRequiredWithoutKitCheckoutItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutKitCheckoutItemsInput, Prisma.AssetUncheckedCreateWithoutKitCheckoutItemsInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutKitCheckoutItemsInput
+  upsert?: Prisma.AssetUpsertWithoutKitCheckoutItemsInput
+  connect?: Prisma.AssetWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutKitCheckoutItemsInput, Prisma.AssetUpdateWithoutKitCheckoutItemsInput>, Prisma.AssetUncheckedUpdateWithoutKitCheckoutItemsInput>
 }
 
-export type AssetCreateOrConnectWithoutVendorInput = {
-  where: Prisma.AssetWhereUniqueInput
-  create: Prisma.XOR<Prisma.AssetCreateWithoutVendorInput, Prisma.AssetUncheckedCreateWithoutVendorInput>
+export type AssetCreateNestedOneWithoutMaintenanceSchedulesInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutMaintenanceSchedulesInput, Prisma.AssetUncheckedCreateWithoutMaintenanceSchedulesInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutMaintenanceSchedulesInput
+  connect?: Prisma.AssetWhereUniqueInput
 }
 
-export type AssetCreateManyVendorInputEnvelope = {
-  data: Prisma.AssetCreateManyVendorInput | Prisma.AssetCreateManyVendorInput[]
-  skipDuplicates?: boolean
+export type AssetUpdateOneRequiredWithoutMaintenanceSchedulesNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutMaintenanceSchedulesInput, Prisma.AssetUncheckedCreateWithoutMaintenanceSchedulesInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutMaintenanceSchedulesInput
+  upsert?: Prisma.AssetUpsertWithoutMaintenanceSchedulesInput
+  connect?: Prisma.AssetWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutMaintenanceSchedulesInput, Prisma.AssetUpdateWithoutMaintenanceSchedulesInput>, Prisma.AssetUncheckedUpdateWithoutMaintenanceSchedulesInput>
 }
 
-export type AssetUpsertWithWhereUniqueWithoutVendorInput = {
-  where: Prisma.AssetWhereUniqueInput
-  update: Prisma.XOR<Prisma.AssetUpdateWithoutVendorInput, Prisma.AssetUncheckedUpdateWithoutVendorInput>
-  create: Prisma.XOR<Prisma.AssetCreateWithoutVendorInput, Prisma.AssetUncheckedCreateWithoutVendorInput>
+export type AssetCreateNestedOneWithoutMaintenanceRecordsInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutMaintenanceRecordsInput, Prisma.AssetUncheckedCreateWithoutMaintenanceRecordsInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutMaintenanceRecordsInput
+  connect?: Prisma.AssetWhereUniqueInput
 }
 
-export type AssetUpdateWithWhereUniqueWithoutVendorInput = {
-  where: Prisma.AssetWhereUniqueInput
-  data: Prisma.XOR<Prisma.AssetUpdateWithoutVendorInput, Prisma.AssetUncheckedUpdateWithoutVendorInput>
+export type AssetUpdateOneRequiredWithoutMaintenanceRecordsNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutMaintenanceRecordsInput, Prisma.AssetUncheckedCreateWithoutMaintenanceRecordsInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutMaintenanceRecordsInput
+  upsert?: Prisma.AssetUpsertWithoutMaintenanceRecordsInput
+  connect?: Prisma.AssetWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutMaintenanceRecordsInput, Prisma.AssetUpdateWithoutMaintenanceRecordsInput>, Prisma.AssetUncheckedUpdateWithoutMaintenanceRecordsInput>
 }
 
-export type AssetUpdateManyWithWhereWithoutVendorInput = {
-  where: Prisma.AssetScalarWhereInput
-  data: Prisma.XOR<Prisma.AssetUpdateManyMutationInput, Prisma.AssetUncheckedUpdateManyWithoutVendorInput>
+export type AssetCreateNestedOneWithoutReservationsInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutReservationsInput, Prisma.AssetUncheckedCreateWithoutReservationsInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutReservationsInput
+  connect?: Prisma.AssetWhereUniqueInput
 }
 
-export type AssetScalarWhereInput = {
-  AND?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
-  OR?: Prisma.AssetScalarWhereInput[]
-  NOT?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
-  id?: Prisma.StringFilter<"Asset"> | string
-  assetTag?: Prisma.StringFilter<"Asset"> | string
-  assetCategoryId?: Prisma.StringFilter<"Asset"> | string
-  assetModelId?: Prisma.StringNullableFilter<"Asset"> | string | null
-  vendorId?: Prisma.StringNullableFilter<"Asset"> | string | null
-  contractId?: Prisma.StringNullableFilter<"Asset"> | string | null
-  lifecycleStateId?: Prisma.StringNullableFilter<"Asset"> | string | null
-  serialNumber?: Prisma.StringNullableFilter<"Asset"> | string | null
-  purchaseDate?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
-  purchaseCost?: Prisma.DecimalNullableFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: Prisma.DecimalNullableFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.StringNullableFilter<"Asset"> | string | null
-  depreciationModel?: Prisma.StringNullableFilter<"Asset"> | string | null
-  depreciationStart?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
-  depreciationEnd?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
-  warrantyEndDate?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
-  condition?: Prisma.StringNullableFilter<"Asset"> | string | null
-  currentStockLocationId?: Prisma.StringNullableFilter<"Asset"> | string | null
-  attributes?: Prisma.JsonNullableFilter<"Asset">
-  note?: Prisma.StringNullableFilter<"Asset"> | string | null
-  deletedAt?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
-  createdAt?: Prisma.DateTimeFilter<"Asset"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Asset"> | Date | string
+export type AssetUpdateOneRequiredWithoutReservationsNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutReservationsInput, Prisma.AssetUncheckedCreateWithoutReservationsInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutReservationsInput
+  upsert?: Prisma.AssetUpsertWithoutReservationsInput
+  connect?: Prisma.AssetWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutReservationsInput, Prisma.AssetUpdateWithoutReservationsInput>, Prisma.AssetUncheckedUpdateWithoutReservationsInput>
 }
 
-export type AssetCreateWithoutLifecycleStateInput = {
-  id?: string
-  assetTag: string
-  serialNumber?: string | null
-  purchaseDate?: Date | string | null
-  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  depreciationModel?: string | null
-  depreciationStart?: Date | string | null
-  depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: string | null
-  deletedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
-  assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
-  vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
-  contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
-  currentStockLocation?: Prisma.StockLocationCreateNestedOneWithoutAssetsInput
-  warranties?: Prisma.WarrantyCreateNestedManyWithoutAssetInput
-  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLinkedAssetInput
-  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutAssetInput
-  assetAssignments?: Prisma.AssetAssignmentCreateNestedManyWithoutAssetInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
-  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
-  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
-  reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
-  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
-  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+export type AssetCreateNestedOneWithoutServiceAssetsInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutServiceAssetsInput, Prisma.AssetUncheckedCreateWithoutServiceAssetsInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutServiceAssetsInput
+  connect?: Prisma.AssetWhereUniqueInput
 }
 
-export type AssetUncheckedCreateWithoutLifecycleStateInput = {
-  id?: string
-  assetTag: string
-  assetCategoryId: string
-  assetModelId?: string | null
-  vendorId?: string | null
-  contractId?: string | null
-  serialNumber?: string | null
-  purchaseDate?: Date | string | null
-  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  depreciationModel?: string | null
-  depreciationStart?: Date | string | null
-  depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
-  currentStockLocationId?: string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: string | null
-  deletedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
-  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
-  assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
-  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
-  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
-  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
-  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
-}
-
-export type AssetCreateOrConnectWithoutLifecycleStateInput = {
-  where: Prisma.AssetWhereUniqueInput
-  create: Prisma.XOR<Prisma.AssetCreateWithoutLifecycleStateInput, Prisma.AssetUncheckedCreateWithoutLifecycleStateInput>
-}
-
-export type AssetCreateManyLifecycleStateInputEnvelope = {
-  data: Prisma.AssetCreateManyLifecycleStateInput | Prisma.AssetCreateManyLifecycleStateInput[]
-  skipDuplicates?: boolean
-}
-
-export type AssetUpsertWithWhereUniqueWithoutLifecycleStateInput = {
-  where: Prisma.AssetWhereUniqueInput
-  update: Prisma.XOR<Prisma.AssetUpdateWithoutLifecycleStateInput, Prisma.AssetUncheckedUpdateWithoutLifecycleStateInput>
-  create: Prisma.XOR<Prisma.AssetCreateWithoutLifecycleStateInput, Prisma.AssetUncheckedCreateWithoutLifecycleStateInput>
-}
-
-export type AssetUpdateWithWhereUniqueWithoutLifecycleStateInput = {
-  where: Prisma.AssetWhereUniqueInput
-  data: Prisma.XOR<Prisma.AssetUpdateWithoutLifecycleStateInput, Prisma.AssetUncheckedUpdateWithoutLifecycleStateInput>
-}
-
-export type AssetUpdateManyWithWhereWithoutLifecycleStateInput = {
-  where: Prisma.AssetScalarWhereInput
-  data: Prisma.XOR<Prisma.AssetUpdateManyMutationInput, Prisma.AssetUncheckedUpdateManyWithoutLifecycleStateInput>
-}
-
-export type AssetCreateWithoutConfigurationItemsInput = {
-  id?: string
-  assetTag: string
-  serialNumber?: string | null
-  purchaseDate?: Date | string | null
-  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  depreciationModel?: string | null
-  depreciationStart?: Date | string | null
-  depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: string | null
-  deletedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
-  assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
-  vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
-  contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
-  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutAssetsInput
-  currentStockLocation?: Prisma.StockLocationCreateNestedOneWithoutAssetsInput
-  warranties?: Prisma.WarrantyCreateNestedManyWithoutAssetInput
-  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutAssetInput
-  assetAssignments?: Prisma.AssetAssignmentCreateNestedManyWithoutAssetInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
-  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
-  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
-  reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
-  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
-  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
-}
-
-export type AssetUncheckedCreateWithoutConfigurationItemsInput = {
-  id?: string
-  assetTag: string
-  assetCategoryId: string
-  assetModelId?: string | null
-  vendorId?: string | null
-  contractId?: string | null
-  lifecycleStateId?: string | null
-  serialNumber?: string | null
-  purchaseDate?: Date | string | null
-  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  depreciationModel?: string | null
-  depreciationStart?: Date | string | null
-  depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
-  currentStockLocationId?: string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: string | null
-  deletedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
-  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
-  assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
-  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
-  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
-  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
-  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
-}
-
-export type AssetCreateOrConnectWithoutConfigurationItemsInput = {
-  where: Prisma.AssetWhereUniqueInput
-  create: Prisma.XOR<Prisma.AssetCreateWithoutConfigurationItemsInput, Prisma.AssetUncheckedCreateWithoutConfigurationItemsInput>
-}
-
-export type AssetUpsertWithoutConfigurationItemsInput = {
-  update: Prisma.XOR<Prisma.AssetUpdateWithoutConfigurationItemsInput, Prisma.AssetUncheckedUpdateWithoutConfigurationItemsInput>
-  create: Prisma.XOR<Prisma.AssetCreateWithoutConfigurationItemsInput, Prisma.AssetUncheckedCreateWithoutConfigurationItemsInput>
-  where?: Prisma.AssetWhereInput
-}
-
-export type AssetUpdateToOneWithWhereWithoutConfigurationItemsInput = {
-  where?: Prisma.AssetWhereInput
-  data: Prisma.XOR<Prisma.AssetUpdateWithoutConfigurationItemsInput, Prisma.AssetUncheckedUpdateWithoutConfigurationItemsInput>
-}
-
-export type AssetUpdateWithoutConfigurationItemsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
-  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
-  assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
-  vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
-  contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
-  lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutAssetsNestedInput
-  currentStockLocation?: Prisma.StockLocationUpdateOneWithoutAssetsNestedInput
-  warranties?: Prisma.WarrantyUpdateManyWithoutAssetNestedInput
-  stockMovements?: Prisma.StockMovementUpdateManyWithoutAssetNestedInput
-  assetAssignments?: Prisma.AssetAssignmentUpdateManyWithoutAssetNestedInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssetNestedInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
-  disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
-  reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
-  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
-  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
-}
-
-export type AssetUncheckedUpdateWithoutConfigurationItemsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
-  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
-  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
-  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
-  assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
-  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
-  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
-  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
-  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
+export type AssetUpdateOneWithoutServiceAssetsNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutServiceAssetsInput, Prisma.AssetUncheckedCreateWithoutServiceAssetsInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutServiceAssetsInput
+  upsert?: Prisma.AssetUpsertWithoutServiceAssetsInput
+  disconnect?: Prisma.AssetWhereInput | boolean
+  delete?: Prisma.AssetWhereInput | boolean
+  connect?: Prisma.AssetWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutServiceAssetsInput, Prisma.AssetUpdateWithoutServiceAssetsInput>, Prisma.AssetUncheckedUpdateWithoutServiceAssetsInput>
 }
 
 export type AssetCreateWithoutAssetCategoryInput = {
@@ -1749,6 +1376,35 @@ export type AssetUpdateWithWhereUniqueWithoutAssetCategoryInput = {
 export type AssetUpdateManyWithWhereWithoutAssetCategoryInput = {
   where: Prisma.AssetScalarWhereInput
   data: Prisma.XOR<Prisma.AssetUpdateManyMutationInput, Prisma.AssetUncheckedUpdateManyWithoutAssetCategoryInput>
+}
+
+export type AssetScalarWhereInput = {
+  AND?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
+  OR?: Prisma.AssetScalarWhereInput[]
+  NOT?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
+  id?: Prisma.StringFilter<"Asset"> | string
+  assetTag?: Prisma.StringFilter<"Asset"> | string
+  assetCategoryId?: Prisma.StringFilter<"Asset"> | string
+  assetModelId?: Prisma.StringNullableFilter<"Asset"> | string | null
+  vendorId?: Prisma.StringNullableFilter<"Asset"> | string | null
+  contractId?: Prisma.StringNullableFilter<"Asset"> | string | null
+  lifecycleStateId?: Prisma.StringNullableFilter<"Asset"> | string | null
+  serialNumber?: Prisma.StringNullableFilter<"Asset"> | string | null
+  purchaseDate?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
+  purchaseCost?: Prisma.DecimalNullableFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.DecimalNullableFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.StringNullableFilter<"Asset"> | string | null
+  depreciationModel?: Prisma.StringNullableFilter<"Asset"> | string | null
+  depreciationStart?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
+  depreciationEnd?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
+  warrantyEndDate?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
+  condition?: Prisma.StringNullableFilter<"Asset"> | string | null
+  currentStockLocationId?: Prisma.StringNullableFilter<"Asset"> | string | null
+  attributes?: Prisma.JsonNullableFilter<"Asset">
+  note?: Prisma.StringNullableFilter<"Asset"> | string | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
+  createdAt?: Prisma.DateTimeFilter<"Asset"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Asset"> | Date | string
 }
 
 export type AssetCreateWithoutAssetModelInput = {
@@ -2427,6 +2083,940 @@ export type AssetUncheckedUpdateWithoutWarrantiesInput = {
   intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
 
+export type AssetCreateWithoutConfigurationItemsInput = {
+  id?: string
+  assetTag: string
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
+  assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
+  vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
+  contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
+  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutAssetsInput
+  currentStockLocation?: Prisma.StockLocationCreateNestedOneWithoutAssetsInput
+  warranties?: Prisma.WarrantyCreateNestedManyWithoutAssetInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+}
+
+export type AssetUncheckedCreateWithoutConfigurationItemsInput = {
+  id?: string
+  assetTag: string
+  assetCategoryId: string
+  assetModelId?: string | null
+  vendorId?: string | null
+  contractId?: string | null
+  lifecycleStateId?: string | null
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  currentStockLocationId?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
+}
+
+export type AssetCreateOrConnectWithoutConfigurationItemsInput = {
+  where: Prisma.AssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCreateWithoutConfigurationItemsInput, Prisma.AssetUncheckedCreateWithoutConfigurationItemsInput>
+}
+
+export type AssetUpsertWithoutConfigurationItemsInput = {
+  update: Prisma.XOR<Prisma.AssetUpdateWithoutConfigurationItemsInput, Prisma.AssetUncheckedUpdateWithoutConfigurationItemsInput>
+  create: Prisma.XOR<Prisma.AssetCreateWithoutConfigurationItemsInput, Prisma.AssetUncheckedCreateWithoutConfigurationItemsInput>
+  where?: Prisma.AssetWhereInput
+}
+
+export type AssetUpdateToOneWithWhereWithoutConfigurationItemsInput = {
+  where?: Prisma.AssetWhereInput
+  data: Prisma.XOR<Prisma.AssetUpdateWithoutConfigurationItemsInput, Prisma.AssetUncheckedUpdateWithoutConfigurationItemsInput>
+}
+
+export type AssetUpdateWithoutConfigurationItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
+  assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
+  vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
+  contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
+  lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutAssetsNestedInput
+  currentStockLocation?: Prisma.StockLocationUpdateOneWithoutAssetsNestedInput
+  warranties?: Prisma.WarrantyUpdateManyWithoutAssetNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+}
+
+export type AssetUncheckedUpdateWithoutConfigurationItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
+}
+
+export type AssetCreateWithoutContractInput = {
+  id?: string
+  assetTag: string
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
+  assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
+  vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
+  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutAssetsInput
+  currentStockLocation?: Prisma.StockLocationCreateNestedOneWithoutAssetsInput
+  warranties?: Prisma.WarrantyCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+}
+
+export type AssetUncheckedCreateWithoutContractInput = {
+  id?: string
+  assetTag: string
+  assetCategoryId: string
+  assetModelId?: string | null
+  vendorId?: string | null
+  lifecycleStateId?: string | null
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  currentStockLocationId?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
+}
+
+export type AssetCreateOrConnectWithoutContractInput = {
+  where: Prisma.AssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCreateWithoutContractInput, Prisma.AssetUncheckedCreateWithoutContractInput>
+}
+
+export type AssetCreateManyContractInputEnvelope = {
+  data: Prisma.AssetCreateManyContractInput | Prisma.AssetCreateManyContractInput[]
+  skipDuplicates?: boolean
+}
+
+export type AssetUpsertWithWhereUniqueWithoutContractInput = {
+  where: Prisma.AssetWhereUniqueInput
+  update: Prisma.XOR<Prisma.AssetUpdateWithoutContractInput, Prisma.AssetUncheckedUpdateWithoutContractInput>
+  create: Prisma.XOR<Prisma.AssetCreateWithoutContractInput, Prisma.AssetUncheckedCreateWithoutContractInput>
+}
+
+export type AssetUpdateWithWhereUniqueWithoutContractInput = {
+  where: Prisma.AssetWhereUniqueInput
+  data: Prisma.XOR<Prisma.AssetUpdateWithoutContractInput, Prisma.AssetUncheckedUpdateWithoutContractInput>
+}
+
+export type AssetUpdateManyWithWhereWithoutContractInput = {
+  where: Prisma.AssetScalarWhereInput
+  data: Prisma.XOR<Prisma.AssetUpdateManyMutationInput, Prisma.AssetUncheckedUpdateManyWithoutContractInput>
+}
+
+export type AssetCreateWithoutDisposalsInput = {
+  id?: string
+  assetTag: string
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
+  assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
+  vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
+  contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
+  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutAssetsInput
+  currentStockLocation?: Prisma.StockLocationCreateNestedOneWithoutAssetsInput
+  warranties?: Prisma.WarrantyCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+}
+
+export type AssetUncheckedCreateWithoutDisposalsInput = {
+  id?: string
+  assetTag: string
+  assetCategoryId: string
+  assetModelId?: string | null
+  vendorId?: string | null
+  contractId?: string | null
+  lifecycleStateId?: string | null
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  currentStockLocationId?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
+}
+
+export type AssetCreateOrConnectWithoutDisposalsInput = {
+  where: Prisma.AssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCreateWithoutDisposalsInput, Prisma.AssetUncheckedCreateWithoutDisposalsInput>
+}
+
+export type AssetUpsertWithoutDisposalsInput = {
+  update: Prisma.XOR<Prisma.AssetUpdateWithoutDisposalsInput, Prisma.AssetUncheckedUpdateWithoutDisposalsInput>
+  create: Prisma.XOR<Prisma.AssetCreateWithoutDisposalsInput, Prisma.AssetUncheckedCreateWithoutDisposalsInput>
+  where?: Prisma.AssetWhereInput
+}
+
+export type AssetUpdateToOneWithWhereWithoutDisposalsInput = {
+  where?: Prisma.AssetWhereInput
+  data: Prisma.XOR<Prisma.AssetUpdateWithoutDisposalsInput, Prisma.AssetUncheckedUpdateWithoutDisposalsInput>
+}
+
+export type AssetUpdateWithoutDisposalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
+  assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
+  vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
+  contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
+  lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutAssetsNestedInput
+  currentStockLocation?: Prisma.StockLocationUpdateOneWithoutAssetsNestedInput
+  warranties?: Prisma.WarrantyUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+}
+
+export type AssetUncheckedUpdateWithoutDisposalsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
+}
+
+export type AssetCreateWithoutVendorInput = {
+  id?: string
+  assetTag: string
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
+  assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
+  contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
+  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutAssetsInput
+  currentStockLocation?: Prisma.StockLocationCreateNestedOneWithoutAssetsInput
+  warranties?: Prisma.WarrantyCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+}
+
+export type AssetUncheckedCreateWithoutVendorInput = {
+  id?: string
+  assetTag: string
+  assetCategoryId: string
+  assetModelId?: string | null
+  contractId?: string | null
+  lifecycleStateId?: string | null
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  currentStockLocationId?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
+}
+
+export type AssetCreateOrConnectWithoutVendorInput = {
+  where: Prisma.AssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCreateWithoutVendorInput, Prisma.AssetUncheckedCreateWithoutVendorInput>
+}
+
+export type AssetCreateManyVendorInputEnvelope = {
+  data: Prisma.AssetCreateManyVendorInput | Prisma.AssetCreateManyVendorInput[]
+  skipDuplicates?: boolean
+}
+
+export type AssetUpsertWithWhereUniqueWithoutVendorInput = {
+  where: Prisma.AssetWhereUniqueInput
+  update: Prisma.XOR<Prisma.AssetUpdateWithoutVendorInput, Prisma.AssetUncheckedUpdateWithoutVendorInput>
+  create: Prisma.XOR<Prisma.AssetCreateWithoutVendorInput, Prisma.AssetUncheckedCreateWithoutVendorInput>
+}
+
+export type AssetUpdateWithWhereUniqueWithoutVendorInput = {
+  where: Prisma.AssetWhereUniqueInput
+  data: Prisma.XOR<Prisma.AssetUpdateWithoutVendorInput, Prisma.AssetUncheckedUpdateWithoutVendorInput>
+}
+
+export type AssetUpdateManyWithWhereWithoutVendorInput = {
+  where: Prisma.AssetScalarWhereInput
+  data: Prisma.XOR<Prisma.AssetUpdateManyMutationInput, Prisma.AssetUncheckedUpdateManyWithoutVendorInput>
+}
+
+export type AssetCreateWithoutLifecycleStateInput = {
+  id?: string
+  assetTag: string
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
+  assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
+  vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
+  contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
+  currentStockLocation?: Prisma.StockLocationCreateNestedOneWithoutAssetsInput
+  warranties?: Prisma.WarrantyCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+}
+
+export type AssetUncheckedCreateWithoutLifecycleStateInput = {
+  id?: string
+  assetTag: string
+  assetCategoryId: string
+  assetModelId?: string | null
+  vendorId?: string | null
+  contractId?: string | null
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  currentStockLocationId?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
+}
+
+export type AssetCreateOrConnectWithoutLifecycleStateInput = {
+  where: Prisma.AssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCreateWithoutLifecycleStateInput, Prisma.AssetUncheckedCreateWithoutLifecycleStateInput>
+}
+
+export type AssetCreateManyLifecycleStateInputEnvelope = {
+  data: Prisma.AssetCreateManyLifecycleStateInput | Prisma.AssetCreateManyLifecycleStateInput[]
+  skipDuplicates?: boolean
+}
+
+export type AssetUpsertWithWhereUniqueWithoutLifecycleStateInput = {
+  where: Prisma.AssetWhereUniqueInput
+  update: Prisma.XOR<Prisma.AssetUpdateWithoutLifecycleStateInput, Prisma.AssetUncheckedUpdateWithoutLifecycleStateInput>
+  create: Prisma.XOR<Prisma.AssetCreateWithoutLifecycleStateInput, Prisma.AssetUncheckedCreateWithoutLifecycleStateInput>
+}
+
+export type AssetUpdateWithWhereUniqueWithoutLifecycleStateInput = {
+  where: Prisma.AssetWhereUniqueInput
+  data: Prisma.XOR<Prisma.AssetUpdateWithoutLifecycleStateInput, Prisma.AssetUncheckedUpdateWithoutLifecycleStateInput>
+}
+
+export type AssetUpdateManyWithWhereWithoutLifecycleStateInput = {
+  where: Prisma.AssetScalarWhereInput
+  data: Prisma.XOR<Prisma.AssetUpdateManyMutationInput, Prisma.AssetUncheckedUpdateManyWithoutLifecycleStateInput>
+}
+
+export type AssetCreateWithoutIntuneDeviceInput = {
+  id?: string
+  assetTag: string
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
+  assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
+  vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
+  contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
+  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutAssetsInput
+  currentStockLocation?: Prisma.StockLocationCreateNestedOneWithoutAssetsInput
+  warranties?: Prisma.WarrantyCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+}
+
+export type AssetUncheckedCreateWithoutIntuneDeviceInput = {
+  id?: string
+  assetTag: string
+  assetCategoryId: string
+  assetModelId?: string | null
+  vendorId?: string | null
+  contractId?: string | null
+  lifecycleStateId?: string | null
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  currentStockLocationId?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+}
+
+export type AssetCreateOrConnectWithoutIntuneDeviceInput = {
+  where: Prisma.AssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCreateWithoutIntuneDeviceInput, Prisma.AssetUncheckedCreateWithoutIntuneDeviceInput>
+}
+
+export type AssetUpsertWithoutIntuneDeviceInput = {
+  update: Prisma.XOR<Prisma.AssetUpdateWithoutIntuneDeviceInput, Prisma.AssetUncheckedUpdateWithoutIntuneDeviceInput>
+  create: Prisma.XOR<Prisma.AssetCreateWithoutIntuneDeviceInput, Prisma.AssetUncheckedCreateWithoutIntuneDeviceInput>
+  where?: Prisma.AssetWhereInput
+}
+
+export type AssetUpdateToOneWithWhereWithoutIntuneDeviceInput = {
+  where?: Prisma.AssetWhereInput
+  data: Prisma.XOR<Prisma.AssetUpdateWithoutIntuneDeviceInput, Prisma.AssetUncheckedUpdateWithoutIntuneDeviceInput>
+}
+
+export type AssetUpdateWithoutIntuneDeviceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
+  assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
+  vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
+  contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
+  lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutAssetsNestedInput
+  currentStockLocation?: Prisma.StockLocationUpdateOneWithoutAssetsNestedInput
+  warranties?: Prisma.WarrantyUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+}
+
+export type AssetUncheckedUpdateWithoutIntuneDeviceInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+}
+
+export type AssetCreateWithoutKitCheckoutItemsInput = {
+  id?: string
+  assetTag: string
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
+  assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
+  vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
+  contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
+  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutAssetsInput
+  currentStockLocation?: Prisma.StockLocationCreateNestedOneWithoutAssetsInput
+  warranties?: Prisma.WarrantyCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+}
+
+export type AssetUncheckedCreateWithoutKitCheckoutItemsInput = {
+  id?: string
+  assetTag: string
+  assetCategoryId: string
+  assetModelId?: string | null
+  vendorId?: string | null
+  contractId?: string | null
+  lifecycleStateId?: string | null
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  currentStockLocationId?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
+}
+
+export type AssetCreateOrConnectWithoutKitCheckoutItemsInput = {
+  where: Prisma.AssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCreateWithoutKitCheckoutItemsInput, Prisma.AssetUncheckedCreateWithoutKitCheckoutItemsInput>
+}
+
+export type AssetUpsertWithoutKitCheckoutItemsInput = {
+  update: Prisma.XOR<Prisma.AssetUpdateWithoutKitCheckoutItemsInput, Prisma.AssetUncheckedUpdateWithoutKitCheckoutItemsInput>
+  create: Prisma.XOR<Prisma.AssetCreateWithoutKitCheckoutItemsInput, Prisma.AssetUncheckedCreateWithoutKitCheckoutItemsInput>
+  where?: Prisma.AssetWhereInput
+}
+
+export type AssetUpdateToOneWithWhereWithoutKitCheckoutItemsInput = {
+  where?: Prisma.AssetWhereInput
+  data: Prisma.XOR<Prisma.AssetUpdateWithoutKitCheckoutItemsInput, Prisma.AssetUncheckedUpdateWithoutKitCheckoutItemsInput>
+}
+
+export type AssetUpdateWithoutKitCheckoutItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
+  assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
+  vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
+  contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
+  lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutAssetsNestedInput
+  currentStockLocation?: Prisma.StockLocationUpdateOneWithoutAssetsNestedInput
+  warranties?: Prisma.WarrantyUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+}
+
+export type AssetUncheckedUpdateWithoutKitCheckoutItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
+}
+
 export type AssetCreateWithoutMaintenanceSchedulesInput = {
   id?: string
   assetTag: string
@@ -2743,326 +3333,6 @@ export type AssetUncheckedUpdateWithoutMaintenanceRecordsInput = {
   disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
-  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
-  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
-}
-
-export type AssetCreateWithoutDisposalsInput = {
-  id?: string
-  assetTag: string
-  serialNumber?: string | null
-  purchaseDate?: Date | string | null
-  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  depreciationModel?: string | null
-  depreciationStart?: Date | string | null
-  depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: string | null
-  deletedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
-  assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
-  vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
-  contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
-  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutAssetsInput
-  currentStockLocation?: Prisma.StockLocationCreateNestedOneWithoutAssetsInput
-  warranties?: Prisma.WarrantyCreateNestedManyWithoutAssetInput
-  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLinkedAssetInput
-  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutAssetInput
-  assetAssignments?: Prisma.AssetAssignmentCreateNestedManyWithoutAssetInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
-  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
-  reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
-  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
-  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
-}
-
-export type AssetUncheckedCreateWithoutDisposalsInput = {
-  id?: string
-  assetTag: string
-  assetCategoryId: string
-  assetModelId?: string | null
-  vendorId?: string | null
-  contractId?: string | null
-  lifecycleStateId?: string | null
-  serialNumber?: string | null
-  purchaseDate?: Date | string | null
-  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  depreciationModel?: string | null
-  depreciationStart?: Date | string | null
-  depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
-  currentStockLocationId?: string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: string | null
-  deletedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
-  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
-  assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
-  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
-  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
-  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
-}
-
-export type AssetCreateOrConnectWithoutDisposalsInput = {
-  where: Prisma.AssetWhereUniqueInput
-  create: Prisma.XOR<Prisma.AssetCreateWithoutDisposalsInput, Prisma.AssetUncheckedCreateWithoutDisposalsInput>
-}
-
-export type AssetUpsertWithoutDisposalsInput = {
-  update: Prisma.XOR<Prisma.AssetUpdateWithoutDisposalsInput, Prisma.AssetUncheckedUpdateWithoutDisposalsInput>
-  create: Prisma.XOR<Prisma.AssetCreateWithoutDisposalsInput, Prisma.AssetUncheckedCreateWithoutDisposalsInput>
-  where?: Prisma.AssetWhereInput
-}
-
-export type AssetUpdateToOneWithWhereWithoutDisposalsInput = {
-  where?: Prisma.AssetWhereInput
-  data: Prisma.XOR<Prisma.AssetUpdateWithoutDisposalsInput, Prisma.AssetUncheckedUpdateWithoutDisposalsInput>
-}
-
-export type AssetUpdateWithoutDisposalsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
-  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
-  assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
-  vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
-  contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
-  lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutAssetsNestedInput
-  currentStockLocation?: Prisma.StockLocationUpdateOneWithoutAssetsNestedInput
-  warranties?: Prisma.WarrantyUpdateManyWithoutAssetNestedInput
-  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutLinkedAssetNestedInput
-  stockMovements?: Prisma.StockMovementUpdateManyWithoutAssetNestedInput
-  assetAssignments?: Prisma.AssetAssignmentUpdateManyWithoutAssetNestedInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssetNestedInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
-  reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
-  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
-  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
-}
-
-export type AssetUncheckedUpdateWithoutDisposalsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
-  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
-  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
-  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
-  assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
-  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
-  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
-  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
-}
-
-export type AssetCreateWithoutKitCheckoutItemsInput = {
-  id?: string
-  assetTag: string
-  serialNumber?: string | null
-  purchaseDate?: Date | string | null
-  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  depreciationModel?: string | null
-  depreciationStart?: Date | string | null
-  depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: string | null
-  deletedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
-  assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
-  vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
-  contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
-  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutAssetsInput
-  currentStockLocation?: Prisma.StockLocationCreateNestedOneWithoutAssetsInput
-  warranties?: Prisma.WarrantyCreateNestedManyWithoutAssetInput
-  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLinkedAssetInput
-  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutAssetInput
-  assetAssignments?: Prisma.AssetAssignmentCreateNestedManyWithoutAssetInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
-  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
-  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
-  reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
-  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
-  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
-}
-
-export type AssetUncheckedCreateWithoutKitCheckoutItemsInput = {
-  id?: string
-  assetTag: string
-  assetCategoryId: string
-  assetModelId?: string | null
-  vendorId?: string | null
-  contractId?: string | null
-  lifecycleStateId?: string | null
-  serialNumber?: string | null
-  purchaseDate?: Date | string | null
-  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  depreciationModel?: string | null
-  depreciationStart?: Date | string | null
-  depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
-  currentStockLocationId?: string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: string | null
-  deletedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
-  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
-  assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
-  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
-  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
-  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
-  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
-}
-
-export type AssetCreateOrConnectWithoutKitCheckoutItemsInput = {
-  where: Prisma.AssetWhereUniqueInput
-  create: Prisma.XOR<Prisma.AssetCreateWithoutKitCheckoutItemsInput, Prisma.AssetUncheckedCreateWithoutKitCheckoutItemsInput>
-}
-
-export type AssetUpsertWithoutKitCheckoutItemsInput = {
-  update: Prisma.XOR<Prisma.AssetUpdateWithoutKitCheckoutItemsInput, Prisma.AssetUncheckedUpdateWithoutKitCheckoutItemsInput>
-  create: Prisma.XOR<Prisma.AssetCreateWithoutKitCheckoutItemsInput, Prisma.AssetUncheckedCreateWithoutKitCheckoutItemsInput>
-  where?: Prisma.AssetWhereInput
-}
-
-export type AssetUpdateToOneWithWhereWithoutKitCheckoutItemsInput = {
-  where?: Prisma.AssetWhereInput
-  data: Prisma.XOR<Prisma.AssetUpdateWithoutKitCheckoutItemsInput, Prisma.AssetUncheckedUpdateWithoutKitCheckoutItemsInput>
-}
-
-export type AssetUpdateWithoutKitCheckoutItemsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
-  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
-  assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
-  vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
-  contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
-  lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutAssetsNestedInput
-  currentStockLocation?: Prisma.StockLocationUpdateOneWithoutAssetsNestedInput
-  warranties?: Prisma.WarrantyUpdateManyWithoutAssetNestedInput
-  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutLinkedAssetNestedInput
-  stockMovements?: Prisma.StockMovementUpdateManyWithoutAssetNestedInput
-  assetAssignments?: Prisma.AssetAssignmentUpdateManyWithoutAssetNestedInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssetNestedInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
-  disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
-  reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
-  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
-  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
-}
-
-export type AssetUncheckedUpdateWithoutKitCheckoutItemsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
-  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
-  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
-  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
-  assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
-  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
-  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
   intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
@@ -3385,508 +3655,6 @@ export type AssetUncheckedUpdateWithoutServiceAssetsInput = {
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
   intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
-}
-
-export type AssetCreateWithoutContractInput = {
-  id?: string
-  assetTag: string
-  serialNumber?: string | null
-  purchaseDate?: Date | string | null
-  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  depreciationModel?: string | null
-  depreciationStart?: Date | string | null
-  depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: string | null
-  deletedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
-  assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
-  vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
-  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutAssetsInput
-  currentStockLocation?: Prisma.StockLocationCreateNestedOneWithoutAssetsInput
-  warranties?: Prisma.WarrantyCreateNestedManyWithoutAssetInput
-  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLinkedAssetInput
-  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutAssetInput
-  assetAssignments?: Prisma.AssetAssignmentCreateNestedManyWithoutAssetInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
-  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
-  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
-  reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
-  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
-  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
-}
-
-export type AssetUncheckedCreateWithoutContractInput = {
-  id?: string
-  assetTag: string
-  assetCategoryId: string
-  assetModelId?: string | null
-  vendorId?: string | null
-  lifecycleStateId?: string | null
-  serialNumber?: string | null
-  purchaseDate?: Date | string | null
-  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  depreciationModel?: string | null
-  depreciationStart?: Date | string | null
-  depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
-  currentStockLocationId?: string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: string | null
-  deletedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
-  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
-  assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
-  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
-  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
-  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
-  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
-}
-
-export type AssetCreateOrConnectWithoutContractInput = {
-  where: Prisma.AssetWhereUniqueInput
-  create: Prisma.XOR<Prisma.AssetCreateWithoutContractInput, Prisma.AssetUncheckedCreateWithoutContractInput>
-}
-
-export type AssetCreateManyContractInputEnvelope = {
-  data: Prisma.AssetCreateManyContractInput | Prisma.AssetCreateManyContractInput[]
-  skipDuplicates?: boolean
-}
-
-export type AssetUpsertWithWhereUniqueWithoutContractInput = {
-  where: Prisma.AssetWhereUniqueInput
-  update: Prisma.XOR<Prisma.AssetUpdateWithoutContractInput, Prisma.AssetUncheckedUpdateWithoutContractInput>
-  create: Prisma.XOR<Prisma.AssetCreateWithoutContractInput, Prisma.AssetUncheckedCreateWithoutContractInput>
-}
-
-export type AssetUpdateWithWhereUniqueWithoutContractInput = {
-  where: Prisma.AssetWhereUniqueInput
-  data: Prisma.XOR<Prisma.AssetUpdateWithoutContractInput, Prisma.AssetUncheckedUpdateWithoutContractInput>
-}
-
-export type AssetUpdateManyWithWhereWithoutContractInput = {
-  where: Prisma.AssetScalarWhereInput
-  data: Prisma.XOR<Prisma.AssetUpdateManyMutationInput, Prisma.AssetUncheckedUpdateManyWithoutContractInput>
-}
-
-export type AssetCreateWithoutIntuneDeviceInput = {
-  id?: string
-  assetTag: string
-  serialNumber?: string | null
-  purchaseDate?: Date | string | null
-  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  depreciationModel?: string | null
-  depreciationStart?: Date | string | null
-  depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: string | null
-  deletedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
-  assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
-  vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
-  contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
-  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutAssetsInput
-  currentStockLocation?: Prisma.StockLocationCreateNestedOneWithoutAssetsInput
-  warranties?: Prisma.WarrantyCreateNestedManyWithoutAssetInput
-  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLinkedAssetInput
-  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutAssetInput
-  assetAssignments?: Prisma.AssetAssignmentCreateNestedManyWithoutAssetInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
-  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
-  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
-  reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
-  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
-}
-
-export type AssetUncheckedCreateWithoutIntuneDeviceInput = {
-  id?: string
-  assetTag: string
-  assetCategoryId: string
-  assetModelId?: string | null
-  vendorId?: string | null
-  contractId?: string | null
-  lifecycleStateId?: string | null
-  serialNumber?: string | null
-  purchaseDate?: Date | string | null
-  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  depreciationModel?: string | null
-  depreciationStart?: Date | string | null
-  depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
-  currentStockLocationId?: string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: string | null
-  deletedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
-  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
-  assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
-  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
-  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
-  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
-}
-
-export type AssetCreateOrConnectWithoutIntuneDeviceInput = {
-  where: Prisma.AssetWhereUniqueInput
-  create: Prisma.XOR<Prisma.AssetCreateWithoutIntuneDeviceInput, Prisma.AssetUncheckedCreateWithoutIntuneDeviceInput>
-}
-
-export type AssetUpsertWithoutIntuneDeviceInput = {
-  update: Prisma.XOR<Prisma.AssetUpdateWithoutIntuneDeviceInput, Prisma.AssetUncheckedUpdateWithoutIntuneDeviceInput>
-  create: Prisma.XOR<Prisma.AssetCreateWithoutIntuneDeviceInput, Prisma.AssetUncheckedCreateWithoutIntuneDeviceInput>
-  where?: Prisma.AssetWhereInput
-}
-
-export type AssetUpdateToOneWithWhereWithoutIntuneDeviceInput = {
-  where?: Prisma.AssetWhereInput
-  data: Prisma.XOR<Prisma.AssetUpdateWithoutIntuneDeviceInput, Prisma.AssetUncheckedUpdateWithoutIntuneDeviceInput>
-}
-
-export type AssetUpdateWithoutIntuneDeviceInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
-  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
-  assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
-  vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
-  contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
-  lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutAssetsNestedInput
-  currentStockLocation?: Prisma.StockLocationUpdateOneWithoutAssetsNestedInput
-  warranties?: Prisma.WarrantyUpdateManyWithoutAssetNestedInput
-  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutLinkedAssetNestedInput
-  stockMovements?: Prisma.StockMovementUpdateManyWithoutAssetNestedInput
-  assetAssignments?: Prisma.AssetAssignmentUpdateManyWithoutAssetNestedInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssetNestedInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
-  disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
-  reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
-  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
-}
-
-export type AssetUncheckedUpdateWithoutIntuneDeviceInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
-  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
-  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
-  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
-  assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
-  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
-  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
-  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
-}
-
-export type AssetCreateManyVendorInput = {
-  id?: string
-  assetTag: string
-  assetCategoryId: string
-  assetModelId?: string | null
-  contractId?: string | null
-  lifecycleStateId?: string | null
-  serialNumber?: string | null
-  purchaseDate?: Date | string | null
-  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  depreciationModel?: string | null
-  depreciationStart?: Date | string | null
-  depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
-  currentStockLocationId?: string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: string | null
-  deletedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type AssetUpdateWithoutVendorInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
-  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
-  assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
-  contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
-  lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutAssetsNestedInput
-  currentStockLocation?: Prisma.StockLocationUpdateOneWithoutAssetsNestedInput
-  warranties?: Prisma.WarrantyUpdateManyWithoutAssetNestedInput
-  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutLinkedAssetNestedInput
-  stockMovements?: Prisma.StockMovementUpdateManyWithoutAssetNestedInput
-  assetAssignments?: Prisma.AssetAssignmentUpdateManyWithoutAssetNestedInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssetNestedInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
-  disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
-  reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
-  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
-  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
-}
-
-export type AssetUncheckedUpdateWithoutVendorInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
-  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
-  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
-  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
-  assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
-  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
-  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
-  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
-  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
-}
-
-export type AssetUncheckedUpdateManyWithoutVendorInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
-  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
-  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type AssetCreateManyLifecycleStateInput = {
-  id?: string
-  assetTag: string
-  assetCategoryId: string
-  assetModelId?: string | null
-  vendorId?: string | null
-  contractId?: string | null
-  serialNumber?: string | null
-  purchaseDate?: Date | string | null
-  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  depreciationModel?: string | null
-  depreciationStart?: Date | string | null
-  depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
-  currentStockLocationId?: string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: string | null
-  deletedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type AssetUpdateWithoutLifecycleStateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
-  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
-  assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
-  vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
-  contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
-  currentStockLocation?: Prisma.StockLocationUpdateOneWithoutAssetsNestedInput
-  warranties?: Prisma.WarrantyUpdateManyWithoutAssetNestedInput
-  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutLinkedAssetNestedInput
-  stockMovements?: Prisma.StockMovementUpdateManyWithoutAssetNestedInput
-  assetAssignments?: Prisma.AssetAssignmentUpdateManyWithoutAssetNestedInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssetNestedInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
-  disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
-  reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
-  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
-  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
-}
-
-export type AssetUncheckedUpdateWithoutLifecycleStateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
-  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
-  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
-  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
-  assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
-  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
-  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
-  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
-  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
-  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
-  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
-}
-
-export type AssetUncheckedUpdateManyWithoutLifecycleStateInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
-  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
-  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type AssetCreateManyAssetCategoryInput = {
@@ -4359,6 +4127,250 @@ export type AssetUncheckedUpdateManyWithoutContractInput = {
   assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type AssetCreateManyVendorInput = {
+  id?: string
+  assetTag: string
+  assetCategoryId: string
+  assetModelId?: string | null
+  contractId?: string | null
+  lifecycleStateId?: string | null
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  currentStockLocationId?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type AssetUpdateWithoutVendorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
+  assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
+  contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
+  lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutAssetsNestedInput
+  currentStockLocation?: Prisma.StockLocationUpdateOneWithoutAssetsNestedInput
+  warranties?: Prisma.WarrantyUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+}
+
+export type AssetUncheckedUpdateWithoutVendorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
+}
+
+export type AssetUncheckedUpdateManyWithoutVendorInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type AssetCreateManyLifecycleStateInput = {
+  id?: string
+  assetTag: string
+  assetCategoryId: string
+  assetModelId?: string | null
+  vendorId?: string | null
+  contractId?: string | null
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: string | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  warrantyEndDate?: Date | string | null
+  condition?: string | null
+  currentStockLocationId?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  deletedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type AssetUpdateWithoutLifecycleStateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
+  assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
+  vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
+  contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
+  currentStockLocation?: Prisma.StockLocationUpdateOneWithoutAssetsNestedInput
+  warranties?: Prisma.WarrantyUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+}
+
+export type AssetUncheckedUpdateWithoutLifecycleStateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
+}
+
+export type AssetUncheckedUpdateManyWithoutLifecycleStateInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null

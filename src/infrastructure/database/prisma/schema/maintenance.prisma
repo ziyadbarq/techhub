@@ -1,0 +1,80 @@
+// ============================================
+// MAINTENANCE SYSTEM
+// ============================================
+//
+// Models: MaintenanceSchedule, MaintenanceRecord
+// Enums: None
+// Layer: Layer 2 (Asset/Inventory extension)
+// Related DI Module: maintenance.module.ts
+// ============================================
+
+// MaintenanceSchedule model
+// Defines recurring preventive maintenance schedules for assets
+model MaintenanceSchedule {
+  id                       String   @id @default(cuid())
+  assetId                  String
+  title                    String
+  description              String?  @db.Text
+  scheduleType             String // ScheduleType enum: WEEKLY, MONTHLY, QUARTERLY, YEARLY, CUSTOM
+  intervalValue            Int      @default(1)
+  startDate                DateTime @default(now())
+  nextDueDate              DateTime
+  isActive                 Boolean  @default(true)
+  assignedToId             String?
+  estimatedDurationMinutes Int?
+  priority                 String   @default("MEDIUM") // MaintenancePriority enum: LOW, MEDIUM, HIGH, CRITICAL
+  instructions             String?  @db.Text
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  // Relations
+  asset              Asset               @relation(fields: [assetId], references: [id], onDelete: Restrict)
+  assignedTo         Person?             @relation(fields: [assignedToId], references: [id], onDelete: SetNull)
+  maintenanceRecords MaintenanceRecord[]
+
+  // Indexes
+  @@index([assetId])
+  @@index([assignedToId])
+  @@index([nextDueDate])
+  @@index([isActive])
+  @@index([scheduleType])
+  @@index([priority])
+  @@index([startDate]) // Medium-priority: Schedule activation
+  @@map("maintenance_schedules")
+}
+
+// MaintenanceRecord model
+// Tracks actual maintenance work performed or scheduled on assets
+model MaintenanceRecord {
+  id                    String    @id @default(cuid())
+  assetId               String
+  maintenanceScheduleId String?
+  title                 String
+  description           String?   @db.Text
+  scheduledDate         DateTime
+  completedDate         DateTime?
+  performedById         String?
+  status                String    @default("SCHEDULED") // MaintenanceStatus enum: SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED, OVERDUE
+  notes                 String?   @db.Text
+  cost                  Decimal?  @db.Decimal(12, 2)
+  currency              String? // Currency code (USD, EUR, GBP, SAR, etc.)
+  partsUsed             Json? // Array of strings
+  nextMaintenanceDate   DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  // Relations
+  asset               Asset                @relation(fields: [assetId], references: [id], onDelete: Restrict)
+  maintenanceSchedule MaintenanceSchedule? @relation(fields: [maintenanceScheduleId], references: [id], onDelete: SetNull)
+  performedBy         Person?              @relation(fields: [performedById], references: [id], onDelete: SetNull)
+
+  // Indexes
+  @@index([assetId])
+  @@index([maintenanceScheduleId])
+  @@index([performedById])
+  @@index([scheduledDate])
+  @@index([completedDate])
+  @@index([status])
+  @@index([status, assetId]) // High-priority: Asset maintenance history
+  @@map("maintenance_records")
+}

@@ -1,0 +1,449 @@
+// ============================================
+// FOUNDATION LAYER - Organization, People, Locations, Vendors, Lifecycle
+// ============================================
+//
+// Models: OrganizationUnit, Person, PersonRoleAssignment, Location, Vendor, VendorContact, ExchangeRate, LifecycleModel, LifecycleState, LifecycleTransition, FieldDefinition
+// Enums: OrganizationUnitType, VendorType, LocationType, StateType
+// Layer: Layer 1 (Foundation)
+// Related DI Module: foundation.module.ts
+// ============================================
+
+// OrganizationUnit model
+// Hierarchy: Company > Business Unit > Department > Team
+model OrganizationUnit {
+  id          String               @id @default(cuid())
+  parentId    String?
+  name        String
+  code        String               @unique
+  description String?              @db.Text
+  unitType    OrganizationUnitType @default(OTHER)
+  managerId   String?
+  costCenter  String?
+  level       Int // 1=Company, 2=BU, 3=Dept, 4=Team
+  isActive    Boolean              @default(true)
+  note        String?              @db.Text
+  metadata    Json?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  // Relations
+  parent             OrganizationUnit?   @relation("OrgUnitHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children           OrganizationUnit[]  @relation("OrgUnitHierarchy")
+  manager            Person?             @relation("OrgUnitManager", fields: [managerId], references: [id], onDelete: SetNull)
+  people             Person[]            @relation("PersonOrgUnit")
+  configurationItems ConfigurationItem[]
+  dataOwnerships     DataOwnership[]     @relation("DataOwnershipOrgUnit")
+  reservations       AssetReservation[]  @relation("ReservationForOrgUnit")
+
+  // Indexes
+  @@index([parentId])
+  @@index([code])
+  @@index([managerId])
+  @@index([isActive])
+  @@index([level])
+  @@index([unitType])
+  @@map("organization_units")
+}
+
+// Person model
+// Organizational people (different from Better Auth User)
+model Person {
+  id              String    @id @default(cuid())
+  azureAdId       String?   @unique // Immutable MS Graph ID - source of truth for user sync
+  userId          String?   @unique // Optional link to Better Auth User
+  firstName       String
+  lastName        String
+  middleName      String?
+  email           String    @unique
+  phone           String?
+  mobile          String?
+  employeeId      String?   @unique
+  orgUnitId       String
+  primaryRoleId   String
+  managerId       String?
+  title           String?
+  office          String?            // Office location from MS Graph (e.g., "Riyadh HQ", "India Office")
+  locationId      String?
+  department      String?
+  hireDate        DateTime?
+  terminationDate DateTime?
+  isActive        Boolean   @default(true)
+  isExcluded      Boolean   @default(false) // TechHub-specific: hide from app (service accounts)
+  metadata        Json?
+  deletedAt       DateTime? // Soft delete timestamp
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  user                         User?                  @relation(fields: [userId], references: [id], onDelete: SetNull)
+  orgUnit                      OrganizationUnit       @relation("PersonOrgUnit", fields: [orgUnitId], references: [id], onDelete: Restrict)
+  primaryRole                  Role                   @relation("PersonPrimaryRole", fields: [primaryRoleId], references: [id], onDelete: Restrict)
+  manager                      Person?                @relation("PersonManager", fields: [managerId], references: [id], onDelete: SetNull)
+  directReports                Person[]               @relation("PersonManager")
+  location                     Location?              @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  managedOrgUnits              OrganizationUnit[]     @relation("OrgUnitManager")
+  roleAssignments              PersonRoleAssignment[]
+  configurationItems           ConfigurationItem[]
+  stockMovements               StockMovement[]
+  verificationCampaigns        VerificationCampaign[]
+  verificationItems            VerificationItem[]
+  auditLogsChanged             AuditLogEntry[]        @relation("AuditLogChangedBy")
+  attachments                  Attachment[]
+  dataOwnerships                DataOwnership[]        @relation("DataOwnershipPerson")
+  assignedMaintenanceSchedules  MaintenanceSchedule[]
+  performedMaintenanceRecords   MaintenanceRecord[]
+  initiatedDisposals            AssetDisposal[]        @relation("DisposalInitiatedBy")
+  approvedDisposals             AssetDisposal[]        @relation("DisposalApprovedBy")
+  disposalApprovals             DisposalApproval[]     @relation("DisposalApprover")
+  uploadedDisposalDocuments     DisposalDocument[]     @relation("DisposalDocumentUploader")
+  kitCheckouts                  AssetKitCheckout[]     @relation("KitCheckoutBy")
+  reservationsFor               AssetReservation[]     @relation("ReservationForPerson")
+  reservationsCreated           AssetReservation[]     @relation("ReservationBy")
+  reservationsConfirmed         AssetReservation[]     @relation("ReservationConfirmedBy")
+  reservationsCancelled         AssetReservation[]     @relation("ReservationCancelledBy")
+  serviceOwnerships             ServiceOwnership[]
+  intuneDevices                 IntuneDevice[]         @relation("IntuneDevicePerson")
+
+  // Indexes
+  @@index([azureAdId])
+  @@index([userId])
+  @@index([email])
+  @@index([employeeId])
+  @@index([orgUnitId])
+  @@index([primaryRoleId])
+  @@index([managerId])
+  @@index([locationId])
+  @@index([isActive])
+  @@index([isExcluded])
+  @@map("persons")
+}
+
+// PersonRoleAssignment model
+// Many-to-many Person-Role with temporal data
+model PersonRoleAssignment {
+  id        String    @id @default(cuid())
+  personId  String
+  roleId    String
+  scope     String?
+  startDate DateTime  @default(now())
+  endDate   DateTime?
+  isPrimary Boolean   @default(false)
+  isActive  Boolean   @default(true)
+  note      String?   @db.Text
+  metadata  Json?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  person Person @relation(fields: [personId], references: [id], onDelete: Restrict)
+  role   Role   @relation("PersonRoleAssignments", fields: [roleId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([personId])
+  @@index([roleId])
+  @@index([isPrimary])
+  @@index([startDate, endDate])
+  @@map("person_role_assignments")
+}
+
+// Location model
+// Hierarchy: Country > City > Campus > Building > Floor > Room > Rack
+model Location {
+  id           String       @id @default(cuid())
+  parentId     String?
+  name         String
+  code         String       @unique
+  description  String?      @db.Text
+  locationType LocationType
+  address      String?
+  addressLine1 String?
+  addressLine2 String?
+  city         String?
+  state        String?
+  country      String?
+  postalCode   String?
+  latitude     Decimal?     @db.Decimal(10, 7)
+  longitude    Decimal?     @db.Decimal(10, 7)
+  timeZone     String?
+  isActive     Boolean      @default(true)
+  metadata     Json?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  // Relations
+  parent             Location?           @relation("LocationHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
+  children           Location[]          @relation("LocationHierarchy")
+  persons            Person[]
+  stockLocations     StockLocation[]
+  configurationItems ConfigurationItem[]
+
+  // Indexes
+  @@index([parentId])
+  @@index([code])
+  @@index([locationType])
+  @@index([city])
+  @@index([country])
+  @@index([isActive])
+  @@map("locations")
+}
+
+// Vendor model
+model Vendor {
+  id           String     @id @default(cuid())
+  name         String
+  code         String     @unique
+  legalName    String?
+  description  String?    @db.Text
+  vendorType   VendorType @default(OTHER)
+  taxId        String?
+  website      String?
+  email        String?
+  phone        String?
+  address      String?
+  city         String?
+  state        String?
+  country      String?
+  postalCode   String?
+  paymentTerms String?    @db.Text
+  isPreferred  Boolean    @default(false)
+  isActive     Boolean    @default(true)
+  tags         String[]
+  note         String?    @db.Text
+  metadata     Json?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  // Relations
+  contacts        VendorContact[]
+  assetModels     AssetModel[]
+  assets          Asset[]
+  warranties      Warranty[]
+  contracts       Contract[]
+  licenseProducts LicenseProduct[]
+  disposals       AssetDisposal[]
+  services        Service[]
+
+  // Indexes
+  @@index([name])
+  @@index([code])
+  @@index([email])
+  @@index([vendorType])
+  @@index([isActive])
+  @@index([isPreferred])
+  @@map("vendors")
+}
+
+// VendorContact model
+model VendorContact {
+  id        String   @id @default(cuid())
+  vendorId  String
+  firstName String
+  lastName  String
+  title     String?
+  email     String?
+  phone     String?
+  mobile    String?
+  role      String? // Account manager, Support, Sales, etc.
+  isPrimary Boolean  @default(false)
+  isActive  Boolean  @default(true)
+  note      String?  @db.Text
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  vendor Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@index([vendorId])
+  @@index([email])
+  @@index([isPrimary])
+  @@map("vendor_contacts")
+}
+
+// ExchangeRate model
+// Multi-currency support - stores exchange rates to SAR (Saudi Riyal)
+model ExchangeRate {
+  id        String   @id @default(cuid())
+  currency  String   @unique // 3-letter ISO code (USD, EUR, GBP, SAR)
+  rateToSAR Decimal  @db.Decimal(10, 6) // 1 CURRENCY = X SAR
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Indexes
+  @@index([currency])
+  @@index([isActive])
+  @@map("exchange_rates")
+}
+
+// LifecycleModel model
+// Reusable state machine definitions (for CIs, Assets, Licenses)
+model LifecycleModel {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  states          LifecycleState[]
+  transitions     LifecycleTransition[]
+  ciClasses       CIClass[]
+  assetCategories AssetCategory[]
+  licenseProducts LicenseProduct[]
+
+  // Indexes
+  @@index([name])
+  @@map("lifecycle_models")
+}
+
+// LifecycleState model
+model LifecycleState {
+  id               String    @id @default(cuid())
+  lifecycleModelId String
+  name             String
+  code             String
+  description      String?   @db.Text
+  stateType        StateType @default(ACTIVE)
+  isActiveState    Boolean   @default(false) // true if considered in-use/active
+  isTerminalState  Boolean   @default(false) // true if end-of-life
+  sortOrder        Int
+  isActive         Boolean   @default(true)
+  metadata         Json?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  // Relations
+  lifecycleModel     LifecycleModel        @relation(fields: [lifecycleModelId], references: [id], onDelete: Restrict)
+  transitionsFrom    LifecycleTransition[] @relation("TransitionFrom")
+  transitionsTo      LifecycleTransition[] @relation("TransitionTo")
+  configurationItems ConfigurationItem[]
+  assets             Asset[]
+
+  // Indexes
+  @@unique([lifecycleModelId, code])
+  @@index([lifecycleModelId])
+  @@index([code])
+  @@index([sortOrder])
+  @@index([stateType])
+  @@map("lifecycle_states")
+}
+
+// LifecycleTransition model
+model LifecycleTransition {
+  id               String   @id @default(cuid())
+  lifecycleModelId String
+  name             String
+  description      String?  @db.Text
+  fromStateId      String
+  toStateId        String
+  requiredRoleId   String? // Optional: role required to execute transition
+  requiresApproval Boolean  @default(false)
+  approvalPolicy   Json? // JSON rule definition
+  conditions       Json?
+  isAutomated      Boolean  @default(false)
+  isActive         Boolean  @default(true)
+  metadata         Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  lifecycleModel LifecycleModel @relation(fields: [lifecycleModelId], references: [id], onDelete: Restrict)
+  fromState      LifecycleState @relation("TransitionFrom", fields: [fromStateId], references: [id], onDelete: Restrict)
+  toState        LifecycleState @relation("TransitionTo", fields: [toStateId], references: [id], onDelete: Restrict)
+  requiredRole   Role?          @relation("TransitionRequiredRole", fields: [requiredRoleId], references: [id], onDelete: SetNull)
+
+  // Indexes
+  @@unique([lifecycleModelId, fromStateId, toStateId])
+  @@index([lifecycleModelId])
+  @@index([fromStateId])
+  @@index([toStateId])
+  @@index([requiredRoleId])
+  @@map("lifecycle_transitions")
+}
+
+// FieldDefinition model
+// Meta-model for dynamic attributes
+model FieldDefinition {
+  id              String            @id @default(cuid())
+  name            String            @unique // internal name, e.g. cpu_cores
+  label           String // display label
+  dataType        FieldDataTypeEnum
+  description     String?           @db.Text
+  entityType      String
+  isGlobal        Boolean           @default(false) // true if reusable across many domains
+  isRequired      Boolean           @default(false)
+  isUnique        Boolean           @default(false)
+  validationRules Json? // min/max, regex, etc.
+  defaultValue    Json?
+  enumOptions     Json? // for ENUM data_type
+  uiGroup         String? // group/tab in UI
+  uiOrder         Int               @default(0)
+  displayOrder    Int               @default(0)
+  isSearchable    Boolean           @default(false)
+  isFilterable    Boolean           @default(false)
+  isActive        Boolean           @default(true)
+  metadata        Json?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  // Relations
+  ciClassFields        CIClassField[]
+  assetCategoryFields  AssetCategoryField[]
+  licenseProductFields LicenseProductField[]
+
+  // Indexes
+  @@index([name])
+  @@index([dataType])
+  @@index([entityType])
+  @@index([isGlobal])
+  @@index([isActive])
+  @@map("field_definitions")
+}
+
+// ============================================
+// FOUNDATION ENUMS
+// ============================================
+
+enum OrganizationUnitType {
+  COMPANY
+  BUSINESS_UNIT
+  DEPARTMENT
+  TEAM
+  DIVISION
+  OTHER
+}
+
+enum VendorType {
+  MANUFACTURER
+  RESELLER
+  SERVICE_PROVIDER
+  CONSULTANT
+  CONTRACTOR
+  OTHER
+}
+
+enum LocationType {
+  COUNTRY
+  CITY
+  CAMPUS
+  BUILDING
+  FLOOR
+  ROOM
+  RACK
+  DATA_CENTER
+  CLOUD_REGION
+  PHYSICAL
+  LOGICAL
+  ZONE
+  AREA
+}
+
+enum StateType {
+  INITIAL
+  ACTIVE
+  INACTIVE
+  TERMINAL
+  TRANSITION
+}

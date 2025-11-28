@@ -1,0 +1,36 @@
+// ============================================
+// BARQ ASSETS - PRISMA SCHEMA CONFIGURATION
+// ============================================
+//
+// Multi-file schema organized by bounded context.
+// Each .prisma file contains models + enums for its domain.
+//
+// Files:
+//   auth.prisma        - Better Auth (User, Account, Session, Verification)
+//   rbac.prisma        - RBAC (Role, Permission, etc.)
+//   foundation.prisma  - Layer 1 (Organization, Person, Location, Vendor, Lifecycle)
+//   cmdb.prisma        - CMDB (CIClass, ConfigurationItem, Relationships)
+//   assets.prisma      - Layer 2 (Asset, Category, Model, Stock, Warranty)
+//   maintenance.prisma - Maintenance scheduling
+//   disposal.prisma    - Asset disposal workflow
+//   kits.prisma        - Asset kits & bundles
+//   reservations.prisma - Asset reservations
+//   services.prisma    - Service management
+//   contracts.prisma   - Contract management
+//   licenses.prisma    - License management
+//   governance.prisma  - Data governance & verification
+//   attachments.prisma - Document attachments
+//   intune.prisma      - Intune/MDM integration
+//   system.prisma      - Feature flags, Tasks, Prompts
+// ============================================
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../../../../generated/prisma"
+  engineType   = "client"
+  postgenerate = "node scripts/recreate-prisma-index.js"
+}
+
+datasource db {
+  provider = "postgresql"
+}

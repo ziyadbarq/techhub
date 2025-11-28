@@ -630,6 +630,11 @@ export type FieldDefinitionUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type FieldDefinitionScalarRelationFilter = {
+  is?: Prisma.FieldDefinitionWhereInput
+  isNot?: Prisma.FieldDefinitionWhereInput
+}
+
 export type FieldDefinitionCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -704,13 +709,18 @@ export type FieldDefinitionSumOrderByAggregateInput = {
   displayOrder?: Prisma.SortOrder
 }
 
-export type FieldDefinitionScalarRelationFilter = {
-  is?: Prisma.FieldDefinitionWhereInput
-  isNot?: Prisma.FieldDefinitionWhereInput
+export type FieldDefinitionCreateNestedOneWithoutAssetCategoryFieldsInput = {
+  create?: Prisma.XOR<Prisma.FieldDefinitionCreateWithoutAssetCategoryFieldsInput, Prisma.FieldDefinitionUncheckedCreateWithoutAssetCategoryFieldsInput>
+  connectOrCreate?: Prisma.FieldDefinitionCreateOrConnectWithoutAssetCategoryFieldsInput
+  connect?: Prisma.FieldDefinitionWhereUniqueInput
 }
 
-export type EnumFieldDataTypeEnumFieldUpdateOperationsInput = {
-  set?: $Enums.FieldDataTypeEnum
+export type FieldDefinitionUpdateOneRequiredWithoutAssetCategoryFieldsNestedInput = {
+  create?: Prisma.XOR<Prisma.FieldDefinitionCreateWithoutAssetCategoryFieldsInput, Prisma.FieldDefinitionUncheckedCreateWithoutAssetCategoryFieldsInput>
+  connectOrCreate?: Prisma.FieldDefinitionCreateOrConnectWithoutAssetCategoryFieldsInput
+  upsert?: Prisma.FieldDefinitionUpsertWithoutAssetCategoryFieldsInput
+  connect?: Prisma.FieldDefinitionWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FieldDefinitionUpdateToOneWithWhereWithoutAssetCategoryFieldsInput, Prisma.FieldDefinitionUpdateWithoutAssetCategoryFieldsInput>, Prisma.FieldDefinitionUncheckedUpdateWithoutAssetCategoryFieldsInput>
 }
 
 export type FieldDefinitionCreateNestedOneWithoutCiClassFieldsInput = {
@@ -727,18 +737,8 @@ export type FieldDefinitionUpdateOneRequiredWithoutCiClassFieldsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.FieldDefinitionUpdateToOneWithWhereWithoutCiClassFieldsInput, Prisma.FieldDefinitionUpdateWithoutCiClassFieldsInput>, Prisma.FieldDefinitionUncheckedUpdateWithoutCiClassFieldsInput>
 }
 
-export type FieldDefinitionCreateNestedOneWithoutAssetCategoryFieldsInput = {
-  create?: Prisma.XOR<Prisma.FieldDefinitionCreateWithoutAssetCategoryFieldsInput, Prisma.FieldDefinitionUncheckedCreateWithoutAssetCategoryFieldsInput>
-  connectOrCreate?: Prisma.FieldDefinitionCreateOrConnectWithoutAssetCategoryFieldsInput
-  connect?: Prisma.FieldDefinitionWhereUniqueInput
-}
-
-export type FieldDefinitionUpdateOneRequiredWithoutAssetCategoryFieldsNestedInput = {
-  create?: Prisma.XOR<Prisma.FieldDefinitionCreateWithoutAssetCategoryFieldsInput, Prisma.FieldDefinitionUncheckedCreateWithoutAssetCategoryFieldsInput>
-  connectOrCreate?: Prisma.FieldDefinitionCreateOrConnectWithoutAssetCategoryFieldsInput
-  upsert?: Prisma.FieldDefinitionUpsertWithoutAssetCategoryFieldsInput
-  connect?: Prisma.FieldDefinitionWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.FieldDefinitionUpdateToOneWithWhereWithoutAssetCategoryFieldsInput, Prisma.FieldDefinitionUpdateWithoutAssetCategoryFieldsInput>, Prisma.FieldDefinitionUncheckedUpdateWithoutAssetCategoryFieldsInput>
+export type EnumFieldDataTypeEnumFieldUpdateOperationsInput = {
+  set?: $Enums.FieldDataTypeEnum
 }
 
 export type FieldDefinitionCreateNestedOneWithoutLicenseProductFieldsInput = {
@@ -753,126 +753,6 @@ export type FieldDefinitionUpdateOneRequiredWithoutLicenseProductFieldsNestedInp
   upsert?: Prisma.FieldDefinitionUpsertWithoutLicenseProductFieldsInput
   connect?: Prisma.FieldDefinitionWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.FieldDefinitionUpdateToOneWithWhereWithoutLicenseProductFieldsInput, Prisma.FieldDefinitionUpdateWithoutLicenseProductFieldsInput>, Prisma.FieldDefinitionUncheckedUpdateWithoutLicenseProductFieldsInput>
-}
-
-export type FieldDefinitionCreateWithoutCiClassFieldsInput = {
-  id?: string
-  name: string
-  label: string
-  dataType: $Enums.FieldDataTypeEnum
-  description?: string | null
-  entityType: string
-  isGlobal?: boolean
-  isRequired?: boolean
-  isUnique?: boolean
-  validationRules?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  enumOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  uiGroup?: string | null
-  uiOrder?: number
-  displayOrder?: number
-  isSearchable?: boolean
-  isFilterable?: boolean
-  isActive?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  assetCategoryFields?: Prisma.AssetCategoryFieldCreateNestedManyWithoutFieldDefinitionInput
-  licenseProductFields?: Prisma.LicenseProductFieldCreateNestedManyWithoutFieldDefinitionInput
-}
-
-export type FieldDefinitionUncheckedCreateWithoutCiClassFieldsInput = {
-  id?: string
-  name: string
-  label: string
-  dataType: $Enums.FieldDataTypeEnum
-  description?: string | null
-  entityType: string
-  isGlobal?: boolean
-  isRequired?: boolean
-  isUnique?: boolean
-  validationRules?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  enumOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  uiGroup?: string | null
-  uiOrder?: number
-  displayOrder?: number
-  isSearchable?: boolean
-  isFilterable?: boolean
-  isActive?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  assetCategoryFields?: Prisma.AssetCategoryFieldUncheckedCreateNestedManyWithoutFieldDefinitionInput
-  licenseProductFields?: Prisma.LicenseProductFieldUncheckedCreateNestedManyWithoutFieldDefinitionInput
-}
-
-export type FieldDefinitionCreateOrConnectWithoutCiClassFieldsInput = {
-  where: Prisma.FieldDefinitionWhereUniqueInput
-  create: Prisma.XOR<Prisma.FieldDefinitionCreateWithoutCiClassFieldsInput, Prisma.FieldDefinitionUncheckedCreateWithoutCiClassFieldsInput>
-}
-
-export type FieldDefinitionUpsertWithoutCiClassFieldsInput = {
-  update: Prisma.XOR<Prisma.FieldDefinitionUpdateWithoutCiClassFieldsInput, Prisma.FieldDefinitionUncheckedUpdateWithoutCiClassFieldsInput>
-  create: Prisma.XOR<Prisma.FieldDefinitionCreateWithoutCiClassFieldsInput, Prisma.FieldDefinitionUncheckedCreateWithoutCiClassFieldsInput>
-  where?: Prisma.FieldDefinitionWhereInput
-}
-
-export type FieldDefinitionUpdateToOneWithWhereWithoutCiClassFieldsInput = {
-  where?: Prisma.FieldDefinitionWhereInput
-  data: Prisma.XOR<Prisma.FieldDefinitionUpdateWithoutCiClassFieldsInput, Prisma.FieldDefinitionUncheckedUpdateWithoutCiClassFieldsInput>
-}
-
-export type FieldDefinitionUpdateWithoutCiClassFieldsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  label?: Prisma.StringFieldUpdateOperationsInput | string
-  dataType?: Prisma.EnumFieldDataTypeEnumFieldUpdateOperationsInput | $Enums.FieldDataTypeEnum
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  entityType?: Prisma.StringFieldUpdateOperationsInput | string
-  isGlobal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnique?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  validationRules?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  enumOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  uiGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  uiOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  isSearchable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isFilterable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assetCategoryFields?: Prisma.AssetCategoryFieldUpdateManyWithoutFieldDefinitionNestedInput
-  licenseProductFields?: Prisma.LicenseProductFieldUpdateManyWithoutFieldDefinitionNestedInput
-}
-
-export type FieldDefinitionUncheckedUpdateWithoutCiClassFieldsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  label?: Prisma.StringFieldUpdateOperationsInput | string
-  dataType?: Prisma.EnumFieldDataTypeEnumFieldUpdateOperationsInput | $Enums.FieldDataTypeEnum
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  entityType?: Prisma.StringFieldUpdateOperationsInput | string
-  isGlobal?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnique?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  validationRules?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  enumOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  uiGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  uiOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  isSearchable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isFilterable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assetCategoryFields?: Prisma.AssetCategoryFieldUncheckedUpdateManyWithoutFieldDefinitionNestedInput
-  licenseProductFields?: Prisma.LicenseProductFieldUncheckedUpdateManyWithoutFieldDefinitionNestedInput
 }
 
 export type FieldDefinitionCreateWithoutAssetCategoryFieldsInput = {
@@ -992,6 +872,126 @@ export type FieldDefinitionUncheckedUpdateWithoutAssetCategoryFieldsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ciClassFields?: Prisma.CIClassFieldUncheckedUpdateManyWithoutFieldDefinitionNestedInput
+  licenseProductFields?: Prisma.LicenseProductFieldUncheckedUpdateManyWithoutFieldDefinitionNestedInput
+}
+
+export type FieldDefinitionCreateWithoutCiClassFieldsInput = {
+  id?: string
+  name: string
+  label: string
+  dataType: $Enums.FieldDataTypeEnum
+  description?: string | null
+  entityType: string
+  isGlobal?: boolean
+  isRequired?: boolean
+  isUnique?: boolean
+  validationRules?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  enumOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  uiGroup?: string | null
+  uiOrder?: number
+  displayOrder?: number
+  isSearchable?: boolean
+  isFilterable?: boolean
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assetCategoryFields?: Prisma.AssetCategoryFieldCreateNestedManyWithoutFieldDefinitionInput
+  licenseProductFields?: Prisma.LicenseProductFieldCreateNestedManyWithoutFieldDefinitionInput
+}
+
+export type FieldDefinitionUncheckedCreateWithoutCiClassFieldsInput = {
+  id?: string
+  name: string
+  label: string
+  dataType: $Enums.FieldDataTypeEnum
+  description?: string | null
+  entityType: string
+  isGlobal?: boolean
+  isRequired?: boolean
+  isUnique?: boolean
+  validationRules?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  enumOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  uiGroup?: string | null
+  uiOrder?: number
+  displayOrder?: number
+  isSearchable?: boolean
+  isFilterable?: boolean
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  assetCategoryFields?: Prisma.AssetCategoryFieldUncheckedCreateNestedManyWithoutFieldDefinitionInput
+  licenseProductFields?: Prisma.LicenseProductFieldUncheckedCreateNestedManyWithoutFieldDefinitionInput
+}
+
+export type FieldDefinitionCreateOrConnectWithoutCiClassFieldsInput = {
+  where: Prisma.FieldDefinitionWhereUniqueInput
+  create: Prisma.XOR<Prisma.FieldDefinitionCreateWithoutCiClassFieldsInput, Prisma.FieldDefinitionUncheckedCreateWithoutCiClassFieldsInput>
+}
+
+export type FieldDefinitionUpsertWithoutCiClassFieldsInput = {
+  update: Prisma.XOR<Prisma.FieldDefinitionUpdateWithoutCiClassFieldsInput, Prisma.FieldDefinitionUncheckedUpdateWithoutCiClassFieldsInput>
+  create: Prisma.XOR<Prisma.FieldDefinitionCreateWithoutCiClassFieldsInput, Prisma.FieldDefinitionUncheckedCreateWithoutCiClassFieldsInput>
+  where?: Prisma.FieldDefinitionWhereInput
+}
+
+export type FieldDefinitionUpdateToOneWithWhereWithoutCiClassFieldsInput = {
+  where?: Prisma.FieldDefinitionWhereInput
+  data: Prisma.XOR<Prisma.FieldDefinitionUpdateWithoutCiClassFieldsInput, Prisma.FieldDefinitionUncheckedUpdateWithoutCiClassFieldsInput>
+}
+
+export type FieldDefinitionUpdateWithoutCiClassFieldsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  label?: Prisma.StringFieldUpdateOperationsInput | string
+  dataType?: Prisma.EnumFieldDataTypeEnumFieldUpdateOperationsInput | $Enums.FieldDataTypeEnum
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  entityType?: Prisma.StringFieldUpdateOperationsInput | string
+  isGlobal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnique?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validationRules?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  enumOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  uiGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  uiOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  isSearchable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFilterable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assetCategoryFields?: Prisma.AssetCategoryFieldUpdateManyWithoutFieldDefinitionNestedInput
+  licenseProductFields?: Prisma.LicenseProductFieldUpdateManyWithoutFieldDefinitionNestedInput
+}
+
+export type FieldDefinitionUncheckedUpdateWithoutCiClassFieldsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  label?: Prisma.StringFieldUpdateOperationsInput | string
+  dataType?: Prisma.EnumFieldDataTypeEnumFieldUpdateOperationsInput | $Enums.FieldDataTypeEnum
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  entityType?: Prisma.StringFieldUpdateOperationsInput | string
+  isGlobal?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isRequired?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnique?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  validationRules?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  defaultValue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  enumOptions?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  uiGroup?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  uiOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  displayOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  isSearchable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFilterable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  assetCategoryFields?: Prisma.AssetCategoryFieldUncheckedUpdateManyWithoutFieldDefinitionNestedInput
   licenseProductFields?: Prisma.LicenseProductFieldUncheckedUpdateManyWithoutFieldDefinitionNestedInput
 }
 

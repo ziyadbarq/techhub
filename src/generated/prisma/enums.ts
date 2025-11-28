@@ -9,28 +9,6 @@
 * 🟢 You can import this file directly.
 */
 
-export const EnvironmentEnum = {
-  PROD: 'PROD',
-  UAT: 'UAT',
-  DEV: 'DEV',
-  DR: 'DR',
-  TEST: 'TEST',
-  OTHER: 'OTHER'
-} as const
-
-export type EnvironmentEnum = (typeof EnvironmentEnum)[keyof typeof EnvironmentEnum]
-
-
-export const CriticalityEnum = {
-  LOW: 'LOW',
-  MEDIUM: 'MEDIUM',
-  HIGH: 'HIGH',
-  CRITICAL: 'CRITICAL'
-} as const
-
-export type CriticalityEnum = (typeof CriticalityEnum)[keyof typeof CriticalityEnum]
-
-
 export const AssigneeTypeEnum = {
   PERSON: 'PERSON',
   ORG_UNIT: 'ORG_UNIT',
@@ -39,48 +17,6 @@ export const AssigneeTypeEnum = {
 } as const
 
 export type AssigneeTypeEnum = (typeof AssigneeTypeEnum)[keyof typeof AssigneeTypeEnum]
-
-
-export const AllocationTargetTypeEnum = {
-  PERSON: 'PERSON',
-  CI: 'CI',
-  ASSET: 'ASSET'
-} as const
-
-export type AllocationTargetTypeEnum = (typeof AllocationTargetTypeEnum)[keyof typeof AllocationTargetTypeEnum]
-
-
-export const TargetObjectTypeEnum = {
-  ORGANIZATION_UNIT: 'ORGANIZATION_UNIT',
-  PERSON: 'PERSON',
-  LOCATION: 'LOCATION',
-  VENDOR: 'VENDOR',
-  LIFECYCLE_STATE: 'LIFECYCLE_STATE',
-  LIFECYCLE_TRANSITION: 'LIFECYCLE_TRANSITION',
-  CI: 'CI',
-  CI_RELATIONSHIP: 'CI_RELATIONSHIP',
-  RELATIONSHIP_TYPE: 'RELATIONSHIP_TYPE',
-  ASSET: 'ASSET',
-  ASSET_ASSIGNMENT: 'ASSET_ASSIGNMENT',
-  WARRANTY: 'WARRANTY',
-  MAINTENANCE_SCHEDULE: 'MAINTENANCE_SCHEDULE',
-  MAINTENANCE_RECORD: 'MAINTENANCE_RECORD',
-  STOCK_MOVEMENT: 'STOCK_MOVEMENT',
-  ASSET_DISPOSAL: 'ASSET_DISPOSAL',
-  DISPOSAL_APPROVAL: 'DISPOSAL_APPROVAL',
-  DISPOSAL_DOCUMENT: 'DISPOSAL_DOCUMENT',
-  ASSET_KIT: 'ASSET_KIT',
-  ASSET_KIT_ITEM: 'ASSET_KIT_ITEM',
-  ASSET_KIT_CHECKOUT: 'ASSET_KIT_CHECKOUT',
-  ASSET_KIT_CHECKOUT_ITEM: 'ASSET_KIT_CHECKOUT_ITEM',
-  ASSET_RESERVATION: 'ASSET_RESERVATION',
-  ASSET_RESERVATION_CONFLICT: 'ASSET_RESERVATION_CONFLICT',
-  CONTRACT: 'CONTRACT',
-  LICENSE_ENTITLEMENT: 'LICENSE_ENTITLEMENT',
-  LICENSE_ALLOCATION: 'LICENSE_ALLOCATION'
-} as const
-
-export type TargetObjectTypeEnum = (typeof TargetObjectTypeEnum)[keyof typeof TargetObjectTypeEnum]
 
 
 export const StockMovementTypeEnum = {
@@ -112,22 +48,50 @@ export const FieldDataTypeEnum = {
 export type FieldDataTypeEnum = (typeof FieldDataTypeEnum)[keyof typeof FieldDataTypeEnum]
 
 
+export const WarrantyCoverageType = {
+  STANDARD: 'STANDARD',
+  EXTENDED: 'EXTENDED',
+  ENHANCED: 'ENHANCED',
+  PREMIUM: 'PREMIUM',
+  BASIC: 'BASIC',
+  THIRD_PARTY: 'THIRD_PARTY',
+  MANUFACTURER: 'MANUFACTURER',
+  DEPOT: 'DEPOT',
+  ONSITE: 'ONSITE',
+  NEXT_BUSINESS_DAY: 'NEXT_BUSINESS_DAY'
+} as const
+
+export type WarrantyCoverageType = (typeof WarrantyCoverageType)[keyof typeof WarrantyCoverageType]
+
+
+export const EnvironmentEnum = {
+  PROD: 'PROD',
+  UAT: 'UAT',
+  DEV: 'DEV',
+  DR: 'DR',
+  TEST: 'TEST',
+  OTHER: 'OTHER'
+} as const
+
+export type EnvironmentEnum = (typeof EnvironmentEnum)[keyof typeof EnvironmentEnum]
+
+
+export const CriticalityEnum = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  CRITICAL: 'CRITICAL'
+} as const
+
+export type CriticalityEnum = (typeof CriticalityEnum)[keyof typeof CriticalityEnum]
+
+
 export const RelationshipDirectionEnum = {
   UNIDIRECTIONAL: 'UNIDIRECTIONAL',
   BIDIRECTIONAL: 'BIDIRECTIONAL'
 } as const
 
 export type RelationshipDirectionEnum = (typeof RelationshipDirectionEnum)[keyof typeof RelationshipDirectionEnum]
-
-
-export const VerificationStatusEnum = {
-  PENDING: 'PENDING',
-  IN_PROGRESS: 'IN_PROGRESS',
-  VERIFIED: 'VERIFIED',
-  EXCEPTION: 'EXCEPTION'
-} as const
-
-export type VerificationStatusEnum = (typeof VerificationStatusEnum)[keyof typeof VerificationStatusEnum]
 
 
 export const OrganizationUnitType = {
@@ -184,50 +148,69 @@ export const StateType = {
 export type StateType = (typeof StateType)[keyof typeof StateType]
 
 
-export const WarrantyCoverageType = {
-  STANDARD: 'STANDARD',
-  EXTENDED: 'EXTENDED',
-  ENHANCED: 'ENHANCED',
-  PREMIUM: 'PREMIUM',
-  BASIC: 'BASIC',
-  THIRD_PARTY: 'THIRD_PARTY',
-  MANUFACTURER: 'MANUFACTURER',
-  DEPOT: 'DEPOT',
-  ONSITE: 'ONSITE',
-  NEXT_BUSINESS_DAY: 'NEXT_BUSINESS_DAY'
-} as const
-
-export type WarrantyCoverageType = (typeof WarrantyCoverageType)[keyof typeof WarrantyCoverageType]
-
-
-export const TaskStatus = {
+export const VerificationStatusEnum = {
   PENDING: 'PENDING',
   IN_PROGRESS: 'IN_PROGRESS',
-  COMPLETED: 'COMPLETED'
+  VERIFIED: 'VERIFIED',
+  EXCEPTION: 'EXCEPTION'
 } as const
 
-export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus]
+export type VerificationStatusEnum = (typeof VerificationStatusEnum)[keyof typeof VerificationStatusEnum]
 
 
-export const PromptBlockCategory = {
-  CORE_SYNTAX: 'CORE_SYNTAX',
-  CONTENT_GUIDELINES: 'CONTENT_GUIDELINES',
-  VALIDATION: 'VALIDATION',
-  ADVANCED_FEATURES: 'ADVANCED_FEATURES'
+export const IntuneDeviceOwnershipType = {
+  CORPORATE: 'CORPORATE',
+  PERSONAL: 'PERSONAL',
+  UNKNOWN: 'UNKNOWN'
 } as const
 
-export type PromptBlockCategory = (typeof PromptBlockCategory)[keyof typeof PromptBlockCategory]
+export type IntuneDeviceOwnershipType = (typeof IntuneDeviceOwnershipType)[keyof typeof IntuneDeviceOwnershipType]
 
 
-export const PromptPurpose = {
-  OUTLINE: 'OUTLINE',
-  CONTENT: 'CONTENT',
-  THEME: 'THEME',
-  REVIEW: 'REVIEW',
-  REFINEMENT: 'REFINEMENT'
+export const IntuneComplianceState = {
+  COMPLIANT: 'COMPLIANT',
+  NON_COMPLIANT: 'NON_COMPLIANT',
+  CONFLICT: 'CONFLICT',
+  ERROR: 'ERROR',
+  IN_GRACE_PERIOD: 'IN_GRACE_PERIOD',
+  CONFIG_MANAGER: 'CONFIG_MANAGER',
+  UNKNOWN: 'UNKNOWN'
 } as const
 
-export type PromptPurpose = (typeof PromptPurpose)[keyof typeof PromptPurpose]
+export type IntuneComplianceState = (typeof IntuneComplianceState)[keyof typeof IntuneComplianceState]
+
+
+export const IntuneManagementState = {
+  MANAGED: 'MANAGED',
+  RETIRE_PENDING: 'RETIRE_PENDING',
+  RETIRE_ISSUED: 'RETIRE_ISSUED',
+  WIPE_PENDING: 'WIPE_PENDING',
+  WIPE_ISSUED: 'WIPE_ISSUED',
+  UNHEALTHY: 'UNHEALTHY',
+  DELETE_PENDING: 'DELETE_PENDING',
+  DISCOVERED: 'DISCOVERED'
+} as const
+
+export type IntuneManagementState = (typeof IntuneManagementState)[keyof typeof IntuneManagementState]
+
+
+export const IntuneSyncStatus = {
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  PARTIAL: 'PARTIAL'
+} as const
+
+export type IntuneSyncStatus = (typeof IntuneSyncStatus)[keyof typeof IntuneSyncStatus]
+
+
+export const AllocationTargetTypeEnum = {
+  PERSON: 'PERSON',
+  CI: 'CI',
+  ASSET: 'ASSET'
+} as const
+
+export type AllocationTargetTypeEnum = (typeof AllocationTargetTypeEnum)[keyof typeof AllocationTargetTypeEnum]
 
 
 export const ServiceType = {
@@ -329,50 +312,67 @@ export const ServiceRelationshipType = {
 export type ServiceRelationshipType = (typeof ServiceRelationshipType)[keyof typeof ServiceRelationshipType]
 
 
-export const IntuneDeviceOwnershipType = {
-  CORPORATE: 'CORPORATE',
-  PERSONAL: 'PERSONAL',
-  UNKNOWN: 'UNKNOWN'
+export const TargetObjectTypeEnum = {
+  ORGANIZATION_UNIT: 'ORGANIZATION_UNIT',
+  PERSON: 'PERSON',
+  LOCATION: 'LOCATION',
+  VENDOR: 'VENDOR',
+  LIFECYCLE_STATE: 'LIFECYCLE_STATE',
+  LIFECYCLE_TRANSITION: 'LIFECYCLE_TRANSITION',
+  CI: 'CI',
+  CI_RELATIONSHIP: 'CI_RELATIONSHIP',
+  RELATIONSHIP_TYPE: 'RELATIONSHIP_TYPE',
+  ASSET: 'ASSET',
+  ASSET_ASSIGNMENT: 'ASSET_ASSIGNMENT',
+  WARRANTY: 'WARRANTY',
+  MAINTENANCE_SCHEDULE: 'MAINTENANCE_SCHEDULE',
+  MAINTENANCE_RECORD: 'MAINTENANCE_RECORD',
+  STOCK_MOVEMENT: 'STOCK_MOVEMENT',
+  ASSET_DISPOSAL: 'ASSET_DISPOSAL',
+  DISPOSAL_APPROVAL: 'DISPOSAL_APPROVAL',
+  DISPOSAL_DOCUMENT: 'DISPOSAL_DOCUMENT',
+  ASSET_KIT: 'ASSET_KIT',
+  ASSET_KIT_ITEM: 'ASSET_KIT_ITEM',
+  ASSET_KIT_CHECKOUT: 'ASSET_KIT_CHECKOUT',
+  ASSET_KIT_CHECKOUT_ITEM: 'ASSET_KIT_CHECKOUT_ITEM',
+  ASSET_RESERVATION: 'ASSET_RESERVATION',
+  ASSET_RESERVATION_CONFLICT: 'ASSET_RESERVATION_CONFLICT',
+  CONTRACT: 'CONTRACT',
+  LICENSE_ENTITLEMENT: 'LICENSE_ENTITLEMENT',
+  LICENSE_ALLOCATION: 'LICENSE_ALLOCATION'
 } as const
 
-export type IntuneDeviceOwnershipType = (typeof IntuneDeviceOwnershipType)[keyof typeof IntuneDeviceOwnershipType]
+export type TargetObjectTypeEnum = (typeof TargetObjectTypeEnum)[keyof typeof TargetObjectTypeEnum]
 
 
-export const IntuneComplianceState = {
-  COMPLIANT: 'COMPLIANT',
-  NON_COMPLIANT: 'NON_COMPLIANT',
-  CONFLICT: 'CONFLICT',
-  ERROR: 'ERROR',
-  IN_GRACE_PERIOD: 'IN_GRACE_PERIOD',
-  CONFIG_MANAGER: 'CONFIG_MANAGER',
-  UNKNOWN: 'UNKNOWN'
-} as const
-
-export type IntuneComplianceState = (typeof IntuneComplianceState)[keyof typeof IntuneComplianceState]
-
-
-export const IntuneManagementState = {
-  MANAGED: 'MANAGED',
-  RETIRE_PENDING: 'RETIRE_PENDING',
-  RETIRE_ISSUED: 'RETIRE_ISSUED',
-  WIPE_PENDING: 'WIPE_PENDING',
-  WIPE_ISSUED: 'WIPE_ISSUED',
-  UNHEALTHY: 'UNHEALTHY',
-  DELETE_PENDING: 'DELETE_PENDING',
-  DISCOVERED: 'DISCOVERED'
-} as const
-
-export type IntuneManagementState = (typeof IntuneManagementState)[keyof typeof IntuneManagementState]
-
-
-export const IntuneSyncStatus = {
+export const TaskStatus = {
+  PENDING: 'PENDING',
   IN_PROGRESS: 'IN_PROGRESS',
-  COMPLETED: 'COMPLETED',
-  FAILED: 'FAILED',
-  PARTIAL: 'PARTIAL'
+  COMPLETED: 'COMPLETED'
 } as const
 
-export type IntuneSyncStatus = (typeof IntuneSyncStatus)[keyof typeof IntuneSyncStatus]
+export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus]
+
+
+export const PromptBlockCategory = {
+  CORE_SYNTAX: 'CORE_SYNTAX',
+  CONTENT_GUIDELINES: 'CONTENT_GUIDELINES',
+  VALIDATION: 'VALIDATION',
+  ADVANCED_FEATURES: 'ADVANCED_FEATURES'
+} as const
+
+export type PromptBlockCategory = (typeof PromptBlockCategory)[keyof typeof PromptBlockCategory]
+
+
+export const PromptPurpose = {
+  OUTLINE: 'OUTLINE',
+  CONTENT: 'CONTENT',
+  THEME: 'THEME',
+  REVIEW: 'REVIEW',
+  REFINEMENT: 'REFINEMENT'
+} as const
+
+export type PromptPurpose = (typeof PromptPurpose)[keyof typeof PromptPurpose]
 
 
 export const FeatureFlagCategory = {

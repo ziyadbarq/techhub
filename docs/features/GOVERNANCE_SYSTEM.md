@@ -1140,7 +1140,7 @@ src/
 │
 ├── infrastructure/
 │   ├── database/prisma/
-│   │   └── schema.prisma                                ✅ 4 models + 2 enums
+│   │   └── schema/governance.prisma                     ✅ 5 models + 1 enum
 │   └── repositories/
 │       ├── prisma-data-domain.repository.ts             ✅
 │       ├── prisma-data-ownership.repository.ts          ✅

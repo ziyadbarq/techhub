@@ -1050,7 +1050,7 @@ src/
 │
 ├── infrastructure/
 │   ├── database/prisma/
-│   │   └── schema.prisma                              ✅
+│   │   └── schema/attachments.prisma                  ✅
 │   └── repositories/
 │       ├── prisma-attachment-type.repository.ts       ✅
 │       └── prisma-attachment.repository.ts            ✅

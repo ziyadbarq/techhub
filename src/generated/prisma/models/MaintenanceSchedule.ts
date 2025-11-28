@@ -601,48 +601,6 @@ export type MaintenanceScheduleNullableScalarRelationFilter = {
   isNot?: Prisma.MaintenanceScheduleWhereInput | null
 }
 
-export type MaintenanceScheduleCreateNestedManyWithoutAssignedToInput = {
-  create?: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutAssignedToInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput> | Prisma.MaintenanceScheduleCreateWithoutAssignedToInput[] | Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput[]
-  connectOrCreate?: Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput | Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput[]
-  createMany?: Prisma.MaintenanceScheduleCreateManyAssignedToInputEnvelope
-  connect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
-}
-
-export type MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput = {
-  create?: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutAssignedToInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput> | Prisma.MaintenanceScheduleCreateWithoutAssignedToInput[] | Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput[]
-  connectOrCreate?: Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput | Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput[]
-  createMany?: Prisma.MaintenanceScheduleCreateManyAssignedToInputEnvelope
-  connect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
-}
-
-export type MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput = {
-  create?: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutAssignedToInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput> | Prisma.MaintenanceScheduleCreateWithoutAssignedToInput[] | Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput[]
-  connectOrCreate?: Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput | Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput[]
-  upsert?: Prisma.MaintenanceScheduleUpsertWithWhereUniqueWithoutAssignedToInput | Prisma.MaintenanceScheduleUpsertWithWhereUniqueWithoutAssignedToInput[]
-  createMany?: Prisma.MaintenanceScheduleCreateManyAssignedToInputEnvelope
-  set?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
-  disconnect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
-  delete?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
-  connect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
-  update?: Prisma.MaintenanceScheduleUpdateWithWhereUniqueWithoutAssignedToInput | Prisma.MaintenanceScheduleUpdateWithWhereUniqueWithoutAssignedToInput[]
-  updateMany?: Prisma.MaintenanceScheduleUpdateManyWithWhereWithoutAssignedToInput | Prisma.MaintenanceScheduleUpdateManyWithWhereWithoutAssignedToInput[]
-  deleteMany?: Prisma.MaintenanceScheduleScalarWhereInput | Prisma.MaintenanceScheduleScalarWhereInput[]
-}
-
-export type MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput = {
-  create?: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutAssignedToInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput> | Prisma.MaintenanceScheduleCreateWithoutAssignedToInput[] | Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput[]
-  connectOrCreate?: Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput | Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput[]
-  upsert?: Prisma.MaintenanceScheduleUpsertWithWhereUniqueWithoutAssignedToInput | Prisma.MaintenanceScheduleUpsertWithWhereUniqueWithoutAssignedToInput[]
-  createMany?: Prisma.MaintenanceScheduleCreateManyAssignedToInputEnvelope
-  set?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
-  disconnect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
-  delete?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
-  connect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
-  update?: Prisma.MaintenanceScheduleUpdateWithWhereUniqueWithoutAssignedToInput | Prisma.MaintenanceScheduleUpdateWithWhereUniqueWithoutAssignedToInput[]
-  updateMany?: Prisma.MaintenanceScheduleUpdateManyWithWhereWithoutAssignedToInput | Prisma.MaintenanceScheduleUpdateManyWithWhereWithoutAssignedToInput[]
-  deleteMany?: Prisma.MaintenanceScheduleScalarWhereInput | Prisma.MaintenanceScheduleScalarWhereInput[]
-}
-
 export type MaintenanceScheduleCreateNestedManyWithoutAssetInput = {
   create?: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutAssetInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutAssetInput> | Prisma.MaintenanceScheduleCreateWithoutAssetInput[] | Prisma.MaintenanceScheduleUncheckedCreateWithoutAssetInput[]
   connectOrCreate?: Prisma.MaintenanceScheduleCreateOrConnectWithoutAssetInput | Prisma.MaintenanceScheduleCreateOrConnectWithoutAssetInput[]
@@ -685,6 +643,48 @@ export type MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput = {
   deleteMany?: Prisma.MaintenanceScheduleScalarWhereInput | Prisma.MaintenanceScheduleScalarWhereInput[]
 }
 
+export type MaintenanceScheduleCreateNestedManyWithoutAssignedToInput = {
+  create?: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutAssignedToInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput> | Prisma.MaintenanceScheduleCreateWithoutAssignedToInput[] | Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput[]
+  connectOrCreate?: Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput | Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput[]
+  createMany?: Prisma.MaintenanceScheduleCreateManyAssignedToInputEnvelope
+  connect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+}
+
+export type MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput = {
+  create?: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutAssignedToInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput> | Prisma.MaintenanceScheduleCreateWithoutAssignedToInput[] | Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput[]
+  connectOrCreate?: Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput | Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput[]
+  createMany?: Prisma.MaintenanceScheduleCreateManyAssignedToInputEnvelope
+  connect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+}
+
+export type MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput = {
+  create?: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutAssignedToInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput> | Prisma.MaintenanceScheduleCreateWithoutAssignedToInput[] | Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput[]
+  connectOrCreate?: Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput | Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput[]
+  upsert?: Prisma.MaintenanceScheduleUpsertWithWhereUniqueWithoutAssignedToInput | Prisma.MaintenanceScheduleUpsertWithWhereUniqueWithoutAssignedToInput[]
+  createMany?: Prisma.MaintenanceScheduleCreateManyAssignedToInputEnvelope
+  set?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+  disconnect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+  delete?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+  connect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+  update?: Prisma.MaintenanceScheduleUpdateWithWhereUniqueWithoutAssignedToInput | Prisma.MaintenanceScheduleUpdateWithWhereUniqueWithoutAssignedToInput[]
+  updateMany?: Prisma.MaintenanceScheduleUpdateManyWithWhereWithoutAssignedToInput | Prisma.MaintenanceScheduleUpdateManyWithWhereWithoutAssignedToInput[]
+  deleteMany?: Prisma.MaintenanceScheduleScalarWhereInput | Prisma.MaintenanceScheduleScalarWhereInput[]
+}
+
+export type MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput = {
+  create?: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutAssignedToInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput> | Prisma.MaintenanceScheduleCreateWithoutAssignedToInput[] | Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput[]
+  connectOrCreate?: Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput | Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput[]
+  upsert?: Prisma.MaintenanceScheduleUpsertWithWhereUniqueWithoutAssignedToInput | Prisma.MaintenanceScheduleUpsertWithWhereUniqueWithoutAssignedToInput[]
+  createMany?: Prisma.MaintenanceScheduleCreateManyAssignedToInputEnvelope
+  set?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+  disconnect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+  delete?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+  connect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+  update?: Prisma.MaintenanceScheduleUpdateWithWhereUniqueWithoutAssignedToInput | Prisma.MaintenanceScheduleUpdateWithWhereUniqueWithoutAssignedToInput[]
+  updateMany?: Prisma.MaintenanceScheduleUpdateManyWithWhereWithoutAssignedToInput | Prisma.MaintenanceScheduleUpdateManyWithWhereWithoutAssignedToInput[]
+  deleteMany?: Prisma.MaintenanceScheduleScalarWhereInput | Prisma.MaintenanceScheduleScalarWhereInput[]
+}
+
 export type MaintenanceScheduleCreateNestedOneWithoutMaintenanceRecordsInput = {
   create?: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutMaintenanceRecordsInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutMaintenanceRecordsInput>
   connectOrCreate?: Prisma.MaintenanceScheduleCreateOrConnectWithoutMaintenanceRecordsInput
@@ -699,89 +699,6 @@ export type MaintenanceScheduleUpdateOneWithoutMaintenanceRecordsNestedInput = {
   delete?: Prisma.MaintenanceScheduleWhereInput | boolean
   connect?: Prisma.MaintenanceScheduleWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.MaintenanceScheduleUpdateToOneWithWhereWithoutMaintenanceRecordsInput, Prisma.MaintenanceScheduleUpdateWithoutMaintenanceRecordsInput>, Prisma.MaintenanceScheduleUncheckedUpdateWithoutMaintenanceRecordsInput>
-}
-
-export type MaintenanceScheduleCreateWithoutAssignedToInput = {
-  id?: string
-  title: string
-  description?: string | null
-  scheduleType: string
-  intervalValue?: number
-  startDate?: Date | string
-  nextDueDate: Date | string
-  isActive?: boolean
-  estimatedDurationMinutes?: number | null
-  priority?: string
-  instructions?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  asset: Prisma.AssetCreateNestedOneWithoutMaintenanceSchedulesInput
-  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutMaintenanceScheduleInput
-}
-
-export type MaintenanceScheduleUncheckedCreateWithoutAssignedToInput = {
-  id?: string
-  assetId: string
-  title: string
-  description?: string | null
-  scheduleType: string
-  intervalValue?: number
-  startDate?: Date | string
-  nextDueDate: Date | string
-  isActive?: boolean
-  estimatedDurationMinutes?: number | null
-  priority?: string
-  instructions?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutMaintenanceScheduleInput
-}
-
-export type MaintenanceScheduleCreateOrConnectWithoutAssignedToInput = {
-  where: Prisma.MaintenanceScheduleWhereUniqueInput
-  create: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutAssignedToInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput>
-}
-
-export type MaintenanceScheduleCreateManyAssignedToInputEnvelope = {
-  data: Prisma.MaintenanceScheduleCreateManyAssignedToInput | Prisma.MaintenanceScheduleCreateManyAssignedToInput[]
-  skipDuplicates?: boolean
-}
-
-export type MaintenanceScheduleUpsertWithWhereUniqueWithoutAssignedToInput = {
-  where: Prisma.MaintenanceScheduleWhereUniqueInput
-  update: Prisma.XOR<Prisma.MaintenanceScheduleUpdateWithoutAssignedToInput, Prisma.MaintenanceScheduleUncheckedUpdateWithoutAssignedToInput>
-  create: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutAssignedToInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput>
-}
-
-export type MaintenanceScheduleUpdateWithWhereUniqueWithoutAssignedToInput = {
-  where: Prisma.MaintenanceScheduleWhereUniqueInput
-  data: Prisma.XOR<Prisma.MaintenanceScheduleUpdateWithoutAssignedToInput, Prisma.MaintenanceScheduleUncheckedUpdateWithoutAssignedToInput>
-}
-
-export type MaintenanceScheduleUpdateManyWithWhereWithoutAssignedToInput = {
-  where: Prisma.MaintenanceScheduleScalarWhereInput
-  data: Prisma.XOR<Prisma.MaintenanceScheduleUpdateManyMutationInput, Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToInput>
-}
-
-export type MaintenanceScheduleScalarWhereInput = {
-  AND?: Prisma.MaintenanceScheduleScalarWhereInput | Prisma.MaintenanceScheduleScalarWhereInput[]
-  OR?: Prisma.MaintenanceScheduleScalarWhereInput[]
-  NOT?: Prisma.MaintenanceScheduleScalarWhereInput | Prisma.MaintenanceScheduleScalarWhereInput[]
-  id?: Prisma.StringFilter<"MaintenanceSchedule"> | string
-  assetId?: Prisma.StringFilter<"MaintenanceSchedule"> | string
-  title?: Prisma.StringFilter<"MaintenanceSchedule"> | string
-  description?: Prisma.StringNullableFilter<"MaintenanceSchedule"> | string | null
-  scheduleType?: Prisma.StringFilter<"MaintenanceSchedule"> | string
-  intervalValue?: Prisma.IntFilter<"MaintenanceSchedule"> | number
-  startDate?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
-  nextDueDate?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
-  isActive?: Prisma.BoolFilter<"MaintenanceSchedule"> | boolean
-  assignedToId?: Prisma.StringNullableFilter<"MaintenanceSchedule"> | string | null
-  estimatedDurationMinutes?: Prisma.IntNullableFilter<"MaintenanceSchedule"> | number | null
-  priority?: Prisma.StringFilter<"MaintenanceSchedule"> | string
-  instructions?: Prisma.StringNullableFilter<"MaintenanceSchedule"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
 }
 
 export type MaintenanceScheduleCreateWithoutAssetInput = {
@@ -844,6 +761,89 @@ export type MaintenanceScheduleUpdateWithWhereUniqueWithoutAssetInput = {
 export type MaintenanceScheduleUpdateManyWithWhereWithoutAssetInput = {
   where: Prisma.MaintenanceScheduleScalarWhereInput
   data: Prisma.XOR<Prisma.MaintenanceScheduleUpdateManyMutationInput, Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetInput>
+}
+
+export type MaintenanceScheduleScalarWhereInput = {
+  AND?: Prisma.MaintenanceScheduleScalarWhereInput | Prisma.MaintenanceScheduleScalarWhereInput[]
+  OR?: Prisma.MaintenanceScheduleScalarWhereInput[]
+  NOT?: Prisma.MaintenanceScheduleScalarWhereInput | Prisma.MaintenanceScheduleScalarWhereInput[]
+  id?: Prisma.StringFilter<"MaintenanceSchedule"> | string
+  assetId?: Prisma.StringFilter<"MaintenanceSchedule"> | string
+  title?: Prisma.StringFilter<"MaintenanceSchedule"> | string
+  description?: Prisma.StringNullableFilter<"MaintenanceSchedule"> | string | null
+  scheduleType?: Prisma.StringFilter<"MaintenanceSchedule"> | string
+  intervalValue?: Prisma.IntFilter<"MaintenanceSchedule"> | number
+  startDate?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
+  nextDueDate?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
+  isActive?: Prisma.BoolFilter<"MaintenanceSchedule"> | boolean
+  assignedToId?: Prisma.StringNullableFilter<"MaintenanceSchedule"> | string | null
+  estimatedDurationMinutes?: Prisma.IntNullableFilter<"MaintenanceSchedule"> | number | null
+  priority?: Prisma.StringFilter<"MaintenanceSchedule"> | string
+  instructions?: Prisma.StringNullableFilter<"MaintenanceSchedule"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
+}
+
+export type MaintenanceScheduleCreateWithoutAssignedToInput = {
+  id?: string
+  title: string
+  description?: string | null
+  scheduleType: string
+  intervalValue?: number
+  startDate?: Date | string
+  nextDueDate: Date | string
+  isActive?: boolean
+  estimatedDurationMinutes?: number | null
+  priority?: string
+  instructions?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  asset: Prisma.AssetCreateNestedOneWithoutMaintenanceSchedulesInput
+  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutMaintenanceScheduleInput
+}
+
+export type MaintenanceScheduleUncheckedCreateWithoutAssignedToInput = {
+  id?: string
+  assetId: string
+  title: string
+  description?: string | null
+  scheduleType: string
+  intervalValue?: number
+  startDate?: Date | string
+  nextDueDate: Date | string
+  isActive?: boolean
+  estimatedDurationMinutes?: number | null
+  priority?: string
+  instructions?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutMaintenanceScheduleInput
+}
+
+export type MaintenanceScheduleCreateOrConnectWithoutAssignedToInput = {
+  where: Prisma.MaintenanceScheduleWhereUniqueInput
+  create: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutAssignedToInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput>
+}
+
+export type MaintenanceScheduleCreateManyAssignedToInputEnvelope = {
+  data: Prisma.MaintenanceScheduleCreateManyAssignedToInput | Prisma.MaintenanceScheduleCreateManyAssignedToInput[]
+  skipDuplicates?: boolean
+}
+
+export type MaintenanceScheduleUpsertWithWhereUniqueWithoutAssignedToInput = {
+  where: Prisma.MaintenanceScheduleWhereUniqueInput
+  update: Prisma.XOR<Prisma.MaintenanceScheduleUpdateWithoutAssignedToInput, Prisma.MaintenanceScheduleUncheckedUpdateWithoutAssignedToInput>
+  create: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutAssignedToInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput>
+}
+
+export type MaintenanceScheduleUpdateWithWhereUniqueWithoutAssignedToInput = {
+  where: Prisma.MaintenanceScheduleWhereUniqueInput
+  data: Prisma.XOR<Prisma.MaintenanceScheduleUpdateWithoutAssignedToInput, Prisma.MaintenanceScheduleUncheckedUpdateWithoutAssignedToInput>
+}
+
+export type MaintenanceScheduleUpdateManyWithWhereWithoutAssignedToInput = {
+  where: Prisma.MaintenanceScheduleScalarWhereInput
+  data: Prisma.XOR<Prisma.MaintenanceScheduleUpdateManyMutationInput, Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToInput>
 }
 
 export type MaintenanceScheduleCreateWithoutMaintenanceRecordsInput = {
@@ -934,76 +934,6 @@ export type MaintenanceScheduleUncheckedUpdateWithoutMaintenanceRecordsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type MaintenanceScheduleCreateManyAssignedToInput = {
-  id?: string
-  assetId: string
-  title: string
-  description?: string | null
-  scheduleType: string
-  intervalValue?: number
-  startDate?: Date | string
-  nextDueDate: Date | string
-  isActive?: boolean
-  estimatedDurationMinutes?: number | null
-  priority?: string
-  instructions?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type MaintenanceScheduleUpdateWithoutAssignedToInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scheduleType?: Prisma.StringFieldUpdateOperationsInput | string
-  intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  priority?: Prisma.StringFieldUpdateOperationsInput | string
-  instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  asset?: Prisma.AssetUpdateOneRequiredWithoutMaintenanceSchedulesNestedInput
-  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutMaintenanceScheduleNestedInput
-}
-
-export type MaintenanceScheduleUncheckedUpdateWithoutAssignedToInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetId?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scheduleType?: Prisma.StringFieldUpdateOperationsInput | string
-  intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  priority?: Prisma.StringFieldUpdateOperationsInput | string
-  instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutMaintenanceScheduleNestedInput
-}
-
-export type MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  assetId?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scheduleType?: Prisma.StringFieldUpdateOperationsInput | string
-  intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
-  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  priority?: Prisma.StringFieldUpdateOperationsInput | string
-  instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
 export type MaintenanceScheduleCreateManyAssetInput = {
   id?: string
   title: string
@@ -1067,6 +997,76 @@ export type MaintenanceScheduleUncheckedUpdateManyWithoutAssetInput = {
   nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   assignedToId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type MaintenanceScheduleCreateManyAssignedToInput = {
+  id?: string
+  assetId: string
+  title: string
+  description?: string | null
+  scheduleType: string
+  intervalValue?: number
+  startDate?: Date | string
+  nextDueDate: Date | string
+  isActive?: boolean
+  estimatedDurationMinutes?: number | null
+  priority?: string
+  instructions?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type MaintenanceScheduleUpdateWithoutAssignedToInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scheduleType?: Prisma.StringFieldUpdateOperationsInput | string
+  intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  asset?: Prisma.AssetUpdateOneRequiredWithoutMaintenanceSchedulesNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutMaintenanceScheduleNestedInput
+}
+
+export type MaintenanceScheduleUncheckedUpdateWithoutAssignedToInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetId?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scheduleType?: Prisma.StringFieldUpdateOperationsInput | string
+  intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutMaintenanceScheduleNestedInput
+}
+
+export type MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetId?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scheduleType?: Prisma.StringFieldUpdateOperationsInput | string
+  intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   priority?: Prisma.StringFieldUpdateOperationsInput | string
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null

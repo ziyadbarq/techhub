@@ -496,6 +496,11 @@ export type LifecycleStateUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type LifecycleStateNullableScalarRelationFilter = {
+  is?: Prisma.LifecycleStateWhereInput | null
+  isNot?: Prisma.LifecycleStateWhereInput | null
+}
+
 export type LifecycleStateListRelationFilter = {
   every?: Prisma.LifecycleStateWhereInput
   some?: Prisma.LifecycleStateWhereInput
@@ -570,9 +575,36 @@ export type LifecycleStateScalarRelationFilter = {
   isNot?: Prisma.LifecycleStateWhereInput
 }
 
-export type LifecycleStateNullableScalarRelationFilter = {
-  is?: Prisma.LifecycleStateWhereInput | null
-  isNot?: Prisma.LifecycleStateWhereInput | null
+export type LifecycleStateCreateNestedOneWithoutAssetsInput = {
+  create?: Prisma.XOR<Prisma.LifecycleStateCreateWithoutAssetsInput, Prisma.LifecycleStateUncheckedCreateWithoutAssetsInput>
+  connectOrCreate?: Prisma.LifecycleStateCreateOrConnectWithoutAssetsInput
+  connect?: Prisma.LifecycleStateWhereUniqueInput
+}
+
+export type LifecycleStateUpdateOneWithoutAssetsNestedInput = {
+  create?: Prisma.XOR<Prisma.LifecycleStateCreateWithoutAssetsInput, Prisma.LifecycleStateUncheckedCreateWithoutAssetsInput>
+  connectOrCreate?: Prisma.LifecycleStateCreateOrConnectWithoutAssetsInput
+  upsert?: Prisma.LifecycleStateUpsertWithoutAssetsInput
+  disconnect?: Prisma.LifecycleStateWhereInput | boolean
+  delete?: Prisma.LifecycleStateWhereInput | boolean
+  connect?: Prisma.LifecycleStateWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LifecycleStateUpdateToOneWithWhereWithoutAssetsInput, Prisma.LifecycleStateUpdateWithoutAssetsInput>, Prisma.LifecycleStateUncheckedUpdateWithoutAssetsInput>
+}
+
+export type LifecycleStateCreateNestedOneWithoutConfigurationItemsInput = {
+  create?: Prisma.XOR<Prisma.LifecycleStateCreateWithoutConfigurationItemsInput, Prisma.LifecycleStateUncheckedCreateWithoutConfigurationItemsInput>
+  connectOrCreate?: Prisma.LifecycleStateCreateOrConnectWithoutConfigurationItemsInput
+  connect?: Prisma.LifecycleStateWhereUniqueInput
+}
+
+export type LifecycleStateUpdateOneWithoutConfigurationItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.LifecycleStateCreateWithoutConfigurationItemsInput, Prisma.LifecycleStateUncheckedCreateWithoutConfigurationItemsInput>
+  connectOrCreate?: Prisma.LifecycleStateCreateOrConnectWithoutConfigurationItemsInput
+  upsert?: Prisma.LifecycleStateUpsertWithoutConfigurationItemsInput
+  disconnect?: Prisma.LifecycleStateWhereInput | boolean
+  delete?: Prisma.LifecycleStateWhereInput | boolean
+  connect?: Prisma.LifecycleStateWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.LifecycleStateUpdateToOneWithWhereWithoutConfigurationItemsInput, Prisma.LifecycleStateUpdateWithoutConfigurationItemsInput>, Prisma.LifecycleStateUncheckedUpdateWithoutConfigurationItemsInput>
 }
 
 export type LifecycleStateCreateNestedManyWithoutLifecycleModelInput = {
@@ -649,36 +681,188 @@ export type LifecycleStateUpdateOneRequiredWithoutTransitionsToNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.LifecycleStateUpdateToOneWithWhereWithoutTransitionsToInput, Prisma.LifecycleStateUpdateWithoutTransitionsToInput>, Prisma.LifecycleStateUncheckedUpdateWithoutTransitionsToInput>
 }
 
-export type LifecycleStateCreateNestedOneWithoutConfigurationItemsInput = {
-  create?: Prisma.XOR<Prisma.LifecycleStateCreateWithoutConfigurationItemsInput, Prisma.LifecycleStateUncheckedCreateWithoutConfigurationItemsInput>
-  connectOrCreate?: Prisma.LifecycleStateCreateOrConnectWithoutConfigurationItemsInput
-  connect?: Prisma.LifecycleStateWhereUniqueInput
+export type LifecycleStateCreateWithoutAssetsInput = {
+  id?: string
+  name: string
+  code: string
+  description?: string | null
+  stateType?: $Enums.StateType
+  isActiveState?: boolean
+  isTerminalState?: boolean
+  sortOrder: number
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lifecycleModel: Prisma.LifecycleModelCreateNestedOneWithoutStatesInput
+  transitionsFrom?: Prisma.LifecycleTransitionCreateNestedManyWithoutFromStateInput
+  transitionsTo?: Prisma.LifecycleTransitionCreateNestedManyWithoutToStateInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLifecycleStateInput
 }
 
-export type LifecycleStateUpdateOneWithoutConfigurationItemsNestedInput = {
-  create?: Prisma.XOR<Prisma.LifecycleStateCreateWithoutConfigurationItemsInput, Prisma.LifecycleStateUncheckedCreateWithoutConfigurationItemsInput>
-  connectOrCreate?: Prisma.LifecycleStateCreateOrConnectWithoutConfigurationItemsInput
-  upsert?: Prisma.LifecycleStateUpsertWithoutConfigurationItemsInput
-  disconnect?: Prisma.LifecycleStateWhereInput | boolean
-  delete?: Prisma.LifecycleStateWhereInput | boolean
-  connect?: Prisma.LifecycleStateWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.LifecycleStateUpdateToOneWithWhereWithoutConfigurationItemsInput, Prisma.LifecycleStateUpdateWithoutConfigurationItemsInput>, Prisma.LifecycleStateUncheckedUpdateWithoutConfigurationItemsInput>
+export type LifecycleStateUncheckedCreateWithoutAssetsInput = {
+  id?: string
+  lifecycleModelId: string
+  name: string
+  code: string
+  description?: string | null
+  stateType?: $Enums.StateType
+  isActiveState?: boolean
+  isTerminalState?: boolean
+  sortOrder: number
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  transitionsFrom?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutFromStateInput
+  transitionsTo?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutToStateInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLifecycleStateInput
 }
 
-export type LifecycleStateCreateNestedOneWithoutAssetsInput = {
-  create?: Prisma.XOR<Prisma.LifecycleStateCreateWithoutAssetsInput, Prisma.LifecycleStateUncheckedCreateWithoutAssetsInput>
-  connectOrCreate?: Prisma.LifecycleStateCreateOrConnectWithoutAssetsInput
-  connect?: Prisma.LifecycleStateWhereUniqueInput
+export type LifecycleStateCreateOrConnectWithoutAssetsInput = {
+  where: Prisma.LifecycleStateWhereUniqueInput
+  create: Prisma.XOR<Prisma.LifecycleStateCreateWithoutAssetsInput, Prisma.LifecycleStateUncheckedCreateWithoutAssetsInput>
 }
 
-export type LifecycleStateUpdateOneWithoutAssetsNestedInput = {
-  create?: Prisma.XOR<Prisma.LifecycleStateCreateWithoutAssetsInput, Prisma.LifecycleStateUncheckedCreateWithoutAssetsInput>
-  connectOrCreate?: Prisma.LifecycleStateCreateOrConnectWithoutAssetsInput
-  upsert?: Prisma.LifecycleStateUpsertWithoutAssetsInput
-  disconnect?: Prisma.LifecycleStateWhereInput | boolean
-  delete?: Prisma.LifecycleStateWhereInput | boolean
-  connect?: Prisma.LifecycleStateWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.LifecycleStateUpdateToOneWithWhereWithoutAssetsInput, Prisma.LifecycleStateUpdateWithoutAssetsInput>, Prisma.LifecycleStateUncheckedUpdateWithoutAssetsInput>
+export type LifecycleStateUpsertWithoutAssetsInput = {
+  update: Prisma.XOR<Prisma.LifecycleStateUpdateWithoutAssetsInput, Prisma.LifecycleStateUncheckedUpdateWithoutAssetsInput>
+  create: Prisma.XOR<Prisma.LifecycleStateCreateWithoutAssetsInput, Prisma.LifecycleStateUncheckedCreateWithoutAssetsInput>
+  where?: Prisma.LifecycleStateWhereInput
+}
+
+export type LifecycleStateUpdateToOneWithWhereWithoutAssetsInput = {
+  where?: Prisma.LifecycleStateWhereInput
+  data: Prisma.XOR<Prisma.LifecycleStateUpdateWithoutAssetsInput, Prisma.LifecycleStateUncheckedUpdateWithoutAssetsInput>
+}
+
+export type LifecycleStateUpdateWithoutAssetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stateType?: Prisma.EnumStateTypeFieldUpdateOperationsInput | $Enums.StateType
+  isActiveState?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isTerminalState?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lifecycleModel?: Prisma.LifecycleModelUpdateOneRequiredWithoutStatesNestedInput
+  transitionsFrom?: Prisma.LifecycleTransitionUpdateManyWithoutFromStateNestedInput
+  transitionsTo?: Prisma.LifecycleTransitionUpdateManyWithoutToStateNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutLifecycleStateNestedInput
+}
+
+export type LifecycleStateUncheckedUpdateWithoutAssetsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycleModelId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stateType?: Prisma.EnumStateTypeFieldUpdateOperationsInput | $Enums.StateType
+  isActiveState?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isTerminalState?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transitionsFrom?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutFromStateNestedInput
+  transitionsTo?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutToStateNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLifecycleStateNestedInput
+}
+
+export type LifecycleStateCreateWithoutConfigurationItemsInput = {
+  id?: string
+  name: string
+  code: string
+  description?: string | null
+  stateType?: $Enums.StateType
+  isActiveState?: boolean
+  isTerminalState?: boolean
+  sortOrder: number
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lifecycleModel: Prisma.LifecycleModelCreateNestedOneWithoutStatesInput
+  transitionsFrom?: Prisma.LifecycleTransitionCreateNestedManyWithoutFromStateInput
+  transitionsTo?: Prisma.LifecycleTransitionCreateNestedManyWithoutToStateInput
+  assets?: Prisma.AssetCreateNestedManyWithoutLifecycleStateInput
+}
+
+export type LifecycleStateUncheckedCreateWithoutConfigurationItemsInput = {
+  id?: string
+  lifecycleModelId: string
+  name: string
+  code: string
+  description?: string | null
+  stateType?: $Enums.StateType
+  isActiveState?: boolean
+  isTerminalState?: boolean
+  sortOrder: number
+  isActive?: boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  transitionsFrom?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutFromStateInput
+  transitionsTo?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutToStateInput
+  assets?: Prisma.AssetUncheckedCreateNestedManyWithoutLifecycleStateInput
+}
+
+export type LifecycleStateCreateOrConnectWithoutConfigurationItemsInput = {
+  where: Prisma.LifecycleStateWhereUniqueInput
+  create: Prisma.XOR<Prisma.LifecycleStateCreateWithoutConfigurationItemsInput, Prisma.LifecycleStateUncheckedCreateWithoutConfigurationItemsInput>
+}
+
+export type LifecycleStateUpsertWithoutConfigurationItemsInput = {
+  update: Prisma.XOR<Prisma.LifecycleStateUpdateWithoutConfigurationItemsInput, Prisma.LifecycleStateUncheckedUpdateWithoutConfigurationItemsInput>
+  create: Prisma.XOR<Prisma.LifecycleStateCreateWithoutConfigurationItemsInput, Prisma.LifecycleStateUncheckedCreateWithoutConfigurationItemsInput>
+  where?: Prisma.LifecycleStateWhereInput
+}
+
+export type LifecycleStateUpdateToOneWithWhereWithoutConfigurationItemsInput = {
+  where?: Prisma.LifecycleStateWhereInput
+  data: Prisma.XOR<Prisma.LifecycleStateUpdateWithoutConfigurationItemsInput, Prisma.LifecycleStateUncheckedUpdateWithoutConfigurationItemsInput>
+}
+
+export type LifecycleStateUpdateWithoutConfigurationItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stateType?: Prisma.EnumStateTypeFieldUpdateOperationsInput | $Enums.StateType
+  isActiveState?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isTerminalState?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lifecycleModel?: Prisma.LifecycleModelUpdateOneRequiredWithoutStatesNestedInput
+  transitionsFrom?: Prisma.LifecycleTransitionUpdateManyWithoutFromStateNestedInput
+  transitionsTo?: Prisma.LifecycleTransitionUpdateManyWithoutToStateNestedInput
+  assets?: Prisma.AssetUpdateManyWithoutLifecycleStateNestedInput
+}
+
+export type LifecycleStateUncheckedUpdateWithoutConfigurationItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycleModelId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stateType?: Prisma.EnumStateTypeFieldUpdateOperationsInput | $Enums.StateType
+  isActiveState?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isTerminalState?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transitionsFrom?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutFromStateNestedInput
+  transitionsTo?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutToStateNestedInput
+  assets?: Prisma.AssetUncheckedUpdateManyWithoutLifecycleStateNestedInput
 }
 
 export type LifecycleStateCreateWithoutLifecycleModelInput = {
@@ -946,190 +1130,6 @@ export type LifecycleStateUncheckedUpdateWithoutTransitionsToInput = {
   transitionsFrom?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutFromStateNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLifecycleStateNestedInput
   assets?: Prisma.AssetUncheckedUpdateManyWithoutLifecycleStateNestedInput
-}
-
-export type LifecycleStateCreateWithoutConfigurationItemsInput = {
-  id?: string
-  name: string
-  code: string
-  description?: string | null
-  stateType?: $Enums.StateType
-  isActiveState?: boolean
-  isTerminalState?: boolean
-  sortOrder: number
-  isActive?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  lifecycleModel: Prisma.LifecycleModelCreateNestedOneWithoutStatesInput
-  transitionsFrom?: Prisma.LifecycleTransitionCreateNestedManyWithoutFromStateInput
-  transitionsTo?: Prisma.LifecycleTransitionCreateNestedManyWithoutToStateInput
-  assets?: Prisma.AssetCreateNestedManyWithoutLifecycleStateInput
-}
-
-export type LifecycleStateUncheckedCreateWithoutConfigurationItemsInput = {
-  id?: string
-  lifecycleModelId: string
-  name: string
-  code: string
-  description?: string | null
-  stateType?: $Enums.StateType
-  isActiveState?: boolean
-  isTerminalState?: boolean
-  sortOrder: number
-  isActive?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  transitionsFrom?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutFromStateInput
-  transitionsTo?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutToStateInput
-  assets?: Prisma.AssetUncheckedCreateNestedManyWithoutLifecycleStateInput
-}
-
-export type LifecycleStateCreateOrConnectWithoutConfigurationItemsInput = {
-  where: Prisma.LifecycleStateWhereUniqueInput
-  create: Prisma.XOR<Prisma.LifecycleStateCreateWithoutConfigurationItemsInput, Prisma.LifecycleStateUncheckedCreateWithoutConfigurationItemsInput>
-}
-
-export type LifecycleStateUpsertWithoutConfigurationItemsInput = {
-  update: Prisma.XOR<Prisma.LifecycleStateUpdateWithoutConfigurationItemsInput, Prisma.LifecycleStateUncheckedUpdateWithoutConfigurationItemsInput>
-  create: Prisma.XOR<Prisma.LifecycleStateCreateWithoutConfigurationItemsInput, Prisma.LifecycleStateUncheckedCreateWithoutConfigurationItemsInput>
-  where?: Prisma.LifecycleStateWhereInput
-}
-
-export type LifecycleStateUpdateToOneWithWhereWithoutConfigurationItemsInput = {
-  where?: Prisma.LifecycleStateWhereInput
-  data: Prisma.XOR<Prisma.LifecycleStateUpdateWithoutConfigurationItemsInput, Prisma.LifecycleStateUncheckedUpdateWithoutConfigurationItemsInput>
-}
-
-export type LifecycleStateUpdateWithoutConfigurationItemsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stateType?: Prisma.EnumStateTypeFieldUpdateOperationsInput | $Enums.StateType
-  isActiveState?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isTerminalState?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lifecycleModel?: Prisma.LifecycleModelUpdateOneRequiredWithoutStatesNestedInput
-  transitionsFrom?: Prisma.LifecycleTransitionUpdateManyWithoutFromStateNestedInput
-  transitionsTo?: Prisma.LifecycleTransitionUpdateManyWithoutToStateNestedInput
-  assets?: Prisma.AssetUpdateManyWithoutLifecycleStateNestedInput
-}
-
-export type LifecycleStateUncheckedUpdateWithoutConfigurationItemsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  lifecycleModelId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stateType?: Prisma.EnumStateTypeFieldUpdateOperationsInput | $Enums.StateType
-  isActiveState?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isTerminalState?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  transitionsFrom?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutFromStateNestedInput
-  transitionsTo?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutToStateNestedInput
-  assets?: Prisma.AssetUncheckedUpdateManyWithoutLifecycleStateNestedInput
-}
-
-export type LifecycleStateCreateWithoutAssetsInput = {
-  id?: string
-  name: string
-  code: string
-  description?: string | null
-  stateType?: $Enums.StateType
-  isActiveState?: boolean
-  isTerminalState?: boolean
-  sortOrder: number
-  isActive?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  lifecycleModel: Prisma.LifecycleModelCreateNestedOneWithoutStatesInput
-  transitionsFrom?: Prisma.LifecycleTransitionCreateNestedManyWithoutFromStateInput
-  transitionsTo?: Prisma.LifecycleTransitionCreateNestedManyWithoutToStateInput
-  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLifecycleStateInput
-}
-
-export type LifecycleStateUncheckedCreateWithoutAssetsInput = {
-  id?: string
-  lifecycleModelId: string
-  name: string
-  code: string
-  description?: string | null
-  stateType?: $Enums.StateType
-  isActiveState?: boolean
-  isTerminalState?: boolean
-  sortOrder: number
-  isActive?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  transitionsFrom?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutFromStateInput
-  transitionsTo?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutToStateInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLifecycleStateInput
-}
-
-export type LifecycleStateCreateOrConnectWithoutAssetsInput = {
-  where: Prisma.LifecycleStateWhereUniqueInput
-  create: Prisma.XOR<Prisma.LifecycleStateCreateWithoutAssetsInput, Prisma.LifecycleStateUncheckedCreateWithoutAssetsInput>
-}
-
-export type LifecycleStateUpsertWithoutAssetsInput = {
-  update: Prisma.XOR<Prisma.LifecycleStateUpdateWithoutAssetsInput, Prisma.LifecycleStateUncheckedUpdateWithoutAssetsInput>
-  create: Prisma.XOR<Prisma.LifecycleStateCreateWithoutAssetsInput, Prisma.LifecycleStateUncheckedCreateWithoutAssetsInput>
-  where?: Prisma.LifecycleStateWhereInput
-}
-
-export type LifecycleStateUpdateToOneWithWhereWithoutAssetsInput = {
-  where?: Prisma.LifecycleStateWhereInput
-  data: Prisma.XOR<Prisma.LifecycleStateUpdateWithoutAssetsInput, Prisma.LifecycleStateUncheckedUpdateWithoutAssetsInput>
-}
-
-export type LifecycleStateUpdateWithoutAssetsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stateType?: Prisma.EnumStateTypeFieldUpdateOperationsInput | $Enums.StateType
-  isActiveState?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isTerminalState?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lifecycleModel?: Prisma.LifecycleModelUpdateOneRequiredWithoutStatesNestedInput
-  transitionsFrom?: Prisma.LifecycleTransitionUpdateManyWithoutFromStateNestedInput
-  transitionsTo?: Prisma.LifecycleTransitionUpdateManyWithoutToStateNestedInput
-  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutLifecycleStateNestedInput
-}
-
-export type LifecycleStateUncheckedUpdateWithoutAssetsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  lifecycleModelId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stateType?: Prisma.EnumStateTypeFieldUpdateOperationsInput | $Enums.StateType
-  isActiveState?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isTerminalState?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  transitionsFrom?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutFromStateNestedInput
-  transitionsTo?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutToStateNestedInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLifecycleStateNestedInput
 }
 
 export type LifecycleStateCreateManyLifecycleModelInput = {

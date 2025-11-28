@@ -406,7 +406,11 @@ src/
 ├── infrastructure/                         # Infrastructure Layer
 │   ├── database/
 │   │   └── prisma/
-│   │       ├── schema.prisma               # Database schema
+│   │       ├── schema/                     # Multi-file schema (17 domain files)
+│   │       │   ├── schema.prisma           # Generator + datasource config
+│   │       │   ├── auth.prisma             # Auth models
+│   │       │   ├── assets.prisma           # Asset models
+│   │       │   └── ...                     # Other domain files
 │   │       └── seed.ts                     # Seed data
 │   │
 │   ├── repositories/                       # Repository Implementations
@@ -2013,7 +2017,9 @@ export function registerUseCases(container: Container): void {
 
 ### Prisma Schema
 
-**Location**: `src/infrastructure/database/prisma/schema.prisma`
+**Location**: `src/infrastructure/database/prisma/schema/` (multi-file schema)
+
+See [PRISMA_GUIDE.md - Multi-File Schema Organization](PRISMA_GUIDE.md#multi-file-schema-organization) for complete structure.
 
 ```prisma
 generator client {
@@ -2797,7 +2803,7 @@ See the **Task** feature for a complete example:
 
 ### Adding a New Feature: "Notes"
 
-1. **Update Schema** (`schema.prisma`):
+1. **Update Schema** (add to appropriate domain file in `schema/`):
 
 ```prisma
 model Note {
@@ -3029,7 +3035,7 @@ A: Yes, to maintain consistency and testability. The layers make refactoring eas
 
 **Q: Can I use a different database (MongoDB, MySQL)?**
 
-A: Yes, change `datasource` in `schema.prisma` and update repository implementations.
+A: Yes, change `datasource` in `schema/schema.prisma` and update repository implementations.
 
 ---
 

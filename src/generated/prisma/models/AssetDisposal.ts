@@ -732,6 +732,76 @@ export type AssetDisposalScalarRelationFilter = {
   isNot?: Prisma.AssetDisposalWhereInput
 }
 
+export type AssetDisposalCreateNestedManyWithoutAssetInput = {
+  create?: Prisma.XOR<Prisma.AssetDisposalCreateWithoutAssetInput, Prisma.AssetDisposalUncheckedCreateWithoutAssetInput> | Prisma.AssetDisposalCreateWithoutAssetInput[] | Prisma.AssetDisposalUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.AssetDisposalCreateOrConnectWithoutAssetInput | Prisma.AssetDisposalCreateOrConnectWithoutAssetInput[]
+  createMany?: Prisma.AssetDisposalCreateManyAssetInputEnvelope
+  connect?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
+}
+
+export type AssetDisposalUncheckedCreateNestedManyWithoutAssetInput = {
+  create?: Prisma.XOR<Prisma.AssetDisposalCreateWithoutAssetInput, Prisma.AssetDisposalUncheckedCreateWithoutAssetInput> | Prisma.AssetDisposalCreateWithoutAssetInput[] | Prisma.AssetDisposalUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.AssetDisposalCreateOrConnectWithoutAssetInput | Prisma.AssetDisposalCreateOrConnectWithoutAssetInput[]
+  createMany?: Prisma.AssetDisposalCreateManyAssetInputEnvelope
+  connect?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
+}
+
+export type AssetDisposalUpdateManyWithoutAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetDisposalCreateWithoutAssetInput, Prisma.AssetDisposalUncheckedCreateWithoutAssetInput> | Prisma.AssetDisposalCreateWithoutAssetInput[] | Prisma.AssetDisposalUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.AssetDisposalCreateOrConnectWithoutAssetInput | Prisma.AssetDisposalCreateOrConnectWithoutAssetInput[]
+  upsert?: Prisma.AssetDisposalUpsertWithWhereUniqueWithoutAssetInput | Prisma.AssetDisposalUpsertWithWhereUniqueWithoutAssetInput[]
+  createMany?: Prisma.AssetDisposalCreateManyAssetInputEnvelope
+  set?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
+  disconnect?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
+  delete?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
+  connect?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
+  update?: Prisma.AssetDisposalUpdateWithWhereUniqueWithoutAssetInput | Prisma.AssetDisposalUpdateWithWhereUniqueWithoutAssetInput[]
+  updateMany?: Prisma.AssetDisposalUpdateManyWithWhereWithoutAssetInput | Prisma.AssetDisposalUpdateManyWithWhereWithoutAssetInput[]
+  deleteMany?: Prisma.AssetDisposalScalarWhereInput | Prisma.AssetDisposalScalarWhereInput[]
+}
+
+export type AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetDisposalCreateWithoutAssetInput, Prisma.AssetDisposalUncheckedCreateWithoutAssetInput> | Prisma.AssetDisposalCreateWithoutAssetInput[] | Prisma.AssetDisposalUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.AssetDisposalCreateOrConnectWithoutAssetInput | Prisma.AssetDisposalCreateOrConnectWithoutAssetInput[]
+  upsert?: Prisma.AssetDisposalUpsertWithWhereUniqueWithoutAssetInput | Prisma.AssetDisposalUpsertWithWhereUniqueWithoutAssetInput[]
+  createMany?: Prisma.AssetDisposalCreateManyAssetInputEnvelope
+  set?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
+  disconnect?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
+  delete?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
+  connect?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
+  update?: Prisma.AssetDisposalUpdateWithWhereUniqueWithoutAssetInput | Prisma.AssetDisposalUpdateWithWhereUniqueWithoutAssetInput[]
+  updateMany?: Prisma.AssetDisposalUpdateManyWithWhereWithoutAssetInput | Prisma.AssetDisposalUpdateManyWithWhereWithoutAssetInput[]
+  deleteMany?: Prisma.AssetDisposalScalarWhereInput | Prisma.AssetDisposalScalarWhereInput[]
+}
+
+export type AssetDisposalCreateNestedOneWithoutApprovalsInput = {
+  create?: Prisma.XOR<Prisma.AssetDisposalCreateWithoutApprovalsInput, Prisma.AssetDisposalUncheckedCreateWithoutApprovalsInput>
+  connectOrCreate?: Prisma.AssetDisposalCreateOrConnectWithoutApprovalsInput
+  connect?: Prisma.AssetDisposalWhereUniqueInput
+}
+
+export type AssetDisposalUpdateOneRequiredWithoutApprovalsNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetDisposalCreateWithoutApprovalsInput, Prisma.AssetDisposalUncheckedCreateWithoutApprovalsInput>
+  connectOrCreate?: Prisma.AssetDisposalCreateOrConnectWithoutApprovalsInput
+  upsert?: Prisma.AssetDisposalUpsertWithoutApprovalsInput
+  connect?: Prisma.AssetDisposalWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetDisposalUpdateToOneWithWhereWithoutApprovalsInput, Prisma.AssetDisposalUpdateWithoutApprovalsInput>, Prisma.AssetDisposalUncheckedUpdateWithoutApprovalsInput>
+}
+
+export type AssetDisposalCreateNestedOneWithoutDocumentsInput = {
+  create?: Prisma.XOR<Prisma.AssetDisposalCreateWithoutDocumentsInput, Prisma.AssetDisposalUncheckedCreateWithoutDocumentsInput>
+  connectOrCreate?: Prisma.AssetDisposalCreateOrConnectWithoutDocumentsInput
+  connect?: Prisma.AssetDisposalWhereUniqueInput
+}
+
+export type AssetDisposalUpdateOneRequiredWithoutDocumentsNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetDisposalCreateWithoutDocumentsInput, Prisma.AssetDisposalUncheckedCreateWithoutDocumentsInput>
+  connectOrCreate?: Prisma.AssetDisposalCreateOrConnectWithoutDocumentsInput
+  upsert?: Prisma.AssetDisposalUpsertWithoutDocumentsInput
+  connect?: Prisma.AssetDisposalWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetDisposalUpdateToOneWithWhereWithoutDocumentsInput, Prisma.AssetDisposalUpdateWithoutDocumentsInput>, Prisma.AssetDisposalUncheckedUpdateWithoutDocumentsInput>
+}
+
 export type AssetDisposalCreateNestedManyWithoutInitiatedByInput = {
   create?: Prisma.XOR<Prisma.AssetDisposalCreateWithoutInitiatedByInput, Prisma.AssetDisposalUncheckedCreateWithoutInitiatedByInput> | Prisma.AssetDisposalCreateWithoutInitiatedByInput[] | Prisma.AssetDisposalUncheckedCreateWithoutInitiatedByInput[]
   connectOrCreate?: Prisma.AssetDisposalCreateOrConnectWithoutInitiatedByInput | Prisma.AssetDisposalCreateOrConnectWithoutInitiatedByInput[]
@@ -858,331 +928,6 @@ export type AssetDisposalUncheckedUpdateManyWithoutDisposalVendorNestedInput = {
   deleteMany?: Prisma.AssetDisposalScalarWhereInput | Prisma.AssetDisposalScalarWhereInput[]
 }
 
-export type AssetDisposalCreateNestedManyWithoutAssetInput = {
-  create?: Prisma.XOR<Prisma.AssetDisposalCreateWithoutAssetInput, Prisma.AssetDisposalUncheckedCreateWithoutAssetInput> | Prisma.AssetDisposalCreateWithoutAssetInput[] | Prisma.AssetDisposalUncheckedCreateWithoutAssetInput[]
-  connectOrCreate?: Prisma.AssetDisposalCreateOrConnectWithoutAssetInput | Prisma.AssetDisposalCreateOrConnectWithoutAssetInput[]
-  createMany?: Prisma.AssetDisposalCreateManyAssetInputEnvelope
-  connect?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
-}
-
-export type AssetDisposalUncheckedCreateNestedManyWithoutAssetInput = {
-  create?: Prisma.XOR<Prisma.AssetDisposalCreateWithoutAssetInput, Prisma.AssetDisposalUncheckedCreateWithoutAssetInput> | Prisma.AssetDisposalCreateWithoutAssetInput[] | Prisma.AssetDisposalUncheckedCreateWithoutAssetInput[]
-  connectOrCreate?: Prisma.AssetDisposalCreateOrConnectWithoutAssetInput | Prisma.AssetDisposalCreateOrConnectWithoutAssetInput[]
-  createMany?: Prisma.AssetDisposalCreateManyAssetInputEnvelope
-  connect?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
-}
-
-export type AssetDisposalUpdateManyWithoutAssetNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetDisposalCreateWithoutAssetInput, Prisma.AssetDisposalUncheckedCreateWithoutAssetInput> | Prisma.AssetDisposalCreateWithoutAssetInput[] | Prisma.AssetDisposalUncheckedCreateWithoutAssetInput[]
-  connectOrCreate?: Prisma.AssetDisposalCreateOrConnectWithoutAssetInput | Prisma.AssetDisposalCreateOrConnectWithoutAssetInput[]
-  upsert?: Prisma.AssetDisposalUpsertWithWhereUniqueWithoutAssetInput | Prisma.AssetDisposalUpsertWithWhereUniqueWithoutAssetInput[]
-  createMany?: Prisma.AssetDisposalCreateManyAssetInputEnvelope
-  set?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
-  disconnect?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
-  delete?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
-  connect?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
-  update?: Prisma.AssetDisposalUpdateWithWhereUniqueWithoutAssetInput | Prisma.AssetDisposalUpdateWithWhereUniqueWithoutAssetInput[]
-  updateMany?: Prisma.AssetDisposalUpdateManyWithWhereWithoutAssetInput | Prisma.AssetDisposalUpdateManyWithWhereWithoutAssetInput[]
-  deleteMany?: Prisma.AssetDisposalScalarWhereInput | Prisma.AssetDisposalScalarWhereInput[]
-}
-
-export type AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetDisposalCreateWithoutAssetInput, Prisma.AssetDisposalUncheckedCreateWithoutAssetInput> | Prisma.AssetDisposalCreateWithoutAssetInput[] | Prisma.AssetDisposalUncheckedCreateWithoutAssetInput[]
-  connectOrCreate?: Prisma.AssetDisposalCreateOrConnectWithoutAssetInput | Prisma.AssetDisposalCreateOrConnectWithoutAssetInput[]
-  upsert?: Prisma.AssetDisposalUpsertWithWhereUniqueWithoutAssetInput | Prisma.AssetDisposalUpsertWithWhereUniqueWithoutAssetInput[]
-  createMany?: Prisma.AssetDisposalCreateManyAssetInputEnvelope
-  set?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
-  disconnect?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
-  delete?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
-  connect?: Prisma.AssetDisposalWhereUniqueInput | Prisma.AssetDisposalWhereUniqueInput[]
-  update?: Prisma.AssetDisposalUpdateWithWhereUniqueWithoutAssetInput | Prisma.AssetDisposalUpdateWithWhereUniqueWithoutAssetInput[]
-  updateMany?: Prisma.AssetDisposalUpdateManyWithWhereWithoutAssetInput | Prisma.AssetDisposalUpdateManyWithWhereWithoutAssetInput[]
-  deleteMany?: Prisma.AssetDisposalScalarWhereInput | Prisma.AssetDisposalScalarWhereInput[]
-}
-
-export type AssetDisposalCreateNestedOneWithoutApprovalsInput = {
-  create?: Prisma.XOR<Prisma.AssetDisposalCreateWithoutApprovalsInput, Prisma.AssetDisposalUncheckedCreateWithoutApprovalsInput>
-  connectOrCreate?: Prisma.AssetDisposalCreateOrConnectWithoutApprovalsInput
-  connect?: Prisma.AssetDisposalWhereUniqueInput
-}
-
-export type AssetDisposalUpdateOneRequiredWithoutApprovalsNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetDisposalCreateWithoutApprovalsInput, Prisma.AssetDisposalUncheckedCreateWithoutApprovalsInput>
-  connectOrCreate?: Prisma.AssetDisposalCreateOrConnectWithoutApprovalsInput
-  upsert?: Prisma.AssetDisposalUpsertWithoutApprovalsInput
-  connect?: Prisma.AssetDisposalWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetDisposalUpdateToOneWithWhereWithoutApprovalsInput, Prisma.AssetDisposalUpdateWithoutApprovalsInput>, Prisma.AssetDisposalUncheckedUpdateWithoutApprovalsInput>
-}
-
-export type AssetDisposalCreateNestedOneWithoutDocumentsInput = {
-  create?: Prisma.XOR<Prisma.AssetDisposalCreateWithoutDocumentsInput, Prisma.AssetDisposalUncheckedCreateWithoutDocumentsInput>
-  connectOrCreate?: Prisma.AssetDisposalCreateOrConnectWithoutDocumentsInput
-  connect?: Prisma.AssetDisposalWhereUniqueInput
-}
-
-export type AssetDisposalUpdateOneRequiredWithoutDocumentsNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetDisposalCreateWithoutDocumentsInput, Prisma.AssetDisposalUncheckedCreateWithoutDocumentsInput>
-  connectOrCreate?: Prisma.AssetDisposalCreateOrConnectWithoutDocumentsInput
-  upsert?: Prisma.AssetDisposalUpsertWithoutDocumentsInput
-  connect?: Prisma.AssetDisposalWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetDisposalUpdateToOneWithWhereWithoutDocumentsInput, Prisma.AssetDisposalUpdateWithoutDocumentsInput>, Prisma.AssetDisposalUncheckedUpdateWithoutDocumentsInput>
-}
-
-export type AssetDisposalCreateWithoutInitiatedByInput = {
-  id?: string
-  disposalType: string
-  reason?: string | null
-  approvedAt?: Date | string | null
-  status?: string
-  estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  disposalDate?: Date | string | null
-  certificateNumber?: string | null
-  certificateIssuedAt?: Date | string | null
-  recipientInfo?: string | null
-  note?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  asset: Prisma.AssetCreateNestedOneWithoutDisposalsInput
-  approvedBy?: Prisma.PersonCreateNestedOneWithoutApprovedDisposalsInput
-  disposalVendor?: Prisma.VendorCreateNestedOneWithoutDisposalsInput
-  approvals?: Prisma.DisposalApprovalCreateNestedManyWithoutDisposalInput
-  documents?: Prisma.DisposalDocumentCreateNestedManyWithoutDisposalInput
-}
-
-export type AssetDisposalUncheckedCreateWithoutInitiatedByInput = {
-  id?: string
-  assetId: string
-  disposalType: string
-  reason?: string | null
-  approvedById?: string | null
-  approvedAt?: Date | string | null
-  status?: string
-  estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  disposalDate?: Date | string | null
-  certificateNumber?: string | null
-  certificateIssuedAt?: Date | string | null
-  disposalVendorId?: string | null
-  recipientInfo?: string | null
-  note?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  approvals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutDisposalInput
-  documents?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutDisposalInput
-}
-
-export type AssetDisposalCreateOrConnectWithoutInitiatedByInput = {
-  where: Prisma.AssetDisposalWhereUniqueInput
-  create: Prisma.XOR<Prisma.AssetDisposalCreateWithoutInitiatedByInput, Prisma.AssetDisposalUncheckedCreateWithoutInitiatedByInput>
-}
-
-export type AssetDisposalCreateManyInitiatedByInputEnvelope = {
-  data: Prisma.AssetDisposalCreateManyInitiatedByInput | Prisma.AssetDisposalCreateManyInitiatedByInput[]
-  skipDuplicates?: boolean
-}
-
-export type AssetDisposalCreateWithoutApprovedByInput = {
-  id?: string
-  disposalType: string
-  reason?: string | null
-  approvedAt?: Date | string | null
-  status?: string
-  estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  disposalDate?: Date | string | null
-  certificateNumber?: string | null
-  certificateIssuedAt?: Date | string | null
-  recipientInfo?: string | null
-  note?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  asset: Prisma.AssetCreateNestedOneWithoutDisposalsInput
-  initiatedBy: Prisma.PersonCreateNestedOneWithoutInitiatedDisposalsInput
-  disposalVendor?: Prisma.VendorCreateNestedOneWithoutDisposalsInput
-  approvals?: Prisma.DisposalApprovalCreateNestedManyWithoutDisposalInput
-  documents?: Prisma.DisposalDocumentCreateNestedManyWithoutDisposalInput
-}
-
-export type AssetDisposalUncheckedCreateWithoutApprovedByInput = {
-  id?: string
-  assetId: string
-  disposalType: string
-  reason?: string | null
-  initiatedById: string
-  approvedAt?: Date | string | null
-  status?: string
-  estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  disposalDate?: Date | string | null
-  certificateNumber?: string | null
-  certificateIssuedAt?: Date | string | null
-  disposalVendorId?: string | null
-  recipientInfo?: string | null
-  note?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  approvals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutDisposalInput
-  documents?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutDisposalInput
-}
-
-export type AssetDisposalCreateOrConnectWithoutApprovedByInput = {
-  where: Prisma.AssetDisposalWhereUniqueInput
-  create: Prisma.XOR<Prisma.AssetDisposalCreateWithoutApprovedByInput, Prisma.AssetDisposalUncheckedCreateWithoutApprovedByInput>
-}
-
-export type AssetDisposalCreateManyApprovedByInputEnvelope = {
-  data: Prisma.AssetDisposalCreateManyApprovedByInput | Prisma.AssetDisposalCreateManyApprovedByInput[]
-  skipDuplicates?: boolean
-}
-
-export type AssetDisposalUpsertWithWhereUniqueWithoutInitiatedByInput = {
-  where: Prisma.AssetDisposalWhereUniqueInput
-  update: Prisma.XOR<Prisma.AssetDisposalUpdateWithoutInitiatedByInput, Prisma.AssetDisposalUncheckedUpdateWithoutInitiatedByInput>
-  create: Prisma.XOR<Prisma.AssetDisposalCreateWithoutInitiatedByInput, Prisma.AssetDisposalUncheckedCreateWithoutInitiatedByInput>
-}
-
-export type AssetDisposalUpdateWithWhereUniqueWithoutInitiatedByInput = {
-  where: Prisma.AssetDisposalWhereUniqueInput
-  data: Prisma.XOR<Prisma.AssetDisposalUpdateWithoutInitiatedByInput, Prisma.AssetDisposalUncheckedUpdateWithoutInitiatedByInput>
-}
-
-export type AssetDisposalUpdateManyWithWhereWithoutInitiatedByInput = {
-  where: Prisma.AssetDisposalScalarWhereInput
-  data: Prisma.XOR<Prisma.AssetDisposalUpdateManyMutationInput, Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByInput>
-}
-
-export type AssetDisposalScalarWhereInput = {
-  AND?: Prisma.AssetDisposalScalarWhereInput | Prisma.AssetDisposalScalarWhereInput[]
-  OR?: Prisma.AssetDisposalScalarWhereInput[]
-  NOT?: Prisma.AssetDisposalScalarWhereInput | Prisma.AssetDisposalScalarWhereInput[]
-  id?: Prisma.StringFilter<"AssetDisposal"> | string
-  assetId?: Prisma.StringFilter<"AssetDisposal"> | string
-  disposalType?: Prisma.StringFilter<"AssetDisposal"> | string
-  reason?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
-  initiatedById?: Prisma.StringFilter<"AssetDisposal"> | string
-  approvedById?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
-  approvedAt?: Prisma.DateTimeNullableFilter<"AssetDisposal"> | Date | string | null
-  status?: Prisma.StringFilter<"AssetDisposal"> | string
-  estimatedValue?: Prisma.DecimalNullableFilter<"AssetDisposal"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  actualProceeds?: Prisma.DecimalNullableFilter<"AssetDisposal"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
-  sanitizationChecklist?: Prisma.JsonNullableFilter<"AssetDisposal">
-  disposalDate?: Prisma.DateTimeNullableFilter<"AssetDisposal"> | Date | string | null
-  certificateNumber?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
-  certificateIssuedAt?: Prisma.DateTimeNullableFilter<"AssetDisposal"> | Date | string | null
-  disposalVendorId?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
-  recipientInfo?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
-  note?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
-  metadata?: Prisma.JsonNullableFilter<"AssetDisposal">
-  createdAt?: Prisma.DateTimeFilter<"AssetDisposal"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"AssetDisposal"> | Date | string
-}
-
-export type AssetDisposalUpsertWithWhereUniqueWithoutApprovedByInput = {
-  where: Prisma.AssetDisposalWhereUniqueInput
-  update: Prisma.XOR<Prisma.AssetDisposalUpdateWithoutApprovedByInput, Prisma.AssetDisposalUncheckedUpdateWithoutApprovedByInput>
-  create: Prisma.XOR<Prisma.AssetDisposalCreateWithoutApprovedByInput, Prisma.AssetDisposalUncheckedCreateWithoutApprovedByInput>
-}
-
-export type AssetDisposalUpdateWithWhereUniqueWithoutApprovedByInput = {
-  where: Prisma.AssetDisposalWhereUniqueInput
-  data: Prisma.XOR<Prisma.AssetDisposalUpdateWithoutApprovedByInput, Prisma.AssetDisposalUncheckedUpdateWithoutApprovedByInput>
-}
-
-export type AssetDisposalUpdateManyWithWhereWithoutApprovedByInput = {
-  where: Prisma.AssetDisposalScalarWhereInput
-  data: Prisma.XOR<Prisma.AssetDisposalUpdateManyMutationInput, Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByInput>
-}
-
-export type AssetDisposalCreateWithoutDisposalVendorInput = {
-  id?: string
-  disposalType: string
-  reason?: string | null
-  approvedAt?: Date | string | null
-  status?: string
-  estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  disposalDate?: Date | string | null
-  certificateNumber?: string | null
-  certificateIssuedAt?: Date | string | null
-  recipientInfo?: string | null
-  note?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  asset: Prisma.AssetCreateNestedOneWithoutDisposalsInput
-  initiatedBy: Prisma.PersonCreateNestedOneWithoutInitiatedDisposalsInput
-  approvedBy?: Prisma.PersonCreateNestedOneWithoutApprovedDisposalsInput
-  approvals?: Prisma.DisposalApprovalCreateNestedManyWithoutDisposalInput
-  documents?: Prisma.DisposalDocumentCreateNestedManyWithoutDisposalInput
-}
-
-export type AssetDisposalUncheckedCreateWithoutDisposalVendorInput = {
-  id?: string
-  assetId: string
-  disposalType: string
-  reason?: string | null
-  initiatedById: string
-  approvedById?: string | null
-  approvedAt?: Date | string | null
-  status?: string
-  estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  disposalDate?: Date | string | null
-  certificateNumber?: string | null
-  certificateIssuedAt?: Date | string | null
-  recipientInfo?: string | null
-  note?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  approvals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutDisposalInput
-  documents?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutDisposalInput
-}
-
-export type AssetDisposalCreateOrConnectWithoutDisposalVendorInput = {
-  where: Prisma.AssetDisposalWhereUniqueInput
-  create: Prisma.XOR<Prisma.AssetDisposalCreateWithoutDisposalVendorInput, Prisma.AssetDisposalUncheckedCreateWithoutDisposalVendorInput>
-}
-
-export type AssetDisposalCreateManyDisposalVendorInputEnvelope = {
-  data: Prisma.AssetDisposalCreateManyDisposalVendorInput | Prisma.AssetDisposalCreateManyDisposalVendorInput[]
-  skipDuplicates?: boolean
-}
-
-export type AssetDisposalUpsertWithWhereUniqueWithoutDisposalVendorInput = {
-  where: Prisma.AssetDisposalWhereUniqueInput
-  update: Prisma.XOR<Prisma.AssetDisposalUpdateWithoutDisposalVendorInput, Prisma.AssetDisposalUncheckedUpdateWithoutDisposalVendorInput>
-  create: Prisma.XOR<Prisma.AssetDisposalCreateWithoutDisposalVendorInput, Prisma.AssetDisposalUncheckedCreateWithoutDisposalVendorInput>
-}
-
-export type AssetDisposalUpdateWithWhereUniqueWithoutDisposalVendorInput = {
-  where: Prisma.AssetDisposalWhereUniqueInput
-  data: Prisma.XOR<Prisma.AssetDisposalUpdateWithoutDisposalVendorInput, Prisma.AssetDisposalUncheckedUpdateWithoutDisposalVendorInput>
-}
-
-export type AssetDisposalUpdateManyWithWhereWithoutDisposalVendorInput = {
-  where: Prisma.AssetDisposalScalarWhereInput
-  data: Prisma.XOR<Prisma.AssetDisposalUpdateManyMutationInput, Prisma.AssetDisposalUncheckedUpdateManyWithoutDisposalVendorInput>
-}
-
 export type AssetDisposalCreateWithoutAssetInput = {
   id?: string
   disposalType: string
@@ -1257,6 +1002,33 @@ export type AssetDisposalUpdateWithWhereUniqueWithoutAssetInput = {
 export type AssetDisposalUpdateManyWithWhereWithoutAssetInput = {
   where: Prisma.AssetDisposalScalarWhereInput
   data: Prisma.XOR<Prisma.AssetDisposalUpdateManyMutationInput, Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetInput>
+}
+
+export type AssetDisposalScalarWhereInput = {
+  AND?: Prisma.AssetDisposalScalarWhereInput | Prisma.AssetDisposalScalarWhereInput[]
+  OR?: Prisma.AssetDisposalScalarWhereInput[]
+  NOT?: Prisma.AssetDisposalScalarWhereInput | Prisma.AssetDisposalScalarWhereInput[]
+  id?: Prisma.StringFilter<"AssetDisposal"> | string
+  assetId?: Prisma.StringFilter<"AssetDisposal"> | string
+  disposalType?: Prisma.StringFilter<"AssetDisposal"> | string
+  reason?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
+  initiatedById?: Prisma.StringFilter<"AssetDisposal"> | string
+  approvedById?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
+  approvedAt?: Prisma.DateTimeNullableFilter<"AssetDisposal"> | Date | string | null
+  status?: Prisma.StringFilter<"AssetDisposal"> | string
+  estimatedValue?: Prisma.DecimalNullableFilter<"AssetDisposal"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  actualProceeds?: Prisma.DecimalNullableFilter<"AssetDisposal"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
+  sanitizationChecklist?: Prisma.JsonNullableFilter<"AssetDisposal">
+  disposalDate?: Prisma.DateTimeNullableFilter<"AssetDisposal"> | Date | string | null
+  certificateNumber?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
+  certificateIssuedAt?: Prisma.DateTimeNullableFilter<"AssetDisposal"> | Date | string | null
+  disposalVendorId?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
+  recipientInfo?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
+  note?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
+  metadata?: Prisma.JsonNullableFilter<"AssetDisposal">
+  createdAt?: Prisma.DateTimeFilter<"AssetDisposal"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"AssetDisposal"> | Date | string
 }
 
 export type AssetDisposalCreateWithoutApprovalsInput = {
@@ -1489,6 +1261,330 @@ export type AssetDisposalUncheckedUpdateWithoutDocumentsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   approvals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutDisposalNestedInput
+}
+
+export type AssetDisposalCreateWithoutInitiatedByInput = {
+  id?: string
+  disposalType: string
+  reason?: string | null
+  approvedAt?: Date | string | null
+  status?: string
+  estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disposalDate?: Date | string | null
+  certificateNumber?: string | null
+  certificateIssuedAt?: Date | string | null
+  recipientInfo?: string | null
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  asset: Prisma.AssetCreateNestedOneWithoutDisposalsInput
+  approvedBy?: Prisma.PersonCreateNestedOneWithoutApprovedDisposalsInput
+  disposalVendor?: Prisma.VendorCreateNestedOneWithoutDisposalsInput
+  approvals?: Prisma.DisposalApprovalCreateNestedManyWithoutDisposalInput
+  documents?: Prisma.DisposalDocumentCreateNestedManyWithoutDisposalInput
+}
+
+export type AssetDisposalUncheckedCreateWithoutInitiatedByInput = {
+  id?: string
+  assetId: string
+  disposalType: string
+  reason?: string | null
+  approvedById?: string | null
+  approvedAt?: Date | string | null
+  status?: string
+  estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disposalDate?: Date | string | null
+  certificateNumber?: string | null
+  certificateIssuedAt?: Date | string | null
+  disposalVendorId?: string | null
+  recipientInfo?: string | null
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  approvals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutDisposalInput
+  documents?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutDisposalInput
+}
+
+export type AssetDisposalCreateOrConnectWithoutInitiatedByInput = {
+  where: Prisma.AssetDisposalWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetDisposalCreateWithoutInitiatedByInput, Prisma.AssetDisposalUncheckedCreateWithoutInitiatedByInput>
+}
+
+export type AssetDisposalCreateManyInitiatedByInputEnvelope = {
+  data: Prisma.AssetDisposalCreateManyInitiatedByInput | Prisma.AssetDisposalCreateManyInitiatedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type AssetDisposalCreateWithoutApprovedByInput = {
+  id?: string
+  disposalType: string
+  reason?: string | null
+  approvedAt?: Date | string | null
+  status?: string
+  estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disposalDate?: Date | string | null
+  certificateNumber?: string | null
+  certificateIssuedAt?: Date | string | null
+  recipientInfo?: string | null
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  asset: Prisma.AssetCreateNestedOneWithoutDisposalsInput
+  initiatedBy: Prisma.PersonCreateNestedOneWithoutInitiatedDisposalsInput
+  disposalVendor?: Prisma.VendorCreateNestedOneWithoutDisposalsInput
+  approvals?: Prisma.DisposalApprovalCreateNestedManyWithoutDisposalInput
+  documents?: Prisma.DisposalDocumentCreateNestedManyWithoutDisposalInput
+}
+
+export type AssetDisposalUncheckedCreateWithoutApprovedByInput = {
+  id?: string
+  assetId: string
+  disposalType: string
+  reason?: string | null
+  initiatedById: string
+  approvedAt?: Date | string | null
+  status?: string
+  estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disposalDate?: Date | string | null
+  certificateNumber?: string | null
+  certificateIssuedAt?: Date | string | null
+  disposalVendorId?: string | null
+  recipientInfo?: string | null
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  approvals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutDisposalInput
+  documents?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutDisposalInput
+}
+
+export type AssetDisposalCreateOrConnectWithoutApprovedByInput = {
+  where: Prisma.AssetDisposalWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetDisposalCreateWithoutApprovedByInput, Prisma.AssetDisposalUncheckedCreateWithoutApprovedByInput>
+}
+
+export type AssetDisposalCreateManyApprovedByInputEnvelope = {
+  data: Prisma.AssetDisposalCreateManyApprovedByInput | Prisma.AssetDisposalCreateManyApprovedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type AssetDisposalUpsertWithWhereUniqueWithoutInitiatedByInput = {
+  where: Prisma.AssetDisposalWhereUniqueInput
+  update: Prisma.XOR<Prisma.AssetDisposalUpdateWithoutInitiatedByInput, Prisma.AssetDisposalUncheckedUpdateWithoutInitiatedByInput>
+  create: Prisma.XOR<Prisma.AssetDisposalCreateWithoutInitiatedByInput, Prisma.AssetDisposalUncheckedCreateWithoutInitiatedByInput>
+}
+
+export type AssetDisposalUpdateWithWhereUniqueWithoutInitiatedByInput = {
+  where: Prisma.AssetDisposalWhereUniqueInput
+  data: Prisma.XOR<Prisma.AssetDisposalUpdateWithoutInitiatedByInput, Prisma.AssetDisposalUncheckedUpdateWithoutInitiatedByInput>
+}
+
+export type AssetDisposalUpdateManyWithWhereWithoutInitiatedByInput = {
+  where: Prisma.AssetDisposalScalarWhereInput
+  data: Prisma.XOR<Prisma.AssetDisposalUpdateManyMutationInput, Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByInput>
+}
+
+export type AssetDisposalUpsertWithWhereUniqueWithoutApprovedByInput = {
+  where: Prisma.AssetDisposalWhereUniqueInput
+  update: Prisma.XOR<Prisma.AssetDisposalUpdateWithoutApprovedByInput, Prisma.AssetDisposalUncheckedUpdateWithoutApprovedByInput>
+  create: Prisma.XOR<Prisma.AssetDisposalCreateWithoutApprovedByInput, Prisma.AssetDisposalUncheckedCreateWithoutApprovedByInput>
+}
+
+export type AssetDisposalUpdateWithWhereUniqueWithoutApprovedByInput = {
+  where: Prisma.AssetDisposalWhereUniqueInput
+  data: Prisma.XOR<Prisma.AssetDisposalUpdateWithoutApprovedByInput, Prisma.AssetDisposalUncheckedUpdateWithoutApprovedByInput>
+}
+
+export type AssetDisposalUpdateManyWithWhereWithoutApprovedByInput = {
+  where: Prisma.AssetDisposalScalarWhereInput
+  data: Prisma.XOR<Prisma.AssetDisposalUpdateManyMutationInput, Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByInput>
+}
+
+export type AssetDisposalCreateWithoutDisposalVendorInput = {
+  id?: string
+  disposalType: string
+  reason?: string | null
+  approvedAt?: Date | string | null
+  status?: string
+  estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disposalDate?: Date | string | null
+  certificateNumber?: string | null
+  certificateIssuedAt?: Date | string | null
+  recipientInfo?: string | null
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  asset: Prisma.AssetCreateNestedOneWithoutDisposalsInput
+  initiatedBy: Prisma.PersonCreateNestedOneWithoutInitiatedDisposalsInput
+  approvedBy?: Prisma.PersonCreateNestedOneWithoutApprovedDisposalsInput
+  approvals?: Prisma.DisposalApprovalCreateNestedManyWithoutDisposalInput
+  documents?: Prisma.DisposalDocumentCreateNestedManyWithoutDisposalInput
+}
+
+export type AssetDisposalUncheckedCreateWithoutDisposalVendorInput = {
+  id?: string
+  assetId: string
+  disposalType: string
+  reason?: string | null
+  initiatedById: string
+  approvedById?: string | null
+  approvedAt?: Date | string | null
+  status?: string
+  estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disposalDate?: Date | string | null
+  certificateNumber?: string | null
+  certificateIssuedAt?: Date | string | null
+  recipientInfo?: string | null
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  approvals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutDisposalInput
+  documents?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutDisposalInput
+}
+
+export type AssetDisposalCreateOrConnectWithoutDisposalVendorInput = {
+  where: Prisma.AssetDisposalWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetDisposalCreateWithoutDisposalVendorInput, Prisma.AssetDisposalUncheckedCreateWithoutDisposalVendorInput>
+}
+
+export type AssetDisposalCreateManyDisposalVendorInputEnvelope = {
+  data: Prisma.AssetDisposalCreateManyDisposalVendorInput | Prisma.AssetDisposalCreateManyDisposalVendorInput[]
+  skipDuplicates?: boolean
+}
+
+export type AssetDisposalUpsertWithWhereUniqueWithoutDisposalVendorInput = {
+  where: Prisma.AssetDisposalWhereUniqueInput
+  update: Prisma.XOR<Prisma.AssetDisposalUpdateWithoutDisposalVendorInput, Prisma.AssetDisposalUncheckedUpdateWithoutDisposalVendorInput>
+  create: Prisma.XOR<Prisma.AssetDisposalCreateWithoutDisposalVendorInput, Prisma.AssetDisposalUncheckedCreateWithoutDisposalVendorInput>
+}
+
+export type AssetDisposalUpdateWithWhereUniqueWithoutDisposalVendorInput = {
+  where: Prisma.AssetDisposalWhereUniqueInput
+  data: Prisma.XOR<Prisma.AssetDisposalUpdateWithoutDisposalVendorInput, Prisma.AssetDisposalUncheckedUpdateWithoutDisposalVendorInput>
+}
+
+export type AssetDisposalUpdateManyWithWhereWithoutDisposalVendorInput = {
+  where: Prisma.AssetDisposalScalarWhereInput
+  data: Prisma.XOR<Prisma.AssetDisposalUpdateManyMutationInput, Prisma.AssetDisposalUncheckedUpdateManyWithoutDisposalVendorInput>
+}
+
+export type AssetDisposalCreateManyAssetInput = {
+  id?: string
+  disposalType: string
+  reason?: string | null
+  initiatedById: string
+  approvedById?: string | null
+  approvedAt?: Date | string | null
+  status?: string
+  estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disposalDate?: Date | string | null
+  certificateNumber?: string | null
+  certificateIssuedAt?: Date | string | null
+  disposalVendorId?: string | null
+  recipientInfo?: string | null
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type AssetDisposalUpdateWithoutAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disposalDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  certificateNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  certificateIssuedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  recipientInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  initiatedBy?: Prisma.PersonUpdateOneRequiredWithoutInitiatedDisposalsNestedInput
+  approvedBy?: Prisma.PersonUpdateOneWithoutApprovedDisposalsNestedInput
+  disposalVendor?: Prisma.VendorUpdateOneWithoutDisposalsNestedInput
+  approvals?: Prisma.DisposalApprovalUpdateManyWithoutDisposalNestedInput
+  documents?: Prisma.DisposalDocumentUpdateManyWithoutDisposalNestedInput
+}
+
+export type AssetDisposalUncheckedUpdateWithoutAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  initiatedById?: Prisma.StringFieldUpdateOperationsInput | string
+  approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disposalDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  certificateNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  certificateIssuedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  disposalVendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recipientInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  approvals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutDisposalNestedInput
+  documents?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutDisposalNestedInput
+}
+
+export type AssetDisposalUncheckedUpdateManyWithoutAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  initiatedById?: Prisma.StringFieldUpdateOperationsInput | string
+  approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disposalDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  certificateNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  certificateIssuedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  disposalVendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recipientInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type AssetDisposalCreateManyInitiatedByInput = {
@@ -1772,102 +1868,6 @@ export type AssetDisposalUncheckedUpdateManyWithoutDisposalVendorInput = {
   disposalDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   certificateNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   certificateIssuedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  recipientInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type AssetDisposalCreateManyAssetInput = {
-  id?: string
-  disposalType: string
-  reason?: string | null
-  initiatedById: string
-  approvedById?: string | null
-  approvedAt?: Date | string | null
-  status?: string
-  estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: string | null
-  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  disposalDate?: Date | string | null
-  certificateNumber?: string | null
-  certificateIssuedAt?: Date | string | null
-  disposalVendorId?: string | null
-  recipientInfo?: string | null
-  note?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type AssetDisposalUpdateWithoutAssetInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  disposalDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  certificateNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  certificateIssuedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  recipientInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  initiatedBy?: Prisma.PersonUpdateOneRequiredWithoutInitiatedDisposalsNestedInput
-  approvedBy?: Prisma.PersonUpdateOneWithoutApprovedDisposalsNestedInput
-  disposalVendor?: Prisma.VendorUpdateOneWithoutDisposalsNestedInput
-  approvals?: Prisma.DisposalApprovalUpdateManyWithoutDisposalNestedInput
-  documents?: Prisma.DisposalDocumentUpdateManyWithoutDisposalNestedInput
-}
-
-export type AssetDisposalUncheckedUpdateWithoutAssetInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  initiatedById?: Prisma.StringFieldUpdateOperationsInput | string
-  approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  disposalDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  certificateNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  certificateIssuedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  disposalVendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  recipientInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  approvals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutDisposalNestedInput
-  documents?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutDisposalNestedInput
-}
-
-export type AssetDisposalUncheckedUpdateManyWithoutAssetInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  initiatedById?: Prisma.StringFieldUpdateOperationsInput | string
-  approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
-  estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sanitizationChecklist?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  disposalDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  certificateNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  certificateIssuedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  disposalVendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   recipientInfo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue

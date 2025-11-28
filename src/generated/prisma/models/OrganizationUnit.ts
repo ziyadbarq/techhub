@@ -600,6 +600,22 @@ export type OrganizationUnitScalarRelationFilter = {
   isNot?: Prisma.OrganizationUnitWhereInput
 }
 
+export type OrganizationUnitCreateNestedOneWithoutConfigurationItemsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutConfigurationItemsInput, Prisma.OrganizationUnitUncheckedCreateWithoutConfigurationItemsInput>
+  connectOrCreate?: Prisma.OrganizationUnitCreateOrConnectWithoutConfigurationItemsInput
+  connect?: Prisma.OrganizationUnitWhereUniqueInput
+}
+
+export type OrganizationUnitUpdateOneWithoutConfigurationItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutConfigurationItemsInput, Prisma.OrganizationUnitUncheckedCreateWithoutConfigurationItemsInput>
+  connectOrCreate?: Prisma.OrganizationUnitCreateOrConnectWithoutConfigurationItemsInput
+  upsert?: Prisma.OrganizationUnitUpsertWithoutConfigurationItemsInput
+  disconnect?: Prisma.OrganizationUnitWhereInput | boolean
+  delete?: Prisma.OrganizationUnitWhereInput | boolean
+  connect?: Prisma.OrganizationUnitWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUnitUpdateToOneWithWhereWithoutConfigurationItemsInput, Prisma.OrganizationUnitUpdateWithoutConfigurationItemsInput>, Prisma.OrganizationUnitUncheckedUpdateWithoutConfigurationItemsInput>
+}
+
 export type OrganizationUnitCreateNestedOneWithoutChildrenInput = {
   create?: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutChildrenInput, Prisma.OrganizationUnitUncheckedCreateWithoutChildrenInput>
   connectOrCreate?: Prisma.OrganizationUnitCreateOrConnectWithoutChildrenInput
@@ -718,20 +734,20 @@ export type OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput = {
   deleteMany?: Prisma.OrganizationUnitScalarWhereInput | Prisma.OrganizationUnitScalarWhereInput[]
 }
 
-export type OrganizationUnitCreateNestedOneWithoutConfigurationItemsInput = {
-  create?: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutConfigurationItemsInput, Prisma.OrganizationUnitUncheckedCreateWithoutConfigurationItemsInput>
-  connectOrCreate?: Prisma.OrganizationUnitCreateOrConnectWithoutConfigurationItemsInput
+export type OrganizationUnitCreateNestedOneWithoutDataOwnershipsInput = {
+  create?: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutDataOwnershipsInput, Prisma.OrganizationUnitUncheckedCreateWithoutDataOwnershipsInput>
+  connectOrCreate?: Prisma.OrganizationUnitCreateOrConnectWithoutDataOwnershipsInput
   connect?: Prisma.OrganizationUnitWhereUniqueInput
 }
 
-export type OrganizationUnitUpdateOneWithoutConfigurationItemsNestedInput = {
-  create?: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutConfigurationItemsInput, Prisma.OrganizationUnitUncheckedCreateWithoutConfigurationItemsInput>
-  connectOrCreate?: Prisma.OrganizationUnitCreateOrConnectWithoutConfigurationItemsInput
-  upsert?: Prisma.OrganizationUnitUpsertWithoutConfigurationItemsInput
+export type OrganizationUnitUpdateOneWithoutDataOwnershipsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutDataOwnershipsInput, Prisma.OrganizationUnitUncheckedCreateWithoutDataOwnershipsInput>
+  connectOrCreate?: Prisma.OrganizationUnitCreateOrConnectWithoutDataOwnershipsInput
+  upsert?: Prisma.OrganizationUnitUpsertWithoutDataOwnershipsInput
   disconnect?: Prisma.OrganizationUnitWhereInput | boolean
   delete?: Prisma.OrganizationUnitWhereInput | boolean
   connect?: Prisma.OrganizationUnitWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUnitUpdateToOneWithWhereWithoutConfigurationItemsInput, Prisma.OrganizationUnitUpdateWithoutConfigurationItemsInput>, Prisma.OrganizationUnitUncheckedUpdateWithoutConfigurationItemsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUnitUpdateToOneWithWhereWithoutDataOwnershipsInput, Prisma.OrganizationUnitUpdateWithoutDataOwnershipsInput>, Prisma.OrganizationUnitUncheckedUpdateWithoutDataOwnershipsInput>
 }
 
 export type OrganizationUnitCreateNestedOneWithoutReservationsInput = {
@@ -750,20 +766,104 @@ export type OrganizationUnitUpdateOneWithoutReservationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUnitUpdateToOneWithWhereWithoutReservationsInput, Prisma.OrganizationUnitUpdateWithoutReservationsInput>, Prisma.OrganizationUnitUncheckedUpdateWithoutReservationsInput>
 }
 
-export type OrganizationUnitCreateNestedOneWithoutDataOwnershipsInput = {
-  create?: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutDataOwnershipsInput, Prisma.OrganizationUnitUncheckedCreateWithoutDataOwnershipsInput>
-  connectOrCreate?: Prisma.OrganizationUnitCreateOrConnectWithoutDataOwnershipsInput
-  connect?: Prisma.OrganizationUnitWhereUniqueInput
+export type OrganizationUnitCreateWithoutConfigurationItemsInput = {
+  id?: string
+  name: string
+  code: string
+  description?: string | null
+  unitType?: $Enums.OrganizationUnitType
+  costCenter?: string | null
+  level: number
+  isActive?: boolean
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  parent?: Prisma.OrganizationUnitCreateNestedOneWithoutChildrenInput
+  children?: Prisma.OrganizationUnitCreateNestedManyWithoutParentInput
+  manager?: Prisma.PersonCreateNestedOneWithoutManagedOrgUnitsInput
+  people?: Prisma.PersonCreateNestedManyWithoutOrgUnitInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerOrgUnitInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutReservedForOrgUnitInput
 }
 
-export type OrganizationUnitUpdateOneWithoutDataOwnershipsNestedInput = {
-  create?: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutDataOwnershipsInput, Prisma.OrganizationUnitUncheckedCreateWithoutDataOwnershipsInput>
-  connectOrCreate?: Prisma.OrganizationUnitCreateOrConnectWithoutDataOwnershipsInput
-  upsert?: Prisma.OrganizationUnitUpsertWithoutDataOwnershipsInput
-  disconnect?: Prisma.OrganizationUnitWhereInput | boolean
-  delete?: Prisma.OrganizationUnitWhereInput | boolean
-  connect?: Prisma.OrganizationUnitWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.OrganizationUnitUpdateToOneWithWhereWithoutDataOwnershipsInput, Prisma.OrganizationUnitUpdateWithoutDataOwnershipsInput>, Prisma.OrganizationUnitUncheckedUpdateWithoutDataOwnershipsInput>
+export type OrganizationUnitUncheckedCreateWithoutConfigurationItemsInput = {
+  id?: string
+  parentId?: string | null
+  name: string
+  code: string
+  description?: string | null
+  unitType?: $Enums.OrganizationUnitType
+  managerId?: string | null
+  costCenter?: string | null
+  level: number
+  isActive?: boolean
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  children?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutParentInput
+  people?: Prisma.PersonUncheckedCreateNestedManyWithoutOrgUnitInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerOrgUnitInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForOrgUnitInput
+}
+
+export type OrganizationUnitCreateOrConnectWithoutConfigurationItemsInput = {
+  where: Prisma.OrganizationUnitWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutConfigurationItemsInput, Prisma.OrganizationUnitUncheckedCreateWithoutConfigurationItemsInput>
+}
+
+export type OrganizationUnitUpsertWithoutConfigurationItemsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUnitUpdateWithoutConfigurationItemsInput, Prisma.OrganizationUnitUncheckedUpdateWithoutConfigurationItemsInput>
+  create: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutConfigurationItemsInput, Prisma.OrganizationUnitUncheckedCreateWithoutConfigurationItemsInput>
+  where?: Prisma.OrganizationUnitWhereInput
+}
+
+export type OrganizationUnitUpdateToOneWithWhereWithoutConfigurationItemsInput = {
+  where?: Prisma.OrganizationUnitWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUnitUpdateWithoutConfigurationItemsInput, Prisma.OrganizationUnitUncheckedUpdateWithoutConfigurationItemsInput>
+}
+
+export type OrganizationUnitUpdateWithoutConfigurationItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitType?: Prisma.EnumOrganizationUnitTypeFieldUpdateOperationsInput | $Enums.OrganizationUnitType
+  costCenter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  parent?: Prisma.OrganizationUnitUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.OrganizationUnitUpdateManyWithoutParentNestedInput
+  manager?: Prisma.PersonUpdateOneWithoutManagedOrgUnitsNestedInput
+  people?: Prisma.PersonUpdateManyWithoutOrgUnitNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerOrgUnitNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutReservedForOrgUnitNestedInput
+}
+
+export type OrganizationUnitUncheckedUpdateWithoutConfigurationItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitType?: Prisma.EnumOrganizationUnitTypeFieldUpdateOperationsInput | $Enums.OrganizationUnitType
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  costCenter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  children?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutParentNestedInput
+  people?: Prisma.PersonUncheckedUpdateManyWithoutOrgUnitNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerOrgUnitNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForOrgUnitNestedInput
 }
 
 export type OrganizationUnitCreateWithoutChildrenInput = {
@@ -1122,7 +1222,7 @@ export type OrganizationUnitUpdateManyWithWhereWithoutManagerInput = {
   data: Prisma.XOR<Prisma.OrganizationUnitUpdateManyMutationInput, Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerInput>
 }
 
-export type OrganizationUnitCreateWithoutConfigurationItemsInput = {
+export type OrganizationUnitCreateWithoutDataOwnershipsInput = {
   id?: string
   name: string
   code: string
@@ -1139,11 +1239,11 @@ export type OrganizationUnitCreateWithoutConfigurationItemsInput = {
   children?: Prisma.OrganizationUnitCreateNestedManyWithoutParentInput
   manager?: Prisma.PersonCreateNestedOneWithoutManagedOrgUnitsInput
   people?: Prisma.PersonCreateNestedManyWithoutOrgUnitInput
-  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerOrgUnitInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutReservedForOrgUnitInput
 }
 
-export type OrganizationUnitUncheckedCreateWithoutConfigurationItemsInput = {
+export type OrganizationUnitUncheckedCreateWithoutDataOwnershipsInput = {
   id?: string
   parentId?: string | null
   name: string
@@ -1160,27 +1260,27 @@ export type OrganizationUnitUncheckedCreateWithoutConfigurationItemsInput = {
   updatedAt?: Date | string
   children?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutParentInput
   people?: Prisma.PersonUncheckedCreateNestedManyWithoutOrgUnitInput
-  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerOrgUnitInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForOrgUnitInput
 }
 
-export type OrganizationUnitCreateOrConnectWithoutConfigurationItemsInput = {
+export type OrganizationUnitCreateOrConnectWithoutDataOwnershipsInput = {
   where: Prisma.OrganizationUnitWhereUniqueInput
-  create: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutConfigurationItemsInput, Prisma.OrganizationUnitUncheckedCreateWithoutConfigurationItemsInput>
+  create: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutDataOwnershipsInput, Prisma.OrganizationUnitUncheckedCreateWithoutDataOwnershipsInput>
 }
 
-export type OrganizationUnitUpsertWithoutConfigurationItemsInput = {
-  update: Prisma.XOR<Prisma.OrganizationUnitUpdateWithoutConfigurationItemsInput, Prisma.OrganizationUnitUncheckedUpdateWithoutConfigurationItemsInput>
-  create: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutConfigurationItemsInput, Prisma.OrganizationUnitUncheckedCreateWithoutConfigurationItemsInput>
+export type OrganizationUnitUpsertWithoutDataOwnershipsInput = {
+  update: Prisma.XOR<Prisma.OrganizationUnitUpdateWithoutDataOwnershipsInput, Prisma.OrganizationUnitUncheckedUpdateWithoutDataOwnershipsInput>
+  create: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutDataOwnershipsInput, Prisma.OrganizationUnitUncheckedCreateWithoutDataOwnershipsInput>
   where?: Prisma.OrganizationUnitWhereInput
 }
 
-export type OrganizationUnitUpdateToOneWithWhereWithoutConfigurationItemsInput = {
+export type OrganizationUnitUpdateToOneWithWhereWithoutDataOwnershipsInput = {
   where?: Prisma.OrganizationUnitWhereInput
-  data: Prisma.XOR<Prisma.OrganizationUnitUpdateWithoutConfigurationItemsInput, Prisma.OrganizationUnitUncheckedUpdateWithoutConfigurationItemsInput>
+  data: Prisma.XOR<Prisma.OrganizationUnitUpdateWithoutDataOwnershipsInput, Prisma.OrganizationUnitUncheckedUpdateWithoutDataOwnershipsInput>
 }
 
-export type OrganizationUnitUpdateWithoutConfigurationItemsInput = {
+export type OrganizationUnitUpdateWithoutDataOwnershipsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1197,11 +1297,11 @@ export type OrganizationUnitUpdateWithoutConfigurationItemsInput = {
   children?: Prisma.OrganizationUnitUpdateManyWithoutParentNestedInput
   manager?: Prisma.PersonUpdateOneWithoutManagedOrgUnitsNestedInput
   people?: Prisma.PersonUpdateManyWithoutOrgUnitNestedInput
-  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerOrgUnitNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutReservedForOrgUnitNestedInput
 }
 
-export type OrganizationUnitUncheckedUpdateWithoutConfigurationItemsInput = {
+export type OrganizationUnitUncheckedUpdateWithoutDataOwnershipsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1218,7 +1318,7 @@ export type OrganizationUnitUncheckedUpdateWithoutConfigurationItemsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   children?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutParentNestedInput
   people?: Prisma.PersonUncheckedUpdateManyWithoutOrgUnitNestedInput
-  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerOrgUnitNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForOrgUnitNestedInput
 }
 
@@ -1320,106 +1420,6 @@ export type OrganizationUnitUncheckedUpdateWithoutReservationsInput = {
   people?: Prisma.PersonUncheckedUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerOrgUnitNestedInput
-}
-
-export type OrganizationUnitCreateWithoutDataOwnershipsInput = {
-  id?: string
-  name: string
-  code: string
-  description?: string | null
-  unitType?: $Enums.OrganizationUnitType
-  costCenter?: string | null
-  level: number
-  isActive?: boolean
-  note?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  parent?: Prisma.OrganizationUnitCreateNestedOneWithoutChildrenInput
-  children?: Prisma.OrganizationUnitCreateNestedManyWithoutParentInput
-  manager?: Prisma.PersonCreateNestedOneWithoutManagedOrgUnitsInput
-  people?: Prisma.PersonCreateNestedManyWithoutOrgUnitInput
-  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
-  reservations?: Prisma.AssetReservationCreateNestedManyWithoutReservedForOrgUnitInput
-}
-
-export type OrganizationUnitUncheckedCreateWithoutDataOwnershipsInput = {
-  id?: string
-  parentId?: string | null
-  name: string
-  code: string
-  description?: string | null
-  unitType?: $Enums.OrganizationUnitType
-  managerId?: string | null
-  costCenter?: string | null
-  level: number
-  isActive?: boolean
-  note?: string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  children?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutParentInput
-  people?: Prisma.PersonUncheckedCreateNestedManyWithoutOrgUnitInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
-  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForOrgUnitInput
-}
-
-export type OrganizationUnitCreateOrConnectWithoutDataOwnershipsInput = {
-  where: Prisma.OrganizationUnitWhereUniqueInput
-  create: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutDataOwnershipsInput, Prisma.OrganizationUnitUncheckedCreateWithoutDataOwnershipsInput>
-}
-
-export type OrganizationUnitUpsertWithoutDataOwnershipsInput = {
-  update: Prisma.XOR<Prisma.OrganizationUnitUpdateWithoutDataOwnershipsInput, Prisma.OrganizationUnitUncheckedUpdateWithoutDataOwnershipsInput>
-  create: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutDataOwnershipsInput, Prisma.OrganizationUnitUncheckedCreateWithoutDataOwnershipsInput>
-  where?: Prisma.OrganizationUnitWhereInput
-}
-
-export type OrganizationUnitUpdateToOneWithWhereWithoutDataOwnershipsInput = {
-  where?: Prisma.OrganizationUnitWhereInput
-  data: Prisma.XOR<Prisma.OrganizationUnitUpdateWithoutDataOwnershipsInput, Prisma.OrganizationUnitUncheckedUpdateWithoutDataOwnershipsInput>
-}
-
-export type OrganizationUnitUpdateWithoutDataOwnershipsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  unitType?: Prisma.EnumOrganizationUnitTypeFieldUpdateOperationsInput | $Enums.OrganizationUnitType
-  costCenter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  level?: Prisma.IntFieldUpdateOperationsInput | number
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  parent?: Prisma.OrganizationUnitUpdateOneWithoutChildrenNestedInput
-  children?: Prisma.OrganizationUnitUpdateManyWithoutParentNestedInput
-  manager?: Prisma.PersonUpdateOneWithoutManagedOrgUnitsNestedInput
-  people?: Prisma.PersonUpdateManyWithoutOrgUnitNestedInput
-  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
-  reservations?: Prisma.AssetReservationUpdateManyWithoutReservedForOrgUnitNestedInput
-}
-
-export type OrganizationUnitUncheckedUpdateWithoutDataOwnershipsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  unitType?: Prisma.EnumOrganizationUnitTypeFieldUpdateOperationsInput | $Enums.OrganizationUnitType
-  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  costCenter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  level?: Prisma.IntFieldUpdateOperationsInput | number
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  children?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutParentNestedInput
-  people?: Prisma.PersonUncheckedUpdateManyWithoutOrgUnitNestedInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
-  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForOrgUnitNestedInput
 }
 
 export type OrganizationUnitCreateManyParentInput = {

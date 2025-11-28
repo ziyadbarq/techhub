@@ -147,7 +147,7 @@ This assets app implements **Clean Architecture** (Robert C. Martin) with **Depe
 ║  └─────────────────────────────────────────────────────────┘ ║
 ║  ┌─────────────────────────────────────────────────────────┐ ║
 ║  │  Database                                               │ ║
-║  │  • schema.prisma (PostgreSQL schema)                    │ ║
+║  │  • schema/ (Multi-file PostgreSQL schema)               │ ║
 ║  │  • seed.ts (Seed data)                                  │ ║
 ║  └─────────────────────────────────────────────────────────┘ ║
 ║                                                               ║

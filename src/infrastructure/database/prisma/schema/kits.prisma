@@ -1,0 +1,120 @@
+// ============================================
+// ASSET KITS & BUNDLES
+// ============================================
+//
+// Models: AssetKit, AssetKitItem, AssetKitCheckout, AssetKitCheckoutItem
+// Enums: None
+// Layer: Layer 3 (Advanced ITAM)
+// Related DI Module: asset-kits.module.ts
+// ============================================
+
+// AssetKit model
+// Reusable kit templates (e.g., "New Hire Kit", "Executive Package")
+model AssetKit {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  description String?  @db.Text
+  kitType     String   @map("kit_type") // NEW_HIRE, CONTRACTOR, EXECUTIVE, PROJECT, TEMPORARY, OTHER
+  isActive    Boolean  @default(true) @map("is_active")
+  metadata    Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  items     AssetKitItem[]
+  checkouts AssetKitCheckout[]
+
+  // Indexes
+  @@index([code])
+  @@index([kitType])
+  @@index([isActive])
+  @@map("asset_kits")
+}
+
+// AssetKitItem model
+// Items included in a kit template (category or specific model)
+model AssetKitItem {
+  id              String   @id @default(cuid())
+  assetKitId      String   @map("asset_kit_id")
+  assetCategoryId String?  @map("asset_category_id")
+  assetModelId    String?  @map("asset_model_id")
+  quantity        Int      @default(1)
+  isRequired      Boolean  @default(true) @map("is_required")
+  note            String?  @db.Text
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  assetKit      AssetKit               @relation(fields: [assetKitId], references: [id], onDelete: Cascade)
+  assetCategory AssetCategory?         @relation(fields: [assetCategoryId], references: [id], onDelete: Restrict)
+  assetModel    AssetModel?            @relation(fields: [assetModelId], references: [id], onDelete: SetNull)
+  checkoutItems AssetKitCheckoutItem[]
+
+  // Indexes
+  @@index([assetKitId])
+  @@index([assetCategoryId])
+  @@index([assetModelId])
+  @@map("asset_kit_items")
+}
+
+// AssetKitCheckout model
+// Actual kit checkout instance tracking
+model AssetKitCheckout {
+  id                 String    @id @default(cuid())
+  assetKitId         String    @map("asset_kit_id")
+  assigneeType       String    @map("assignee_type") // PERSON, ORG_UNIT, LOCATION
+  assigneeId         String    @map("assignee_id")
+  checkoutDate       DateTime  @default(now()) @map("checkout_date")
+  expectedReturnDate DateTime? @map("expected_return_date")
+  actualReturnDate   DateTime? @map("actual_return_date")
+  status             String    @default("CHECKED_OUT") @map("status") // CHECKED_OUT, PARTIALLY_RETURNED, RETURNED, CANCELLED
+  checkedOutById     String    @map("checked_out_by_id")
+  note               String?   @db.Text
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  assetKit     AssetKit               @relation(fields: [assetKitId], references: [id], onDelete: Restrict)
+  checkedOutBy Person                 @relation("KitCheckoutBy", fields: [checkedOutById], references: [id], onDelete: Restrict)
+  items        AssetKitCheckoutItem[]
+
+  // Indexes
+  @@index([assetKitId])
+  @@index([assigneeType, assigneeId])
+  @@index([status])
+  @@index([checkedOutById])
+  @@index([expectedReturnDate])
+  @@index([checkoutDate]) // Medium-priority: Checkout history
+  @@index([actualReturnDate]) // Medium-priority: Return tracking
+  @@map("asset_kit_checkouts")
+}
+
+// AssetKitCheckoutItem model
+// Individual assets tracked within a kit checkout
+model AssetKitCheckoutItem {
+  id                  String    @id @default(cuid())
+  kitCheckoutId       String    @map("kit_checkout_id")
+  assetId             String    @map("asset_id")
+  kitItemId           String    @map("kit_item_id")
+  checkoutDate        DateTime  @default(now()) @map("checkout_date")
+  returnDate          DateTime? @map("return_date")
+  status              String    @default("CHECKED_OUT") @map("status") // CHECKED_OUT, RETURNED, DAMAGED, LOST
+  conditionAtCheckout String?   @map("condition_at_checkout") @db.Text
+  conditionAtReturn   String?   @map("condition_at_return") @db.Text
+  note                String?   @db.Text
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  kitCheckout AssetKitCheckout @relation(fields: [kitCheckoutId], references: [id], onDelete: Cascade)
+  asset       Asset            @relation(fields: [assetId], references: [id], onDelete: Restrict)
+  kitItem     AssetKitItem     @relation(fields: [kitItemId], references: [id], onDelete: Restrict)
+
+  // Indexes
+  @@index([kitCheckoutId])
+  @@index([assetId])
+  @@index([kitItemId])
+  @@index([status])
+  @@map("asset_kit_checkout_items")
+}

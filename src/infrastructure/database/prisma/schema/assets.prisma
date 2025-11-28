@@ -1,0 +1,302 @@
+// ============================================
+// IT ASSET MANAGEMENT (ITAM) - Assets, Models, Stock, Warranty
+// ============================================
+//
+// Models: AssetCategory, AssetCategoryField, AssetModel, StockLocation, StockMovement, Asset, AssetAssignment, Warranty
+// Enums: AssigneeTypeEnum, TargetObjectTypeEnum, StockMovementTypeEnum, FieldDataTypeEnum, WarrantyCoverageType
+// Layer: Layer 2 (Asset/Inventory)
+// Related DI Module: asset.module.ts
+// ============================================
+
+// AssetCategory model
+model AssetCategory {
+  id               String   @id @default(cuid())
+  name             String   @unique
+  code             String   @unique
+  description      String?  @db.Text
+  lifecycleModelId String?
+  isConsumable     Boolean  @default(false) // true for items like cables, mice
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  lifecycleModel LifecycleModel?      @relation(fields: [lifecycleModelId], references: [id], onDelete: SetNull)
+  fields         AssetCategoryField[]
+  assetModels    AssetModel[]
+  assets         Asset[]
+  dataOwnerships DataOwnership[]
+  kitItems       AssetKitItem[]
+
+  // Indexes
+  @@index([code])
+  @@index([lifecycleModelId])
+  @@map("asset_categories")
+}
+
+// AssetCategoryField model
+model AssetCategoryField {
+  id                String   @id @default(cuid())
+  assetCategoryId   String
+  fieldDefinitionId String
+  isRequired        Boolean  @default(false)
+  isUnique          Boolean  @default(false)
+  isVisible         Boolean  @default(true)
+  uiOrder           Int      @default(0)
+  defaultValue      Json?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  assetCategory   AssetCategory   @relation(fields: [assetCategoryId], references: [id], onDelete: Cascade)
+  fieldDefinition FieldDefinition @relation(fields: [fieldDefinitionId], references: [id], onDelete: Restrict)
+
+  // Indexes
+  @@unique([assetCategoryId, fieldDefinitionId])
+  @@index([assetCategoryId])
+  @@index([fieldDefinitionId])
+  @@map("asset_category_fields")
+}
+
+// AssetModel model
+model AssetModel {
+  id                    String   @id @default(cuid())
+  assetCategoryId       String
+  vendorId              String
+  name                  String
+  code                  String   @unique
+  description           String?  @db.Text
+  defaultWarrantyMonths Int?
+  defaultAttributes     Json? // default specs: RAM, CPU, screen size, etc.
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  // Relations
+  assetCategory AssetCategory @relation(fields: [assetCategoryId], references: [id], onDelete: Restrict)
+  vendor        Vendor        @relation(fields: [vendorId], references: [id], onDelete: Restrict)
+  assets        Asset[]
+  kitItems      AssetKitItem[]
+
+  // Indexes
+  @@index([code])
+  @@index([assetCategoryId])
+  @@index([vendorId])
+  @@map("asset_models")
+}
+
+// StockLocation model
+model StockLocation {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  locationId  String?
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  location           Location?       @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  assets             Asset[]
+  stockMovementsFrom StockMovement[] @relation("StockMovementFrom")
+  stockMovementsTo   StockMovement[] @relation("StockMovementTo")
+
+  // Indexes
+  @@index([code])
+  @@index([locationId])
+  @@map("stock_locations")
+}
+
+// StockMovement model
+model StockMovement {
+  id                  String                @id @default(cuid())
+  movementType        StockMovementTypeEnum
+  stockLocationFromId String?
+  stockLocationToId   String?
+  assetId             String?
+  quantity            Int                   @default(1)
+  reason              String?               @db.Text
+  performedById       String
+  occurredAt          DateTime              @default(now())
+  createdAt           DateTime              @default(now())
+
+  // Relations
+  stockLocationFrom StockLocation? @relation("StockMovementFrom", fields: [stockLocationFromId], references: [id], onDelete: SetNull)
+  stockLocationTo   StockLocation? @relation("StockMovementTo", fields: [stockLocationToId], references: [id], onDelete: SetNull)
+  asset             Asset?         @relation(fields: [assetId], references: [id], onDelete: SetNull)
+  performedBy       Person         @relation(fields: [performedById], references: [id], onDelete: Restrict)
+
+  // Indexes
+  @@index([movementType])
+  @@index([stockLocationFromId])
+  @@index([stockLocationToId])
+  @@index([assetId])
+  @@index([performedById])
+  @@index([occurredAt])
+  @@map("stock_movements")
+}
+
+// Asset model
+model Asset {
+  id                     String    @id @default(cuid())
+  assetTag               String    @unique
+  assetCategoryId        String
+  assetModelId           String?
+  vendorId               String?
+  contractId             String?
+  lifecycleStateId       String?
+  serialNumber           String?   @unique
+  purchaseDate           DateTime?
+  purchaseCost           Decimal?  @db.Decimal(12, 2)
+  purchaseCostSar        Decimal?  @db.Decimal(12, 2) // Frozen SAR snapshot at create/update
+  currency               String?
+  depreciationModel      String?
+  depreciationStart      DateTime?
+  depreciationEnd        DateTime?
+  warrantyEndDate        DateTime?
+  condition              String? // Asset condition: NEW, GOOD, FAIR, POOR
+  currentStockLocationId String?
+  attributes             Json? // dynamic fields per AssetCategoryField
+  note                   String?   @db.Text
+  deletedAt              DateTime? // Soft delete timestamp
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  // Relations
+  assetCategory        AssetCategory         @relation(fields: [assetCategoryId], references: [id], onDelete: Restrict)
+  assetModel           AssetModel?           @relation(fields: [assetModelId], references: [id], onDelete: SetNull)
+  vendor               Vendor?               @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  contract             Contract?             @relation(fields: [contractId], references: [id], onDelete: SetNull)
+  lifecycleState       LifecycleState?       @relation(fields: [lifecycleStateId], references: [id], onDelete: SetNull)
+  currentStockLocation StockLocation?        @relation(fields: [currentStockLocationId], references: [id], onDelete: SetNull)
+  warranties           Warranty[]
+  configurationItems   ConfigurationItem[]
+  stockMovements       StockMovement[]
+  assetAssignments     AssetAssignment[]
+  maintenanceSchedules MaintenanceSchedule[]
+  maintenanceRecords   MaintenanceRecord[]
+  disposals            AssetDisposal[]        @relation("AssetDisposals")
+  reservations         AssetReservation[]
+  kitCheckoutItems     AssetKitCheckoutItem[]
+  serviceAssets        ServiceAsset[]
+  intuneDevice         IntuneDevice?          @relation("IntuneDeviceAsset")
+
+  // Indexes
+  @@index([assetTag])
+  @@index([assetCategoryId])
+  @@index([assetModelId])
+  @@index([vendorId])
+  @@index([contractId])
+  @@index([lifecycleStateId])
+  @@index([serialNumber])
+  @@index([currentStockLocationId])
+  @@index([condition]) // High-priority: Filter by condition
+  @@index([warrantyEndDate]) // High-priority: Expiring warranties
+  @@index([assetCategoryId, lifecycleStateId]) // High-priority: Dashboard queries
+  @@index([condition, lifecycleStateId]) // High-priority: Filter by condition + state
+  @@index([purchaseDate]) // Medium-priority: Age-based queries
+  @@index([depreciationStart, depreciationEnd]) // Medium-priority: Depreciation queries
+  @@map("assets")
+}
+
+// AssetAssignment model
+model AssetAssignment {
+  id                    String           @id @default(cuid())
+  assetId               String
+  assigneeType          AssigneeTypeEnum
+  assigneeId            String // points to Person/OrgUnit/Location/CI depending on type
+  startDate             DateTime         @default(now())
+  endDate               DateTime?
+  isPrimary             Boolean          @default(false)
+  conditionOnAssignment String? // Condition when asset was assigned
+  conditionOnReturn     String? // Condition when asset was returned
+  note                  String?          @db.Text
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+
+  // Relations
+  asset Asset @relation(fields: [assetId], references: [id], onDelete: Restrict)
+
+  // Indexes
+  @@index([assetId])
+  @@index([assigneeType, assigneeId])
+  @@index([startDate, endDate])
+  @@map("asset_assignments")
+}
+
+// Warranty model
+// Comprehensive warranty tracking with support for multiple warranties per asset
+model Warranty {
+  id              String               @id @default(cuid())
+  assetId         String
+  vendorId        String? // Nullable to support third-party warranty providers
+  coverageType    WarrantyCoverageType @default(STANDARD)
+  coverageDetails String?              @db.Text
+  policyReference String?
+  slaDetails      Json? // SLA terms, response times, coverage hours
+  startDate       DateTime
+  endDate         DateTime
+  cost            Decimal?             @db.Decimal(12, 2)
+  currency        String?
+  note            String?              @db.Text
+  metadata        Json?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+
+  // Relations
+  asset  Asset   @relation(fields: [assetId], references: [id], onDelete: Restrict)
+  vendor Vendor? @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+
+  // Indexes
+  @@index([assetId])
+  @@index([vendorId])
+  @@index([startDate, endDate])
+  @@index([endDate]) // For expiration queries
+  @@index([coverageType])
+  @@map("warranties")
+}
+
+// ============================================
+// ASSET ENUMS
+// ============================================
+
+enum AssigneeTypeEnum {
+  PERSON
+  ORG_UNIT
+  LOCATION
+  CI
+}
+
+enum StockMovementTypeEnum {
+  IN
+  OUT
+  TRANSFER
+  ADJUSTMENT
+}
+
+enum FieldDataTypeEnum {
+  STRING
+  TEXT
+  INTEGER
+  DECIMAL
+  BOOLEAN
+  DATE
+  DATETIME
+  ENUM
+  JSON
+  CI_REFERENCE
+  PERSON_REFERENCE
+  ORG_UNIT_REFERENCE
+  LOCATION_REFERENCE
+}
+
+enum WarrantyCoverageType {
+  STANDARD
+  EXTENDED
+  ENHANCED
+  PREMIUM
+  BASIC
+  THIRD_PARTY
+  MANUFACTURER
+  DEPOT
+  ONSITE
+  NEXT_BUSINESS_DAY
+}

@@ -117,6 +117,7 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 - Client components: `import from "@/generated/prisma"` or `@/generated/prisma/enums`
 - Use singleton from `@/infrastructure/database/prisma/client` (NOT new instances)
 - NEVER import from `@prisma/client` (ESLint enforced)
+- **Multi-file schema**: Add models to domain files in `schema/` (e.g., `assets.prisma`, `licenses.prisma`)
 - See [PRISMA_GUIDE.md](docs/guides/PRISMA_GUIDE.md)
 
 **Next.js 16 Async APIs**:

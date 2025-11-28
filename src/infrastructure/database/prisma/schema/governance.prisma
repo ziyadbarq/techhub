@@ -1,0 +1,143 @@
+// ============================================
+// GOVERNANCE: DATA DOMAINS, OWNERSHIP, VERIFICATION
+// ============================================
+//
+// Models: DataDomain, DataOwnership, VerificationCampaign, VerificationItem, AuditLogEntry
+// Enums: VerificationStatusEnum
+// Layer: Layer 3 (Advanced ITAM)
+// Related DI Module: governance.module.ts
+// ============================================
+
+// DataDomain model
+model DataDomain {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  code        String   @unique
+  description String?  @db.Text
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  dataOwnerships DataOwnership[]
+
+  // Indexes
+  @@index([code])
+  @@index([isActive])
+  @@map("data_domains")
+}
+
+// DataOwnership model
+model DataOwnership {
+  id              String   @id @default(cuid())
+  dataDomainId    String
+  ciClassId       String?
+  assetCategoryId String?
+  ownerPersonId   String?
+  ownerOrgUnitId  String?
+  note            String?  @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  dataDomain    DataDomain        @relation(fields: [dataDomainId], references: [id], onDelete: Cascade)
+  ciClass       CIClass?          @relation(fields: [ciClassId], references: [id], onDelete: Cascade)
+  assetCategory AssetCategory?    @relation(fields: [assetCategoryId], references: [id], onDelete: Cascade)
+  ownerPerson   Person?           @relation("DataOwnershipPerson", fields: [ownerPersonId], references: [id], onDelete: SetNull)
+  ownerOrgUnit  OrganizationUnit? @relation("DataOwnershipOrgUnit", fields: [ownerOrgUnitId], references: [id], onDelete: SetNull)
+
+  // Indexes
+  @@index([dataDomainId])
+  @@index([ciClassId])
+  @@index([assetCategoryId])
+  @@index([ownerPersonId])
+  @@index([ownerOrgUnitId])
+  @@map("data_ownerships")
+}
+
+// VerificationCampaign model
+model VerificationCampaign {
+  id               String               @id @default(cuid())
+  name             String
+  description      String?              @db.Text
+  targetType       TargetObjectTypeEnum // CI or ASSET
+  filterDefinition Json? // selection rules (by class, category, location, etc.)
+  scheduledStart   DateTime
+  scheduledEnd     DateTime?
+  createdById      String
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+
+  // Relations
+  createdBy Person             @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  items     VerificationItem[]
+
+  // Indexes
+  @@index([targetType])
+  @@index([createdById])
+  @@index([scheduledStart, scheduledEnd])
+  @@map("verification_campaigns")
+}
+
+// VerificationItem model
+model VerificationItem {
+  id                     String                 @id @default(cuid())
+  verificationCampaignId String
+  targetType             TargetObjectTypeEnum
+  targetId               String
+  verifierPersonId       String?
+  status                 VerificationStatusEnum
+  verifiedAt             DateTime?
+  comment                String?                @db.Text
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
+
+  // Relations
+  verificationCampaign VerificationCampaign @relation(fields: [verificationCampaignId], references: [id], onDelete: Cascade)
+  verifierPerson       Person?              @relation(fields: [verifierPersonId], references: [id], onDelete: SetNull)
+
+  // Indexes
+  @@index([verificationCampaignId])
+  @@index([targetType, targetId])
+  @@index([verifierPersonId])
+  @@index([status])
+  @@index([verifiedAt]) // Medium-priority: Verification timeline
+  @@map("verification_items")
+}
+
+// AuditLogEntry model (Foundation audit log for CMDB/ITAM)
+model AuditLogEntry {
+  id              String               @id @default(cuid())
+  targetType      TargetObjectTypeEnum
+  targetId        String
+  fieldName       String?
+  oldValue        String?              @db.Text
+  newValue        String?              @db.Text
+  changedById     String
+  changedByUserId String? // Optional User link (for direct user actions)
+  changedAt       DateTime             @default(now())
+  sourceSystem    String? // UI, API, Discovery, Import
+  note            String?              @db.Text
+
+  // Relations
+  changedBy     Person @relation("AuditLogChangedBy", fields: [changedById], references: [id], onDelete: Restrict)
+  changedByUser User?  @relation("AuditLogChangedByUser", fields: [changedByUserId], references: [id], onDelete: Restrict)
+
+  // Indexes
+  @@index([targetType, targetId])
+  @@index([changedById])
+  @@index([changedByUserId])
+  @@index([changedAt])
+  @@map("audit_log_entries")
+}
+
+// ============================================
+// GOVERNANCE ENUMS
+// ============================================
+
+enum VerificationStatusEnum {
+  PENDING
+  IN_PROGRESS
+  VERIFIED
+  EXCEPTION
+}

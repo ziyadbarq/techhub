@@ -1,0 +1,87 @@
+// ============================================
+// AUTHENTICATION (Better Auth)
+// ============================================
+//
+// Models: User, Account, Session, Verification
+// Enums: None
+// Layer: System/Infrastructure
+// Related DI Module: auth.module.ts
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  image         String?
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Authentication tracking
+  lastLoginMethod String? // 'email' | 'microsoft' | other OAuth providers
+  lastLoginAt     DateTime?
+
+  // Relations
+  accounts        Account[]
+  sessions        Session[]
+  roles           UserRole[]
+  person          Person? // Optional link to organizational person
+  auditLogsAsUser AuditLogEntry[] @relation("AuditLogChangedByUser")
+
+  @@index([email])
+  @@map("users")
+}
+
+model Account {
+  id                String    @id @default(cuid())
+  userId            String
+  type              String    @default("oauth")
+  provider          String
+  providerAccountId String
+  refreshToken      String?   @db.Text
+  accessToken       String?   @db.Text
+  expiresAt         DateTime?
+  tokenType         String?
+  scope             String?
+  idToken           String?   @db.Text
+  sessionState      String?
+  password          String?   @db.Text // Better Auth email/password storage
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@index([expiresAt]) // Medium-priority: Cleanup expired sessions
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([identifier])
+  @@index([expiresAt]) // Medium-priority: Cleanup expired tokens
+  @@map("verification")
+}

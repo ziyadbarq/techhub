@@ -1116,7 +1116,7 @@ await prisma.vendor.deleteMany({}); // Least dependent
 3. Update seed code to match schema
 
 ```typescript
-// Check your schema.prisma
+// Check schema/assets.prisma
 model Asset {
   purchaseCost Float?  // ← Use purchaseCost, not purchasePrice
   currency     String?

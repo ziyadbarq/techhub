@@ -7,9 +7,9 @@ const envFile = fs.existsSync(".env.local") ? ".env.local" : ".env";
 config({ path: envFile });
 
 export default defineConfig({
-  schema: "src/infrastructure/database/prisma/schema.prisma",
+  schema: "src/infrastructure/database/prisma/schema",
   migrations: {
-    path: "src/infrastructure/database/prisma/migrations",
+    path: "src/infrastructure/database/prisma/schema/migrations",
     seed: "tsx src/infrastructure/database/prisma/seed.ts",
   },
   datasource: {

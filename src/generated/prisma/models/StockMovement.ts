@@ -477,48 +477,6 @@ export type StockMovementSumOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
 }
 
-export type StockMovementCreateNestedManyWithoutPerformedByInput = {
-  create?: Prisma.XOR<Prisma.StockMovementCreateWithoutPerformedByInput, Prisma.StockMovementUncheckedCreateWithoutPerformedByInput> | Prisma.StockMovementCreateWithoutPerformedByInput[] | Prisma.StockMovementUncheckedCreateWithoutPerformedByInput[]
-  connectOrCreate?: Prisma.StockMovementCreateOrConnectWithoutPerformedByInput | Prisma.StockMovementCreateOrConnectWithoutPerformedByInput[]
-  createMany?: Prisma.StockMovementCreateManyPerformedByInputEnvelope
-  connect?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
-}
-
-export type StockMovementUncheckedCreateNestedManyWithoutPerformedByInput = {
-  create?: Prisma.XOR<Prisma.StockMovementCreateWithoutPerformedByInput, Prisma.StockMovementUncheckedCreateWithoutPerformedByInput> | Prisma.StockMovementCreateWithoutPerformedByInput[] | Prisma.StockMovementUncheckedCreateWithoutPerformedByInput[]
-  connectOrCreate?: Prisma.StockMovementCreateOrConnectWithoutPerformedByInput | Prisma.StockMovementCreateOrConnectWithoutPerformedByInput[]
-  createMany?: Prisma.StockMovementCreateManyPerformedByInputEnvelope
-  connect?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
-}
-
-export type StockMovementUpdateManyWithoutPerformedByNestedInput = {
-  create?: Prisma.XOR<Prisma.StockMovementCreateWithoutPerformedByInput, Prisma.StockMovementUncheckedCreateWithoutPerformedByInput> | Prisma.StockMovementCreateWithoutPerformedByInput[] | Prisma.StockMovementUncheckedCreateWithoutPerformedByInput[]
-  connectOrCreate?: Prisma.StockMovementCreateOrConnectWithoutPerformedByInput | Prisma.StockMovementCreateOrConnectWithoutPerformedByInput[]
-  upsert?: Prisma.StockMovementUpsertWithWhereUniqueWithoutPerformedByInput | Prisma.StockMovementUpsertWithWhereUniqueWithoutPerformedByInput[]
-  createMany?: Prisma.StockMovementCreateManyPerformedByInputEnvelope
-  set?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
-  disconnect?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
-  delete?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
-  connect?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
-  update?: Prisma.StockMovementUpdateWithWhereUniqueWithoutPerformedByInput | Prisma.StockMovementUpdateWithWhereUniqueWithoutPerformedByInput[]
-  updateMany?: Prisma.StockMovementUpdateManyWithWhereWithoutPerformedByInput | Prisma.StockMovementUpdateManyWithWhereWithoutPerformedByInput[]
-  deleteMany?: Prisma.StockMovementScalarWhereInput | Prisma.StockMovementScalarWhereInput[]
-}
-
-export type StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput = {
-  create?: Prisma.XOR<Prisma.StockMovementCreateWithoutPerformedByInput, Prisma.StockMovementUncheckedCreateWithoutPerformedByInput> | Prisma.StockMovementCreateWithoutPerformedByInput[] | Prisma.StockMovementUncheckedCreateWithoutPerformedByInput[]
-  connectOrCreate?: Prisma.StockMovementCreateOrConnectWithoutPerformedByInput | Prisma.StockMovementCreateOrConnectWithoutPerformedByInput[]
-  upsert?: Prisma.StockMovementUpsertWithWhereUniqueWithoutPerformedByInput | Prisma.StockMovementUpsertWithWhereUniqueWithoutPerformedByInput[]
-  createMany?: Prisma.StockMovementCreateManyPerformedByInputEnvelope
-  set?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
-  disconnect?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
-  delete?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
-  connect?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
-  update?: Prisma.StockMovementUpdateWithWhereUniqueWithoutPerformedByInput | Prisma.StockMovementUpdateWithWhereUniqueWithoutPerformedByInput[]
-  updateMany?: Prisma.StockMovementUpdateManyWithWhereWithoutPerformedByInput | Prisma.StockMovementUpdateManyWithWhereWithoutPerformedByInput[]
-  deleteMany?: Prisma.StockMovementScalarWhereInput | Prisma.StockMovementScalarWhereInput[]
-}
-
 export type StockMovementCreateNestedManyWithoutStockLocationFromInput = {
   create?: Prisma.XOR<Prisma.StockMovementCreateWithoutStockLocationFromInput, Prisma.StockMovementUncheckedCreateWithoutStockLocationFromInput> | Prisma.StockMovementCreateWithoutStockLocationFromInput[] | Prisma.StockMovementUncheckedCreateWithoutStockLocationFromInput[]
   connectOrCreate?: Prisma.StockMovementCreateOrConnectWithoutStockLocationFromInput | Prisma.StockMovementCreateOrConnectWithoutStockLocationFromInput[]
@@ -649,70 +607,46 @@ export type StockMovementUncheckedUpdateManyWithoutAssetNestedInput = {
   deleteMany?: Prisma.StockMovementScalarWhereInput | Prisma.StockMovementScalarWhereInput[]
 }
 
-export type StockMovementCreateWithoutPerformedByInput = {
-  id?: string
-  movementType: $Enums.StockMovementTypeEnum
-  quantity?: number
-  reason?: string | null
-  occurredAt?: Date | string
-  createdAt?: Date | string
-  stockLocationFrom?: Prisma.StockLocationCreateNestedOneWithoutStockMovementsFromInput
-  stockLocationTo?: Prisma.StockLocationCreateNestedOneWithoutStockMovementsToInput
-  asset?: Prisma.AssetCreateNestedOneWithoutStockMovementsInput
+export type StockMovementCreateNestedManyWithoutPerformedByInput = {
+  create?: Prisma.XOR<Prisma.StockMovementCreateWithoutPerformedByInput, Prisma.StockMovementUncheckedCreateWithoutPerformedByInput> | Prisma.StockMovementCreateWithoutPerformedByInput[] | Prisma.StockMovementUncheckedCreateWithoutPerformedByInput[]
+  connectOrCreate?: Prisma.StockMovementCreateOrConnectWithoutPerformedByInput | Prisma.StockMovementCreateOrConnectWithoutPerformedByInput[]
+  createMany?: Prisma.StockMovementCreateManyPerformedByInputEnvelope
+  connect?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
 }
 
-export type StockMovementUncheckedCreateWithoutPerformedByInput = {
-  id?: string
-  movementType: $Enums.StockMovementTypeEnum
-  stockLocationFromId?: string | null
-  stockLocationToId?: string | null
-  assetId?: string | null
-  quantity?: number
-  reason?: string | null
-  occurredAt?: Date | string
-  createdAt?: Date | string
+export type StockMovementUncheckedCreateNestedManyWithoutPerformedByInput = {
+  create?: Prisma.XOR<Prisma.StockMovementCreateWithoutPerformedByInput, Prisma.StockMovementUncheckedCreateWithoutPerformedByInput> | Prisma.StockMovementCreateWithoutPerformedByInput[] | Prisma.StockMovementUncheckedCreateWithoutPerformedByInput[]
+  connectOrCreate?: Prisma.StockMovementCreateOrConnectWithoutPerformedByInput | Prisma.StockMovementCreateOrConnectWithoutPerformedByInput[]
+  createMany?: Prisma.StockMovementCreateManyPerformedByInputEnvelope
+  connect?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
 }
 
-export type StockMovementCreateOrConnectWithoutPerformedByInput = {
-  where: Prisma.StockMovementWhereUniqueInput
-  create: Prisma.XOR<Prisma.StockMovementCreateWithoutPerformedByInput, Prisma.StockMovementUncheckedCreateWithoutPerformedByInput>
+export type StockMovementUpdateManyWithoutPerformedByNestedInput = {
+  create?: Prisma.XOR<Prisma.StockMovementCreateWithoutPerformedByInput, Prisma.StockMovementUncheckedCreateWithoutPerformedByInput> | Prisma.StockMovementCreateWithoutPerformedByInput[] | Prisma.StockMovementUncheckedCreateWithoutPerformedByInput[]
+  connectOrCreate?: Prisma.StockMovementCreateOrConnectWithoutPerformedByInput | Prisma.StockMovementCreateOrConnectWithoutPerformedByInput[]
+  upsert?: Prisma.StockMovementUpsertWithWhereUniqueWithoutPerformedByInput | Prisma.StockMovementUpsertWithWhereUniqueWithoutPerformedByInput[]
+  createMany?: Prisma.StockMovementCreateManyPerformedByInputEnvelope
+  set?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
+  disconnect?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
+  delete?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
+  connect?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
+  update?: Prisma.StockMovementUpdateWithWhereUniqueWithoutPerformedByInput | Prisma.StockMovementUpdateWithWhereUniqueWithoutPerformedByInput[]
+  updateMany?: Prisma.StockMovementUpdateManyWithWhereWithoutPerformedByInput | Prisma.StockMovementUpdateManyWithWhereWithoutPerformedByInput[]
+  deleteMany?: Prisma.StockMovementScalarWhereInput | Prisma.StockMovementScalarWhereInput[]
 }
 
-export type StockMovementCreateManyPerformedByInputEnvelope = {
-  data: Prisma.StockMovementCreateManyPerformedByInput | Prisma.StockMovementCreateManyPerformedByInput[]
-  skipDuplicates?: boolean
-}
-
-export type StockMovementUpsertWithWhereUniqueWithoutPerformedByInput = {
-  where: Prisma.StockMovementWhereUniqueInput
-  update: Prisma.XOR<Prisma.StockMovementUpdateWithoutPerformedByInput, Prisma.StockMovementUncheckedUpdateWithoutPerformedByInput>
-  create: Prisma.XOR<Prisma.StockMovementCreateWithoutPerformedByInput, Prisma.StockMovementUncheckedCreateWithoutPerformedByInput>
-}
-
-export type StockMovementUpdateWithWhereUniqueWithoutPerformedByInput = {
-  where: Prisma.StockMovementWhereUniqueInput
-  data: Prisma.XOR<Prisma.StockMovementUpdateWithoutPerformedByInput, Prisma.StockMovementUncheckedUpdateWithoutPerformedByInput>
-}
-
-export type StockMovementUpdateManyWithWhereWithoutPerformedByInput = {
-  where: Prisma.StockMovementScalarWhereInput
-  data: Prisma.XOR<Prisma.StockMovementUpdateManyMutationInput, Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByInput>
-}
-
-export type StockMovementScalarWhereInput = {
-  AND?: Prisma.StockMovementScalarWhereInput | Prisma.StockMovementScalarWhereInput[]
-  OR?: Prisma.StockMovementScalarWhereInput[]
-  NOT?: Prisma.StockMovementScalarWhereInput | Prisma.StockMovementScalarWhereInput[]
-  id?: Prisma.StringFilter<"StockMovement"> | string
-  movementType?: Prisma.EnumStockMovementTypeEnumFilter<"StockMovement"> | $Enums.StockMovementTypeEnum
-  stockLocationFromId?: Prisma.StringNullableFilter<"StockMovement"> | string | null
-  stockLocationToId?: Prisma.StringNullableFilter<"StockMovement"> | string | null
-  assetId?: Prisma.StringNullableFilter<"StockMovement"> | string | null
-  quantity?: Prisma.IntFilter<"StockMovement"> | number
-  reason?: Prisma.StringNullableFilter<"StockMovement"> | string | null
-  performedById?: Prisma.StringFilter<"StockMovement"> | string
-  occurredAt?: Prisma.DateTimeFilter<"StockMovement"> | Date | string
-  createdAt?: Prisma.DateTimeFilter<"StockMovement"> | Date | string
+export type StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput = {
+  create?: Prisma.XOR<Prisma.StockMovementCreateWithoutPerformedByInput, Prisma.StockMovementUncheckedCreateWithoutPerformedByInput> | Prisma.StockMovementCreateWithoutPerformedByInput[] | Prisma.StockMovementUncheckedCreateWithoutPerformedByInput[]
+  connectOrCreate?: Prisma.StockMovementCreateOrConnectWithoutPerformedByInput | Prisma.StockMovementCreateOrConnectWithoutPerformedByInput[]
+  upsert?: Prisma.StockMovementUpsertWithWhereUniqueWithoutPerformedByInput | Prisma.StockMovementUpsertWithWhereUniqueWithoutPerformedByInput[]
+  createMany?: Prisma.StockMovementCreateManyPerformedByInputEnvelope
+  set?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
+  disconnect?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
+  delete?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
+  connect?: Prisma.StockMovementWhereUniqueInput | Prisma.StockMovementWhereUniqueInput[]
+  update?: Prisma.StockMovementUpdateWithWhereUniqueWithoutPerformedByInput | Prisma.StockMovementUpdateWithWhereUniqueWithoutPerformedByInput[]
+  updateMany?: Prisma.StockMovementUpdateManyWithWhereWithoutPerformedByInput | Prisma.StockMovementUpdateManyWithWhereWithoutPerformedByInput[]
+  deleteMany?: Prisma.StockMovementScalarWhereInput | Prisma.StockMovementScalarWhereInput[]
 }
 
 export type StockMovementCreateWithoutStockLocationFromInput = {
@@ -799,6 +733,22 @@ export type StockMovementUpdateManyWithWhereWithoutStockLocationFromInput = {
   data: Prisma.XOR<Prisma.StockMovementUpdateManyMutationInput, Prisma.StockMovementUncheckedUpdateManyWithoutStockLocationFromInput>
 }
 
+export type StockMovementScalarWhereInput = {
+  AND?: Prisma.StockMovementScalarWhereInput | Prisma.StockMovementScalarWhereInput[]
+  OR?: Prisma.StockMovementScalarWhereInput[]
+  NOT?: Prisma.StockMovementScalarWhereInput | Prisma.StockMovementScalarWhereInput[]
+  id?: Prisma.StringFilter<"StockMovement"> | string
+  movementType?: Prisma.EnumStockMovementTypeEnumFilter<"StockMovement"> | $Enums.StockMovementTypeEnum
+  stockLocationFromId?: Prisma.StringNullableFilter<"StockMovement"> | string | null
+  stockLocationToId?: Prisma.StringNullableFilter<"StockMovement"> | string | null
+  assetId?: Prisma.StringNullableFilter<"StockMovement"> | string | null
+  quantity?: Prisma.IntFilter<"StockMovement"> | number
+  reason?: Prisma.StringNullableFilter<"StockMovement"> | string | null
+  performedById?: Prisma.StringFilter<"StockMovement"> | string
+  occurredAt?: Prisma.DateTimeFilter<"StockMovement"> | Date | string
+  createdAt?: Prisma.DateTimeFilter<"StockMovement"> | Date | string
+}
+
 export type StockMovementUpsertWithWhereUniqueWithoutStockLocationToInput = {
   where: Prisma.StockMovementWhereUniqueInput
   update: Prisma.XOR<Prisma.StockMovementUpdateWithoutStockLocationToInput, Prisma.StockMovementUncheckedUpdateWithoutStockLocationToInput>
@@ -865,7 +815,19 @@ export type StockMovementUpdateManyWithWhereWithoutAssetInput = {
   data: Prisma.XOR<Prisma.StockMovementUpdateManyMutationInput, Prisma.StockMovementUncheckedUpdateManyWithoutAssetInput>
 }
 
-export type StockMovementCreateManyPerformedByInput = {
+export type StockMovementCreateWithoutPerformedByInput = {
+  id?: string
+  movementType: $Enums.StockMovementTypeEnum
+  quantity?: number
+  reason?: string | null
+  occurredAt?: Date | string
+  createdAt?: Date | string
+  stockLocationFrom?: Prisma.StockLocationCreateNestedOneWithoutStockMovementsFromInput
+  stockLocationTo?: Prisma.StockLocationCreateNestedOneWithoutStockMovementsToInput
+  asset?: Prisma.AssetCreateNestedOneWithoutStockMovementsInput
+}
+
+export type StockMovementUncheckedCreateWithoutPerformedByInput = {
   id?: string
   movementType: $Enums.StockMovementTypeEnum
   stockLocationFromId?: string | null
@@ -877,40 +839,30 @@ export type StockMovementCreateManyPerformedByInput = {
   createdAt?: Date | string
 }
 
-export type StockMovementUpdateWithoutPerformedByInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  movementType?: Prisma.EnumStockMovementTypeEnumFieldUpdateOperationsInput | $Enums.StockMovementTypeEnum
-  quantity?: Prisma.IntFieldUpdateOperationsInput | number
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  stockLocationFrom?: Prisma.StockLocationUpdateOneWithoutStockMovementsFromNestedInput
-  stockLocationTo?: Prisma.StockLocationUpdateOneWithoutStockMovementsToNestedInput
-  asset?: Prisma.AssetUpdateOneWithoutStockMovementsNestedInput
+export type StockMovementCreateOrConnectWithoutPerformedByInput = {
+  where: Prisma.StockMovementWhereUniqueInput
+  create: Prisma.XOR<Prisma.StockMovementCreateWithoutPerformedByInput, Prisma.StockMovementUncheckedCreateWithoutPerformedByInput>
 }
 
-export type StockMovementUncheckedUpdateWithoutPerformedByInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  movementType?: Prisma.EnumStockMovementTypeEnumFieldUpdateOperationsInput | $Enums.StockMovementTypeEnum
-  stockLocationFromId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stockLocationToId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  quantity?: Prisma.IntFieldUpdateOperationsInput | number
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type StockMovementCreateManyPerformedByInputEnvelope = {
+  data: Prisma.StockMovementCreateManyPerformedByInput | Prisma.StockMovementCreateManyPerformedByInput[]
+  skipDuplicates?: boolean
 }
 
-export type StockMovementUncheckedUpdateManyWithoutPerformedByInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  movementType?: Prisma.EnumStockMovementTypeEnumFieldUpdateOperationsInput | $Enums.StockMovementTypeEnum
-  stockLocationFromId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stockLocationToId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  quantity?: Prisma.IntFieldUpdateOperationsInput | number
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type StockMovementUpsertWithWhereUniqueWithoutPerformedByInput = {
+  where: Prisma.StockMovementWhereUniqueInput
+  update: Prisma.XOR<Prisma.StockMovementUpdateWithoutPerformedByInput, Prisma.StockMovementUncheckedUpdateWithoutPerformedByInput>
+  create: Prisma.XOR<Prisma.StockMovementCreateWithoutPerformedByInput, Prisma.StockMovementUncheckedCreateWithoutPerformedByInput>
+}
+
+export type StockMovementUpdateWithWhereUniqueWithoutPerformedByInput = {
+  where: Prisma.StockMovementWhereUniqueInput
+  data: Prisma.XOR<Prisma.StockMovementUpdateWithoutPerformedByInput, Prisma.StockMovementUncheckedUpdateWithoutPerformedByInput>
+}
+
+export type StockMovementUpdateManyWithWhereWithoutPerformedByInput = {
+  where: Prisma.StockMovementScalarWhereInput
+  data: Prisma.XOR<Prisma.StockMovementUpdateManyMutationInput, Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByInput>
 }
 
 export type StockMovementCreateManyStockLocationFromInput = {
@@ -1053,6 +1005,54 @@ export type StockMovementUncheckedUpdateManyWithoutAssetInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   performedById?: Prisma.StringFieldUpdateOperationsInput | string
+  occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type StockMovementCreateManyPerformedByInput = {
+  id?: string
+  movementType: $Enums.StockMovementTypeEnum
+  stockLocationFromId?: string | null
+  stockLocationToId?: string | null
+  assetId?: string | null
+  quantity?: number
+  reason?: string | null
+  occurredAt?: Date | string
+  createdAt?: Date | string
+}
+
+export type StockMovementUpdateWithoutPerformedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  movementType?: Prisma.EnumStockMovementTypeEnumFieldUpdateOperationsInput | $Enums.StockMovementTypeEnum
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stockLocationFrom?: Prisma.StockLocationUpdateOneWithoutStockMovementsFromNestedInput
+  stockLocationTo?: Prisma.StockLocationUpdateOneWithoutStockMovementsToNestedInput
+  asset?: Prisma.AssetUpdateOneWithoutStockMovementsNestedInput
+}
+
+export type StockMovementUncheckedUpdateWithoutPerformedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  movementType?: Prisma.EnumStockMovementTypeEnumFieldUpdateOperationsInput | $Enums.StockMovementTypeEnum
+  stockLocationFromId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stockLocationToId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type StockMovementUncheckedUpdateManyWithoutPerformedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  movementType?: Prisma.EnumStockMovementTypeEnumFieldUpdateOperationsInput | $Enums.StockMovementTypeEnum
+  stockLocationFromId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stockLocationToId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  quantity?: Prisma.IntFieldUpdateOperationsInput | number
+  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }

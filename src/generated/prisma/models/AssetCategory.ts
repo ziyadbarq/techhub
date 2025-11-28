@@ -375,16 +375,6 @@ export type AssetCategoryUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type AssetCategoryListRelationFilter = {
-  every?: Prisma.AssetCategoryWhereInput
-  some?: Prisma.AssetCategoryWhereInput
-  none?: Prisma.AssetCategoryWhereInput
-}
-
-export type AssetCategoryOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
 export type AssetCategoryCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -423,51 +413,35 @@ export type AssetCategoryScalarRelationFilter = {
   isNot?: Prisma.AssetCategoryWhereInput
 }
 
+export type AssetCategoryListRelationFilter = {
+  every?: Prisma.AssetCategoryWhereInput
+  some?: Prisma.AssetCategoryWhereInput
+  none?: Prisma.AssetCategoryWhereInput
+}
+
+export type AssetCategoryOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
 export type AssetCategoryNullableScalarRelationFilter = {
   is?: Prisma.AssetCategoryWhereInput | null
   isNot?: Prisma.AssetCategoryWhereInput | null
 }
 
-export type AssetCategoryCreateNestedManyWithoutLifecycleModelInput = {
-  create?: Prisma.XOR<Prisma.AssetCategoryCreateWithoutLifecycleModelInput, Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput> | Prisma.AssetCategoryCreateWithoutLifecycleModelInput[] | Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput[]
-  connectOrCreate?: Prisma.AssetCategoryCreateOrConnectWithoutLifecycleModelInput | Prisma.AssetCategoryCreateOrConnectWithoutLifecycleModelInput[]
-  createMany?: Prisma.AssetCategoryCreateManyLifecycleModelInputEnvelope
-  connect?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
+export type StringFieldUpdateOperationsInput = {
+  set?: string
 }
 
-export type AssetCategoryUncheckedCreateNestedManyWithoutLifecycleModelInput = {
-  create?: Prisma.XOR<Prisma.AssetCategoryCreateWithoutLifecycleModelInput, Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput> | Prisma.AssetCategoryCreateWithoutLifecycleModelInput[] | Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput[]
-  connectOrCreate?: Prisma.AssetCategoryCreateOrConnectWithoutLifecycleModelInput | Prisma.AssetCategoryCreateOrConnectWithoutLifecycleModelInput[]
-  createMany?: Prisma.AssetCategoryCreateManyLifecycleModelInputEnvelope
-  connect?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
 }
 
-export type AssetCategoryUpdateManyWithoutLifecycleModelNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetCategoryCreateWithoutLifecycleModelInput, Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput> | Prisma.AssetCategoryCreateWithoutLifecycleModelInput[] | Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput[]
-  connectOrCreate?: Prisma.AssetCategoryCreateOrConnectWithoutLifecycleModelInput | Prisma.AssetCategoryCreateOrConnectWithoutLifecycleModelInput[]
-  upsert?: Prisma.AssetCategoryUpsertWithWhereUniqueWithoutLifecycleModelInput | Prisma.AssetCategoryUpsertWithWhereUniqueWithoutLifecycleModelInput[]
-  createMany?: Prisma.AssetCategoryCreateManyLifecycleModelInputEnvelope
-  set?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
-  disconnect?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
-  delete?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
-  connect?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
-  update?: Prisma.AssetCategoryUpdateWithWhereUniqueWithoutLifecycleModelInput | Prisma.AssetCategoryUpdateWithWhereUniqueWithoutLifecycleModelInput[]
-  updateMany?: Prisma.AssetCategoryUpdateManyWithWhereWithoutLifecycleModelInput | Prisma.AssetCategoryUpdateManyWithWhereWithoutLifecycleModelInput[]
-  deleteMany?: Prisma.AssetCategoryScalarWhereInput | Prisma.AssetCategoryScalarWhereInput[]
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
-export type AssetCategoryUncheckedUpdateManyWithoutLifecycleModelNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetCategoryCreateWithoutLifecycleModelInput, Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput> | Prisma.AssetCategoryCreateWithoutLifecycleModelInput[] | Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput[]
-  connectOrCreate?: Prisma.AssetCategoryCreateOrConnectWithoutLifecycleModelInput | Prisma.AssetCategoryCreateOrConnectWithoutLifecycleModelInput[]
-  upsert?: Prisma.AssetCategoryUpsertWithWhereUniqueWithoutLifecycleModelInput | Prisma.AssetCategoryUpsertWithWhereUniqueWithoutLifecycleModelInput[]
-  createMany?: Prisma.AssetCategoryCreateManyLifecycleModelInputEnvelope
-  set?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
-  disconnect?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
-  delete?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
-  connect?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
-  update?: Prisma.AssetCategoryUpdateWithWhereUniqueWithoutLifecycleModelInput | Prisma.AssetCategoryUpdateWithWhereUniqueWithoutLifecycleModelInput[]
-  updateMany?: Prisma.AssetCategoryUpdateManyWithWhereWithoutLifecycleModelInput | Prisma.AssetCategoryUpdateManyWithWhereWithoutLifecycleModelInput[]
-  deleteMany?: Prisma.AssetCategoryScalarWhereInput | Prisma.AssetCategoryScalarWhereInput[]
+export type DateTimeFieldUpdateOperationsInput = {
+  set?: Date | string
 }
 
 export type AssetCategoryCreateNestedOneWithoutFieldsInput = {
@@ -512,20 +486,46 @@ export type AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AssetCategoryUpdateToOneWithWhereWithoutAssetsInput, Prisma.AssetCategoryUpdateWithoutAssetsInput>, Prisma.AssetCategoryUncheckedUpdateWithoutAssetsInput>
 }
 
-export type AssetCategoryCreateNestedOneWithoutKitItemsInput = {
-  create?: Prisma.XOR<Prisma.AssetCategoryCreateWithoutKitItemsInput, Prisma.AssetCategoryUncheckedCreateWithoutKitItemsInput>
-  connectOrCreate?: Prisma.AssetCategoryCreateOrConnectWithoutKitItemsInput
-  connect?: Prisma.AssetCategoryWhereUniqueInput
+export type AssetCategoryCreateNestedManyWithoutLifecycleModelInput = {
+  create?: Prisma.XOR<Prisma.AssetCategoryCreateWithoutLifecycleModelInput, Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput> | Prisma.AssetCategoryCreateWithoutLifecycleModelInput[] | Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput[]
+  connectOrCreate?: Prisma.AssetCategoryCreateOrConnectWithoutLifecycleModelInput | Prisma.AssetCategoryCreateOrConnectWithoutLifecycleModelInput[]
+  createMany?: Prisma.AssetCategoryCreateManyLifecycleModelInputEnvelope
+  connect?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
 }
 
-export type AssetCategoryUpdateOneWithoutKitItemsNestedInput = {
-  create?: Prisma.XOR<Prisma.AssetCategoryCreateWithoutKitItemsInput, Prisma.AssetCategoryUncheckedCreateWithoutKitItemsInput>
-  connectOrCreate?: Prisma.AssetCategoryCreateOrConnectWithoutKitItemsInput
-  upsert?: Prisma.AssetCategoryUpsertWithoutKitItemsInput
-  disconnect?: Prisma.AssetCategoryWhereInput | boolean
-  delete?: Prisma.AssetCategoryWhereInput | boolean
-  connect?: Prisma.AssetCategoryWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetCategoryUpdateToOneWithWhereWithoutKitItemsInput, Prisma.AssetCategoryUpdateWithoutKitItemsInput>, Prisma.AssetCategoryUncheckedUpdateWithoutKitItemsInput>
+export type AssetCategoryUncheckedCreateNestedManyWithoutLifecycleModelInput = {
+  create?: Prisma.XOR<Prisma.AssetCategoryCreateWithoutLifecycleModelInput, Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput> | Prisma.AssetCategoryCreateWithoutLifecycleModelInput[] | Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput[]
+  connectOrCreate?: Prisma.AssetCategoryCreateOrConnectWithoutLifecycleModelInput | Prisma.AssetCategoryCreateOrConnectWithoutLifecycleModelInput[]
+  createMany?: Prisma.AssetCategoryCreateManyLifecycleModelInputEnvelope
+  connect?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
+}
+
+export type AssetCategoryUpdateManyWithoutLifecycleModelNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCategoryCreateWithoutLifecycleModelInput, Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput> | Prisma.AssetCategoryCreateWithoutLifecycleModelInput[] | Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput[]
+  connectOrCreate?: Prisma.AssetCategoryCreateOrConnectWithoutLifecycleModelInput | Prisma.AssetCategoryCreateOrConnectWithoutLifecycleModelInput[]
+  upsert?: Prisma.AssetCategoryUpsertWithWhereUniqueWithoutLifecycleModelInput | Prisma.AssetCategoryUpsertWithWhereUniqueWithoutLifecycleModelInput[]
+  createMany?: Prisma.AssetCategoryCreateManyLifecycleModelInputEnvelope
+  set?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
+  disconnect?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
+  delete?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
+  connect?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
+  update?: Prisma.AssetCategoryUpdateWithWhereUniqueWithoutLifecycleModelInput | Prisma.AssetCategoryUpdateWithWhereUniqueWithoutLifecycleModelInput[]
+  updateMany?: Prisma.AssetCategoryUpdateManyWithWhereWithoutLifecycleModelInput | Prisma.AssetCategoryUpdateManyWithWhereWithoutLifecycleModelInput[]
+  deleteMany?: Prisma.AssetCategoryScalarWhereInput | Prisma.AssetCategoryScalarWhereInput[]
+}
+
+export type AssetCategoryUncheckedUpdateManyWithoutLifecycleModelNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCategoryCreateWithoutLifecycleModelInput, Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput> | Prisma.AssetCategoryCreateWithoutLifecycleModelInput[] | Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput[]
+  connectOrCreate?: Prisma.AssetCategoryCreateOrConnectWithoutLifecycleModelInput | Prisma.AssetCategoryCreateOrConnectWithoutLifecycleModelInput[]
+  upsert?: Prisma.AssetCategoryUpsertWithWhereUniqueWithoutLifecycleModelInput | Prisma.AssetCategoryUpsertWithWhereUniqueWithoutLifecycleModelInput[]
+  createMany?: Prisma.AssetCategoryCreateManyLifecycleModelInputEnvelope
+  set?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
+  disconnect?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
+  delete?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
+  connect?: Prisma.AssetCategoryWhereUniqueInput | Prisma.AssetCategoryWhereUniqueInput[]
+  update?: Prisma.AssetCategoryUpdateWithWhereUniqueWithoutLifecycleModelInput | Prisma.AssetCategoryUpdateWithWhereUniqueWithoutLifecycleModelInput[]
+  updateMany?: Prisma.AssetCategoryUpdateManyWithWhereWithoutLifecycleModelInput | Prisma.AssetCategoryUpdateManyWithWhereWithoutLifecycleModelInput[]
+  deleteMany?: Prisma.AssetCategoryScalarWhereInput | Prisma.AssetCategoryScalarWhereInput[]
 }
 
 export type AssetCategoryCreateNestedOneWithoutDataOwnershipsInput = {
@@ -544,74 +544,20 @@ export type AssetCategoryUpdateOneWithoutDataOwnershipsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AssetCategoryUpdateToOneWithWhereWithoutDataOwnershipsInput, Prisma.AssetCategoryUpdateWithoutDataOwnershipsInput>, Prisma.AssetCategoryUncheckedUpdateWithoutDataOwnershipsInput>
 }
 
-export type AssetCategoryCreateWithoutLifecycleModelInput = {
-  id?: string
-  name: string
-  code: string
-  description?: string | null
-  isConsumable?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  fields?: Prisma.AssetCategoryFieldCreateNestedManyWithoutAssetCategoryInput
-  assetModels?: Prisma.AssetModelCreateNestedManyWithoutAssetCategoryInput
-  assets?: Prisma.AssetCreateNestedManyWithoutAssetCategoryInput
-  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutAssetCategoryInput
-  kitItems?: Prisma.AssetKitItemCreateNestedManyWithoutAssetCategoryInput
+export type AssetCategoryCreateNestedOneWithoutKitItemsInput = {
+  create?: Prisma.XOR<Prisma.AssetCategoryCreateWithoutKitItemsInput, Prisma.AssetCategoryUncheckedCreateWithoutKitItemsInput>
+  connectOrCreate?: Prisma.AssetCategoryCreateOrConnectWithoutKitItemsInput
+  connect?: Prisma.AssetCategoryWhereUniqueInput
 }
 
-export type AssetCategoryUncheckedCreateWithoutLifecycleModelInput = {
-  id?: string
-  name: string
-  code: string
-  description?: string | null
-  isConsumable?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  fields?: Prisma.AssetCategoryFieldUncheckedCreateNestedManyWithoutAssetCategoryInput
-  assetModels?: Prisma.AssetModelUncheckedCreateNestedManyWithoutAssetCategoryInput
-  assets?: Prisma.AssetUncheckedCreateNestedManyWithoutAssetCategoryInput
-  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutAssetCategoryInput
-  kitItems?: Prisma.AssetKitItemUncheckedCreateNestedManyWithoutAssetCategoryInput
-}
-
-export type AssetCategoryCreateOrConnectWithoutLifecycleModelInput = {
-  where: Prisma.AssetCategoryWhereUniqueInput
-  create: Prisma.XOR<Prisma.AssetCategoryCreateWithoutLifecycleModelInput, Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput>
-}
-
-export type AssetCategoryCreateManyLifecycleModelInputEnvelope = {
-  data: Prisma.AssetCategoryCreateManyLifecycleModelInput | Prisma.AssetCategoryCreateManyLifecycleModelInput[]
-  skipDuplicates?: boolean
-}
-
-export type AssetCategoryUpsertWithWhereUniqueWithoutLifecycleModelInput = {
-  where: Prisma.AssetCategoryWhereUniqueInput
-  update: Prisma.XOR<Prisma.AssetCategoryUpdateWithoutLifecycleModelInput, Prisma.AssetCategoryUncheckedUpdateWithoutLifecycleModelInput>
-  create: Prisma.XOR<Prisma.AssetCategoryCreateWithoutLifecycleModelInput, Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput>
-}
-
-export type AssetCategoryUpdateWithWhereUniqueWithoutLifecycleModelInput = {
-  where: Prisma.AssetCategoryWhereUniqueInput
-  data: Prisma.XOR<Prisma.AssetCategoryUpdateWithoutLifecycleModelInput, Prisma.AssetCategoryUncheckedUpdateWithoutLifecycleModelInput>
-}
-
-export type AssetCategoryUpdateManyWithWhereWithoutLifecycleModelInput = {
-  where: Prisma.AssetCategoryScalarWhereInput
-  data: Prisma.XOR<Prisma.AssetCategoryUpdateManyMutationInput, Prisma.AssetCategoryUncheckedUpdateManyWithoutLifecycleModelInput>
-}
-
-export type AssetCategoryScalarWhereInput = {
-  AND?: Prisma.AssetCategoryScalarWhereInput | Prisma.AssetCategoryScalarWhereInput[]
-  OR?: Prisma.AssetCategoryScalarWhereInput[]
-  NOT?: Prisma.AssetCategoryScalarWhereInput | Prisma.AssetCategoryScalarWhereInput[]
-  id?: Prisma.StringFilter<"AssetCategory"> | string
-  name?: Prisma.StringFilter<"AssetCategory"> | string
-  code?: Prisma.StringFilter<"AssetCategory"> | string
-  description?: Prisma.StringNullableFilter<"AssetCategory"> | string | null
-  lifecycleModelId?: Prisma.StringNullableFilter<"AssetCategory"> | string | null
-  isConsumable?: Prisma.BoolFilter<"AssetCategory"> | boolean
-  createdAt?: Prisma.DateTimeFilter<"AssetCategory"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"AssetCategory"> | Date | string
+export type AssetCategoryUpdateOneWithoutKitItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCategoryCreateWithoutKitItemsInput, Prisma.AssetCategoryUncheckedCreateWithoutKitItemsInput>
+  connectOrCreate?: Prisma.AssetCategoryCreateOrConnectWithoutKitItemsInput
+  upsert?: Prisma.AssetCategoryUpsertWithoutKitItemsInput
+  disconnect?: Prisma.AssetCategoryWhereInput | boolean
+  delete?: Prisma.AssetCategoryWhereInput | boolean
+  connect?: Prisma.AssetCategoryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetCategoryUpdateToOneWithWhereWithoutKitItemsInput, Prisma.AssetCategoryUpdateWithoutKitItemsInput>, Prisma.AssetCategoryUncheckedUpdateWithoutKitItemsInput>
 }
 
 export type AssetCategoryCreateWithoutFieldsInput = {
@@ -842,7 +788,7 @@ export type AssetCategoryUncheckedUpdateWithoutAssetsInput = {
   kitItems?: Prisma.AssetKitItemUncheckedUpdateManyWithoutAssetCategoryNestedInput
 }
 
-export type AssetCategoryCreateWithoutKitItemsInput = {
+export type AssetCategoryCreateWithoutLifecycleModelInput = {
   id?: string
   name: string
   code: string
@@ -850,19 +796,18 @@ export type AssetCategoryCreateWithoutKitItemsInput = {
   isConsumable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  lifecycleModel?: Prisma.LifecycleModelCreateNestedOneWithoutAssetCategoriesInput
   fields?: Prisma.AssetCategoryFieldCreateNestedManyWithoutAssetCategoryInput
   assetModels?: Prisma.AssetModelCreateNestedManyWithoutAssetCategoryInput
   assets?: Prisma.AssetCreateNestedManyWithoutAssetCategoryInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutAssetCategoryInput
+  kitItems?: Prisma.AssetKitItemCreateNestedManyWithoutAssetCategoryInput
 }
 
-export type AssetCategoryUncheckedCreateWithoutKitItemsInput = {
+export type AssetCategoryUncheckedCreateWithoutLifecycleModelInput = {
   id?: string
   name: string
   code: string
   description?: string | null
-  lifecycleModelId?: string | null
   isConsumable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -870,52 +815,47 @@ export type AssetCategoryUncheckedCreateWithoutKitItemsInput = {
   assetModels?: Prisma.AssetModelUncheckedCreateNestedManyWithoutAssetCategoryInput
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutAssetCategoryInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutAssetCategoryInput
+  kitItems?: Prisma.AssetKitItemUncheckedCreateNestedManyWithoutAssetCategoryInput
 }
 
-export type AssetCategoryCreateOrConnectWithoutKitItemsInput = {
+export type AssetCategoryCreateOrConnectWithoutLifecycleModelInput = {
   where: Prisma.AssetCategoryWhereUniqueInput
-  create: Prisma.XOR<Prisma.AssetCategoryCreateWithoutKitItemsInput, Prisma.AssetCategoryUncheckedCreateWithoutKitItemsInput>
+  create: Prisma.XOR<Prisma.AssetCategoryCreateWithoutLifecycleModelInput, Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput>
 }
 
-export type AssetCategoryUpsertWithoutKitItemsInput = {
-  update: Prisma.XOR<Prisma.AssetCategoryUpdateWithoutKitItemsInput, Prisma.AssetCategoryUncheckedUpdateWithoutKitItemsInput>
-  create: Prisma.XOR<Prisma.AssetCategoryCreateWithoutKitItemsInput, Prisma.AssetCategoryUncheckedCreateWithoutKitItemsInput>
-  where?: Prisma.AssetCategoryWhereInput
+export type AssetCategoryCreateManyLifecycleModelInputEnvelope = {
+  data: Prisma.AssetCategoryCreateManyLifecycleModelInput | Prisma.AssetCategoryCreateManyLifecycleModelInput[]
+  skipDuplicates?: boolean
 }
 
-export type AssetCategoryUpdateToOneWithWhereWithoutKitItemsInput = {
-  where?: Prisma.AssetCategoryWhereInput
-  data: Prisma.XOR<Prisma.AssetCategoryUpdateWithoutKitItemsInput, Prisma.AssetCategoryUncheckedUpdateWithoutKitItemsInput>
+export type AssetCategoryUpsertWithWhereUniqueWithoutLifecycleModelInput = {
+  where: Prisma.AssetCategoryWhereUniqueInput
+  update: Prisma.XOR<Prisma.AssetCategoryUpdateWithoutLifecycleModelInput, Prisma.AssetCategoryUncheckedUpdateWithoutLifecycleModelInput>
+  create: Prisma.XOR<Prisma.AssetCategoryCreateWithoutLifecycleModelInput, Prisma.AssetCategoryUncheckedCreateWithoutLifecycleModelInput>
 }
 
-export type AssetCategoryUpdateWithoutKitItemsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isConsumable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  lifecycleModel?: Prisma.LifecycleModelUpdateOneWithoutAssetCategoriesNestedInput
-  fields?: Prisma.AssetCategoryFieldUpdateManyWithoutAssetCategoryNestedInput
-  assetModels?: Prisma.AssetModelUpdateManyWithoutAssetCategoryNestedInput
-  assets?: Prisma.AssetUpdateManyWithoutAssetCategoryNestedInput
-  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutAssetCategoryNestedInput
+export type AssetCategoryUpdateWithWhereUniqueWithoutLifecycleModelInput = {
+  where: Prisma.AssetCategoryWhereUniqueInput
+  data: Prisma.XOR<Prisma.AssetCategoryUpdateWithoutLifecycleModelInput, Prisma.AssetCategoryUncheckedUpdateWithoutLifecycleModelInput>
 }
 
-export type AssetCategoryUncheckedUpdateWithoutKitItemsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  code?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lifecycleModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isConsumable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  fields?: Prisma.AssetCategoryFieldUncheckedUpdateManyWithoutAssetCategoryNestedInput
-  assetModels?: Prisma.AssetModelUncheckedUpdateManyWithoutAssetCategoryNestedInput
-  assets?: Prisma.AssetUncheckedUpdateManyWithoutAssetCategoryNestedInput
-  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutAssetCategoryNestedInput
+export type AssetCategoryUpdateManyWithWhereWithoutLifecycleModelInput = {
+  where: Prisma.AssetCategoryScalarWhereInput
+  data: Prisma.XOR<Prisma.AssetCategoryUpdateManyMutationInput, Prisma.AssetCategoryUncheckedUpdateManyWithoutLifecycleModelInput>
+}
+
+export type AssetCategoryScalarWhereInput = {
+  AND?: Prisma.AssetCategoryScalarWhereInput | Prisma.AssetCategoryScalarWhereInput[]
+  OR?: Prisma.AssetCategoryScalarWhereInput[]
+  NOT?: Prisma.AssetCategoryScalarWhereInput | Prisma.AssetCategoryScalarWhereInput[]
+  id?: Prisma.StringFilter<"AssetCategory"> | string
+  name?: Prisma.StringFilter<"AssetCategory"> | string
+  code?: Prisma.StringFilter<"AssetCategory"> | string
+  description?: Prisma.StringNullableFilter<"AssetCategory"> | string | null
+  lifecycleModelId?: Prisma.StringNullableFilter<"AssetCategory"> | string | null
+  isConsumable?: Prisma.BoolFilter<"AssetCategory"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"AssetCategory"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"AssetCategory"> | Date | string
 }
 
 export type AssetCategoryCreateWithoutDataOwnershipsInput = {
@@ -992,6 +932,82 @@ export type AssetCategoryUncheckedUpdateWithoutDataOwnershipsInput = {
   assetModels?: Prisma.AssetModelUncheckedUpdateManyWithoutAssetCategoryNestedInput
   assets?: Prisma.AssetUncheckedUpdateManyWithoutAssetCategoryNestedInput
   kitItems?: Prisma.AssetKitItemUncheckedUpdateManyWithoutAssetCategoryNestedInput
+}
+
+export type AssetCategoryCreateWithoutKitItemsInput = {
+  id?: string
+  name: string
+  code: string
+  description?: string | null
+  isConsumable?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lifecycleModel?: Prisma.LifecycleModelCreateNestedOneWithoutAssetCategoriesInput
+  fields?: Prisma.AssetCategoryFieldCreateNestedManyWithoutAssetCategoryInput
+  assetModels?: Prisma.AssetModelCreateNestedManyWithoutAssetCategoryInput
+  assets?: Prisma.AssetCreateNestedManyWithoutAssetCategoryInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutAssetCategoryInput
+}
+
+export type AssetCategoryUncheckedCreateWithoutKitItemsInput = {
+  id?: string
+  name: string
+  code: string
+  description?: string | null
+  lifecycleModelId?: string | null
+  isConsumable?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  fields?: Prisma.AssetCategoryFieldUncheckedCreateNestedManyWithoutAssetCategoryInput
+  assetModels?: Prisma.AssetModelUncheckedCreateNestedManyWithoutAssetCategoryInput
+  assets?: Prisma.AssetUncheckedCreateNestedManyWithoutAssetCategoryInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutAssetCategoryInput
+}
+
+export type AssetCategoryCreateOrConnectWithoutKitItemsInput = {
+  where: Prisma.AssetCategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCategoryCreateWithoutKitItemsInput, Prisma.AssetCategoryUncheckedCreateWithoutKitItemsInput>
+}
+
+export type AssetCategoryUpsertWithoutKitItemsInput = {
+  update: Prisma.XOR<Prisma.AssetCategoryUpdateWithoutKitItemsInput, Prisma.AssetCategoryUncheckedUpdateWithoutKitItemsInput>
+  create: Prisma.XOR<Prisma.AssetCategoryCreateWithoutKitItemsInput, Prisma.AssetCategoryUncheckedCreateWithoutKitItemsInput>
+  where?: Prisma.AssetCategoryWhereInput
+}
+
+export type AssetCategoryUpdateToOneWithWhereWithoutKitItemsInput = {
+  where?: Prisma.AssetCategoryWhereInput
+  data: Prisma.XOR<Prisma.AssetCategoryUpdateWithoutKitItemsInput, Prisma.AssetCategoryUncheckedUpdateWithoutKitItemsInput>
+}
+
+export type AssetCategoryUpdateWithoutKitItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isConsumable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lifecycleModel?: Prisma.LifecycleModelUpdateOneWithoutAssetCategoriesNestedInput
+  fields?: Prisma.AssetCategoryFieldUpdateManyWithoutAssetCategoryNestedInput
+  assetModels?: Prisma.AssetModelUpdateManyWithoutAssetCategoryNestedInput
+  assets?: Prisma.AssetUpdateManyWithoutAssetCategoryNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutAssetCategoryNestedInput
+}
+
+export type AssetCategoryUncheckedUpdateWithoutKitItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lifecycleModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isConsumable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fields?: Prisma.AssetCategoryFieldUncheckedUpdateManyWithoutAssetCategoryNestedInput
+  assetModels?: Prisma.AssetModelUncheckedUpdateManyWithoutAssetCategoryNestedInput
+  assets?: Prisma.AssetUncheckedUpdateManyWithoutAssetCategoryNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutAssetCategoryNestedInput
 }
 
 export type AssetCategoryCreateManyLifecycleModelInput = {

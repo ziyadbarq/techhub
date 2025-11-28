@@ -451,48 +451,6 @@ export type DisposalDocumentSumOrderByAggregateInput = {
   sizeBytes?: Prisma.SortOrder
 }
 
-export type DisposalDocumentCreateNestedManyWithoutUploadedByInput = {
-  create?: Prisma.XOR<Prisma.DisposalDocumentCreateWithoutUploadedByInput, Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput> | Prisma.DisposalDocumentCreateWithoutUploadedByInput[] | Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput[]
-  connectOrCreate?: Prisma.DisposalDocumentCreateOrConnectWithoutUploadedByInput | Prisma.DisposalDocumentCreateOrConnectWithoutUploadedByInput[]
-  createMany?: Prisma.DisposalDocumentCreateManyUploadedByInputEnvelope
-  connect?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
-}
-
-export type DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput = {
-  create?: Prisma.XOR<Prisma.DisposalDocumentCreateWithoutUploadedByInput, Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput> | Prisma.DisposalDocumentCreateWithoutUploadedByInput[] | Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput[]
-  connectOrCreate?: Prisma.DisposalDocumentCreateOrConnectWithoutUploadedByInput | Prisma.DisposalDocumentCreateOrConnectWithoutUploadedByInput[]
-  createMany?: Prisma.DisposalDocumentCreateManyUploadedByInputEnvelope
-  connect?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
-}
-
-export type DisposalDocumentUpdateManyWithoutUploadedByNestedInput = {
-  create?: Prisma.XOR<Prisma.DisposalDocumentCreateWithoutUploadedByInput, Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput> | Prisma.DisposalDocumentCreateWithoutUploadedByInput[] | Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput[]
-  connectOrCreate?: Prisma.DisposalDocumentCreateOrConnectWithoutUploadedByInput | Prisma.DisposalDocumentCreateOrConnectWithoutUploadedByInput[]
-  upsert?: Prisma.DisposalDocumentUpsertWithWhereUniqueWithoutUploadedByInput | Prisma.DisposalDocumentUpsertWithWhereUniqueWithoutUploadedByInput[]
-  createMany?: Prisma.DisposalDocumentCreateManyUploadedByInputEnvelope
-  set?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
-  disconnect?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
-  delete?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
-  connect?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
-  update?: Prisma.DisposalDocumentUpdateWithWhereUniqueWithoutUploadedByInput | Prisma.DisposalDocumentUpdateWithWhereUniqueWithoutUploadedByInput[]
-  updateMany?: Prisma.DisposalDocumentUpdateManyWithWhereWithoutUploadedByInput | Prisma.DisposalDocumentUpdateManyWithWhereWithoutUploadedByInput[]
-  deleteMany?: Prisma.DisposalDocumentScalarWhereInput | Prisma.DisposalDocumentScalarWhereInput[]
-}
-
-export type DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput = {
-  create?: Prisma.XOR<Prisma.DisposalDocumentCreateWithoutUploadedByInput, Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput> | Prisma.DisposalDocumentCreateWithoutUploadedByInput[] | Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput[]
-  connectOrCreate?: Prisma.DisposalDocumentCreateOrConnectWithoutUploadedByInput | Prisma.DisposalDocumentCreateOrConnectWithoutUploadedByInput[]
-  upsert?: Prisma.DisposalDocumentUpsertWithWhereUniqueWithoutUploadedByInput | Prisma.DisposalDocumentUpsertWithWhereUniqueWithoutUploadedByInput[]
-  createMany?: Prisma.DisposalDocumentCreateManyUploadedByInputEnvelope
-  set?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
-  disconnect?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
-  delete?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
-  connect?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
-  update?: Prisma.DisposalDocumentUpdateWithWhereUniqueWithoutUploadedByInput | Prisma.DisposalDocumentUpdateWithWhereUniqueWithoutUploadedByInput[]
-  updateMany?: Prisma.DisposalDocumentUpdateManyWithWhereWithoutUploadedByInput | Prisma.DisposalDocumentUpdateManyWithWhereWithoutUploadedByInput[]
-  deleteMany?: Prisma.DisposalDocumentScalarWhereInput | Prisma.DisposalDocumentScalarWhereInput[]
-}
-
 export type DisposalDocumentCreateNestedManyWithoutDisposalInput = {
   create?: Prisma.XOR<Prisma.DisposalDocumentCreateWithoutDisposalInput, Prisma.DisposalDocumentUncheckedCreateWithoutDisposalInput> | Prisma.DisposalDocumentCreateWithoutDisposalInput[] | Prisma.DisposalDocumentUncheckedCreateWithoutDisposalInput[]
   connectOrCreate?: Prisma.DisposalDocumentCreateOrConnectWithoutDisposalInput | Prisma.DisposalDocumentCreateOrConnectWithoutDisposalInput[]
@@ -535,75 +493,46 @@ export type DisposalDocumentUncheckedUpdateManyWithoutDisposalNestedInput = {
   deleteMany?: Prisma.DisposalDocumentScalarWhereInput | Prisma.DisposalDocumentScalarWhereInput[]
 }
 
-export type NullableBigIntFieldUpdateOperationsInput = {
-  set?: bigint | number | null
-  increment?: bigint | number
-  decrement?: bigint | number
-  multiply?: bigint | number
-  divide?: bigint | number
+export type DisposalDocumentCreateNestedManyWithoutUploadedByInput = {
+  create?: Prisma.XOR<Prisma.DisposalDocumentCreateWithoutUploadedByInput, Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput> | Prisma.DisposalDocumentCreateWithoutUploadedByInput[] | Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput[]
+  connectOrCreate?: Prisma.DisposalDocumentCreateOrConnectWithoutUploadedByInput | Prisma.DisposalDocumentCreateOrConnectWithoutUploadedByInput[]
+  createMany?: Prisma.DisposalDocumentCreateManyUploadedByInputEnvelope
+  connect?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
 }
 
-export type DisposalDocumentCreateWithoutUploadedByInput = {
-  id?: string
-  documentType: string
-  fileName: string
-  filePath: string
-  mimeType?: string | null
-  sizeBytes?: bigint | number | null
-  uploadedAt?: Date | string
-  disposal: Prisma.AssetDisposalCreateNestedOneWithoutDocumentsInput
+export type DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput = {
+  create?: Prisma.XOR<Prisma.DisposalDocumentCreateWithoutUploadedByInput, Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput> | Prisma.DisposalDocumentCreateWithoutUploadedByInput[] | Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput[]
+  connectOrCreate?: Prisma.DisposalDocumentCreateOrConnectWithoutUploadedByInput | Prisma.DisposalDocumentCreateOrConnectWithoutUploadedByInput[]
+  createMany?: Prisma.DisposalDocumentCreateManyUploadedByInputEnvelope
+  connect?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
 }
 
-export type DisposalDocumentUncheckedCreateWithoutUploadedByInput = {
-  id?: string
-  disposalId: string
-  documentType: string
-  fileName: string
-  filePath: string
-  mimeType?: string | null
-  sizeBytes?: bigint | number | null
-  uploadedAt?: Date | string
+export type DisposalDocumentUpdateManyWithoutUploadedByNestedInput = {
+  create?: Prisma.XOR<Prisma.DisposalDocumentCreateWithoutUploadedByInput, Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput> | Prisma.DisposalDocumentCreateWithoutUploadedByInput[] | Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput[]
+  connectOrCreate?: Prisma.DisposalDocumentCreateOrConnectWithoutUploadedByInput | Prisma.DisposalDocumentCreateOrConnectWithoutUploadedByInput[]
+  upsert?: Prisma.DisposalDocumentUpsertWithWhereUniqueWithoutUploadedByInput | Prisma.DisposalDocumentUpsertWithWhereUniqueWithoutUploadedByInput[]
+  createMany?: Prisma.DisposalDocumentCreateManyUploadedByInputEnvelope
+  set?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
+  disconnect?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
+  delete?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
+  connect?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
+  update?: Prisma.DisposalDocumentUpdateWithWhereUniqueWithoutUploadedByInput | Prisma.DisposalDocumentUpdateWithWhereUniqueWithoutUploadedByInput[]
+  updateMany?: Prisma.DisposalDocumentUpdateManyWithWhereWithoutUploadedByInput | Prisma.DisposalDocumentUpdateManyWithWhereWithoutUploadedByInput[]
+  deleteMany?: Prisma.DisposalDocumentScalarWhereInput | Prisma.DisposalDocumentScalarWhereInput[]
 }
 
-export type DisposalDocumentCreateOrConnectWithoutUploadedByInput = {
-  where: Prisma.DisposalDocumentWhereUniqueInput
-  create: Prisma.XOR<Prisma.DisposalDocumentCreateWithoutUploadedByInput, Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput>
-}
-
-export type DisposalDocumentCreateManyUploadedByInputEnvelope = {
-  data: Prisma.DisposalDocumentCreateManyUploadedByInput | Prisma.DisposalDocumentCreateManyUploadedByInput[]
-  skipDuplicates?: boolean
-}
-
-export type DisposalDocumentUpsertWithWhereUniqueWithoutUploadedByInput = {
-  where: Prisma.DisposalDocumentWhereUniqueInput
-  update: Prisma.XOR<Prisma.DisposalDocumentUpdateWithoutUploadedByInput, Prisma.DisposalDocumentUncheckedUpdateWithoutUploadedByInput>
-  create: Prisma.XOR<Prisma.DisposalDocumentCreateWithoutUploadedByInput, Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput>
-}
-
-export type DisposalDocumentUpdateWithWhereUniqueWithoutUploadedByInput = {
-  where: Prisma.DisposalDocumentWhereUniqueInput
-  data: Prisma.XOR<Prisma.DisposalDocumentUpdateWithoutUploadedByInput, Prisma.DisposalDocumentUncheckedUpdateWithoutUploadedByInput>
-}
-
-export type DisposalDocumentUpdateManyWithWhereWithoutUploadedByInput = {
-  where: Prisma.DisposalDocumentScalarWhereInput
-  data: Prisma.XOR<Prisma.DisposalDocumentUpdateManyMutationInput, Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByInput>
-}
-
-export type DisposalDocumentScalarWhereInput = {
-  AND?: Prisma.DisposalDocumentScalarWhereInput | Prisma.DisposalDocumentScalarWhereInput[]
-  OR?: Prisma.DisposalDocumentScalarWhereInput[]
-  NOT?: Prisma.DisposalDocumentScalarWhereInput | Prisma.DisposalDocumentScalarWhereInput[]
-  id?: Prisma.StringFilter<"DisposalDocument"> | string
-  disposalId?: Prisma.StringFilter<"DisposalDocument"> | string
-  documentType?: Prisma.StringFilter<"DisposalDocument"> | string
-  fileName?: Prisma.StringFilter<"DisposalDocument"> | string
-  filePath?: Prisma.StringFilter<"DisposalDocument"> | string
-  mimeType?: Prisma.StringNullableFilter<"DisposalDocument"> | string | null
-  sizeBytes?: Prisma.BigIntNullableFilter<"DisposalDocument"> | bigint | number | null
-  uploadedById?: Prisma.StringFilter<"DisposalDocument"> | string
-  uploadedAt?: Prisma.DateTimeFilter<"DisposalDocument"> | Date | string
+export type DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput = {
+  create?: Prisma.XOR<Prisma.DisposalDocumentCreateWithoutUploadedByInput, Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput> | Prisma.DisposalDocumentCreateWithoutUploadedByInput[] | Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput[]
+  connectOrCreate?: Prisma.DisposalDocumentCreateOrConnectWithoutUploadedByInput | Prisma.DisposalDocumentCreateOrConnectWithoutUploadedByInput[]
+  upsert?: Prisma.DisposalDocumentUpsertWithWhereUniqueWithoutUploadedByInput | Prisma.DisposalDocumentUpsertWithWhereUniqueWithoutUploadedByInput[]
+  createMany?: Prisma.DisposalDocumentCreateManyUploadedByInputEnvelope
+  set?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
+  disconnect?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
+  delete?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
+  connect?: Prisma.DisposalDocumentWhereUniqueInput | Prisma.DisposalDocumentWhereUniqueInput[]
+  update?: Prisma.DisposalDocumentUpdateWithWhereUniqueWithoutUploadedByInput | Prisma.DisposalDocumentUpdateWithWhereUniqueWithoutUploadedByInput[]
+  updateMany?: Prisma.DisposalDocumentUpdateManyWithWhereWithoutUploadedByInput | Prisma.DisposalDocumentUpdateManyWithWhereWithoutUploadedByInput[]
+  deleteMany?: Prisma.DisposalDocumentScalarWhereInput | Prisma.DisposalDocumentScalarWhereInput[]
 }
 
 export type DisposalDocumentCreateWithoutDisposalInput = {
@@ -654,7 +583,33 @@ export type DisposalDocumentUpdateManyWithWhereWithoutDisposalInput = {
   data: Prisma.XOR<Prisma.DisposalDocumentUpdateManyMutationInput, Prisma.DisposalDocumentUncheckedUpdateManyWithoutDisposalInput>
 }
 
-export type DisposalDocumentCreateManyUploadedByInput = {
+export type DisposalDocumentScalarWhereInput = {
+  AND?: Prisma.DisposalDocumentScalarWhereInput | Prisma.DisposalDocumentScalarWhereInput[]
+  OR?: Prisma.DisposalDocumentScalarWhereInput[]
+  NOT?: Prisma.DisposalDocumentScalarWhereInput | Prisma.DisposalDocumentScalarWhereInput[]
+  id?: Prisma.StringFilter<"DisposalDocument"> | string
+  disposalId?: Prisma.StringFilter<"DisposalDocument"> | string
+  documentType?: Prisma.StringFilter<"DisposalDocument"> | string
+  fileName?: Prisma.StringFilter<"DisposalDocument"> | string
+  filePath?: Prisma.StringFilter<"DisposalDocument"> | string
+  mimeType?: Prisma.StringNullableFilter<"DisposalDocument"> | string | null
+  sizeBytes?: Prisma.BigIntNullableFilter<"DisposalDocument"> | bigint | number | null
+  uploadedById?: Prisma.StringFilter<"DisposalDocument"> | string
+  uploadedAt?: Prisma.DateTimeFilter<"DisposalDocument"> | Date | string
+}
+
+export type DisposalDocumentCreateWithoutUploadedByInput = {
+  id?: string
+  documentType: string
+  fileName: string
+  filePath: string
+  mimeType?: string | null
+  sizeBytes?: bigint | number | null
+  uploadedAt?: Date | string
+  disposal: Prisma.AssetDisposalCreateNestedOneWithoutDocumentsInput
+}
+
+export type DisposalDocumentUncheckedCreateWithoutUploadedByInput = {
   id?: string
   disposalId: string
   documentType: string
@@ -665,37 +620,30 @@ export type DisposalDocumentCreateManyUploadedByInput = {
   uploadedAt?: Date | string
 }
 
-export type DisposalDocumentUpdateWithoutUploadedByInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  documentType?: Prisma.StringFieldUpdateOperationsInput | string
-  fileName?: Prisma.StringFieldUpdateOperationsInput | string
-  filePath?: Prisma.StringFieldUpdateOperationsInput | string
-  mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sizeBytes?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  disposal?: Prisma.AssetDisposalUpdateOneRequiredWithoutDocumentsNestedInput
+export type DisposalDocumentCreateOrConnectWithoutUploadedByInput = {
+  where: Prisma.DisposalDocumentWhereUniqueInput
+  create: Prisma.XOR<Prisma.DisposalDocumentCreateWithoutUploadedByInput, Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput>
 }
 
-export type DisposalDocumentUncheckedUpdateWithoutUploadedByInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalId?: Prisma.StringFieldUpdateOperationsInput | string
-  documentType?: Prisma.StringFieldUpdateOperationsInput | string
-  fileName?: Prisma.StringFieldUpdateOperationsInput | string
-  filePath?: Prisma.StringFieldUpdateOperationsInput | string
-  mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sizeBytes?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type DisposalDocumentCreateManyUploadedByInputEnvelope = {
+  data: Prisma.DisposalDocumentCreateManyUploadedByInput | Prisma.DisposalDocumentCreateManyUploadedByInput[]
+  skipDuplicates?: boolean
 }
 
-export type DisposalDocumentUncheckedUpdateManyWithoutUploadedByInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalId?: Prisma.StringFieldUpdateOperationsInput | string
-  documentType?: Prisma.StringFieldUpdateOperationsInput | string
-  fileName?: Prisma.StringFieldUpdateOperationsInput | string
-  filePath?: Prisma.StringFieldUpdateOperationsInput | string
-  mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sizeBytes?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
-  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type DisposalDocumentUpsertWithWhereUniqueWithoutUploadedByInput = {
+  where: Prisma.DisposalDocumentWhereUniqueInput
+  update: Prisma.XOR<Prisma.DisposalDocumentUpdateWithoutUploadedByInput, Prisma.DisposalDocumentUncheckedUpdateWithoutUploadedByInput>
+  create: Prisma.XOR<Prisma.DisposalDocumentCreateWithoutUploadedByInput, Prisma.DisposalDocumentUncheckedCreateWithoutUploadedByInput>
+}
+
+export type DisposalDocumentUpdateWithWhereUniqueWithoutUploadedByInput = {
+  where: Prisma.DisposalDocumentWhereUniqueInput
+  data: Prisma.XOR<Prisma.DisposalDocumentUpdateWithoutUploadedByInput, Prisma.DisposalDocumentUncheckedUpdateWithoutUploadedByInput>
+}
+
+export type DisposalDocumentUpdateManyWithWhereWithoutUploadedByInput = {
+  where: Prisma.DisposalDocumentScalarWhereInput
+  data: Prisma.XOR<Prisma.DisposalDocumentUpdateManyMutationInput, Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByInput>
 }
 
 export type DisposalDocumentCreateManyDisposalInput = {
@@ -739,6 +687,50 @@ export type DisposalDocumentUncheckedUpdateManyWithoutDisposalInput = {
   mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sizeBytes?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   uploadedById?: Prisma.StringFieldUpdateOperationsInput | string
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type DisposalDocumentCreateManyUploadedByInput = {
+  id?: string
+  disposalId: string
+  documentType: string
+  fileName: string
+  filePath: string
+  mimeType?: string | null
+  sizeBytes?: bigint | number | null
+  uploadedAt?: Date | string
+}
+
+export type DisposalDocumentUpdateWithoutUploadedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  documentType?: Prisma.StringFieldUpdateOperationsInput | string
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  filePath?: Prisma.StringFieldUpdateOperationsInput | string
+  mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sizeBytes?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  disposal?: Prisma.AssetDisposalUpdateOneRequiredWithoutDocumentsNestedInput
+}
+
+export type DisposalDocumentUncheckedUpdateWithoutUploadedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalId?: Prisma.StringFieldUpdateOperationsInput | string
+  documentType?: Prisma.StringFieldUpdateOperationsInput | string
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  filePath?: Prisma.StringFieldUpdateOperationsInput | string
+  mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sizeBytes?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
+  uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type DisposalDocumentUncheckedUpdateManyWithoutUploadedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalId?: Prisma.StringFieldUpdateOperationsInput | string
+  documentType?: Prisma.StringFieldUpdateOperationsInput | string
+  fileName?: Prisma.StringFieldUpdateOperationsInput | string
+  filePath?: Prisma.StringFieldUpdateOperationsInput | string
+  mimeType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sizeBytes?: Prisma.NullableBigIntFieldUpdateOperationsInput | bigint | number | null
   uploadedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 

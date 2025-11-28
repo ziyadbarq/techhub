@@ -1,0 +1,126 @@
+// ============================================
+// RBAC (Role-Based Access Control)
+// ============================================
+//
+// Models: Role, Permission, RolePermission, UserRole, AuditLog, CodeSequence
+// Enums: None
+// Layer: System/Infrastructure
+// Related DI Module: rbac.module.ts
+// ============================================
+
+model Role {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  displayName String
+  description String?
+  isSystem    Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdBy   String?
+
+  // Role Hierarchy - Self-referential relationship
+  parentId String? @db.Text
+  parent   Role?   @relation("RoleHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children Role[]  @relation("RoleHierarchy")
+
+  // Relations
+  permissions           RolePermission[]
+  users                 UserRole[]
+  personsPrimaryRole    Person[]               @relation("PersonPrimaryRole")
+  personRoleAssignments PersonRoleAssignment[] @relation("PersonRoleAssignments")
+  lifecycleTransitions  LifecycleTransition[]  @relation("TransitionRequiredRole")
+
+  @@index([name])
+  @@index([isActive])
+  @@index([parentId])
+  @@map("roles")
+}
+
+model Permission {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  displayName String
+  description String?
+  resource    String
+  action      String
+  isSystem    Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  roles RolePermission[]
+
+  @@index([resource, action])
+  @@index([isActive])
+  @@map("permissions")
+}
+
+model RolePermission {
+  id           String @id @default(cuid())
+  roleId       String
+  permissionId String
+
+  createdAt DateTime @default(now())
+
+  // Relations
+  role       Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@index([roleId])
+  @@index([permissionId])
+  @@map("role_permissions")
+}
+
+model UserRole {
+  id        String    @id @default(cuid())
+  userId    String
+  roleId    String
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  createdBy String?
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@index([userId])
+  @@index([roleId])
+  @@index([expiresAt]) // High-priority: Expired role cleanup
+  @@map("user_roles")
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String
+  entityType String
+  entityId   String?
+  changes    Json?
+  metadata   Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@map("audit_logs")
+}
+
+// CodeSequence model
+// Auto-generation of unique codes for entities
+model CodeSequence {
+  id         String   @id @default(cuid())
+  entityType String   @unique // e.g., "VENDOR", "ASSET_KIT", "LIFECYCLE_STATE_{modelId}"
+  prefix     String // e.g., "VENDOR", "KIT", "STATE"
+  lastNumber Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([entityType])
+  @@map("code_sequences")
+}

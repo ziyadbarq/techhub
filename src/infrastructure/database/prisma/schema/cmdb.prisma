@@ -1,0 +1,201 @@
+// ============================================
+// CMDB - CI Classes, Configuration Items, Relationships
+// ============================================
+//
+// Models: CIClass, CIClassField, ConfigurationItem, RelationshipType, RelationshipTypeScope, CIRelationship
+// Enums: EnvironmentEnum, CriticalityEnum, RelationshipDirectionEnum
+// Layer: Layer 3 (Advanced ITAM)
+// Related DI Module: cmdb.module.ts
+// ============================================
+
+// CIClass model
+model CIClass {
+  id                 String           @id @default(cuid())
+  name               String           @unique
+  code               String           @unique
+  parentClassId      String?
+  description        String?          @db.Text
+  lifecycleModelId   String?
+  defaultCriticality CriticalityEnum?
+  defaultEnvironment EnvironmentEnum?
+  isDiscoverable     Boolean          @default(false)
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  // Relations
+  parentClass                CIClass?                @relation("CIClassHierarchy", fields: [parentClassId], references: [id], onDelete: Restrict)
+  childClasses               CIClass[]               @relation("CIClassHierarchy")
+  lifecycleModel             LifecycleModel?         @relation(fields: [lifecycleModelId], references: [id], onDelete: SetNull)
+  fields                     CIClassField[]
+  configurationItems         ConfigurationItem[]
+  relationshipTypeScopesFrom RelationshipTypeScope[] @relation("RelationshipTypeScopeFrom")
+  relationshipTypeScopesTo   RelationshipTypeScope[] @relation("RelationshipTypeScopeTo")
+  dataOwnerships             DataOwnership[]
+
+  // Indexes
+  @@index([parentClassId])
+  @@index([code])
+  @@index([lifecycleModelId])
+  @@map("ci_classes")
+}
+
+// CIClassField model
+model CIClassField {
+  id                String   @id @default(cuid())
+  ciClassId         String
+  fieldDefinitionId String
+  isRequired        Boolean  @default(false)
+  isUnique          Boolean  @default(false)
+  isVisible         Boolean  @default(true)
+  defaultValue      Json?
+  uiOrder           Int      @default(0)
+  note              String?  @db.Text
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  ciClass         CIClass         @relation(fields: [ciClassId], references: [id], onDelete: Cascade)
+  fieldDefinition FieldDefinition @relation(fields: [fieldDefinitionId], references: [id], onDelete: Restrict)
+
+  // Indexes
+  @@unique([ciClassId, fieldDefinitionId])
+  @@index([ciClassId])
+  @@index([fieldDefinitionId])
+  @@map("ci_class_fields")
+}
+
+// ConfigurationItem model
+model ConfigurationItem {
+  id                    String           @id @default(cuid())
+  name                  String
+  ciClassId             String
+  lifecycleStateId      String?
+  criticality           CriticalityEnum?
+  environment           EnvironmentEnum?
+  primaryOwnerPersonId  String?
+  primaryOwnerOrgUnitId String?
+  locationId            String?
+  linkedAssetId         String?
+  ciKey                 String?          @unique // unique business key, e.g. hostname
+  description           String?          @db.Text
+  attributes            Json? // dynamic fields per CIClassField
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+
+  // Relations
+  ciClass             CIClass           @relation(fields: [ciClassId], references: [id], onDelete: Restrict)
+  lifecycleState      LifecycleState?   @relation(fields: [lifecycleStateId], references: [id], onDelete: SetNull)
+  primaryOwnerPerson  Person?           @relation(fields: [primaryOwnerPersonId], references: [id], onDelete: SetNull)
+  primaryOwnerOrgUnit OrganizationUnit? @relation(fields: [primaryOwnerOrgUnitId], references: [id], onDelete: SetNull)
+  location            Location?         @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  linkedAsset         Asset?            @relation(fields: [linkedAssetId], references: [id], onDelete: SetNull)
+  relationshipsFrom   CIRelationship[]  @relation("CIRelationshipFrom")
+  relationshipsTo     CIRelationship[]  @relation("CIRelationshipTo")
+
+  // Indexes
+  @@index([ciClassId])
+  @@index([lifecycleStateId])
+  @@index([primaryOwnerPersonId])
+  @@index([primaryOwnerOrgUnitId])
+  @@index([locationId])
+  @@index([ciKey])
+  @@index([name])
+  @@map("configuration_items")
+}
+
+// RelationshipType model
+model RelationshipType {
+  id          String                    @id @default(cuid())
+  name        String                    @unique
+  code        String                    @unique
+  description String?                   @db.Text
+  direction   RelationshipDirectionEnum
+  isImpacting Boolean                   @default(false) // if failure of "to" impacts "from"
+  createdAt   DateTime                  @default(now())
+  updatedAt   DateTime                  @updatedAt
+
+  // Relations
+  scopes        RelationshipTypeScope[]
+  relationships CIRelationship[]
+
+  // Indexes
+  @@index([code])
+  @@map("relationship_types")
+}
+
+// RelationshipTypeScope model
+model RelationshipTypeScope {
+  id                 String   @id @default(cuid())
+  relationshipTypeId String
+  fromCiClassId      String
+  toCiClassId        String
+  note               String?  @db.Text
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  // Relations
+  relationshipType RelationshipType @relation(fields: [relationshipTypeId], references: [id], onDelete: Cascade)
+  fromCiClass      CIClass          @relation("RelationshipTypeScopeFrom", fields: [fromCiClassId], references: [id], onDelete: Cascade)
+  toCiClass        CIClass          @relation("RelationshipTypeScopeTo", fields: [toCiClassId], references: [id], onDelete: Cascade)
+
+  // Indexes
+  @@unique([relationshipTypeId, fromCiClassId, toCiClassId])
+  @@index([relationshipTypeId])
+  @@index([fromCiClassId])
+  @@index([toCiClassId])
+  @@map("relationship_type_scopes")
+}
+
+// CIRelationship model
+model CIRelationship {
+  id                 String    @id @default(cuid())
+  fromCiId           String
+  toCiId             String
+  relationshipTypeId String
+  isActive           Boolean   @default(true)
+  validFrom          DateTime  @default(now())
+  validTo            DateTime?
+  note               String?   @db.Text
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  // Relations
+  fromCi           ConfigurationItem @relation("CIRelationshipFrom", fields: [fromCiId], references: [id], onDelete: Restrict)
+  toCi             ConfigurationItem @relation("CIRelationshipTo", fields: [toCiId], references: [id], onDelete: Restrict)
+  relationshipType RelationshipType  @relation(fields: [relationshipTypeId], references: [id], onDelete: Restrict)
+
+  // Indexes
+  @@unique([fromCiId, toCiId, relationshipTypeId])
+  @@index([fromCiId])
+  @@index([toCiId])
+  @@index([relationshipTypeId])
+  @@index([isActive])
+  @@index([isActive, relationshipTypeId]) // High-priority: Topology queries
+  @@index([validFrom, validTo]) // High-priority: Temporal queries
+  @@map("ci_relationships")
+}
+
+// ============================================
+// CMDB ENUMS
+// ============================================
+
+enum EnvironmentEnum {
+  PROD
+  UAT
+  DEV
+  DR
+  TEST
+  OTHER
+}
+
+enum CriticalityEnum {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum RelationshipDirectionEnum {
+  UNIDIRECTIONAL
+  BIDIRECTIONAL
+}
