@@ -500,7 +500,27 @@ interface EmployeeDirectoryDTO {
 
 ---
 
+## Related Features
+
+### Person Details Page
+
+While the Employee Directory provides navigation and visualization of the organizational hierarchy, the **Person Details Page** (`/persons/[id]`) offers an in-depth 360-degree view of individual employees:
+
+- **Overview**: Personal info, employment, organization, location, status
+- **Organization**: Full reporting chain, direct reports list, role assignments
+- **Assets & Licenses**: Intune devices, reservations, kit checkouts, maintenance
+- **Services & CMDB**: Service ownerships, configuration items, data ownerships
+- **Governance**: Verification campaigns, attachments, disposal activities
+- **Activity Log**: Audit trail and activity history
+
+Users can navigate to the Person Details page by clicking an employee's name in the table view or org chart.
+
+See [Person Details Page](./PERSON_DETAILS.md) for complete documentation.
+
+---
+
 **Related Documentation:**
+- [Person Details Page](./PERSON_DETAILS.md) - Comprehensive 360-degree view of person profile
 - [Foundation Layer Guide](../guides/FOUNDATION_LAYER.md)
 - [Entity Reference](../guides/ENTITY_REFERENCE.md)
 - [Refactoring Patterns](../guides/REFACTORING_PATTERNS.md)

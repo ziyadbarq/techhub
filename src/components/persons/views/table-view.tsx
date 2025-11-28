@@ -8,6 +8,7 @@
 
 import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
 import {
   Mail,
   Phone,
@@ -75,7 +76,12 @@ export function TableView({
               size="sm"
             />
             <div className="flex flex-col">
-              <span className="font-medium">{person.fullName}</span>
+              <Link
+                href={`/persons/${person.id}`}
+                className="text-primary font-medium hover:underline"
+              >
+                {person.fullName}
+              </Link>
               {person.employeeId && (
                 <span className="text-muted-foreground text-xs">
                   ID: {person.employeeId}

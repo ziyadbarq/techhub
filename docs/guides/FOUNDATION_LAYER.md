@@ -265,9 +265,26 @@ await personRepository.update(person);
 
 **UI Routes**:
 
-- [/persons](/persons) - List all persons
+- [/persons](/persons) - List all persons with table, card, and org chart views
 - [/persons/new](/persons/new) - Create new person
-- [/persons/:id](/persons/:id) - View/edit person
+- [/persons/:id](/persons/:id) - **Person Details Page** - 360-degree view
+
+**Person Details Page** (`/persons/:id`):
+
+The Person Details page provides a comprehensive view of all information related to a person:
+
+| Tab | Content |
+|-----|---------|
+| **Overview** | Personal info, employment, organization, location, status |
+| **Organization** | Reporting chain, direct reports (lazy loaded), role assignments |
+| **Assets & Licenses** | Intune devices, reservations, kit checkouts, maintenance schedules |
+| **Services & CMDB** | Service ownerships, configuration items, data ownerships |
+| **Governance** | Verification campaigns, items, attachments, disposal activities |
+| **Activity** | Audit log timeline (placeholder) |
+
+Quick stats cards show: Role & Org, Team info, Assets & Devices count, Activity count.
+
+See [Person Details Page](../features/PERSON_DETAILS.md) for complete implementation details.
 
 ---
 

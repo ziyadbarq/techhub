@@ -270,6 +270,42 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
   },
 
   // ============================================================================
+  // FOUNDATION ENTITY ROUTES
+  // ============================================================================
+
+  "/persons": {
+    requiredPermissions: [PERMISSIONS.PERSONS_VIEW],
+    description: "Person directory - view all persons and employee directory",
+  },
+
+  "/persons/[id]": {
+    requiredPermissions: [PERMISSIONS.PERSONS_VIEW],
+    description:
+      "Person details - 360-degree view with roles, reporting chain, and related entities",
+  },
+
+  "/organization-units": {
+    requiredPermissions: [PERMISSIONS.ORGANIZATION_UNITS_VIEW],
+    description: "Organization unit management - view org hierarchy",
+  },
+
+  "/locations": {
+    requiredPermissions: [PERMISSIONS.LOCATIONS_VIEW],
+    description: "Location management - view and manage physical locations",
+  },
+
+  "/vendors": {
+    requiredPermissions: [PERMISSIONS.VENDORS_VIEW],
+    description: "Vendor management - view and manage vendors",
+  },
+
+  "/roles": {
+    requiredPermissions: [PERMISSIONS.ROLES_VIEW],
+    description:
+      "Business role management - view and manage organizational roles",
+  },
+
+  // ============================================================================
   // INTUNE ROUTES
   // ============================================================================
 

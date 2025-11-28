@@ -28,16 +28,41 @@ export function Header() {
   const breadcrumbs = useMemo(() => {
     const pathSegments = pathname?.split("/").filter(Boolean) ?? [];
 
-    // Skip the "dashboard" segment since we always show it as the first breadcrumb
-    const segmentsAfterDashboard =
-      pathSegments[0] === "dashboard" ? pathSegments.slice(1) : pathSegments;
+    // Map of parent routes to their detail page labels
+    const detailPageLabels: Record<string, string> = {
+      persons: "Person Details",
+      assets: "Asset Details",
+      services: "Service Details",
+      vendors: "Vendor Details",
+      locations: "Location Details",
+      roles: "Role Details",
+      contracts: "Contract Details",
+      "organization-units": "Organization Unit Details",
+      "license-products": "License Product Details",
+      "intune/devices": "Device Details",
+    };
 
-    const segments = segmentsAfterDashboard.map((segment, index, array) => {
-      const path = "/dashboard/" + array.slice(0, index + 1).join("/");
-      const label = segment
-        .split("-")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
+    // Build breadcrumbs from path segments
+    // Note: (dashboard) is a route group, so paths are directly at root (e.g., /persons, not /dashboard/persons)
+    const segments = pathSegments.map((segment, index, array) => {
+      const path = "/" + array.slice(0, index + 1).join("/");
+
+      // Check if this segment looks like an ID (not a recognizable word)
+      // IDs typically contain random characters or are very long
+      const isLikelyId =
+        segment.length > 20 || /^[a-z0-9]{20,}$/i.test(segment);
+
+      let label: string;
+      if (isLikelyId && index > 0) {
+        // Get parent path to determine the detail page label
+        const parentPath = array.slice(0, index).join("/");
+        label = detailPageLabels[parentPath] || "Details";
+      } else {
+        label = segment
+          .split("-")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+      }
 
       return { label, path };
     });

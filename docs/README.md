@@ -40,6 +40,7 @@ Core building blocks for the CMDB/ITAM system:
 - [Foundation Layer Guide](./guides/FOUNDATION_LAYER.md) - Complete user guide for all 11 Foundation entities
 - [Entity Reference](./guides/ENTITY_REFERENCE.md) - Quick reference for OrganizationUnit, Person, Role, Location, Vendor, Lifecycle, and FieldDefinition entities
 - [Employee Directory & Org Chart](./features/EMPLOYEE_DIRECTORY.md) - Interactive org chart visualization with lazy loading, recursive CTE queries, and theme-aware styling
+- [Person Details Page](./features/PERSON_DETAILS.md) - Comprehensive 360-degree view of person profile with related entities, reporting chain, and role assignments
 
 ### Asset & Inventory Layer (Layer 2)
 
