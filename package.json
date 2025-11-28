@@ -34,8 +34,8 @@
     "redis:start": "docker compose up -d redis",
     "redis:stop": "docker compose down",
     "redis:logs": "docker compose logs -f redis",
-    "worker:dev": "dotenv -e .env.local -- tsx watch src/infrastructure/services/queue/worker.ts",
-    "worker:start": "dotenv -e .env.local -- tsx src/infrastructure/services/queue/worker.ts",
+    "worker:dev": "dotenv -e .env.local -- tsx watch --import ./scripts/shim-server-only.js src/infrastructure/services/queue/worker.ts",
+    "worker:start": "dotenv -e .env.local -- tsx --import ./scripts/shim-server-only.js src/infrastructure/services/queue/worker.ts",
     "pm2:start": "pm2 start ecosystem.config.cjs --env production",
     "pm2:stop": "pm2 stop all",
     "pm2:restart": "pm2 restart all",
@@ -50,8 +50,8 @@
     "type-check:staged": "bash scripts/type-check-staged.sh",
     "reset": "dotenv -e .env.local -- tsx scripts/reset-dev-environment.ts",
     "roles:manage": "dotenv -e .env.local -- tsx scripts/manage-user-roles.ts",
-    "sync:users": "dotenv -e .env.local -- tsx scripts/sync-users-from-graph.ts",
-    "backfill:azure-ids": "dotenv -e .env.local -- tsx scripts/backfill-azure-ad-ids.ts",
+    "sync:users": "dotenv -e .env.local -- tsx --import ./scripts/shim-server-only.js scripts/sync-users-from-graph.ts",
+    "backfill:azure-ids": "dotenv -e .env.local -- tsx --import ./scripts/shim-server-only.js scripts/backfill-azure-ad-ids.ts",
     "prepare": "husky"
   },
   "dependencies": {
