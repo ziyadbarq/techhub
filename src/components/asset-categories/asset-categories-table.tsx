@@ -112,7 +112,7 @@ export function AssetCategoriesTable({
           <div className="flex flex-col gap-1">
             <Link
               href={`/asset-categories/${row.original.id}`}
-              className="hover:text-primary font-medium hover:underline"
+              className="text-primary font-medium hover:underline"
             >
               {name}
             </Link>

@@ -164,6 +164,16 @@ Manual linking (planned):
    - **ITAM Links**: Link/unlink devices to assets and persons
    - **Related Items**: Full details of linked asset and person (category, vendor, model, location, job title, department, etc.)
 
+### Asset Detail Integration
+
+The Asset detail page includes an **Intune tab** (permission-gated) that displays all Intune devices linked to that asset:
+
+- **Component**: `src/components/assets/asset-intune-tab.tsx`
+- **Controller Action**: `getIntuneDevicesByAssetAction(assetId)`
+- **Permission Required**: `INTUNE_DEVICES_VIEW`
+- Shows: Device name (linked to device detail), OS version, compliance state badge, ownership type, management state, serial number
+- Compliance colors: COMPLIANT (default), NON_COMPLIANT (destructive), IN_GRACE_PERIOD (secondary), UNKNOWN (outline)
+
 ## Data Model
 
 ### IntuneDevice Entity

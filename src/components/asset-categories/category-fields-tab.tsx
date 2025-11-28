@@ -6,14 +6,25 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Plus,
-  ChevronUp,
-  ChevronDown,
-  Trash2,
-  GripVertical,
-} from "lucide-react";
+import { Plus, Trash2, GripVertical } from "lucide-react";
 import { toast } from "sonner";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -49,6 +60,148 @@ interface CategoryFieldsTabProps {
   onFieldsChange: (fields: EnrichedAssetCategoryFieldDTO[]) => void;
 }
 
+// Data type badge color mapping
+const dataTypeColors: Record<string, string> = {
+  STRING: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+  TEXT: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+  INTEGER: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+  DECIMAL: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+  BOOLEAN:
+    "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
+  DATE: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+  DATETIME:
+    "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+  ENUM: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
+  JSON: "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200",
+};
+
+// Sortable field item component
+interface SortableFieldItemProps {
+  field: EnrichedAssetCategoryFieldDTO;
+  index: number;
+  canUpdate: boolean;
+  canDelete: boolean;
+  isUpdating: boolean;
+  onToggleRequired: () => void;
+  onToggleVisible: () => void;
+  onDelete: () => void;
+}
+
+function SortableFieldItem({
+  field,
+  index,
+  canUpdate,
+  canDelete,
+  isUpdating,
+  onToggleRequired,
+  onToggleVisible,
+  onDelete,
+}: SortableFieldItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: field.id, disabled: !canUpdate });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  const colorClass =
+    dataTypeColors[field.dataType] ||
+    "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200";
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`bg-muted/50 flex items-center gap-4 rounded-lg border p-4 ${
+        isDragging ? "opacity-50 shadow-lg" : ""
+      }`}
+    >
+      {/* Drag handle */}
+      <div
+        {...attributes}
+        {...listeners}
+        className={`text-muted-foreground flex items-center gap-1 ${
+          canUpdate ? "cursor-grab active:cursor-grabbing" : ""
+        }`}
+      >
+        <GripVertical className="h-4 w-4" />
+        <span className="w-4 text-center text-sm">{index + 1}</span>
+      </div>
+
+      {/* Field info */}
+      <div className="flex-1">
+        <div className="flex items-center gap-2">
+          <span className="font-medium">{field.fieldLabel}</span>
+          <Badge variant="outline" className={`${colorClass} border-0`}>
+            {field.dataType}
+          </Badge>
+          {field.isRequired && (
+            <Badge variant="destructive" className="text-xs">
+              Required
+            </Badge>
+          )}
+          {!field.isVisible && (
+            <Badge variant="secondary" className="text-xs">
+              Hidden
+            </Badge>
+          )}
+        </div>
+        <p className="text-muted-foreground text-sm">
+          {field.fieldDescription || `Field: ${field.fieldName}`}
+        </p>
+      </div>
+
+      {/* Controls */}
+      {canUpdate && (
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <Switch
+              id={`required-${field.id}`}
+              checked={field.isRequired}
+              onCheckedChange={onToggleRequired}
+              disabled={isUpdating}
+            />
+            <Label htmlFor={`required-${field.id}`} className="text-sm">
+              Required
+            </Label>
+          </div>
+          <div className="flex items-center gap-2">
+            <Switch
+              id={`visible-${field.id}`}
+              checked={field.isVisible}
+              onCheckedChange={onToggleVisible}
+              disabled={isUpdating}
+            />
+            <Label htmlFor={`visible-${field.id}`} className="text-sm">
+              Visible
+            </Label>
+          </div>
+        </div>
+      )}
+
+      {/* Delete button */}
+      {canDelete && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="text-destructive hover:text-destructive"
+          onClick={onDelete}
+          disabled={isUpdating}
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      )}
+    </div>
+  );
+}
+
 export function CategoryFieldsTab({
   category,
   attachedFields,
@@ -65,12 +218,49 @@ export function CategoryFieldsTab({
   const canUpdate = hasPermission(PERMISSIONS.ASSET_CATEGORY_FIELDS_UPDATE);
   const canDelete = hasPermission(PERMISSIONS.ASSET_CATEGORY_FIELDS_DELETE);
 
+  // DnD sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
   // Get available field definitions (not yet attached)
   const availableFieldDefinitions = fieldDefinitions.filter(
     (fd) =>
       fd.isActive &&
       !attachedFields.some((af) => af.fieldDefinitionId === fd.id),
   );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = attachedFields.findIndex((f) => f.id === active.id);
+      const newIndex = attachedFields.findIndex((f) => f.id === over.id);
+
+      // Optimistically update UI
+      const newFields = arrayMove(attachedFields, oldIndex, newIndex);
+      onFieldsChange(newFields);
+
+      // Update uiOrder in database for affected fields
+      try {
+        const updates = newFields.map((field, idx) =>
+          updateAssetCategoryFieldAction(field.id, { uiOrder: idx }),
+        );
+        await Promise.all(updates);
+      } catch {
+        // Revert on error
+        onFieldsChange(attachedFields);
+        toast.error("Failed to save field order");
+      }
+    }
+  };
 
   const handleToggleRequired = async (field: EnrichedAssetCategoryFieldDTO) => {
     setUpdatingFieldId(field.id);
@@ -118,68 +308,6 @@ export function CategoryFieldsTab({
     }
   };
 
-  const handleMoveUp = async (index: number) => {
-    if (index === 0) return;
-
-    const field = attachedFields[index];
-    const prevField = attachedFields[index - 1];
-
-    setUpdatingFieldId(field.id);
-    try {
-      // Swap uiOrder values
-      await Promise.all([
-        updateAssetCategoryFieldAction(field.id, {
-          uiOrder: prevField.uiOrder,
-        }),
-        updateAssetCategoryFieldAction(prevField.id, {
-          uiOrder: field.uiOrder,
-        }),
-      ]);
-
-      const newFields = [...attachedFields];
-      [newFields[index - 1], newFields[index]] = [
-        { ...newFields[index], uiOrder: prevField.uiOrder },
-        { ...newFields[index - 1], uiOrder: field.uiOrder },
-      ];
-      onFieldsChange(newFields);
-    } catch {
-      toast.error("Failed to reorder field");
-    } finally {
-      setUpdatingFieldId(null);
-    }
-  };
-
-  const handleMoveDown = async (index: number) => {
-    if (index === attachedFields.length - 1) return;
-
-    const field = attachedFields[index];
-    const nextField = attachedFields[index + 1];
-
-    setUpdatingFieldId(field.id);
-    try {
-      // Swap uiOrder values
-      await Promise.all([
-        updateAssetCategoryFieldAction(field.id, {
-          uiOrder: nextField.uiOrder,
-        }),
-        updateAssetCategoryFieldAction(nextField.id, {
-          uiOrder: field.uiOrder,
-        }),
-      ]);
-
-      const newFields = [...attachedFields];
-      [newFields[index], newFields[index + 1]] = [
-        { ...newFields[index + 1], uiOrder: field.uiOrder },
-        { ...newFields[index], uiOrder: nextField.uiOrder },
-      ];
-      onFieldsChange(newFields);
-    } catch {
-      toast.error("Failed to reorder field");
-    } finally {
-      setUpdatingFieldId(null);
-    }
-  };
-
   const handleDelete = async () => {
     if (!fieldToDelete) return;
 
@@ -200,37 +328,9 @@ export function CategoryFieldsTab({
     }
   };
 
-  const handleFieldAdded = (newField: EnrichedAssetCategoryFieldDTO) => {
-    onFieldsChange([...attachedFields, newField]);
+  const handleFieldsAdded = (allFields: EnrichedAssetCategoryFieldDTO[]) => {
+    onFieldsChange(allFields);
     setAddDialogOpen(false);
-  };
-
-  const getDataTypeBadge = (dataType: string) => {
-    const typeColors: Record<string, string> = {
-      STRING: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-      TEXT: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-      INTEGER:
-        "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-      DECIMAL:
-        "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-      BOOLEAN:
-        "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
-      DATE: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-      DATETIME:
-        "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-      ENUM: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
-      JSON: "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200",
-    };
-
-    const colorClass =
-      typeColors[dataType] ||
-      "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200";
-
-    return (
-      <Badge variant="outline" className={`${colorClass} border-0`}>
-        {dataType}
-      </Badge>
-    );
   };
 
   return (
@@ -255,115 +355,32 @@ export function CategoryFieldsTab({
             )}
           </div>
         ) : (
-          <div className="space-y-2">
-            {attachedFields.map((field, index) => (
-              <div
-                key={field.id}
-                className="bg-muted/50 flex items-center gap-4 rounded-lg border p-4"
-              >
-                {/* Order indicator */}
-                <div className="text-muted-foreground flex items-center gap-1">
-                  <GripVertical className="h-4 w-4" />
-                  <span className="w-4 text-center text-sm">{index + 1}</span>
-                </div>
-
-                {/* Field info */}
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">{field.fieldLabel}</span>
-                    {getDataTypeBadge(field.dataType)}
-                    {field.isRequired && (
-                      <Badge variant="destructive" className="text-xs">
-                        Required
-                      </Badge>
-                    )}
-                    {!field.isVisible && (
-                      <Badge variant="secondary" className="text-xs">
-                        Hidden
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-muted-foreground text-sm">
-                    {field.fieldDescription || `Field: ${field.fieldName}`}
-                  </p>
-                </div>
-
-                {/* Controls */}
-                {canUpdate && (
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                      <Switch
-                        id={`required-${field.id}`}
-                        checked={field.isRequired}
-                        onCheckedChange={() => handleToggleRequired(field)}
-                        disabled={updatingFieldId === field.id}
-                      />
-                      <Label
-                        htmlFor={`required-${field.id}`}
-                        className="text-sm"
-                      >
-                        Required
-                      </Label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Switch
-                        id={`visible-${field.id}`}
-                        checked={field.isVisible}
-                        onCheckedChange={() => handleToggleVisible(field)}
-                        disabled={updatingFieldId === field.id}
-                      />
-                      <Label
-                        htmlFor={`visible-${field.id}`}
-                        className="text-sm"
-                      >
-                        Visible
-                      </Label>
-                    </div>
-                  </div>
-                )}
-
-                {/* Order buttons */}
-                {canUpdate && (
-                  <div className="flex flex-col gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6"
-                      onClick={() => handleMoveUp(index)}
-                      disabled={index === 0 || updatingFieldId === field.id}
-                    >
-                      <ChevronUp className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6"
-                      onClick={() => handleMoveDown(index)}
-                      disabled={
-                        index === attachedFields.length - 1 ||
-                        updatingFieldId === field.id
-                      }
-                    >
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
-
-                {/* Delete button */}
-                {canDelete && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-destructive hover:text-destructive"
-                    onClick={() => setFieldToDelete(field.id)}
-                    disabled={updatingFieldId === field.id}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                )}
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={attachedFields.map((f) => f.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="space-y-2">
+                {attachedFields.map((field, index) => (
+                  <SortableFieldItem
+                    key={field.id}
+                    field={field}
+                    index={index}
+                    canUpdate={canUpdate}
+                    canDelete={canDelete}
+                    isUpdating={updatingFieldId === field.id}
+                    onToggleRequired={() => handleToggleRequired(field)}
+                    onToggleVisible={() => handleToggleVisible(field)}
+                    onDelete={() => setFieldToDelete(field.id)}
+                  />
+                ))}
               </div>
-            ))}
-          </div>
+            </SortableContext>
+          </DndContext>
         )}
       </CardContent>
 
@@ -374,7 +391,7 @@ export function CategoryFieldsTab({
         categoryId={category.id}
         availableFieldDefinitions={availableFieldDefinitions}
         existingFieldCount={attachedFields.length}
-        onFieldAdded={handleFieldAdded}
+        onFieldAdded={handleFieldsAdded}
       />
 
       {/* Delete Confirmation Dialog */}

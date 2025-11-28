@@ -238,6 +238,52 @@ const dependencies = await getDependencies(ciId, {
 
 ---
 
+## Asset Detail 360-Degree View
+
+The Asset detail page provides a comprehensive view of all related data across the system through tabbed navigation:
+
+### Core Tabs (Always Visible)
+
+| Tab | Description | Data Source |
+|-----|-------------|-------------|
+| **Overview** | Asset details, category, model, location, lifecycle | Asset entity |
+| **Warranties** | Active and historical warranty records | Warranty entity |
+| **Assignments** | Current and past employee assignments | AssetAssignment entity |
+| **Movements** | Stock movement history between locations | StockMovement entity |
+| **Reservations** | Future bookings and reservation history | AssetReservation entity |
+
+### Permission-Gated Tabs
+
+| Tab | Permission Required | Description |
+|-----|---------------------|-------------|
+| **CMDB** | `CONFIGURATION_ITEMS_VIEW` | Configuration Items linked to this asset |
+| **Services** | `SERVICES_VIEW` | Services that use this asset |
+| **Intune** | `INTUNE_DEVICES_VIEW` | Intune devices linked to this asset |
+
+### Implementation
+
+```typescript
+// Asset detail page tabs with permission checks
+const canViewCmdb = hasPermission(PERMISSIONS.CONFIGURATION_ITEMS_VIEW);
+const canViewServices = hasPermission(PERMISSIONS.SERVICES_VIEW);
+const canViewIntune = hasPermission(PERMISSIONS.INTUNE_DEVICES_VIEW);
+
+// Tabs are conditionally rendered based on permissions
+{canViewCmdb && <TabsTrigger value="cmdb">CMDB</TabsTrigger>}
+{canViewServices && <TabsTrigger value="services">Services</TabsTrigger>}
+{canViewIntune && <TabsTrigger value="intune">Intune</TabsTrigger>}
+```
+
+### Key Files
+
+- `src/components/assets/asset-detail-page-client.tsx` - Main detail page component
+- `src/components/assets/asset-reservations-tab.tsx` - Reservations tab
+- `src/components/assets/asset-cmdb-tab.tsx` - CMDB tab
+- `src/components/assets/asset-services-tab.tsx` - Services tab
+- `src/components/assets/asset-intune-tab.tsx` - Intune tab
+
+---
+
 ## Integration Points
 
 ### With Asset Management
@@ -246,6 +292,7 @@ const dependencies = await getDependencies(ciId, {
 - Kits contain assets
 - Reservations book assets
 - Configuration Items can link to physical assets
+- **Asset detail page shows all related data in 360-degree view**
 
 ### With Lifecycle Management
 

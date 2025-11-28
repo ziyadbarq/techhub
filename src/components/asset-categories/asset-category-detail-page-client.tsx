@@ -1,13 +1,13 @@
 /**
  * Asset Category Detail Page Client Component
- * Displays category details with tabs for Overview and Custom Fields
+ * Displays category details with tabs for Overview, Custom Fields, Models, and Assets
  */
 
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Edit, Trash2, Layers } from "lucide-react";
+import { ArrowLeft, Edit, Trash2, Layers, Package, Box } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,23 +27,31 @@ import { toast } from "sonner";
 import type { AssetCategoryDTO } from "@/interface-adapters/presenters/asset-category.presenter";
 import type { EnrichedAssetCategoryFieldDTO } from "@/interface-adapters/presenters/asset-category-field.presenter";
 import type { FieldDefinitionDTO } from "@/interface-adapters/presenters/field-definition.presenter";
+import type { AssetModelDTO } from "@/interface-adapters/presenters/asset-model.presenter";
+import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
 import { deleteAssetCategoryAction } from "@/interface-adapters/controllers/asset-category.controller";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { AssetCategoryForm } from "./asset-category-form";
 import { CategoryOverviewTab } from "./category-overview-tab";
 import { CategoryFieldsTab } from "./category-fields-tab";
+import { CategoryModelsTab } from "./category-models-tab";
+import { CategoryAssetsTab } from "./category-assets-tab";
 
 interface AssetCategoryDetailPageClientProps {
   category: AssetCategoryDTO;
   attachedFields: EnrichedAssetCategoryFieldDTO[];
   fieldDefinitions: FieldDefinitionDTO[];
+  models: AssetModelDTO[];
+  assets: AssetDTO[];
 }
 
 export function AssetCategoryDetailPageClient({
   category,
   attachedFields: initialFields,
   fieldDefinitions,
+  models,
+  assets,
 }: AssetCategoryDetailPageClientProps) {
   const router = useRouter();
   const { hasPermission } = usePermissions();
@@ -57,6 +65,8 @@ export function AssetCategoryDetailPageClient({
   const canUpdate = hasPermission(PERMISSIONS.ASSET_CATEGORIES_UPDATE);
   const canDelete = hasPermission(PERMISSIONS.ASSET_CATEGORIES_DELETE);
   const canManageFields = hasPermission(PERMISSIONS.ASSET_CATEGORY_FIELDS_VIEW);
+  const canViewModels = hasPermission(PERMISSIONS.ASSET_MODELS_VIEW);
+  const canViewAssets = hasPermission(PERMISSIONS.ASSETS_VIEW);
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -135,6 +145,18 @@ export function AssetCategoryDetailPageClient({
       <Tabs defaultValue="overview" className="w-full">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          {canViewModels && (
+            <TabsTrigger value="models" className="flex items-center gap-2">
+              <Package className="h-4 w-4" />
+              Models ({models.length})
+            </TabsTrigger>
+          )}
+          {canViewAssets && (
+            <TabsTrigger value="assets" className="flex items-center gap-2">
+              <Box className="h-4 w-4" />
+              Assets ({assets.length})
+            </TabsTrigger>
+          )}
           {canManageFields && (
             <TabsTrigger value="fields" className="flex items-center gap-2">
               <Layers className="h-4 w-4" />
@@ -146,6 +168,18 @@ export function AssetCategoryDetailPageClient({
         <TabsContent value="overview" className="mt-4">
           <CategoryOverviewTab category={category} />
         </TabsContent>
+
+        {canViewModels && (
+          <TabsContent value="models" className="mt-4">
+            <CategoryModelsTab models={models} categoryId={category.id} />
+          </TabsContent>
+        )}
+
+        {canViewAssets && (
+          <TabsContent value="assets" className="mt-4">
+            <CategoryAssetsTab assets={assets} categoryId={category.id} />
+          </TabsContent>
+        )}
 
         {canManageFields && (
           <TabsContent value="fields" className="mt-4">

@@ -499,12 +499,24 @@ const linkedCIs = await listConfigurationItems({
 });
 ```
 
+### Asset Detail Integration
+
+The Asset detail page includes a **CMDB tab** (permission-gated) that displays all Configuration Items linked to that asset:
+
+- **Component**: `src/components/assets/asset-cmdb-tab.tsx`
+- **Controller Action**: `listConfigurationItemsAction({ linkedAssetId: assetId })`
+- **Permission Required**: `CONFIGURATION_ITEMS_VIEW`
+- Shows: CI name, CI key, criticality badge, environment badge, CI class, description
+- Criticality colors: CRITICAL (destructive), HIGH (default), MEDIUM (secondary), LOW (outline)
+- Environment colors: PRODUCTION (red), STAGING (yellow), DEVELOPMENT (blue), TEST (green)
+
 ### Use Cases
 
 1. **Hardware Tracking**: Link servers, network equipment to CI records
 2. **Lifecycle Coordination**: Sync asset lifecycle with CI lifecycle
 3. **Cost Tracking**: Associate infrastructure costs with assets
 4. **Maintenance Coordination**: Schedule maintenance based on asset and CI status
+5. **360-Degree Asset View**: See all CIs linked to an asset from the Asset detail page
 
 ---
 

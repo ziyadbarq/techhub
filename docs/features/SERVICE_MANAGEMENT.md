@@ -638,6 +638,16 @@ export async function getServiceAssetsAction(serviceId: string): Promise<ActionR
 export async function getAssetServicesAction(assetId: string): Promise<ActionResponse<ServiceAssetDTO[]>>
 ```
 
+### Asset Detail Integration
+
+The Asset detail page includes a **Services tab** (permission-gated) that displays all services linked to that asset:
+
+- **Component**: `src/components/assets/asset-services-tab.tsx`
+- **Controller Action**: `getAssetServicesAction(assetId)`
+- **Permission Required**: `SERVICES_VIEW`
+- Shows: Service name (linked to service detail page), relationship type badge, description
+- Relationship badges: HOSTS (default), DEPENDS_ON (secondary), USES (outline), SUPPORTS (outline)
+
 #### Service Relationship Controller
 **Location**: `src/interface-adapters/controllers/service-relationship.controller.ts`
 

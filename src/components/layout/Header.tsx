@@ -26,7 +26,9 @@ export function Header() {
 
   // Memoize breadcrumb calculation - only recalculate when pathname changes
   const breadcrumbs = useMemo(() => {
-    const pathSegments = pathname?.split("/").filter(Boolean) ?? [];
+    // Filter out "dashboard" since we always add it as the first breadcrumb
+    const pathSegments =
+      pathname?.split("/").filter((s) => Boolean(s) && s !== "dashboard") ?? [];
 
     // Map of parent routes to their detail page labels
     const detailPageLabels: Record<string, string> = {

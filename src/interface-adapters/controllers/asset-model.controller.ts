@@ -168,6 +168,35 @@ export async function listAssetModelsAction(): Promise<
   }
 }
 
+export async function listAssetModelsByCategoryAction(
+  assetCategoryId: string,
+): Promise<ActionResponse<AssetModelDTO[]>> {
+  try {
+    await requirePermission(PERMISSIONS.ASSET_MODELS_VIEW);
+
+    const container = getContainer();
+    const useCase = container.get<ListAssetModelsUseCase>(
+      DI_TOKENS.ListAssetModelsUseCase,
+    );
+
+    const assetModels = await useCase.execute({ assetCategoryId });
+
+    // Enrich with related entity names
+    const enrichmentMap = await enrichAssetModels(assetModels);
+
+    return {
+      success: true,
+      data: presentAssetModels(assetModels, enrichmentMap),
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "listAssetModelsByCategoryAction", assetCategoryId },
+      "Failed to list asset models by category",
+    );
+  }
+}
+
 export async function getAssetModelAction(
   id: string,
 ): Promise<ActionResponse<AssetModelDTO>> {

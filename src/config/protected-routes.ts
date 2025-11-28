@@ -323,6 +323,40 @@ export const PROTECTED_ROUTES: Record<string, RouteProtection> = {
     requiredPermissions: [PERMISSIONS.INTUNE_COMPLIANCE_VIEW],
     description: "Device compliance monitoring dashboard",
   },
+
+  // ============================================================================
+  // ASSET MANAGEMENT ROUTES
+  // ============================================================================
+
+  "/asset-models": {
+    requiredPermissions: [PERMISSIONS.ASSET_MODELS_VIEW],
+    description: "Asset model management - view all asset models",
+  },
+
+  "/asset-models/[id]": {
+    requiredPermissions: [PERMISSIONS.ASSET_MODELS_VIEW],
+    description: "View specific asset model details with assets and statistics",
+  },
+
+  "/asset-categories": {
+    requiredPermissions: [PERMISSIONS.ASSET_CATEGORIES_VIEW],
+    description: "Asset category management - view all categories",
+  },
+
+  "/asset-categories/[id]": {
+    requiredPermissions: [PERMISSIONS.ASSET_CATEGORIES_VIEW],
+    description: "View specific asset category with custom fields",
+  },
+
+  "/assets": {
+    requiredPermissions: [PERMISSIONS.ASSETS_VIEW],
+    description: "Asset management - view all assets",
+  },
+
+  "/assets/[assetTag]": {
+    requiredPermissions: [PERMISSIONS.ASSETS_VIEW],
+    description: "View specific asset details (360-degree view)",
+  },
 };
 
 /**

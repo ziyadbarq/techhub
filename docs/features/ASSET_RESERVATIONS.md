@@ -39,6 +39,16 @@ COMPLETED  → End date reached, asset returned
 - List View: Table of all reservations
 - Calendar View: Visual calendar (ready for implementation)
 - Availability Checker: Find available assets
+- **Asset Detail View**: Reservations tab shows all reservations for a specific asset (via `/assets/[id]`)
+
+### Asset Detail Integration
+
+The Asset detail page includes a **Reservations tab** that displays all reservations (past and future) for that specific asset:
+
+- **Component**: `src/components/assets/asset-reservations-tab.tsx`
+- **Controller Action**: `listReservationsByAssetAction(assetId)`
+- Shows: Purpose, date range, reserved by person, status badge
+- Status colors: PENDING (outline), CONFIRMED (secondary), ACTIVE (default), COMPLETED (secondary), CANCELLED (destructive)
 
 ## Database Schema
 

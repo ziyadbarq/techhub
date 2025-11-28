@@ -15,6 +15,10 @@ import {
   TrendingUp,
   UserPlus,
   RotateCcw,
+  Calendar,
+  Server,
+  Globe,
+  Laptop,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -41,9 +45,14 @@ import { AssetOverviewTab } from "./asset-overview-tab";
 import { AssetWarrantiesTab } from "./asset-warranties-tab";
 import { AssetAssignmentsTab } from "./asset-assignments-tab";
 import { AssetMovementsTab } from "./asset-movements-tab";
+import { AssetReservationsTab } from "./asset-reservations-tab";
+import { AssetCmdbTab } from "./asset-cmdb-tab";
+import { AssetServicesTab } from "./asset-services-tab";
+import { AssetIntuneTab } from "./asset-intune-tab";
 import { AssignAssetWizard } from "./assign-asset-wizard";
 import { ReturnAssetWizard } from "./return-asset-wizard";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
+import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 interface AssetDetailPageClientProps {
@@ -54,6 +63,7 @@ export function AssetDetailPageClient({
   asset: initialAsset,
 }: AssetDetailPageClientProps) {
   const router = useRouter();
+  const { hasPermission } = usePermissions();
   const asset = initialAsset;
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -62,6 +72,11 @@ export function AssetDetailPageClient({
   const [isReturnWizardOpen, setIsReturnWizardOpen] = useState(false);
   const [activeAssignment, setActiveAssignment] =
     useState<AssetAssignmentDTO | null>(null);
+
+  // Permission checks for additional tabs
+  const canViewCmdb = hasPermission(PERMISSIONS.CONFIGURATION_ITEMS_VIEW);
+  const canViewServices = hasPermission(PERMISSIONS.SERVICES_VIEW);
+  const canViewIntune = hasPermission(PERMISSIONS.INTUNE_DEVICES_VIEW);
 
   // Fetch active assignment for Return Wizard
   useEffect(() => {
@@ -188,7 +203,7 @@ export function AssetDetailPageClient({
 
       {/* Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList>
+        <TabsList className="h-auto flex-wrap gap-1">
           <TabsTrigger value="overview" className="gap-2">
             <Package className="h-4 w-4" />
             Overview
@@ -205,6 +220,28 @@ export function AssetDetailPageClient({
             <TrendingUp className="h-4 w-4" />
             Movements
           </TabsTrigger>
+          <TabsTrigger value="reservations" className="gap-2">
+            <Calendar className="h-4 w-4" />
+            Reservations
+          </TabsTrigger>
+          {canViewCmdb && (
+            <TabsTrigger value="cmdb" className="gap-2">
+              <Server className="h-4 w-4" />
+              CMDB
+            </TabsTrigger>
+          )}
+          {canViewServices && (
+            <TabsTrigger value="services" className="gap-2">
+              <Globe className="h-4 w-4" />
+              Services
+            </TabsTrigger>
+          )}
+          {canViewIntune && (
+            <TabsTrigger value="intune" className="gap-2">
+              <Laptop className="h-4 w-4" />
+              Intune
+            </TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="overview">
@@ -222,6 +259,28 @@ export function AssetDetailPageClient({
         <TabsContent value="movements">
           <AssetMovementsTab assetId={asset.id} />
         </TabsContent>
+
+        <TabsContent value="reservations">
+          <AssetReservationsTab assetId={asset.id} />
+        </TabsContent>
+
+        {canViewCmdb && (
+          <TabsContent value="cmdb">
+            <AssetCmdbTab assetId={asset.id} />
+          </TabsContent>
+        )}
+
+        {canViewServices && (
+          <TabsContent value="services">
+            <AssetServicesTab assetId={asset.id} />
+          </TabsContent>
+        )}
+
+        {canViewIntune && (
+          <TabsContent value="intune">
+            <AssetIntuneTab assetId={asset.id} />
+          </TabsContent>
+        )}
       </Tabs>
 
       {/* Edit Form Dialog */}

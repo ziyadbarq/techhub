@@ -252,6 +252,46 @@ export async function getIntuneDeviceAction(
 }
 
 /**
+ * Get Intune devices linked to a specific asset
+ */
+export async function getIntuneDevicesByAssetAction(
+  assetId: string,
+): Promise<ActionResponse<IntuneDeviceDTO[]>> {
+  try {
+    await requirePermission(PERMISSIONS.INTUNE_DEVICES_VIEW);
+
+    const container = getContainer();
+    const listDevicesUseCase = container.get<ListIntuneDevicesUseCase>(
+      DI_TOKENS.ListIntuneDevicesUseCase,
+    );
+
+    // Get all devices linked to assets, then filter by specific assetId
+    const result = await listDevicesUseCase.execute({
+      filters: { isLinkedToAsset: true },
+    });
+
+    // Filter by the specific asset ID
+    const linkedDevices = result.devices.filter(
+      (device) => device.linkedAssetId === assetId,
+    );
+
+    const devices = presentIntuneDevices(linkedDevices);
+    const enrichedDevices = await enrichDevices(devices);
+
+    return {
+      success: true,
+      data: enrichedDevices,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getIntuneDevicesByAssetAction", assetId },
+      "Failed to get Intune devices by asset",
+    );
+  }
+}
+
+/**
  * Get compliance statistics
  */
 export async function getIntuneComplianceStatsAction(): Promise<

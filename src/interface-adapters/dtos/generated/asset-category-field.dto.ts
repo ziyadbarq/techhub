@@ -6,8 +6,8 @@ import { z } from "zod";
 
 // Create Asset Category Field DTO
 export const CreateAssetCategoryFieldSchema = z.object({
-  assetCategoryId: z.string().uuid("Invalid asset category ID"),
-  fieldDefinitionId: z.string().uuid("Invalid field definition ID"),
+  assetCategoryId: z.string().min(1, "Asset category ID is required"),
+  fieldDefinitionId: z.string().min(1, "Field definition ID is required"),
   isRequired: z.boolean().optional().default(false),
   isUnique: z.boolean().optional().default(false),
   isVisible: z.boolean().optional().default(true),

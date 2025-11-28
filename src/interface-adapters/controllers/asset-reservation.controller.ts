@@ -188,6 +188,38 @@ export async function listReservationsAction(): Promise<
   }
 }
 
+export async function listReservationsByAssetAction(
+  assetId: string,
+): Promise<ActionResponse<AssetReservationDTO[]>> {
+  try {
+    await requirePermission(PERMISSIONS.ASSETS_VIEW);
+
+    const container = getContainer();
+    const useCase = container.get<ListReservationsUseCase>(
+      DI_TOKENS.ListReservationsUseCase,
+    );
+
+    const result = await useCase.execute({ assetId });
+
+    // Enrich with asset tags and person names
+    const enrichmentMap = await enrichAssetReservations(result.reservations);
+
+    return {
+      success: true,
+      data: AssetReservationPresenter.toDTOList(
+        result.reservations,
+        enrichmentMap,
+      ),
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "listReservationsByAssetAction", assetId },
+      "Failed to list reservations by asset",
+    );
+  }
+}
+
 export async function getReservationAction(
   id: string,
 ): Promise<ActionResponse<AssetReservationDTO>> {

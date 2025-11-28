@@ -36,7 +36,7 @@ interface AddFieldDialogProps {
   categoryId: string;
   availableFieldDefinitions: FieldDefinitionDTO[];
   existingFieldCount: number;
-  onFieldAdded: (field: EnrichedAssetCategoryFieldDTO) => void;
+  onFieldAdded: (fields: EnrichedAssetCategoryFieldDTO[]) => void;
 }
 
 export function AddFieldDialog({
@@ -86,7 +86,6 @@ export function AddFieldDialog({
     setIsSubmitting(true);
     try {
       let successCount = 0;
-      let lastAddedField: EnrichedAssetCategoryFieldDTO | null = null;
 
       // Add fields sequentially
       for (const fieldId of selectedFieldIds) {
@@ -105,29 +104,23 @@ export function AddFieldDialog({
       }
 
       if (successCount > 0) {
-        // Fetch the updated list to get enriched DTOs
+        // Fetch the updated list to get all enriched DTOs
         const updatedResult =
           await listEnrichedAssetCategoryFieldsAction(categoryId);
-        if (updatedResult.success && updatedResult.data.length > 0) {
-          // Get the newly added field (last in the list)
-          lastAddedField = updatedResult.data[updatedResult.data.length - 1];
-        }
 
         toast.success(
           `Added ${successCount} field${successCount > 1 ? "s" : ""} to category`,
         );
 
-        if (lastAddedField) {
-          onFieldAdded(lastAddedField);
+        // Pass all fields to parent to update state
+        if (updatedResult.success) {
+          onFieldAdded(updatedResult.data);
         }
 
-        // Reset state
+        // Reset state and close dialog
         setSelectedFieldIds(new Set());
         setSearchQuery("");
         onOpenChange(false);
-
-        // Refresh the page to get all new fields
-        window.location.reload();
       } else {
         toast.error("Failed to add fields");
       }
