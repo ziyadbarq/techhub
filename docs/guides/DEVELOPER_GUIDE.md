@@ -308,7 +308,7 @@ npm run dev
 ```bash
 npm run dev              # Start dev server (http://localhost:3000)
 npm run build            # Production build
-npm run start            # Start production server
+npm run start            # Start production server (auto-kills port conflicts)
 npm run type-check       # TypeScript validation
 npm run lint             # ESLint
 npm run format           # Prettier (auto-fix)

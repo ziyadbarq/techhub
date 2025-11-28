@@ -338,7 +338,7 @@ npm run build            # Build for production (type-check + lint + build)
 npm run build:fast       # Fast build (skips TypeScript checks)
 
 # Production
-npm run start            # Start server only (requires existing build)
+npm run start            # Start server only (auto-kills port conflicts)
 npm run start:deploy     # Full deployment: build → migrate → seed (if empty) → start
 
 # Code Quality

@@ -71,7 +71,7 @@ npm run validate # Type-check + lint + test
 # Build & Deploy
 npm run build         # Production build (type-check + lint + build)
 npm run build:fast    # Fast build (skips TypeScript)
-npm run start         # Start server only (requires existing build)
+npm run start         # Start server only (auto-kills port conflicts)
 npm run deploy        # Full deployment: build → migrate → seed (if empty) → cache clear → PM2 start
 npm run deploy:full   # Full deployment with npm install and force rebuild
 

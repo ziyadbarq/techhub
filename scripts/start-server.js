@@ -103,6 +103,25 @@ function exists(path) {
   }
 }
 
+/**
+ * Kill any process using the specified port (macOS/Linux)
+ * @param {string|number} port - The port number to check
+ * @returns {{ killed: boolean, pid?: string }}
+ */
+function killProcessOnPort(port) {
+  try {
+    // Get PID of process using the port
+    const pid = execSync(`lsof -ti :${port}`, { encoding: "utf-8" }).trim();
+    if (pid) {
+      execSync(`kill -9 ${pid}`);
+      return { killed: true, pid };
+    }
+  } catch {
+    // No process on port or command failed - that's fine
+  }
+  return { killed: false };
+}
+
 // ========================================
 // Validation Functions
 // ========================================
@@ -417,6 +436,12 @@ function startServer() {
   log("🚀", "Starting Next.js server...");
 
   const port = getValidatedPort();
+
+  // Kill any existing process on the port
+  const { killed, pid } = killProcessOnPort(port);
+  if (killed) {
+    logWarning(`Killed previous process on port ${port} (PID: ${pid})`);
+  }
 
   serverProcess = spawn("npx", ["next", "start"], {
     stdio: "inherit",
