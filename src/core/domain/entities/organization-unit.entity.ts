@@ -127,8 +127,15 @@ export class OrganizationUnit {
   /**
    * Move to a different parent
    * Business rule: Cannot move to own child (circular reference)
+   * @param newParentId - New parent ID (null for root)
+   * @param childIds - IDs of all descendants (for circular reference check)
+   * @param newLevel - New level based on new parent's level + 1
    */
-  moveTo(newParentId: string | null, childIds: string[]): void {
+  moveTo(
+    newParentId: string | null,
+    childIds: string[],
+    newLevel: number,
+  ): void {
     // Cannot move to self
     if (newParentId === this.props.id) {
       throw new Error("Cannot move organization unit to itself");
@@ -141,7 +148,22 @@ export class OrganizationUnit {
       );
     }
 
+    // Validate level
+    OrganizationUnit.validateLevel(newLevel, newParentId);
+
     this.props.parentId = newParentId;
+    this.props.level = newLevel;
+    this.props.updatedAt = new Date();
+  }
+
+  /**
+   * Update level (used when parent's level changes)
+   */
+  setLevel(level: number): void {
+    if (!Number.isInteger(level) || level < 1 || level > 10) {
+      throw new Error("Organization unit level must be between 1 and 10");
+    }
+    this.props.level = level;
     this.props.updatedAt = new Date();
   }
 

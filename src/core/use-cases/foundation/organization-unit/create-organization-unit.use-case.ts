@@ -17,7 +17,6 @@ export interface CreateOrganizationUnitProps {
   description?: string;
   parentId?: string | null;
   unitType: OrganizationUnitType;
-  level: number;
   managerId?: string | null;
   costCenter?: string | null;
   note?: string | null;
@@ -39,6 +38,8 @@ export class CreateOrganizationUnitUseCase {
    * @param props - Organization unit creation properties
    * @returns Created organization unit
    * @throws Error if code already exists
+   * @throws Error if parent not found
+   * @throws Error if max hierarchy depth exceeded
    */
   async execute(props: CreateOrganizationUnitProps): Promise<OrganizationUnit> {
     // Auto-generate code if not provided or empty
@@ -53,7 +54,24 @@ export class CreateOrganizationUnitUseCase {
       throw new Error(`Organization unit with code "${code}" already exists`);
     }
 
-    const organizationUnit = OrganizationUnit.create({ ...props, code });
+    // Auto-calculate level based on parent hierarchy
+    let level = 1;
+    if (props.parentId) {
+      const parent = await this.organizationUnitRepository.findById(
+        props.parentId,
+      );
+      if (!parent) {
+        throw new Error("Parent organization unit not found");
+      }
+      level = parent.level + 1;
+      if (level > 10) {
+        throw new Error(
+          "Maximum organization unit hierarchy depth (10 levels) exceeded",
+        );
+      }
+    }
+
+    const organizationUnit = OrganizationUnit.create({ ...props, code, level });
     const created =
       await this.organizationUnitRepository.create(organizationUnit);
     return created;

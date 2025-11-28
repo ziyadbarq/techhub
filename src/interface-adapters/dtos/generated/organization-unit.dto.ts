@@ -25,7 +25,6 @@ export const CreateOrganizationUnitSchema = z.object({
     .optional()
     .nullable(),
   unitType: z.nativeEnum(OrganizationUnitType),
-  level: z.number().int().min(0).optional().default(0),
   parentId: z.string().optional().nullable(),
   managerId: z.string().optional().nullable(),
   costCenter: z

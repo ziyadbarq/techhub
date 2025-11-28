@@ -65,7 +65,7 @@ export class UpdateOrganizationUnitUseCase {
       }
     }
 
-    // If moving to new parent, check for circular references
+    // If moving to new parent, check for circular references and recalculate levels
     if (
       props.parentId !== undefined &&
       props.parentId !== organizationUnit.parentId
@@ -74,7 +74,43 @@ export class UpdateOrganizationUnitUseCase {
         props.id,
       );
       const childIds = descendants.map((d) => d.id);
-      organizationUnit.moveTo(props.parentId, childIds);
+
+      // Calculate new level based on new parent
+      let newLevel = 1;
+      if (props.parentId) {
+        const newParent = await this.organizationUnitRepository.findById(
+          props.parentId,
+        );
+        if (!newParent) {
+          throw new Error("Parent organization unit not found");
+        }
+        newLevel = newParent.level + 1;
+        if (newLevel > 10) {
+          throw new Error(
+            "Maximum organization unit hierarchy depth (10 levels) exceeded",
+          );
+        }
+      }
+
+      // Calculate level difference to update descendants
+      const levelDiff = newLevel - organizationUnit.level;
+
+      // Move the unit (validates and updates level)
+      organizationUnit.moveTo(props.parentId, childIds, newLevel);
+
+      // Update descendants' levels if level changed
+      if (levelDiff !== 0) {
+        for (const descendant of descendants) {
+          const newDescendantLevel = descendant.level + levelDiff;
+          if (newDescendantLevel > 10) {
+            throw new Error(
+              `Moving this unit would exceed maximum hierarchy depth (10 levels) for descendant "${descendant.name}"`,
+            );
+          }
+          descendant.setLevel(newDescendantLevel);
+          await this.organizationUnitRepository.update(descendant);
+        }
+      }
     }
 
     // Update using entity's update method (includes validation)
