@@ -35,6 +35,9 @@ export const VENDOR_DATA = [
 // ==============================================
 
 export const LOCATION_DATA = [
+  // ==============================================
+  // Physical Locations
+  // ==============================================
   {
     name: "Riyadh Headquarters",
     code: "RUH-HQ",
@@ -56,6 +59,10 @@ export const LOCATION_DATA = [
     country: "Saudi Arabia",
     locationType: "BUILDING" as const,
   },
+
+  // ==============================================
+  // Remote/Logical Locations
+  // ==============================================
   {
     name: "Remote - Saudi Arabia",
     code: "SA-REMOTE",
@@ -69,6 +76,24 @@ export const LOCATION_DATA = [
     city: "Various",
     country: "Various",
     locationType: "LOGICAL" as const,
+  },
+
+  // ==============================================
+  // Cloud Data Centers (OCI Regions)
+  // ==============================================
+  {
+    name: "Oracle Cloud - Jeddah",
+    code: "OCI-JEDDAH",
+    city: "Jeddah",
+    country: "Saudi Arabia",
+    locationType: "DATA_CENTER" as const,
+  },
+  {
+    name: "Oracle Cloud - Riyadh",
+    code: "OCI-RIYADH",
+    city: "Riyadh",
+    country: "Saudi Arabia",
+    locationType: "DATA_CENTER" as const,
   },
 ] as const;
 

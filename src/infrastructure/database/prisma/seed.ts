@@ -28,6 +28,7 @@ import { seedCMDB } from "./seed-cmdb.js";
 import { seedLayer3ITAM } from "./seed-layer3-itam.js";
 import { seedAttachments } from "./seed-attachments.js";
 import { seedGovernance } from "./seed-governance.js";
+import { seedLicenses } from "./seed-licenses.js";
 import {
   seedBusinessProcesses,
   seedServices,
@@ -152,6 +153,14 @@ async function main() {
 
       await seedGovernance(prisma);
       seeded.push("Governance (data domains, ownerships, verification)");
+      console.log("");
+    }
+
+    // 7.5. Seed License Products (Microsoft 365)
+    if (shouldSeed(SeedModule.CMDB)) {
+      // License products depend on vendors (foundation layer)
+      await seedLicenses(prisma);
+      seeded.push("License Products (Microsoft 365)");
       console.log("");
     }
 

@@ -19,7 +19,7 @@
 export const SEED_QUANTITIES = {
   // Foundation Layer
   VENDORS: 9,
-  LOCATIONS: 5, // Barq actual locations
+  LOCATIONS: 7, // Barq actual locations + OCI regions
   ORGANIZATION_UNITS: 223, // 1 company + 17 departments + 55 sub-departments + 150 teams
   PERSONS: 21, // Demo persons matching service owners (production uses Graph sync)
   LIFECYCLE_STATUSES: 6,
@@ -57,6 +57,10 @@ export const SEED_QUANTITIES = {
   CONFIGURATION_ITEMS: 20,
   RELATIONSHIP_TYPES: 8,
   CI_RELATIONSHIPS: 15,
+
+  // License Management
+  LICENSE_PRODUCTS: 4, // Microsoft 365 products
+  LICENSE_ADDONS: 4, // Microsoft add-ons
 } as const;
 
 // ==============================================
@@ -74,6 +78,9 @@ export * from "./seed-config-layer3.js";
 
 // Governance
 export * from "./seed-config-governance.js";
+
+// Licenses
+export * from "./seed-config-licenses.js";
 
 // System & Services (split into multiple domain files)
 export * from "./seed-config-system/index.js";

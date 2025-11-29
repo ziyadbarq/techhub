@@ -67,11 +67,48 @@ export const ASSET_MODEL_DATA = {
       code: "T14SG4",
       description: "14-inch ultrabook",
     },
+    // Apple MacBook Models (from JAMF inventory)
     {
       vendor: "APPLE",
-      name: "MacBook Air 15-inch M3",
-      code: "MBA15M3",
-      description: "Lightweight Apple Silicon laptop",
+      name: "MacBook Air (M2, 2022)",
+      code: "MBA-M2-2022",
+      description: "13-inch M2 MacBook Air",
+    },
+    {
+      vendor: "APPLE",
+      name: "MacBook Air (15-inch, M3, 2024)",
+      code: "MBA-15-M3-2024",
+      description: "15-inch M3 MacBook Air",
+    },
+    {
+      vendor: "APPLE",
+      name: "MacBook Pro (14-inch, 2024) M4",
+      code: "MBP-14-M4-2024",
+      description: "14-inch M4 MacBook Pro",
+    },
+    {
+      vendor: "APPLE",
+      name: "MacBook Pro (14-inch, Nov 2023) M3 Pro",
+      code: "MBP-14-M3PRO-2023",
+      description: "14-inch M3 Pro MacBook Pro",
+    },
+    {
+      vendor: "APPLE",
+      name: "MacBook Pro (16-inch, 2024) M4 Pro",
+      code: "MBP-16-M4PRO-2024",
+      description: "16-inch M4 Pro MacBook Pro",
+    },
+    {
+      vendor: "APPLE",
+      name: "MacBook Pro (16-inch, 2024) M4 Max",
+      code: "MBP-16-M4MAX-2024",
+      description: "16-inch M4 Max MacBook Pro",
+    },
+    {
+      vendor: "APPLE",
+      name: "MacBook Pro (16-inch, Nov 2023) M3 Pro",
+      code: "MBP-16-M3PRO-2023",
+      description: "16-inch M3 Pro MacBook Pro",
     },
   ],
   DESKTOP: [
