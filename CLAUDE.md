@@ -83,10 +83,16 @@ npm run db:reset # Reset database + seed (drops all data!)
 npm run roles:manage            # Interactive user role manager
 npm run roles:manage -- --dry-run  # Preview role changes without applying
 npm run roles:manage -- --help     # Show role manager help
-
-# Ad-hoc Prisma scripts (with env + correct client import)
-npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastructure/database/prisma/client.ts'; (async()=>{ /* your queries */ await prisma.$disconnect();})();"
 ```
+
+## Database Development Quick Reference
+
+- **Running Prisma queries**: `npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastructure/database/prisma/client.ts'; (async()=>{ console.log(await prisma.asset.count()); await prisma.$disconnect();})();"` (use Prisma singleton; see docs/guides/PRISMA_GUIDE.md)
+- **Schema location**: Multi-file schema in `prisma/schema/` (`schema.prisma`, `assets.prisma`, `licenses.prisma`, `cmdb.prisma`, etc.)
+- **Schema changes**: Edit `.prisma` files → `npx prisma migrate dev --name descriptive_name` → `npm run db:generate`
+- **Common commands**: `npm run db:seed`, `npm run db:seed:dev`, `npm run db:reset`, `npx prisma studio`
+- **Critical rules**: Let Prisma generate migrations; never use `prisma db push` or `prisma migrate resolve --applied`; quote camelCase columns in raw SQL and use `@@map("table_name")`
+- **Environment**: PostgreSQL runs natively (no Docker); `DATABASE_URL` lives in `.env.local`
 
 ## Documentation
 

@@ -12,6 +12,8 @@
  * - Only syncs users with @barq.com or @barraq.com.sa domains
  */
 
+import { ORG_UNIT_DATA } from "@/infrastructure/database/prisma/seed-config-org-units";
+
 // ==============================================
 // Valid Email Domains for Sync
 // ==============================================
@@ -47,27 +49,35 @@ export function isValidEmailDomain(email: string | null): boolean {
  */
 export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   // ============================================
+  // BOARD / CEO / STRATEGY (new roots)
+  // ============================================
+  board: "BOAR",
+  "board of directors": "BOAR",
+  "board of director": "BOAR",
+  chairman: "BOAR",
+  "vice chairman": "BOAR",
+  ceo: "CEO",
+  "chief executive officer": "CEO",
+  "chief of staff": "EXEC-COS",
+  "chief of staff office": "EXEC-COS",
+  "strategy & corporate governance": "SCG",
+  "strategy and corporate governance": "SCG",
+  "strategy director": "SCG",
+  "strategic planning": "SCG",
+
+  // ============================================
   // EXECUTIVE LEADERSHIP (EXEC)
   // ============================================
   "ceo office": "EXEC-CEO",
   "ceo office manager": "EXEC-CEO",
-  "chief executive officer": "EXEC-CEO",
-  "board of directors": "EXEC",
   "board of directors member": "EXEC",
-  board: "EXEC",
-  chairman: "EXEC",
-  "vice chairman": "EXEC",
   "chairman of risk and compliance committee": "EXEC",
   "member of risk and compliance committee": "EXEC",
   executive: "EXEC",
   "executive office": "EXEC",
   "executive leadership": "EXEC",
   "business head": "EXEC",
-  "chief of staff": "EXEC-COS",
-  strategy: "EXEC-STRAT",
-  "strategy & growth": "EXEC-STRAT",
-  "strategy and growth": "EXEC-STRAT",
-  "strategy director": "EXEC-STRAT",
+  strategy: "SCG",
 
   // C-levels go to their corresponding departments
   "chief business officer": "BIZ",
@@ -112,6 +122,8 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   "regulatory compliance officer": "RISK-COMP",
   "regulatory compliance senior manager": "RISK-COMP",
   "compliance assurance": "RISK-COMP",
+  "compliance management": "COMPL-COMP",
+  "compliance operations": "COMPL-COMP",
 
   // AML & CTF
   "aml & ctf": "RISK-AML",
@@ -151,15 +163,19 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   "sanctions senior associate": "RISK-SANCT",
 
   // Risk Management
-  risk: "RISK-ERM",
-  "risk ": "RISK-ERM",
-  "risk associate": "RISK-ERM",
-  "risk manager": "RISK-ERM",
-  "risk management": "RISK-ERM",
-  "risk management ": "RISK-ERM",
-  "enterprise risk": "RISK-ERM",
-  "enterprise risk manager": "RISK-ERM",
-  "operational risk": "RISK-ERM",
+  risk: "RISK-MGMT",
+  "risk ": "RISK-MGMT",
+  "risk associate": "RISK-MGMT",
+  "risk manager": "RISK-MGMT",
+  "risk management": "RISK-MGMT",
+  "risk management ": "RISK-MGMT",
+  "enterprise risk": "RISK-MGMT",
+  "enterprise risk manager": "RISK-MGMT",
+  "operational risk": "RISK-MGMT",
+  "risk monitoring": "RMGT-RMR",
+  "risk monitoring & reporting": "RMGT-RMR",
+  "credit risk": "RMGT-CRED",
+  "operational risk management": "RMGT-OPER",
 
   // SAMA Affairs
   "sama affairs & compliance assurance": "RISK-SAMA",
@@ -306,15 +322,15 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   "business & partnerships": "BIZ",
 
   // Business Development (Regional)
-  "business development": "BIZ-BD",
-  "regional operations": "BIZ-BD",
-  "central regional manager": "BIZ-BD",
-  "central regional officer": "BIZ-BD",
-  "eastern regional manager": "BIZ-BD",
-  "south & north regional manager": "BIZ-BD",
-  "south regional officer": "BIZ-BD",
-  "western regional manager": "BIZ-BD",
-  "western regional officer": "BIZ-BD",
+  "business development": "BUSI-DEVP",
+  "regional operations": "BUSI-DEVP",
+  "central regional manager": "BUSI-DEVP",
+  "central regional officer": "BUSI-DEVP",
+  "eastern regional manager": "BUSI-DEVP",
+  "south & north regional manager": "BUSI-DEVP",
+  "south regional officer": "BUSI-DEVP",
+  "western regional manager": "BUSI-DEVP",
+  "western regional officer": "BUSI-DEVP",
 
   // Partnerships
   partnerships: "BIZ-PART",
@@ -506,6 +522,7 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   "data ": "TECH-DATA",
   "data & analytics": "TECH-DATA",
   "data and analytics": "TECH-DATA",
+  "data governance": "DATA",
   "data science": "TECH-DATA",
   "data science analytics": "TECH-DATA",
   "data science analytics officer": "TECH-DATA",
@@ -588,6 +605,7 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   infosec: "SEC",
   security: "SEC",
   ciso: "SEC",
+  "cybersecurity management": "SEC-MGMT",
 
   // Security Operations Center
   soc: "SEC-SOC",
@@ -605,11 +623,13 @@ export const DEPARTMENT_NORMALIZATION_MAP: Record<string, string> = {
   "blue team": "SEC-CDC",
 
   // Security GRC
-  "security governance": "SEC-GRC",
-  "security compliance": "SEC-GRC",
-  "security risk": "SEC-GRC",
-  "security audit": "SEC-GRC",
-  "cybersecurity governance, risk and compliance assistant manager": "SEC-GRC",
+  "security governance": "SEC-CGRAC-SGRC",
+  "security compliance": "SEC-CGRAC-SGRC",
+  "security risk": "SEC-CGRAC-SGRC",
+  "security audit": "SEC-CGRAC-SGRC",
+  "cybersecurity governance, risk and compliance assistant manager":
+    "SEC-CGRAC-SGRC",
+  "security governance risk & compliance": "SEC-GRC",
 
   // Vulnerability Management
   "vulnerability management": "SEC-VM",
@@ -749,14 +769,30 @@ export const OFFICE_NORMALIZATION_MAP: Record<string, string> = {
  */
 export const DEPARTMENT_ROLE_MAP: Record<string, string> = {
   // ============================================
+  // BOARD / CEO / STRATEGY
+  // ============================================
+  BOAR: "viewer",
+  CEO: "viewer",
+  SCG: "viewer",
+
+  // ============================================
   // CYBERSECURITY (SEC) - Reports to CISO
   // ============================================
   SEC: "security-officer",
   "SEC-SOC": "security-officer",
   "SEC-CDC": "security-officer",
-  "SEC-GRC": "security-officer",
+  "SEC-CGRAC-SGRC": "security-officer",
+  "SEC-CGRAC-SGRC-AUD": "security-officer",
+  "SEC-CGRAC-SGRC-POL": "security-officer",
+  "SEC-CGRAC-AUD": "security-officer",
+  "SEC-CGRAC-POL": "security-officer",
   "SEC-VM": "security-officer",
   "SEC-PRIV": "security-officer",
+  "SEC-GRC": "security-officer",
+  "SEC-OPS": "security-officer",
+  "SEC-CGRAC": "security-officer",
+  "SEC-CAD": "security-officer",
+  "SEC-MGMT": "security-officer",
 
   // ============================================
   // RISK & COMPLIANCE (RISK) - Reports to CRO
@@ -766,9 +802,16 @@ export const DEPARTMENT_ROLE_MAP: Record<string, string> = {
   "RISK-AML": "auditor",
   "RISK-FRAUD": "auditor",
   "RISK-SANCT": "auditor",
-  "RISK-ERM": "auditor",
+  "RISK-MGMT": "auditor",
   "RISK-SAMA": "auditor",
   "RISK-SSU": "auditor",
+  RMGT: "auditor",
+  "RMGT-RMR": "auditor",
+  "RMGT-OPER": "auditor",
+  "RMGT-BCM": "auditor",
+  "RMGT-CRED": "auditor",
+  "RMGT-RDM": "auditor",
+  "RMGT-ENTE": "auditor",
 
   // ============================================
   // INTERNAL AUDIT (AUDIT) - Reports to CRO/Board
@@ -777,6 +820,8 @@ export const DEPARTMENT_ROLE_MAP: Record<string, string> = {
   "AUDIT-INT": "auditor",
   "AUDIT-CORP": "auditor",
   "AUDIT-IT": "auditor",
+  INTA: "auditor",
+  "INTA-INTE": "auditor",
 
   // ============================================
   // TECHNOLOGY (TECH) - Reports to CTO
@@ -791,6 +836,7 @@ export const DEPARTMENT_ROLE_MAP: Record<string, string> = {
   "TECH-BCM": "service-owner",
   // Data & Analytics → data-steward (override)
   "TECH-DATA": "data-steward",
+  DATA: "data-steward",
 
   // ============================================
   // FINANCE (FIN) - Reports to CFO
@@ -846,10 +892,11 @@ export const DEPARTMENT_ROLE_MAP: Record<string, string> = {
   // BUSINESS & PARTNERSHIPS (BIZ) - Reports to CBO
   // ============================================
   BIZ: "viewer",
-  "BIZ-BD": "viewer",
+  "BUSI-DEVP": "viewer",
   "BIZ-PART": "viewer",
   "BIZ-REMIT": "viewer",
   "BIZ-GROWTH": "viewer",
+  BUSI: "viewer",
 
   // ============================================
   // LOYALTY & GAMING (LG) - Reports to CBO
@@ -885,7 +932,45 @@ export const DEPARTMENT_ROLE_MAP: Record<string, string> = {
   // ============================================
   VENDOR: "viewer",
   UNASSIGNED: "viewer",
+  COMPL: "auditor",
+  "COMPL-SANC": "auditor",
+  "COMPL-REGU": "auditor",
+  "COMPL-SACA": "auditor",
+  "COMPL-AFBC": "auditor",
+  "COMPL-AMLC": "auditor",
+  "COMPL-COMP": "auditor",
+  "COMPL-SSU": "auditor",
 } as const;
+
+// ==============================================
+// Validation Helpers (detect drift vs ORG_UNIT_DATA)
+// ==============================================
+
+const VALID_ORG_UNIT_CODES: Set<string> = new Set(
+  ORG_UNIT_DATA.map((unit) => unit.code),
+);
+
+function validateCodes(label: string, codes: Iterable<string>) {
+  const missing = new Set<string>();
+  for (const code of codes) {
+    if (!VALID_ORG_UNIT_CODES.has(code)) {
+      missing.add(code);
+    }
+  }
+  if (missing.size > 0) {
+    console.warn(
+      `[graph-normalization] ${label} references unknown org codes: ${[
+        ...missing,
+      ].join(", ")}`,
+    );
+  }
+}
+
+validateCodes(
+  "DEPARTMENT_NORMALIZATION_MAP",
+  Object.values(DEPARTMENT_NORMALIZATION_MAP),
+);
+validateCodes("DEPARTMENT_ROLE_MAP", Object.keys(DEPARTMENT_ROLE_MAP));
 
 /**
  * Title-based role overrides (higher priority than department).
@@ -950,6 +1035,20 @@ export function normalizeDepartment(dept: string | null): string | null {
   const trimmed = normalized.trimEnd();
   if (DEPARTMENT_NORMALIZATION_MAP[trimmed]) {
     return DEPARTMENT_NORMALIZATION_MAP[trimmed];
+  }
+
+  // Try direct name match from org unit data (keeps map aligned with seeds)
+  const normalizedNameKey = normalized.replace(/&/g, "and");
+  const fromNames = ORG_UNIT_DATA.find(
+    (unit) =>
+      unit.name
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, " ")
+        .replace(/&/g, "and") === normalizedNameKey,
+  );
+  if (fromNames) {
+    return fromNames.code;
   }
 
   // No match found - return null (will use default)
