@@ -48,7 +48,7 @@ export function ReadingProgress({ className }: ReadingProgressProps) {
       )}
     >
       <div
-        className="bg-barq-yellow h-full transition-all duration-150 ease-out"
+        className="h-full bg-gradient-to-r from-emerald-400 via-cyan-300 to-amber-300 transition-all duration-150 ease-out"
         style={{ width: `${progress}%` }}
         role="progressbar"
         aria-valuenow={Math.round(progress)}

@@ -58,10 +58,7 @@ import {
 } from "./navigation-groups/compliance";
 
 // System & administration groups
-import {
-  adminSettingsGroup,
-  documentationGroup,
-} from "./navigation-groups/system";
+import { adminSettingsGroup } from "./navigation-groups/system";
 
 // ============================================================================
 // Aggregate Navigation Groups
@@ -79,7 +76,6 @@ import {
  * 5. Licenses & Contracts
  * 6. Governance & Attachments
  * 7. Admin & Settings
- * 8. Documentation
  */
 export const navGroups = [
   // Core navigation (always visible)
@@ -102,9 +98,6 @@ export const navGroups = [
 
   // Administration and platform settings
   adminSettingsGroup,
-
-  // Documentation
-  documentationGroup,
 ];
 
 // ============================================================================

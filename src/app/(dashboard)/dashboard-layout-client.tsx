@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useSyncExternalStore, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { ErrorBoundary } from "@/components/error-boundary";
@@ -27,6 +28,7 @@ function useHydrated(): boolean {
 
 export function DashboardLayoutClient({ children }: { children: ReactNode }) {
   const isHydrated = useHydrated();
+  const pathname = usePathname();
 
   if (!isHydrated) {
     return <GlobalLoading />;
@@ -35,11 +37,14 @@ export function DashboardLayoutClient({ children }: { children: ReactNode }) {
   // Check if we're on a special page that needs full-width layout (no padding/max-width)
   // Add your special routes here (e.g., editor pages, canvas pages, etc.)
   const isFullWidthPage = false; // Modify this based on your needs
+  const isDocsPage = pathname?.startsWith("/docs");
 
   // Apply padding and max-width to all pages except special full-width pages
   const mainClasses = isFullWidthPage
     ? "flex-1 overflow-y-auto bg-muted/40"
-    : "flex-1 overflow-y-auto bg-muted/40 p-4 md:p-6 lg:p-8";
+    : isDocsPage
+      ? "flex-1 overflow-y-auto bg-muted/40"
+      : "flex-1 overflow-y-auto bg-muted/40 p-4 md:p-6 lg:p-8";
 
   return (
     <ErrorBoundary>

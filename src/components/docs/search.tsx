@@ -279,29 +279,29 @@ export function Search({ docs }: SearchProps) {
       {/* Search trigger button */}
       <Button
         variant="outline"
-        className="text-muted-foreground relative w-full justify-start text-sm"
+        className="border-border/60 bg-muted/50 text-foreground hover:border-foreground/40 hover:bg-muted/80 relative w-full justify-start rounded-full text-sm shadow-[0_12px_30px_-24px_rgba(0,0,0,0.7)] transition"
         onClick={() => setIsOpen(true)}
       >
-        <SearchIcon className="mr-2 h-4 w-4" />
-        <span>Search documentation...</span>
-        <kbd className="bg-muted pointer-events-none absolute top-1/2 right-2 hidden -translate-y-1/2 items-center gap-1 rounded border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none sm:flex">
+        <SearchIcon className="mr-2 h-4 w-4 text-emerald-300" />
+        <span className="text-muted-foreground">Search documentation...</span>
+        <kbd className="bg-muted pointer-events-none absolute top-1/2 right-2 hidden -translate-y-1/2 items-center gap-1 rounded-full border px-1.5 font-mono text-[10px] font-medium opacity-100 select-none sm:flex">
           <span className="text-xs">⌘</span>K
         </kbd>
       </Button>
 
       {/* Search dialog */}
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="gap-0 p-0 sm:max-w-2xl">
-          <DialogHeader className="border-border border-b px-4 py-3">
+        <DialogContent className="border-border/60 bg-card/90 gap-0 p-0 shadow-2xl backdrop-blur sm:max-w-2xl">
+          <DialogHeader className="border-border/60 border-b px-4 py-3">
             <DialogTitle className="sr-only">Search Documentation</DialogTitle>
             <div className="relative">
-              <SearchIcon className="text-muted-foreground absolute top-1/2 left-0 h-4 w-4 -translate-y-1/2" />
+              <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
               <Input
                 ref={inputRef}
                 placeholder="Search documentation..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="border-0 pr-10 pl-7 focus-visible:ring-0"
+                className="border-border/60 bg-background/80 pr-10 pl-9 text-sm focus-visible:ring-emerald-300"
                 autoFocus
               />
               {query && (
@@ -340,15 +340,15 @@ export function Search({ docs }: SearchProps) {
                     onClick={() => handleSelect(result.slug)}
                     onMouseEnter={() => setSelectedIndex(index)}
                     className={cn(
-                      "w-full rounded-md p-3 text-left transition-colors",
+                      "w-full rounded-xl p-3 text-left transition-colors",
                       "focus:outline-none",
                       selectedIndex === index
-                        ? "bg-muted"
+                        ? "bg-emerald-400/10 ring-1 ring-emerald-300/30"
                         : "hover:bg-muted/50",
                     )}
                   >
                     <div className="flex items-start gap-3">
-                      <FileText className="text-muted-foreground mt-1 h-4 w-4 flex-shrink-0" />
+                      <FileText className="mt-1 h-4 w-4 flex-shrink-0 text-emerald-300" />
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           <p className="font-medium">{result.title}</p>

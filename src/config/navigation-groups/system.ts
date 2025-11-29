@@ -2,8 +2,7 @@
  * System & Administration Navigation Groups
  *
  * Groups:
- * - Admin & Settings: Admin dashboard, system setup, RBAC analytics, feature flags, and platform settings
- * - Documentation: Getting started, entity reference, workflows, admin guide
+ * - Admin & Settings: Admin dashboard, system setup, RBAC analytics, feature flags, platform settings, and docs link
  */
 
 import {
@@ -14,11 +13,8 @@ import {
   ServerCog,
   Cloud,
   LayoutDashboard,
-  Database,
   Settings2,
-  Lightbulb,
-  GitBranch,
-  ShieldCheck,
+  BookOpen,
 } from "lucide-react";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { NavGroup } from "../navigation.types";
@@ -91,40 +87,13 @@ export const adminSettingsGroup: NavGroup = {
       description: "External system integrations and webhooks",
       permission: PERMISSIONS.SETTINGS_MANAGE,
     },
-  ],
-  visible: true,
-  collapsible: true,
-  defaultCollapsed: true,
-};
-
-export const documentationGroup: NavGroup = {
-  id: "documentation",
-  title: "Documentation",
-  items: [
     {
-      title: "Getting Started",
+      title: "Documentation",
       href: "/docs/getting-started/overview",
-      icon: Lightbulb,
-      description: "Foundation layer and data management basics",
-    },
-    {
-      title: "Workflows",
-      href: "/docs/user-guides/workflows",
-      icon: GitBranch,
-      description: "Common workflows and guides",
-    },
-    {
-      title: "Admin Guide",
-      href: "/docs/admin-guides/overview",
-      icon: ShieldCheck,
-      description: "RBAC and user management",
-      permission: PERMISSIONS.USERS_MANAGE,
-    },
-    {
-      title: "Entity Reference",
-      href: "/docs/reference/entities",
-      icon: Database,
-      description: "Complete guide to all entities",
+      icon: BookOpen,
+      description: "Guides, workflows, and references",
+      permission: PERMISSIONS.DASHBOARD_VIEW,
+      visible: false,
     },
   ],
   visible: true,

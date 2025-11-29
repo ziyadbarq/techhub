@@ -62,11 +62,11 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
   }
 
   return (
-    <nav className="space-y-2">
-      <p className="text-muted-foreground mb-4 text-sm font-semibold">
+    <nav className="border-border/60 bg-card/70 space-y-3 rounded-2xl border p-4 shadow-[0_12px_40px_-30px_rgba(0,0,0,0.7)] backdrop-blur">
+      <p className="text-muted-foreground mb-2 text-xs font-semibold tracking-[0.1em] uppercase">
         On This Page
       </p>
-      <ul className="space-y-2">
+      <ul className="space-y-1">
         {headings.map((heading) => (
           <li
             key={heading.id}
@@ -75,8 +75,9 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
             <button
               onClick={() => handleClick(heading.id)}
               className={cn(
-                "hover:text-foreground text-muted-foreground w-full text-left text-sm transition-colors",
-                activeId === heading.id && "text-barq-yellow font-medium",
+                "hover:text-foreground text-muted-foreground w-full rounded-md px-2 py-1 text-left text-sm transition",
+                activeId === heading.id &&
+                  "text-foreground bg-emerald-400/10 ring-1 ring-emerald-300/30",
               )}
             >
               {heading.text}

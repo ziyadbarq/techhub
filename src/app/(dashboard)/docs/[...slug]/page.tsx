@@ -26,7 +26,6 @@ import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
 import { customComponents } from "@/components/mdx/mdx-components";
 import { DocsRightSidebar } from "@/components/docs/docs-right-sidebar";
 import { DocsPagination } from "@/components/docs/docs-pagination";
-import { Breadcrumb } from "@/components/docs/breadcrumb";
 import { DocsFeedback } from "@/components/docs/docs-feedback";
 import { RelatedDocs } from "@/components/docs/related-docs";
 import { ScrollToTop } from "@/components/docs/scroll-to-top";
@@ -173,18 +172,16 @@ export default async function DocPage({ params }: DocPageProps) {
 
   return (
     <div className="relative">
-      {/* Breadcrumb */}
-      <div className="mb-6">
-        <Breadcrumb items={breadcrumbItems} />
-      </div>
-
       <div className="flex gap-8">
         {/* Main content */}
-        <article className="prose prose-slate dark:prose-invert max-w-none min-w-0 flex-1">
+        <article className="prose prose-slate dark:prose-invert border-border/60 bg-card/80 prose-headings:tracking-tight prose-headings:text-foreground prose-p:text-muted-foreground prose-li:text-muted-foreground prose-a:text-emerald-300 prose-a:underline prose-a:underline-offset-4 prose-strong:text-foreground max-w-3xl min-w-0 flex-1 rounded-3xl border px-8 py-8 shadow-[0_30px_90px_-70px_rgba(0,0,0,0.9)] backdrop-blur">
           {/* Page title */}
-          <div className="border-border mb-8 border-b pb-4">
-            <h1 className="mb-2">{frontmatter.title}</h1>
-            <p className="text-muted-foreground text-lg">
+          <div className="border-border mb-8 border-b pb-5">
+            <div className="text-xs font-semibold tracking-[0.15em] text-emerald-300 uppercase">
+              Documentation
+            </div>
+            <h1 className="mb-3 text-balance">{frontmatter.title}</h1>
+            <p className="text-muted-foreground text-lg leading-7">
               {frontmatter.description}
             </p>
 

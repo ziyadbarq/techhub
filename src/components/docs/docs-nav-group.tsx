@@ -38,17 +38,19 @@ function NavItem({ item, isActive }: { item: DocNavItem; isActive: boolean }) {
     <Link
       href={item.href}
       className={cn(
-        "group flex items-start gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+        "group flex items-start gap-3 rounded-xl px-3 py-2 text-sm transition-colors",
         isActive
-          ? "bg-barq-yellow/10 text-barq-yellow font-medium"
-          : "text-muted-foreground hover:bg-accent hover:text-foreground",
+          ? "text-foreground bg-emerald-400/10 shadow-[0_10px_30px_-24px_rgba(16,185,129,0.8)] ring-1 ring-emerald-400/30"
+          : "text-muted-foreground hover:bg-accent/60 hover:text-foreground",
       )}
     >
       {renderIcon(
         item.icon,
         cn(
           "mt-0.5 h-4 w-4 shrink-0 transition-colors",
-          isActive ? "text-barq-yellow" : "group-hover:text-foreground",
+          isActive
+            ? "text-emerald-300"
+            : "text-muted-foreground group-hover:text-foreground",
         ),
       )}
       <div className="flex min-w-0 flex-col gap-0.5">
@@ -87,10 +89,10 @@ export function DocsNavGroup({
       <button
         onClick={() => setIsExpanded(!effectiveExpanded)}
         className={cn(
-          "flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+          "flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm font-semibold tracking-tight transition-colors",
           hasActiveItem
-            ? "text-barq-yellow"
-            : "text-foreground hover:bg-accent",
+            ? "text-emerald-200"
+            : "text-foreground hover:bg-accent/60",
         )}
         aria-expanded={effectiveExpanded}
       >
@@ -99,7 +101,7 @@ export function DocsNavGroup({
             category.icon,
             cn(
               "h-4 w-4",
-              hasActiveItem ? "text-barq-yellow" : "text-muted-foreground",
+              hasActiveItem ? "text-emerald-300" : "text-muted-foreground",
             ),
           )}
           <span>{category.title}</span>
@@ -113,7 +115,7 @@ export function DocsNavGroup({
 
       {/* Category Items */}
       {effectiveExpanded && (
-        <div className="border-border ml-2 space-y-0.5 border-l pl-2">
+        <div className="border-border/60 ml-2 space-y-0.5 border-l pl-2">
           {category.items.map((item) => {
             const isActive = pathname === `/docs/${item.slug}`;
             return <NavItem key={item.slug} item={item} isActive={isActive} />;

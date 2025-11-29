@@ -10,7 +10,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, Settings, LogOut, Moon, Sun, Search } from "lucide-react";
+import {
+  User,
+  Settings,
+  LogOut,
+  Moon,
+  Sun,
+  Search,
+  House,
+  ChevronRight,
+} from "lucide-react";
 import { useTheme } from "next-themes";
 import { usePathname, useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth/client";
@@ -25,6 +34,8 @@ export function Header() {
   const { setOpen } = useCommandPalette();
 
   // Memoize breadcrumb calculation - only recalculate when pathname changes
+  const isDocsRoute = pathname?.startsWith("/docs");
+
   const breadcrumbs = useMemo(() => {
     // Filter out "dashboard" since we always add it as the first breadcrumb
     const pathSegments =
@@ -73,6 +84,40 @@ export function Header() {
     return [{ label: "Dashboard", path: "/dashboard" }, ...segments];
   }, [pathname]);
 
+  const docsBreadcrumbs = useMemo(() => {
+    if (!isDocsRoute) return null;
+    const docSegments = pathname?.replace(/^\/+/, "").split("/").slice(1); // drop "docs"
+
+    const formatLabel = (segment: string) =>
+      segment
+        .split("-")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+
+    const category = docSegments?.[0];
+    const lastSegment = docSegments?.[docSegments.length - 1];
+
+    const trail = [];
+    trail.push({ label: "Documentation", path: "/docs" });
+
+    if (category) {
+      trail.push({
+        label: formatLabel(category),
+        path: `/docs?category=${category}`,
+      });
+    }
+
+    if (lastSegment && lastSegment !== category) {
+      trail.push({ label: formatLabel(lastSegment) });
+    }
+
+    if (trail.length === 1) {
+      trail.push({ label: "Overview" });
+    }
+
+    return trail;
+  }, [isDocsRoute, pathname]);
+
   // Handle sign out - memoized to prevent unnecessary re-renders
   const handleSignOut = useCallback(async () => {
     await authClient.signOut();
@@ -82,8 +127,51 @@ export function Header() {
   return (
     <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-30 flex h-16 items-center gap-4 border-b pr-4 pl-16 backdrop-blur md:pr-6 md:pl-6">
       {/* Breadcrumbs */}
-      <nav className="flex flex-1 items-center gap-2 text-sm">
-        {breadcrumbs.length > 0 ? (
+      <nav
+        className="flex flex-1 items-center gap-2 text-sm"
+        aria-label="Breadcrumb"
+      >
+        {isDocsRoute && docsBreadcrumbs ? (
+          <ol className="text-muted-foreground flex items-center space-x-2">
+            <li>
+              <Link
+                href="/dashboard"
+                className="hover:text-foreground transition-colors"
+              >
+                <House className="h-4 w-4" />
+                <span className="sr-only">Home</span>
+              </Link>
+            </li>
+            {docsBreadcrumbs.map((crumb, index) => {
+              const isLast = index === docsBreadcrumbs.length - 1;
+              return (
+                <li
+                  key={`${crumb.label}-${index}`}
+                  className="flex items-center space-x-2"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                  {crumb.path && !isLast ? (
+                    <Link
+                      href={crumb.path}
+                      className="hover:text-foreground transition-colors"
+                    >
+                      {crumb.label}
+                    </Link>
+                  ) : (
+                    <span
+                      className={cn(
+                        "transition-colors",
+                        isLast ? "text-foreground font-medium" : "",
+                      )}
+                    >
+                      {crumb.label}
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        ) : breadcrumbs.length > 0 ? (
           breadcrumbs.map((crumb, index) => (
             <div key={crumb.path} className="flex items-center gap-2">
               {index > 0 && <span className="text-muted-foreground">/</span>}

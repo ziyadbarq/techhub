@@ -63,16 +63,16 @@ export function DocsNav() {
             key={item.href}
             href={item.href}
             className={cn(
-              "flex items-start gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors",
+              "flex items-start gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors",
               isActive
-                ? "bg-barq-yellow/10 text-barq-yellow font-medium"
-                : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                ? "text-foreground bg-emerald-400/10 ring-1 ring-emerald-300/30"
+                : "text-muted-foreground hover:bg-accent/60 hover:text-foreground",
             )}
           >
             <Icon
               className={cn(
                 "mt-0.5 h-4 w-4 shrink-0",
-                isActive ? "text-barq-yellow" : "",
+                isActive ? "text-emerald-300" : "",
               )}
             />
             <div className="flex flex-col gap-1">
