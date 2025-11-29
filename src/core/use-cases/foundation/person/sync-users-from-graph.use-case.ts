@@ -23,10 +23,12 @@ import type { ILocationRepository } from "@/core/repositories/location.repositor
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import { Person } from "@/core/domain/entities/person.entity";
 import {
+  isInternalUser,
   transformGraphUserToPerson,
   type SyncResult,
   type FetchUsersOptions,
   type TransformGraphUserOptions,
+  type GraphUser,
 } from "@/lib/schemas/graph-user.schema";
 import type {
   GraphSyncProgress,
@@ -66,6 +68,12 @@ export interface SyncUsersOptions extends FetchUsersOptions {
    * Dry run - don't actually make changes
    */
   dryRun?: boolean;
+
+  /**
+   * Limit sync to specific Azure AD user IDs
+   * When provided, skips deactivation of missing users
+   */
+  targetAzureIds?: string[];
 
   /**
    * Progress callback for real-time updates
@@ -144,6 +152,14 @@ export class SyncUsersFromGraphUseCase {
 
     const startTime = Date.now();
     const onProgress = options?.onProgress;
+    const targetAzureIds = Array.from(
+      new Set(
+        (options?.targetAzureIds ?? [])
+          .map((id) => id.trim())
+          .filter((id) => id.length > 0),
+      ),
+    );
+    const hasTargetAzureIds = targetAzureIds.length > 0;
     let lastReported = -1;
 
     // Helper to get stats for progress reporting
@@ -185,7 +201,9 @@ export class SyncUsersFromGraphUseCase {
       );
 
       // Pass 1: Fetch users from Graph
-      this.logger.info("Pass 1: Fetching users from Microsoft Graph");
+      this.logger.info("Pass 1: Fetching users from Microsoft Graph", {
+        targetAzureIds: hasTargetAzureIds ? targetAzureIds : undefined,
+      });
       this.reportProgress(
         onProgress,
         "fetching-users",
@@ -197,10 +215,52 @@ export class SyncUsersFromGraphUseCase {
         -1,
       );
 
-      const graphUsers = await this.graphService.fetchAllUsers({
-        includeDisabled: options?.includeDisabled,
-        includeGuests: options?.includeGuests,
-      });
+      let graphUsers: GraphUser[] = [];
+
+      if (hasTargetAzureIds) {
+        const fetchResults = await Promise.all(
+          targetAzureIds.map(async (azureAdId) => {
+            try {
+              const user = await this.graphService.fetchUser(azureAdId);
+              if (!user) {
+                result.errors.push({
+                  azureAdId,
+                  error: "User not found in Microsoft Graph",
+                });
+              }
+              return user;
+            } catch (error) {
+              result.errors.push({
+                azureAdId,
+                error:
+                  error instanceof Error ? error.message : String(error ?? ""),
+              });
+              this.logger.warn("Failed to fetch user from Graph", {
+                azureAdId,
+                error: error instanceof Error ? error.message : String(error),
+              });
+              return null;
+            }
+          }),
+        );
+
+        graphUsers = fetchResults.filter(
+          (user): user is GraphUser =>
+            !!user && (options?.includeGuests ? true : isInternalUser(user)),
+        );
+      } else {
+        graphUsers = await this.graphService.fetchAllUsers({
+          includeDisabled: options?.includeDisabled,
+          includeGuests: options?.includeGuests,
+        });
+      }
+
+      if (graphUsers.length === 0) {
+        this.logger.warn("No Graph users available to sync", {
+          targetAzureIds,
+        });
+        return result;
+      }
 
       this.logger.info("Fetched users from Graph", {
         count: graphUsers.length,
@@ -379,7 +439,7 @@ export class SyncUsersFromGraphUseCase {
       }
 
       // Pass 3: Deactivate users no longer in Graph
-      if (options?.deactivateMissing !== false) {
+      if (!hasTargetAzureIds && options?.deactivateMissing !== false) {
         this.logger.info("Pass 3: Deactivating removed users");
         this.reportProgress(
           onProgress,

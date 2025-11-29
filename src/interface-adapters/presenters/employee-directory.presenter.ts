@@ -11,6 +11,7 @@ import type { Person } from "@/core/domain/entities/person.entity";
  */
 export interface EmployeeDirectoryDTO {
   id: string;
+  azureAdId: string | null;
   firstName: string;
   lastName: string;
   fullName: string;
@@ -81,6 +82,7 @@ export function presentEmployeeDirectory(
 
   return {
     id: person.id,
+    azureAdId: person.azureAdId,
     firstName: person.firstName,
     lastName: person.lastName,
     fullName: generateFullName(

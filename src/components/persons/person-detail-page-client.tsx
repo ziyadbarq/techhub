@@ -26,6 +26,7 @@ import {
   CheckCircle2,
   XCircle,
   UserPlus,
+  RefreshCw,
   Link2,
   Copy,
   Check,
@@ -57,6 +58,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -83,6 +85,7 @@ import {
   getPersonDetailsAction,
   getPersonLinkedUserAction,
 } from "@/interface-adapters/controllers/person-details.controller";
+import { syncPersonFromGraphAction } from "@/interface-adapters/controllers/microsoft-graph.controller";
 import {
   createUserForPersonAction,
   linkUserToPersonAction,
@@ -137,12 +140,14 @@ export function PersonDetailPageClient({
   const [copiedField, setCopiedField] = useState<
     "email" | "password" | "both" | null
   >(null);
+  const [isSyncingFromGraph, setIsSyncingFromGraph] = useState(false);
 
   // Permission checks
   const canUpdate = hasPermission(PERMISSIONS.PERSONS_UPDATE);
   const canDelete = hasPermission(PERMISSIONS.PERSONS_DELETE);
   const canManage = hasPermission(PERMISSIONS.PERSONS_MANAGE);
   const canManageUsers = hasPermission(PERMISSIONS.USERS_MANAGE);
+  const canSync = hasPermission(PERMISSIONS.PERSONS_SYNC);
 
   // Calculate stats for quick stats cards
   const totalAssets =
@@ -309,6 +314,32 @@ Please change your password after first login.`;
     }
   };
 
+  const handleSyncPerson = async () => {
+    if (!person.azureAdId) {
+      toast.error("Cannot sync because this person is not linked to Entra ID");
+      return;
+    }
+
+    setIsSyncingFromGraph(true);
+    try {
+      const result = await syncPersonFromGraphAction(person.id);
+      if (result.success) {
+        const updated = await getPersonDetailsAction(person.id);
+        if (updated.success) {
+          setPerson(updated.data);
+        }
+        toast.success("Person synced from Microsoft Graph");
+        router.refresh();
+      } else {
+        toast.error(result.error ?? "Failed to sync person");
+      }
+    } catch {
+      toast.error("Failed to sync person");
+    } finally {
+      setIsSyncingFromGraph(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -388,6 +419,30 @@ Please change your password after first login.`;
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
+                ) : canManageUsers ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Badge
+                        variant="outline"
+                        className="cursor-pointer gap-1 border-orange-500 text-orange-600"
+                      >
+                        <XCircle className="h-3 w-3" />
+                        No User Account
+                      </Badge>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-52">
+                      <DropdownMenuItem
+                        onClick={() => setIsCreateUserDialogOpen(true)}
+                      >
+                        <UserPlus className="mr-2 h-4 w-4" />
+                        Create User Account
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleOpenLinkDialog}>
+                        <Link2 className="mr-2 h-4 w-4" />
+                        Link Existing User
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 ) : (
                   <Badge
                     variant="outline"
@@ -420,6 +475,30 @@ Please change your password after first login.`;
               </a>
             </Button>
           )}
+          {canSync && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleSyncPerson}
+                    disabled={isSyncingFromGraph || !person.azureAdId}
+                  >
+                    <RefreshCw
+                      className={`mr-2 h-4 w-4 ${isSyncingFromGraph ? "animate-spin" : ""}`}
+                    />
+                    {isSyncingFromGraph ? "Syncing..." : "Sync from Entra"}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {person.azureAdId
+                    ? "Refresh this person from Microsoft Entra ID"
+                    : "This person is not linked to Microsoft Entra ID"}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
           {canUpdate && (
             <Button
               variant="outline"
@@ -430,55 +509,77 @@ Please change your password after first login.`;
               Edit
             </Button>
           )}
-          {/* User Provisioning Actions */}
-          {canManageUsers && !linkedUser && !isLoadingUser && (
+          {(canSync || canManageUsers || canManage || canDelete) && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <UserPlus className="mr-2 h-4 w-4" />
-                  Provision User
+                <Button variant="outline" size="sm" className="gap-2">
+                  <RefreshCw className="h-4 w-4" />
+                  More
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  onClick={() => setIsCreateUserDialogOpen(true)}
-                >
-                  <UserPlus className="mr-2 h-4 w-4" />
-                  Create New User Account
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleOpenLinkDialog}>
-                  <Link2 className="mr-2 h-4 w-4" />
-                  Link to Existing User
-                </DropdownMenuItem>
+              <DropdownMenuContent align="end" className="w-48">
+                {canManageUsers && !linkedUser && !isLoadingUser && (
+                  <>
+                    <DropdownMenuItem
+                      onClick={() => setIsCreateUserDialogOpen(true)}
+                    >
+                      <UserPlus className="mr-2 h-4 w-4" />
+                      Create User
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleOpenLinkDialog}>
+                      <Link2 className="mr-2 h-4 w-4" />
+                      Link Existing User
+                    </DropdownMenuItem>
+                    {(canSync || canManage || canDelete) && (
+                      <DropdownMenuSeparator />
+                    )}
+                  </>
+                )}
+
+                {canSync && person.azureAdId && (
+                  <DropdownMenuItem
+                    onClick={handleSyncPerson}
+                    disabled={isSyncingFromGraph}
+                  >
+                    <RefreshCw
+                      className={`mr-2 h-4 w-4 ${isSyncingFromGraph ? "animate-spin" : ""}`}
+                    />
+                    {isSyncingFromGraph ? "Syncing..." : "Sync from Entra"}
+                  </DropdownMenuItem>
+                )}
+
+                {canManage && (
+                  <DropdownMenuItem
+                    onClick={handleToggleExclusion}
+                    disabled={isTogglingExclusion}
+                  >
+                    {isTogglingExclusion ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : person.isExcluded ? (
+                      <UserCheck className="mr-2 h-4 w-4" />
+                    ) : (
+                      <UserX className="mr-2 h-4 w-4" />
+                    )}
+                    {person.isExcluded ? "Include person" : "Exclude person"}
+                  </DropdownMenuItem>
+                )}
+
+                {canDelete && (
+                  <>
+                    {(canSync && person.azureAdId) || canManage ? (
+                      <DropdownMenuSeparator />
+                    ) : null}
+                    <DropdownMenuItem
+                      onClick={() => setIsDeleteDialogOpen(true)}
+                      className="text-destructive focus:text-destructive"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" />
+                      Delete person
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
-          )}
-          {canManage && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleToggleExclusion}
-              disabled={isTogglingExclusion}
-            >
-              {isTogglingExclusion ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : person.isExcluded ? (
-                <UserCheck className="mr-2 h-4 w-4" />
-              ) : (
-                <UserX className="mr-2 h-4 w-4" />
-              )}
-              {person.isExcluded ? "Include" : "Exclude"}
-            </Button>
-          )}
-          {canDelete && (
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => setIsDeleteDialogOpen(true)}
-            >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete
-            </Button>
           )}
         </div>
       </div>

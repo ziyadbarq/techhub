@@ -17,6 +17,7 @@ import type { CreateOrganizationUnitUseCase } from "@/core/use-cases/foundation/
 import { IMicrosoftGraphService } from "@/core/services/microsoft-graph.service.interface";
 import type { IOrganizationUnitRepository } from "@/core/repositories/organization-unit.repository.interface";
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
+import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import type { SyncResult } from "@/lib/schemas/graph-user.schema";
 import { OrganizationUnitType } from "@/core/domain/value-objects/foundation-enums";
 import { z } from "zod";
@@ -133,6 +134,90 @@ export async function syncUsersFromGraphAction(
       error,
       { function: "syncUsersFromGraphAction" },
       "Failed to sync users from Microsoft Graph",
+    );
+  }
+}
+
+/**
+ * Sync a single person from Microsoft Graph
+ *
+ * Refreshes a specific user using their Azure AD ID (person detail page)
+ */
+export async function syncPersonFromGraphAction(
+  personId: string,
+): Promise<ActionResponse<SyncResultDTO>> {
+  try {
+    await requirePermission(PERMISSIONS.PERSONS_SYNC);
+
+    if (!personId) {
+      return {
+        success: false,
+        error: "Person ID is required",
+      };
+    }
+
+    const container = getContainer();
+    const personRepo = container.get<IPersonRepository>(
+      DI_TOKENS.IPersonRepository,
+    );
+    const person = await personRepo.findById(personId);
+
+    if (!person) {
+      return { success: false, error: "Person not found" };
+    }
+
+    if (!person.azureAdId) {
+      return {
+        success: false,
+        error: "Person is not linked to Microsoft Entra ID",
+      };
+    }
+
+    const useCase = container.get<SyncUsersFromGraphUseCase>(
+      DI_TOKENS.SyncUsersFromGraphUseCase,
+    );
+
+    const result: SyncResult = await useCase.execute({
+      targetAzureIds: [person.azureAdId],
+      includeDisabled: true,
+      includeGuests: false,
+      defaultOrgUnitId: person.orgUnitId,
+      defaultPrimaryRoleId: person.primaryRoleId,
+      deactivateMissing: false,
+    });
+
+    if (
+      result.errors.length > 0 &&
+      result.created === 0 &&
+      result.updated === 0
+    ) {
+      return {
+        success: false,
+        error:
+          result.errors[0]?.error ||
+          "Failed to sync person from Microsoft Graph",
+      };
+    }
+
+    revalidatePath("/persons");
+    revalidatePath(`/persons/${personId}`);
+
+    return {
+      success: true,
+      data: {
+        created: result.created,
+        updated: result.updated,
+        deactivated: result.deactivated,
+        excluded: result.excluded,
+        errorCount: result.errors.length,
+        errors: result.errors,
+      },
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "syncPersonFromGraphAction" },
+      "Failed to sync person from Microsoft Graph",
     );
   }
 }
