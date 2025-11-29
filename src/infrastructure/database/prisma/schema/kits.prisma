@@ -15,7 +15,7 @@ model AssetKit {
   name        String
   code        String   @unique
   description String?  @db.Text
-  kitType     String // NEW_HIRE, CONTRACTOR, EXECUTIVE, PROJECT, TEMPORARY, OTHER
+  kitType     AssetKitTypeEnum @default(OTHER)
   isActive    Boolean  @default(true)
   metadata    Json?
   createdAt   DateTime @default(now())
@@ -31,6 +31,7 @@ model AssetKit {
   deletedBy Person?            @relation("AssetKitDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes
+  @@unique([name])
   @@index([code])
   @@index([kitType])
   @@index([isActive])
@@ -69,12 +70,12 @@ model AssetKitItem {
 model AssetKitCheckout {
   id                 String    @id @default(cuid())
   assetKitId         String
-  assigneeType       String // PERSON, ORG_UNIT, LOCATION
+  assigneeType       KitAssigneeTypeEnum @default(PERSON)
   assigneeId         String
   checkoutDate       DateTime  @default(now())
   expectedReturnDate DateTime?
   actualReturnDate   DateTime?
-  status             String    @default("CHECKED_OUT") // CHECKED_OUT, PARTIALLY_RETURNED, RETURNED, CANCELLED
+  status             KitCheckoutStatusEnum @default(CHECKED_OUT)
   checkedOutById     String
   note               String?   @db.Text
   createdAt          DateTime  @default(now())
@@ -105,7 +106,7 @@ model AssetKitCheckoutItem {
   kitItemId           String
   checkoutDate        DateTime  @default(now())
   returnDate          DateTime?
-  status              String    @default("CHECKED_OUT") // CHECKED_OUT, RETURNED, DAMAGED, LOST
+  status              KitCheckoutItemStatusEnum @default(CHECKED_OUT)
   conditionAtCheckout String?   @db.Text
   conditionAtReturn   String?   @db.Text
   note                String?   @db.Text
@@ -118,9 +119,43 @@ model AssetKitCheckoutItem {
   kitItem     AssetKitItem     @relation(fields: [kitItemId], references: [id], onDelete: Restrict)
 
   // Indexes
+  @@unique([kitCheckoutId, assetId])
   @@index([kitCheckoutId])
   @@index([assetId])
   @@index([kitItemId])
   @@index([status])
   @@map("asset_kit_checkout_items")
+}
+
+// ============================================
+// ASSET KIT ENUMS
+// ============================================
+
+enum AssetKitTypeEnum {
+  NEW_HIRE
+  CONTRACTOR
+  EXECUTIVE
+  PROJECT
+  TEMPORARY
+  OTHER
+}
+
+enum KitAssigneeTypeEnum {
+  PERSON
+  ORG_UNIT
+  LOCATION
+}
+
+enum KitCheckoutStatusEnum {
+  CHECKED_OUT
+  PARTIALLY_RETURNED
+  RETURNED
+  CANCELLED
+}
+
+enum KitCheckoutItemStatusEnum {
+  CHECKED_OUT
+  RETURNED
+  DAMAGED
+  LOST
 }

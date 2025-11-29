@@ -115,6 +115,7 @@ model ConfigurationItem {
   @@index([primaryOwnerPersonId])
   @@index([primaryOwnerOrgUnitId])
   @@index([locationId])
+  @@unique([linkedAssetId])
   @@index([ciKey])
   @@index([name])
   @@index([deletedAt])

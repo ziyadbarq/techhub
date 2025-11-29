@@ -32,7 +32,7 @@ export type AssetReservationMinAggregateOutputType = {
   reservedById: string | null
   startDate: Date | null
   endDate: Date | null
-  status: string | null
+  status: $Enums.AssetReservationStatusEnum | null
   purpose: string | null
   note: string | null
   confirmationDate: Date | null
@@ -54,7 +54,7 @@ export type AssetReservationMaxAggregateOutputType = {
   reservedById: string | null
   startDate: Date | null
   endDate: Date | null
-  status: string | null
+  status: $Enums.AssetReservationStatusEnum | null
   purpose: string | null
   note: string | null
   confirmationDate: Date | null
@@ -239,7 +239,7 @@ export type AssetReservationGroupByOutputType = {
   reservedById: string
   startDate: Date
   endDate: Date
-  status: string
+  status: $Enums.AssetReservationStatusEnum
   purpose: string | null
   note: string | null
   confirmationDate: Date | null
@@ -282,7 +282,7 @@ export type AssetReservationWhereInput = {
   reservedById?: Prisma.StringFilter<"AssetReservation"> | string
   startDate?: Prisma.DateTimeFilter<"AssetReservation"> | Date | string
   endDate?: Prisma.DateTimeFilter<"AssetReservation"> | Date | string
-  status?: Prisma.StringFilter<"AssetReservation"> | string
+  status?: Prisma.EnumAssetReservationStatusEnumFilter<"AssetReservation"> | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
   note?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
   confirmationDate?: Prisma.DateTimeNullableFilter<"AssetReservation"> | Date | string | null
@@ -347,7 +347,7 @@ export type AssetReservationWhereUniqueInput = Prisma.AtLeast<{
   reservedById?: Prisma.StringFilter<"AssetReservation"> | string
   startDate?: Prisma.DateTimeFilter<"AssetReservation"> | Date | string
   endDate?: Prisma.DateTimeFilter<"AssetReservation"> | Date | string
-  status?: Prisma.StringFilter<"AssetReservation"> | string
+  status?: Prisma.EnumAssetReservationStatusEnumFilter<"AssetReservation"> | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
   note?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
   confirmationDate?: Prisma.DateTimeNullableFilter<"AssetReservation"> | Date | string | null
@@ -406,7 +406,7 @@ export type AssetReservationScalarWhereWithAggregatesInput = {
   reservedById?: Prisma.StringWithAggregatesFilter<"AssetReservation"> | string
   startDate?: Prisma.DateTimeWithAggregatesFilter<"AssetReservation"> | Date | string
   endDate?: Prisma.DateTimeWithAggregatesFilter<"AssetReservation"> | Date | string
-  status?: Prisma.StringWithAggregatesFilter<"AssetReservation"> | string
+  status?: Prisma.EnumAssetReservationStatusEnumWithAggregatesFilter<"AssetReservation"> | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.StringNullableWithAggregatesFilter<"AssetReservation"> | string | null
   note?: Prisma.StringNullableWithAggregatesFilter<"AssetReservation"> | string | null
   confirmationDate?: Prisma.DateTimeNullableWithAggregatesFilter<"AssetReservation"> | Date | string | null
@@ -424,7 +424,7 @@ export type AssetReservationCreateInput = {
   id?: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -452,7 +452,7 @@ export type AssetReservationUncheckedCreateInput = {
   reservedById: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -472,7 +472,7 @@ export type AssetReservationUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -500,7 +500,7 @@ export type AssetReservationUncheckedUpdateInput = {
   reservedById?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -524,7 +524,7 @@ export type AssetReservationCreateManyInput = {
   reservedById: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -542,7 +542,7 @@ export type AssetReservationUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -561,7 +561,7 @@ export type AssetReservationUncheckedUpdateManyInput = {
   reservedById?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -950,6 +950,10 @@ export type AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput = {
   deleteMany?: Prisma.AssetReservationScalarWhereInput | Prisma.AssetReservationScalarWhereInput[]
 }
 
+export type EnumAssetReservationStatusEnumFieldUpdateOperationsInput = {
+  set?: $Enums.AssetReservationStatusEnum
+}
+
 export type AssetReservationCreateNestedOneWithoutConflictsInput = {
   create?: Prisma.XOR<Prisma.AssetReservationCreateWithoutConflictsInput, Prisma.AssetReservationUncheckedCreateWithoutConflictsInput>
   connectOrCreate?: Prisma.AssetReservationCreateOrConnectWithoutConflictsInput
@@ -982,7 +986,7 @@ export type AssetReservationCreateWithoutAssetInput = {
   id?: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1008,7 +1012,7 @@ export type AssetReservationUncheckedCreateWithoutAssetInput = {
   reservedById: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1061,7 +1065,7 @@ export type AssetReservationScalarWhereInput = {
   reservedById?: Prisma.StringFilter<"AssetReservation"> | string
   startDate?: Prisma.DateTimeFilter<"AssetReservation"> | Date | string
   endDate?: Prisma.DateTimeFilter<"AssetReservation"> | Date | string
-  status?: Prisma.StringFilter<"AssetReservation"> | string
+  status?: Prisma.EnumAssetReservationStatusEnumFilter<"AssetReservation"> | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
   note?: Prisma.StringNullableFilter<"AssetReservation"> | string | null
   confirmationDate?: Prisma.DateTimeNullableFilter<"AssetReservation"> | Date | string | null
@@ -1079,7 +1083,7 @@ export type AssetReservationCreateWithoutReservedForOrgUnitInput = {
   id?: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1105,7 +1109,7 @@ export type AssetReservationUncheckedCreateWithoutReservedForOrgUnitInput = {
   reservedById: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1151,7 +1155,7 @@ export type AssetReservationCreateWithoutReservedForPersonInput = {
   id?: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1177,7 +1181,7 @@ export type AssetReservationUncheckedCreateWithoutReservedForPersonInput = {
   reservedById: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1207,7 +1211,7 @@ export type AssetReservationCreateWithoutReservedByInput = {
   id?: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1233,7 +1237,7 @@ export type AssetReservationUncheckedCreateWithoutReservedByInput = {
   reservedForOrgUnitId?: string | null
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1263,7 +1267,7 @@ export type AssetReservationCreateWithoutConfirmedByInput = {
   id?: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1290,7 +1294,7 @@ export type AssetReservationUncheckedCreateWithoutConfirmedByInput = {
   reservedById: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1319,7 +1323,7 @@ export type AssetReservationCreateWithoutCancelledByInput = {
   id?: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1346,7 +1350,7 @@ export type AssetReservationUncheckedCreateWithoutCancelledByInput = {
   reservedById: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1375,7 +1379,7 @@ export type AssetReservationCreateWithoutDeletedByInput = {
   id?: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1402,7 +1406,7 @@ export type AssetReservationUncheckedCreateWithoutDeletedByInput = {
   reservedById: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1511,7 +1515,7 @@ export type AssetReservationCreateWithoutConflictsInput = {
   id?: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1538,7 +1542,7 @@ export type AssetReservationUncheckedCreateWithoutConflictsInput = {
   reservedById: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1562,7 +1566,7 @@ export type AssetReservationCreateWithoutConflictingReservationsInput = {
   id?: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1589,7 +1593,7 @@ export type AssetReservationUncheckedCreateWithoutConflictingReservationsInput =
   reservedById: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1624,7 +1628,7 @@ export type AssetReservationUpdateWithoutConflictsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1651,7 +1655,7 @@ export type AssetReservationUncheckedUpdateWithoutConflictsInput = {
   reservedById?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1681,7 +1685,7 @@ export type AssetReservationUpdateWithoutConflictingReservationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1708,7 +1712,7 @@ export type AssetReservationUncheckedUpdateWithoutConflictingReservationsInput =
   reservedById?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1730,7 +1734,7 @@ export type AssetReservationCreateManyAssetInput = {
   reservedById: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1748,7 +1752,7 @@ export type AssetReservationUpdateWithoutAssetInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1774,7 +1778,7 @@ export type AssetReservationUncheckedUpdateWithoutAssetInput = {
   reservedById?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1797,7 +1801,7 @@ export type AssetReservationUncheckedUpdateManyWithoutAssetInput = {
   reservedById?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1818,7 +1822,7 @@ export type AssetReservationCreateManyReservedForOrgUnitInput = {
   reservedById: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1836,7 +1840,7 @@ export type AssetReservationUpdateWithoutReservedForOrgUnitInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1862,7 +1866,7 @@ export type AssetReservationUncheckedUpdateWithoutReservedForOrgUnitInput = {
   reservedById?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1885,7 +1889,7 @@ export type AssetReservationUncheckedUpdateManyWithoutReservedForOrgUnitInput = 
   reservedById?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1906,7 +1910,7 @@ export type AssetReservationCreateManyReservedForPersonInput = {
   reservedById: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1927,7 +1931,7 @@ export type AssetReservationCreateManyReservedByInput = {
   reservedForOrgUnitId?: string | null
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1949,7 +1953,7 @@ export type AssetReservationCreateManyConfirmedByInput = {
   reservedById: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1970,7 +1974,7 @@ export type AssetReservationCreateManyCancelledByInput = {
   reservedById: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -1991,7 +1995,7 @@ export type AssetReservationCreateManyDeletedByInput = {
   reservedById: string
   startDate: Date | string
   endDate: Date | string
-  status?: string
+  status?: $Enums.AssetReservationStatusEnum
   purpose?: string | null
   note?: string | null
   confirmationDate?: Date | string | null
@@ -2008,7 +2012,7 @@ export type AssetReservationUpdateWithoutReservedForPersonInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2034,7 +2038,7 @@ export type AssetReservationUncheckedUpdateWithoutReservedForPersonInput = {
   reservedById?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2057,7 +2061,7 @@ export type AssetReservationUncheckedUpdateManyWithoutReservedForPersonInput = {
   reservedById?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2075,7 +2079,7 @@ export type AssetReservationUpdateWithoutReservedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2101,7 +2105,7 @@ export type AssetReservationUncheckedUpdateWithoutReservedByInput = {
   reservedForOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2124,7 +2128,7 @@ export type AssetReservationUncheckedUpdateManyWithoutReservedByInput = {
   reservedForOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2142,7 +2146,7 @@ export type AssetReservationUpdateWithoutConfirmedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2169,7 +2173,7 @@ export type AssetReservationUncheckedUpdateWithoutConfirmedByInput = {
   reservedById?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2192,7 +2196,7 @@ export type AssetReservationUncheckedUpdateManyWithoutConfirmedByInput = {
   reservedById?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2209,7 +2213,7 @@ export type AssetReservationUpdateWithoutCancelledByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2236,7 +2240,7 @@ export type AssetReservationUncheckedUpdateWithoutCancelledByInput = {
   reservedById?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2259,7 +2263,7 @@ export type AssetReservationUncheckedUpdateManyWithoutCancelledByInput = {
   reservedById?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2276,7 +2280,7 @@ export type AssetReservationUpdateWithoutDeletedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2303,7 +2307,7 @@ export type AssetReservationUncheckedUpdateWithoutDeletedByInput = {
   reservedById?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2326,7 +2330,7 @@ export type AssetReservationUncheckedUpdateManyWithoutDeletedByInput = {
   reservedById?: Prisma.StringFieldUpdateOperationsInput | string
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumAssetReservationStatusEnumFieldUpdateOperationsInput | $Enums.AssetReservationStatusEnum
   purpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   confirmationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2544,7 +2548,7 @@ export type $AssetReservationPayload<ExtArgs extends runtime.Types.Extensions.In
     reservedById: string
     startDate: Date
     endDate: Date
-    status: string
+    status: $Enums.AssetReservationStatusEnum
     purpose: string | null
     note: string | null
     confirmationDate: Date | null
@@ -2995,7 +2999,7 @@ export interface AssetReservationFieldRefs {
   readonly reservedById: Prisma.FieldRef<"AssetReservation", 'String'>
   readonly startDate: Prisma.FieldRef<"AssetReservation", 'DateTime'>
   readonly endDate: Prisma.FieldRef<"AssetReservation", 'DateTime'>
-  readonly status: Prisma.FieldRef<"AssetReservation", 'String'>
+  readonly status: Prisma.FieldRef<"AssetReservation", 'AssetReservationStatusEnum'>
   readonly purpose: Prisma.FieldRef<"AssetReservation", 'String'>
   readonly note: Prisma.FieldRef<"AssetReservation", 'String'>
   readonly confirmationDate: Prisma.FieldRef<"AssetReservation", 'DateTime'>

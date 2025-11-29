@@ -121,6 +121,15 @@ export const RelationshipDirectionEnum = {
 export type RelationshipDirectionEnum = (typeof RelationshipDirectionEnum)[keyof typeof RelationshipDirectionEnum]
 
 
+export const DisposalApprovalStatusEnum = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type DisposalApprovalStatusEnum = (typeof DisposalApprovalStatusEnum)[keyof typeof DisposalApprovalStatusEnum]
+
+
 export const OrganizationUnitType = {
   COMPANY: 'COMPANY',
   BUSINESS_UNIT: 'BUSINESS_UNIT',
@@ -231,6 +240,47 @@ export const IntuneSyncStatus = {
 export type IntuneSyncStatus = (typeof IntuneSyncStatus)[keyof typeof IntuneSyncStatus]
 
 
+export const AssetKitTypeEnum = {
+  NEW_HIRE: 'NEW_HIRE',
+  CONTRACTOR: 'CONTRACTOR',
+  EXECUTIVE: 'EXECUTIVE',
+  PROJECT: 'PROJECT',
+  TEMPORARY: 'TEMPORARY',
+  OTHER: 'OTHER'
+} as const
+
+export type AssetKitTypeEnum = (typeof AssetKitTypeEnum)[keyof typeof AssetKitTypeEnum]
+
+
+export const KitAssigneeTypeEnum = {
+  PERSON: 'PERSON',
+  ORG_UNIT: 'ORG_UNIT',
+  LOCATION: 'LOCATION'
+} as const
+
+export type KitAssigneeTypeEnum = (typeof KitAssigneeTypeEnum)[keyof typeof KitAssigneeTypeEnum]
+
+
+export const KitCheckoutStatusEnum = {
+  CHECKED_OUT: 'CHECKED_OUT',
+  PARTIALLY_RETURNED: 'PARTIALLY_RETURNED',
+  RETURNED: 'RETURNED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type KitCheckoutStatusEnum = (typeof KitCheckoutStatusEnum)[keyof typeof KitCheckoutStatusEnum]
+
+
+export const KitCheckoutItemStatusEnum = {
+  CHECKED_OUT: 'CHECKED_OUT',
+  RETURNED: 'RETURNED',
+  DAMAGED: 'DAMAGED',
+  LOST: 'LOST'
+} as const
+
+export type KitCheckoutItemStatusEnum = (typeof KitCheckoutItemStatusEnum)[keyof typeof KitCheckoutItemStatusEnum]
+
+
 export const AllocationTargetTypeEnum = {
   PERSON: 'PERSON',
   CI: 'CI',
@@ -238,6 +288,28 @@ export const AllocationTargetTypeEnum = {
 } as const
 
 export type AllocationTargetTypeEnum = (typeof AllocationTargetTypeEnum)[keyof typeof AllocationTargetTypeEnum]
+
+
+export const LicenseMetricTypeEnum = {
+  PER_DEVICE: 'PER_DEVICE',
+  PER_USER: 'PER_USER',
+  PER_CORE: 'PER_CORE',
+  PER_VM: 'PER_VM',
+  PER_CLUSTER: 'PER_CLUSTER'
+} as const
+
+export type LicenseMetricTypeEnum = (typeof LicenseMetricTypeEnum)[keyof typeof LicenseMetricTypeEnum]
+
+
+export const AssetReservationStatusEnum = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  ACTIVE: 'ACTIVE',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type AssetReservationStatusEnum = (typeof AssetReservationStatusEnum)[keyof typeof AssetReservationStatusEnum]
 
 
 export const ServiceType = {

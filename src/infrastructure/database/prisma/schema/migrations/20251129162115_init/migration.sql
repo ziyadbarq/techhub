@@ -26,6 +26,9 @@ CREATE TYPE "CriticalityEnum" AS ENUM ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL');
 CREATE TYPE "RelationshipDirectionEnum" AS ENUM ('UNIDIRECTIONAL', 'BIDIRECTIONAL');
 
 -- CreateEnum
+CREATE TYPE "DisposalApprovalStatusEnum" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
+
+-- CreateEnum
 CREATE TYPE "OrganizationUnitType" AS ENUM ('COMPANY', 'BUSINESS_UNIT', 'DEPARTMENT', 'TEAM', 'DIVISION', 'OTHER');
 
 -- CreateEnum
@@ -53,7 +56,25 @@ CREATE TYPE "IntuneManagementState" AS ENUM ('MANAGED', 'RETIRE_PENDING', 'RETIR
 CREATE TYPE "IntuneSyncStatus" AS ENUM ('IN_PROGRESS', 'COMPLETED', 'FAILED', 'PARTIAL');
 
 -- CreateEnum
+CREATE TYPE "AssetKitTypeEnum" AS ENUM ('NEW_HIRE', 'CONTRACTOR', 'EXECUTIVE', 'PROJECT', 'TEMPORARY', 'OTHER');
+
+-- CreateEnum
+CREATE TYPE "KitAssigneeTypeEnum" AS ENUM ('PERSON', 'ORG_UNIT', 'LOCATION');
+
+-- CreateEnum
+CREATE TYPE "KitCheckoutStatusEnum" AS ENUM ('CHECKED_OUT', 'PARTIALLY_RETURNED', 'RETURNED', 'CANCELLED');
+
+-- CreateEnum
+CREATE TYPE "KitCheckoutItemStatusEnum" AS ENUM ('CHECKED_OUT', 'RETURNED', 'DAMAGED', 'LOST');
+
+-- CreateEnum
 CREATE TYPE "AllocationTargetTypeEnum" AS ENUM ('PERSON', 'CI', 'ASSET');
+
+-- CreateEnum
+CREATE TYPE "LicenseMetricTypeEnum" AS ENUM ('PER_DEVICE', 'PER_USER', 'PER_CORE', 'PER_VM', 'PER_CLUSTER');
+
+-- CreateEnum
+CREATE TYPE "AssetReservationStatusEnum" AS ENUM ('PENDING', 'CONFIRMED', 'ACTIVE', 'COMPLETED', 'CANCELLED');
 
 -- CreateEnum
 CREATE TYPE "ServiceType" AS ENUM ('APPLICATION', 'SERVER', 'NETWORK', 'DATABASE', 'ENDPOINT', 'CLOUD_SERVICE', 'API', 'MIDDLEWARE', 'STORAGE', 'OTHER');
@@ -559,7 +580,7 @@ CREATE TABLE "disposal_approvals" (
     "id" TEXT NOT NULL,
     "disposalId" TEXT NOT NULL,
     "approverId" TEXT NOT NULL,
-    "status" TEXT NOT NULL DEFAULT 'PENDING',
+    "status" "DisposalApprovalStatusEnum" NOT NULL DEFAULT 'PENDING',
     "decisionAt" TIMESTAMP(3),
     "comment" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -931,7 +952,7 @@ CREATE TABLE "verification_items" (
     "targetType" "TargetObjectTypeEnum" NOT NULL,
     "targetId" TEXT NOT NULL,
     "verifierPersonId" TEXT,
-    "status" "VerificationStatusEnum" NOT NULL,
+    "status" "VerificationStatusEnum" NOT NULL DEFAULT 'PENDING',
     "verifiedAt" TIMESTAMP(3),
     "comment" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -1039,7 +1060,7 @@ CREATE TABLE "asset_kits" (
     "name" TEXT NOT NULL,
     "code" TEXT NOT NULL,
     "description" TEXT,
-    "kitType" TEXT NOT NULL,
+    "kitType" "AssetKitTypeEnum" NOT NULL DEFAULT 'OTHER',
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "metadata" JSONB,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -1069,12 +1090,12 @@ CREATE TABLE "asset_kit_items" (
 CREATE TABLE "asset_kit_checkouts" (
     "id" TEXT NOT NULL,
     "assetKitId" TEXT NOT NULL,
-    "assigneeType" TEXT NOT NULL,
+    "assigneeType" "KitAssigneeTypeEnum" NOT NULL DEFAULT 'PERSON',
     "assigneeId" TEXT NOT NULL,
     "checkoutDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "expectedReturnDate" TIMESTAMP(3),
     "actualReturnDate" TIMESTAMP(3),
-    "status" TEXT NOT NULL DEFAULT 'CHECKED_OUT',
+    "status" "KitCheckoutStatusEnum" NOT NULL DEFAULT 'CHECKED_OUT',
     "checkedOutById" TEXT NOT NULL,
     "note" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -1091,7 +1112,7 @@ CREATE TABLE "asset_kit_checkout_items" (
     "kitItemId" TEXT NOT NULL,
     "checkoutDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "returnDate" TIMESTAMP(3),
-    "status" TEXT NOT NULL DEFAULT 'CHECKED_OUT',
+    "status" "KitCheckoutItemStatusEnum" NOT NULL DEFAULT 'CHECKED_OUT',
     "conditionAtCheckout" TEXT,
     "conditionAtReturn" TEXT,
     "note" TEXT,
@@ -1107,7 +1128,7 @@ CREATE TABLE "license_products" (
     "name" TEXT NOT NULL,
     "code" TEXT NOT NULL,
     "vendorId" TEXT NOT NULL,
-    "metricType" TEXT NOT NULL,
+    "metricType" "LicenseMetricTypeEnum" NOT NULL,
     "description" TEXT,
     "lifecycleModelId" TEXT,
     "attributes" JSONB,
@@ -1334,7 +1355,7 @@ CREATE TABLE "asset_reservations" (
     "reservedById" TEXT NOT NULL,
     "startDate" TIMESTAMP(3) NOT NULL,
     "endDate" TIMESTAMP(3) NOT NULL,
-    "status" TEXT NOT NULL DEFAULT 'PENDING',
+    "status" "AssetReservationStatusEnum" NOT NULL DEFAULT 'PENDING',
     "purpose" TEXT,
     "note" TEXT,
     "confirmationDate" TIMESTAMP(3),
@@ -1820,6 +1841,9 @@ CREATE INDEX "configuration_items_name_idx" ON "configuration_items"("name");
 CREATE INDEX "configuration_items_deletedAt_idx" ON "configuration_items"("deletedAt");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "configuration_items_linkedAssetId_key" ON "configuration_items"("linkedAssetId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "relationship_types_name_key" ON "relationship_types"("name");
 
 -- CreateIndex
@@ -1944,6 +1968,9 @@ CREATE INDEX "disposal_approvals_status_idx" ON "disposal_approvals"("status");
 
 -- CreateIndex
 CREATE INDEX "disposal_approvals_decisionAt_idx" ON "disposal_approvals"("decisionAt");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "disposal_approvals_disposalId_approverId_key" ON "disposal_approvals"("disposalId", "approverId");
 
 -- CreateIndex
 CREATE INDEX "disposal_documents_disposalId_idx" ON "disposal_documents"("disposalId");
@@ -2255,6 +2282,9 @@ CREATE INDEX "verification_items_status_idx" ON "verification_items"("status");
 CREATE INDEX "verification_items_verifiedAt_idx" ON "verification_items"("verifiedAt");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "verification_items_verificationCampaignId_targetType_target_key" ON "verification_items"("verificationCampaignId", "targetType", "targetId");
+
+-- CreateIndex
 CREATE INDEX "audit_log_entries_targetType_targetId_idx" ON "audit_log_entries"("targetType", "targetId");
 
 -- CreateIndex
@@ -2342,6 +2372,9 @@ CREATE INDEX "asset_kits_isActive_idx" ON "asset_kits"("isActive");
 CREATE INDEX "asset_kits_deletedAt_idx" ON "asset_kits"("deletedAt");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "asset_kits_name_key" ON "asset_kits"("name");
+
+-- CreateIndex
 CREATE INDEX "asset_kit_items_assetKitId_idx" ON "asset_kit_items"("assetKitId");
 
 -- CreateIndex
@@ -2382,6 +2415,9 @@ CREATE INDEX "asset_kit_checkout_items_kitItemId_idx" ON "asset_kit_checkout_ite
 
 -- CreateIndex
 CREATE INDEX "asset_kit_checkout_items_status_idx" ON "asset_kit_checkout_items"("status");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "asset_kit_checkout_items_kitCheckoutId_assetId_key" ON "asset_kit_checkout_items"("kitCheckoutId", "assetId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "license_products_name_key" ON "license_products"("name");
@@ -2573,6 +2609,9 @@ CREATE INDEX "asset_reservations_status_idx" ON "asset_reservations"("status");
 CREATE INDEX "asset_reservations_startDate_endDate_idx" ON "asset_reservations"("startDate", "endDate");
 
 -- CreateIndex
+CREATE INDEX "asset_reservations_assetId_startDate_endDate_idx" ON "asset_reservations"("assetId", "startDate", "endDate");
+
+-- CreateIndex
 CREATE INDEX "asset_reservations_status_assetId_idx" ON "asset_reservations"("status", "assetId");
 
 -- CreateIndex
@@ -2661,6 +2700,9 @@ CREATE INDEX "service_assets_assetId_idx" ON "service_assets"("assetId");
 
 -- CreateIndex
 CREATE INDEX "service_assets_relationship_idx" ON "service_assets"("relationship");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "service_assets_serviceId_assetId_relationship_key" ON "service_assets"("serviceId", "assetId", "relationship");
 
 -- CreateIndex
 CREATE INDEX "service_relationships_fromServiceId_idx" ON "service_relationships"("fromServiceId");

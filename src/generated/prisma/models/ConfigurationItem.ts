@@ -338,6 +338,7 @@ export type ConfigurationItemOrderByWithRelationInput = {
 
 export type ConfigurationItemWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  linkedAssetId?: string
   ciKey?: string
   AND?: Prisma.ConfigurationItemWhereInput | Prisma.ConfigurationItemWhereInput[]
   OR?: Prisma.ConfigurationItemWhereInput[]
@@ -350,7 +351,6 @@ export type ConfigurationItemWhereUniqueInput = Prisma.AtLeast<{
   primaryOwnerPersonId?: Prisma.StringNullableFilter<"ConfigurationItem"> | string | null
   primaryOwnerOrgUnitId?: Prisma.StringNullableFilter<"ConfigurationItem"> | string | null
   locationId?: Prisma.StringNullableFilter<"ConfigurationItem"> | string | null
-  linkedAssetId?: Prisma.StringNullableFilter<"ConfigurationItem"> | string | null
   description?: Prisma.StringNullableFilter<"ConfigurationItem"> | string | null
   attributes?: Prisma.JsonNullableFilter<"ConfigurationItem">
   createdAt?: Prisma.DateTimeFilter<"ConfigurationItem"> | Date | string
@@ -370,7 +370,7 @@ export type ConfigurationItemWhereUniqueInput = Prisma.AtLeast<{
   deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
   createdBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
   updatedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
-}, "id" | "ciKey">
+}, "id" | "ciKey" | "linkedAssetId">
 
 export type ConfigurationItemOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

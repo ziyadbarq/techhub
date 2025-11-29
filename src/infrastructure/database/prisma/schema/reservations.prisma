@@ -18,7 +18,7 @@ model AssetReservation {
   reservedById         String
   startDate            DateTime
   endDate              DateTime
-  status               String    @default("PENDING") // PENDING, CONFIRMED, ACTIVE, COMPLETED, CANCELLED
+  status               AssetReservationStatusEnum @default(PENDING)
   purpose              String?   @db.Text
   note                 String?   @db.Text
   confirmationDate     DateTime?
@@ -51,6 +51,7 @@ model AssetReservation {
   @@index([reservedById])
   @@index([status])
   @@index([startDate, endDate])
+  @@index([assetId, startDate, endDate])
   @@index([status, assetId]) // CRITICAL: Asset availability checks
   @@index([deletedAt])
   @@map("asset_reservations")
@@ -75,4 +76,16 @@ model AssetReservationConflict {
   @@index([conflictingReservationId])
   @@index([resolvedAt])
   @@map("asset_reservation_conflicts")
+}
+
+// ============================================
+// RESERVATION ENUMS
+// ============================================
+
+enum AssetReservationStatusEnum {
+  PENDING
+  CONFIRMED
+  ACTIVE
+  COMPLETED
+  CANCELLED
 }

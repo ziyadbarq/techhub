@@ -163,6 +163,7 @@ model ServiceAsset {
   updatedAt    DateTime          @updatedAt
 
   // Indexes
+  @@unique([serviceId, assetId, relationship])
   @@index([serviceId])
   @@index([assetId])
   @@index([relationship])

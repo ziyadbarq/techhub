@@ -14,7 +14,7 @@ model LicenseProduct {
   name             String    @unique
   code             String    @unique
   vendorId         String
-  metricType       String // per_device, per_user, per_core, per_vm, per_cluster
+  metricType       LicenseMetricTypeEnum
   description      String?   @db.Text
   lifecycleModelId String?
   attributes       Json? // Dynamic custom fields per LicenseProductField
@@ -175,4 +175,12 @@ enum AllocationTargetTypeEnum {
   PERSON
   CI
   ASSET
+}
+
+enum LicenseMetricTypeEnum {
+  PER_DEVICE
+  PER_USER
+  PER_CORE
+  PER_VM
+  PER_CLUSTER
 }

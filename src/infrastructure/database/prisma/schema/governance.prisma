@@ -86,7 +86,7 @@ model VerificationItem {
   targetType             TargetObjectTypeEnum
   targetId               String
   verifierPersonId       String?
-  status                 VerificationStatusEnum
+  status                 VerificationStatusEnum @default(PENDING)
   verifiedAt             DateTime?
   comment                String?                @db.Text
   createdAt              DateTime               @default(now())
@@ -97,6 +97,7 @@ model VerificationItem {
   verifierPerson       Person?              @relation(fields: [verifierPersonId], references: [id], onDelete: SetNull)
 
   // Indexes
+  @@unique([verificationCampaignId, targetType, targetId])
   @@index([verificationCampaignId])
   @@index([targetType, targetId])
   @@index([verifierPersonId])

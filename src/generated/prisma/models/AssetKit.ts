@@ -29,7 +29,7 @@ export type AssetKitMinAggregateOutputType = {
   name: string | null
   code: string | null
   description: string | null
-  kitType: string | null
+  kitType: $Enums.AssetKitTypeEnum | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -42,7 +42,7 @@ export type AssetKitMaxAggregateOutputType = {
   name: string | null
   code: string | null
   description: string | null
-  kitType: string | null
+  kitType: $Enums.AssetKitTypeEnum | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -184,7 +184,7 @@ export type AssetKitGroupByOutputType = {
   name: string
   code: string
   description: string | null
-  kitType: string
+  kitType: $Enums.AssetKitTypeEnum
   isActive: boolean
   metadata: runtime.JsonValue | null
   createdAt: Date
@@ -219,7 +219,7 @@ export type AssetKitWhereInput = {
   name?: Prisma.StringFilter<"AssetKit"> | string
   code?: Prisma.StringFilter<"AssetKit"> | string
   description?: Prisma.StringNullableFilter<"AssetKit"> | string | null
-  kitType?: Prisma.StringFilter<"AssetKit"> | string
+  kitType?: Prisma.EnumAssetKitTypeEnumFilter<"AssetKit"> | $Enums.AssetKitTypeEnum
   isActive?: Prisma.BoolFilter<"AssetKit"> | boolean
   metadata?: Prisma.JsonNullableFilter<"AssetKit">
   createdAt?: Prisma.DateTimeFilter<"AssetKit"> | Date | string
@@ -250,13 +250,13 @@ export type AssetKitOrderByWithRelationInput = {
 
 export type AssetKitWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  name?: string
   code?: string
   AND?: Prisma.AssetKitWhereInput | Prisma.AssetKitWhereInput[]
   OR?: Prisma.AssetKitWhereInput[]
   NOT?: Prisma.AssetKitWhereInput | Prisma.AssetKitWhereInput[]
-  name?: Prisma.StringFilter<"AssetKit"> | string
   description?: Prisma.StringNullableFilter<"AssetKit"> | string | null
-  kitType?: Prisma.StringFilter<"AssetKit"> | string
+  kitType?: Prisma.EnumAssetKitTypeEnumFilter<"AssetKit"> | $Enums.AssetKitTypeEnum
   isActive?: Prisma.BoolFilter<"AssetKit"> | boolean
   metadata?: Prisma.JsonNullableFilter<"AssetKit">
   createdAt?: Prisma.DateTimeFilter<"AssetKit"> | Date | string
@@ -266,7 +266,7 @@ export type AssetKitWhereUniqueInput = Prisma.AtLeast<{
   items?: Prisma.AssetKitItemListRelationFilter
   checkouts?: Prisma.AssetKitCheckoutListRelationFilter
   deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
-}, "id" | "code">
+}, "id" | "code" | "name">
 
 export type AssetKitOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -293,7 +293,7 @@ export type AssetKitScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"AssetKit"> | string
   code?: Prisma.StringWithAggregatesFilter<"AssetKit"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"AssetKit"> | string | null
-  kitType?: Prisma.StringWithAggregatesFilter<"AssetKit"> | string
+  kitType?: Prisma.EnumAssetKitTypeEnumWithAggregatesFilter<"AssetKit"> | $Enums.AssetKitTypeEnum
   isActive?: Prisma.BoolWithAggregatesFilter<"AssetKit"> | boolean
   metadata?: Prisma.JsonNullableWithAggregatesFilter<"AssetKit">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AssetKit"> | Date | string
@@ -307,7 +307,7 @@ export type AssetKitCreateInput = {
   name: string
   code: string
   description?: string | null
-  kitType: string
+  kitType?: $Enums.AssetKitTypeEnum
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -323,7 +323,7 @@ export type AssetKitUncheckedCreateInput = {
   name: string
   code: string
   description?: string | null
-  kitType: string
+  kitType?: $Enums.AssetKitTypeEnum
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -339,7 +339,7 @@ export type AssetKitUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  kitType?: Prisma.StringFieldUpdateOperationsInput | string
+  kitType?: Prisma.EnumAssetKitTypeEnumFieldUpdateOperationsInput | $Enums.AssetKitTypeEnum
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -355,7 +355,7 @@ export type AssetKitUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  kitType?: Prisma.StringFieldUpdateOperationsInput | string
+  kitType?: Prisma.EnumAssetKitTypeEnumFieldUpdateOperationsInput | $Enums.AssetKitTypeEnum
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -371,7 +371,7 @@ export type AssetKitCreateManyInput = {
   name: string
   code: string
   description?: string | null
-  kitType: string
+  kitType?: $Enums.AssetKitTypeEnum
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -385,7 +385,7 @@ export type AssetKitUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  kitType?: Prisma.StringFieldUpdateOperationsInput | string
+  kitType?: Prisma.EnumAssetKitTypeEnumFieldUpdateOperationsInput | $Enums.AssetKitTypeEnum
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -398,7 +398,7 @@ export type AssetKitUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  kitType?: Prisma.StringFieldUpdateOperationsInput | string
+  kitType?: Prisma.EnumAssetKitTypeEnumFieldUpdateOperationsInput | $Enums.AssetKitTypeEnum
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -504,6 +504,10 @@ export type AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput = {
   deleteMany?: Prisma.AssetKitScalarWhereInput | Prisma.AssetKitScalarWhereInput[]
 }
 
+export type EnumAssetKitTypeEnumFieldUpdateOperationsInput = {
+  set?: $Enums.AssetKitTypeEnum
+}
+
 export type AssetKitCreateNestedOneWithoutItemsInput = {
   create?: Prisma.XOR<Prisma.AssetKitCreateWithoutItemsInput, Prisma.AssetKitUncheckedCreateWithoutItemsInput>
   connectOrCreate?: Prisma.AssetKitCreateOrConnectWithoutItemsInput
@@ -537,7 +541,7 @@ export type AssetKitCreateWithoutDeletedByInput = {
   name: string
   code: string
   description?: string | null
-  kitType: string
+  kitType?: $Enums.AssetKitTypeEnum
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -552,7 +556,7 @@ export type AssetKitUncheckedCreateWithoutDeletedByInput = {
   name: string
   code: string
   description?: string | null
-  kitType: string
+  kitType?: $Enums.AssetKitTypeEnum
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -596,7 +600,7 @@ export type AssetKitScalarWhereInput = {
   name?: Prisma.StringFilter<"AssetKit"> | string
   code?: Prisma.StringFilter<"AssetKit"> | string
   description?: Prisma.StringNullableFilter<"AssetKit"> | string | null
-  kitType?: Prisma.StringFilter<"AssetKit"> | string
+  kitType?: Prisma.EnumAssetKitTypeEnumFilter<"AssetKit"> | $Enums.AssetKitTypeEnum
   isActive?: Prisma.BoolFilter<"AssetKit"> | boolean
   metadata?: Prisma.JsonNullableFilter<"AssetKit">
   createdAt?: Prisma.DateTimeFilter<"AssetKit"> | Date | string
@@ -610,7 +614,7 @@ export type AssetKitCreateWithoutItemsInput = {
   name: string
   code: string
   description?: string | null
-  kitType: string
+  kitType?: $Enums.AssetKitTypeEnum
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -625,7 +629,7 @@ export type AssetKitUncheckedCreateWithoutItemsInput = {
   name: string
   code: string
   description?: string | null
-  kitType: string
+  kitType?: $Enums.AssetKitTypeEnum
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -656,7 +660,7 @@ export type AssetKitUpdateWithoutItemsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  kitType?: Prisma.StringFieldUpdateOperationsInput | string
+  kitType?: Prisma.EnumAssetKitTypeEnumFieldUpdateOperationsInput | $Enums.AssetKitTypeEnum
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -671,7 +675,7 @@ export type AssetKitUncheckedUpdateWithoutItemsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  kitType?: Prisma.StringFieldUpdateOperationsInput | string
+  kitType?: Prisma.EnumAssetKitTypeEnumFieldUpdateOperationsInput | $Enums.AssetKitTypeEnum
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -686,7 +690,7 @@ export type AssetKitCreateWithoutCheckoutsInput = {
   name: string
   code: string
   description?: string | null
-  kitType: string
+  kitType?: $Enums.AssetKitTypeEnum
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -701,7 +705,7 @@ export type AssetKitUncheckedCreateWithoutCheckoutsInput = {
   name: string
   code: string
   description?: string | null
-  kitType: string
+  kitType?: $Enums.AssetKitTypeEnum
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -732,7 +736,7 @@ export type AssetKitUpdateWithoutCheckoutsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  kitType?: Prisma.StringFieldUpdateOperationsInput | string
+  kitType?: Prisma.EnumAssetKitTypeEnumFieldUpdateOperationsInput | $Enums.AssetKitTypeEnum
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -747,7 +751,7 @@ export type AssetKitUncheckedUpdateWithoutCheckoutsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  kitType?: Prisma.StringFieldUpdateOperationsInput | string
+  kitType?: Prisma.EnumAssetKitTypeEnumFieldUpdateOperationsInput | $Enums.AssetKitTypeEnum
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -762,7 +766,7 @@ export type AssetKitCreateManyDeletedByInput = {
   name: string
   code: string
   description?: string | null
-  kitType: string
+  kitType?: $Enums.AssetKitTypeEnum
   isActive?: boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -775,7 +779,7 @@ export type AssetKitUpdateWithoutDeletedByInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  kitType?: Prisma.StringFieldUpdateOperationsInput | string
+  kitType?: Prisma.EnumAssetKitTypeEnumFieldUpdateOperationsInput | $Enums.AssetKitTypeEnum
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -790,7 +794,7 @@ export type AssetKitUncheckedUpdateWithoutDeletedByInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  kitType?: Prisma.StringFieldUpdateOperationsInput | string
+  kitType?: Prisma.EnumAssetKitTypeEnumFieldUpdateOperationsInput | $Enums.AssetKitTypeEnum
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -805,7 +809,7 @@ export type AssetKitUncheckedUpdateManyWithoutDeletedByInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  kitType?: Prisma.StringFieldUpdateOperationsInput | string
+  kitType?: Prisma.EnumAssetKitTypeEnumFieldUpdateOperationsInput | $Enums.AssetKitTypeEnum
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -941,7 +945,7 @@ export type $AssetKitPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     name: string
     code: string
     description: string | null
-    kitType: string
+    kitType: $Enums.AssetKitTypeEnum
     isActive: boolean
     metadata: runtime.JsonValue | null
     createdAt: Date
@@ -1378,7 +1382,7 @@ export interface AssetKitFieldRefs {
   readonly name: Prisma.FieldRef<"AssetKit", 'String'>
   readonly code: Prisma.FieldRef<"AssetKit", 'String'>
   readonly description: Prisma.FieldRef<"AssetKit", 'String'>
-  readonly kitType: Prisma.FieldRef<"AssetKit", 'String'>
+  readonly kitType: Prisma.FieldRef<"AssetKit", 'AssetKitTypeEnum'>
   readonly isActive: Prisma.FieldRef<"AssetKit", 'Boolean'>
   readonly metadata: Prisma.FieldRef<"AssetKit", 'Json'>
   readonly createdAt: Prisma.FieldRef<"AssetKit", 'DateTime'>

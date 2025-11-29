@@ -28,7 +28,7 @@ export type DisposalApprovalMinAggregateOutputType = {
   id: string | null
   disposalId: string | null
   approverId: string | null
-  status: string | null
+  status: $Enums.DisposalApprovalStatusEnum | null
   decisionAt: Date | null
   comment: string | null
   createdAt: Date | null
@@ -38,7 +38,7 @@ export type DisposalApprovalMaxAggregateOutputType = {
   id: string | null
   disposalId: string | null
   approverId: string | null
-  status: string | null
+  status: $Enums.DisposalApprovalStatusEnum | null
   decisionAt: Date | null
   comment: string | null
   createdAt: Date | null
@@ -163,7 +163,7 @@ export type DisposalApprovalGroupByOutputType = {
   id: string
   disposalId: string
   approverId: string
-  status: string
+  status: $Enums.DisposalApprovalStatusEnum
   decisionAt: Date | null
   comment: string | null
   createdAt: Date
@@ -194,7 +194,7 @@ export type DisposalApprovalWhereInput = {
   id?: Prisma.StringFilter<"DisposalApproval"> | string
   disposalId?: Prisma.StringFilter<"DisposalApproval"> | string
   approverId?: Prisma.StringFilter<"DisposalApproval"> | string
-  status?: Prisma.StringFilter<"DisposalApproval"> | string
+  status?: Prisma.EnumDisposalApprovalStatusEnumFilter<"DisposalApproval"> | $Enums.DisposalApprovalStatusEnum
   decisionAt?: Prisma.DateTimeNullableFilter<"DisposalApproval"> | Date | string | null
   comment?: Prisma.StringNullableFilter<"DisposalApproval"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DisposalApproval"> | Date | string
@@ -216,18 +216,19 @@ export type DisposalApprovalOrderByWithRelationInput = {
 
 export type DisposalApprovalWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  disposalId_approverId?: Prisma.DisposalApprovalDisposalIdApproverIdCompoundUniqueInput
   AND?: Prisma.DisposalApprovalWhereInput | Prisma.DisposalApprovalWhereInput[]
   OR?: Prisma.DisposalApprovalWhereInput[]
   NOT?: Prisma.DisposalApprovalWhereInput | Prisma.DisposalApprovalWhereInput[]
   disposalId?: Prisma.StringFilter<"DisposalApproval"> | string
   approverId?: Prisma.StringFilter<"DisposalApproval"> | string
-  status?: Prisma.StringFilter<"DisposalApproval"> | string
+  status?: Prisma.EnumDisposalApprovalStatusEnumFilter<"DisposalApproval"> | $Enums.DisposalApprovalStatusEnum
   decisionAt?: Prisma.DateTimeNullableFilter<"DisposalApproval"> | Date | string | null
   comment?: Prisma.StringNullableFilter<"DisposalApproval"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DisposalApproval"> | Date | string
   disposal?: Prisma.XOR<Prisma.AssetDisposalScalarRelationFilter, Prisma.AssetDisposalWhereInput>
   approver?: Prisma.XOR<Prisma.PersonScalarRelationFilter, Prisma.PersonWhereInput>
-}, "id">
+}, "id" | "disposalId_approverId">
 
 export type DisposalApprovalOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -249,7 +250,7 @@ export type DisposalApprovalScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"DisposalApproval"> | string
   disposalId?: Prisma.StringWithAggregatesFilter<"DisposalApproval"> | string
   approverId?: Prisma.StringWithAggregatesFilter<"DisposalApproval"> | string
-  status?: Prisma.StringWithAggregatesFilter<"DisposalApproval"> | string
+  status?: Prisma.EnumDisposalApprovalStatusEnumWithAggregatesFilter<"DisposalApproval"> | $Enums.DisposalApprovalStatusEnum
   decisionAt?: Prisma.DateTimeNullableWithAggregatesFilter<"DisposalApproval"> | Date | string | null
   comment?: Prisma.StringNullableWithAggregatesFilter<"DisposalApproval"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"DisposalApproval"> | Date | string
@@ -257,7 +258,7 @@ export type DisposalApprovalScalarWhereWithAggregatesInput = {
 
 export type DisposalApprovalCreateInput = {
   id?: string
-  status?: string
+  status?: $Enums.DisposalApprovalStatusEnum
   decisionAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
@@ -269,7 +270,7 @@ export type DisposalApprovalUncheckedCreateInput = {
   id?: string
   disposalId: string
   approverId: string
-  status?: string
+  status?: $Enums.DisposalApprovalStatusEnum
   decisionAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
@@ -277,7 +278,7 @@ export type DisposalApprovalUncheckedCreateInput = {
 
 export type DisposalApprovalUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalApprovalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalApprovalStatusEnum
   decisionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -289,7 +290,7 @@ export type DisposalApprovalUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   disposalId?: Prisma.StringFieldUpdateOperationsInput | string
   approverId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalApprovalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalApprovalStatusEnum
   decisionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -299,7 +300,7 @@ export type DisposalApprovalCreateManyInput = {
   id?: string
   disposalId: string
   approverId: string
-  status?: string
+  status?: $Enums.DisposalApprovalStatusEnum
   decisionAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
@@ -307,7 +308,7 @@ export type DisposalApprovalCreateManyInput = {
 
 export type DisposalApprovalUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalApprovalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalApprovalStatusEnum
   decisionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -317,7 +318,7 @@ export type DisposalApprovalUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   disposalId?: Prisma.StringFieldUpdateOperationsInput | string
   approverId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalApprovalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalApprovalStatusEnum
   decisionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -331,6 +332,11 @@ export type DisposalApprovalListRelationFilter = {
 
 export type DisposalApprovalOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type DisposalApprovalDisposalIdApproverIdCompoundUniqueInput = {
+  disposalId: string
+  approverId: string
 }
 
 export type DisposalApprovalCountOrderByAggregateInput = {
@@ -405,6 +411,10 @@ export type DisposalApprovalUncheckedUpdateManyWithoutDisposalNestedInput = {
   deleteMany?: Prisma.DisposalApprovalScalarWhereInput | Prisma.DisposalApprovalScalarWhereInput[]
 }
 
+export type EnumDisposalApprovalStatusEnumFieldUpdateOperationsInput = {
+  set?: $Enums.DisposalApprovalStatusEnum
+}
+
 export type DisposalApprovalCreateNestedManyWithoutApproverInput = {
   create?: Prisma.XOR<Prisma.DisposalApprovalCreateWithoutApproverInput, Prisma.DisposalApprovalUncheckedCreateWithoutApproverInput> | Prisma.DisposalApprovalCreateWithoutApproverInput[] | Prisma.DisposalApprovalUncheckedCreateWithoutApproverInput[]
   connectOrCreate?: Prisma.DisposalApprovalCreateOrConnectWithoutApproverInput | Prisma.DisposalApprovalCreateOrConnectWithoutApproverInput[]
@@ -449,7 +459,7 @@ export type DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput = {
 
 export type DisposalApprovalCreateWithoutDisposalInput = {
   id?: string
-  status?: string
+  status?: $Enums.DisposalApprovalStatusEnum
   decisionAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
@@ -459,7 +469,7 @@ export type DisposalApprovalCreateWithoutDisposalInput = {
 export type DisposalApprovalUncheckedCreateWithoutDisposalInput = {
   id?: string
   approverId: string
-  status?: string
+  status?: $Enums.DisposalApprovalStatusEnum
   decisionAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
@@ -498,7 +508,7 @@ export type DisposalApprovalScalarWhereInput = {
   id?: Prisma.StringFilter<"DisposalApproval"> | string
   disposalId?: Prisma.StringFilter<"DisposalApproval"> | string
   approverId?: Prisma.StringFilter<"DisposalApproval"> | string
-  status?: Prisma.StringFilter<"DisposalApproval"> | string
+  status?: Prisma.EnumDisposalApprovalStatusEnumFilter<"DisposalApproval"> | $Enums.DisposalApprovalStatusEnum
   decisionAt?: Prisma.DateTimeNullableFilter<"DisposalApproval"> | Date | string | null
   comment?: Prisma.StringNullableFilter<"DisposalApproval"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DisposalApproval"> | Date | string
@@ -506,7 +516,7 @@ export type DisposalApprovalScalarWhereInput = {
 
 export type DisposalApprovalCreateWithoutApproverInput = {
   id?: string
-  status?: string
+  status?: $Enums.DisposalApprovalStatusEnum
   decisionAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
@@ -516,7 +526,7 @@ export type DisposalApprovalCreateWithoutApproverInput = {
 export type DisposalApprovalUncheckedCreateWithoutApproverInput = {
   id?: string
   disposalId: string
-  status?: string
+  status?: $Enums.DisposalApprovalStatusEnum
   decisionAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
@@ -551,7 +561,7 @@ export type DisposalApprovalUpdateManyWithWhereWithoutApproverInput = {
 export type DisposalApprovalCreateManyDisposalInput = {
   id?: string
   approverId: string
-  status?: string
+  status?: $Enums.DisposalApprovalStatusEnum
   decisionAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
@@ -559,7 +569,7 @@ export type DisposalApprovalCreateManyDisposalInput = {
 
 export type DisposalApprovalUpdateWithoutDisposalInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalApprovalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalApprovalStatusEnum
   decisionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -569,7 +579,7 @@ export type DisposalApprovalUpdateWithoutDisposalInput = {
 export type DisposalApprovalUncheckedUpdateWithoutDisposalInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   approverId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalApprovalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalApprovalStatusEnum
   decisionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -578,7 +588,7 @@ export type DisposalApprovalUncheckedUpdateWithoutDisposalInput = {
 export type DisposalApprovalUncheckedUpdateManyWithoutDisposalInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   approverId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalApprovalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalApprovalStatusEnum
   decisionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -587,7 +597,7 @@ export type DisposalApprovalUncheckedUpdateManyWithoutDisposalInput = {
 export type DisposalApprovalCreateManyApproverInput = {
   id?: string
   disposalId: string
-  status?: string
+  status?: $Enums.DisposalApprovalStatusEnum
   decisionAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
@@ -595,7 +605,7 @@ export type DisposalApprovalCreateManyApproverInput = {
 
 export type DisposalApprovalUpdateWithoutApproverInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalApprovalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalApprovalStatusEnum
   decisionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -605,7 +615,7 @@ export type DisposalApprovalUpdateWithoutApproverInput = {
 export type DisposalApprovalUncheckedUpdateWithoutApproverInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   disposalId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalApprovalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalApprovalStatusEnum
   decisionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -614,7 +624,7 @@ export type DisposalApprovalUncheckedUpdateWithoutApproverInput = {
 export type DisposalApprovalUncheckedUpdateManyWithoutApproverInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   disposalId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalApprovalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalApprovalStatusEnum
   decisionAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -692,7 +702,7 @@ export type $DisposalApprovalPayload<ExtArgs extends runtime.Types.Extensions.In
     id: string
     disposalId: string
     approverId: string
-    status: string
+    status: $Enums.DisposalApprovalStatusEnum
     decisionAt: Date | null
     comment: string | null
     createdAt: Date
@@ -1124,7 +1134,7 @@ export interface DisposalApprovalFieldRefs {
   readonly id: Prisma.FieldRef<"DisposalApproval", 'String'>
   readonly disposalId: Prisma.FieldRef<"DisposalApproval", 'String'>
   readonly approverId: Prisma.FieldRef<"DisposalApproval", 'String'>
-  readonly status: Prisma.FieldRef<"DisposalApproval", 'String'>
+  readonly status: Prisma.FieldRef<"DisposalApproval", 'DisposalApprovalStatusEnum'>
   readonly decisionAt: Prisma.FieldRef<"DisposalApproval", 'DateTime'>
   readonly comment: Prisma.FieldRef<"DisposalApproval", 'String'>
   readonly createdAt: Prisma.FieldRef<"DisposalApproval", 'DateTime'>

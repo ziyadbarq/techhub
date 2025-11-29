@@ -29,7 +29,7 @@ export type LicenseProductMinAggregateOutputType = {
   name: string | null
   code: string | null
   vendorId: string | null
-  metricType: string | null
+  metricType: $Enums.LicenseMetricTypeEnum | null
   description: string | null
   lifecycleModelId: string | null
   createdAt: Date | null
@@ -43,7 +43,7 @@ export type LicenseProductMaxAggregateOutputType = {
   name: string | null
   code: string | null
   vendorId: string | null
-  metricType: string | null
+  metricType: $Enums.LicenseMetricTypeEnum | null
   description: string | null
   lifecycleModelId: string | null
   createdAt: Date | null
@@ -190,7 +190,7 @@ export type LicenseProductGroupByOutputType = {
   name: string
   code: string
   vendorId: string
-  metricType: string
+  metricType: $Enums.LicenseMetricTypeEnum
   description: string | null
   lifecycleModelId: string | null
   attributes: runtime.JsonValue | null
@@ -226,7 +226,7 @@ export type LicenseProductWhereInput = {
   name?: Prisma.StringFilter<"LicenseProduct"> | string
   code?: Prisma.StringFilter<"LicenseProduct"> | string
   vendorId?: Prisma.StringFilter<"LicenseProduct"> | string
-  metricType?: Prisma.StringFilter<"LicenseProduct"> | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFilter<"LicenseProduct"> | $Enums.LicenseMetricTypeEnum
   description?: Prisma.StringNullableFilter<"LicenseProduct"> | string | null
   lifecycleModelId?: Prisma.StringNullableFilter<"LicenseProduct"> | string | null
   attributes?: Prisma.JsonNullableFilter<"LicenseProduct">
@@ -271,7 +271,7 @@ export type LicenseProductWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.LicenseProductWhereInput[]
   NOT?: Prisma.LicenseProductWhereInput | Prisma.LicenseProductWhereInput[]
   vendorId?: Prisma.StringFilter<"LicenseProduct"> | string
-  metricType?: Prisma.StringFilter<"LicenseProduct"> | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFilter<"LicenseProduct"> | $Enums.LicenseMetricTypeEnum
   description?: Prisma.StringNullableFilter<"LicenseProduct"> | string | null
   lifecycleModelId?: Prisma.StringNullableFilter<"LicenseProduct"> | string | null
   attributes?: Prisma.JsonNullableFilter<"LicenseProduct">
@@ -313,7 +313,7 @@ export type LicenseProductScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"LicenseProduct"> | string
   code?: Prisma.StringWithAggregatesFilter<"LicenseProduct"> | string
   vendorId?: Prisma.StringWithAggregatesFilter<"LicenseProduct"> | string
-  metricType?: Prisma.StringWithAggregatesFilter<"LicenseProduct"> | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumWithAggregatesFilter<"LicenseProduct"> | $Enums.LicenseMetricTypeEnum
   description?: Prisma.StringNullableWithAggregatesFilter<"LicenseProduct"> | string | null
   lifecycleModelId?: Prisma.StringNullableWithAggregatesFilter<"LicenseProduct"> | string | null
   attributes?: Prisma.JsonNullableWithAggregatesFilter<"LicenseProduct">
@@ -327,7 +327,7 @@ export type LicenseProductCreateInput = {
   id?: string
   name: string
   code: string
-  metricType: string
+  metricType: $Enums.LicenseMetricTypeEnum
   description?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -346,7 +346,7 @@ export type LicenseProductUncheckedCreateInput = {
   name: string
   code: string
   vendorId: string
-  metricType: string
+  metricType: $Enums.LicenseMetricTypeEnum
   description?: string | null
   lifecycleModelId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -363,7 +363,7 @@ export type LicenseProductUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFieldUpdateOperationsInput | $Enums.LicenseMetricTypeEnum
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -382,7 +382,7 @@ export type LicenseProductUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   vendorId?: Prisma.StringFieldUpdateOperationsInput | string
-  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFieldUpdateOperationsInput | $Enums.LicenseMetricTypeEnum
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lifecycleModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -400,7 +400,7 @@ export type LicenseProductCreateManyInput = {
   name: string
   code: string
   vendorId: string
-  metricType: string
+  metricType: $Enums.LicenseMetricTypeEnum
   description?: string | null
   lifecycleModelId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -414,7 +414,7 @@ export type LicenseProductUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFieldUpdateOperationsInput | $Enums.LicenseMetricTypeEnum
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -427,7 +427,7 @@ export type LicenseProductUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   vendorId?: Prisma.StringFieldUpdateOperationsInput | string
-  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFieldUpdateOperationsInput | $Enums.LicenseMetricTypeEnum
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lifecycleModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -621,6 +621,10 @@ export type LicenseProductUncheckedUpdateManyWithoutLifecycleModelNestedInput = 
   deleteMany?: Prisma.LicenseProductScalarWhereInput | Prisma.LicenseProductScalarWhereInput[]
 }
 
+export type EnumLicenseMetricTypeEnumFieldUpdateOperationsInput = {
+  set?: $Enums.LicenseMetricTypeEnum
+}
+
 export type LicenseProductCreateNestedOneWithoutFieldsInput = {
   create?: Prisma.XOR<Prisma.LicenseProductCreateWithoutFieldsInput, Prisma.LicenseProductUncheckedCreateWithoutFieldsInput>
   connectOrCreate?: Prisma.LicenseProductCreateOrConnectWithoutFieldsInput
@@ -667,7 +671,7 @@ export type LicenseProductCreateWithoutDeletedByInput = {
   id?: string
   name: string
   code: string
-  metricType: string
+  metricType: $Enums.LicenseMetricTypeEnum
   description?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -685,7 +689,7 @@ export type LicenseProductUncheckedCreateWithoutDeletedByInput = {
   name: string
   code: string
   vendorId: string
-  metricType: string
+  metricType: $Enums.LicenseMetricTypeEnum
   description?: string | null
   lifecycleModelId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -731,7 +735,7 @@ export type LicenseProductScalarWhereInput = {
   name?: Prisma.StringFilter<"LicenseProduct"> | string
   code?: Prisma.StringFilter<"LicenseProduct"> | string
   vendorId?: Prisma.StringFilter<"LicenseProduct"> | string
-  metricType?: Prisma.StringFilter<"LicenseProduct"> | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFilter<"LicenseProduct"> | $Enums.LicenseMetricTypeEnum
   description?: Prisma.StringNullableFilter<"LicenseProduct"> | string | null
   lifecycleModelId?: Prisma.StringNullableFilter<"LicenseProduct"> | string | null
   attributes?: Prisma.JsonNullableFilter<"LicenseProduct">
@@ -745,7 +749,7 @@ export type LicenseProductCreateWithoutVendorInput = {
   id?: string
   name: string
   code: string
-  metricType: string
+  metricType: $Enums.LicenseMetricTypeEnum
   description?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -762,7 +766,7 @@ export type LicenseProductUncheckedCreateWithoutVendorInput = {
   id?: string
   name: string
   code: string
-  metricType: string
+  metricType: $Enums.LicenseMetricTypeEnum
   description?: string | null
   lifecycleModelId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -805,7 +809,7 @@ export type LicenseProductCreateWithoutLifecycleModelInput = {
   id?: string
   name: string
   code: string
-  metricType: string
+  metricType: $Enums.LicenseMetricTypeEnum
   description?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -823,7 +827,7 @@ export type LicenseProductUncheckedCreateWithoutLifecycleModelInput = {
   name: string
   code: string
   vendorId: string
-  metricType: string
+  metricType: $Enums.LicenseMetricTypeEnum
   description?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -865,7 +869,7 @@ export type LicenseProductCreateWithoutFieldsInput = {
   id?: string
   name: string
   code: string
-  metricType: string
+  metricType: $Enums.LicenseMetricTypeEnum
   description?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -883,7 +887,7 @@ export type LicenseProductUncheckedCreateWithoutFieldsInput = {
   name: string
   code: string
   vendorId: string
-  metricType: string
+  metricType: $Enums.LicenseMetricTypeEnum
   description?: string | null
   lifecycleModelId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -915,7 +919,7 @@ export type LicenseProductUpdateWithoutFieldsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFieldUpdateOperationsInput | $Enums.LicenseMetricTypeEnum
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -933,7 +937,7 @@ export type LicenseProductUncheckedUpdateWithoutFieldsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   vendorId?: Prisma.StringFieldUpdateOperationsInput | string
-  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFieldUpdateOperationsInput | $Enums.LicenseMetricTypeEnum
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lifecycleModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -949,7 +953,7 @@ export type LicenseProductCreateWithoutLicenseEntitlementsInput = {
   id?: string
   name: string
   code: string
-  metricType: string
+  metricType: $Enums.LicenseMetricTypeEnum
   description?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -967,7 +971,7 @@ export type LicenseProductUncheckedCreateWithoutLicenseEntitlementsInput = {
   name: string
   code: string
   vendorId: string
-  metricType: string
+  metricType: $Enums.LicenseMetricTypeEnum
   description?: string | null
   lifecycleModelId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -999,7 +1003,7 @@ export type LicenseProductUpdateWithoutLicenseEntitlementsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFieldUpdateOperationsInput | $Enums.LicenseMetricTypeEnum
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1017,7 +1021,7 @@ export type LicenseProductUncheckedUpdateWithoutLicenseEntitlementsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   vendorId?: Prisma.StringFieldUpdateOperationsInput | string
-  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFieldUpdateOperationsInput | $Enums.LicenseMetricTypeEnum
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lifecycleModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1033,7 +1037,7 @@ export type LicenseProductCreateWithoutAddonsInput = {
   id?: string
   name: string
   code: string
-  metricType: string
+  metricType: $Enums.LicenseMetricTypeEnum
   description?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -1051,7 +1055,7 @@ export type LicenseProductUncheckedCreateWithoutAddonsInput = {
   name: string
   code: string
   vendorId: string
-  metricType: string
+  metricType: $Enums.LicenseMetricTypeEnum
   description?: string | null
   lifecycleModelId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1083,7 +1087,7 @@ export type LicenseProductUpdateWithoutAddonsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFieldUpdateOperationsInput | $Enums.LicenseMetricTypeEnum
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1101,7 +1105,7 @@ export type LicenseProductUncheckedUpdateWithoutAddonsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   vendorId?: Prisma.StringFieldUpdateOperationsInput | string
-  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFieldUpdateOperationsInput | $Enums.LicenseMetricTypeEnum
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lifecycleModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1118,7 +1122,7 @@ export type LicenseProductCreateManyDeletedByInput = {
   name: string
   code: string
   vendorId: string
-  metricType: string
+  metricType: $Enums.LicenseMetricTypeEnum
   description?: string | null
   lifecycleModelId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1131,7 +1135,7 @@ export type LicenseProductUpdateWithoutDeletedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFieldUpdateOperationsInput | $Enums.LicenseMetricTypeEnum
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1149,7 +1153,7 @@ export type LicenseProductUncheckedUpdateWithoutDeletedByInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   vendorId?: Prisma.StringFieldUpdateOperationsInput | string
-  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFieldUpdateOperationsInput | $Enums.LicenseMetricTypeEnum
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lifecycleModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1166,7 +1170,7 @@ export type LicenseProductUncheckedUpdateManyWithoutDeletedByInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   vendorId?: Prisma.StringFieldUpdateOperationsInput | string
-  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFieldUpdateOperationsInput | $Enums.LicenseMetricTypeEnum
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lifecycleModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1179,7 +1183,7 @@ export type LicenseProductCreateManyVendorInput = {
   id?: string
   name: string
   code: string
-  metricType: string
+  metricType: $Enums.LicenseMetricTypeEnum
   description?: string | null
   lifecycleModelId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1193,7 +1197,7 @@ export type LicenseProductUpdateWithoutVendorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFieldUpdateOperationsInput | $Enums.LicenseMetricTypeEnum
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1210,7 +1214,7 @@ export type LicenseProductUncheckedUpdateWithoutVendorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFieldUpdateOperationsInput | $Enums.LicenseMetricTypeEnum
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lifecycleModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1227,7 +1231,7 @@ export type LicenseProductUncheckedUpdateManyWithoutVendorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFieldUpdateOperationsInput | $Enums.LicenseMetricTypeEnum
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lifecycleModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
@@ -1242,7 +1246,7 @@ export type LicenseProductCreateManyLifecycleModelInput = {
   name: string
   code: string
   vendorId: string
-  metricType: string
+  metricType: $Enums.LicenseMetricTypeEnum
   description?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
@@ -1255,7 +1259,7 @@ export type LicenseProductUpdateWithoutLifecycleModelInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
-  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFieldUpdateOperationsInput | $Enums.LicenseMetricTypeEnum
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1273,7 +1277,7 @@ export type LicenseProductUncheckedUpdateWithoutLifecycleModelInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   vendorId?: Prisma.StringFieldUpdateOperationsInput | string
-  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFieldUpdateOperationsInput | $Enums.LicenseMetricTypeEnum
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1290,7 +1294,7 @@ export type LicenseProductUncheckedUpdateManyWithoutLifecycleModelInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   code?: Prisma.StringFieldUpdateOperationsInput | string
   vendorId?: Prisma.StringFieldUpdateOperationsInput | string
-  metricType?: Prisma.StringFieldUpdateOperationsInput | string
+  metricType?: Prisma.EnumLicenseMetricTypeEnumFieldUpdateOperationsInput | $Enums.LicenseMetricTypeEnum
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1457,7 +1461,7 @@ export type $LicenseProductPayload<ExtArgs extends runtime.Types.Extensions.Inte
     name: string
     code: string
     vendorId: string
-    metricType: string
+    metricType: $Enums.LicenseMetricTypeEnum
     description: string | null
     lifecycleModelId: string | null
     attributes: runtime.JsonValue | null
@@ -1898,7 +1902,7 @@ export interface LicenseProductFieldRefs {
   readonly name: Prisma.FieldRef<"LicenseProduct", 'String'>
   readonly code: Prisma.FieldRef<"LicenseProduct", 'String'>
   readonly vendorId: Prisma.FieldRef<"LicenseProduct", 'String'>
-  readonly metricType: Prisma.FieldRef<"LicenseProduct", 'String'>
+  readonly metricType: Prisma.FieldRef<"LicenseProduct", 'LicenseMetricTypeEnum'>
   readonly description: Prisma.FieldRef<"LicenseProduct", 'String'>
   readonly lifecycleModelId: Prisma.FieldRef<"LicenseProduct", 'String'>
   readonly attributes: Prisma.FieldRef<"LicenseProduct", 'Json'>

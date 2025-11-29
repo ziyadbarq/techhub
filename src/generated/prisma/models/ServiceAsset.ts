@@ -216,6 +216,7 @@ export type ServiceAssetOrderByWithRelationInput = {
 
 export type ServiceAssetWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  serviceId_assetId_relationship?: Prisma.ServiceAssetServiceIdAssetIdRelationshipCompoundUniqueInput
   AND?: Prisma.ServiceAssetWhereInput | Prisma.ServiceAssetWhereInput[]
   OR?: Prisma.ServiceAssetWhereInput[]
   NOT?: Prisma.ServiceAssetWhereInput | Prisma.ServiceAssetWhereInput[]
@@ -227,7 +228,7 @@ export type ServiceAssetWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"ServiceAsset"> | Date | string
   service?: Prisma.XOR<Prisma.ServiceScalarRelationFilter, Prisma.ServiceWhereInput>
   asset?: Prisma.XOR<Prisma.AssetNullableScalarRelationFilter, Prisma.AssetWhereInput> | null
-}, "id">
+}, "id" | "serviceId_assetId_relationship">
 
 export type ServiceAssetOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -331,6 +332,12 @@ export type ServiceAssetListRelationFilter = {
 
 export type ServiceAssetOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type ServiceAssetServiceIdAssetIdRelationshipCompoundUniqueInput = {
+  serviceId: string
+  assetId: string
+  relationship: $Enums.AssetRelationship
 }
 
 export type ServiceAssetCountOrderByAggregateInput = {

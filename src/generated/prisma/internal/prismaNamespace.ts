@@ -8125,6 +8125,20 @@ export type ListEnumDisposalStatusEnumFieldRefInput<$PrismaModel> = FieldRefInpu
 
 
 /**
+ * Reference to a field of type 'DisposalApprovalStatusEnum'
+ */
+export type EnumDisposalApprovalStatusEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DisposalApprovalStatusEnum'>
+    
+
+
+/**
+ * Reference to a field of type 'DisposalApprovalStatusEnum[]'
+ */
+export type ListEnumDisposalApprovalStatusEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DisposalApprovalStatusEnum[]'>
+    
+
+
+/**
  * Reference to a field of type 'OrganizationUnitType'
  */
 export type EnumOrganizationUnitTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OrganizationUnitType'>
@@ -8265,6 +8279,76 @@ export type ListEnumIntuneSyncStatusFieldRefInput<$PrismaModel> = FieldRefInputT
 
 
 /**
+ * Reference to a field of type 'AssetKitTypeEnum'
+ */
+export type EnumAssetKitTypeEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AssetKitTypeEnum'>
+    
+
+
+/**
+ * Reference to a field of type 'AssetKitTypeEnum[]'
+ */
+export type ListEnumAssetKitTypeEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AssetKitTypeEnum[]'>
+    
+
+
+/**
+ * Reference to a field of type 'KitAssigneeTypeEnum'
+ */
+export type EnumKitAssigneeTypeEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KitAssigneeTypeEnum'>
+    
+
+
+/**
+ * Reference to a field of type 'KitAssigneeTypeEnum[]'
+ */
+export type ListEnumKitAssigneeTypeEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KitAssigneeTypeEnum[]'>
+    
+
+
+/**
+ * Reference to a field of type 'KitCheckoutStatusEnum'
+ */
+export type EnumKitCheckoutStatusEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KitCheckoutStatusEnum'>
+    
+
+
+/**
+ * Reference to a field of type 'KitCheckoutStatusEnum[]'
+ */
+export type ListEnumKitCheckoutStatusEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KitCheckoutStatusEnum[]'>
+    
+
+
+/**
+ * Reference to a field of type 'KitCheckoutItemStatusEnum'
+ */
+export type EnumKitCheckoutItemStatusEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KitCheckoutItemStatusEnum'>
+    
+
+
+/**
+ * Reference to a field of type 'KitCheckoutItemStatusEnum[]'
+ */
+export type ListEnumKitCheckoutItemStatusEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'KitCheckoutItemStatusEnum[]'>
+    
+
+
+/**
+ * Reference to a field of type 'LicenseMetricTypeEnum'
+ */
+export type EnumLicenseMetricTypeEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LicenseMetricTypeEnum'>
+    
+
+
+/**
+ * Reference to a field of type 'LicenseMetricTypeEnum[]'
+ */
+export type ListEnumLicenseMetricTypeEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'LicenseMetricTypeEnum[]'>
+    
+
+
+/**
  * Reference to a field of type 'AllocationTargetTypeEnum'
  */
 export type EnumAllocationTargetTypeEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AllocationTargetTypeEnum'>
@@ -8317,6 +8401,20 @@ export type EnumMaintenanceStatusEnumFieldRefInput<$PrismaModel> = FieldRefInput
  * Reference to a field of type 'MaintenanceStatusEnum[]'
  */
 export type ListEnumMaintenanceStatusEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MaintenanceStatusEnum[]'>
+    
+
+
+/**
+ * Reference to a field of type 'AssetReservationStatusEnum'
+ */
+export type EnumAssetReservationStatusEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AssetReservationStatusEnum'>
+    
+
+
+/**
+ * Reference to a field of type 'AssetReservationStatusEnum[]'
+ */
+export type ListEnumAssetReservationStatusEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AssetReservationStatusEnum[]'>
     
 
 

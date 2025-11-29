@@ -31,7 +31,7 @@ export type AssetKitCheckoutItemMinAggregateOutputType = {
   kitItemId: string | null
   checkoutDate: Date | null
   returnDate: Date | null
-  status: string | null
+  status: $Enums.KitCheckoutItemStatusEnum | null
   conditionAtCheckout: string | null
   conditionAtReturn: string | null
   note: string | null
@@ -46,7 +46,7 @@ export type AssetKitCheckoutItemMaxAggregateOutputType = {
   kitItemId: string | null
   checkoutDate: Date | null
   returnDate: Date | null
-  status: string | null
+  status: $Enums.KitCheckoutItemStatusEnum | null
   conditionAtCheckout: string | null
   conditionAtReturn: string | null
   note: string | null
@@ -196,7 +196,7 @@ export type AssetKitCheckoutItemGroupByOutputType = {
   kitItemId: string
   checkoutDate: Date
   returnDate: Date | null
-  status: string
+  status: $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout: string | null
   conditionAtReturn: string | null
   note: string | null
@@ -232,7 +232,7 @@ export type AssetKitCheckoutItemWhereInput = {
   kitItemId?: Prisma.StringFilter<"AssetKitCheckoutItem"> | string
   checkoutDate?: Prisma.DateTimeFilter<"AssetKitCheckoutItem"> | Date | string
   returnDate?: Prisma.DateTimeNullableFilter<"AssetKitCheckoutItem"> | Date | string | null
-  status?: Prisma.StringFilter<"AssetKitCheckoutItem"> | string
+  status?: Prisma.EnumKitCheckoutItemStatusEnumFilter<"AssetKitCheckoutItem"> | $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: Prisma.StringNullableFilter<"AssetKitCheckoutItem"> | string | null
   conditionAtReturn?: Prisma.StringNullableFilter<"AssetKitCheckoutItem"> | string | null
   note?: Prisma.StringNullableFilter<"AssetKitCheckoutItem"> | string | null
@@ -263,6 +263,7 @@ export type AssetKitCheckoutItemOrderByWithRelationInput = {
 
 export type AssetKitCheckoutItemWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  kitCheckoutId_assetId?: Prisma.AssetKitCheckoutItemKitCheckoutIdAssetIdCompoundUniqueInput
   AND?: Prisma.AssetKitCheckoutItemWhereInput | Prisma.AssetKitCheckoutItemWhereInput[]
   OR?: Prisma.AssetKitCheckoutItemWhereInput[]
   NOT?: Prisma.AssetKitCheckoutItemWhereInput | Prisma.AssetKitCheckoutItemWhereInput[]
@@ -271,7 +272,7 @@ export type AssetKitCheckoutItemWhereUniqueInput = Prisma.AtLeast<{
   kitItemId?: Prisma.StringFilter<"AssetKitCheckoutItem"> | string
   checkoutDate?: Prisma.DateTimeFilter<"AssetKitCheckoutItem"> | Date | string
   returnDate?: Prisma.DateTimeNullableFilter<"AssetKitCheckoutItem"> | Date | string | null
-  status?: Prisma.StringFilter<"AssetKitCheckoutItem"> | string
+  status?: Prisma.EnumKitCheckoutItemStatusEnumFilter<"AssetKitCheckoutItem"> | $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: Prisma.StringNullableFilter<"AssetKitCheckoutItem"> | string | null
   conditionAtReturn?: Prisma.StringNullableFilter<"AssetKitCheckoutItem"> | string | null
   note?: Prisma.StringNullableFilter<"AssetKitCheckoutItem"> | string | null
@@ -280,7 +281,7 @@ export type AssetKitCheckoutItemWhereUniqueInput = Prisma.AtLeast<{
   kitCheckout?: Prisma.XOR<Prisma.AssetKitCheckoutScalarRelationFilter, Prisma.AssetKitCheckoutWhereInput>
   asset?: Prisma.XOR<Prisma.AssetScalarRelationFilter, Prisma.AssetWhereInput>
   kitItem?: Prisma.XOR<Prisma.AssetKitItemScalarRelationFilter, Prisma.AssetKitItemWhereInput>
-}, "id">
+}, "id" | "kitCheckoutId_assetId">
 
 export type AssetKitCheckoutItemOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -310,7 +311,7 @@ export type AssetKitCheckoutItemScalarWhereWithAggregatesInput = {
   kitItemId?: Prisma.StringWithAggregatesFilter<"AssetKitCheckoutItem"> | string
   checkoutDate?: Prisma.DateTimeWithAggregatesFilter<"AssetKitCheckoutItem"> | Date | string
   returnDate?: Prisma.DateTimeNullableWithAggregatesFilter<"AssetKitCheckoutItem"> | Date | string | null
-  status?: Prisma.StringWithAggregatesFilter<"AssetKitCheckoutItem"> | string
+  status?: Prisma.EnumKitCheckoutItemStatusEnumWithAggregatesFilter<"AssetKitCheckoutItem"> | $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: Prisma.StringNullableWithAggregatesFilter<"AssetKitCheckoutItem"> | string | null
   conditionAtReturn?: Prisma.StringNullableWithAggregatesFilter<"AssetKitCheckoutItem"> | string | null
   note?: Prisma.StringNullableWithAggregatesFilter<"AssetKitCheckoutItem"> | string | null
@@ -322,7 +323,7 @@ export type AssetKitCheckoutItemCreateInput = {
   id?: string
   checkoutDate?: Date | string
   returnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: string | null
   conditionAtReturn?: string | null
   note?: string | null
@@ -340,7 +341,7 @@ export type AssetKitCheckoutItemUncheckedCreateInput = {
   kitItemId: string
   checkoutDate?: Date | string
   returnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: string | null
   conditionAtReturn?: string | null
   note?: string | null
@@ -352,7 +353,7 @@ export type AssetKitCheckoutItemUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   returnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutItemStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionAtReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -370,7 +371,7 @@ export type AssetKitCheckoutItemUncheckedUpdateInput = {
   kitItemId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   returnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutItemStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionAtReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -385,7 +386,7 @@ export type AssetKitCheckoutItemCreateManyInput = {
   kitItemId: string
   checkoutDate?: Date | string
   returnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: string | null
   conditionAtReturn?: string | null
   note?: string | null
@@ -397,7 +398,7 @@ export type AssetKitCheckoutItemUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   returnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutItemStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionAtReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -412,7 +413,7 @@ export type AssetKitCheckoutItemUncheckedUpdateManyInput = {
   kitItemId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   returnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutItemStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionAtReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -428,6 +429,11 @@ export type AssetKitCheckoutItemListRelationFilter = {
 
 export type AssetKitCheckoutItemOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type AssetKitCheckoutItemKitCheckoutIdAssetIdCompoundUniqueInput = {
+  kitCheckoutId: string
+  assetId: string
 }
 
 export type AssetKitCheckoutItemCountOrderByAggregateInput = {
@@ -601,11 +607,15 @@ export type AssetKitCheckoutItemUncheckedUpdateManyWithoutKitCheckoutNestedInput
   deleteMany?: Prisma.AssetKitCheckoutItemScalarWhereInput | Prisma.AssetKitCheckoutItemScalarWhereInput[]
 }
 
+export type EnumKitCheckoutItemStatusEnumFieldUpdateOperationsInput = {
+  set?: $Enums.KitCheckoutItemStatusEnum
+}
+
 export type AssetKitCheckoutItemCreateWithoutAssetInput = {
   id?: string
   checkoutDate?: Date | string
   returnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: string | null
   conditionAtReturn?: string | null
   note?: string | null
@@ -621,7 +631,7 @@ export type AssetKitCheckoutItemUncheckedCreateWithoutAssetInput = {
   kitItemId: string
   checkoutDate?: Date | string
   returnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: string | null
   conditionAtReturn?: string | null
   note?: string | null
@@ -665,7 +675,7 @@ export type AssetKitCheckoutItemScalarWhereInput = {
   kitItemId?: Prisma.StringFilter<"AssetKitCheckoutItem"> | string
   checkoutDate?: Prisma.DateTimeFilter<"AssetKitCheckoutItem"> | Date | string
   returnDate?: Prisma.DateTimeNullableFilter<"AssetKitCheckoutItem"> | Date | string | null
-  status?: Prisma.StringFilter<"AssetKitCheckoutItem"> | string
+  status?: Prisma.EnumKitCheckoutItemStatusEnumFilter<"AssetKitCheckoutItem"> | $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: Prisma.StringNullableFilter<"AssetKitCheckoutItem"> | string | null
   conditionAtReturn?: Prisma.StringNullableFilter<"AssetKitCheckoutItem"> | string | null
   note?: Prisma.StringNullableFilter<"AssetKitCheckoutItem"> | string | null
@@ -677,7 +687,7 @@ export type AssetKitCheckoutItemCreateWithoutKitItemInput = {
   id?: string
   checkoutDate?: Date | string
   returnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: string | null
   conditionAtReturn?: string | null
   note?: string | null
@@ -693,7 +703,7 @@ export type AssetKitCheckoutItemUncheckedCreateWithoutKitItemInput = {
   assetId: string
   checkoutDate?: Date | string
   returnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: string | null
   conditionAtReturn?: string | null
   note?: string | null
@@ -731,7 +741,7 @@ export type AssetKitCheckoutItemCreateWithoutKitCheckoutInput = {
   id?: string
   checkoutDate?: Date | string
   returnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: string | null
   conditionAtReturn?: string | null
   note?: string | null
@@ -747,7 +757,7 @@ export type AssetKitCheckoutItemUncheckedCreateWithoutKitCheckoutInput = {
   kitItemId: string
   checkoutDate?: Date | string
   returnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: string | null
   conditionAtReturn?: string | null
   note?: string | null
@@ -787,7 +797,7 @@ export type AssetKitCheckoutItemCreateManyAssetInput = {
   kitItemId: string
   checkoutDate?: Date | string
   returnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: string | null
   conditionAtReturn?: string | null
   note?: string | null
@@ -799,7 +809,7 @@ export type AssetKitCheckoutItemUpdateWithoutAssetInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   returnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutItemStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionAtReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -815,7 +825,7 @@ export type AssetKitCheckoutItemUncheckedUpdateWithoutAssetInput = {
   kitItemId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   returnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutItemStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionAtReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -829,7 +839,7 @@ export type AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetInput = {
   kitItemId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   returnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutItemStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionAtReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -843,7 +853,7 @@ export type AssetKitCheckoutItemCreateManyKitItemInput = {
   assetId: string
   checkoutDate?: Date | string
   returnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: string | null
   conditionAtReturn?: string | null
   note?: string | null
@@ -855,7 +865,7 @@ export type AssetKitCheckoutItemUpdateWithoutKitItemInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   returnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutItemStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionAtReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -871,7 +881,7 @@ export type AssetKitCheckoutItemUncheckedUpdateWithoutKitItemInput = {
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   returnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutItemStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionAtReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -885,7 +895,7 @@ export type AssetKitCheckoutItemUncheckedUpdateManyWithoutKitItemInput = {
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   returnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutItemStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionAtReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -899,7 +909,7 @@ export type AssetKitCheckoutItemCreateManyKitCheckoutInput = {
   kitItemId: string
   checkoutDate?: Date | string
   returnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: string | null
   conditionAtReturn?: string | null
   note?: string | null
@@ -911,7 +921,7 @@ export type AssetKitCheckoutItemUpdateWithoutKitCheckoutInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   returnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutItemStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionAtReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -927,7 +937,7 @@ export type AssetKitCheckoutItemUncheckedUpdateWithoutKitCheckoutInput = {
   kitItemId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   returnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutItemStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionAtReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -941,7 +951,7 @@ export type AssetKitCheckoutItemUncheckedUpdateManyWithoutKitCheckoutInput = {
   kitItemId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   returnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutItemStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutItemStatusEnum
   conditionAtCheckout?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionAtReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1051,7 +1061,7 @@ export type $AssetKitCheckoutItemPayload<ExtArgs extends runtime.Types.Extension
     kitItemId: string
     checkoutDate: Date
     returnDate: Date | null
-    status: string
+    status: $Enums.KitCheckoutItemStatusEnum
     conditionAtCheckout: string | null
     conditionAtReturn: string | null
     note: string | null
@@ -1489,7 +1499,7 @@ export interface AssetKitCheckoutItemFieldRefs {
   readonly kitItemId: Prisma.FieldRef<"AssetKitCheckoutItem", 'String'>
   readonly checkoutDate: Prisma.FieldRef<"AssetKitCheckoutItem", 'DateTime'>
   readonly returnDate: Prisma.FieldRef<"AssetKitCheckoutItem", 'DateTime'>
-  readonly status: Prisma.FieldRef<"AssetKitCheckoutItem", 'String'>
+  readonly status: Prisma.FieldRef<"AssetKitCheckoutItem", 'KitCheckoutItemStatusEnum'>
   readonly conditionAtCheckout: Prisma.FieldRef<"AssetKitCheckoutItem", 'String'>
   readonly conditionAtReturn: Prisma.FieldRef<"AssetKitCheckoutItem", 'String'>
   readonly note: Prisma.FieldRef<"AssetKitCheckoutItem", 'String'>

@@ -61,7 +61,7 @@ model DisposalApproval {
   id         String    @id @default(cuid())
   disposalId String
   approverId String
-  status     String    @default("PENDING") // PENDING, APPROVED, REJECTED
+  status     DisposalApprovalStatusEnum @default(PENDING)
   decisionAt DateTime?
   comment    String?   @db.Text
   createdAt  DateTime  @default(now())
@@ -71,6 +71,7 @@ model DisposalApproval {
   approver Person        @relation("DisposalApprover", fields: [approverId], references: [id], onDelete: Restrict)
 
   // Indexes
+  @@unique([disposalId, approverId])
   @@index([disposalId])
   @@index([approverId])
   @@index([status])
@@ -100,4 +101,14 @@ model DisposalDocument {
   @@index([documentType])
   @@index([uploadedById])
   @@map("disposal_documents")
+}
+
+// ============================================
+// DISPOSAL ENUMS
+// ============================================
+
+enum DisposalApprovalStatusEnum {
+  PENDING
+  APPROVED
+  REJECTED
 }

@@ -27,12 +27,12 @@ export type AggregateAssetKitCheckout = {
 export type AssetKitCheckoutMinAggregateOutputType = {
   id: string | null
   assetKitId: string | null
-  assigneeType: string | null
+  assigneeType: $Enums.KitAssigneeTypeEnum | null
   assigneeId: string | null
   checkoutDate: Date | null
   expectedReturnDate: Date | null
   actualReturnDate: Date | null
-  status: string | null
+  status: $Enums.KitCheckoutStatusEnum | null
   checkedOutById: string | null
   note: string | null
   createdAt: Date | null
@@ -42,12 +42,12 @@ export type AssetKitCheckoutMinAggregateOutputType = {
 export type AssetKitCheckoutMaxAggregateOutputType = {
   id: string | null
   assetKitId: string | null
-  assigneeType: string | null
+  assigneeType: $Enums.KitAssigneeTypeEnum | null
   assigneeId: string | null
   checkoutDate: Date | null
   expectedReturnDate: Date | null
   actualReturnDate: Date | null
-  status: string | null
+  status: $Enums.KitCheckoutStatusEnum | null
   checkedOutById: string | null
   note: string | null
   createdAt: Date | null
@@ -192,12 +192,12 @@ export type AssetKitCheckoutGroupByArgs<ExtArgs extends runtime.Types.Extensions
 export type AssetKitCheckoutGroupByOutputType = {
   id: string
   assetKitId: string
-  assigneeType: string
+  assigneeType: $Enums.KitAssigneeTypeEnum
   assigneeId: string
   checkoutDate: Date
   expectedReturnDate: Date | null
   actualReturnDate: Date | null
-  status: string
+  status: $Enums.KitCheckoutStatusEnum
   checkedOutById: string
   note: string | null
   createdAt: Date
@@ -228,12 +228,12 @@ export type AssetKitCheckoutWhereInput = {
   NOT?: Prisma.AssetKitCheckoutWhereInput | Prisma.AssetKitCheckoutWhereInput[]
   id?: Prisma.StringFilter<"AssetKitCheckout"> | string
   assetKitId?: Prisma.StringFilter<"AssetKitCheckout"> | string
-  assigneeType?: Prisma.StringFilter<"AssetKitCheckout"> | string
+  assigneeType?: Prisma.EnumKitAssigneeTypeEnumFilter<"AssetKitCheckout"> | $Enums.KitAssigneeTypeEnum
   assigneeId?: Prisma.StringFilter<"AssetKitCheckout"> | string
   checkoutDate?: Prisma.DateTimeFilter<"AssetKitCheckout"> | Date | string
   expectedReturnDate?: Prisma.DateTimeNullableFilter<"AssetKitCheckout"> | Date | string | null
   actualReturnDate?: Prisma.DateTimeNullableFilter<"AssetKitCheckout"> | Date | string | null
-  status?: Prisma.StringFilter<"AssetKitCheckout"> | string
+  status?: Prisma.EnumKitCheckoutStatusEnumFilter<"AssetKitCheckout"> | $Enums.KitCheckoutStatusEnum
   checkedOutById?: Prisma.StringFilter<"AssetKitCheckout"> | string
   note?: Prisma.StringNullableFilter<"AssetKitCheckout"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AssetKitCheckout"> | Date | string
@@ -267,12 +267,12 @@ export type AssetKitCheckoutWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.AssetKitCheckoutWhereInput[]
   NOT?: Prisma.AssetKitCheckoutWhereInput | Prisma.AssetKitCheckoutWhereInput[]
   assetKitId?: Prisma.StringFilter<"AssetKitCheckout"> | string
-  assigneeType?: Prisma.StringFilter<"AssetKitCheckout"> | string
+  assigneeType?: Prisma.EnumKitAssigneeTypeEnumFilter<"AssetKitCheckout"> | $Enums.KitAssigneeTypeEnum
   assigneeId?: Prisma.StringFilter<"AssetKitCheckout"> | string
   checkoutDate?: Prisma.DateTimeFilter<"AssetKitCheckout"> | Date | string
   expectedReturnDate?: Prisma.DateTimeNullableFilter<"AssetKitCheckout"> | Date | string | null
   actualReturnDate?: Prisma.DateTimeNullableFilter<"AssetKitCheckout"> | Date | string | null
-  status?: Prisma.StringFilter<"AssetKitCheckout"> | string
+  status?: Prisma.EnumKitCheckoutStatusEnumFilter<"AssetKitCheckout"> | $Enums.KitCheckoutStatusEnum
   checkedOutById?: Prisma.StringFilter<"AssetKitCheckout"> | string
   note?: Prisma.StringNullableFilter<"AssetKitCheckout"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AssetKitCheckout"> | Date | string
@@ -306,12 +306,12 @@ export type AssetKitCheckoutScalarWhereWithAggregatesInput = {
   NOT?: Prisma.AssetKitCheckoutScalarWhereWithAggregatesInput | Prisma.AssetKitCheckoutScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"AssetKitCheckout"> | string
   assetKitId?: Prisma.StringWithAggregatesFilter<"AssetKitCheckout"> | string
-  assigneeType?: Prisma.StringWithAggregatesFilter<"AssetKitCheckout"> | string
+  assigneeType?: Prisma.EnumKitAssigneeTypeEnumWithAggregatesFilter<"AssetKitCheckout"> | $Enums.KitAssigneeTypeEnum
   assigneeId?: Prisma.StringWithAggregatesFilter<"AssetKitCheckout"> | string
   checkoutDate?: Prisma.DateTimeWithAggregatesFilter<"AssetKitCheckout"> | Date | string
   expectedReturnDate?: Prisma.DateTimeNullableWithAggregatesFilter<"AssetKitCheckout"> | Date | string | null
   actualReturnDate?: Prisma.DateTimeNullableWithAggregatesFilter<"AssetKitCheckout"> | Date | string | null
-  status?: Prisma.StringWithAggregatesFilter<"AssetKitCheckout"> | string
+  status?: Prisma.EnumKitCheckoutStatusEnumWithAggregatesFilter<"AssetKitCheckout"> | $Enums.KitCheckoutStatusEnum
   checkedOutById?: Prisma.StringWithAggregatesFilter<"AssetKitCheckout"> | string
   note?: Prisma.StringNullableWithAggregatesFilter<"AssetKitCheckout"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AssetKitCheckout"> | Date | string
@@ -320,12 +320,12 @@ export type AssetKitCheckoutScalarWhereWithAggregatesInput = {
 
 export type AssetKitCheckoutCreateInput = {
   id?: string
-  assigneeType: string
+  assigneeType?: $Enums.KitAssigneeTypeEnum
   assigneeId: string
   checkoutDate?: Date | string
   expectedReturnDate?: Date | string | null
   actualReturnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutStatusEnum
   note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -337,12 +337,12 @@ export type AssetKitCheckoutCreateInput = {
 export type AssetKitCheckoutUncheckedCreateInput = {
   id?: string
   assetKitId: string
-  assigneeType: string
+  assigneeType?: $Enums.KitAssigneeTypeEnum
   assigneeId: string
   checkoutDate?: Date | string
   expectedReturnDate?: Date | string | null
   actualReturnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutStatusEnum
   checkedOutById: string
   note?: string | null
   createdAt?: Date | string
@@ -352,12 +352,12 @@ export type AssetKitCheckoutUncheckedCreateInput = {
 
 export type AssetKitCheckoutUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  assigneeType?: Prisma.StringFieldUpdateOperationsInput | string
+  assigneeType?: Prisma.EnumKitAssigneeTypeEnumFieldUpdateOperationsInput | $Enums.KitAssigneeTypeEnum
   assigneeId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expectedReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   actualReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutStatusEnum
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -369,12 +369,12 @@ export type AssetKitCheckoutUpdateInput = {
 export type AssetKitCheckoutUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetKitId?: Prisma.StringFieldUpdateOperationsInput | string
-  assigneeType?: Prisma.StringFieldUpdateOperationsInput | string
+  assigneeType?: Prisma.EnumKitAssigneeTypeEnumFieldUpdateOperationsInput | $Enums.KitAssigneeTypeEnum
   assigneeId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expectedReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   actualReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutStatusEnum
   checkedOutById?: Prisma.StringFieldUpdateOperationsInput | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -385,12 +385,12 @@ export type AssetKitCheckoutUncheckedUpdateInput = {
 export type AssetKitCheckoutCreateManyInput = {
   id?: string
   assetKitId: string
-  assigneeType: string
+  assigneeType?: $Enums.KitAssigneeTypeEnum
   assigneeId: string
   checkoutDate?: Date | string
   expectedReturnDate?: Date | string | null
   actualReturnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutStatusEnum
   checkedOutById: string
   note?: string | null
   createdAt?: Date | string
@@ -399,12 +399,12 @@ export type AssetKitCheckoutCreateManyInput = {
 
 export type AssetKitCheckoutUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  assigneeType?: Prisma.StringFieldUpdateOperationsInput | string
+  assigneeType?: Prisma.EnumKitAssigneeTypeEnumFieldUpdateOperationsInput | $Enums.KitAssigneeTypeEnum
   assigneeId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expectedReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   actualReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutStatusEnum
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -413,12 +413,12 @@ export type AssetKitCheckoutUpdateManyMutationInput = {
 export type AssetKitCheckoutUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetKitId?: Prisma.StringFieldUpdateOperationsInput | string
-  assigneeType?: Prisma.StringFieldUpdateOperationsInput | string
+  assigneeType?: Prisma.EnumKitAssigneeTypeEnumFieldUpdateOperationsInput | $Enums.KitAssigneeTypeEnum
   assigneeId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expectedReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   actualReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutStatusEnum
   checkedOutById?: Prisma.StringFieldUpdateOperationsInput | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -569,6 +569,14 @@ export type AssetKitCheckoutUncheckedUpdateManyWithoutAssetKitNestedInput = {
   deleteMany?: Prisma.AssetKitCheckoutScalarWhereInput | Prisma.AssetKitCheckoutScalarWhereInput[]
 }
 
+export type EnumKitAssigneeTypeEnumFieldUpdateOperationsInput = {
+  set?: $Enums.KitAssigneeTypeEnum
+}
+
+export type EnumKitCheckoutStatusEnumFieldUpdateOperationsInput = {
+  set?: $Enums.KitCheckoutStatusEnum
+}
+
 export type AssetKitCheckoutCreateNestedOneWithoutItemsInput = {
   create?: Prisma.XOR<Prisma.AssetKitCheckoutCreateWithoutItemsInput, Prisma.AssetKitCheckoutUncheckedCreateWithoutItemsInput>
   connectOrCreate?: Prisma.AssetKitCheckoutCreateOrConnectWithoutItemsInput
@@ -585,12 +593,12 @@ export type AssetKitCheckoutUpdateOneRequiredWithoutItemsNestedInput = {
 
 export type AssetKitCheckoutCreateWithoutCheckedOutByInput = {
   id?: string
-  assigneeType: string
+  assigneeType?: $Enums.KitAssigneeTypeEnum
   assigneeId: string
   checkoutDate?: Date | string
   expectedReturnDate?: Date | string | null
   actualReturnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutStatusEnum
   note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -601,12 +609,12 @@ export type AssetKitCheckoutCreateWithoutCheckedOutByInput = {
 export type AssetKitCheckoutUncheckedCreateWithoutCheckedOutByInput = {
   id?: string
   assetKitId: string
-  assigneeType: string
+  assigneeType?: $Enums.KitAssigneeTypeEnum
   assigneeId: string
   checkoutDate?: Date | string
   expectedReturnDate?: Date | string | null
   actualReturnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutStatusEnum
   note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -645,12 +653,12 @@ export type AssetKitCheckoutScalarWhereInput = {
   NOT?: Prisma.AssetKitCheckoutScalarWhereInput | Prisma.AssetKitCheckoutScalarWhereInput[]
   id?: Prisma.StringFilter<"AssetKitCheckout"> | string
   assetKitId?: Prisma.StringFilter<"AssetKitCheckout"> | string
-  assigneeType?: Prisma.StringFilter<"AssetKitCheckout"> | string
+  assigneeType?: Prisma.EnumKitAssigneeTypeEnumFilter<"AssetKitCheckout"> | $Enums.KitAssigneeTypeEnum
   assigneeId?: Prisma.StringFilter<"AssetKitCheckout"> | string
   checkoutDate?: Prisma.DateTimeFilter<"AssetKitCheckout"> | Date | string
   expectedReturnDate?: Prisma.DateTimeNullableFilter<"AssetKitCheckout"> | Date | string | null
   actualReturnDate?: Prisma.DateTimeNullableFilter<"AssetKitCheckout"> | Date | string | null
-  status?: Prisma.StringFilter<"AssetKitCheckout"> | string
+  status?: Prisma.EnumKitCheckoutStatusEnumFilter<"AssetKitCheckout"> | $Enums.KitCheckoutStatusEnum
   checkedOutById?: Prisma.StringFilter<"AssetKitCheckout"> | string
   note?: Prisma.StringNullableFilter<"AssetKitCheckout"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AssetKitCheckout"> | Date | string
@@ -659,12 +667,12 @@ export type AssetKitCheckoutScalarWhereInput = {
 
 export type AssetKitCheckoutCreateWithoutAssetKitInput = {
   id?: string
-  assigneeType: string
+  assigneeType?: $Enums.KitAssigneeTypeEnum
   assigneeId: string
   checkoutDate?: Date | string
   expectedReturnDate?: Date | string | null
   actualReturnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutStatusEnum
   note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -674,12 +682,12 @@ export type AssetKitCheckoutCreateWithoutAssetKitInput = {
 
 export type AssetKitCheckoutUncheckedCreateWithoutAssetKitInput = {
   id?: string
-  assigneeType: string
+  assigneeType?: $Enums.KitAssigneeTypeEnum
   assigneeId: string
   checkoutDate?: Date | string
   expectedReturnDate?: Date | string | null
   actualReturnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutStatusEnum
   checkedOutById: string
   note?: string | null
   createdAt?: Date | string
@@ -715,12 +723,12 @@ export type AssetKitCheckoutUpdateManyWithWhereWithoutAssetKitInput = {
 
 export type AssetKitCheckoutCreateWithoutItemsInput = {
   id?: string
-  assigneeType: string
+  assigneeType?: $Enums.KitAssigneeTypeEnum
   assigneeId: string
   checkoutDate?: Date | string
   expectedReturnDate?: Date | string | null
   actualReturnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutStatusEnum
   note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -731,12 +739,12 @@ export type AssetKitCheckoutCreateWithoutItemsInput = {
 export type AssetKitCheckoutUncheckedCreateWithoutItemsInput = {
   id?: string
   assetKitId: string
-  assigneeType: string
+  assigneeType?: $Enums.KitAssigneeTypeEnum
   assigneeId: string
   checkoutDate?: Date | string
   expectedReturnDate?: Date | string | null
   actualReturnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutStatusEnum
   checkedOutById: string
   note?: string | null
   createdAt?: Date | string
@@ -761,12 +769,12 @@ export type AssetKitCheckoutUpdateToOneWithWhereWithoutItemsInput = {
 
 export type AssetKitCheckoutUpdateWithoutItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  assigneeType?: Prisma.StringFieldUpdateOperationsInput | string
+  assigneeType?: Prisma.EnumKitAssigneeTypeEnumFieldUpdateOperationsInput | $Enums.KitAssigneeTypeEnum
   assigneeId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expectedReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   actualReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutStatusEnum
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -777,12 +785,12 @@ export type AssetKitCheckoutUpdateWithoutItemsInput = {
 export type AssetKitCheckoutUncheckedUpdateWithoutItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetKitId?: Prisma.StringFieldUpdateOperationsInput | string
-  assigneeType?: Prisma.StringFieldUpdateOperationsInput | string
+  assigneeType?: Prisma.EnumKitAssigneeTypeEnumFieldUpdateOperationsInput | $Enums.KitAssigneeTypeEnum
   assigneeId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expectedReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   actualReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutStatusEnum
   checkedOutById?: Prisma.StringFieldUpdateOperationsInput | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -792,12 +800,12 @@ export type AssetKitCheckoutUncheckedUpdateWithoutItemsInput = {
 export type AssetKitCheckoutCreateManyCheckedOutByInput = {
   id?: string
   assetKitId: string
-  assigneeType: string
+  assigneeType?: $Enums.KitAssigneeTypeEnum
   assigneeId: string
   checkoutDate?: Date | string
   expectedReturnDate?: Date | string | null
   actualReturnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutStatusEnum
   note?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -805,12 +813,12 @@ export type AssetKitCheckoutCreateManyCheckedOutByInput = {
 
 export type AssetKitCheckoutUpdateWithoutCheckedOutByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  assigneeType?: Prisma.StringFieldUpdateOperationsInput | string
+  assigneeType?: Prisma.EnumKitAssigneeTypeEnumFieldUpdateOperationsInput | $Enums.KitAssigneeTypeEnum
   assigneeId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expectedReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   actualReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutStatusEnum
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -821,12 +829,12 @@ export type AssetKitCheckoutUpdateWithoutCheckedOutByInput = {
 export type AssetKitCheckoutUncheckedUpdateWithoutCheckedOutByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetKitId?: Prisma.StringFieldUpdateOperationsInput | string
-  assigneeType?: Prisma.StringFieldUpdateOperationsInput | string
+  assigneeType?: Prisma.EnumKitAssigneeTypeEnumFieldUpdateOperationsInput | $Enums.KitAssigneeTypeEnum
   assigneeId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expectedReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   actualReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutStatusEnum
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -836,12 +844,12 @@ export type AssetKitCheckoutUncheckedUpdateWithoutCheckedOutByInput = {
 export type AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetKitId?: Prisma.StringFieldUpdateOperationsInput | string
-  assigneeType?: Prisma.StringFieldUpdateOperationsInput | string
+  assigneeType?: Prisma.EnumKitAssigneeTypeEnumFieldUpdateOperationsInput | $Enums.KitAssigneeTypeEnum
   assigneeId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expectedReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   actualReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutStatusEnum
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -849,12 +857,12 @@ export type AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByInput = {
 
 export type AssetKitCheckoutCreateManyAssetKitInput = {
   id?: string
-  assigneeType: string
+  assigneeType?: $Enums.KitAssigneeTypeEnum
   assigneeId: string
   checkoutDate?: Date | string
   expectedReturnDate?: Date | string | null
   actualReturnDate?: Date | string | null
-  status?: string
+  status?: $Enums.KitCheckoutStatusEnum
   checkedOutById: string
   note?: string | null
   createdAt?: Date | string
@@ -863,12 +871,12 @@ export type AssetKitCheckoutCreateManyAssetKitInput = {
 
 export type AssetKitCheckoutUpdateWithoutAssetKitInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  assigneeType?: Prisma.StringFieldUpdateOperationsInput | string
+  assigneeType?: Prisma.EnumKitAssigneeTypeEnumFieldUpdateOperationsInput | $Enums.KitAssigneeTypeEnum
   assigneeId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expectedReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   actualReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutStatusEnum
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -878,12 +886,12 @@ export type AssetKitCheckoutUpdateWithoutAssetKitInput = {
 
 export type AssetKitCheckoutUncheckedUpdateWithoutAssetKitInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  assigneeType?: Prisma.StringFieldUpdateOperationsInput | string
+  assigneeType?: Prisma.EnumKitAssigneeTypeEnumFieldUpdateOperationsInput | $Enums.KitAssigneeTypeEnum
   assigneeId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expectedReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   actualReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutStatusEnum
   checkedOutById?: Prisma.StringFieldUpdateOperationsInput | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -893,12 +901,12 @@ export type AssetKitCheckoutUncheckedUpdateWithoutAssetKitInput = {
 
 export type AssetKitCheckoutUncheckedUpdateManyWithoutAssetKitInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  assigneeType?: Prisma.StringFieldUpdateOperationsInput | string
+  assigneeType?: Prisma.EnumKitAssigneeTypeEnumFieldUpdateOperationsInput | $Enums.KitAssigneeTypeEnum
   assigneeId?: Prisma.StringFieldUpdateOperationsInput | string
   checkoutDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   expectedReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   actualReturnDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumKitCheckoutStatusEnumFieldUpdateOperationsInput | $Enums.KitCheckoutStatusEnum
   checkedOutById?: Prisma.StringFieldUpdateOperationsInput | string
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1030,12 +1038,12 @@ export type $AssetKitCheckoutPayload<ExtArgs extends runtime.Types.Extensions.In
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     assetKitId: string
-    assigneeType: string
+    assigneeType: $Enums.KitAssigneeTypeEnum
     assigneeId: string
     checkoutDate: Date
     expectedReturnDate: Date | null
     actualReturnDate: Date | null
-    status: string
+    status: $Enums.KitCheckoutStatusEnum
     checkedOutById: string
     note: string | null
     createdAt: Date
@@ -1468,12 +1476,12 @@ export interface Prisma__AssetKitCheckoutClient<T, Null = never, ExtArgs extends
 export interface AssetKitCheckoutFieldRefs {
   readonly id: Prisma.FieldRef<"AssetKitCheckout", 'String'>
   readonly assetKitId: Prisma.FieldRef<"AssetKitCheckout", 'String'>
-  readonly assigneeType: Prisma.FieldRef<"AssetKitCheckout", 'String'>
+  readonly assigneeType: Prisma.FieldRef<"AssetKitCheckout", 'KitAssigneeTypeEnum'>
   readonly assigneeId: Prisma.FieldRef<"AssetKitCheckout", 'String'>
   readonly checkoutDate: Prisma.FieldRef<"AssetKitCheckout", 'DateTime'>
   readonly expectedReturnDate: Prisma.FieldRef<"AssetKitCheckout", 'DateTime'>
   readonly actualReturnDate: Prisma.FieldRef<"AssetKitCheckout", 'DateTime'>
-  readonly status: Prisma.FieldRef<"AssetKitCheckout", 'String'>
+  readonly status: Prisma.FieldRef<"AssetKitCheckout", 'KitCheckoutStatusEnum'>
   readonly checkedOutById: Prisma.FieldRef<"AssetKitCheckout", 'String'>
   readonly note: Prisma.FieldRef<"AssetKitCheckout", 'String'>
   readonly createdAt: Prisma.FieldRef<"AssetKitCheckout", 'DateTime'>

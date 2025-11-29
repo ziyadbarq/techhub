@@ -243,6 +243,7 @@ export type VerificationItemOrderByWithRelationInput = {
 
 export type VerificationItemWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  verificationCampaignId_targetType_targetId?: Prisma.VerificationItemVerificationCampaignIdTargetTypeTargetIdCompoundUniqueInput
   AND?: Prisma.VerificationItemWhereInput | Prisma.VerificationItemWhereInput[]
   OR?: Prisma.VerificationItemWhereInput[]
   NOT?: Prisma.VerificationItemWhereInput | Prisma.VerificationItemWhereInput[]
@@ -257,7 +258,7 @@ export type VerificationItemWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"VerificationItem"> | Date | string
   verificationCampaign?: Prisma.XOR<Prisma.VerificationCampaignScalarRelationFilter, Prisma.VerificationCampaignWhereInput>
   verifierPerson?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
-}, "id">
+}, "id" | "verificationCampaignId_targetType_targetId">
 
 export type VerificationItemOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -295,7 +296,7 @@ export type VerificationItemCreateInput = {
   id?: string
   targetType: $Enums.TargetObjectTypeEnum
   targetId: string
-  status: $Enums.VerificationStatusEnum
+  status?: $Enums.VerificationStatusEnum
   verifiedAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
@@ -310,7 +311,7 @@ export type VerificationItemUncheckedCreateInput = {
   targetType: $Enums.TargetObjectTypeEnum
   targetId: string
   verifierPersonId?: string | null
-  status: $Enums.VerificationStatusEnum
+  status?: $Enums.VerificationStatusEnum
   verifiedAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
@@ -349,7 +350,7 @@ export type VerificationItemCreateManyInput = {
   targetType: $Enums.TargetObjectTypeEnum
   targetId: string
   verifierPersonId?: string | null
-  status: $Enums.VerificationStatusEnum
+  status?: $Enums.VerificationStatusEnum
   verifiedAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
@@ -388,6 +389,12 @@ export type VerificationItemListRelationFilter = {
 
 export type VerificationItemOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type VerificationItemVerificationCampaignIdTargetTypeTargetIdCompoundUniqueInput = {
+  verificationCampaignId: string
+  targetType: $Enums.TargetObjectTypeEnum
+  targetId: string
 }
 
 export type VerificationItemCountOrderByAggregateInput = {
@@ -521,7 +528,7 @@ export type VerificationItemCreateWithoutVerifierPersonInput = {
   id?: string
   targetType: $Enums.TargetObjectTypeEnum
   targetId: string
-  status: $Enums.VerificationStatusEnum
+  status?: $Enums.VerificationStatusEnum
   verifiedAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
@@ -534,7 +541,7 @@ export type VerificationItemUncheckedCreateWithoutVerifierPersonInput = {
   verificationCampaignId: string
   targetType: $Enums.TargetObjectTypeEnum
   targetId: string
-  status: $Enums.VerificationStatusEnum
+  status?: $Enums.VerificationStatusEnum
   verifiedAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
@@ -587,7 +594,7 @@ export type VerificationItemCreateWithoutVerificationCampaignInput = {
   id?: string
   targetType: $Enums.TargetObjectTypeEnum
   targetId: string
-  status: $Enums.VerificationStatusEnum
+  status?: $Enums.VerificationStatusEnum
   verifiedAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
@@ -600,7 +607,7 @@ export type VerificationItemUncheckedCreateWithoutVerificationCampaignInput = {
   targetType: $Enums.TargetObjectTypeEnum
   targetId: string
   verifierPersonId?: string | null
-  status: $Enums.VerificationStatusEnum
+  status?: $Enums.VerificationStatusEnum
   verifiedAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
@@ -638,7 +645,7 @@ export type VerificationItemCreateManyVerifierPersonInput = {
   verificationCampaignId: string
   targetType: $Enums.TargetObjectTypeEnum
   targetId: string
-  status: $Enums.VerificationStatusEnum
+  status?: $Enums.VerificationStatusEnum
   verifiedAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
@@ -686,7 +693,7 @@ export type VerificationItemCreateManyVerificationCampaignInput = {
   targetType: $Enums.TargetObjectTypeEnum
   targetId: string
   verifierPersonId?: string | null
-  status: $Enums.VerificationStatusEnum
+  status?: $Enums.VerificationStatusEnum
   verifiedAt?: Date | string | null
   comment?: string | null
   createdAt?: Date | string
