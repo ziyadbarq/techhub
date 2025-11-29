@@ -8,6 +8,7 @@
  */
 
 import { useState, useCallback, useEffect, useMemo } from "react";
+import type { PaginationState } from "@tanstack/react-table";
 import { toast } from "sonner";
 import { RefreshCw, Laptop, Package, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -46,6 +47,8 @@ export function IntuneDevicesPageClient({
   initialStats,
 }: IntuneDevicesPageClientProps) {
   const [data, setData] = useState<PaginatedDevicesData>(initialData);
+  const [page, setPage] = useState<number>(initialData.page ?? 1);
+  const [pageSize, setPageSize] = useState<number>(initialData.pageSize ?? 10);
   const [stats, setStats] = useState<IntuneComplianceStatsDTO | null>(
     initialStats ?? null,
   );
@@ -80,17 +83,33 @@ export function IntuneDevicesPageClient({
   }, []);
 
   const loadDevices = useCallback(
-    async (page: number, currentFilters?: IntuneDeviceFiltersDTO) => {
+    async (
+      page: number,
+      currentFilters?: IntuneDeviceFiltersDTO,
+      pageSizeOverride?: number,
+    ) => {
       setIsLoading(true);
       try {
         const filtersToUse = currentFilters ?? filters;
         const hasFilters = Object.values(filtersToUse).some(Boolean);
+        const sizeToUse = pageSizeOverride ?? pageSize;
         const result = await listIntuneDevicesAction(
           hasFilters ? filtersToUse : undefined,
-          { page, pageSize: data.pageSize },
+          { page, pageSize: sizeToUse },
         );
         if (result.success) {
-          setData(result.data);
+          const safeTotalPages = Math.max(result.data.totalPages, 1);
+          const safePage =
+            result.data.page > safeTotalPages
+              ? safeTotalPages
+              : result.data.page;
+          setPage(safePage);
+          setPageSize(result.data.pageSize ?? sizeToUse);
+          setData({
+            ...result.data,
+            page: safePage,
+            totalPages: safeTotalPages,
+          });
         } else {
           toast.error(result.error || "Failed to load devices");
         }
@@ -100,14 +119,20 @@ export function IntuneDevicesPageClient({
         setIsLoading(false);
       }
     },
-    [filters, data.pageSize],
+    [filters, pageSize],
   );
 
-  const handlePageChange = useCallback(
-    (page: number) => {
-      loadDevices(page, filters);
+  const handlePaginationChange = useCallback(
+    (paginationState: PaginationState) => {
+      const nextSize = paginationState.pageSize;
+      const sizeChanged = nextSize !== pageSize;
+      const targetPage = sizeChanged ? 1 : paginationState.pageIndex + 1;
+      if (!sizeChanged && targetPage === page) return;
+      setPage(targetPage); // keep controls in sync while fetching
+      setPageSize(nextSize);
+      loadDevices(targetPage, filters, nextSize);
     },
-    [loadDevices, filters],
+    [filters, loadDevices, pageSize, page],
   );
 
   const handleSync = useCallback(async () => {
@@ -284,10 +309,10 @@ export function IntuneDevicesPageClient({
             isLoading={isLoading}
             selectable={canCreateAssets && canLinkDevices}
             onSelectionChange={handleSelectionChange}
-            totalPages={data.totalPages}
-            currentPage={data.page}
-            pageSize={data.pageSize}
-            onPageChange={handlePageChange}
+            totalPages={Math.max(data.totalPages, 1)}
+            currentPage={page}
+            pageSize={pageSize}
+            onPaginationChange={handlePaginationChange}
           />
           {data.total > 0 && (
             <p className="text-muted-foreground text-sm">

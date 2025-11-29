@@ -166,32 +166,37 @@ export function DataTable<TData, TValue>({
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onPaginationChange: (updaterOrValue) => {
-      const newPagination =
+      const current = pagination
+        ? {
+            pageIndex: pagination.pageIndex ?? 0,
+            pageSize: pagination.pageSize ?? 10,
+          }
+        : internalPagination;
+      const next =
         typeof updaterOrValue === "function"
-          ? updaterOrValue(internalPagination)
+          ? updaterOrValue(current)
           : updaterOrValue;
 
-      // Call manual pagination handler if provided
-      if (pagination?.onPageChange) {
-        pagination.onPageChange(newPagination.pageIndex);
+      if (pagination?.onPaginationChange) {
+        pagination.onPaginationChange(next);
+      } else if (pagination?.onPageChange) {
+        pagination.onPageChange(next.pageIndex);
+        setInternalPagination(next);
+      } else {
+        setInternalPagination(next);
       }
-
-      // Update internal state
-      const handler = pagination?.onPaginationChange ?? setInternalPagination;
-      handler(newPagination);
     },
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
-      pagination:
-        pagination?.onPaginationChange || pagination?.manualPagination
-          ? {
-              pageIndex: pagination.pageIndex ?? 0,
-              pageSize: pagination.pageSize ?? 10,
-            }
-          : internalPagination,
+      pagination: pagination
+        ? {
+            pageIndex: pagination.pageIndex ?? 0,
+            pageSize: pagination.pageSize ?? 10,
+          }
+        : internalPagination,
     },
     manualPagination:
       pagination?.manualPagination ?? !!pagination?.onPaginationChange,
@@ -201,6 +206,8 @@ export function DataTable<TData, TValue>({
         ? Math.ceil(pagination.total / (pagination.pageSize ?? 10))
         : undefined),
   });
+
+  const showSkeleton = loading && data.length === 0;
 
   // Notify parent of selection changes
   React.useEffect(() => {
@@ -293,8 +300,7 @@ export function DataTable<TData, TValue>({
               ))}
             </TableHeader>
             <TableBody>
-              {loading ? (
-                // Loading skeleton
+              {showSkeleton ? (
                 Array.from({ length: pagination?.pageSize ?? 5 }).map(
                   (_, i) => (
                     <TableRow key={i}>
@@ -342,6 +348,12 @@ export function DataTable<TData, TValue>({
           </Table>
         </div>
 
+        {loading && data.length > 0 && (
+          <div className="bg-background/80 pointer-events-none absolute inset-0 flex items-center justify-center">
+            <div className="text-muted-foreground text-sm">Loading…</div>
+          </div>
+        )}
+
         {/* Horizontal Scroll Indicator (Mobile) */}
         {showScrollIndicator && (
           <div className="pointer-events-none absolute top-0 right-0 flex h-full items-center pr-2 md:hidden">
@@ -372,7 +384,7 @@ export function DataTable<TData, TValue>({
               }}
               className="h-8 w-[70px] rounded-md border bg-transparent px-2 text-sm"
             >
-              {[5, 10, 20, 30, 40, 50].map((pageSize) => (
+              {[10, 50, 100, 500].map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   {pageSize}
                 </option>

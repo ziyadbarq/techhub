@@ -10,7 +10,7 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import type { ColumnDef } from "@tanstack/react-table";
+import type { ColumnDef, PaginationState } from "@tanstack/react-table";
 import { MoreHorizontal, ExternalLink, Laptop, Monitor } from "lucide-react";
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
@@ -42,7 +42,7 @@ interface IntuneDevicesTableProps {
   totalPages: number;
   currentPage: number;
   pageSize: number;
-  onPageChange: (page: number) => void;
+  onPaginationChange?: (pagination: PaginationState) => void;
 }
 
 export function IntuneDevicesTable({
@@ -53,7 +53,7 @@ export function IntuneDevicesTable({
   totalPages,
   currentPage,
   pageSize,
-  onPageChange,
+  onPaginationChange,
 }: IntuneDevicesTableProps) {
   const columns = useMemo<ColumnDef<IntuneDeviceDTO>[]>(
     () => [
@@ -313,7 +313,7 @@ export function IntuneDevicesTable({
         pageSize,
         pageIndex: currentPage - 1,
         pageCount: totalPages,
-        onPageChange: (pageIndex) => onPageChange(pageIndex + 1),
+        onPaginationChange,
         manualPagination: true,
       }}
     />
