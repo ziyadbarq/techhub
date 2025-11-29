@@ -131,7 +131,7 @@ cp .env.example .env.local
 # Edit .env.local with your DATABASE_URL, REDIS_URL, and OPENAI_API_KEY
 
 # 4. Initialize database
-npm run db:push        # Push Prisma schema to database
+npm run db:migrate     # Apply database migrations
 npm run db:seed        # Seed RBAC data, Foundation entities, and test data
 
 # 5. Create first admin
@@ -292,11 +292,11 @@ See `docs/THEME_SYSTEM.md` for complete documentation.
 # Generate Prisma Client
 npm run db:generate
 
-# Push schema changes to database (development)
-npm run db:push
-
-# Create migration (production)
+# Create and apply migrations (development)
 npm run db:migrate
+
+# Apply migrations without prompts (production)
+npm run db:migrate:deploy
 
 # Seed database with prompts
 npm run db:seed
@@ -349,8 +349,8 @@ npm run validate         # Run all checks (type-check + lint + test)
 
 # Database
 npm run db:generate      # Generate Prisma Client
-npm run db:push          # Push schema (dev)
-npm run db:migrate       # Create migration (prod)
+npm run db:migrate       # Create/apply migrations (dev)
+npm run db:migrate:deploy # Apply migrations (prod)
 npm run db:seed          # Seed database
 npm run db:studio        # Open Prisma Studio
 ```

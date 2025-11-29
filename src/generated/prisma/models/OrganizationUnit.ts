@@ -48,6 +48,8 @@ export type OrganizationUnitMinAggregateOutputType = {
   note: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
 }
 
 export type OrganizationUnitMaxAggregateOutputType = {
@@ -64,6 +66,8 @@ export type OrganizationUnitMaxAggregateOutputType = {
   note: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
 }
 
 export type OrganizationUnitCountAggregateOutputType = {
@@ -81,6 +85,8 @@ export type OrganizationUnitCountAggregateOutputType = {
   metadata: number
   createdAt: number
   updatedAt: number
+  deletedAt: number
+  deletedById: number
   _all: number
 }
 
@@ -107,6 +113,8 @@ export type OrganizationUnitMinAggregateInputType = {
   note?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
 }
 
 export type OrganizationUnitMaxAggregateInputType = {
@@ -123,6 +131,8 @@ export type OrganizationUnitMaxAggregateInputType = {
   note?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
 }
 
 export type OrganizationUnitCountAggregateInputType = {
@@ -140,6 +150,8 @@ export type OrganizationUnitCountAggregateInputType = {
   metadata?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
   _all?: true
 }
 
@@ -244,6 +256,8 @@ export type OrganizationUnitGroupByOutputType = {
   metadata: runtime.JsonValue | null
   createdAt: Date
   updatedAt: Date
+  deletedAt: Date | null
+  deletedById: string | null
   _count: OrganizationUnitCountAggregateOutputType | null
   _avg: OrganizationUnitAvgAggregateOutputType | null
   _sum: OrganizationUnitSumAggregateOutputType | null
@@ -284,6 +298,8 @@ export type OrganizationUnitWhereInput = {
   metadata?: Prisma.JsonNullableFilter<"OrganizationUnit">
   createdAt?: Prisma.DateTimeFilter<"OrganizationUnit"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OrganizationUnit"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"OrganizationUnit"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"OrganizationUnit"> | string | null
   parent?: Prisma.XOR<Prisma.OrganizationUnitNullableScalarRelationFilter, Prisma.OrganizationUnitWhereInput> | null
   children?: Prisma.OrganizationUnitListRelationFilter
   manager?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
@@ -291,6 +307,7 @@ export type OrganizationUnitWhereInput = {
   configurationItems?: Prisma.ConfigurationItemListRelationFilter
   dataOwnerships?: Prisma.DataOwnershipListRelationFilter
   reservations?: Prisma.AssetReservationListRelationFilter
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }
 
 export type OrganizationUnitOrderByWithRelationInput = {
@@ -308,6 +325,8 @@ export type OrganizationUnitOrderByWithRelationInput = {
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   parent?: Prisma.OrganizationUnitOrderByWithRelationInput
   children?: Prisma.OrganizationUnitOrderByRelationAggregateInput
   manager?: Prisma.PersonOrderByWithRelationInput
@@ -315,6 +334,7 @@ export type OrganizationUnitOrderByWithRelationInput = {
   configurationItems?: Prisma.ConfigurationItemOrderByRelationAggregateInput
   dataOwnerships?: Prisma.DataOwnershipOrderByRelationAggregateInput
   reservations?: Prisma.AssetReservationOrderByRelationAggregateInput
+  deletedBy?: Prisma.PersonOrderByWithRelationInput
 }
 
 export type OrganizationUnitWhereUniqueInput = Prisma.AtLeast<{
@@ -335,6 +355,8 @@ export type OrganizationUnitWhereUniqueInput = Prisma.AtLeast<{
   metadata?: Prisma.JsonNullableFilter<"OrganizationUnit">
   createdAt?: Prisma.DateTimeFilter<"OrganizationUnit"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OrganizationUnit"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"OrganizationUnit"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"OrganizationUnit"> | string | null
   parent?: Prisma.XOR<Prisma.OrganizationUnitNullableScalarRelationFilter, Prisma.OrganizationUnitWhereInput> | null
   children?: Prisma.OrganizationUnitListRelationFilter
   manager?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
@@ -342,6 +364,7 @@ export type OrganizationUnitWhereUniqueInput = Prisma.AtLeast<{
   configurationItems?: Prisma.ConfigurationItemListRelationFilter
   dataOwnerships?: Prisma.DataOwnershipListRelationFilter
   reservations?: Prisma.AssetReservationListRelationFilter
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }, "id" | "code">
 
 export type OrganizationUnitOrderByWithAggregationInput = {
@@ -359,6 +382,8 @@ export type OrganizationUnitOrderByWithAggregationInput = {
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.OrganizationUnitCountOrderByAggregateInput
   _avg?: Prisma.OrganizationUnitAvgOrderByAggregateInput
   _max?: Prisma.OrganizationUnitMaxOrderByAggregateInput
@@ -384,6 +409,8 @@ export type OrganizationUnitScalarWhereWithAggregatesInput = {
   metadata?: Prisma.JsonNullableWithAggregatesFilter<"OrganizationUnit">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"OrganizationUnit"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"OrganizationUnit"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"OrganizationUnit"> | Date | string | null
+  deletedById?: Prisma.StringNullableWithAggregatesFilter<"OrganizationUnit"> | string | null
 }
 
 export type OrganizationUnitCreateInput = {
@@ -399,6 +426,7 @@ export type OrganizationUnitCreateInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   parent?: Prisma.OrganizationUnitCreateNestedOneWithoutChildrenInput
   children?: Prisma.OrganizationUnitCreateNestedManyWithoutParentInput
   manager?: Prisma.PersonCreateNestedOneWithoutManagedOrgUnitsInput
@@ -406,6 +434,7 @@ export type OrganizationUnitCreateInput = {
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerOrgUnitInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutReservedForOrgUnitInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedOrgUnitsInput
 }
 
 export type OrganizationUnitUncheckedCreateInput = {
@@ -423,6 +452,8 @@ export type OrganizationUnitUncheckedCreateInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   children?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutParentInput
   people?: Prisma.PersonUncheckedCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
@@ -443,6 +474,7 @@ export type OrganizationUnitUpdateInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   parent?: Prisma.OrganizationUnitUpdateOneWithoutChildrenNestedInput
   children?: Prisma.OrganizationUnitUpdateManyWithoutParentNestedInput
   manager?: Prisma.PersonUpdateOneWithoutManagedOrgUnitsNestedInput
@@ -450,6 +482,7 @@ export type OrganizationUnitUpdateInput = {
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerOrgUnitNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutReservedForOrgUnitNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedOrgUnitsNestedInput
 }
 
 export type OrganizationUnitUncheckedUpdateInput = {
@@ -467,6 +500,8 @@ export type OrganizationUnitUncheckedUpdateInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   children?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutParentNestedInput
   people?: Prisma.PersonUncheckedUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
@@ -489,6 +524,8 @@ export type OrganizationUnitCreateManyInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type OrganizationUnitUpdateManyMutationInput = {
@@ -504,6 +541,7 @@ export type OrganizationUnitUpdateManyMutationInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type OrganizationUnitUncheckedUpdateManyInput = {
@@ -521,6 +559,8 @@ export type OrganizationUnitUncheckedUpdateManyInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type OrganizationUnitNullableScalarRelationFilter = {
@@ -553,6 +593,8 @@ export type OrganizationUnitCountOrderByAggregateInput = {
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type OrganizationUnitAvgOrderByAggregateInput = {
@@ -573,6 +615,8 @@ export type OrganizationUnitMaxOrderByAggregateInput = {
   note?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type OrganizationUnitMinOrderByAggregateInput = {
@@ -589,6 +633,8 @@ export type OrganizationUnitMinOrderByAggregateInput = {
   note?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type OrganizationUnitSumOrderByAggregateInput = {
@@ -691,10 +737,24 @@ export type OrganizationUnitCreateNestedManyWithoutManagerInput = {
   connect?: Prisma.OrganizationUnitWhereUniqueInput | Prisma.OrganizationUnitWhereUniqueInput[]
 }
 
+export type OrganizationUnitCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutDeletedByInput, Prisma.OrganizationUnitUncheckedCreateWithoutDeletedByInput> | Prisma.OrganizationUnitCreateWithoutDeletedByInput[] | Prisma.OrganizationUnitUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.OrganizationUnitCreateOrConnectWithoutDeletedByInput | Prisma.OrganizationUnitCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.OrganizationUnitCreateManyDeletedByInputEnvelope
+  connect?: Prisma.OrganizationUnitWhereUniqueInput | Prisma.OrganizationUnitWhereUniqueInput[]
+}
+
 export type OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput = {
   create?: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutManagerInput, Prisma.OrganizationUnitUncheckedCreateWithoutManagerInput> | Prisma.OrganizationUnitCreateWithoutManagerInput[] | Prisma.OrganizationUnitUncheckedCreateWithoutManagerInput[]
   connectOrCreate?: Prisma.OrganizationUnitCreateOrConnectWithoutManagerInput | Prisma.OrganizationUnitCreateOrConnectWithoutManagerInput[]
   createMany?: Prisma.OrganizationUnitCreateManyManagerInputEnvelope
+  connect?: Prisma.OrganizationUnitWhereUniqueInput | Prisma.OrganizationUnitWhereUniqueInput[]
+}
+
+export type OrganizationUnitUncheckedCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutDeletedByInput, Prisma.OrganizationUnitUncheckedCreateWithoutDeletedByInput> | Prisma.OrganizationUnitCreateWithoutDeletedByInput[] | Prisma.OrganizationUnitUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.OrganizationUnitCreateOrConnectWithoutDeletedByInput | Prisma.OrganizationUnitCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.OrganizationUnitCreateManyDeletedByInputEnvelope
   connect?: Prisma.OrganizationUnitWhereUniqueInput | Prisma.OrganizationUnitWhereUniqueInput[]
 }
 
@@ -720,6 +780,20 @@ export type OrganizationUnitUpdateManyWithoutManagerNestedInput = {
   deleteMany?: Prisma.OrganizationUnitScalarWhereInput | Prisma.OrganizationUnitScalarWhereInput[]
 }
 
+export type OrganizationUnitUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutDeletedByInput, Prisma.OrganizationUnitUncheckedCreateWithoutDeletedByInput> | Prisma.OrganizationUnitCreateWithoutDeletedByInput[] | Prisma.OrganizationUnitUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.OrganizationUnitCreateOrConnectWithoutDeletedByInput | Prisma.OrganizationUnitCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.OrganizationUnitUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.OrganizationUnitUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.OrganizationUnitCreateManyDeletedByInputEnvelope
+  set?: Prisma.OrganizationUnitWhereUniqueInput | Prisma.OrganizationUnitWhereUniqueInput[]
+  disconnect?: Prisma.OrganizationUnitWhereUniqueInput | Prisma.OrganizationUnitWhereUniqueInput[]
+  delete?: Prisma.OrganizationUnitWhereUniqueInput | Prisma.OrganizationUnitWhereUniqueInput[]
+  connect?: Prisma.OrganizationUnitWhereUniqueInput | Prisma.OrganizationUnitWhereUniqueInput[]
+  update?: Prisma.OrganizationUnitUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.OrganizationUnitUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.OrganizationUnitUpdateManyWithWhereWithoutDeletedByInput | Prisma.OrganizationUnitUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.OrganizationUnitScalarWhereInput | Prisma.OrganizationUnitScalarWhereInput[]
+}
+
 export type OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput = {
   create?: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutManagerInput, Prisma.OrganizationUnitUncheckedCreateWithoutManagerInput> | Prisma.OrganizationUnitCreateWithoutManagerInput[] | Prisma.OrganizationUnitUncheckedCreateWithoutManagerInput[]
   connectOrCreate?: Prisma.OrganizationUnitCreateOrConnectWithoutManagerInput | Prisma.OrganizationUnitCreateOrConnectWithoutManagerInput[]
@@ -731,6 +805,20 @@ export type OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput = {
   connect?: Prisma.OrganizationUnitWhereUniqueInput | Prisma.OrganizationUnitWhereUniqueInput[]
   update?: Prisma.OrganizationUnitUpdateWithWhereUniqueWithoutManagerInput | Prisma.OrganizationUnitUpdateWithWhereUniqueWithoutManagerInput[]
   updateMany?: Prisma.OrganizationUnitUpdateManyWithWhereWithoutManagerInput | Prisma.OrganizationUnitUpdateManyWithWhereWithoutManagerInput[]
+  deleteMany?: Prisma.OrganizationUnitScalarWhereInput | Prisma.OrganizationUnitScalarWhereInput[]
+}
+
+export type OrganizationUnitUncheckedUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutDeletedByInput, Prisma.OrganizationUnitUncheckedCreateWithoutDeletedByInput> | Prisma.OrganizationUnitCreateWithoutDeletedByInput[] | Prisma.OrganizationUnitUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.OrganizationUnitCreateOrConnectWithoutDeletedByInput | Prisma.OrganizationUnitCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.OrganizationUnitUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.OrganizationUnitUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.OrganizationUnitCreateManyDeletedByInputEnvelope
+  set?: Prisma.OrganizationUnitWhereUniqueInput | Prisma.OrganizationUnitWhereUniqueInput[]
+  disconnect?: Prisma.OrganizationUnitWhereUniqueInput | Prisma.OrganizationUnitWhereUniqueInput[]
+  delete?: Prisma.OrganizationUnitWhereUniqueInput | Prisma.OrganizationUnitWhereUniqueInput[]
+  connect?: Prisma.OrganizationUnitWhereUniqueInput | Prisma.OrganizationUnitWhereUniqueInput[]
+  update?: Prisma.OrganizationUnitUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.OrganizationUnitUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.OrganizationUnitUpdateManyWithWhereWithoutDeletedByInput | Prisma.OrganizationUnitUpdateManyWithWhereWithoutDeletedByInput[]
   deleteMany?: Prisma.OrganizationUnitScalarWhereInput | Prisma.OrganizationUnitScalarWhereInput[]
 }
 
@@ -779,12 +867,14 @@ export type OrganizationUnitCreateWithoutConfigurationItemsInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   parent?: Prisma.OrganizationUnitCreateNestedOneWithoutChildrenInput
   children?: Prisma.OrganizationUnitCreateNestedManyWithoutParentInput
   manager?: Prisma.PersonCreateNestedOneWithoutManagedOrgUnitsInput
   people?: Prisma.PersonCreateNestedManyWithoutOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerOrgUnitInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutReservedForOrgUnitInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedOrgUnitsInput
 }
 
 export type OrganizationUnitUncheckedCreateWithoutConfigurationItemsInput = {
@@ -802,6 +892,8 @@ export type OrganizationUnitUncheckedCreateWithoutConfigurationItemsInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   children?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutParentInput
   people?: Prisma.PersonUncheckedCreateNestedManyWithoutOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerOrgUnitInput
@@ -837,12 +929,14 @@ export type OrganizationUnitUpdateWithoutConfigurationItemsInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   parent?: Prisma.OrganizationUnitUpdateOneWithoutChildrenNestedInput
   children?: Prisma.OrganizationUnitUpdateManyWithoutParentNestedInput
   manager?: Prisma.PersonUpdateOneWithoutManagedOrgUnitsNestedInput
   people?: Prisma.PersonUpdateManyWithoutOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerOrgUnitNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutReservedForOrgUnitNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedOrgUnitsNestedInput
 }
 
 export type OrganizationUnitUncheckedUpdateWithoutConfigurationItemsInput = {
@@ -860,6 +954,8 @@ export type OrganizationUnitUncheckedUpdateWithoutConfigurationItemsInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   children?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutParentNestedInput
   people?: Prisma.PersonUncheckedUpdateManyWithoutOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerOrgUnitNestedInput
@@ -879,12 +975,14 @@ export type OrganizationUnitCreateWithoutChildrenInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   parent?: Prisma.OrganizationUnitCreateNestedOneWithoutChildrenInput
   manager?: Prisma.PersonCreateNestedOneWithoutManagedOrgUnitsInput
   people?: Prisma.PersonCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerOrgUnitInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutReservedForOrgUnitInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedOrgUnitsInput
 }
 
 export type OrganizationUnitUncheckedCreateWithoutChildrenInput = {
@@ -902,6 +1000,8 @@ export type OrganizationUnitUncheckedCreateWithoutChildrenInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   people?: Prisma.PersonUncheckedCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerOrgUnitInput
@@ -926,12 +1026,14 @@ export type OrganizationUnitCreateWithoutParentInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   children?: Prisma.OrganizationUnitCreateNestedManyWithoutParentInput
   manager?: Prisma.PersonCreateNestedOneWithoutManagedOrgUnitsInput
   people?: Prisma.PersonCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerOrgUnitInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutReservedForOrgUnitInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedOrgUnitsInput
 }
 
 export type OrganizationUnitUncheckedCreateWithoutParentInput = {
@@ -948,6 +1050,8 @@ export type OrganizationUnitUncheckedCreateWithoutParentInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   children?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutParentInput
   people?: Prisma.PersonUncheckedCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
@@ -989,12 +1093,14 @@ export type OrganizationUnitUpdateWithoutChildrenInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   parent?: Prisma.OrganizationUnitUpdateOneWithoutChildrenNestedInput
   manager?: Prisma.PersonUpdateOneWithoutManagedOrgUnitsNestedInput
   people?: Prisma.PersonUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerOrgUnitNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutReservedForOrgUnitNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedOrgUnitsNestedInput
 }
 
 export type OrganizationUnitUncheckedUpdateWithoutChildrenInput = {
@@ -1012,6 +1118,8 @@ export type OrganizationUnitUncheckedUpdateWithoutChildrenInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   people?: Prisma.PersonUncheckedUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerOrgUnitNestedInput
@@ -1052,6 +1160,8 @@ export type OrganizationUnitScalarWhereInput = {
   metadata?: Prisma.JsonNullableFilter<"OrganizationUnit">
   createdAt?: Prisma.DateTimeFilter<"OrganizationUnit"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OrganizationUnit"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"OrganizationUnit"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"OrganizationUnit"> | string | null
 }
 
 export type OrganizationUnitCreateWithoutPeopleInput = {
@@ -1067,12 +1177,14 @@ export type OrganizationUnitCreateWithoutPeopleInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   parent?: Prisma.OrganizationUnitCreateNestedOneWithoutChildrenInput
   children?: Prisma.OrganizationUnitCreateNestedManyWithoutParentInput
   manager?: Prisma.PersonCreateNestedOneWithoutManagedOrgUnitsInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerOrgUnitInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutReservedForOrgUnitInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedOrgUnitsInput
 }
 
 export type OrganizationUnitUncheckedCreateWithoutPeopleInput = {
@@ -1090,6 +1202,8 @@ export type OrganizationUnitUncheckedCreateWithoutPeopleInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   children?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutParentInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerOrgUnitInput
@@ -1114,12 +1228,14 @@ export type OrganizationUnitCreateWithoutManagerInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   parent?: Prisma.OrganizationUnitCreateNestedOneWithoutChildrenInput
   children?: Prisma.OrganizationUnitCreateNestedManyWithoutParentInput
   people?: Prisma.PersonCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerOrgUnitInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutReservedForOrgUnitInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedOrgUnitsInput
 }
 
 export type OrganizationUnitUncheckedCreateWithoutManagerInput = {
@@ -1136,6 +1252,8 @@ export type OrganizationUnitUncheckedCreateWithoutManagerInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   children?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutParentInput
   people?: Prisma.PersonUncheckedCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
@@ -1150,6 +1268,62 @@ export type OrganizationUnitCreateOrConnectWithoutManagerInput = {
 
 export type OrganizationUnitCreateManyManagerInputEnvelope = {
   data: Prisma.OrganizationUnitCreateManyManagerInput | Prisma.OrganizationUnitCreateManyManagerInput[]
+  skipDuplicates?: boolean
+}
+
+export type OrganizationUnitCreateWithoutDeletedByInput = {
+  id?: string
+  name: string
+  code: string
+  description?: string | null
+  unitType?: $Enums.OrganizationUnitType
+  costCenter?: string | null
+  level: number
+  isActive?: boolean
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  parent?: Prisma.OrganizationUnitCreateNestedOneWithoutChildrenInput
+  children?: Prisma.OrganizationUnitCreateNestedManyWithoutParentInput
+  manager?: Prisma.PersonCreateNestedOneWithoutManagedOrgUnitsInput
+  people?: Prisma.PersonCreateNestedManyWithoutOrgUnitInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerOrgUnitInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutReservedForOrgUnitInput
+}
+
+export type OrganizationUnitUncheckedCreateWithoutDeletedByInput = {
+  id?: string
+  parentId?: string | null
+  name: string
+  code: string
+  description?: string | null
+  unitType?: $Enums.OrganizationUnitType
+  managerId?: string | null
+  costCenter?: string | null
+  level: number
+  isActive?: boolean
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  children?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutParentInput
+  people?: Prisma.PersonUncheckedCreateNestedManyWithoutOrgUnitInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerOrgUnitInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForOrgUnitInput
+}
+
+export type OrganizationUnitCreateOrConnectWithoutDeletedByInput = {
+  where: Prisma.OrganizationUnitWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutDeletedByInput, Prisma.OrganizationUnitUncheckedCreateWithoutDeletedByInput>
+}
+
+export type OrganizationUnitCreateManyDeletedByInputEnvelope = {
+  data: Prisma.OrganizationUnitCreateManyDeletedByInput | Prisma.OrganizationUnitCreateManyDeletedByInput[]
   skipDuplicates?: boolean
 }
 
@@ -1177,12 +1351,14 @@ export type OrganizationUnitUpdateWithoutPeopleInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   parent?: Prisma.OrganizationUnitUpdateOneWithoutChildrenNestedInput
   children?: Prisma.OrganizationUnitUpdateManyWithoutParentNestedInput
   manager?: Prisma.PersonUpdateOneWithoutManagedOrgUnitsNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerOrgUnitNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutReservedForOrgUnitNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedOrgUnitsNestedInput
 }
 
 export type OrganizationUnitUncheckedUpdateWithoutPeopleInput = {
@@ -1200,6 +1376,8 @@ export type OrganizationUnitUncheckedUpdateWithoutPeopleInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   children?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutParentNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerOrgUnitNestedInput
@@ -1222,6 +1400,22 @@ export type OrganizationUnitUpdateManyWithWhereWithoutManagerInput = {
   data: Prisma.XOR<Prisma.OrganizationUnitUpdateManyMutationInput, Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerInput>
 }
 
+export type OrganizationUnitUpsertWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.OrganizationUnitWhereUniqueInput
+  update: Prisma.XOR<Prisma.OrganizationUnitUpdateWithoutDeletedByInput, Prisma.OrganizationUnitUncheckedUpdateWithoutDeletedByInput>
+  create: Prisma.XOR<Prisma.OrganizationUnitCreateWithoutDeletedByInput, Prisma.OrganizationUnitUncheckedCreateWithoutDeletedByInput>
+}
+
+export type OrganizationUnitUpdateWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.OrganizationUnitWhereUniqueInput
+  data: Prisma.XOR<Prisma.OrganizationUnitUpdateWithoutDeletedByInput, Prisma.OrganizationUnitUncheckedUpdateWithoutDeletedByInput>
+}
+
+export type OrganizationUnitUpdateManyWithWhereWithoutDeletedByInput = {
+  where: Prisma.OrganizationUnitScalarWhereInput
+  data: Prisma.XOR<Prisma.OrganizationUnitUpdateManyMutationInput, Prisma.OrganizationUnitUncheckedUpdateManyWithoutDeletedByInput>
+}
+
 export type OrganizationUnitCreateWithoutDataOwnershipsInput = {
   id?: string
   name: string
@@ -1235,12 +1429,14 @@ export type OrganizationUnitCreateWithoutDataOwnershipsInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   parent?: Prisma.OrganizationUnitCreateNestedOneWithoutChildrenInput
   children?: Prisma.OrganizationUnitCreateNestedManyWithoutParentInput
   manager?: Prisma.PersonCreateNestedOneWithoutManagedOrgUnitsInput
   people?: Prisma.PersonCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutReservedForOrgUnitInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedOrgUnitsInput
 }
 
 export type OrganizationUnitUncheckedCreateWithoutDataOwnershipsInput = {
@@ -1258,6 +1454,8 @@ export type OrganizationUnitUncheckedCreateWithoutDataOwnershipsInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   children?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutParentInput
   people?: Prisma.PersonUncheckedCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
@@ -1293,12 +1491,14 @@ export type OrganizationUnitUpdateWithoutDataOwnershipsInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   parent?: Prisma.OrganizationUnitUpdateOneWithoutChildrenNestedInput
   children?: Prisma.OrganizationUnitUpdateManyWithoutParentNestedInput
   manager?: Prisma.PersonUpdateOneWithoutManagedOrgUnitsNestedInput
   people?: Prisma.PersonUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutReservedForOrgUnitNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedOrgUnitsNestedInput
 }
 
 export type OrganizationUnitUncheckedUpdateWithoutDataOwnershipsInput = {
@@ -1316,6 +1516,8 @@ export type OrganizationUnitUncheckedUpdateWithoutDataOwnershipsInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   children?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutParentNestedInput
   people?: Prisma.PersonUncheckedUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
@@ -1335,12 +1537,14 @@ export type OrganizationUnitCreateWithoutReservationsInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   parent?: Prisma.OrganizationUnitCreateNestedOneWithoutChildrenInput
   children?: Prisma.OrganizationUnitCreateNestedManyWithoutParentInput
   manager?: Prisma.PersonCreateNestedOneWithoutManagedOrgUnitsInput
   people?: Prisma.PersonCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerOrgUnitInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedOrgUnitsInput
 }
 
 export type OrganizationUnitUncheckedCreateWithoutReservationsInput = {
@@ -1358,6 +1562,8 @@ export type OrganizationUnitUncheckedCreateWithoutReservationsInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   children?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutParentInput
   people?: Prisma.PersonUncheckedCreateNestedManyWithoutOrgUnitInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerOrgUnitInput
@@ -1393,12 +1599,14 @@ export type OrganizationUnitUpdateWithoutReservationsInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   parent?: Prisma.OrganizationUnitUpdateOneWithoutChildrenNestedInput
   children?: Prisma.OrganizationUnitUpdateManyWithoutParentNestedInput
   manager?: Prisma.PersonUpdateOneWithoutManagedOrgUnitsNestedInput
   people?: Prisma.PersonUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerOrgUnitNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedOrgUnitsNestedInput
 }
 
 export type OrganizationUnitUncheckedUpdateWithoutReservationsInput = {
@@ -1416,6 +1624,8 @@ export type OrganizationUnitUncheckedUpdateWithoutReservationsInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   children?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutParentNestedInput
   people?: Prisma.PersonUncheckedUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
@@ -1436,6 +1646,8 @@ export type OrganizationUnitCreateManyParentInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type OrganizationUnitUpdateWithoutParentInput = {
@@ -1451,12 +1663,14 @@ export type OrganizationUnitUpdateWithoutParentInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   children?: Prisma.OrganizationUnitUpdateManyWithoutParentNestedInput
   manager?: Prisma.PersonUpdateOneWithoutManagedOrgUnitsNestedInput
   people?: Prisma.PersonUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerOrgUnitNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutReservedForOrgUnitNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedOrgUnitsNestedInput
 }
 
 export type OrganizationUnitUncheckedUpdateWithoutParentInput = {
@@ -1473,6 +1687,8 @@ export type OrganizationUnitUncheckedUpdateWithoutParentInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   children?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutParentNestedInput
   people?: Prisma.PersonUncheckedUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
@@ -1494,6 +1710,8 @@ export type OrganizationUnitUncheckedUpdateManyWithoutParentInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type OrganizationUnitCreateManyManagerInput = {
@@ -1510,6 +1728,26 @@ export type OrganizationUnitCreateManyManagerInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+}
+
+export type OrganizationUnitCreateManyDeletedByInput = {
+  id?: string
+  parentId?: string | null
+  name: string
+  code: string
+  description?: string | null
+  unitType?: $Enums.OrganizationUnitType
+  managerId?: string | null
+  costCenter?: string | null
+  level: number
+  isActive?: boolean
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type OrganizationUnitUpdateWithoutManagerInput = {
@@ -1525,12 +1763,14 @@ export type OrganizationUnitUpdateWithoutManagerInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   parent?: Prisma.OrganizationUnitUpdateOneWithoutChildrenNestedInput
   children?: Prisma.OrganizationUnitUpdateManyWithoutParentNestedInput
   people?: Prisma.PersonUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerOrgUnitNestedInput
   reservations?: Prisma.AssetReservationUpdateManyWithoutReservedForOrgUnitNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedOrgUnitsNestedInput
 }
 
 export type OrganizationUnitUncheckedUpdateWithoutManagerInput = {
@@ -1547,6 +1787,8 @@ export type OrganizationUnitUncheckedUpdateWithoutManagerInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   children?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutParentNestedInput
   people?: Prisma.PersonUncheckedUpdateManyWithoutOrgUnitNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
@@ -1568,6 +1810,72 @@ export type OrganizationUnitUncheckedUpdateManyWithoutManagerInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type OrganizationUnitUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitType?: Prisma.EnumOrganizationUnitTypeFieldUpdateOperationsInput | $Enums.OrganizationUnitType
+  costCenter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parent?: Prisma.OrganizationUnitUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.OrganizationUnitUpdateManyWithoutParentNestedInput
+  manager?: Prisma.PersonUpdateOneWithoutManagedOrgUnitsNestedInput
+  people?: Prisma.PersonUpdateManyWithoutOrgUnitNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerOrgUnitNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutReservedForOrgUnitNestedInput
+}
+
+export type OrganizationUnitUncheckedUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitType?: Prisma.EnumOrganizationUnitTypeFieldUpdateOperationsInput | $Enums.OrganizationUnitType
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  costCenter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  children?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutParentNestedInput
+  people?: Prisma.PersonUncheckedUpdateManyWithoutOrgUnitNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerOrgUnitNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerOrgUnitNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForOrgUnitNestedInput
+}
+
+export type OrganizationUnitUncheckedUpdateManyWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unitType?: Prisma.EnumOrganizationUnitTypeFieldUpdateOperationsInput | $Enums.OrganizationUnitType
+  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  costCenter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  level?: Prisma.IntFieldUpdateOperationsInput | number
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -1652,6 +1960,8 @@ export type OrganizationUnitSelect<ExtArgs extends runtime.Types.Extensions.Inte
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   parent?: boolean | Prisma.OrganizationUnit$parentArgs<ExtArgs>
   children?: boolean | Prisma.OrganizationUnit$childrenArgs<ExtArgs>
   manager?: boolean | Prisma.OrganizationUnit$managerArgs<ExtArgs>
@@ -1659,6 +1969,7 @@ export type OrganizationUnitSelect<ExtArgs extends runtime.Types.Extensions.Inte
   configurationItems?: boolean | Prisma.OrganizationUnit$configurationItemsArgs<ExtArgs>
   dataOwnerships?: boolean | Prisma.OrganizationUnit$dataOwnershipsArgs<ExtArgs>
   reservations?: boolean | Prisma.OrganizationUnit$reservationsArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.OrganizationUnit$deletedByArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationUnitCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["organizationUnit"]>
 
@@ -1677,8 +1988,11 @@ export type OrganizationUnitSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   parent?: boolean | Prisma.OrganizationUnit$parentArgs<ExtArgs>
   manager?: boolean | Prisma.OrganizationUnit$managerArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.OrganizationUnit$deletedByArgs<ExtArgs>
 }, ExtArgs["result"]["organizationUnit"]>
 
 export type OrganizationUnitSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1696,8 +2010,11 @@ export type OrganizationUnitSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   parent?: boolean | Prisma.OrganizationUnit$parentArgs<ExtArgs>
   manager?: boolean | Prisma.OrganizationUnit$managerArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.OrganizationUnit$deletedByArgs<ExtArgs>
 }, ExtArgs["result"]["organizationUnit"]>
 
 export type OrganizationUnitSelectScalar = {
@@ -1715,9 +2032,11 @@ export type OrganizationUnitSelectScalar = {
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
 }
 
-export type OrganizationUnitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "parentId" | "name" | "code" | "description" | "unitType" | "managerId" | "costCenter" | "level" | "isActive" | "note" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["organizationUnit"]>
+export type OrganizationUnitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "parentId" | "name" | "code" | "description" | "unitType" | "managerId" | "costCenter" | "level" | "isActive" | "note" | "metadata" | "createdAt" | "updatedAt" | "deletedAt" | "deletedById", ExtArgs["result"]["organizationUnit"]>
 export type OrganizationUnitInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   parent?: boolean | Prisma.OrganizationUnit$parentArgs<ExtArgs>
   children?: boolean | Prisma.OrganizationUnit$childrenArgs<ExtArgs>
@@ -1726,15 +2045,18 @@ export type OrganizationUnitInclude<ExtArgs extends runtime.Types.Extensions.Int
   configurationItems?: boolean | Prisma.OrganizationUnit$configurationItemsArgs<ExtArgs>
   dataOwnerships?: boolean | Prisma.OrganizationUnit$dataOwnershipsArgs<ExtArgs>
   reservations?: boolean | Prisma.OrganizationUnit$reservationsArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.OrganizationUnit$deletedByArgs<ExtArgs>
   _count?: boolean | Prisma.OrganizationUnitCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrganizationUnitIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   parent?: boolean | Prisma.OrganizationUnit$parentArgs<ExtArgs>
   manager?: boolean | Prisma.OrganizationUnit$managerArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.OrganizationUnit$deletedByArgs<ExtArgs>
 }
 export type OrganizationUnitIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   parent?: boolean | Prisma.OrganizationUnit$parentArgs<ExtArgs>
   manager?: boolean | Prisma.OrganizationUnit$managerArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.OrganizationUnit$deletedByArgs<ExtArgs>
 }
 
 export type $OrganizationUnitPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1747,6 +2069,7 @@ export type $OrganizationUnitPayload<ExtArgs extends runtime.Types.Extensions.In
     configurationItems: Prisma.$ConfigurationItemPayload<ExtArgs>[]
     dataOwnerships: Prisma.$DataOwnershipPayload<ExtArgs>[]
     reservations: Prisma.$AssetReservationPayload<ExtArgs>[]
+    deletedBy: Prisma.$PersonPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1763,6 +2086,8 @@ export type $OrganizationUnitPayload<ExtArgs extends runtime.Types.Extensions.In
     metadata: runtime.JsonValue | null
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
+    deletedById: string | null
   }, ExtArgs["result"]["organizationUnit"]>
   composites: {}
 }
@@ -2164,6 +2489,7 @@ export interface Prisma__OrganizationUnitClient<T, Null = never, ExtArgs extends
   configurationItems<T extends Prisma.OrganizationUnit$configurationItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationUnit$configurationItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConfigurationItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   dataOwnerships<T extends Prisma.OrganizationUnit$dataOwnershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationUnit$dataOwnershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DataOwnershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reservations<T extends Prisma.OrganizationUnit$reservationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationUnit$reservationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetReservationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deletedBy<T extends Prisma.OrganizationUnit$deletedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationUnit$deletedByArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2207,6 +2533,8 @@ export interface OrganizationUnitFieldRefs {
   readonly metadata: Prisma.FieldRef<"OrganizationUnit", 'Json'>
   readonly createdAt: Prisma.FieldRef<"OrganizationUnit", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"OrganizationUnit", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"OrganizationUnit", 'DateTime'>
+  readonly deletedById: Prisma.FieldRef<"OrganizationUnit", 'String'>
 }
     
 
@@ -2758,6 +3086,25 @@ export type OrganizationUnit$reservationsArgs<ExtArgs extends runtime.Types.Exte
   take?: number
   skip?: number
   distinct?: Prisma.AssetReservationScalarFieldEnum | Prisma.AssetReservationScalarFieldEnum[]
+}
+
+/**
+ * OrganizationUnit.deletedBy
+ */
+export type OrganizationUnit$deletedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Person
+   */
+  select?: Prisma.PersonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Person
+   */
+  omit?: Prisma.PersonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PersonInclude<ExtArgs> | null
+  where?: Prisma.PersonWhereInput
 }
 
 /**

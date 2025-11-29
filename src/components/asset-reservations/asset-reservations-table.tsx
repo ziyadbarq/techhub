@@ -17,6 +17,7 @@ import {
   type ColumnFiltersState,
 } from "@tanstack/react-table";
 import { Eye, Tag, User } from "lucide-react";
+import { formatDate } from "@/lib/utils/date-format";
 import { Button } from "@/components/ui/button";
 import { EntityDisplay } from "@/components/ui/entity-display";
 import {
@@ -94,18 +95,20 @@ export function AssetReservationsTable({
     {
       accessorKey: "startDate",
       header: "Start Date",
-      cell: ({ row }) => {
-        const date = new Date(row.getValue<string>("startDate"));
-        return <div className="text-sm">{date.toLocaleDateString()}</div>;
-      },
+      cell: ({ row }) => (
+        <div className="text-sm">
+          {formatDate(row.getValue<string>("startDate"))}
+        </div>
+      ),
     },
     {
       accessorKey: "endDate",
       header: "End Date",
-      cell: ({ row }) => {
-        const date = new Date(row.getValue<string>("endDate"));
-        return <div className="text-sm">{date.toLocaleDateString()}</div>;
-      },
+      cell: ({ row }) => (
+        <div className="text-sm">
+          {formatDate(row.getValue<string>("endDate"))}
+        </div>
+      ),
     },
     {
       accessorKey: "purpose",

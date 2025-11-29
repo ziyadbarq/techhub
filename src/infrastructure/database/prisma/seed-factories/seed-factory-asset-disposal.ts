@@ -5,11 +5,12 @@
  */
 
 import type { Prisma, PrismaClient } from "@/generated/prisma/server";
+import type { DisposalTypeEnum, DisposalStatusEnum } from "@/generated/prisma";
 import { optionalConnect, requireConnect } from "../seed-utils.js";
 
 export interface AssetDisposalFactoryOptions {
   assetId: string;
-  disposalType: "DONATION" | "SALE" | "RECYCLING" | "DESTRUCTION" | "OTHER";
+  disposalType: DisposalTypeEnum;
   reason?: string;
   initiatedById: string;
   approvedById?: string;
@@ -18,13 +19,7 @@ export interface AssetDisposalFactoryOptions {
   estimatedValue?: number;
   actualProceeds?: number;
   currency?: string;
-  status:
-    | "PENDING_APPROVAL"
-    | "APPROVED"
-    | "REJECTED"
-    | "IN_PROGRESS"
-    | "COMPLETED"
-    | "CANCELLED";
+  status: DisposalStatusEnum;
   sanitizationChecklist?: Prisma.InputJsonValue;
   certificateNumber?: string;
   certificateIssuedAt?: Date;

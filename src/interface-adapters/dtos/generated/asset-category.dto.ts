@@ -25,7 +25,6 @@ export const CreateAssetCategorySchema = z.object({
     .optional()
     .nullable(),
   lifecycleModelId: z.string().optional().nullable(),
-  isConsumable: z.boolean().optional(),
 });
 
 export const UpdateAssetCategorySchema = z.object({
@@ -49,7 +48,6 @@ export const UpdateAssetCategorySchema = z.object({
     .optional()
     .nullable(),
   lifecycleModelId: z.string().optional().nullable(),
-  isConsumable: z.boolean().optional(),
 });
 
 export const AssetCategoryIdSchema = z.object({

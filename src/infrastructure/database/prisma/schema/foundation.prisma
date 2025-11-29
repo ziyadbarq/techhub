@@ -26,6 +26,10 @@ model OrganizationUnit {
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt
 
+  // Soft delete fields
+  deletedAt   DateTime?
+  deletedById String?
+
   // Relations
   parent             OrganizationUnit?   @relation("OrgUnitHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
   children           OrganizationUnit[]  @relation("OrgUnitHierarchy")
@@ -34,6 +38,7 @@ model OrganizationUnit {
   configurationItems ConfigurationItem[]
   dataOwnerships     DataOwnership[]     @relation("DataOwnershipOrgUnit")
   reservations       AssetReservation[]  @relation("ReservationForOrgUnit")
+  deletedBy          Person?             @relation("OrgUnitDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([parentId])
@@ -42,6 +47,7 @@ model OrganizationUnit {
   @@index([isActive])
   @@index([level])
   @@index([unitType])
+  @@index([deletedAt])
   @@map("organization_units")
 }
 
@@ -70,9 +76,16 @@ model Person {
   isActive        Boolean   @default(true)
   isExcluded      Boolean   @default(false) // TechHub-specific: hide from app (service accounts)
   metadata        Json?
-  deletedAt       DateTime? // Soft delete timestamp
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
+
+  // Soft delete fields
+  deletedAt   DateTime?
+  deletedById String?
+
+  // Audit trail fields
+  createdById String?
+  updatedById String?
 
   // Relations
   user                         User?                  @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -84,7 +97,8 @@ model Person {
   managedOrgUnits              OrganizationUnit[]     @relation("OrgUnitManager")
   roleAssignments              PersonRoleAssignment[]
   configurationItems           ConfigurationItem[]
-  stockMovements               StockMovement[]
+  stockMovementsPerformed      StockMovement[]        @relation("StockMovementPerformedBy")
+  stockMovementsVoided         StockMovement[]        @relation("StockMovementVoidedBy")
   verificationCampaigns        VerificationCampaign[]
   verificationItems            VerificationItem[]
   auditLogsChanged             AuditLogEntry[]        @relation("AuditLogChangedBy")
@@ -106,6 +120,37 @@ model Person {
   deletedFieldDefinitions       FieldDefinition[]      @relation("FieldDefinitionDeletedBy")
   archivedFieldDefinitions      FieldDefinition[]      @relation("FieldDefinitionArchivedBy")
   createdFieldTemplates         FieldTemplate[]        @relation("FieldTemplateCreatedBy")
+  // Self-referential soft delete and audit relations
+  deletedBy                     Person?                @relation("PersonDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  deletedPersons                Person[]               @relation("PersonDeletedBy")
+  createdBy                     Person?                @relation("PersonCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  createdPersons                Person[]               @relation("PersonCreatedBy")
+  updatedBy                     Person?                @relation("PersonUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  updatedPersons                Person[]               @relation("PersonUpdatedBy")
+  // Soft delete relations (reverse for other entities)
+  deletedOrgUnits               OrganizationUnit[]     @relation("OrgUnitDeletedBy")
+  deletedLocations              Location[]             @relation("LocationDeletedBy")
+  deletedVendors                Vendor[]               @relation("VendorDeletedBy")
+  deletedLifecycleModels        LifecycleModel[]       @relation("LifecycleModelDeletedBy")
+  deletedLifecycleStates        LifecycleState[]       @relation("LifecycleStateDeletedBy")
+  deletedAssetCategories        AssetCategory[]        @relation("AssetCategoryDeletedBy")
+  deletedAssetModels            AssetModel[]           @relation("AssetModelDeletedBy")
+  deletedAssets                 Asset[]                @relation("AssetDeletedBy")
+  createdAssets                 Asset[]                @relation("AssetCreatedBy")
+  updatedAssets                 Asset[]                @relation("AssetUpdatedBy")
+  deletedWarranties             Warranty[]             @relation("WarrantyDeletedBy")
+  deletedMaintenanceSchedules   MaintenanceSchedule[]  @relation("MaintenanceScheduleDeletedBy")
+  deletedContractTypes          ContractType[]         @relation("ContractTypeDeletedBy")
+  deletedContracts              Contract[]             @relation("ContractDeletedBy")
+  deletedCIClasses              CIClass[]              @relation("CIClassDeletedBy")
+  deletedConfigurationItems     ConfigurationItem[]    @relation("ConfigurationItemDeletedBy")
+  createdConfigurationItems     ConfigurationItem[]    @relation("ConfigurationItemCreatedBy")
+  updatedConfigurationItems     ConfigurationItem[]    @relation("ConfigurationItemUpdatedBy")
+  deletedServices               Service[]              @relation("ServiceDeletedBy")
+  deletedLicenseProducts        LicenseProduct[]       @relation("LicenseProductDeletedBy")
+  deletedLicenseEntitlements    LicenseEntitlement[]   @relation("LicenseEntitlementDeletedBy")
+  deletedAssetKits              AssetKit[]             @relation("AssetKitDeletedBy")
+  deletedAssetReservations      AssetReservation[]     @relation("AssetReservationDeletedBy")
 
   // Indexes
   @@index([azureAdId])
@@ -118,6 +163,8 @@ model Person {
   @@index([locationId])
   @@index([isActive])
   @@index([isExcluded])
+  @@index([deletedAt])
+  @@index([firstName, lastName])
   @@map("persons")
 }
 
@@ -139,7 +186,7 @@ model PersonRoleAssignment {
 
   // Relations
   person Person @relation(fields: [personId], references: [id], onDelete: Restrict)
-  role   Role   @relation("PersonRoleAssignments", fields: [roleId], references: [id], onDelete: Cascade)
+  role   Role   @relation("PersonRoleAssignments", fields: [roleId], references: [id], onDelete: Restrict)
 
   // Indexes
   @@index([personId])
@@ -173,12 +220,17 @@ model Location {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 
+  // Soft delete fields
+  deletedAt   DateTime?
+  deletedById String?
+
   // Relations
   parent             Location?           @relation("LocationHierarchy", fields: [parentId], references: [id], onDelete: Restrict)
   children           Location[]          @relation("LocationHierarchy")
   persons            Person[]
   stockLocations     StockLocation[]
   configurationItems ConfigurationItem[]
+  deletedBy          Person?             @relation("LocationDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([parentId])
@@ -187,6 +239,7 @@ model Location {
   @@index([city])
   @@index([country])
   @@index([isActive])
+  @@index([deletedAt])
   @@map("locations")
 }
 
@@ -216,6 +269,10 @@ model Vendor {
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 
+  // Soft delete fields
+  deletedAt   DateTime?
+  deletedById String?
+
   // Relations
   contacts        VendorContact[]
   assetModels     AssetModel[]
@@ -225,6 +282,7 @@ model Vendor {
   licenseProducts LicenseProduct[]
   disposals       AssetDisposal[]
   services        Service[]
+  deletedBy       Person?          @relation("VendorDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([name])
@@ -233,6 +291,7 @@ model Vendor {
   @@index([vendorType])
   @@index([isActive])
   @@index([isPreferred])
+  @@index([deletedAt])
   @@map("vendors")
 }
 
@@ -283,11 +342,15 @@ model ExchangeRate {
 // LifecycleModel model
 // Reusable state machine definitions (for CIs, Assets, Licenses)
 model LifecycleModel {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  description String?  @db.Text
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?   @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Soft delete fields
+  deletedAt   DateTime?
+  deletedById String?
 
   // Relations
   states          LifecycleState[]
@@ -295,9 +358,11 @@ model LifecycleModel {
   ciClasses       CIClass[]
   assetCategories AssetCategory[]
   licenseProducts LicenseProduct[]
+  deletedBy       Person?               @relation("LifecycleModelDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([name])
+  @@index([deletedAt])
   @@map("lifecycle_models")
 }
 
@@ -317,12 +382,17 @@ model LifecycleState {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
+  // Soft delete fields
+  deletedAt   DateTime?
+  deletedById String?
+
   // Relations
   lifecycleModel     LifecycleModel        @relation(fields: [lifecycleModelId], references: [id], onDelete: Restrict)
   transitionsFrom    LifecycleTransition[] @relation("TransitionFrom")
   transitionsTo      LifecycleTransition[] @relation("TransitionTo")
   configurationItems ConfigurationItem[]
   assets             Asset[]
+  deletedBy          Person?               @relation("LifecycleStateDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@unique([lifecycleModelId, code])
@@ -330,6 +400,7 @@ model LifecycleState {
   @@index([code])
   @@index([sortOrder])
   @@index([stateType])
+  @@index([deletedAt])
   @@map("lifecycle_states")
 }
 

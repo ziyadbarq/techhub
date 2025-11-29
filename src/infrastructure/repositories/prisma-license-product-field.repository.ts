@@ -127,6 +127,90 @@ export class PrismaLicenseProductFieldRepository
   }
 
   /**
+   * Find fields by license product ID with FieldDefinition included
+   * Returns raw Prisma result for enriched DTO creation
+   *
+   * This method returns:
+   * 1. Product-specific fields linked via LicenseProductField
+   * 2. Global LICENSE_PRODUCT fields (isGlobal=true, entityType="LICENSE_PRODUCT")
+   */
+  async findByLicenseProductIdWithDefinition(licenseProductId: string) {
+    // 1. Get product-specific fields from LicenseProductField
+    const productFields = await this.prisma.licenseProductField.findMany({
+      where: { licenseProductId },
+      orderBy: { uiOrder: "asc" },
+      include: {
+        fieldDefinition: {
+          select: {
+            id: true,
+            name: true,
+            label: true,
+            description: true,
+            dataType: true,
+            enumOptions: true,
+            validationRules: true,
+            defaultValue: true,
+            uiGroup: true,
+          },
+        },
+      },
+    });
+
+    // 2. Get global LICENSE_PRODUCT fields that aren't already linked to this product
+    const linkedFieldIds = productFields.map((f) => f.fieldDefinitionId);
+    const globalFields = await this.prisma.fieldDefinition.findMany({
+      where: {
+        entityType: "LICENSE_PRODUCT",
+        isGlobal: true,
+        isActive: true,
+        deletedAt: null,
+        id: { notIn: linkedFieldIds },
+      },
+      orderBy: { uiOrder: "asc" },
+      select: {
+        id: true,
+        name: true,
+        label: true,
+        description: true,
+        dataType: true,
+        enumOptions: true,
+        validationRules: true,
+        defaultValue: true,
+        uiGroup: true,
+        uiOrder: true,
+        isRequired: true,
+      },
+    });
+
+    // 3. Convert global fields to the same structure as product fields
+    const globalFieldsAsProductFields = globalFields.map((gf, index) => ({
+      id: `global-${gf.id}`, // Virtual ID for global fields
+      licenseProductId,
+      fieldDefinitionId: gf.id,
+      isRequired: gf.isRequired,
+      isVisible: true,
+      defaultValue: gf.defaultValue,
+      uiOrder: 1000 + (gf.uiOrder || index), // Put global fields after product fields
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      fieldDefinition: {
+        id: gf.id,
+        name: gf.name,
+        label: gf.label,
+        description: gf.description,
+        dataType: gf.dataType,
+        enumOptions: gf.enumOptions,
+        validationRules: gf.validationRules,
+        defaultValue: gf.defaultValue,
+        uiGroup: gf.uiGroup,
+      },
+    }));
+
+    // 4. Combine and return all fields
+    return [...productFields, ...globalFieldsAsProductFields];
+  }
+
+  /**
    * Maps Prisma model to domain entity
    */
   private toDomain(data: {

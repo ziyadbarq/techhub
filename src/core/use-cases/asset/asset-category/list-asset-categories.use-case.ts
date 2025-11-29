@@ -15,7 +15,6 @@ export interface ListAssetCategoriesOptions {
   orderBy?: "name" | "code" | "createdAt";
   order?: "asc" | "desc";
   search?: string;
-  isConsumable?: boolean;
 }
 
 @injectable()
@@ -39,7 +38,6 @@ export class ListAssetCategoriesUseCase {
       return this.assetCategoryRepository.search(options.search, {
         skip: options.skip,
         take: options.take,
-        isConsumable: options.isConsumable,
       });
     }
 

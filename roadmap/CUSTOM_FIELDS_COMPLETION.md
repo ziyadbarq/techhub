@@ -31,19 +31,43 @@ Complete the Custom Fields feature to allow dynamic field definitions that can b
 | 4 | Data Import Integration | ✅ Complete |
 | 5 | Advanced Features (Conditional Logic, Dashboard, New Types) | ✅ Complete |
 
+### Extended to Other Entities ✅
+
+| Entity | Form | Detail | Export | Status |
+|--------|------|--------|--------|--------|
+| **Asset** | ✅ `CustomFieldsSection` | ✅ `CustomFieldsDisplay` | ✅ CSV + XLSX | Full |
+| **ConfigurationItem** | ✅ `CICustomFieldsSection` | ✅ `CICustomFieldsDisplay` | - | Full |
+| **LicenseProduct** | ⏳ UI Pending | ⏳ UI Pending | - | Infrastructure Ready |
+
+**CI Custom Fields** (November 2025):
+- Hook: `src/hooks/use-ci-class-fields.ts`
+- Form: `src/components/custom-fields/ci-custom-fields-section.tsx`
+- Display: `src/components/custom-fields/ci-custom-fields-display.tsx`
+- Repository: `findByCIClassIdWithDefinition()` in `prisma-ci-class-field.repository.ts`
+
+**LicenseProduct Infrastructure** (November 2025):
+- Hook: `src/hooks/use-license-product-fields.ts`
+- Repository: `findByLicenseProductIdWithDefinition()` in `prisma-license-product-field.repository.ts`
+- Controller: `listEnrichedLicenseProductFieldsAction()` ready
+- UI form not yet implemented (existing TODO in codebase)
+
 ---
 
 ## Files Created
 
 ### Hooks
-- `src/hooks/use-category-fields.ts` - Fetches and caches custom fields for a category
+- `src/hooks/use-category-fields.ts` - Fetches and caches custom fields for an asset category
+- `src/hooks/use-ci-class-fields.ts` - Fetches and caches custom fields for a CI class
+- `src/hooks/use-license-product-fields.ts` - Fetches and caches custom fields for a license product
 - `src/hooks/use-conditional-field.ts` - Evaluates conditional logic for field visibility/required/disabled
 
 ### Components
 - `src/components/custom-fields/index.ts` - Barrel exports
 - `src/components/custom-fields/custom-field-input.tsx` - Dynamic input component for all 20 data types
-- `src/components/custom-fields/custom-fields-section.tsx` - Form section with validation
-- `src/components/custom-fields/custom-fields-display.tsx` - Read-only display with formatting
+- `src/components/custom-fields/custom-fields-section.tsx` - Asset form section with validation
+- `src/components/custom-fields/custom-fields-display.tsx` - Asset read-only display with formatting
+- `src/components/custom-fields/ci-custom-fields-section.tsx` - CI form section with validation
+- `src/components/custom-fields/ci-custom-fields-display.tsx` - CI read-only display with formatting
 - `src/components/custom-fields/conditional-custom-field.tsx` - Conditional rendering wrapper component
 
 ### Field Definitions UI
@@ -61,7 +85,24 @@ Complete the Custom Fields feature to allow dynamic field definitions that can b
 ### Components
 - `src/components/assets/asset-form.tsx` - Integrated CustomFieldsSection with validation
 - `src/components/assets/asset-overview-tab.tsx` - Added CustomFieldsDisplay for attributes
+- `src/components/configuration-items/configuration-item-form.tsx` - Integrated CICustomFieldsSection
+- `src/components/configuration-items/configuration-item-detail.tsx` - Added CICustomFieldsDisplay
 - `src/components/data-import/Step4FieldMapper.tsx` - Added Custom Fields section for Asset imports
+
+### Repositories
+- `src/infrastructure/repositories/prisma-asset-category-field.repository.ts` - Added `findByCategoryIdWithDefinition()`
+- `src/infrastructure/repositories/prisma-ci-class-field.repository.ts` - Added `findByCIClassIdWithDefinition()`
+- `src/infrastructure/repositories/prisma-license-product-field.repository.ts` - Added `findByLicenseProductIdWithDefinition()`
+
+### Presenters
+- `src/interface-adapters/presenters/asset-category-field.presenter.ts` - Added enriched DTO types
+- `src/interface-adapters/presenters/ci-class-field.presenter.ts` - Added enriched DTO types
+- `src/interface-adapters/presenters/license-product-field.presenter.ts` - Added enriched DTO types
+
+### Controllers
+- `src/interface-adapters/controllers/asset-category-field.controller.ts` - Added `listEnrichedCategoryFieldsAction()`
+- `src/interface-adapters/controllers/ci-class-field.controller.ts` - Added `listEnrichedCIClassFieldsAction()`
+- `src/interface-adapters/controllers/license-product-field.controller.ts` - Added `listEnrichedLicenseProductFieldsAction()`
 
 ### Data Import Infrastructure
 - `src/lib/data-import/entity-config.types.ts` - Added `isCustomField` property

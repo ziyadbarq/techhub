@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AssetsNearingEOLReport } from "@/components/reports/assets-nearing-eol-report";
-import { AssetsWithoutWarrantyReport } from "@/components/reports/assets-without-warranty-report";
 import { UnassignedAssetsReport } from "@/components/reports/unassigned-assets-report";
 import { AssetsByDepartmentReport } from "@/components/reports/assets-by-department-report";
 import { AssetValueByCategoryReport } from "@/components/reports/asset-value-by-category-report";
@@ -63,9 +62,8 @@ export default async function ReportsPage() {
 
       {/* Reports Tabs */}
       <Tabs defaultValue="eol" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="eol">End of Life</TabsTrigger>
-          <TabsTrigger value="warranty">Warranty</TabsTrigger>
           <TabsTrigger value="unassigned">Unassigned</TabsTrigger>
           <TabsTrigger value="department">By Department</TabsTrigger>
           <TabsTrigger value="value">Value by Category</TabsTrigger>
@@ -74,12 +72,6 @@ export default async function ReportsPage() {
         <TabsContent value="eol" className="mt-6">
           <Suspense fallback={<ReportSkeleton />}>
             <AssetsNearingEOLReport />
-          </Suspense>
-        </TabsContent>
-
-        <TabsContent value="warranty" className="mt-6">
-          <Suspense fallback={<ReportSkeleton />}>
-            <AssetsWithoutWarrantyReport />
           </Suspense>
         </TabsContent>
 
@@ -110,15 +102,6 @@ export default async function ReportsPage() {
             <CardDescription>
               Assets nearing depreciation completion or already fully
               depreciated
-            </CardDescription>
-          </CardHeader>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Warranty Report</CardTitle>
-            <CardDescription>
-              Assets without warranty coverage or with expired warranties
             </CardDescription>
           </CardHeader>
         </Card>

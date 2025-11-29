@@ -11,6 +11,7 @@ import { DI_TOKENS } from "@/di/types";
 import { CompleteTaskUseCase } from "@/core/use-cases/task/complete-task.use-case";
 import type { ITaskRepository } from "@/core/repositories/task.repository.interface";
 import type { IJobQueueService } from "@/core/services/job-queue.service.interface";
+import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { Task, TaskStatus } from "@/core/domain/entities/task.entity";
 import { createMockJobQueue, waitForJob } from "../helpers/queue.helper";
 import { TASK_JOBS } from "@/core/domain/jobs/job-names";
@@ -67,6 +68,26 @@ class MockTaskRepository implements ITaskRepository {
   }
 }
 
+/**
+ * Mock logger for testing
+ */
+const mockLogger: ILoggerService = {
+  info: () => {},
+  warn: () => {},
+  error: () => {},
+  debug: () => {},
+  child: () => mockLogger,
+  startTimer: (operation: string, context?: Record<string, unknown>) => ({
+    startTime: Date.now(),
+    operation,
+    context,
+  }),
+  endTimer: () => {},
+  audit: () => {},
+  withTiming: async <T>(_operation: string, fn: () => Promise<T>): Promise<T> =>
+    fn(),
+};
+
 describe("CompleteTaskUseCase", () => {
   let container: Container;
   let completeTaskUseCase: CompleteTaskUseCase;
@@ -89,6 +110,10 @@ describe("CompleteTaskUseCase", () => {
     container
       .bind<IJobQueueService>(DI_TOKENS.IJobQueueService)
       .toConstantValue(mockJobQueue);
+
+    container
+      .bind<ILoggerService>(DI_TOKENS.ILoggerService)
+      .toConstantValue(mockLogger);
 
     container
       .bind<CompleteTaskUseCase>(DI_TOKENS.CompleteTaskUseCase)

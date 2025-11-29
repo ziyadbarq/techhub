@@ -61,7 +61,8 @@ This file provides high-level guidance when working with this repository.
 
 ```bash
 # Initial Setup
-npm run db:seed      # Seed database (RBAC + Foundation + test data)
+npm run db:seed        # production preset (config/reference only)
+npm run db:seed:dev    # dev preset (full demo data)
 # Create first admin via /register, then assign system-administrator role via Prisma Studio or SQL
 
 # Development
@@ -118,7 +119,19 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 - Use singleton from `@/infrastructure/database/prisma/client` (NOT new instances)
 - NEVER import from `@prisma/client` (ESLint enforced)
 - **Multi-file schema**: Add models to domain files in `schema/` (e.g., `assets.prisma`, `licenses.prisma`)
+- **Schema naming**: Use camelCase fields WITHOUT `@map` (Prisma auto-converts to snake_case); ALWAYS use `@@map` for table names
+- **Raw SQL**: Quote camelCase columns (`"deletedAt"`), use snake_case for tables (`assets`)
+- **Migrations**: See critical rules below
 - See [PRISMA_GUIDE.md](docs/guides/PRISMA_GUIDE.md)
+
+**Prisma Migrations** (CRITICAL - AI MUST FOLLOW):
+- **ALWAYS let Prisma generate migrations**: After schema changes, run `npx prisma migrate dev --name descriptive_name`
+- **NEVER create migration files manually**: Prisma uses shadow database validation; hand-written SQL will fail
+- **NEVER use `prisma migrate resolve --applied`**: This only marks migrations in live DB, not shadow DB
+- **NEVER execute schema changes via `$executeRaw`**: This bypasses migration history completely
+- **NEVER use `prisma db push`**: Always use migrations for schema changes, even in development
+- **If drift detected**: Use `npx prisma migrate reset` (dev only, deletes data) to start fresh
+- **Workflow**: Edit `.prisma` files → `npx prisma migrate dev --name change_name` → `npm run db:generate`
 
 **Next.js 16 Async APIs**:
 - ALWAYS await: `params`, `searchParams`, `cookies()`, `headers()`, `draftMode()`
@@ -131,6 +144,7 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 - Use `import type` for type-only imports (ESLint enforced)
 - Use Sonner toast: `toast.success("Message")` (NOT shadcn useToast)
 - Add `"use no memo";` directive to TanStack Table components (React Compiler incompatibility)
+- Use centralized utilities: `formatDate()` from `@/lib/utils/date-format`, `getStatusBadgeClasses()` from `@/lib/utils/status-colors`
 - See [STACK_UPGRADES.md](docs/guides/STACK_UPGRADES.md)
 
 **Client-Side Session**:
@@ -251,12 +265,25 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 5. **Use structured logging** - Inject `ILoggerService`, never `console.log`
 6. **Before committing** - Run `npm run validate` (type-check + lint + test)
 
+## Developer Notifications
+
+Send push notifications via `mcp__pushover-mcp__send` tool to alert the developer in these scenarios:
+
+- **New features**: When completing significant new functionality
+- **Refactoring**: After completing major code restructuring or architecture changes
+- **Debugging**: When resolving complex bugs or after extended debugging sessions
+- **Planning phase complete**: When finishing a planning phase and ready for implementation approval
+- **Complex bug fixes**: When fixing non-trivial issues that required investigation
+
+Keep messages concise with relevant context (what was done, files affected, next steps if applicable).
+
 ## Critical Checklist
 
 ### ✅ DO
 
 - Import Prisma from `@/generated/prisma`
 - Use Prisma singleton from `client.ts`
+- Use `@@map("snake_case")` for table names in schema; quote camelCase columns in raw SQL (`"deletedAt"`)
 - Await async request APIs (`params`, `cookies()`, etc.)
 - Use `import type` for type-only imports
 - Use Sonner toast: `import { toast } from "sonner";`
@@ -270,6 +297,8 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 - Use DI logger (not `console.log`)
 - Validate at boundaries
 - Follow Clean Architecture layers
+- Use `formatDate()` from `@/lib/utils/date-format` (not `.toLocaleDateString()`)
+- Use `getStatusBadgeClasses()` from `@/lib/utils/status-colors` for status badges
 - Configure MDX plugins in components (runtime), not next.config.ts (build-time)
 - Add new seed data to `seed-config.ts` (centralized configuration)
 - Use seed factories for complex entity creation
@@ -280,6 +309,11 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 - **NEVER** start the dev server (`npm run dev`) or kill a running dev server (user manages this)
 - Import from `@prisma/client` (causes TypeScript errors)
 - **NEVER** use `npx prisma generate` directly (use `npm run db:generate` - creates browser-safe entry points)
+- **NEVER** create migration files manually (use `npx prisma migrate dev` - Prisma validates against shadow DB)
+- **NEVER** use `prisma migrate resolve --applied` to fix migrations (only affects live DB, breaks shadow DB)
+- **NEVER** execute schema changes via `$executeRaw` or `$executeRawUnsafe` (bypasses migration history)
+- **NEVER** use `prisma db push` or `npm run db:push` (bypasses migrations, causes drift)
+- Use `@map` on schema fields (Prisma auto-converts camelCase → snake_case)
 - Create new `Pool()` or `PrismaClient()` instances (exhausts connections)
 - Access `params`/`searchParams` synchronously (runtime errors in Next.js 16)
 - Use shadcn useToast hook (use Sonner toast instead)
@@ -291,6 +325,8 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 - Forget barrel exports for use case modules (breaks pre-commit)
 - Use `console.log` in server code
 - Bypass architecture layers
+- Use `.toLocaleDateString()` or `.toLocaleString()` for dates (use centralized utilities)
+- Manually define status badge colors (use `getStatusBadgeClasses()`)
 - Use Docker (macOS native only)
 - Hardcode seed data in seeder files (use `seed-config.ts`)
 - Wipe data in seeders (seeders are idempotent - use `db:reset` for wipes)

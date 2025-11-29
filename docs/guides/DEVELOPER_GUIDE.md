@@ -286,8 +286,8 @@ npm install
 cp .env.example .env
 # Edit .env with your database URL and OpenAI key
 
-# Push database schema
-npm run db:push
+# Apply database migrations
+npm run db:migrate
 
 # Seed database with example data
 npm run db:seed
@@ -312,8 +312,8 @@ npm run start            # Start production server (auto-kills port conflicts)
 npm run type-check       # TypeScript validation
 npm run lint             # ESLint
 npm run format           # Prettier (auto-fix)
-npm run db:push          # Push schema to database
-npm run db:migrate       # Create migration
+npm run db:migrate       # Create/apply migrations (dev)
+npm run db:migrate:deploy # Apply migrations (prod)
 npm run db:seed          # Seed database
 npm run db:studio        # Open Prisma Studio
 ```
@@ -2082,17 +2082,14 @@ model PromptComposition {
 ### Migrations
 
 ```bash
-# Development: Push schema changes directly
-npm run db:push
-
-# Production: Create migration file
+# Development: Create and apply migrations
 npm run db:migrate
 
-# Apply migrations
-npx prisma migrate deploy
+# Production: Apply pending migrations (no prompts)
+npm run db:migrate:deploy
 
 # Reset database (WARNING: deletes all data)
-npx prisma migrate reset
+npm run db:reset
 ```
 
 ### Seed Data
@@ -2742,6 +2739,72 @@ import { ITaskRepository } from "@/core/repositories/task.repository.interface";
 - ✅ Use `handleControllerError` in controllers
 - ✅ Log errors with context
 - ❌ Don't swallow errors silently
+
+### Centralized Utilities
+
+#### Date Formatting
+
+**ALWAYS use the centralized date formatting utilities** instead of `.toLocaleDateString()` or `.toLocaleString()`:
+
+```typescript
+import { formatDate, formatDateTime, formatDateFull } from "@/lib/utils/date-format";
+
+// ✅ Correct - Centralized utilities
+<span>{formatDate(asset.purchaseDate)}</span>           // "Jan 15, 2024"
+<span>{formatDateTime(log.createdAt)}</span>            // "Jan 15, 2024 at 2:30 PM"
+<span>{formatDateFull(document.issueDate)}</span>       // "January 15, 2024"
+
+// ❌ Incorrect - Manual formatting
+<span>{new Date(asset.purchaseDate).toLocaleDateString()}</span>
+```
+
+**Available Functions** (`src/lib/utils/date-format.ts`):
+
+| Function | Format | Use Case |
+|----------|--------|----------|
+| `formatDate()` | "Jan 15, 2024" | Tables, details, forms |
+| `formatDateShort()` | "Jan 15" | Compact displays |
+| `formatDateFull()` | "January 15, 2024" | Documents, reports |
+| `formatDateTime()` | "Jan 15, 2024 at 2:30 PM" | Timestamps, logs |
+| `formatTime()` | "2:30 PM" | Time-only context |
+| `formatRelativeTime()` | "2 hours ago" | Activity, notifications |
+| `formatDateISO()` | "2024-01-15" | Form input values |
+
+All functions safely handle `null`, `undefined`, and invalid dates (returns "—" for display functions).
+
+#### Status Colors
+
+**ALWAYS use the centralized status color utilities** for consistent status badges:
+
+```typescript
+import { getStatusBadgeClasses, getStatusColor } from "@/lib/utils/status-colors";
+
+// ✅ Correct - Centralized utilities
+<Badge className={getStatusBadgeClasses(status)}>{status}</Badge>
+
+// ❌ Incorrect - Manual color mapping
+<Badge className={status === "active" ? "bg-green-500" : "bg-gray-500"}>{status}</Badge>
+```
+
+**Available Functions** (`src/lib/utils/status-colors.ts`):
+
+| Function | Returns | Use Case |
+|----------|---------|----------|
+| `getStatusColor()` | Color name ("green", "blue", etc.) | Custom styling |
+| `getStatusBadgeClasses()` | Tailwind classes with opacity | Standard badges |
+| `getStatusBadgeSolidClasses()` | Solid background classes | Prominent badges |
+| `getStatusDotClasses()` | Dot indicator classes | Status dots |
+| `getStatusTextClasses()` | Text color classes | Status text |
+
+**Pre-defined Mappings**: `reservationStatusColors`, `disposalStatusColors`, `complianceStatusColors`
+
+**Color Semantics**:
+- **Green**: Active, Success, Approved, Completed, Available
+- **Blue**: Confirmed, In Progress, Info, Synced
+- **Amber**: Pending, Warning, Waiting, Partial
+- **Red**: Failed, Error, Cancelled, Inactive, Overdue
+- **Gray**: Inactive, Unknown, Draft, N/A
+- **Purple**: Reserved, Checked Out
 
 ### Code Quality & Linting
 

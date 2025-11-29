@@ -87,11 +87,6 @@ export function ModelOverviewTab({
             ) : (
               <p className="text-muted-foreground text-sm">Not available</p>
             )}
-            {category && (
-              <p className="text-muted-foreground mt-1 text-xs">
-                {category.isConsumable ? "Consumable" : "Tracked Asset"}
-              </p>
-            )}
           </div>
           <div>
             <p className="text-muted-foreground text-sm font-medium">

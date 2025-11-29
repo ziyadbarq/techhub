@@ -11,27 +11,27 @@
 // AssetDisposal model
 // Tracks asset disposal with approval workflow, sanitization, and certificates
 model AssetDisposal {
-  id                    String    @id @default(cuid())
-  assetId               String    @map("asset_id")
-  disposalType          String    @map("disposal_type") // DONATION, SALE, RECYCLING, DESTRUCTION, OTHER
+  id                    String             @id @default(cuid())
+  assetId               String
+  disposalType          DisposalTypeEnum
   reason                String?
-  initiatedById         String    @map("initiated_by_id")
-  approvedById          String?   @map("approved_by_id")
-  approvedAt            DateTime? @map("approved_at")
-  status                String    @default("PENDING_APPROVAL") // PENDING_APPROVAL, APPROVED, REJECTED, IN_PROGRESS, COMPLETED, CANCELLED
-  estimatedValue        Decimal?  @map("estimated_value") @db.Decimal(12, 2)
-  actualProceeds        Decimal?  @map("actual_proceeds") @db.Decimal(12, 2)
+  initiatedById         String
+  approvedById          String?
+  approvedAt            DateTime?
+  status                DisposalStatusEnum @default(PENDING_APPROVAL)
+  estimatedValue        Decimal?           @db.Decimal(12, 2)
+  actualProceeds        Decimal?           @db.Decimal(12, 2)
   currency              String?
-  sanitizationChecklist Json?     @map("sanitization_checklist")
-  disposalDate          DateTime? @map("disposal_date")
-  certificateNumber     String?   @unique @map("certificate_number")
-  certificateIssuedAt   DateTime? @map("certificate_issued_at")
-  disposalVendorId      String?   @map("disposal_vendor_id")
-  recipientInfo         String?   @map("recipient_info") @db.Text
-  note                  String?   @db.Text
+  sanitizationChecklist Json?
+  disposalDate          DateTime?
+  certificateNumber     String?            @unique
+  certificateIssuedAt   DateTime?
+  disposalVendorId      String?
+  recipientInfo         String?            @db.Text
+  note                  String?            @db.Text
   metadata              Json?
-  createdAt             DateTime  @default(now()) @map("created_at")
-  updatedAt             DateTime  @updatedAt @map("updated_at")
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
 
   // Relations
   asset          Asset              @relation("AssetDisposals", fields: [assetId], references: [id], onDelete: Restrict)
@@ -59,12 +59,12 @@ model AssetDisposal {
 // Multi-level approval tracking for disposal requests
 model DisposalApproval {
   id         String    @id @default(cuid())
-  disposalId String    @map("disposal_id")
-  approverId String    @map("approver_id")
+  disposalId String
+  approverId String
   status     String    @default("PENDING") // PENDING, APPROVED, REJECTED
-  decisionAt DateTime? @map("decision_at")
+  decisionAt DateTime?
   comment    String?   @db.Text
-  createdAt  DateTime  @default(now()) @map("created_at")
+  createdAt  DateTime  @default(now())
 
   // Relations
   disposal AssetDisposal @relation(fields: [disposalId], references: [id], onDelete: Cascade)
@@ -82,14 +82,14 @@ model DisposalApproval {
 // Tracks documents attached to disposals (certificates, receipts, photos)
 model DisposalDocument {
   id           String   @id @default(cuid())
-  disposalId   String   @map("disposal_id")
-  documentType String   @map("document_type") // CERTIFICATE, RECEIPT, INVOICE, PHOTO, OTHER
-  fileName     String   @map("file_name")
-  filePath     String   @map("file_path")
-  mimeType     String?  @map("mime_type")
-  sizeBytes    BigInt?  @map("size_bytes")
-  uploadedById String   @map("uploaded_by_id")
-  uploadedAt   DateTime @default(now()) @map("uploaded_at")
+  disposalId   String
+  documentType String // CERTIFICATE, RECEIPT, INVOICE, PHOTO, OTHER
+  fileName     String
+  filePath     String
+  mimeType     String?
+  sizeBytes    BigInt?
+  uploadedById String
+  uploadedAt   DateTime @default(now())
 
   // Relations
   disposal   AssetDisposal @relation(fields: [disposalId], references: [id], onDelete: Cascade)

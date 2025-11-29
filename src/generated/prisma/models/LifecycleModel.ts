@@ -30,6 +30,8 @@ export type LifecycleModelMinAggregateOutputType = {
   description: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
 }
 
 export type LifecycleModelMaxAggregateOutputType = {
@@ -38,6 +40,8 @@ export type LifecycleModelMaxAggregateOutputType = {
   description: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
 }
 
 export type LifecycleModelCountAggregateOutputType = {
@@ -46,6 +50,8 @@ export type LifecycleModelCountAggregateOutputType = {
   description: number
   createdAt: number
   updatedAt: number
+  deletedAt: number
+  deletedById: number
   _all: number
 }
 
@@ -56,6 +62,8 @@ export type LifecycleModelMinAggregateInputType = {
   description?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
 }
 
 export type LifecycleModelMaxAggregateInputType = {
@@ -64,6 +72,8 @@ export type LifecycleModelMaxAggregateInputType = {
   description?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
 }
 
 export type LifecycleModelCountAggregateInputType = {
@@ -72,6 +82,8 @@ export type LifecycleModelCountAggregateInputType = {
   description?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
   _all?: true
 }
 
@@ -153,6 +165,8 @@ export type LifecycleModelGroupByOutputType = {
   description: string | null
   createdAt: Date
   updatedAt: Date
+  deletedAt: Date | null
+  deletedById: string | null
   _count: LifecycleModelCountAggregateOutputType | null
   _min: LifecycleModelMinAggregateOutputType | null
   _max: LifecycleModelMaxAggregateOutputType | null
@@ -182,11 +196,14 @@ export type LifecycleModelWhereInput = {
   description?: Prisma.StringNullableFilter<"LifecycleModel"> | string | null
   createdAt?: Prisma.DateTimeFilter<"LifecycleModel"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"LifecycleModel"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"LifecycleModel"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"LifecycleModel"> | string | null
   states?: Prisma.LifecycleStateListRelationFilter
   transitions?: Prisma.LifecycleTransitionListRelationFilter
   ciClasses?: Prisma.CIClassListRelationFilter
   assetCategories?: Prisma.AssetCategoryListRelationFilter
   licenseProducts?: Prisma.LicenseProductListRelationFilter
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }
 
 export type LifecycleModelOrderByWithRelationInput = {
@@ -195,11 +212,14 @@ export type LifecycleModelOrderByWithRelationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   states?: Prisma.LifecycleStateOrderByRelationAggregateInput
   transitions?: Prisma.LifecycleTransitionOrderByRelationAggregateInput
   ciClasses?: Prisma.CIClassOrderByRelationAggregateInput
   assetCategories?: Prisma.AssetCategoryOrderByRelationAggregateInput
   licenseProducts?: Prisma.LicenseProductOrderByRelationAggregateInput
+  deletedBy?: Prisma.PersonOrderByWithRelationInput
 }
 
 export type LifecycleModelWhereUniqueInput = Prisma.AtLeast<{
@@ -211,11 +231,14 @@ export type LifecycleModelWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringNullableFilter<"LifecycleModel"> | string | null
   createdAt?: Prisma.DateTimeFilter<"LifecycleModel"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"LifecycleModel"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"LifecycleModel"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"LifecycleModel"> | string | null
   states?: Prisma.LifecycleStateListRelationFilter
   transitions?: Prisma.LifecycleTransitionListRelationFilter
   ciClasses?: Prisma.CIClassListRelationFilter
   assetCategories?: Prisma.AssetCategoryListRelationFilter
   licenseProducts?: Prisma.LicenseProductListRelationFilter
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }, "id" | "name">
 
 export type LifecycleModelOrderByWithAggregationInput = {
@@ -224,6 +247,8 @@ export type LifecycleModelOrderByWithAggregationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.LifecycleModelCountOrderByAggregateInput
   _max?: Prisma.LifecycleModelMaxOrderByAggregateInput
   _min?: Prisma.LifecycleModelMinOrderByAggregateInput
@@ -238,6 +263,8 @@ export type LifecycleModelScalarWhereWithAggregatesInput = {
   description?: Prisma.StringNullableWithAggregatesFilter<"LifecycleModel"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"LifecycleModel"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"LifecycleModel"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"LifecycleModel"> | Date | string | null
+  deletedById?: Prisma.StringNullableWithAggregatesFilter<"LifecycleModel"> | string | null
 }
 
 export type LifecycleModelCreateInput = {
@@ -246,11 +273,13 @@ export type LifecycleModelCreateInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   states?: Prisma.LifecycleStateCreateNestedManyWithoutLifecycleModelInput
   transitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutLifecycleModelInput
   ciClasses?: Prisma.CIClassCreateNestedManyWithoutLifecycleModelInput
   assetCategories?: Prisma.AssetCategoryCreateNestedManyWithoutLifecycleModelInput
   licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutLifecycleModelInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedLifecycleModelsInput
 }
 
 export type LifecycleModelUncheckedCreateInput = {
@@ -259,6 +288,8 @@ export type LifecycleModelUncheckedCreateInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   states?: Prisma.LifecycleStateUncheckedCreateNestedManyWithoutLifecycleModelInput
   transitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutLifecycleModelInput
   ciClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutLifecycleModelInput
@@ -272,11 +303,13 @@ export type LifecycleModelUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   states?: Prisma.LifecycleStateUpdateManyWithoutLifecycleModelNestedInput
   transitions?: Prisma.LifecycleTransitionUpdateManyWithoutLifecycleModelNestedInput
   ciClasses?: Prisma.CIClassUpdateManyWithoutLifecycleModelNestedInput
   assetCategories?: Prisma.AssetCategoryUpdateManyWithoutLifecycleModelNestedInput
   licenseProducts?: Prisma.LicenseProductUpdateManyWithoutLifecycleModelNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedLifecycleModelsNestedInput
 }
 
 export type LifecycleModelUncheckedUpdateInput = {
@@ -285,6 +318,8 @@ export type LifecycleModelUncheckedUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   states?: Prisma.LifecycleStateUncheckedUpdateManyWithoutLifecycleModelNestedInput
   transitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutLifecycleModelNestedInput
   ciClasses?: Prisma.CIClassUncheckedUpdateManyWithoutLifecycleModelNestedInput
@@ -298,6 +333,8 @@ export type LifecycleModelCreateManyInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type LifecycleModelUpdateManyMutationInput = {
@@ -306,6 +343,7 @@ export type LifecycleModelUpdateManyMutationInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type LifecycleModelUncheckedUpdateManyInput = {
@@ -314,11 +352,23 @@ export type LifecycleModelUncheckedUpdateManyInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type LifecycleModelNullableScalarRelationFilter = {
   is?: Prisma.LifecycleModelWhereInput | null
   isNot?: Prisma.LifecycleModelWhereInput | null
+}
+
+export type LifecycleModelListRelationFilter = {
+  every?: Prisma.LifecycleModelWhereInput
+  some?: Prisma.LifecycleModelWhereInput
+  none?: Prisma.LifecycleModelWhereInput
+}
+
+export type LifecycleModelOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type LifecycleModelCountOrderByAggregateInput = {
@@ -327,6 +377,8 @@ export type LifecycleModelCountOrderByAggregateInput = {
   description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type LifecycleModelMaxOrderByAggregateInput = {
@@ -335,6 +387,8 @@ export type LifecycleModelMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type LifecycleModelMinOrderByAggregateInput = {
@@ -343,6 +397,8 @@ export type LifecycleModelMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type LifecycleModelScalarRelationFilter = {
@@ -380,6 +436,48 @@ export type LifecycleModelUpdateOneWithoutCiClassesNestedInput = {
   delete?: Prisma.LifecycleModelWhereInput | boolean
   connect?: Prisma.LifecycleModelWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.LifecycleModelUpdateToOneWithWhereWithoutCiClassesInput, Prisma.LifecycleModelUpdateWithoutCiClassesInput>, Prisma.LifecycleModelUncheckedUpdateWithoutCiClassesInput>
+}
+
+export type LifecycleModelCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.LifecycleModelCreateWithoutDeletedByInput, Prisma.LifecycleModelUncheckedCreateWithoutDeletedByInput> | Prisma.LifecycleModelCreateWithoutDeletedByInput[] | Prisma.LifecycleModelUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.LifecycleModelCreateOrConnectWithoutDeletedByInput | Prisma.LifecycleModelCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.LifecycleModelCreateManyDeletedByInputEnvelope
+  connect?: Prisma.LifecycleModelWhereUniqueInput | Prisma.LifecycleModelWhereUniqueInput[]
+}
+
+export type LifecycleModelUncheckedCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.LifecycleModelCreateWithoutDeletedByInput, Prisma.LifecycleModelUncheckedCreateWithoutDeletedByInput> | Prisma.LifecycleModelCreateWithoutDeletedByInput[] | Prisma.LifecycleModelUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.LifecycleModelCreateOrConnectWithoutDeletedByInput | Prisma.LifecycleModelCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.LifecycleModelCreateManyDeletedByInputEnvelope
+  connect?: Prisma.LifecycleModelWhereUniqueInput | Prisma.LifecycleModelWhereUniqueInput[]
+}
+
+export type LifecycleModelUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.LifecycleModelCreateWithoutDeletedByInput, Prisma.LifecycleModelUncheckedCreateWithoutDeletedByInput> | Prisma.LifecycleModelCreateWithoutDeletedByInput[] | Prisma.LifecycleModelUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.LifecycleModelCreateOrConnectWithoutDeletedByInput | Prisma.LifecycleModelCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.LifecycleModelUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.LifecycleModelUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.LifecycleModelCreateManyDeletedByInputEnvelope
+  set?: Prisma.LifecycleModelWhereUniqueInput | Prisma.LifecycleModelWhereUniqueInput[]
+  disconnect?: Prisma.LifecycleModelWhereUniqueInput | Prisma.LifecycleModelWhereUniqueInput[]
+  delete?: Prisma.LifecycleModelWhereUniqueInput | Prisma.LifecycleModelWhereUniqueInput[]
+  connect?: Prisma.LifecycleModelWhereUniqueInput | Prisma.LifecycleModelWhereUniqueInput[]
+  update?: Prisma.LifecycleModelUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.LifecycleModelUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.LifecycleModelUpdateManyWithWhereWithoutDeletedByInput | Prisma.LifecycleModelUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.LifecycleModelScalarWhereInput | Prisma.LifecycleModelScalarWhereInput[]
+}
+
+export type LifecycleModelUncheckedUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.LifecycleModelCreateWithoutDeletedByInput, Prisma.LifecycleModelUncheckedCreateWithoutDeletedByInput> | Prisma.LifecycleModelCreateWithoutDeletedByInput[] | Prisma.LifecycleModelUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.LifecycleModelCreateOrConnectWithoutDeletedByInput | Prisma.LifecycleModelCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.LifecycleModelUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.LifecycleModelUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.LifecycleModelCreateManyDeletedByInputEnvelope
+  set?: Prisma.LifecycleModelWhereUniqueInput | Prisma.LifecycleModelWhereUniqueInput[]
+  disconnect?: Prisma.LifecycleModelWhereUniqueInput | Prisma.LifecycleModelWhereUniqueInput[]
+  delete?: Prisma.LifecycleModelWhereUniqueInput | Prisma.LifecycleModelWhereUniqueInput[]
+  connect?: Prisma.LifecycleModelWhereUniqueInput | Prisma.LifecycleModelWhereUniqueInput[]
+  update?: Prisma.LifecycleModelUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.LifecycleModelUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.LifecycleModelUpdateManyWithWhereWithoutDeletedByInput | Prisma.LifecycleModelUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.LifecycleModelScalarWhereInput | Prisma.LifecycleModelScalarWhereInput[]
 }
 
 export type LifecycleModelCreateNestedOneWithoutStatesInput = {
@@ -432,10 +530,12 @@ export type LifecycleModelCreateWithoutAssetCategoriesInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   states?: Prisma.LifecycleStateCreateNestedManyWithoutLifecycleModelInput
   transitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutLifecycleModelInput
   ciClasses?: Prisma.CIClassCreateNestedManyWithoutLifecycleModelInput
   licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutLifecycleModelInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedLifecycleModelsInput
 }
 
 export type LifecycleModelUncheckedCreateWithoutAssetCategoriesInput = {
@@ -444,6 +544,8 @@ export type LifecycleModelUncheckedCreateWithoutAssetCategoriesInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   states?: Prisma.LifecycleStateUncheckedCreateNestedManyWithoutLifecycleModelInput
   transitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutLifecycleModelInput
   ciClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutLifecycleModelInput
@@ -472,10 +574,12 @@ export type LifecycleModelUpdateWithoutAssetCategoriesInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   states?: Prisma.LifecycleStateUpdateManyWithoutLifecycleModelNestedInput
   transitions?: Prisma.LifecycleTransitionUpdateManyWithoutLifecycleModelNestedInput
   ciClasses?: Prisma.CIClassUpdateManyWithoutLifecycleModelNestedInput
   licenseProducts?: Prisma.LicenseProductUpdateManyWithoutLifecycleModelNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedLifecycleModelsNestedInput
 }
 
 export type LifecycleModelUncheckedUpdateWithoutAssetCategoriesInput = {
@@ -484,6 +588,8 @@ export type LifecycleModelUncheckedUpdateWithoutAssetCategoriesInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   states?: Prisma.LifecycleStateUncheckedUpdateManyWithoutLifecycleModelNestedInput
   transitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutLifecycleModelNestedInput
   ciClasses?: Prisma.CIClassUncheckedUpdateManyWithoutLifecycleModelNestedInput
@@ -496,10 +602,12 @@ export type LifecycleModelCreateWithoutCiClassesInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   states?: Prisma.LifecycleStateCreateNestedManyWithoutLifecycleModelInput
   transitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutLifecycleModelInput
   assetCategories?: Prisma.AssetCategoryCreateNestedManyWithoutLifecycleModelInput
   licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutLifecycleModelInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedLifecycleModelsInput
 }
 
 export type LifecycleModelUncheckedCreateWithoutCiClassesInput = {
@@ -508,6 +616,8 @@ export type LifecycleModelUncheckedCreateWithoutCiClassesInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   states?: Prisma.LifecycleStateUncheckedCreateNestedManyWithoutLifecycleModelInput
   transitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutLifecycleModelInput
   assetCategories?: Prisma.AssetCategoryUncheckedCreateNestedManyWithoutLifecycleModelInput
@@ -536,10 +646,12 @@ export type LifecycleModelUpdateWithoutCiClassesInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   states?: Prisma.LifecycleStateUpdateManyWithoutLifecycleModelNestedInput
   transitions?: Prisma.LifecycleTransitionUpdateManyWithoutLifecycleModelNestedInput
   assetCategories?: Prisma.AssetCategoryUpdateManyWithoutLifecycleModelNestedInput
   licenseProducts?: Prisma.LicenseProductUpdateManyWithoutLifecycleModelNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedLifecycleModelsNestedInput
 }
 
 export type LifecycleModelUncheckedUpdateWithoutCiClassesInput = {
@@ -548,10 +660,79 @@ export type LifecycleModelUncheckedUpdateWithoutCiClassesInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   states?: Prisma.LifecycleStateUncheckedUpdateManyWithoutLifecycleModelNestedInput
   transitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutLifecycleModelNestedInput
   assetCategories?: Prisma.AssetCategoryUncheckedUpdateManyWithoutLifecycleModelNestedInput
   licenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutLifecycleModelNestedInput
+}
+
+export type LifecycleModelCreateWithoutDeletedByInput = {
+  id?: string
+  name: string
+  description?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  states?: Prisma.LifecycleStateCreateNestedManyWithoutLifecycleModelInput
+  transitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutLifecycleModelInput
+  ciClasses?: Prisma.CIClassCreateNestedManyWithoutLifecycleModelInput
+  assetCategories?: Prisma.AssetCategoryCreateNestedManyWithoutLifecycleModelInput
+  licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutLifecycleModelInput
+}
+
+export type LifecycleModelUncheckedCreateWithoutDeletedByInput = {
+  id?: string
+  name: string
+  description?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  states?: Prisma.LifecycleStateUncheckedCreateNestedManyWithoutLifecycleModelInput
+  transitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutLifecycleModelInput
+  ciClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutLifecycleModelInput
+  assetCategories?: Prisma.AssetCategoryUncheckedCreateNestedManyWithoutLifecycleModelInput
+  licenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutLifecycleModelInput
+}
+
+export type LifecycleModelCreateOrConnectWithoutDeletedByInput = {
+  where: Prisma.LifecycleModelWhereUniqueInput
+  create: Prisma.XOR<Prisma.LifecycleModelCreateWithoutDeletedByInput, Prisma.LifecycleModelUncheckedCreateWithoutDeletedByInput>
+}
+
+export type LifecycleModelCreateManyDeletedByInputEnvelope = {
+  data: Prisma.LifecycleModelCreateManyDeletedByInput | Prisma.LifecycleModelCreateManyDeletedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type LifecycleModelUpsertWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.LifecycleModelWhereUniqueInput
+  update: Prisma.XOR<Prisma.LifecycleModelUpdateWithoutDeletedByInput, Prisma.LifecycleModelUncheckedUpdateWithoutDeletedByInput>
+  create: Prisma.XOR<Prisma.LifecycleModelCreateWithoutDeletedByInput, Prisma.LifecycleModelUncheckedCreateWithoutDeletedByInput>
+}
+
+export type LifecycleModelUpdateWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.LifecycleModelWhereUniqueInput
+  data: Prisma.XOR<Prisma.LifecycleModelUpdateWithoutDeletedByInput, Prisma.LifecycleModelUncheckedUpdateWithoutDeletedByInput>
+}
+
+export type LifecycleModelUpdateManyWithWhereWithoutDeletedByInput = {
+  where: Prisma.LifecycleModelScalarWhereInput
+  data: Prisma.XOR<Prisma.LifecycleModelUpdateManyMutationInput, Prisma.LifecycleModelUncheckedUpdateManyWithoutDeletedByInput>
+}
+
+export type LifecycleModelScalarWhereInput = {
+  AND?: Prisma.LifecycleModelScalarWhereInput | Prisma.LifecycleModelScalarWhereInput[]
+  OR?: Prisma.LifecycleModelScalarWhereInput[]
+  NOT?: Prisma.LifecycleModelScalarWhereInput | Prisma.LifecycleModelScalarWhereInput[]
+  id?: Prisma.StringFilter<"LifecycleModel"> | string
+  name?: Prisma.StringFilter<"LifecycleModel"> | string
+  description?: Prisma.StringNullableFilter<"LifecycleModel"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"LifecycleModel"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"LifecycleModel"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"LifecycleModel"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"LifecycleModel"> | string | null
 }
 
 export type LifecycleModelCreateWithoutStatesInput = {
@@ -560,10 +741,12 @@ export type LifecycleModelCreateWithoutStatesInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   transitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutLifecycleModelInput
   ciClasses?: Prisma.CIClassCreateNestedManyWithoutLifecycleModelInput
   assetCategories?: Prisma.AssetCategoryCreateNestedManyWithoutLifecycleModelInput
   licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutLifecycleModelInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedLifecycleModelsInput
 }
 
 export type LifecycleModelUncheckedCreateWithoutStatesInput = {
@@ -572,6 +755,8 @@ export type LifecycleModelUncheckedCreateWithoutStatesInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   transitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutLifecycleModelInput
   ciClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutLifecycleModelInput
   assetCategories?: Prisma.AssetCategoryUncheckedCreateNestedManyWithoutLifecycleModelInput
@@ -600,10 +785,12 @@ export type LifecycleModelUpdateWithoutStatesInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   transitions?: Prisma.LifecycleTransitionUpdateManyWithoutLifecycleModelNestedInput
   ciClasses?: Prisma.CIClassUpdateManyWithoutLifecycleModelNestedInput
   assetCategories?: Prisma.AssetCategoryUpdateManyWithoutLifecycleModelNestedInput
   licenseProducts?: Prisma.LicenseProductUpdateManyWithoutLifecycleModelNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedLifecycleModelsNestedInput
 }
 
 export type LifecycleModelUncheckedUpdateWithoutStatesInput = {
@@ -612,6 +799,8 @@ export type LifecycleModelUncheckedUpdateWithoutStatesInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   transitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutLifecycleModelNestedInput
   ciClasses?: Prisma.CIClassUncheckedUpdateManyWithoutLifecycleModelNestedInput
   assetCategories?: Prisma.AssetCategoryUncheckedUpdateManyWithoutLifecycleModelNestedInput
@@ -624,10 +813,12 @@ export type LifecycleModelCreateWithoutTransitionsInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   states?: Prisma.LifecycleStateCreateNestedManyWithoutLifecycleModelInput
   ciClasses?: Prisma.CIClassCreateNestedManyWithoutLifecycleModelInput
   assetCategories?: Prisma.AssetCategoryCreateNestedManyWithoutLifecycleModelInput
   licenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutLifecycleModelInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedLifecycleModelsInput
 }
 
 export type LifecycleModelUncheckedCreateWithoutTransitionsInput = {
@@ -636,6 +827,8 @@ export type LifecycleModelUncheckedCreateWithoutTransitionsInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   states?: Prisma.LifecycleStateUncheckedCreateNestedManyWithoutLifecycleModelInput
   ciClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutLifecycleModelInput
   assetCategories?: Prisma.AssetCategoryUncheckedCreateNestedManyWithoutLifecycleModelInput
@@ -664,10 +857,12 @@ export type LifecycleModelUpdateWithoutTransitionsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   states?: Prisma.LifecycleStateUpdateManyWithoutLifecycleModelNestedInput
   ciClasses?: Prisma.CIClassUpdateManyWithoutLifecycleModelNestedInput
   assetCategories?: Prisma.AssetCategoryUpdateManyWithoutLifecycleModelNestedInput
   licenseProducts?: Prisma.LicenseProductUpdateManyWithoutLifecycleModelNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedLifecycleModelsNestedInput
 }
 
 export type LifecycleModelUncheckedUpdateWithoutTransitionsInput = {
@@ -676,6 +871,8 @@ export type LifecycleModelUncheckedUpdateWithoutTransitionsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   states?: Prisma.LifecycleStateUncheckedUpdateManyWithoutLifecycleModelNestedInput
   ciClasses?: Prisma.CIClassUncheckedUpdateManyWithoutLifecycleModelNestedInput
   assetCategories?: Prisma.AssetCategoryUncheckedUpdateManyWithoutLifecycleModelNestedInput
@@ -688,10 +885,12 @@ export type LifecycleModelCreateWithoutLicenseProductsInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   states?: Prisma.LifecycleStateCreateNestedManyWithoutLifecycleModelInput
   transitions?: Prisma.LifecycleTransitionCreateNestedManyWithoutLifecycleModelInput
   ciClasses?: Prisma.CIClassCreateNestedManyWithoutLifecycleModelInput
   assetCategories?: Prisma.AssetCategoryCreateNestedManyWithoutLifecycleModelInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedLifecycleModelsInput
 }
 
 export type LifecycleModelUncheckedCreateWithoutLicenseProductsInput = {
@@ -700,6 +899,8 @@ export type LifecycleModelUncheckedCreateWithoutLicenseProductsInput = {
   description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   states?: Prisma.LifecycleStateUncheckedCreateNestedManyWithoutLifecycleModelInput
   transitions?: Prisma.LifecycleTransitionUncheckedCreateNestedManyWithoutLifecycleModelInput
   ciClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutLifecycleModelInput
@@ -728,10 +929,12 @@ export type LifecycleModelUpdateWithoutLicenseProductsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   states?: Prisma.LifecycleStateUpdateManyWithoutLifecycleModelNestedInput
   transitions?: Prisma.LifecycleTransitionUpdateManyWithoutLifecycleModelNestedInput
   ciClasses?: Prisma.CIClassUpdateManyWithoutLifecycleModelNestedInput
   assetCategories?: Prisma.AssetCategoryUpdateManyWithoutLifecycleModelNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedLifecycleModelsNestedInput
 }
 
 export type LifecycleModelUncheckedUpdateWithoutLicenseProductsInput = {
@@ -740,10 +943,58 @@ export type LifecycleModelUncheckedUpdateWithoutLicenseProductsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   states?: Prisma.LifecycleStateUncheckedUpdateManyWithoutLifecycleModelNestedInput
   transitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutLifecycleModelNestedInput
   ciClasses?: Prisma.CIClassUncheckedUpdateManyWithoutLifecycleModelNestedInput
   assetCategories?: Prisma.AssetCategoryUncheckedUpdateManyWithoutLifecycleModelNestedInput
+}
+
+export type LifecycleModelCreateManyDeletedByInput = {
+  id?: string
+  name: string
+  description?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type LifecycleModelUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  states?: Prisma.LifecycleStateUpdateManyWithoutLifecycleModelNestedInput
+  transitions?: Prisma.LifecycleTransitionUpdateManyWithoutLifecycleModelNestedInput
+  ciClasses?: Prisma.CIClassUpdateManyWithoutLifecycleModelNestedInput
+  assetCategories?: Prisma.AssetCategoryUpdateManyWithoutLifecycleModelNestedInput
+  licenseProducts?: Prisma.LicenseProductUpdateManyWithoutLifecycleModelNestedInput
+}
+
+export type LifecycleModelUncheckedUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  states?: Prisma.LifecycleStateUncheckedUpdateManyWithoutLifecycleModelNestedInput
+  transitions?: Prisma.LifecycleTransitionUncheckedUpdateManyWithoutLifecycleModelNestedInput
+  ciClasses?: Prisma.CIClassUncheckedUpdateManyWithoutLifecycleModelNestedInput
+  assetCategories?: Prisma.AssetCategoryUncheckedUpdateManyWithoutLifecycleModelNestedInput
+  licenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutLifecycleModelNestedInput
+}
+
+export type LifecycleModelUncheckedUpdateManyWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -819,11 +1070,14 @@ export type LifecycleModelSelect<ExtArgs extends runtime.Types.Extensions.Intern
   description?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   states?: boolean | Prisma.LifecycleModel$statesArgs<ExtArgs>
   transitions?: boolean | Prisma.LifecycleModel$transitionsArgs<ExtArgs>
   ciClasses?: boolean | Prisma.LifecycleModel$ciClassesArgs<ExtArgs>
   assetCategories?: boolean | Prisma.LifecycleModel$assetCategoriesArgs<ExtArgs>
   licenseProducts?: boolean | Prisma.LifecycleModel$licenseProductsArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.LifecycleModel$deletedByArgs<ExtArgs>
   _count?: boolean | Prisma.LifecycleModelCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["lifecycleModel"]>
 
@@ -833,6 +1087,9 @@ export type LifecycleModelSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   description?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
+  deletedBy?: boolean | Prisma.LifecycleModel$deletedByArgs<ExtArgs>
 }, ExtArgs["result"]["lifecycleModel"]>
 
 export type LifecycleModelSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -841,6 +1098,9 @@ export type LifecycleModelSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   description?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
+  deletedBy?: boolean | Prisma.LifecycleModel$deletedByArgs<ExtArgs>
 }, ExtArgs["result"]["lifecycleModel"]>
 
 export type LifecycleModelSelectScalar = {
@@ -849,19 +1109,26 @@ export type LifecycleModelSelectScalar = {
   description?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
 }
 
-export type LifecycleModelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "createdAt" | "updatedAt", ExtArgs["result"]["lifecycleModel"]>
+export type LifecycleModelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "createdAt" | "updatedAt" | "deletedAt" | "deletedById", ExtArgs["result"]["lifecycleModel"]>
 export type LifecycleModelInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   states?: boolean | Prisma.LifecycleModel$statesArgs<ExtArgs>
   transitions?: boolean | Prisma.LifecycleModel$transitionsArgs<ExtArgs>
   ciClasses?: boolean | Prisma.LifecycleModel$ciClassesArgs<ExtArgs>
   assetCategories?: boolean | Prisma.LifecycleModel$assetCategoriesArgs<ExtArgs>
   licenseProducts?: boolean | Prisma.LifecycleModel$licenseProductsArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.LifecycleModel$deletedByArgs<ExtArgs>
   _count?: boolean | Prisma.LifecycleModelCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type LifecycleModelIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type LifecycleModelIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type LifecycleModelIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  deletedBy?: boolean | Prisma.LifecycleModel$deletedByArgs<ExtArgs>
+}
+export type LifecycleModelIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  deletedBy?: boolean | Prisma.LifecycleModel$deletedByArgs<ExtArgs>
+}
 
 export type $LifecycleModelPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "LifecycleModel"
@@ -871,6 +1138,7 @@ export type $LifecycleModelPayload<ExtArgs extends runtime.Types.Extensions.Inte
     ciClasses: Prisma.$CIClassPayload<ExtArgs>[]
     assetCategories: Prisma.$AssetCategoryPayload<ExtArgs>[]
     licenseProducts: Prisma.$LicenseProductPayload<ExtArgs>[]
+    deletedBy: Prisma.$PersonPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -878,6 +1146,8 @@ export type $LifecycleModelPayload<ExtArgs extends runtime.Types.Extensions.Inte
     description: string | null
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
+    deletedById: string | null
   }, ExtArgs["result"]["lifecycleModel"]>
   composites: {}
 }
@@ -1277,6 +1547,7 @@ export interface Prisma__LifecycleModelClient<T, Null = never, ExtArgs extends r
   ciClasses<T extends Prisma.LifecycleModel$ciClassesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LifecycleModel$ciClassesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CIClassPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   assetCategories<T extends Prisma.LifecycleModel$assetCategoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LifecycleModel$assetCategoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   licenseProducts<T extends Prisma.LifecycleModel$licenseProductsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LifecycleModel$licenseProductsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LicenseProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deletedBy<T extends Prisma.LifecycleModel$deletedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.LifecycleModel$deletedByArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1311,6 +1582,8 @@ export interface LifecycleModelFieldRefs {
   readonly description: Prisma.FieldRef<"LifecycleModel", 'String'>
   readonly createdAt: Prisma.FieldRef<"LifecycleModel", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"LifecycleModel", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"LifecycleModel", 'DateTime'>
+  readonly deletedById: Prisma.FieldRef<"LifecycleModel", 'String'>
 }
     
 
@@ -1560,6 +1833,10 @@ export type LifecycleModelCreateManyAndReturnArgs<ExtArgs extends runtime.Types.
    */
   data: Prisma.LifecycleModelCreateManyInput | Prisma.LifecycleModelCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LifecycleModelIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1630,6 +1907,10 @@ export type LifecycleModelUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.
    * Limit how many LifecycleModels to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LifecycleModelIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1816,6 +2097,25 @@ export type LifecycleModel$licenseProductsArgs<ExtArgs extends runtime.Types.Ext
   take?: number
   skip?: number
   distinct?: Prisma.LicenseProductScalarFieldEnum | Prisma.LicenseProductScalarFieldEnum[]
+}
+
+/**
+ * LifecycleModel.deletedBy
+ */
+export type LifecycleModel$deletedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Person
+   */
+  select?: Prisma.PersonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Person
+   */
+  omit?: Prisma.PersonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PersonInclude<ExtArgs> | null
+  where?: Prisma.PersonWhereInput
 }
 
 /**

@@ -11,3 +11,6 @@ export { ListStockMovementsUseCase } from "./list-stock-movements.use-case";
 export type { ListStockMovementsOptions } from "./list-stock-movements.use-case";
 
 export { DeleteStockMovementUseCase } from "./delete-stock-movement.use-case";
+
+export { VoidStockMovementUseCase } from "./void-stock-movement.use-case";
+export type { VoidStockMovementProps } from "./void-stock-movement.use-case";

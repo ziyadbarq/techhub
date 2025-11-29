@@ -38,16 +38,6 @@ export interface IAssetCategoryRepository {
   findByLifecycleModel(lifecycleModelId: string): Promise<AssetCategory[]>;
 
   /**
-   * Find consumable categories
-   */
-  findConsumable(): Promise<AssetCategory[]>;
-
-  /**
-   * Find non-consumable categories
-   */
-  findNonConsumable(): Promise<AssetCategory[]>;
-
-  /**
    * Find all asset categories
    */
   findAll(options?: {
@@ -65,7 +55,6 @@ export interface IAssetCategoryRepository {
     options?: {
       skip?: number;
       take?: number;
-      isConsumable?: boolean;
     },
   ): Promise<AssetCategory[]>;
 

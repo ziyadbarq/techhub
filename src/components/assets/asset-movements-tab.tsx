@@ -1,59 +1,63 @@
 /**
  * Asset Movements Tab Component
+ *
+ * Displays stock movement history for an asset in a timeline format.
+ * Supports voiding movements and toggling visibility of voided entries.
  */
 
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { format } from "date-fns";
 import { toast } from "sonner";
-import {
-  ArrowRight,
-  Package,
-  TrendingUp,
-  ArrowDown,
-  ArrowUpDown,
-} from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Eye, EyeOff, RefreshCw } from "lucide-react";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { StockMovementDTO } from "@/interface-adapters/presenters/stock-movement.presenter";
 import { listStockMovementsAction } from "@/interface-adapters/controllers/stock-movement.controller";
+import { MovementTimeline } from "@/components/stock-movements/movement-timeline";
+import { MovementDetailSheet } from "@/components/stock-movements/movement-detail-sheet";
+import { VoidMovementDialog } from "@/components/stock-movements/void-movement-dialog";
+import { usePermissions } from "@/hooks/use-permissions";
+import { useSessionContext } from "@/contexts/session-context";
 
 interface AssetMovementsTabProps {
   assetId: string;
+  personId?: string;
 }
 
-type MovementType = "IN" | "OUT" | "TRANSFER" | "ADJUSTMENT";
-
-const movementTypeIcons: Record<MovementType, typeof ArrowDown> = {
-  IN: ArrowDown,
-  OUT: TrendingUp,
-  TRANSFER: ArrowUpDown,
-  ADJUSTMENT: Package,
-};
-
-const movementTypeColors: Record<MovementType, string> = {
-  IN: "bg-green-500/10 text-green-700 dark:text-green-400",
-  OUT: "bg-blue-500/10 text-blue-700 dark:text-blue-400",
-  TRANSFER: "bg-purple-500/10 text-purple-700 dark:text-purple-400",
-  ADJUSTMENT: "bg-orange-500/10 text-orange-700 dark:text-orange-400",
-};
-
-export function AssetMovementsTab({ assetId }: AssetMovementsTabProps) {
+export function AssetMovementsTab({
+  assetId,
+  personId,
+}: AssetMovementsTabProps) {
   const [movements, setMovements] = useState<StockMovementDTO[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showVoided, setShowVoided] = useState(false);
+  const [selectedMovement, setSelectedMovement] =
+    useState<StockMovementDTO | null>(null);
+  const [detailSheetOpen, setDetailSheetOpen] = useState(false);
+  const [voidDialogOpen, setVoidDialogOpen] = useState(false);
+  const [movementToVoid, setMovementToVoid] = useState<StockMovementDTO | null>(
+    null,
+  );
+
+  const { hasPermission } = usePermissions();
+  const { user } = useSessionContext();
+  const canVoid = hasPermission("stock-movements:void");
+
+  // Get current person ID for void action
+  const currentPersonId = personId || user?.id;
 
   const loadMovements = useCallback(async () => {
     setLoading(true);
     try {
-      const result = await listStockMovementsAction({ assetId });
+      // Include voided movements in the request - we'll filter client-side
+      const result = await listStockMovementsAction({
+        assetId,
+        includeVoided: true,
+      });
       if (result.success) {
         // Sort by date descending (most recent first)
         const sorted = result.data.sort(
@@ -75,6 +79,27 @@ export function AssetMovementsTab({ assetId }: AssetMovementsTabProps) {
     loadMovements();
   }, [assetId, loadMovements]);
 
+  const handleViewDetails = (movement: StockMovementDTO) => {
+    setSelectedMovement(movement);
+    setDetailSheetOpen(true);
+  };
+
+  const handleVoid = (movement: StockMovementDTO) => {
+    setMovementToVoid(movement);
+    setVoidDialogOpen(true);
+  };
+
+  const handleVoided = (voidedMovement: StockMovementDTO) => {
+    // Update the movement in the list
+    setMovements((prev) =>
+      prev.map((m) => (m.id === voidedMovement.id ? voidedMovement : m)),
+    );
+  };
+
+  // Count voided movements
+  const voidedCount = movements.filter((m) => m.isVoided).length;
+  const activeCount = movements.length - voidedCount;
+
   if (loading) {
     return (
       <div className="space-y-4">
@@ -84,108 +109,89 @@ export function AssetMovementsTab({ assetId }: AssetMovementsTabProps) {
     );
   }
 
-  if (movements.length === 0) {
-    return (
-      <Card>
-        <CardContent className="flex min-h-[200px] items-center justify-center">
-          <p className="text-muted-foreground">No movement history</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      {/* Header with controls */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h3 className="text-lg font-semibold">Movement History</h3>
+          <CardTitle className="text-lg">Movement History</CardTitle>
           <p className="text-muted-foreground text-sm">
-            {movements.length} movement{movements.length !== 1 ? "s" : ""}
+            {activeCount} active movement{activeCount !== 1 ? "s" : ""}
+            {voidedCount > 0 && (
+              <span className="text-muted-foreground/70">
+                {" "}
+                • {voidedCount} voided
+              </span>
+            )}
           </p>
+        </div>
+        <div className="flex items-center gap-4">
+          {voidedCount > 0 && (
+            <div className="flex items-center gap-2">
+              <Switch
+                id="show-voided"
+                checked={showVoided}
+                onCheckedChange={setShowVoided}
+              />
+              <Label
+                htmlFor="show-voided"
+                className="text-muted-foreground flex cursor-pointer items-center gap-1.5 text-sm"
+              >
+                {showVoided ? (
+                  <Eye className="h-3.5 w-3.5" />
+                ) : (
+                  <EyeOff className="h-3.5 w-3.5" />
+                )}
+                Show voided
+              </Label>
+            </div>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={loadMovements}
+            disabled={loading}
+          >
+            <RefreshCw
+              className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`}
+            />
+            Refresh
+          </Button>
         </div>
       </div>
 
-      <div className="space-y-3">
-        {movements.map((movement) => {
-          const Icon =
-            movementTypeIcons[movement.movementType as MovementType] || Package;
-          const colorClass =
-            movementTypeColors[movement.movementType as MovementType] ||
-            "bg-gray-500/10 text-gray-700 dark:text-gray-400";
+      {/* Timeline */}
+      <Card>
+        <CardContent className="pt-6">
+          <MovementTimeline
+            movements={movements}
+            showVoided={showVoided}
+            onViewDetails={handleViewDetails}
+            onVoid={handleVoid}
+            canVoid={canVoid}
+          />
+        </CardContent>
+      </Card>
 
-          return (
-            <Card key={movement.id}>
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-3">
-                    <div className={`rounded-lg p-2 ${colorClass}`}>
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <div className="space-y-1">
-                      <CardTitle className="text-base">
-                        {movement.movementType}
-                      </CardTitle>
-                      <CardDescription>
-                        {format(
-                          new Date(movement.occurredAt),
-                          "MMM d, yyyy 'at' h:mm a",
-                        )}
-                      </CardDescription>
+      {/* Detail Sheet */}
+      <MovementDetailSheet
+        movement={selectedMovement}
+        open={detailSheetOpen}
+        onOpenChange={setDetailSheetOpen}
+        onVoid={handleVoid}
+        canVoid={canVoid}
+      />
 
-                      {/* Location Flow */}
-                      {(movement.stockLocationFromName ||
-                        movement.stockLocationToName) && (
-                        <div className="flex items-center gap-2 text-sm">
-                          {movement.stockLocationFromName ? (
-                            <span className="text-muted-foreground">
-                              From: {movement.stockLocationFromName}
-                            </span>
-                          ) : (
-                            <span className="text-muted-foreground">—</span>
-                          )}
-                          <ArrowRight className="h-3 w-3" />
-                          {movement.stockLocationToName ? (
-                            <span className="text-muted-foreground">
-                              To: {movement.stockLocationToName}
-                            </span>
-                          ) : (
-                            <span className="text-muted-foreground">—</span>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col items-end gap-2">
-                    <Badge variant="outline">Qty: {movement.quantity}</Badge>
-                  </div>
-                </div>
-              </CardHeader>
-
-              {(movement.reason || movement.performedByName) && (
-                <CardContent className="space-y-2">
-                  {movement.reason && (
-                    <div>
-                      <p className="text-muted-foreground text-xs font-medium">
-                        Reason
-                      </p>
-                      <p className="text-sm">{movement.reason}</p>
-                    </div>
-                  )}
-                  {movement.performedByName && (
-                    <div>
-                      <p className="text-muted-foreground text-xs font-medium">
-                        Performed By
-                      </p>
-                      <p className="text-sm">{movement.performedByName}</p>
-                    </div>
-                  )}
-                </CardContent>
-              )}
-            </Card>
-          );
-        })}
-      </div>
+      {/* Void Dialog */}
+      {currentPersonId && (
+        <VoidMovementDialog
+          movement={movementToVoid}
+          open={voidDialogOpen}
+          onOpenChange={setVoidDialogOpen}
+          onVoided={handleVoided}
+          personId={currentPersonId}
+        />
+      )}
     </div>
   );
 }

@@ -6373,9 +6373,10 @@ export const AssetCategoryScalarFieldEnum = {
   code: 'code',
   description: 'description',
   lifecycleModelId: 'lifecycleModelId',
-  isConsumable: 'isConsumable',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type AssetCategoryScalarFieldEnum = (typeof AssetCategoryScalarFieldEnum)[keyof typeof AssetCategoryScalarFieldEnum]
@@ -6407,7 +6408,9 @@ export const AssetModelScalarFieldEnum = {
   defaultWarrantyMonths: 'defaultWarrantyMonths',
   defaultAttributes: 'defaultAttributes',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type AssetModelScalarFieldEnum = (typeof AssetModelScalarFieldEnum)[keyof typeof AssetModelScalarFieldEnum]
@@ -6436,7 +6439,14 @@ export const StockMovementScalarFieldEnum = {
   reason: 'reason',
   performedById: 'performedById',
   occurredAt: 'occurredAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  status: 'status',
+  voidedAt: 'voidedAt',
+  voidedById: 'voidedById',
+  voidReason: 'voidReason',
+  source: 'source',
+  sourceReferenceType: 'sourceReferenceType',
+  sourceReferenceId: 'sourceReferenceId'
 } as const
 
 export type StockMovementScalarFieldEnum = (typeof StockMovementScalarFieldEnum)[keyof typeof StockMovementScalarFieldEnum]
@@ -6458,14 +6468,16 @@ export const AssetScalarFieldEnum = {
   depreciationModel: 'depreciationModel',
   depreciationStart: 'depreciationStart',
   depreciationEnd: 'depreciationEnd',
-  warrantyEndDate: 'warrantyEndDate',
   condition: 'condition',
   currentStockLocationId: 'currentStockLocationId',
   attributes: 'attributes',
   note: 'note',
-  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById',
+  createdById: 'createdById',
+  updatedById: 'updatedById'
 } as const
 
 export type AssetScalarFieldEnum = (typeof AssetScalarFieldEnum)[keyof typeof AssetScalarFieldEnum]
@@ -6504,7 +6516,9 @@ export const WarrantyScalarFieldEnum = {
   note: 'note',
   metadata: 'metadata',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type WarrantyScalarFieldEnum = (typeof WarrantyScalarFieldEnum)[keyof typeof WarrantyScalarFieldEnum]
@@ -6615,7 +6629,9 @@ export const CIClassScalarFieldEnum = {
   defaultEnvironment: 'defaultEnvironment',
   isDiscoverable: 'isDiscoverable',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type CIClassScalarFieldEnum = (typeof CIClassScalarFieldEnum)[keyof typeof CIClassScalarFieldEnum]
@@ -6653,7 +6669,11 @@ export const ConfigurationItemScalarFieldEnum = {
   description: 'description',
   attributes: 'attributes',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById',
+  createdById: 'createdById',
+  updatedById: 'updatedById'
 } as const
 
 export type ConfigurationItemScalarFieldEnum = (typeof ConfigurationItemScalarFieldEnum)[keyof typeof ConfigurationItemScalarFieldEnum]
@@ -6709,7 +6729,9 @@ export const ContractTypeScalarFieldEnum = {
   description: 'description',
   isActive: 'isActive',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type ContractTypeScalarFieldEnum = (typeof ContractTypeScalarFieldEnum)[keyof typeof ContractTypeScalarFieldEnum]
@@ -6731,7 +6753,9 @@ export const ContractScalarFieldEnum = {
   currency: 'currency',
   note: 'note',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type ContractScalarFieldEnum = (typeof ContractScalarFieldEnum)[keyof typeof ContractScalarFieldEnum]
@@ -6818,7 +6842,9 @@ export const OrganizationUnitScalarFieldEnum = {
   note: 'note',
   metadata: 'metadata',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type OrganizationUnitScalarFieldEnum = (typeof OrganizationUnitScalarFieldEnum)[keyof typeof OrganizationUnitScalarFieldEnum]
@@ -6847,9 +6873,12 @@ export const PersonScalarFieldEnum = {
   isActive: 'isActive',
   isExcluded: 'isExcluded',
   metadata: 'metadata',
-  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById',
+  createdById: 'createdById',
+  updatedById: 'updatedById'
 } as const
 
 export type PersonScalarFieldEnum = (typeof PersonScalarFieldEnum)[keyof typeof PersonScalarFieldEnum]
@@ -6893,7 +6922,9 @@ export const LocationScalarFieldEnum = {
   isActive: 'isActive',
   metadata: 'metadata',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type LocationScalarFieldEnum = (typeof LocationScalarFieldEnum)[keyof typeof LocationScalarFieldEnum]
@@ -6922,7 +6953,9 @@ export const VendorScalarFieldEnum = {
   note: 'note',
   metadata: 'metadata',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type VendorScalarFieldEnum = (typeof VendorScalarFieldEnum)[keyof typeof VendorScalarFieldEnum]
@@ -6966,7 +6999,9 @@ export const LifecycleModelScalarFieldEnum = {
   name: 'name',
   description: 'description',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type LifecycleModelScalarFieldEnum = (typeof LifecycleModelScalarFieldEnum)[keyof typeof LifecycleModelScalarFieldEnum]
@@ -6985,7 +7020,9 @@ export const LifecycleStateScalarFieldEnum = {
   isActive: 'isActive',
   metadata: 'metadata',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type LifecycleStateScalarFieldEnum = (typeof LifecycleStateScalarFieldEnum)[keyof typeof LifecycleStateScalarFieldEnum]
@@ -7251,7 +7288,9 @@ export const AssetKitScalarFieldEnum = {
   isActive: 'isActive',
   metadata: 'metadata',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type AssetKitScalarFieldEnum = (typeof AssetKitScalarFieldEnum)[keyof typeof AssetKitScalarFieldEnum]
@@ -7316,8 +7355,11 @@ export const LicenseProductScalarFieldEnum = {
   metricType: 'metricType',
   description: 'description',
   lifecycleModelId: 'lifecycleModelId',
+  attributes: 'attributes',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type LicenseProductScalarFieldEnum = (typeof LicenseProductScalarFieldEnum)[keyof typeof LicenseProductScalarFieldEnum]
@@ -7350,7 +7392,9 @@ export const LicenseEntitlementScalarFieldEnum = {
   unitCost: 'unitCost',
   currency: 'currency',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type LicenseEntitlementScalarFieldEnum = (typeof LicenseEntitlementScalarFieldEnum)[keyof typeof LicenseEntitlementScalarFieldEnum]
@@ -7415,7 +7459,9 @@ export const MaintenanceScheduleScalarFieldEnum = {
   priority: 'priority',
   instructions: 'instructions',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type MaintenanceScheduleScalarFieldEnum = (typeof MaintenanceScheduleScalarFieldEnum)[keyof typeof MaintenanceScheduleScalarFieldEnum]
@@ -7542,7 +7588,9 @@ export const AssetReservationScalarFieldEnum = {
   cancelledAt: 'cancelledAt',
   cancelledById: 'cancelledById',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type AssetReservationScalarFieldEnum = (typeof AssetReservationScalarFieldEnum)[keyof typeof AssetReservationScalarFieldEnum]
@@ -7598,7 +7646,9 @@ export const ServiceScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   createdBy: 'createdBy',
-  updatedBy: 'updatedBy'
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type ServiceScalarFieldEnum = (typeof ServiceScalarFieldEnum)[keyof typeof ServiceScalarFieldEnum]
@@ -7816,13 +7866,6 @@ export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMod
 
 
 /**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
-    
-
-
-/**
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -7833,6 +7876,13 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -7879,6 +7929,34 @@ export type ListEnumStockMovementTypeEnumFieldRefInput<$PrismaModel> = FieldRefI
 
 
 /**
+ * Reference to a field of type 'StockMovementStatusEnum'
+ */
+export type EnumStockMovementStatusEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StockMovementStatusEnum'>
+    
+
+
+/**
+ * Reference to a field of type 'StockMovementStatusEnum[]'
+ */
+export type ListEnumStockMovementStatusEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StockMovementStatusEnum[]'>
+    
+
+
+/**
+ * Reference to a field of type 'StockMovementSourceEnum'
+ */
+export type EnumStockMovementSourceEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StockMovementSourceEnum'>
+    
+
+
+/**
+ * Reference to a field of type 'StockMovementSourceEnum[]'
+ */
+export type ListEnumStockMovementSourceEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StockMovementSourceEnum[]'>
+    
+
+
+/**
  * Reference to a field of type 'Decimal'
  */
 export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
@@ -7889,6 +7967,34 @@ export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
  * Reference to a field of type 'Decimal[]'
  */
 export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+/**
+ * Reference to a field of type 'DepreciationModelEnum'
+ */
+export type EnumDepreciationModelEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DepreciationModelEnum'>
+    
+
+
+/**
+ * Reference to a field of type 'DepreciationModelEnum[]'
+ */
+export type ListEnumDepreciationModelEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DepreciationModelEnum[]'>
+    
+
+
+/**
+ * Reference to a field of type 'AssetConditionEnum'
+ */
+export type EnumAssetConditionEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AssetConditionEnum'>
+    
+
+
+/**
+ * Reference to a field of type 'AssetConditionEnum[]'
+ */
+export type ListEnumAssetConditionEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AssetConditionEnum[]'>
     
 
 
@@ -7987,6 +8093,34 @@ export type EnumRelationshipDirectionEnumFieldRefInput<$PrismaModel> = FieldRefI
  * Reference to a field of type 'RelationshipDirectionEnum[]'
  */
 export type ListEnumRelationshipDirectionEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RelationshipDirectionEnum[]'>
+    
+
+
+/**
+ * Reference to a field of type 'DisposalTypeEnum'
+ */
+export type EnumDisposalTypeEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DisposalTypeEnum'>
+    
+
+
+/**
+ * Reference to a field of type 'DisposalTypeEnum[]'
+ */
+export type ListEnumDisposalTypeEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DisposalTypeEnum[]'>
+    
+
+
+/**
+ * Reference to a field of type 'DisposalStatusEnum'
+ */
+export type EnumDisposalStatusEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DisposalStatusEnum'>
+    
+
+
+/**
+ * Reference to a field of type 'DisposalStatusEnum[]'
+ */
+export type ListEnumDisposalStatusEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DisposalStatusEnum[]'>
     
 
 
@@ -8141,6 +8275,48 @@ export type EnumAllocationTargetTypeEnumFieldRefInput<$PrismaModel> = FieldRefIn
  * Reference to a field of type 'AllocationTargetTypeEnum[]'
  */
 export type ListEnumAllocationTargetTypeEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AllocationTargetTypeEnum[]'>
+    
+
+
+/**
+ * Reference to a field of type 'MaintenanceScheduleTypeEnum'
+ */
+export type EnumMaintenanceScheduleTypeEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MaintenanceScheduleTypeEnum'>
+    
+
+
+/**
+ * Reference to a field of type 'MaintenanceScheduleTypeEnum[]'
+ */
+export type ListEnumMaintenanceScheduleTypeEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MaintenanceScheduleTypeEnum[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PriorityEnum'
+ */
+export type EnumPriorityEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PriorityEnum'>
+    
+
+
+/**
+ * Reference to a field of type 'PriorityEnum[]'
+ */
+export type ListEnumPriorityEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PriorityEnum[]'>
+    
+
+
+/**
+ * Reference to a field of type 'MaintenanceStatusEnum'
+ */
+export type EnumMaintenanceStatusEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MaintenanceStatusEnum'>
+    
+
+
+/**
+ * Reference to a field of type 'MaintenanceStatusEnum[]'
+ */
+export type ListEnumMaintenanceStatusEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MaintenanceStatusEnum[]'>
     
 
 

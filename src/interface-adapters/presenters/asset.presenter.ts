@@ -21,7 +21,6 @@ export interface AssetDTO {
   depreciationModel: string | null;
   depreciationStart: string | null;
   depreciationEnd: string | null;
-  warrantyEndDate: string | null;
   condition: string | null;
   currentStockLocationId: string | null;
   attributes: Record<string, unknown> | null;
@@ -29,7 +28,6 @@ export interface AssetDTO {
   createdAt: string;
   updatedAt: string;
   // Computed fields
-  isUnderWarranty: boolean;
   isDepreciated: boolean;
   isFullyDepreciated: boolean;
   // Display fields (enriched from relations)
@@ -69,7 +67,6 @@ export function presentAsset(
     depreciationModel: asset.depreciationModel,
     depreciationStart: asset.depreciationStart?.toISOString() || null,
     depreciationEnd: asset.depreciationEnd?.toISOString() || null,
-    warrantyEndDate: asset.warrantyEndDate?.toISOString() || null,
     condition: asset.condition,
     currentStockLocationId: asset.currentStockLocationId,
     attributes: asset.attributes,
@@ -77,7 +74,6 @@ export function presentAsset(
     createdAt: asset.createdAt.toISOString(),
     updatedAt: asset.updatedAt.toISOString(),
     // Computed fields
-    isUnderWarranty: asset.isUnderWarranty(),
     isDepreciated: asset.isDepreciated(),
     isFullyDepreciated: asset.isFullyDepreciated(),
     // Display fields

@@ -84,3 +84,15 @@ export type {
   GraphUser,
   GraphManagerResponse,
 } from "@/lib/schemas/graph-user.schema";
+
+// Asset Movement Service
+export type {
+  IAssetMovementService,
+  CreateMovementParams,
+  SyncAssetLocationParams,
+  SyncAssetLocationResult,
+  TransactionClient,
+} from "./asset-movement.service.interface";
+
+// SAR Conversion Service
+export type { ISarConversionService } from "./sar-conversion.service.interface";

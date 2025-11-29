@@ -8,6 +8,10 @@ import type {
   MaintenanceSchedule as PrismaMaintenanceSchedule,
   Prisma,
 } from "@/generated/prisma/server";
+import type {
+  MaintenanceScheduleTypeEnum,
+  PriorityEnum,
+} from "@/generated/prisma";
 import { DI_TOKENS } from "@/di/types";
 import type {
   IMaintenanceScheduleRepository,
@@ -197,11 +201,11 @@ export class PrismaMaintenanceScheduleRepository
     }
 
     if (filters.scheduleType) {
-      where.scheduleType = filters.scheduleType;
+      where.scheduleType = filters.scheduleType as MaintenanceScheduleTypeEnum;
     }
 
     if (filters.priority) {
-      where.priority = filters.priority;
+      where.priority = filters.priority as PriorityEnum;
     }
 
     if (filters.dueBefore) {

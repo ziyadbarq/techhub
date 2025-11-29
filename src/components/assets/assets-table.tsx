@@ -1,26 +1,21 @@
 /**
  * Assets Table Component
+ *
+ * Supports server-side pagination, row selection, and column visibility persistence.
  */
 
 "use client";
 
 import * as React from "react";
 import Link from "next/link";
-import { type ColumnDef } from "@tanstack/react-table";
-import {
-  MoreHorizontal,
-  Trash2,
-  Pencil,
-  CheckCircle2,
-  XCircle,
-} from "lucide-react";
+import { type ColumnDef, type PaginationState } from "@tanstack/react-table";
+import { MoreHorizontal, Trash2, Pencil } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,13 +42,24 @@ import { listExchangeRatesAction } from "@/interface-adapters/controllers/exchan
 import type { ExchangeRateResponseDTO } from "@/interface-adapters/presenters/exchange-rate.presenter";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { usePermissions } from "@/hooks/use-permissions";
-import { useCustomFieldColumns } from "./custom-field-columns";
+
+const COLUMN_VISIBILITY_KEY = "assets-table-column-visibility";
 
 interface AssetsTableProps {
   data: AssetDTO[];
   loading?: boolean;
   onEdit: (asset: AssetDTO) => void;
   onRefresh: () => void;
+  /** Callback when row selection changes */
+  onSelectionChange?: (selectedAssets: AssetDTO[]) => void;
+  /** Server-side pagination props */
+  pagination?: {
+    pageIndex: number;
+    pageSize: number;
+    pageCount: number;
+    total: number;
+    onPaginationChange: (pagination: PaginationState) => void;
+  };
 }
 
 export function AssetsTable({
@@ -61,6 +67,8 @@ export function AssetsTable({
   loading = false,
   onEdit,
   onRefresh,
+  onSelectionChange,
+  pagination,
 }: AssetsTableProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const [assetToDelete, setAssetToDelete] = React.useState<AssetDTO | null>(
@@ -72,10 +80,6 @@ export function AssetsTable({
   >(new Map());
 
   const { hasPermission } = usePermissions();
-
-  // Fetch custom field columns based on asset categories
-  const { columns: customFieldColumns, isLoading: loadingCustomFields } =
-    useCustomFieldColumns(data);
 
   // Fetch exchange rates on mount
   React.useEffect(() => {
@@ -330,39 +334,6 @@ export function AssetsTable({
         },
       },
       {
-        accessorKey: "isUnderWarranty",
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Warranty" />
-        ),
-        cell: ({ row }) => {
-          const isUnderWarranty = row.getValue("isUnderWarranty") as boolean;
-          const warrantyEndDate = row.original.warrantyEndDate;
-
-          if (!warrantyEndDate) {
-            return <span className="text-muted-foreground text-sm">—</span>;
-          }
-
-          return (
-            <div className="flex items-center gap-2">
-              {isUnderWarranty ? (
-                <Badge variant="default" className="gap-1">
-                  <CheckCircle2 className="h-3 w-3" />
-                  Active
-                </Badge>
-              ) : (
-                <Badge variant="secondary" className="gap-1">
-                  <XCircle className="h-3 w-3" />
-                  Expired
-                </Badge>
-              )}
-            </div>
-          );
-        },
-        meta: {
-          label: "Warranty",
-        },
-      },
-      {
         accessorKey: "createdAt",
         header: ({ column }) => (
           <DataTableColumnHeader column={column} title="Created" />
@@ -436,35 +407,64 @@ export function AssetsTable({
     [hasPermission, onEdit],
   );
 
-  // Merge static columns + custom field columns + actions column
+  // Merge static columns + actions column
   const allColumns = React.useMemo(() => {
-    return [...baseColumns, ...customFieldColumns, actionsColumn];
-  }, [baseColumns, customFieldColumns, actionsColumn]);
+    return [...baseColumns, actionsColumn];
+  }, [baseColumns, actionsColumn]);
 
-  // Build initial column visibility - hide custom columns by default
+  // Build initial column visibility - load from localStorage or use defaults
   const initialColumnVisibility = React.useMemo(() => {
-    const visibility: Record<string, boolean> = {
+    // Try to load saved visibility from localStorage
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem(COLUMN_VISIBILITY_KEY);
+      if (saved) {
+        try {
+          return JSON.parse(saved) as Record<string, boolean>;
+        } catch {
+          // Fall through to defaults
+        }
+      }
+    }
+
+    // Default visibility - show only essential columns by default
+    return {
       stockLocationName: false,
       purchaseDate: false,
       purchaseCost: false,
-      isUnderWarranty: false,
     };
-    // Hide all custom field columns by default
-    for (const col of customFieldColumns) {
-      if (col.id) {
-        visibility[col.id] = false;
+  }, []);
+
+  // Handle column visibility change - persist to localStorage
+  const _handleColumnVisibilityChange = React.useCallback(
+    (visibility: Record<string, boolean>) => {
+      if (typeof window !== "undefined") {
+        localStorage.setItem(COLUMN_VISIBILITY_KEY, JSON.stringify(visibility));
       }
-    }
-    return visibility;
-  }, [customFieldColumns]);
+    },
+    [],
+  );
 
   return (
     <>
       <DataTable
         columns={allColumns}
         data={data}
-        loading={loading || loadingCustomFields}
+        loading={loading}
         initialColumnVisibility={initialColumnVisibility}
+        onSelectionChange={onSelectionChange}
+        selectable={!!onSelectionChange}
+        pagination={
+          pagination
+            ? {
+                pageIndex: pagination.pageIndex,
+                pageSize: pagination.pageSize,
+                pageCount: pagination.pageCount,
+                total: pagination.total,
+                onPaginationChange: pagination.onPaginationChange,
+                manualPagination: true,
+              }
+            : undefined
+        }
       />
 
       {/* Delete Confirmation Dialog */}

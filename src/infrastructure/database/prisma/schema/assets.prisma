@@ -10,14 +10,17 @@
 
 // AssetCategory model
 model AssetCategory {
-  id               String   @id @default(cuid())
-  name             String   @unique
-  code             String   @unique
-  description      String?  @db.Text
+  id               String    @id @default(cuid())
+  name             String    @unique
+  code             String    @unique
+  description      String?   @db.Text
   lifecycleModelId String?
-  isConsumable     Boolean  @default(false) // true for items like cables, mice
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  // Soft delete fields
+  deletedAt   DateTime?
+  deletedById String?
 
   // Relations
   lifecycleModel LifecycleModel?      @relation(fields: [lifecycleModelId], references: [id], onDelete: SetNull)
@@ -26,10 +29,12 @@ model AssetCategory {
   assets         Asset[]
   dataOwnerships DataOwnership[]
   kitItems       AssetKitItem[]
+  deletedBy      Person?              @relation("AssetCategoryDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([code])
   @@index([lifecycleModelId])
+  @@index([deletedAt])
   @@map("asset_categories")
 }
 
@@ -59,27 +64,33 @@ model AssetCategoryField {
 
 // AssetModel model
 model AssetModel {
-  id                    String   @id @default(cuid())
+  id                    String    @id @default(cuid())
   assetCategoryId       String
   vendorId              String
   name                  String
-  code                  String   @unique
-  description           String?  @db.Text
+  code                  String    @unique
+  description           String?   @db.Text
   defaultWarrantyMonths Int?
   defaultAttributes     Json? // default specs: RAM, CPU, screen size, etc.
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  // Soft delete fields
+  deletedAt   DateTime?
+  deletedById String?
 
   // Relations
   assetCategory AssetCategory @relation(fields: [assetCategoryId], references: [id], onDelete: Restrict)
   vendor        Vendor        @relation(fields: [vendorId], references: [id], onDelete: Restrict)
   assets        Asset[]
   kitItems      AssetKitItem[]
+  deletedBy     Person?       @relation("AssetModelDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([code])
   @@index([assetCategoryId])
   @@index([vendorId])
+  @@index([deletedAt])
   @@map("asset_models")
 }
 
@@ -107,22 +118,34 @@ model StockLocation {
 
 // StockMovement model
 model StockMovement {
-  id                  String                @id @default(cuid())
+  id                  String                     @id @default(cuid())
   movementType        StockMovementTypeEnum
   stockLocationFromId String?
   stockLocationToId   String?
   assetId             String?
-  quantity            Int                   @default(1)
-  reason              String?               @db.Text
+  quantity            Int                        @default(1)
+  reason              String?                    @db.Text
   performedById       String
-  occurredAt          DateTime              @default(now())
-  createdAt           DateTime              @default(now())
+  occurredAt          DateTime                   @default(now())
+  createdAt           DateTime                   @default(now())
+
+  // Void/Cancel support (replaces delete)
+  status              StockMovementStatusEnum    @default(ACTIVE)
+  voidedAt            DateTime?
+  voidedById          String?
+  voidReason          String?                    @db.Text
+
+  // Source tracking for automatic movements
+  source              StockMovementSourceEnum    @default(MANUAL)
+  sourceReferenceType String?                    // "AssetAssignment", "AssetDisposal", "ImportBatch"
+  sourceReferenceId   String?                    // ID of the triggering entity
 
   // Relations
   stockLocationFrom StockLocation? @relation("StockMovementFrom", fields: [stockLocationFromId], references: [id], onDelete: SetNull)
   stockLocationTo   StockLocation? @relation("StockMovementTo", fields: [stockLocationToId], references: [id], onDelete: SetNull)
   asset             Asset?         @relation(fields: [assetId], references: [id], onDelete: SetNull)
-  performedBy       Person         @relation(fields: [performedById], references: [id], onDelete: Restrict)
+  performedBy       Person         @relation("StockMovementPerformedBy", fields: [performedById], references: [id], onDelete: Restrict)
+  voidedBy          Person?        @relation("StockMovementVoidedBy", fields: [voidedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([movementType])
@@ -131,34 +154,45 @@ model StockMovement {
   @@index([assetId])
   @@index([performedById])
   @@index([occurredAt])
+  @@index([status])
+  @@index([source])
+  @@index([sourceReferenceType, sourceReferenceId])
+  @@index([voidedAt])
+  @@index([voidedById])
   @@map("stock_movements")
 }
 
 // Asset model
 model Asset {
-  id                     String    @id @default(cuid())
-  assetTag               String    @unique
+  id                     String                 @id @default(cuid())
+  assetTag               String                 @unique
   assetCategoryId        String
   assetModelId           String?
   vendorId               String?
   contractId             String?
   lifecycleStateId       String?
-  serialNumber           String?   @unique
+  serialNumber           String?                @unique
   purchaseDate           DateTime?
-  purchaseCost           Decimal?  @db.Decimal(12, 2)
-  purchaseCostSar        Decimal?  @db.Decimal(12, 2) // Frozen SAR snapshot at create/update
+  purchaseCost           Decimal?               @db.Decimal(12, 2)
+  purchaseCostSar        Decimal?               @db.Decimal(12, 2) // Frozen SAR snapshot at create/update
   currency               String?
-  depreciationModel      String?
+  depreciationModel      DepreciationModelEnum?
   depreciationStart      DateTime?
   depreciationEnd        DateTime?
-  warrantyEndDate        DateTime?
-  condition              String? // Asset condition: NEW, GOOD, FAIR, POOR
+  condition              AssetConditionEnum? // Asset condition: NEW, GOOD, FAIR, POOR
   currentStockLocationId String?
   attributes             Json? // dynamic fields per AssetCategoryField
-  note                   String?   @db.Text
-  deletedAt              DateTime? // Soft delete timestamp
-  createdAt              DateTime  @default(now())
-  updatedAt              DateTime  @updatedAt
+  note                   String?                @db.Text
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
+
+  // Soft delete fields
+  deletedAt   DateTime?
+  deletedById String?
+
+  // Audit trail fields
+  createdById String?
+  updatedById String?
 
   // Relations
   assetCategory        AssetCategory         @relation(fields: [assetCategoryId], references: [id], onDelete: Restrict)
@@ -178,6 +212,9 @@ model Asset {
   kitCheckoutItems     AssetKitCheckoutItem[]
   serviceAssets        ServiceAsset[]
   intuneDevice         IntuneDevice?          @relation("IntuneDeviceAsset")
+  deletedBy            Person?                @relation("AssetDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  createdBy            Person?                @relation("AssetCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedBy            Person?                @relation("AssetUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([assetTag])
@@ -189,11 +226,11 @@ model Asset {
   @@index([serialNumber])
   @@index([currentStockLocationId])
   @@index([condition]) // High-priority: Filter by condition
-  @@index([warrantyEndDate]) // High-priority: Expiring warranties
   @@index([assetCategoryId, lifecycleStateId]) // High-priority: Dashboard queries
   @@index([condition, lifecycleStateId]) // High-priority: Filter by condition + state
   @@index([purchaseDate]) // Medium-priority: Age-based queries
   @@index([depreciationStart, depreciationEnd]) // Medium-priority: Depreciation queries
+  @@index([deletedAt])
   @@map("assets")
 }
 
@@ -241,9 +278,14 @@ model Warranty {
   createdAt       DateTime             @default(now())
   updatedAt       DateTime             @updatedAt
 
+  // Soft delete fields
+  deletedAt   DateTime?
+  deletedById String?
+
   // Relations
-  asset  Asset   @relation(fields: [assetId], references: [id], onDelete: Restrict)
-  vendor Vendor? @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  asset     Asset   @relation(fields: [assetId], references: [id], onDelete: Restrict)
+  vendor    Vendor? @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  deletedBy Person? @relation("WarrantyDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([assetId])
@@ -251,6 +293,7 @@ model Warranty {
   @@index([startDate, endDate])
   @@index([endDate]) // For expiration queries
   @@index([coverageType])
+  @@index([deletedAt])
   @@map("warranties")
 }
 
@@ -270,6 +313,21 @@ enum StockMovementTypeEnum {
   OUT
   TRANSFER
   ADJUSTMENT
+}
+
+enum StockMovementStatusEnum {
+  ACTIVE
+  VOIDED
+}
+
+enum StockMovementSourceEnum {
+  MANUAL
+  ASSIGNMENT
+  RETURN
+  DISPOSAL
+  IMPORT
+  LOCATION_CHANGE
+  SYSTEM
 }
 
 enum FieldDataTypeEnum {

@@ -48,6 +48,8 @@ export type WarrantyMinAggregateOutputType = {
   note: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
 }
 
 export type WarrantyMaxAggregateOutputType = {
@@ -64,6 +66,8 @@ export type WarrantyMaxAggregateOutputType = {
   note: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
 }
 
 export type WarrantyCountAggregateOutputType = {
@@ -82,6 +86,8 @@ export type WarrantyCountAggregateOutputType = {
   metadata: number
   createdAt: number
   updatedAt: number
+  deletedAt: number
+  deletedById: number
   _all: number
 }
 
@@ -108,6 +114,8 @@ export type WarrantyMinAggregateInputType = {
   note?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
 }
 
 export type WarrantyMaxAggregateInputType = {
@@ -124,6 +132,8 @@ export type WarrantyMaxAggregateInputType = {
   note?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
 }
 
 export type WarrantyCountAggregateInputType = {
@@ -142,6 +152,8 @@ export type WarrantyCountAggregateInputType = {
   metadata?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
   _all?: true
 }
 
@@ -247,6 +259,8 @@ export type WarrantyGroupByOutputType = {
   metadata: runtime.JsonValue | null
   createdAt: Date
   updatedAt: Date
+  deletedAt: Date | null
+  deletedById: string | null
   _count: WarrantyCountAggregateOutputType | null
   _avg: WarrantyAvgAggregateOutputType | null
   _sum: WarrantySumAggregateOutputType | null
@@ -288,8 +302,11 @@ export type WarrantyWhereInput = {
   metadata?: Prisma.JsonNullableFilter<"Warranty">
   createdAt?: Prisma.DateTimeFilter<"Warranty"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Warranty"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Warranty"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"Warranty"> | string | null
   asset?: Prisma.XOR<Prisma.AssetScalarRelationFilter, Prisma.AssetWhereInput>
   vendor?: Prisma.XOR<Prisma.VendorNullableScalarRelationFilter, Prisma.VendorWhereInput> | null
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }
 
 export type WarrantyOrderByWithRelationInput = {
@@ -308,8 +325,11 @@ export type WarrantyOrderByWithRelationInput = {
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   asset?: Prisma.AssetOrderByWithRelationInput
   vendor?: Prisma.VendorOrderByWithRelationInput
+  deletedBy?: Prisma.PersonOrderByWithRelationInput
 }
 
 export type WarrantyWhereUniqueInput = Prisma.AtLeast<{
@@ -331,8 +351,11 @@ export type WarrantyWhereUniqueInput = Prisma.AtLeast<{
   metadata?: Prisma.JsonNullableFilter<"Warranty">
   createdAt?: Prisma.DateTimeFilter<"Warranty"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Warranty"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Warranty"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"Warranty"> | string | null
   asset?: Prisma.XOR<Prisma.AssetScalarRelationFilter, Prisma.AssetWhereInput>
   vendor?: Prisma.XOR<Prisma.VendorNullableScalarRelationFilter, Prisma.VendorWhereInput> | null
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }, "id">
 
 export type WarrantyOrderByWithAggregationInput = {
@@ -351,6 +374,8 @@ export type WarrantyOrderByWithAggregationInput = {
   metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.WarrantyCountOrderByAggregateInput
   _avg?: Prisma.WarrantyAvgOrderByAggregateInput
   _max?: Prisma.WarrantyMaxOrderByAggregateInput
@@ -377,6 +402,8 @@ export type WarrantyScalarWhereWithAggregatesInput = {
   metadata?: Prisma.JsonNullableWithAggregatesFilter<"Warranty">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Warranty"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Warranty"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Warranty"> | Date | string | null
+  deletedById?: Prisma.StringNullableWithAggregatesFilter<"Warranty"> | string | null
 }
 
 export type WarrantyCreateInput = {
@@ -393,8 +420,10 @@ export type WarrantyCreateInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   asset: Prisma.AssetCreateNestedOneWithoutWarrantiesInput
   vendor?: Prisma.VendorCreateNestedOneWithoutWarrantiesInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedWarrantiesInput
 }
 
 export type WarrantyUncheckedCreateInput = {
@@ -413,6 +442,8 @@ export type WarrantyUncheckedCreateInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type WarrantyUpdateInput = {
@@ -429,8 +460,10 @@ export type WarrantyUpdateInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   asset?: Prisma.AssetUpdateOneRequiredWithoutWarrantiesNestedInput
   vendor?: Prisma.VendorUpdateOneWithoutWarrantiesNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedWarrantiesNestedInput
 }
 
 export type WarrantyUncheckedUpdateInput = {
@@ -449,6 +482,8 @@ export type WarrantyUncheckedUpdateInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type WarrantyCreateManyInput = {
@@ -467,6 +502,8 @@ export type WarrantyCreateManyInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type WarrantyUpdateManyMutationInput = {
@@ -483,6 +520,7 @@ export type WarrantyUpdateManyMutationInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type WarrantyUncheckedUpdateManyInput = {
@@ -501,6 +539,8 @@ export type WarrantyUncheckedUpdateManyInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type WarrantyListRelationFilter = {
@@ -529,6 +569,8 @@ export type WarrantyCountOrderByAggregateInput = {
   metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type WarrantyAvgOrderByAggregateInput = {
@@ -549,6 +591,8 @@ export type WarrantyMaxOrderByAggregateInput = {
   note?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type WarrantyMinOrderByAggregateInput = {
@@ -565,6 +609,8 @@ export type WarrantyMinOrderByAggregateInput = {
   note?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type WarrantySumOrderByAggregateInput = {
@@ -615,6 +661,48 @@ export type WarrantyUncheckedUpdateManyWithoutAssetNestedInput = {
 
 export type EnumWarrantyCoverageTypeFieldUpdateOperationsInput = {
   set?: $Enums.WarrantyCoverageType
+}
+
+export type WarrantyCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.WarrantyCreateWithoutDeletedByInput, Prisma.WarrantyUncheckedCreateWithoutDeletedByInput> | Prisma.WarrantyCreateWithoutDeletedByInput[] | Prisma.WarrantyUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.WarrantyCreateOrConnectWithoutDeletedByInput | Prisma.WarrantyCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.WarrantyCreateManyDeletedByInputEnvelope
+  connect?: Prisma.WarrantyWhereUniqueInput | Prisma.WarrantyWhereUniqueInput[]
+}
+
+export type WarrantyUncheckedCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.WarrantyCreateWithoutDeletedByInput, Prisma.WarrantyUncheckedCreateWithoutDeletedByInput> | Prisma.WarrantyCreateWithoutDeletedByInput[] | Prisma.WarrantyUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.WarrantyCreateOrConnectWithoutDeletedByInput | Prisma.WarrantyCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.WarrantyCreateManyDeletedByInputEnvelope
+  connect?: Prisma.WarrantyWhereUniqueInput | Prisma.WarrantyWhereUniqueInput[]
+}
+
+export type WarrantyUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.WarrantyCreateWithoutDeletedByInput, Prisma.WarrantyUncheckedCreateWithoutDeletedByInput> | Prisma.WarrantyCreateWithoutDeletedByInput[] | Prisma.WarrantyUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.WarrantyCreateOrConnectWithoutDeletedByInput | Prisma.WarrantyCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.WarrantyUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.WarrantyUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.WarrantyCreateManyDeletedByInputEnvelope
+  set?: Prisma.WarrantyWhereUniqueInput | Prisma.WarrantyWhereUniqueInput[]
+  disconnect?: Prisma.WarrantyWhereUniqueInput | Prisma.WarrantyWhereUniqueInput[]
+  delete?: Prisma.WarrantyWhereUniqueInput | Prisma.WarrantyWhereUniqueInput[]
+  connect?: Prisma.WarrantyWhereUniqueInput | Prisma.WarrantyWhereUniqueInput[]
+  update?: Prisma.WarrantyUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.WarrantyUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.WarrantyUpdateManyWithWhereWithoutDeletedByInput | Prisma.WarrantyUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.WarrantyScalarWhereInput | Prisma.WarrantyScalarWhereInput[]
+}
+
+export type WarrantyUncheckedUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.WarrantyCreateWithoutDeletedByInput, Prisma.WarrantyUncheckedCreateWithoutDeletedByInput> | Prisma.WarrantyCreateWithoutDeletedByInput[] | Prisma.WarrantyUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.WarrantyCreateOrConnectWithoutDeletedByInput | Prisma.WarrantyCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.WarrantyUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.WarrantyUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.WarrantyCreateManyDeletedByInputEnvelope
+  set?: Prisma.WarrantyWhereUniqueInput | Prisma.WarrantyWhereUniqueInput[]
+  disconnect?: Prisma.WarrantyWhereUniqueInput | Prisma.WarrantyWhereUniqueInput[]
+  delete?: Prisma.WarrantyWhereUniqueInput | Prisma.WarrantyWhereUniqueInput[]
+  connect?: Prisma.WarrantyWhereUniqueInput | Prisma.WarrantyWhereUniqueInput[]
+  update?: Prisma.WarrantyUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.WarrantyUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.WarrantyUpdateManyWithWhereWithoutDeletedByInput | Prisma.WarrantyUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.WarrantyScalarWhereInput | Prisma.WarrantyScalarWhereInput[]
 }
 
 export type WarrantyCreateNestedManyWithoutVendorInput = {
@@ -673,7 +761,9 @@ export type WarrantyCreateWithoutAssetInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   vendor?: Prisma.VendorCreateNestedOneWithoutWarrantiesInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedWarrantiesInput
 }
 
 export type WarrantyUncheckedCreateWithoutAssetInput = {
@@ -691,6 +781,8 @@ export type WarrantyUncheckedCreateWithoutAssetInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type WarrantyCreateOrConnectWithoutAssetInput = {
@@ -738,6 +830,72 @@ export type WarrantyScalarWhereInput = {
   metadata?: Prisma.JsonNullableFilter<"Warranty">
   createdAt?: Prisma.DateTimeFilter<"Warranty"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Warranty"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Warranty"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"Warranty"> | string | null
+}
+
+export type WarrantyCreateWithoutDeletedByInput = {
+  id?: string
+  coverageType?: $Enums.WarrantyCoverageType
+  coverageDetails?: string | null
+  policyReference?: string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  startDate: Date | string
+  endDate: Date | string
+  cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  asset: Prisma.AssetCreateNestedOneWithoutWarrantiesInput
+  vendor?: Prisma.VendorCreateNestedOneWithoutWarrantiesInput
+}
+
+export type WarrantyUncheckedCreateWithoutDeletedByInput = {
+  id?: string
+  assetId: string
+  vendorId?: string | null
+  coverageType?: $Enums.WarrantyCoverageType
+  coverageDetails?: string | null
+  policyReference?: string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  startDate: Date | string
+  endDate: Date | string
+  cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type WarrantyCreateOrConnectWithoutDeletedByInput = {
+  where: Prisma.WarrantyWhereUniqueInput
+  create: Prisma.XOR<Prisma.WarrantyCreateWithoutDeletedByInput, Prisma.WarrantyUncheckedCreateWithoutDeletedByInput>
+}
+
+export type WarrantyCreateManyDeletedByInputEnvelope = {
+  data: Prisma.WarrantyCreateManyDeletedByInput | Prisma.WarrantyCreateManyDeletedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type WarrantyUpsertWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.WarrantyWhereUniqueInput
+  update: Prisma.XOR<Prisma.WarrantyUpdateWithoutDeletedByInput, Prisma.WarrantyUncheckedUpdateWithoutDeletedByInput>
+  create: Prisma.XOR<Prisma.WarrantyCreateWithoutDeletedByInput, Prisma.WarrantyUncheckedCreateWithoutDeletedByInput>
+}
+
+export type WarrantyUpdateWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.WarrantyWhereUniqueInput
+  data: Prisma.XOR<Prisma.WarrantyUpdateWithoutDeletedByInput, Prisma.WarrantyUncheckedUpdateWithoutDeletedByInput>
+}
+
+export type WarrantyUpdateManyWithWhereWithoutDeletedByInput = {
+  where: Prisma.WarrantyScalarWhereInput
+  data: Prisma.XOR<Prisma.WarrantyUpdateManyMutationInput, Prisma.WarrantyUncheckedUpdateManyWithoutDeletedByInput>
 }
 
 export type WarrantyCreateWithoutVendorInput = {
@@ -754,7 +912,9 @@ export type WarrantyCreateWithoutVendorInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   asset: Prisma.AssetCreateNestedOneWithoutWarrantiesInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedWarrantiesInput
 }
 
 export type WarrantyUncheckedCreateWithoutVendorInput = {
@@ -772,6 +932,8 @@ export type WarrantyUncheckedCreateWithoutVendorInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type WarrantyCreateOrConnectWithoutVendorInput = {
@@ -815,6 +977,8 @@ export type WarrantyCreateManyAssetInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type WarrantyUpdateWithoutAssetInput = {
@@ -831,7 +995,9 @@ export type WarrantyUpdateWithoutAssetInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   vendor?: Prisma.VendorUpdateOneWithoutWarrantiesNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedWarrantiesNestedInput
 }
 
 export type WarrantyUncheckedUpdateWithoutAssetInput = {
@@ -849,6 +1015,8 @@ export type WarrantyUncheckedUpdateWithoutAssetInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type WarrantyUncheckedUpdateManyWithoutAssetInput = {
@@ -866,6 +1034,84 @@ export type WarrantyUncheckedUpdateManyWithoutAssetInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type WarrantyCreateManyDeletedByInput = {
+  id?: string
+  assetId: string
+  vendorId?: string | null
+  coverageType?: $Enums.WarrantyCoverageType
+  coverageDetails?: string | null
+  policyReference?: string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  startDate: Date | string
+  endDate: Date | string
+  cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  note?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type WarrantyUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  coverageType?: Prisma.EnumWarrantyCoverageTypeFieldUpdateOperationsInput | $Enums.WarrantyCoverageType
+  coverageDetails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policyReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  asset?: Prisma.AssetUpdateOneRequiredWithoutWarrantiesNestedInput
+  vendor?: Prisma.VendorUpdateOneWithoutWarrantiesNestedInput
+}
+
+export type WarrantyUncheckedUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetId?: Prisma.StringFieldUpdateOperationsInput | string
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageType?: Prisma.EnumWarrantyCoverageTypeFieldUpdateOperationsInput | $Enums.WarrantyCoverageType
+  coverageDetails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policyReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
+export type WarrantyUncheckedUpdateManyWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetId?: Prisma.StringFieldUpdateOperationsInput | string
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  coverageType?: Prisma.EnumWarrantyCoverageTypeFieldUpdateOperationsInput | $Enums.WarrantyCoverageType
+  coverageDetails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  policyReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type WarrantyCreateManyVendorInput = {
@@ -883,6 +1129,8 @@ export type WarrantyCreateManyVendorInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type WarrantyUpdateWithoutVendorInput = {
@@ -899,7 +1147,9 @@ export type WarrantyUpdateWithoutVendorInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   asset?: Prisma.AssetUpdateOneRequiredWithoutWarrantiesNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedWarrantiesNestedInput
 }
 
 export type WarrantyUncheckedUpdateWithoutVendorInput = {
@@ -917,6 +1167,8 @@ export type WarrantyUncheckedUpdateWithoutVendorInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type WarrantyUncheckedUpdateManyWithoutVendorInput = {
@@ -934,6 +1186,8 @@ export type WarrantyUncheckedUpdateManyWithoutVendorInput = {
   metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -954,8 +1208,11 @@ export type WarrantySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
   vendor?: boolean | Prisma.Warranty$vendorArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Warranty$deletedByArgs<ExtArgs>
 }, ExtArgs["result"]["warranty"]>
 
 export type WarrantySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -974,8 +1231,11 @@ export type WarrantySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
   vendor?: boolean | Prisma.Warranty$vendorArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Warranty$deletedByArgs<ExtArgs>
 }, ExtArgs["result"]["warranty"]>
 
 export type WarrantySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -994,8 +1254,11 @@ export type WarrantySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
   vendor?: boolean | Prisma.Warranty$vendorArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Warranty$deletedByArgs<ExtArgs>
 }, ExtArgs["result"]["warranty"]>
 
 export type WarrantySelectScalar = {
@@ -1014,20 +1277,25 @@ export type WarrantySelectScalar = {
   metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
 }
 
-export type WarrantyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "assetId" | "vendorId" | "coverageType" | "coverageDetails" | "policyReference" | "slaDetails" | "startDate" | "endDate" | "cost" | "currency" | "note" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["warranty"]>
+export type WarrantyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "assetId" | "vendorId" | "coverageType" | "coverageDetails" | "policyReference" | "slaDetails" | "startDate" | "endDate" | "cost" | "currency" | "note" | "metadata" | "createdAt" | "updatedAt" | "deletedAt" | "deletedById", ExtArgs["result"]["warranty"]>
 export type WarrantyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
   vendor?: boolean | Prisma.Warranty$vendorArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Warranty$deletedByArgs<ExtArgs>
 }
 export type WarrantyIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
   vendor?: boolean | Prisma.Warranty$vendorArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Warranty$deletedByArgs<ExtArgs>
 }
 export type WarrantyIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
   vendor?: boolean | Prisma.Warranty$vendorArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Warranty$deletedByArgs<ExtArgs>
 }
 
 export type $WarrantyPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1035,6 +1303,7 @@ export type $WarrantyPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   objects: {
     asset: Prisma.$AssetPayload<ExtArgs>
     vendor: Prisma.$VendorPayload<ExtArgs> | null
+    deletedBy: Prisma.$PersonPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1052,6 +1321,8 @@ export type $WarrantyPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     metadata: runtime.JsonValue | null
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
+    deletedById: string | null
   }, ExtArgs["result"]["warranty"]>
   composites: {}
 }
@@ -1448,6 +1719,7 @@ export interface Prisma__WarrantyClient<T, Null = never, ExtArgs extends runtime
   readonly [Symbol.toStringTag]: "PrismaPromise"
   asset<T extends Prisma.AssetDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AssetDefaultArgs<ExtArgs>>): Prisma.Prisma__AssetClient<runtime.Types.Result.GetResult<Prisma.$AssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   vendor<T extends Prisma.Warranty$vendorArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Warranty$vendorArgs<ExtArgs>>): Prisma.Prisma__VendorClient<runtime.Types.Result.GetResult<Prisma.$VendorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  deletedBy<T extends Prisma.Warranty$deletedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Warranty$deletedByArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1492,6 +1764,8 @@ export interface WarrantyFieldRefs {
   readonly metadata: Prisma.FieldRef<"Warranty", 'Json'>
   readonly createdAt: Prisma.FieldRef<"Warranty", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Warranty", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"Warranty", 'DateTime'>
+  readonly deletedById: Prisma.FieldRef<"Warranty", 'String'>
 }
     
 
@@ -1904,6 +2178,25 @@ export type Warranty$vendorArgs<ExtArgs extends runtime.Types.Extensions.Interna
    */
   include?: Prisma.VendorInclude<ExtArgs> | null
   where?: Prisma.VendorWhereInput
+}
+
+/**
+ * Warranty.deletedBy
+ */
+export type Warranty$deletedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Person
+   */
+  select?: Prisma.PersonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Person
+   */
+  omit?: Prisma.PersonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PersonInclude<ExtArgs> | null
+  where?: Prisma.PersonWhereInput
 }
 
 /**

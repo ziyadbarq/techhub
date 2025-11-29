@@ -1,9 +1,14 @@
 /**
  * CMDB Seed Data
- * Seeds relationship types and optional sample CIs
+ * Seeds relationship types, relationship type scopes, and contract types
  */
 
 import type { PrismaClient } from "../../../generated/prisma/client.js";
+import {
+  CI_CLASS_DATA,
+  CONTRACT_TYPE_DATA,
+  RELATIONSHIP_TYPE_SCOPE_DATA,
+} from "./seed-config-layer3.js";
 
 /**
  * Common CMDB relationship types
@@ -97,6 +102,21 @@ const RELATIONSHIP_TYPES = [
 export async function seedCMDB(prisma: PrismaClient) {
   console.log("🗄️  Seeding CMDB data...");
 
+  // Seed CI classes first (needed for relationship type scopes)
+  console.log("   Creating CI classes...");
+  for (const className of CI_CLASS_DATA) {
+    await prisma.cIClass.upsert({
+      where: { name: className },
+      update: {},
+      create: {
+        name: className,
+        code: className.toUpperCase().replace(/\s+/g, "_"),
+        isDiscoverable: false,
+      },
+    });
+  }
+  console.log(`   ✓ Created ${CI_CLASS_DATA.length} CI classes`);
+
   // Seed relationship types
   console.log("   Creating relationship types...");
   for (const relType of RELATIONSHIP_TYPES) {
@@ -119,4 +139,60 @@ export async function seedCMDB(prisma: PrismaClient) {
   }
 
   console.log(`   ✓ Created ${RELATIONSHIP_TYPES.length} relationship types`);
+
+  // Seed relationship type scopes (CI class constraints)
+  console.log("   Creating relationship type scopes...");
+  let scopesCreated = 0;
+  for (const scope of RELATIONSHIP_TYPE_SCOPE_DATA) {
+    // Look up the relationship type and CI classes by code
+    const [relType, fromClass, toClass] = await Promise.all([
+      prisma.relationshipType.findUnique({
+        where: { code: scope.relationshipCode },
+      }),
+      prisma.cIClass.findUnique({ where: { code: scope.fromClassCode } }),
+      prisma.cIClass.findUnique({ where: { code: scope.toClassCode } }),
+    ]);
+
+    if (!relType || !fromClass || !toClass) {
+      // Skip if any entity doesn't exist yet
+      continue;
+    }
+
+    await prisma.relationshipTypeScope.upsert({
+      where: {
+        relationshipTypeId_fromCiClassId_toCiClassId: {
+          relationshipTypeId: relType.id,
+          fromCiClassId: fromClass.id,
+          toCiClassId: toClass.id,
+        },
+      },
+      update: {},
+      create: {
+        relationshipTypeId: relType.id,
+        fromCiClassId: fromClass.id,
+        toCiClassId: toClass.id,
+      },
+    });
+    scopesCreated++;
+  }
+  console.log(`   ✓ Created ${scopesCreated} relationship type scopes`);
+
+  // Seed contract types
+  console.log("   Creating contract types...");
+  for (const contractType of CONTRACT_TYPE_DATA) {
+    await prisma.contractType.upsert({
+      where: { code: contractType.code },
+      update: {
+        name: contractType.name,
+        description: contractType.description,
+      },
+      create: {
+        name: contractType.name,
+        code: contractType.code,
+        description: contractType.description,
+        isActive: true,
+      },
+    });
+  }
+  console.log(`   ✓ Created ${CONTRACT_TYPE_DATA.length} contract types`);
 }

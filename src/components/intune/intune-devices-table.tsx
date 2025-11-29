@@ -31,6 +31,7 @@ import {
   getOwnershipTypeLabel,
   getOwnershipTypeColor,
 } from "@/interface-adapters/presenters/intune-device.presenter";
+import { formatDate } from "@/lib/utils/date-format";
 
 interface IntuneDevicesTableProps {
   devices: IntuneDeviceDTO[];
@@ -245,11 +246,7 @@ export function IntuneDevicesTable({
         cell: ({ row }) => {
           const date = row.getValue("lastSyncDateTime") as string | null;
           if (!date) return <span className="text-muted-foreground">-</span>;
-          return (
-            <span className="text-sm">
-              {new Date(date).toLocaleDateString()}
-            </span>
-          );
+          return <span className="text-sm">{formatDate(date)}</span>;
         },
       },
       {

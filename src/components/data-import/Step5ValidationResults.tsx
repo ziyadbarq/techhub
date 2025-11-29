@@ -11,7 +11,7 @@
  * - Option to proceed or go back
  */
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import type {
   EntityConfig,
   ImportSettings,
@@ -96,10 +96,19 @@ export function Step5ValidationResults({
   const [duplicatePreview, setDuplicatePreview] =
     useState<DuplicatePreview | null>(null);
 
+  // Guard against React Strict Mode double-execution
+  const validationStartedRef = useRef(false);
+
   /**
    * Run validation on mount
    */
   useEffect(() => {
+    // Prevent double-execution in React Strict Mode
+    if (validationStartedRef.current) {
+      return;
+    }
+    validationStartedRef.current = true;
+
     const runValidation = async () => {
       try {
         // Remap data based on column mappings

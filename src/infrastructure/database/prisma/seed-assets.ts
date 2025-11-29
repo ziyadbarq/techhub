@@ -1,13 +1,9 @@
 /**
  * Asset Layer Seed Data (Layer 2)
  *
- * Seeds comprehensive asset management data:
- * - Asset Categories (8 types)
- * - Asset Models (15 models across vendors)
- * - Assets (50+ realistic assets)
- * - Stock Locations (5 locations)
- * - Stock Movements (inventory tracking)
- * - Asset Assignments (70% assignment rate)
+ * Split into two functions:
+ * - seedAssetConfig(): Categories, models, stock locations (production-safe)
+ * - seedDemoAssets(): Demo assets with assignments (dev-only)
  */
 
 import type { PrismaClient } from "../../../generated/prisma/client.js";
@@ -28,22 +24,20 @@ import {
 import { SEED_CONFIG } from "./seed-config.js";
 
 /**
- * Seed Asset Layer entities
+ * Seed Asset Config (Production-safe)
+ *
+ * Seeds asset categories, models, and stock locations.
+ * No demo assets or assignments.
  */
-export async function seedAssets(prisma: PrismaClient) {
-  logSection("Asset Layer (Layer 2)");
+export async function seedAssetConfig(prisma: PrismaClient) {
+  logSection("Asset Config (Production)");
 
   // ==============================================
   // Prerequisites Check
   // ==============================================
   const vendors = await prisma.vendor.findMany({});
-  const locations = await prisma.location.findMany({});
-  const persons = await prisma.person.findMany({});
-  const lifecycleStates = await prisma.lifecycleState.findMany({});
 
   requireEntities(vendors, "vendors");
-  requireEntities(locations, "locations");
-  requireEntities(persons, "persons");
 
   // Create vendor lookup map
   const vendorMap = new Map(vendors.map((v) => [v.code, v]));
@@ -72,6 +66,62 @@ export async function seedAssets(prisma: PrismaClient) {
   }
 
   logSuccess(`Processed ${categoryMap.size} asset categories`);
+
+  // ==============================================
+  // 1b. Asset Category Fields (link field definitions to categories)
+  // ==============================================
+  logStep("📋", "Linking field definitions to categories...");
+
+  // Get all field definitions (name field stores the code from config)
+  const fieldDefinitions = await prisma.fieldDefinition.findMany({
+    select: { id: true, name: true },
+  });
+  const fieldDefMap = new Map(fieldDefinitions.map((f) => [f.name, f.id]));
+
+  let categoryFieldCount = 0;
+
+  for (const [categoryCode, fieldCodes] of Object.entries(
+    SEED_CONFIG.ASSET_CATEGORY_FIELD_MAPPINGS,
+  )) {
+    const category = categoryMap.get(categoryCode);
+    if (!category) continue;
+
+    for (let i = 0; i < fieldCodes.length; i++) {
+      const fieldCode = fieldCodes[i];
+      const fieldDefinitionId = fieldDefMap.get(fieldCode);
+
+      if (!fieldDefinitionId) {
+        logWarning(`Field definition ${fieldCode} not found, skipping`);
+        continue;
+      }
+
+      // Check if already linked (idempotent)
+      const existing = await prisma.assetCategoryField.findFirst({
+        where: {
+          assetCategoryId: category.id,
+          fieldDefinitionId,
+        },
+      });
+
+      if (existing) {
+        categoryFieldCount++;
+        continue;
+      }
+
+      await prisma.assetCategoryField.create({
+        data: {
+          assetCategoryId: category.id,
+          fieldDefinitionId,
+          uiOrder: i + 1,
+          isRequired: false,
+        },
+      });
+
+      categoryFieldCount++;
+    }
+  }
+
+  logSuccess(`Processed ${categoryFieldCount} category-field links`);
 
   // ==============================================
   // 2. Asset Models (idempotent - uses upsert)
@@ -118,9 +168,84 @@ export async function seedAssets(prisma: PrismaClient) {
   logSuccess(`Processed ${modelMap.size} asset models`);
 
   // ==============================================
-  // 3. Assets (idempotent - uses upsert)
+  // 3. Stock Locations (idempotent - uses upsert)
   // ==============================================
-  logStep("💻", "Creating assets...");
+  logStep("📍", "Creating stock locations...");
+
+  // Single main warehouse - add more locations via UI or data import
+  const stockLocationData = [
+    {
+      name: "Main Warehouse",
+      code: "MAIN-WH",
+      description: "Primary IT asset warehouse",
+    },
+  ];
+
+  let stockLocationCount = 0;
+  for (const locData of stockLocationData) {
+    await prisma.stockLocation.upsert({
+      where: { code: locData.code },
+      create: {
+        name: locData.name,
+        code: locData.code,
+        description: locData.description,
+      },
+      update: {}, // No-op update to preserve existing data
+    });
+    stockLocationCount++;
+  }
+
+  logSuccess(`Processed ${stockLocationCount} stock locations`);
+
+  // ==============================================
+  // Summary
+  // ==============================================
+  logSuccess("Asset Config seeding completed");
+  console.log("\nSummary:");
+  console.log(`   - ${categoryMap.size} asset categories`);
+  console.log(`   - ${categoryFieldCount} category-field links`);
+  console.log(`   - ${modelMap.size} asset models`);
+  console.log(`   - ${stockLocationCount} stock locations`);
+}
+
+/**
+ * Seed Demo Assets (Dev-only)
+ *
+ * Seeds 50+ demo assets with assignments and stock movements.
+ * Requires ASSET_CONFIG and DEMO_PERSONS to be seeded first.
+ */
+export async function seedDemoAssets(prisma: PrismaClient) {
+  logSection("Demo Assets (Dev Only)");
+
+  // ==============================================
+  // Prerequisites Check
+  // ==============================================
+  const persons = await prisma.person.findMany({});
+  const lifecycleStates = await prisma.lifecycleState.findMany({});
+  const categories = await prisma.assetCategory.findMany({});
+  const models = await prisma.assetModel.findMany({});
+  const stockLocations = await prisma.stockLocation.findMany({});
+
+  requireEntities(persons, "persons");
+  requireEntities(categories, "asset categories");
+  requireEntities(stockLocations, "stock locations");
+
+  // Create lookup maps
+  const categoryMap = new Map(categories.map((c) => [c.code, c]));
+  const modelsByCategory = new Map<string, string[]>();
+  for (const model of models) {
+    const category = categories.find((c) => c.id === model.assetCategoryId);
+    if (category) {
+      const existing = modelsByCategory.get(category.code) || [];
+      existing.push(model.id);
+      modelsByCategory.set(category.code, existing);
+    }
+  }
+
+  // ==============================================
+  // 1. Assets (idempotent - uses upsert)
+  // ==============================================
+  logStep("💻", "Creating demo assets...");
 
   const assets: Array<{ id: string; categoryCode: string }> = [];
   let totalAssets = 0;
@@ -141,9 +266,7 @@ export async function seedAssets(prisma: PrismaClient) {
     }
 
     // Get models for this category
-    const categoryModels = Array.from(modelMap.entries())
-      .filter(([key]) => key.startsWith(`${categoryCode}-`))
-      .map(([_, modelId]) => modelId);
+    const categoryModels = modelsByCategory.get(categoryCode) || [];
 
     if (categoryModels.length === 0) {
       logWarning(`No models found for ${categoryCode}, creating without model`);
@@ -199,41 +322,10 @@ export async function seedAssets(prisma: PrismaClient) {
     totalAssets += quantity;
   }
 
-  logSuccess(`Processed ${assets.length} assets`);
+  logSuccess(`Processed ${assets.length} demo assets`);
 
   // ==============================================
-  // 4. Stock Locations (idempotent - uses upsert)
-  // ==============================================
-  logStep("📍", "Creating stock locations...");
-
-  const stockLocations = [];
-
-  // Single main warehouse - add more locations via UI or data import
-  const stockLocationData = [
-    {
-      name: "Main Warehouse",
-      code: "MAIN-WH",
-      description: "Primary IT asset warehouse",
-    },
-  ];
-
-  for (const locData of stockLocationData) {
-    const location = await prisma.stockLocation.upsert({
-      where: { code: locData.code },
-      create: {
-        name: locData.name,
-        code: locData.code,
-        description: locData.description,
-      },
-      update: {}, // No-op update to preserve existing data
-    });
-    stockLocations.push(location);
-  }
-
-  logSuccess(`Processed ${stockLocations.length} stock locations`);
-
-  // ==============================================
-  // 5. Stock Movements (idempotent - check before create)
+  // 2. Stock Movements (idempotent - check before create)
   // ==============================================
   logStep("📦", "Creating stock movements...");
 
@@ -277,7 +369,7 @@ export async function seedAssets(prisma: PrismaClient) {
   logSuccess(`Processed ${movementCount} stock movements`);
 
   // ==============================================
-  // 6. Asset Assignments (idempotent - check before create)
+  // 3. Asset Assignments (idempotent - check before create)
   // ==============================================
   logStep("👤", "Creating asset assignments...");
 
@@ -324,12 +416,9 @@ export async function seedAssets(prisma: PrismaClient) {
   // ==============================================
   // Summary
   // ==============================================
-  logSuccess("Asset Layer seeding completed");
+  logSuccess("Demo Assets seeding completed");
   console.log("\nSummary:");
-  console.log(`   - ${categoryMap.size} asset categories`);
-  console.log(`   - ${modelMap.size} asset models`);
-  console.log(`   - ${assets.length} assets`);
-  console.log(`   - ${stockLocations.length} stock locations`);
+  console.log(`   - ${assets.length} demo assets`);
   console.log(`   - ${movementCount} stock movements`);
   console.log(
     `   - ${assignmentCount} asset assignments (${Math.round(assignmentPercentage * 100)}% assigned)`,

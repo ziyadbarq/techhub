@@ -20,7 +20,6 @@ export interface AssetProps {
   depreciationModel: string | null;
   depreciationStart: Date | null;
   depreciationEnd: Date | null;
-  warrantyEndDate: Date | null;
   condition: string | null;
   currentStockLocationId: string | null;
   attributes: Record<string, unknown> | null;
@@ -44,11 +43,12 @@ export interface CreateAssetProps {
   depreciationModel?: string | null;
   depreciationStart?: Date | null;
   depreciationEnd?: Date | null;
-  warrantyEndDate?: Date | null;
   condition?: string | null;
   currentStockLocationId?: string | null;
   attributes?: Record<string, unknown> | null;
   note?: string | null;
+  /** Person ID of the user performing the action (used for movement tracking) */
+  performedById?: string;
 }
 
 export class Asset {
@@ -96,7 +96,6 @@ export class Asset {
       depreciationModel: props.depreciationModel || null,
       depreciationStart: props.depreciationStart || null,
       depreciationEnd: props.depreciationEnd || null,
-      warrantyEndDate: props.warrantyEndDate || null,
       condition: props.condition || null,
       currentStockLocationId: props.currentStockLocationId || null,
       attributes: props.attributes || null,
@@ -130,7 +129,6 @@ export class Asset {
     depreciationModel?: string | null;
     depreciationStart?: Date | null;
     depreciationEnd?: Date | null;
-    warrantyEndDate?: Date | null;
     condition?: string | null;
     currentStockLocationId?: string | null;
     attributes?: Record<string, unknown> | null;
@@ -198,10 +196,6 @@ export class Asset {
       this.props.depreciationEnd = props.depreciationEnd;
     }
 
-    if (props.warrantyEndDate !== undefined) {
-      this.props.warrantyEndDate = props.warrantyEndDate;
-    }
-
     if (props.condition !== undefined) {
       this.props.condition = props.condition;
     }
@@ -248,17 +242,6 @@ export class Asset {
   setStockLocation(stockLocationId: string | null): void {
     this.props.currentStockLocationId = stockLocationId;
     this.props.updatedAt = new Date();
-  }
-
-  /**
-   * Calculate warranty status
-   * Business rule: Based on warranty end date
-   */
-  isUnderWarranty(): boolean {
-    if (!this.props.warrantyEndDate) {
-      return false;
-    }
-    return new Date() < this.props.warrantyEndDate;
   }
 
   /**
@@ -395,10 +378,6 @@ export class Asset {
 
   get depreciationEnd(): Date | null {
     return this.props.depreciationEnd;
-  }
-
-  get warrantyEndDate(): Date | null {
-    return this.props.warrantyEndDate;
   }
 
   get condition(): string | null {

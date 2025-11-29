@@ -42,6 +42,8 @@ interface ReturnAssetWizardProps {
   assetTag: string;
   assignmentId: string;
   assignedToName?: string;
+  /** Pre-selected stock location (typically the asset's currentStockLocationId) */
+  defaultStockLocationId?: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
@@ -59,6 +61,7 @@ export function ReturnAssetWizard({
   assetTag,
   assignmentId,
   assignedToName,
+  defaultStockLocationId,
   open,
   onOpenChange,
   onSuccess,
@@ -108,15 +111,22 @@ export function ReturnAssetWizard({
     }
   }, [open, form]);
 
-  // Reset form when dialog closes
+  // Reset form when dialog closes or opens (to apply defaultStockLocationId)
   useEffect(() => {
-    if (!open) {
+    if (open) {
+      // Pre-select the default location when opening
+      form.reset({
+        stockLocationToId: defaultStockLocationId ?? "",
+        note: "",
+      });
+    } else {
+      // Reset on close
       form.reset({
         stockLocationToId: "",
         note: "",
       });
     }
-  }, [open, form]);
+  }, [open, form, defaultStockLocationId]);
 
   const onSubmit = async (data: ReturnAssetFormValues) => {
     try {
@@ -202,8 +212,14 @@ export function ReturnAssetWizard({
                         disabled={loadingData}
                       />
                       <FormDescription>
-                        Select the stock location where the asset will be
-                        returned
+                        {defaultStockLocationId &&
+                        field.value === defaultStockLocationId ? (
+                          <span className="text-green-600 dark:text-green-400">
+                            Pre-selected based on asset&apos;s previous location
+                          </span>
+                        ) : (
+                          "Select the stock location where the asset will be returned"
+                        )}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

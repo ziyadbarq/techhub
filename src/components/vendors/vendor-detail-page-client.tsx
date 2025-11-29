@@ -48,7 +48,10 @@ import type {
 } from "@/interface-adapters/controllers/vendor-details.controller";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { deleteVendorAction } from "@/interface-adapters/controllers/vendor.controller";
+import {
+  deleteVendorAction,
+  getVendorAction,
+} from "@/interface-adapters/controllers/vendor.controller";
 import { VendorForm } from "@/components/vendors/vendor-form";
 import { VendorOverviewTab } from "@/components/vendors/tabs/vendor-overview-tab";
 import { VendorContactsTab } from "@/components/vendors/tabs/vendor-contacts-tab";
@@ -80,7 +83,7 @@ export function VendorDetailPageClient({
   statistics,
 }: VendorDetailPageClientProps) {
   const router = useRouter();
-  const [vendor] = useState(initialVendor);
+  const [vendor, setVendor] = useState(initialVendor);
   const { hasPermission } = usePermissions();
 
   // Dialog states
@@ -92,10 +95,15 @@ export function VendorDetailPageClient({
   const canUpdate = hasPermission(PERMISSIONS.VENDORS_UPDATE);
   const canDelete = hasPermission(PERMISSIONS.VENDORS_DELETE);
 
-  const handleFormClose = useCallback(() => {
+  const handleFormClose = useCallback(async () => {
     setIsFormOpen(false);
+    // Fetch updated vendor data to refresh UI immediately
+    const result = await getVendorAction(vendor.id);
+    if (result.success) {
+      setVendor(result.data);
+    }
     router.refresh();
-  }, [router]);
+  }, [vendor.id, router]);
 
   const handleDelete = async () => {
     setIsDeleting(true);

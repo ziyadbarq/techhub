@@ -32,6 +32,8 @@ export type ContractTypeMinAggregateOutputType = {
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
 }
 
 export type ContractTypeMaxAggregateOutputType = {
@@ -42,6 +44,8 @@ export type ContractTypeMaxAggregateOutputType = {
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
 }
 
 export type ContractTypeCountAggregateOutputType = {
@@ -52,6 +56,8 @@ export type ContractTypeCountAggregateOutputType = {
   isActive: number
   createdAt: number
   updatedAt: number
+  deletedAt: number
+  deletedById: number
   _all: number
 }
 
@@ -64,6 +70,8 @@ export type ContractTypeMinAggregateInputType = {
   isActive?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
 }
 
 export type ContractTypeMaxAggregateInputType = {
@@ -74,6 +82,8 @@ export type ContractTypeMaxAggregateInputType = {
   isActive?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
 }
 
 export type ContractTypeCountAggregateInputType = {
@@ -84,6 +94,8 @@ export type ContractTypeCountAggregateInputType = {
   isActive?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
   _all?: true
 }
 
@@ -167,6 +179,8 @@ export type ContractTypeGroupByOutputType = {
   isActive: boolean
   createdAt: Date
   updatedAt: Date
+  deletedAt: Date | null
+  deletedById: string | null
   _count: ContractTypeCountAggregateOutputType | null
   _min: ContractTypeMinAggregateOutputType | null
   _max: ContractTypeMaxAggregateOutputType | null
@@ -198,7 +212,10 @@ export type ContractTypeWhereInput = {
   isActive?: Prisma.BoolFilter<"ContractType"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ContractType"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ContractType"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"ContractType"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"ContractType"> | string | null
   contracts?: Prisma.ContractListRelationFilter
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }
 
 export type ContractTypeOrderByWithRelationInput = {
@@ -209,7 +226,10 @@ export type ContractTypeOrderByWithRelationInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   contracts?: Prisma.ContractOrderByRelationAggregateInput
+  deletedBy?: Prisma.PersonOrderByWithRelationInput
 }
 
 export type ContractTypeWhereUniqueInput = Prisma.AtLeast<{
@@ -223,7 +243,10 @@ export type ContractTypeWhereUniqueInput = Prisma.AtLeast<{
   isActive?: Prisma.BoolFilter<"ContractType"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ContractType"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ContractType"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"ContractType"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"ContractType"> | string | null
   contracts?: Prisma.ContractListRelationFilter
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }, "id" | "name" | "code">
 
 export type ContractTypeOrderByWithAggregationInput = {
@@ -234,6 +257,8 @@ export type ContractTypeOrderByWithAggregationInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ContractTypeCountOrderByAggregateInput
   _max?: Prisma.ContractTypeMaxOrderByAggregateInput
   _min?: Prisma.ContractTypeMinOrderByAggregateInput
@@ -250,6 +275,8 @@ export type ContractTypeScalarWhereWithAggregatesInput = {
   isActive?: Prisma.BoolWithAggregatesFilter<"ContractType"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ContractType"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ContractType"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ContractType"> | Date | string | null
+  deletedById?: Prisma.StringNullableWithAggregatesFilter<"ContractType"> | string | null
 }
 
 export type ContractTypeCreateInput = {
@@ -260,7 +287,9 @@ export type ContractTypeCreateInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   contracts?: Prisma.ContractCreateNestedManyWithoutContractTypeInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedContractTypesInput
 }
 
 export type ContractTypeUncheckedCreateInput = {
@@ -271,6 +300,8 @@ export type ContractTypeUncheckedCreateInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   contracts?: Prisma.ContractUncheckedCreateNestedManyWithoutContractTypeInput
 }
 
@@ -282,7 +313,9 @@ export type ContractTypeUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   contracts?: Prisma.ContractUpdateManyWithoutContractTypeNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedContractTypesNestedInput
 }
 
 export type ContractTypeUncheckedUpdateInput = {
@@ -293,6 +326,8 @@ export type ContractTypeUncheckedUpdateInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   contracts?: Prisma.ContractUncheckedUpdateManyWithoutContractTypeNestedInput
 }
 
@@ -304,6 +339,8 @@ export type ContractTypeCreateManyInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type ContractTypeUpdateManyMutationInput = {
@@ -314,6 +351,7 @@ export type ContractTypeUpdateManyMutationInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ContractTypeUncheckedUpdateManyInput = {
@@ -324,6 +362,8 @@ export type ContractTypeUncheckedUpdateManyInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ContractTypeCountOrderByAggregateInput = {
@@ -334,6 +374,8 @@ export type ContractTypeCountOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type ContractTypeMaxOrderByAggregateInput = {
@@ -344,6 +386,8 @@ export type ContractTypeMaxOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type ContractTypeMinOrderByAggregateInput = {
@@ -354,11 +398,23 @@ export type ContractTypeMinOrderByAggregateInput = {
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type ContractTypeScalarRelationFilter = {
   is?: Prisma.ContractTypeWhereInput
   isNot?: Prisma.ContractTypeWhereInput
+}
+
+export type ContractTypeListRelationFilter = {
+  every?: Prisma.ContractTypeWhereInput
+  some?: Prisma.ContractTypeWhereInput
+  none?: Prisma.ContractTypeWhereInput
+}
+
+export type ContractTypeOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type ContractTypeCreateNestedOneWithoutContractsInput = {
@@ -375,6 +431,48 @@ export type ContractTypeUpdateOneRequiredWithoutContractsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ContractTypeUpdateToOneWithWhereWithoutContractsInput, Prisma.ContractTypeUpdateWithoutContractsInput>, Prisma.ContractTypeUncheckedUpdateWithoutContractsInput>
 }
 
+export type ContractTypeCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.ContractTypeCreateWithoutDeletedByInput, Prisma.ContractTypeUncheckedCreateWithoutDeletedByInput> | Prisma.ContractTypeCreateWithoutDeletedByInput[] | Prisma.ContractTypeUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.ContractTypeCreateOrConnectWithoutDeletedByInput | Prisma.ContractTypeCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.ContractTypeCreateManyDeletedByInputEnvelope
+  connect?: Prisma.ContractTypeWhereUniqueInput | Prisma.ContractTypeWhereUniqueInput[]
+}
+
+export type ContractTypeUncheckedCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.ContractTypeCreateWithoutDeletedByInput, Prisma.ContractTypeUncheckedCreateWithoutDeletedByInput> | Prisma.ContractTypeCreateWithoutDeletedByInput[] | Prisma.ContractTypeUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.ContractTypeCreateOrConnectWithoutDeletedByInput | Prisma.ContractTypeCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.ContractTypeCreateManyDeletedByInputEnvelope
+  connect?: Prisma.ContractTypeWhereUniqueInput | Prisma.ContractTypeWhereUniqueInput[]
+}
+
+export type ContractTypeUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.ContractTypeCreateWithoutDeletedByInput, Prisma.ContractTypeUncheckedCreateWithoutDeletedByInput> | Prisma.ContractTypeCreateWithoutDeletedByInput[] | Prisma.ContractTypeUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.ContractTypeCreateOrConnectWithoutDeletedByInput | Prisma.ContractTypeCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.ContractTypeUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.ContractTypeUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.ContractTypeCreateManyDeletedByInputEnvelope
+  set?: Prisma.ContractTypeWhereUniqueInput | Prisma.ContractTypeWhereUniqueInput[]
+  disconnect?: Prisma.ContractTypeWhereUniqueInput | Prisma.ContractTypeWhereUniqueInput[]
+  delete?: Prisma.ContractTypeWhereUniqueInput | Prisma.ContractTypeWhereUniqueInput[]
+  connect?: Prisma.ContractTypeWhereUniqueInput | Prisma.ContractTypeWhereUniqueInput[]
+  update?: Prisma.ContractTypeUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.ContractTypeUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.ContractTypeUpdateManyWithWhereWithoutDeletedByInput | Prisma.ContractTypeUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.ContractTypeScalarWhereInput | Prisma.ContractTypeScalarWhereInput[]
+}
+
+export type ContractTypeUncheckedUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.ContractTypeCreateWithoutDeletedByInput, Prisma.ContractTypeUncheckedCreateWithoutDeletedByInput> | Prisma.ContractTypeCreateWithoutDeletedByInput[] | Prisma.ContractTypeUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.ContractTypeCreateOrConnectWithoutDeletedByInput | Prisma.ContractTypeCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.ContractTypeUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.ContractTypeUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.ContractTypeCreateManyDeletedByInputEnvelope
+  set?: Prisma.ContractTypeWhereUniqueInput | Prisma.ContractTypeWhereUniqueInput[]
+  disconnect?: Prisma.ContractTypeWhereUniqueInput | Prisma.ContractTypeWhereUniqueInput[]
+  delete?: Prisma.ContractTypeWhereUniqueInput | Prisma.ContractTypeWhereUniqueInput[]
+  connect?: Prisma.ContractTypeWhereUniqueInput | Prisma.ContractTypeWhereUniqueInput[]
+  update?: Prisma.ContractTypeUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.ContractTypeUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.ContractTypeUpdateManyWithWhereWithoutDeletedByInput | Prisma.ContractTypeUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.ContractTypeScalarWhereInput | Prisma.ContractTypeScalarWhereInput[]
+}
+
 export type ContractTypeCreateWithoutContractsInput = {
   id?: string
   name: string
@@ -383,6 +481,8 @@ export type ContractTypeCreateWithoutContractsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedContractTypesInput
 }
 
 export type ContractTypeUncheckedCreateWithoutContractsInput = {
@@ -393,6 +493,8 @@ export type ContractTypeUncheckedCreateWithoutContractsInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type ContractTypeCreateOrConnectWithoutContractsInput = {
@@ -419,6 +521,8 @@ export type ContractTypeUpdateWithoutContractsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedContractTypesNestedInput
 }
 
 export type ContractTypeUncheckedUpdateWithoutContractsInput = {
@@ -429,6 +533,119 @@ export type ContractTypeUncheckedUpdateWithoutContractsInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type ContractTypeCreateWithoutDeletedByInput = {
+  id?: string
+  name: string
+  code: string
+  description?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  contracts?: Prisma.ContractCreateNestedManyWithoutContractTypeInput
+}
+
+export type ContractTypeUncheckedCreateWithoutDeletedByInput = {
+  id?: string
+  name: string
+  code: string
+  description?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  contracts?: Prisma.ContractUncheckedCreateNestedManyWithoutContractTypeInput
+}
+
+export type ContractTypeCreateOrConnectWithoutDeletedByInput = {
+  where: Prisma.ContractTypeWhereUniqueInput
+  create: Prisma.XOR<Prisma.ContractTypeCreateWithoutDeletedByInput, Prisma.ContractTypeUncheckedCreateWithoutDeletedByInput>
+}
+
+export type ContractTypeCreateManyDeletedByInputEnvelope = {
+  data: Prisma.ContractTypeCreateManyDeletedByInput | Prisma.ContractTypeCreateManyDeletedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type ContractTypeUpsertWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.ContractTypeWhereUniqueInput
+  update: Prisma.XOR<Prisma.ContractTypeUpdateWithoutDeletedByInput, Prisma.ContractTypeUncheckedUpdateWithoutDeletedByInput>
+  create: Prisma.XOR<Prisma.ContractTypeCreateWithoutDeletedByInput, Prisma.ContractTypeUncheckedCreateWithoutDeletedByInput>
+}
+
+export type ContractTypeUpdateWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.ContractTypeWhereUniqueInput
+  data: Prisma.XOR<Prisma.ContractTypeUpdateWithoutDeletedByInput, Prisma.ContractTypeUncheckedUpdateWithoutDeletedByInput>
+}
+
+export type ContractTypeUpdateManyWithWhereWithoutDeletedByInput = {
+  where: Prisma.ContractTypeScalarWhereInput
+  data: Prisma.XOR<Prisma.ContractTypeUpdateManyMutationInput, Prisma.ContractTypeUncheckedUpdateManyWithoutDeletedByInput>
+}
+
+export type ContractTypeScalarWhereInput = {
+  AND?: Prisma.ContractTypeScalarWhereInput | Prisma.ContractTypeScalarWhereInput[]
+  OR?: Prisma.ContractTypeScalarWhereInput[]
+  NOT?: Prisma.ContractTypeScalarWhereInput | Prisma.ContractTypeScalarWhereInput[]
+  id?: Prisma.StringFilter<"ContractType"> | string
+  name?: Prisma.StringFilter<"ContractType"> | string
+  code?: Prisma.StringFilter<"ContractType"> | string
+  description?: Prisma.StringNullableFilter<"ContractType"> | string | null
+  isActive?: Prisma.BoolFilter<"ContractType"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"ContractType"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"ContractType"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"ContractType"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"ContractType"> | string | null
+}
+
+export type ContractTypeCreateManyDeletedByInput = {
+  id?: string
+  name: string
+  code: string
+  description?: string | null
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type ContractTypeUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  contracts?: Prisma.ContractUpdateManyWithoutContractTypeNestedInput
+}
+
+export type ContractTypeUncheckedUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  contracts?: Prisma.ContractUncheckedUpdateManyWithoutContractTypeNestedInput
+}
+
+export type ContractTypeUncheckedUpdateManyWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -470,7 +687,10 @@ export type ContractTypeSelect<ExtArgs extends runtime.Types.Extensions.Internal
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   contracts?: boolean | Prisma.ContractType$contractsArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.ContractType$deletedByArgs<ExtArgs>
   _count?: boolean | Prisma.ContractTypeCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["contractType"]>
 
@@ -482,6 +702,9 @@ export type ContractTypeSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
+  deletedBy?: boolean | Prisma.ContractType$deletedByArgs<ExtArgs>
 }, ExtArgs["result"]["contractType"]>
 
 export type ContractTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -492,6 +715,9 @@ export type ContractTypeSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
+  deletedBy?: boolean | Prisma.ContractType$deletedByArgs<ExtArgs>
 }, ExtArgs["result"]["contractType"]>
 
 export type ContractTypeSelectScalar = {
@@ -502,20 +728,28 @@ export type ContractTypeSelectScalar = {
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
 }
 
-export type ContractTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "code" | "description" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["contractType"]>
+export type ContractTypeOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "code" | "description" | "isActive" | "createdAt" | "updatedAt" | "deletedAt" | "deletedById", ExtArgs["result"]["contractType"]>
 export type ContractTypeInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   contracts?: boolean | Prisma.ContractType$contractsArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.ContractType$deletedByArgs<ExtArgs>
   _count?: boolean | Prisma.ContractTypeCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type ContractTypeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type ContractTypeIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type ContractTypeIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  deletedBy?: boolean | Prisma.ContractType$deletedByArgs<ExtArgs>
+}
+export type ContractTypeIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  deletedBy?: boolean | Prisma.ContractType$deletedByArgs<ExtArgs>
+}
 
 export type $ContractTypePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ContractType"
   objects: {
     contracts: Prisma.$ContractPayload<ExtArgs>[]
+    deletedBy: Prisma.$PersonPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -525,6 +759,8 @@ export type $ContractTypePayload<ExtArgs extends runtime.Types.Extensions.Intern
     isActive: boolean
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
+    deletedById: string | null
   }, ExtArgs["result"]["contractType"]>
   composites: {}
 }
@@ -920,6 +1156,7 @@ readonly fields: ContractTypeFieldRefs;
 export interface Prisma__ContractTypeClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   contracts<T extends Prisma.ContractType$contractsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ContractType$contractsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContractPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deletedBy<T extends Prisma.ContractType$deletedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ContractType$deletedByArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -956,6 +1193,8 @@ export interface ContractTypeFieldRefs {
   readonly isActive: Prisma.FieldRef<"ContractType", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"ContractType", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ContractType", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"ContractType", 'DateTime'>
+  readonly deletedById: Prisma.FieldRef<"ContractType", 'String'>
 }
     
 
@@ -1205,6 +1444,10 @@ export type ContractTypeCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    */
   data: Prisma.ContractTypeCreateManyInput | Prisma.ContractTypeCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ContractTypeIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1275,6 +1518,10 @@ export type ContractTypeUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    * Limit how many ContractTypes to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ContractTypeIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1365,6 +1612,25 @@ export type ContractType$contractsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.ContractScalarFieldEnum | Prisma.ContractScalarFieldEnum[]
+}
+
+/**
+ * ContractType.deletedBy
+ */
+export type ContractType$deletedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Person
+   */
+  select?: Prisma.PersonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Person
+   */
+  omit?: Prisma.PersonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PersonInclude<ExtArgs> | null
+  where?: Prisma.PersonWhereInput
 }
 
 /**

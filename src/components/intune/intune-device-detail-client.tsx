@@ -70,6 +70,7 @@ import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { ComplianceHistoryTab } from "@/components/intune/tabs/compliance-history-tab";
 import { RelatedItemsTab } from "@/components/intune/tabs/related-items-tab";
 import { CreateAssetFromDeviceWizard } from "@/components/intune/create-asset-from-device-wizard";
+import { formatDateTime } from "@/lib/utils/date-format";
 
 interface IntuneDeviceDetailClientProps {
   device: IntuneDeviceDTO;
@@ -496,27 +497,15 @@ export function IntuneDeviceDetailClient({
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <p className="text-muted-foreground">Enrolled</p>
-                    <p>
-                      {device.enrolledDateTime
-                        ? new Date(device.enrolledDateTime).toLocaleString()
-                        : "-"}
-                    </p>
+                    <p>{formatDateTime(device.enrolledDateTime)}</p>
                   </div>
                   <div>
                     <p className="text-muted-foreground">Last Intune Sync</p>
-                    <p>
-                      {device.lastSyncDateTime
-                        ? new Date(device.lastSyncDateTime).toLocaleString()
-                        : "-"}
-                    </p>
+                    <p>{formatDateTime(device.lastSyncDateTime)}</p>
                   </div>
                   <div>
                     <p className="text-muted-foreground">Last ITAM Sync</p>
-                    <p>
-                      {device.lastSyncedFromIntune
-                        ? new Date(device.lastSyncedFromIntune).toLocaleString()
-                        : "-"}
-                    </p>
+                    <p>{formatDateTime(device.lastSyncedFromIntune)}</p>
                   </div>
                 </div>
               </CardContent>

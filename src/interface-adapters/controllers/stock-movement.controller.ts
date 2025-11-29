@@ -13,8 +13,10 @@ import {
   CreateStockMovementSchema,
   StockMovementIdSchema,
   ListStockMovementsSchema,
+  VoidStockMovementSchema,
   type CreateStockMovementDTO,
   type ListStockMovementsDTO,
+  type VoidStockMovementDTO,
 } from "../dtos/generated/stock-movement.dto";
 import {
   presentStockMovement,
@@ -27,11 +29,13 @@ import type {
   ListStockMovementsUseCase,
   GetStockMovementUseCase,
   DeleteStockMovementUseCase,
+  VoidStockMovementUseCase,
 } from "@/core/use-cases/inventory/stock-movement";
 import type { ListStockLocationsUseCase } from "@/core/use-cases/inventory/stock-location";
 import type { ListAssetsUseCase } from "@/core/use-cases/asset/asset";
 import type { ListPeopleUseCase } from "@/core/use-cases/foundation/person";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
+import type { IAssetAssignmentRepository } from "@/core/repositories/asset-assignment.repository.interface";
 import type { StockMovement } from "@/core/domain/entities/stock-movement.entity";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
@@ -61,10 +65,33 @@ async function enrichStockMovements(
       movements.map((m) => m.assetId).filter((id): id is string => id !== null),
     ),
   ];
-  const personIds = [...new Set(movements.map((m) => m.performedById))];
+  // Collect performedById and voidedById
+  const personIds = [
+    ...new Set(
+      movements
+        .flatMap((m) => [m.performedById, m.voidedById])
+        .filter((id): id is string => id !== null),
+    ),
+  ];
+
+  // Collect assignment IDs for ASSIGNMENT and RETURN source movements
+  const assignmentIds = [
+    ...new Set(
+      movements
+        .filter(
+          (m) =>
+            (m.source === "ASSIGNMENT" || m.source === "RETURN") &&
+            m.sourceReferenceType === "AssetAssignment" &&
+            m.sourceReferenceId,
+        )
+        .map((m) => m.sourceReferenceId)
+        .filter((id): id is string => id !== null),
+    ),
+  ];
 
   // Fetch all entities in parallel
-  const [stockLocationsMap, assetsMap, personsMap]: [
+  const [stockLocationsMap, assetsMap, personsMap, assignmentPersonMap]: [
+    Map<string, string>,
     Map<string, string>,
     Map<string, string>,
     Map<string, string>,
@@ -95,7 +122,7 @@ async function enrichStockMovements(
           .map((a) => [a.id, a.assetTag]),
       );
     })(),
-    // Persons (performed by)
+    // Persons (performed by, voided by)
     (async () => {
       if (personIds.length === 0) return new Map<string, string>();
       const useCase = container.get<ListPeopleUseCase>(
@@ -108,11 +135,60 @@ async function enrichStockMovements(
           .map((p) => [p.id, p.fullName]),
       );
     })(),
+    // Assignment person names (for ASSIGNMENT and RETURN movements)
+    (async () => {
+      if (assignmentIds.length === 0) return new Map<string, string>();
+      const assignmentRepo = container.get<IAssetAssignmentRepository>(
+        DI_TOKENS.IAssetAssignmentRepository,
+      );
+      const personUseCase = container.get<ListPeopleUseCase>(
+        DI_TOKENS.ListPersonsUseCase,
+      );
+
+      // Fetch assignments and collect assignee IDs
+      const assignments = await Promise.all(
+        assignmentIds.map((id) => assignmentRepo.findById(id)),
+      );
+      const assigneeIds = assignments
+        .filter((a) => a !== null && a.assigneeType === "PERSON")
+        .map((a) => a!.assigneeId);
+
+      // Fetch person names for assignees
+      const persons = await personUseCase.execute();
+      const personNameMap = new Map(
+        persons
+          .filter((p) => assigneeIds.includes(p.id))
+          .map((p) => [p.id, p.fullName]),
+      );
+
+      // Build assignment ID -> person name map
+      const result = new Map<string, string>();
+      for (const assignment of assignments) {
+        if (assignment && assignment.assigneeType === "PERSON") {
+          const personName = personNameMap.get(assignment.assigneeId);
+          if (personName) {
+            result.set(assignment.id, personName);
+          }
+        }
+      }
+      return result;
+    })(),
   ]);
 
   // Build enrichment map
   const enrichmentMap = new Map<string, StockMovementEnrichment>();
   for (const movement of movements) {
+    // Get assigned person name for ASSIGNMENT/RETURN movements
+    let assignedToName: string | null = null;
+    if (
+      (movement.source === "ASSIGNMENT" || movement.source === "RETURN") &&
+      movement.sourceReferenceType === "AssetAssignment" &&
+      movement.sourceReferenceId
+    ) {
+      assignedToName =
+        assignmentPersonMap.get(movement.sourceReferenceId) ?? null;
+    }
+
     enrichmentMap.set(movement.id, {
       stockLocationFromName: movement.stockLocationFromId
         ? stockLocationsMap.get(movement.stockLocationFromId)
@@ -122,6 +198,10 @@ async function enrichStockMovements(
         : null,
       assetTag: movement.assetId ? assetsMap.get(movement.assetId) : null,
       performedByName: personsMap.get(movement.performedById),
+      voidedByName: movement.voidedById
+        ? personsMap.get(movement.voidedById)
+        : null,
+      assignedToName,
     });
   }
 
@@ -273,6 +353,57 @@ export async function deleteStockMovementAction(
       error,
       { function: "deleteStockMovementAction", id },
       "Failed to delete stock movement",
+    );
+  }
+}
+
+/**
+ * Void a stock movement (replaces delete for audit trail preservation)
+ */
+export async function voidStockMovementAction(
+  data: VoidStockMovementDTO,
+): Promise<ActionResponse<StockMovementDTO>> {
+  try {
+    await requirePermission(PERMISSIONS.STOCK_MOVEMENTS_VOID);
+
+    const validated = VoidStockMovementSchema.parse(data);
+
+    const container = getContainer();
+    const useCase = container.get<VoidStockMovementUseCase>(
+      DI_TOKENS.VoidStockMovementUseCase,
+    );
+
+    const movement = await useCase.execute({
+      id: validated.id,
+      voidedById: validated.voidedById,
+      voidReason: validated.voidReason,
+    });
+
+    // Get asset tag for revalidation if asset is associated
+    if (movement.assetId) {
+      const assetRepo = container.get<IAssetRepository>(
+        DI_TOKENS.IAssetRepository,
+      );
+      const asset = await assetRepo.findById(movement.assetId);
+      if (asset) {
+        revalidatePath(`/assets/${asset.assetTag}`);
+      }
+    }
+
+    revalidatePath("/stock-movements");
+
+    // Enrich the single movement
+    const enrichmentMap = await enrichStockMovements([movement]);
+
+    return {
+      success: true,
+      data: presentStockMovement(movement, enrichmentMap.get(movement.id)),
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "voidStockMovementAction", id: data.id },
+      "Failed to void stock movement",
     );
   }
 }

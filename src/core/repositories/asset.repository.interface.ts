@@ -13,10 +13,31 @@ export interface AssetSearchOptions {
   currentStockLocationId?: string;
   contractId?: string;
   searchTerm?: string; // Search in assetTag, serialNumber, note
-  warrantyStatus?: "active" | "expired" | "none"; // Filter by warranty status
   depreciationStatus?: "active" | "complete" | "none"; // Filter by depreciation status
+  sortBy?: "assetTag" | "createdAt" | "purchaseDate" | "purchaseCost";
+  sortOrder?: "asc" | "desc";
   limit?: number;
   offset?: number;
+}
+
+/**
+ * Generic paginated result wrapper
+ */
+export interface PaginatedResult<T> {
+  items: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+/**
+ * Asset statistics for summary cards
+ */
+export interface AssetStatistics {
+  total: number;
+  assigned: number;
+  available: number;
 }
 
 export interface IAssetRepository {
@@ -86,11 +107,6 @@ export interface IAssetRepository {
   findByContract(contractId: string): Promise<Asset[]>;
 
   /**
-   * Find all assets with active warranty
-   */
-  findWithActiveWarranty(): Promise<Asset[]>;
-
-  /**
    * Find all assets being depreciated
    */
   findDepreciating(): Promise<Asset[]>;
@@ -152,4 +168,34 @@ export interface IAssetRepository {
    * Check if asset has stock movements
    */
   hasStockMovements(id: string): Promise<boolean>;
+
+  /**
+   * Search assets with pagination - returns items and metadata
+   */
+  searchPaginated(options: AssetSearchOptions): Promise<PaginatedResult<Asset>>;
+
+  /**
+   * Get asset statistics for summary cards
+   */
+  getStatistics(
+    filters?: Omit<
+      AssetSearchOptions,
+      "limit" | "offset" | "sortBy" | "sortOrder"
+    >,
+  ): Promise<AssetStatistics>;
+
+  /**
+   * Delete multiple assets by IDs
+   * Returns count of deleted assets
+   */
+  deleteMany(ids: string[]): Promise<number>;
+
+  /**
+   * Update lifecycle state for multiple assets
+   * Returns count of updated assets
+   */
+  updateLifecycleStateMany(
+    ids: string[],
+    lifecycleStateId: string,
+  ): Promise<number>;
 }

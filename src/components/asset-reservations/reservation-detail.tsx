@@ -22,6 +22,7 @@ import {
   completeReservationAction,
 } from "@/interface-adapters/controllers/asset-reservation.controller";
 import { Play, CheckCircle2, X } from "lucide-react";
+import { formatDate } from "@/lib/utils/date-format";
 
 interface ReservationDetailProps {
   reservation: AssetReservationDTO;
@@ -145,13 +146,13 @@ export function ReservationDetail({
               <div className="grid grid-cols-3 gap-2">
                 <span className="text-muted-foreground">Start Date:</span>
                 <span className="col-span-2">
-                  {new Date(reservation.startDate).toLocaleDateString()}
+                  {formatDate(reservation.startDate)}
                 </span>
               </div>
               <div className="grid grid-cols-3 gap-2">
                 <span className="text-muted-foreground">End Date:</span>
                 <span className="col-span-2">
-                  {new Date(reservation.endDate).toLocaleDateString()}
+                  {formatDate(reservation.endDate)}
                 </span>
               </div>
               {reservation.purpose && (

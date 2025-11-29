@@ -140,7 +140,7 @@ model Person {
 
 ```bash
 # Add azureAdId and office fields first (nullable, no constraints)
-npx dotenv -e .env.local -- prisma db push
+npx prisma migrate dev --name add_azure_ad_fields
 ```
 
 Add to `schema/foundation.prisma`:
@@ -228,14 +228,14 @@ model Person {
 ```bash
 # 1. Add azureAdId and office fields (keep email @unique temporarily)
 # Edit schema/foundation.prisma, then:
-npm run db:push
+npx prisma migrate dev --name add_azure_ad_fields
 npm run db:generate
 
 # 2. Run backfill script to populate azureAdId for existing persons
 npx dotenv -e .env.local -- npx tsx scripts/backfill-azure-ad-ids.ts
 
 # 3. Remove @unique from email in schema/foundation.prisma, then:
-npm run db:push
+npx prisma migrate dev --name remove_email_unique_constraint
 npm run db:generate
 
 # 4. Verify migration
@@ -1488,7 +1488,7 @@ npm install @azure/identity @microsoft/microsoft-graph-client
 
 # 2. Update schema and migrate
 # Edit schema/foundation.prisma to add azureAdId and office fields
-npm run db:push
+npm run db:migrate
 npm run db:generate
 
 # 3. Set environment variables in .env.local

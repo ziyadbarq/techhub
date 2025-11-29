@@ -13,6 +13,8 @@ import { CreateAssetUseCase } from "../create-asset.use-case";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
 import type { ISarConversionService } from "@/core/services/sar-conversion.service.interface";
+import type { IAssetMovementService } from "@/core/services/asset-movement.service.interface";
+import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { Asset } from "@/core/domain/entities/asset.entity";
 
 /**
@@ -88,20 +90,52 @@ class MockSarConversionService implements Partial<ISarConversionService> {
   }
 }
 
+/**
+ * Mock Asset Movement Service
+ */
+class MockAssetMovementService implements Partial<IAssetMovementService> {
+  async recordAssetReceived() {
+    return {} as unknown as ReturnType<
+      IAssetMovementService["recordAssetReceived"]
+    > extends Promise<infer T>
+      ? T
+      : never;
+  }
+}
+
+/**
+ * Mock Logger Service
+ */
+class MockLoggerService implements Partial<ILoggerService> {
+  debug() {}
+  info() {}
+  warn() {}
+  error() {}
+  child() {
+    return this as unknown as ILoggerService;
+  }
+}
+
 describe("CreateAssetUseCase", () => {
   let useCase: CreateAssetUseCase;
   let mockRepository: MockAssetRepository;
   let mockCodeGenerator: MockCodeGeneratorService;
   let mockSarConversionService: MockSarConversionService;
+  let mockAssetMovementService: MockAssetMovementService;
+  let mockLoggerService: MockLoggerService;
 
   beforeEach(() => {
     mockRepository = new MockAssetRepository();
     mockCodeGenerator = new MockCodeGeneratorService();
     mockSarConversionService = new MockSarConversionService();
+    mockAssetMovementService = new MockAssetMovementService();
+    mockLoggerService = new MockLoggerService();
     useCase = new CreateAssetUseCase(
       mockRepository as unknown as IAssetRepository,
       mockCodeGenerator as unknown as ICodeGeneratorService,
       mockSarConversionService as unknown as ISarConversionService,
+      mockAssetMovementService as unknown as IAssetMovementService,
+      mockLoggerService as unknown as ILoggerService,
     );
   });
 

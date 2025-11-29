@@ -56,6 +56,9 @@ export function Step2ImportSettings({
   onSettingsConfigured,
   onBack,
 }: Props) {
+  // Check if this is Universal Assets import (batch settings not applicable)
+  const isUniversalAssets = entity.key === "UNIVERSAL_ASSETS";
+
   const [duplicateStrategy, setDuplicateStrategy] =
     useState<DuplicateStrategy>("skip");
   const [autoTrimWhitespace, setAutoTrimWhitespace] = useState(true);
@@ -309,19 +312,26 @@ export function Step2ImportSettings({
       </Card>
 
       {/* Performance Settings */}
-      <Card>
+      <Card className={isUniversalAssets ? "opacity-60" : ""}>
         <CardHeader>
           <CardTitle className="text-base">Performance</CardTitle>
-          <CardDescription>Configure batch processing settings</CardDescription>
+          <CardDescription>
+            {isUniversalAssets
+              ? "Batch settings not applicable for Universal Assets import (processes rows sequentially for dependency resolution)"
+              : "Configure batch processing settings"}
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label>Batch size (rows per batch)</Label>
+            <Label className={isUniversalAssets ? "text-muted-foreground" : ""}>
+              Batch size (rows per batch)
+            </Label>
             <Input
               type="number"
               min={1}
               max={entity.maxBatchSize}
               value={batchSize}
+              disabled={isUniversalAssets}
               onChange={(e) =>
                 setBatchSize(() => {
                   const next = parseInt(e.target.value, 10);
@@ -331,17 +341,22 @@ export function Step2ImportSettings({
               }
             />
             <p className="text-muted-foreground text-sm">
-              Max: {entity.maxBatchSize} rows. Larger = faster but more memory.
+              {isUniversalAssets
+                ? "Not applicable - rows processed sequentially"
+                : `Max: ${entity.maxBatchSize} rows. Larger = faster but more memory.`}
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label>Max parallel batches</Label>
+            <Label className={isUniversalAssets ? "text-muted-foreground" : ""}>
+              Max parallel batches
+            </Label>
             <Select
               value={String(maxParallelBatches)}
               onValueChange={(v) => setMaxParallelBatches(parseInt(v))}
+              disabled={isUniversalAssets}
             >
-              <SelectTrigger>
+              <SelectTrigger disabled={isUniversalAssets}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -352,7 +367,9 @@ export function Step2ImportSettings({
               </SelectContent>
             </Select>
             <p className="text-muted-foreground text-sm">
-              Higher = faster but may overwhelm database
+              {isUniversalAssets
+                ? "Not applicable - rows processed sequentially"
+                : "Higher = faster but may overwhelm database"}
             </p>
           </div>
         </CardContent>

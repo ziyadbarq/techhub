@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { formatDate } from "@/lib/utils/date-format";
 import type { AssetKitCheckoutDTO } from "@/interface-adapters/dtos/generated/asset-kit-checkout.dto";
 
 interface CheckoutDetailProps {
@@ -64,7 +65,7 @@ export function CheckoutDetail({ checkout, onClose }: CheckoutDetailProps) {
               <div className="grid grid-cols-3 gap-2">
                 <span className="text-muted-foreground">Checkout Date:</span>
                 <span className="col-span-2">
-                  {new Date(checkout.checkoutDate).toLocaleDateString()}
+                  {formatDate(checkout.checkoutDate)}
                 </span>
               </div>
               {checkout.expectedReturnDate && (
@@ -73,7 +74,7 @@ export function CheckoutDetail({ checkout, onClose }: CheckoutDetailProps) {
                     Expected Return:
                   </span>
                   <span className="col-span-2">
-                    {new Date(checkout.expectedReturnDate).toLocaleDateString()}
+                    {formatDate(checkout.expectedReturnDate)}
                   </span>
                 </div>
               )}
@@ -81,7 +82,7 @@ export function CheckoutDetail({ checkout, onClose }: CheckoutDetailProps) {
                 <div className="grid grid-cols-3 gap-2">
                   <span className="text-muted-foreground">Actual Return:</span>
                   <span className="col-span-2">
-                    {new Date(checkout.actualReturnDate).toLocaleDateString()}
+                    {formatDate(checkout.actualReturnDate)}
                   </span>
                 </div>
               )}

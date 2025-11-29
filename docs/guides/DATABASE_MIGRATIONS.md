@@ -14,28 +14,24 @@ Complete guide to managing database schema changes with Prisma migrations in dev
 
 ## Overview
 
-This project uses **Prisma 7** with PostgreSQL for database management. Prisma provides two approaches for managing schema changes:
+This project uses **Prisma 7** with PostgreSQL for database management.
 
-| Approach             | Use Case                       | Creates SQL Files | Tracks History |
-| -------------------- | ------------------------------ | ----------------- | -------------- |
-| `prisma db push`     | Development, rapid prototyping | ❌ No             | ❌ No          |
-| `prisma migrate dev` | Production-ready changes       | ✅ Yes            | ✅ Yes         |
+**IMPORTANT**: Always use migrations (`prisma migrate dev`) for schema changes. Never use `prisma db push`.
 
-### Key Differences
+| Command              | Environment | Creates Migration | Use Case                    |
+| -------------------- | ----------- | ----------------- | --------------------------- |
+| `prisma migrate dev` | Development | ✅ Yes            | All schema changes          |
+| `prisma migrate deploy` | Production | ❌ No (applies existing) | Deploy pending migrations |
 
-**`prisma db push`**:
+### Why Migrations Only?
 
-- Directly syncs schema with database
-- Fast for rapid iteration and experimentation
-- No migration history or rollback capability
-- Used by default in `npm run setup`
-
-**`prisma migrate dev`**:
-
-- Creates timestamped SQL migration files
+- Creates timestamped SQL migration files for version control
 - Maintains migration history in `_prisma_migrations` table
 - Enables code review of database changes
-- Required for production deployments
+- Uses shadow database to validate migrations
+- Consistent workflow between development and production
+
+**See**: [PRISMA_GUIDE.md - Database Migrations](PRISMA_GUIDE.md#database-migrations) for critical migration rules.
 
 ## Prisma Configuration
 
@@ -77,42 +73,39 @@ import { prisma, pool } from "@/infrastructure/database/prisma/client";
 ### Quick Start (Fresh Setup)
 
 ```bash
-# One-command setup (uses db:push)
+# One-command setup
 npm run setup
 ```
 
-This runs: `npm install` → `db:push` → `db:seed`
+This runs: `npm install` → `db:migrate` → `db:seed`
 
-### Recommended Hybrid Approach
+### Standard Workflow
 
-Use `db:push` for rapid iteration, `migrate dev` when features are stable:
+Always use migrations for schema changes:
 
 ```bash
-# 1. During active development - fast iteration
-npm run db:push
-
-# 2. Edit schema as needed (multi-file in schema/ folder)
+# 1. Edit schema as needed (multi-file in schema/ folder)
 # src/infrastructure/database/prisma/schema/*.prisma
 
-# 3. Apply changes quickly
-npm run db:push
-
-# 4. When feature is complete - create migration
+# 2. Create and apply migration
 npm run db:migrate
 # Or with descriptive name:
 npx prisma migrate dev --name add_user_roles
+
+# 3. Regenerate Prisma client
+npm run db:generate
 ```
 
 ### Daily Development Workflow
 
 ```bash
-# Fast iteration cycle
-npm run db:push           # Push schema changes
-npm run db:seed           # Refresh seed data
+# After schema changes
+npx prisma migrate dev --name descriptive_name
+npm run db:generate
+npm run db:seed           # Refresh seed data if needed
 npm run dev               # Start dev server
 
-# When feature is done
-npx prisma migrate dev --name feature_name
+# Commit migration to git
 git add src/infrastructure/database/prisma/schema/migrations/
 git commit -m "Add migration: feature_name"
 ```
@@ -120,19 +113,17 @@ git commit -m "Add migration: feature_name"
 ### Resetting Development Database
 
 ```bash
-# Option 1: Fast reset (uses db:push)
-npm run reset
+# Reset with migrations (replays all migrations)
+npm run db:reset
 
-# Option 2: Reset with migrations (replays all migrations)
+# Or manually
 npx prisma migrate reset
 
-# Option 3: Clear everything including caches
+# Clear everything including caches
 npm run cache:clear:all
 ```
 
 ### Creating Your First Migration
-
-If you've been using `db:push` and want to create a baseline migration:
 
 ```bash
 # Create initial migration from current schema
@@ -306,19 +297,17 @@ jobs:
 # Generate Prisma Client (auto-runs after schema changes)
 npm run db:generate
 
-# Push schema directly (no migration files)
-npm run db:push
-npx prisma db push
-
 # Create migration from schema changes
 npm run db:migrate
 npx prisma migrate dev
 npx prisma migrate dev --name descriptive_name
 
 # Reset database and replay all migrations
+npm run db:reset
 npx prisma migrate reset
 
 # Check migration status
+npm run db:migrate:status
 npx prisma migrate status
 
 # Seed database
@@ -360,16 +349,17 @@ npm run cache:clear:all
 
 ✅ **DO**:
 
-- Use `db:push` for rapid prototyping and experimentation
-- Create migrations when features are complete and tested
+- Always use `prisma migrate dev` for schema changes
 - Name migrations descriptively: `add_user_roles`, `create_tasks_table`
 - Review generated SQL in migration files before committing
 - Commit migrations to git with descriptive commit messages
 - Run `prisma migrate status` before creating new migrations
+- Regenerate Prisma client after migrations: `npm run db:generate`
 
 ❌ **DON'T**:
 
-- Use `db:push` in production - always use `migrate deploy`
+- Use `db:push` - always use migrations
+- Create migration files manually (let Prisma generate them)
 - Edit migration files after they're applied
 - Delete or rename applied migrations
 - Skip migration testing on staging
@@ -389,7 +379,8 @@ npm run cache:clear:all
 
 ❌ **DON'T**:
 
-- Use `migrate dev` or `db:push` in production
+- Use `migrate dev` in production (interactive, may reset data)
+- Use `db:push` anywhere (bypasses migrations)
 - Apply untested migrations directly to production
 - Skip backups before migrations
 - Make destructive changes without rollback plan
@@ -545,20 +536,11 @@ npm run db:generate
         │        │
         ▼        ▼
    Development  Production
-        │        │
-        ▼        │
-   ┌──────────┐ │
-   │Prototyping│ │
-   │    or     │ │
-   │  Stable?  │ │
-   └─┬──────┬─┘ │
-     │      │   │
-     ▼      ▼   ▼
-  Prototype  Stable  Production
-     │        │       │
-     ▼        ▼       ▼
-  db:push  migrate  migrate
-            dev     deploy
+        │            │
+        ▼            ▼
+   migrate dev   migrate deploy
+   (creates +    (applies pending
+    applies)      migrations)
 ```
 
 ## Additional Resources

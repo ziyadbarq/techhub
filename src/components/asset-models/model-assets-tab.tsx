@@ -8,7 +8,7 @@
 import Link from "next/link";
 import { format } from "date-fns";
 import { type ColumnDef } from "@tanstack/react-table";
-import { CheckCircle2, XCircle, ExternalLink, Package } from "lucide-react";
+import { ExternalLink, Package } from "lucide-react";
 
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
@@ -111,33 +111,6 @@ export function ModelAssetsTab({ assets, modelId }: ModelAssetsTabProps) {
             )}
           </span>
         );
-      },
-    },
-    {
-      accessorKey: "isUnderWarranty",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Warranty" />
-      ),
-      cell: ({ row }) => {
-        const isUnderWarranty = row.original.isUnderWarranty;
-        const warrantyEndDate = row.original.warrantyEndDate;
-
-        if (warrantyEndDate) {
-          return (
-            <div className="flex items-center gap-2">
-              {isUnderWarranty ? (
-                <CheckCircle2 className="h-4 w-4 text-green-600" />
-              ) : (
-                <XCircle className="h-4 w-4 text-red-500" />
-              )}
-              <span className="text-muted-foreground text-xs">
-                {format(new Date(warrantyEndDate), "MMM d, yyyy")}
-              </span>
-            </div>
-          );
-        }
-
-        return <span className="text-muted-foreground text-sm">—</span>;
       },
     },
     {

@@ -200,6 +200,12 @@ export const DI_TOKENS = {
    */
   ISarConversionService: Symbol.for("ISarConversionService"),
 
+  /**
+   * Token for IAssetMovementService
+   * Provides centralized movement creation for asset lifecycle events
+   */
+  IAssetMovementService: Symbol.for("IAssetMovementService"),
+
   // ==========================================
   // Use Case Tokens (Example)
   // ==========================================
@@ -243,6 +249,7 @@ export const DI_TOKENS = {
   // User Provisioning Use Cases
   CreateUserForPersonUseCase: Symbol.for("CreateUserForPersonUseCase"),
   ResetUserPasswordUseCase: Symbol.for("ResetUserPasswordUseCase"),
+  LinkUserToPersonUseCase: Symbol.for("LinkUserToPersonUseCase"),
 
   // System Setup Use Cases
   CheckSystemHealthUseCase: Symbol.for("CheckSystemHealthUseCase"),
@@ -732,6 +739,10 @@ export const DI_TOKENS = {
   DeleteAssetWithConfirmationUseCase: Symbol.for(
     "DeleteAssetWithConfirmationUseCase",
   ),
+  ListAssetsPaginatedUseCase: Symbol.for("ListAssetsPaginatedUseCase"),
+  GetAssetStatisticsUseCase: Symbol.for("GetAssetStatisticsUseCase"),
+  BulkDeleteAssetsUseCase: Symbol.for("BulkDeleteAssetsUseCase"),
+  BulkUpdateAssetStatusUseCase: Symbol.for("BulkUpdateAssetStatusUseCase"),
 
   // Assets: Asset Assignment Repository
   IAssetAssignmentRepository: Symbol.for("IAssetAssignmentRepository"),
@@ -777,6 +788,7 @@ export const DI_TOKENS = {
   GetStockMovementUseCase: Symbol.for("GetStockMovementUseCase"),
   ListStockMovementsUseCase: Symbol.for("ListStockMovementsUseCase"),
   DeleteStockMovementUseCase: Symbol.for("DeleteStockMovementUseCase"),
+  VoidStockMovementUseCase: Symbol.for("VoidStockMovementUseCase"),
 
   // Maintenance: Schedule Repository
   IMaintenanceScheduleRepository: Symbol.for("IMaintenanceScheduleRepository"),

@@ -341,7 +341,7 @@ export class PrismaFieldDefinitionRepository
           SELECT COUNT(*) as count FROM assets
           WHERE attributes IS NOT NULL
           AND attributes ? ${fieldName}
-          AND deleted_at IS NULL
+          AND "deletedAt" IS NULL
         `,
           this.prisma.$queryRaw<[{ count: bigint }]>`
           SELECT COUNT(*) as count FROM configuration_items

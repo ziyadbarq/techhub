@@ -17,6 +17,7 @@ import {
   type ColumnFiltersState,
 } from "@tanstack/react-table";
 import { Eye, Package, User } from "lucide-react";
+import { formatDate } from "@/lib/utils/date-format";
 import { Button } from "@/components/ui/button";
 import { EntityDisplay } from "@/components/ui/entity-display";
 import {
@@ -84,34 +85,30 @@ export function KitCheckoutsTable({
     {
       accessorKey: "checkoutDate",
       header: "Checkout Date",
-      cell: ({ row }) => {
-        const date = new Date(row.getValue<string>("checkoutDate"));
-        return <div className="text-sm">{date.toLocaleDateString()}</div>;
-      },
+      cell: ({ row }) => (
+        <div className="text-sm">
+          {formatDate(row.getValue<string>("checkoutDate"))}
+        </div>
+      ),
     },
     {
       accessorKey: "expectedReturnDate",
       header: "Expected Return",
-      cell: ({ row }) => {
-        const date = row.getValue<string | null>("expectedReturnDate");
-        return (
-          <div className="text-sm">
-            {date ? new Date(date).toLocaleDateString() : "N/A"}
-          </div>
-        );
-      },
+      cell: ({ row }) => (
+        <div className="text-sm">
+          {formatDate(row.getValue<string | null>("expectedReturnDate")) ||
+            "N/A"}
+        </div>
+      ),
     },
     {
       accessorKey: "actualReturnDate",
       header: "Actual Return",
-      cell: ({ row }) => {
-        const date = row.getValue<string | null>("actualReturnDate");
-        return (
-          <div className="text-sm">
-            {date ? new Date(date).toLocaleDateString() : "-"}
-          </div>
-        );
-      },
+      cell: ({ row }) => (
+        <div className="text-sm">
+          {formatDate(row.getValue<string | null>("actualReturnDate")) || "-"}
+        </div>
+      ),
     },
     {
       id: "actions",

@@ -11,7 +11,7 @@
  * - Batch processing status
  */
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import type {
   EntityConfig,
   ImportSettings,
@@ -39,6 +39,10 @@ import {
   Activity,
   AlertCircle,
   Loader2,
+  Plus,
+  RefreshCw,
+  Info,
+  AlertTriangle,
 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
@@ -57,6 +61,9 @@ export function Step6ImportProgress({
   lookupMaps,
   onImportComplete,
 }: Props) {
+  // Guard against React Strict Mode double-execution
+  const importStartedRef = useRef(false);
+
   const [progress, setProgress] = useState<ImportProgress>({
     status: "importing",
     totalRows: validRows.length,
@@ -74,6 +81,11 @@ export function Step6ImportProgress({
     errors: [],
   });
 
+  // Separate state for skipped rows (not in ImportProgress type)
+  const [skippedRows, setSkippedRows] = useState<
+    Array<{ rowNumber: number; reason: string }>
+  >([]);
+
   /**
    * Update progress
    */
@@ -90,6 +102,12 @@ export function Step6ImportProgress({
    * Run import
    */
   useEffect(() => {
+    // Prevent double-execution in React Strict Mode
+    if (importStartedRef.current) {
+      return;
+    }
+    importStartedRef.current = true;
+
     const runImport = async () => {
       try {
         let result: ImportResult;
@@ -103,19 +121,120 @@ export function Step6ImportProgress({
             rows,
             columnHeaders,
             {
+              // Universal-specific settings (hardcoded defaults)
               autoCreateMissingEntities: true,
               skipRowOnAutoCreateFailure: true,
               handleAssignmentChanges: true,
               closeOldAssignmentsOnReassign: true,
+              requirePersonForImport: false, // Allow assets without assignment
+              // Standard import settings from Step 2
+              duplicateStrategy: settings.duplicateStrategy,
+              autoTrimWhitespace: settings.autoTrimWhitespace,
+              normalizeText: settings.normalizeText,
+              skipEmptyRows: settings.skipEmptyRows,
+              autoFixCommonErrors: settings.autoFixCommonErrors,
+              dryRun: settings.dryRun,
+              stopOnFirstError: settings.stopOnFirstError,
+              maxErrorsBeforeAbort: settings.maxErrorsBeforeAbort,
             },
           );
 
+          if (!response) {
+            throw new Error("No response received from server");
+          }
+
+          // Handle case where import completed but all rows were skipped/failed
+          if (!response.success && response.data) {
+            const data = response.data;
+
+            // Store skipped rows for display
+            setSkippedRows(
+              data.skipped.map((s) => ({
+                rowNumber: s.rowNumber,
+                reason: s.reason,
+              })),
+            );
+
+            // Determine status: "completed" for skips only, "failed" for actual errors
+            const hasOnlySkips = data.failureCount === 0 && data.skipCount > 0;
+
+            // Update progress with the actual counts
+            updateProgress({
+              status: hasOnlySkips ? "completed" : "failed",
+              processedRows: data.totalRows,
+              successCount: data.successCount,
+              skipCount: data.skipCount,
+              failureCount: data.failureCount,
+              createCount: data.assetsCreated,
+              updateCount: data.assetsUpdated,
+              errors: data.errors.map((e) => ({
+                rowNumber: e.rowNumber,
+                message: e.error,
+              })),
+              recentActivity: data.skipped.slice(0, 5).map((s) => ({
+                timestamp: new Date(),
+                type: "skip" as const,
+                message: s.reason,
+                rowNumber: s.rowNumber,
+              })),
+            });
+
+            // For all-skipped (no actual failures), proceed to results page
+            // This shows the user what happened without treating it as an error
+            if (hasOnlySkips) {
+              const result: ImportResult = {
+                success: false,
+                totalRows: data.totalRows,
+                successCount: data.successCount,
+                skipCount: data.skipCount,
+                failureCount: data.failureCount,
+                createCount: data.assetsCreated,
+                updateCount: data.assetsUpdated,
+                duration: data.duration,
+                throughput: data.throughput,
+                createdRecords: [],
+                updatedRecords: [],
+                skippedRows: data.skipped.map((s) => ({
+                  rowNumber: s.rowNumber,
+                  message: s.reason,
+                })),
+                failedRows: [],
+              };
+
+              // Proceed to results after brief delay
+              setTimeout(() => {
+                onImportComplete(result);
+              }, 2000);
+              return;
+            }
+
+            // For actual failures, throw error
+            const errorDetails =
+              data.errors
+                ?.slice(0, 3)
+                .map((e) => e.error)
+                .join("; ") || "";
+            throw new Error(
+              `Import failed: ${data.failureCount} row(s) had errors${errorDetails ? `: ${errorDetails}` : "."}`,
+            );
+          }
+
           if (!response.success || !response.data) {
-            throw new Error(response.error || "Universal Assets Import failed");
+            // Log full response for debugging
+            console.error("Universal Assets Import failed:", {
+              success: response.success,
+              error: response.error,
+              hasData: !!response.data,
+            });
+            throw new Error(
+              response.error ||
+                "Universal Assets Import failed - check server logs",
+            );
           }
 
           // Convert UniversalImportResult to ImportResult
           const universalResult = response.data;
+
           result = {
             success: universalResult.success,
             totalRows: universalResult.totalRows,
@@ -126,8 +245,18 @@ export function Step6ImportProgress({
             updateCount: universalResult.assetsUpdated,
             duration: universalResult.duration,
             throughput: universalResult.throughput,
-            createdRecords: [],
-            updatedRecords: [],
+            createdRecords: universalResult.createdAssets.map((asset) => ({
+              id: asset.id,
+              assetTag: asset.assetTag,
+              serialNumber: asset.serialNumber,
+              rowNumber: asset.rowNumber,
+            })),
+            updatedRecords: universalResult.updatedAssets.map((asset) => ({
+              id: asset.id,
+              assetTag: asset.assetTag,
+              serialNumber: asset.serialNumber,
+              rowNumber: asset.rowNumber,
+            })),
             skippedRows: universalResult.skipped.map((s) => ({
               rowNumber: s.rowNumber,
               message: s.reason,
@@ -172,6 +301,18 @@ export function Step6ImportProgress({
                     },
                   ]
                 : []),
+              // Show duplicate warnings if any
+              ...(universalResult.warnings?.filter(
+                (w) => w.type === "duplicate_serial_number",
+              ).length
+                ? [
+                    {
+                      timestamp: new Date(),
+                      type: "skip" as const,
+                      message: `Warning: ${universalResult.warnings.filter((w) => w.type === "duplicate_serial_number").length} duplicate serial number(s) in file`,
+                    },
+                  ]
+                : []),
             ],
           });
         } else {
@@ -192,6 +333,8 @@ export function Step6ImportProgress({
           onImportComplete(result);
         }, 1500);
       } catch (error) {
+        console.error("Import failed:", error);
+
         updateProgress({
           status: "failed",
           errors: [
@@ -219,6 +362,11 @@ export function Step6ImportProgress({
    * Update elapsed time
    */
   useEffect(() => {
+    // Only run timer while importing
+    if (progress.status !== "importing") {
+      return;
+    }
+
     const interval = setInterval(() => {
       setProgress((prev) => ({
         ...prev,
@@ -229,7 +377,7 @@ export function Step6ImportProgress({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [progress.status]);
 
   /**
    * Progress percentage
@@ -249,20 +397,64 @@ export function Step6ImportProgress({
   };
 
   /**
-   * Get status color
+   * Get comprehensive status info based on outcome
    */
-  const getStatusColor = (status: ImportProgress["status"]) => {
-    switch (status) {
-      case "importing":
-        return "text-blue-600";
-      case "completed":
-        return "text-green-600";
-      case "failed":
-        return "text-red-600";
-      default:
-        return "text-muted-foreground";
+  const getStatusInfo = () => {
+    if (progress.status === "importing") {
+      return {
+        label: "Importing...",
+        color: "text-blue-600",
+        icon: <Loader2 className="h-5 w-5 animate-spin" />,
+      };
     }
+
+    const { successCount, skipCount, failureCount, totalRows } = progress;
+
+    // Full success: all rows imported
+    if (successCount === totalRows && totalRows > 0) {
+      return {
+        label: "Import Complete!",
+        color: "text-green-600",
+        icon: <CheckCircle2 className="h-5 w-5 text-green-600" />,
+      };
+    }
+
+    // Partial success: some rows imported, some skipped/failed
+    if (successCount > 0 && (skipCount > 0 || failureCount > 0)) {
+      return {
+        label: "Import Complete with Issues",
+        color: "text-yellow-600",
+        icon: <AlertTriangle className="h-5 w-5 text-yellow-600" />,
+      };
+    }
+
+    // All skipped: no imports, but validation issues (not errors)
+    if (skipCount > 0 && failureCount === 0 && successCount === 0) {
+      return {
+        label: "No Assets Imported",
+        color: "text-yellow-600",
+        icon: <Info className="h-5 w-5 text-yellow-600" />,
+      };
+    }
+
+    // All failed: actual errors
+    if (failureCount > 0) {
+      return {
+        label: "Import Failed",
+        color: "text-red-600",
+        icon: <XCircle className="h-5 w-5 text-red-600" />,
+      };
+    }
+
+    // System error or unknown state
+    return {
+      label: "Import Error",
+      color: "text-red-600",
+      icon: <XCircle className="h-5 w-5 text-red-600" />,
+    };
   };
+
+  const statusInfo = getStatusInfo();
 
   /**
    * Get activity icon
@@ -286,18 +478,13 @@ export function Step6ImportProgress({
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2 text-base">
-                <Loader2
-                  className={`h-5 w-5 ${progress.status === "importing" ? "animate-spin" : ""}`}
-                />
-                <span className={getStatusColor(progress.status)}>
-                  {progress.status === "importing" && "Importing..."}
-                  {progress.status === "completed" && "Import Complete!"}
-                  {progress.status === "failed" && "Import Failed"}
-                </span>
+                {statusInfo.icon}
+                <span className={statusInfo.color}>{statusInfo.label}</span>
               </CardTitle>
               <CardDescription>
-                Processing batch {progress.currentBatch} of{" "}
-                {progress.totalBatches}
+                {progress.status === "importing"
+                  ? `Processing batch ${progress.currentBatch} of ${progress.totalBatches}`
+                  : `Processed ${progress.processedRows} row(s)`}
               </CardDescription>
             </div>
             <div className="text-right">
@@ -327,44 +514,70 @@ export function Step6ImportProgress({
       </Card>
 
       {/* Counters */}
-      <div className="grid grid-cols-3 gap-4">
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <CheckCircle2 className="h-8 w-8 text-green-600" />
-              <div>
-                <div className="text-2xl font-bold">
-                  {progress.successCount}
-                </div>
-                <div className="text-muted-foreground text-sm">Created</div>
-              </div>
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <Card className="border-green-200 dark:border-green-800">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-muted-foreground flex items-center gap-2 text-sm font-medium">
+              <Plus className="h-4 w-4 text-green-600" />
+              Created
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">
+              {progress.createCount}
             </div>
+            <p className="text-muted-foreground mt-1 text-xs">New records</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <AlertCircle className="h-8 w-8 text-yellow-600" />
-              <div>
-                <div className="text-2xl font-bold">{progress.skipCount}</div>
-                <div className="text-muted-foreground text-sm">Skipped</div>
-              </div>
+        <Card className="border-blue-200 dark:border-blue-800">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-muted-foreground flex items-center gap-2 text-sm font-medium">
+              <RefreshCw className="h-4 w-4 text-blue-600" />
+              Updated
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">
+              {progress.updateCount}
             </div>
+            <p className="text-muted-foreground mt-1 text-xs">
+              Existing records modified
+            </p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <XCircle className="h-8 w-8 text-red-600" />
-              <div>
-                <div className="text-2xl font-bold">
-                  {progress.failureCount}
-                </div>
-                <div className="text-muted-foreground text-sm">Failed</div>
-              </div>
+        <Card className="border-yellow-200 dark:border-yellow-800">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-muted-foreground flex items-center gap-2 text-sm font-medium">
+              <AlertCircle className="h-4 w-4 text-yellow-600" />
+              Skipped
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-yellow-600">
+              {progress.skipCount}
             </div>
+            <p className="text-muted-foreground mt-1 text-xs">
+              Duplicates or filtered
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-red-200 dark:border-red-800">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-muted-foreground flex items-center gap-2 text-sm font-medium">
+              <XCircle className="h-4 w-4 text-red-600" />
+              Failed
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-red-600">
+              {progress.failureCount}
+            </div>
+            <p className="text-muted-foreground mt-1 text-xs">
+              Validation or import errors
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -413,13 +626,59 @@ export function Step6ImportProgress({
         </CardContent>
       </Card>
 
-      {/* Errors */}
-      {progress.errors.length > 0 && (
-        <Card>
+      {/* Skipped Rows */}
+      {skippedRows.length > 0 && (
+        <Card className="border-yellow-200 dark:border-yellow-800">
           <CardHeader>
-            <CardTitle className="text-base text-red-600">
+            <CardTitle className="flex items-center gap-2 text-base text-yellow-600">
+              <AlertCircle className="h-4 w-4" />
+              Skipped Rows ({skippedRows.length})
+            </CardTitle>
+            <CardDescription>
+              These rows were not imported due to validation issues
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="h-48">
+              <div className="space-y-2">
+                {skippedRows.slice(0, 10).map((skip, i) => (
+                  <div
+                    key={i}
+                    className="flex items-start gap-2 rounded-lg bg-yellow-50 p-2 dark:bg-yellow-950"
+                  >
+                    <AlertCircle className="mt-0.5 h-4 w-4 text-yellow-600" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">
+                        Row {skip.rowNumber}
+                      </p>
+                      <p className="text-muted-foreground text-sm">
+                        {skip.reason}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+                {skippedRows.length > 10 && (
+                  <p className="text-muted-foreground pt-2 text-center text-sm">
+                    ...and {skippedRows.length - 10} more skipped rows
+                  </p>
+                )}
+              </div>
+            </ScrollArea>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Errors - only show for actual failures, not skips */}
+      {progress.failureCount > 0 && progress.errors.length > 0 && (
+        <Card className="border-red-200 dark:border-red-800">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base text-red-600">
+              <XCircle className="h-4 w-4" />
               Errors ({progress.errors.length})
             </CardTitle>
+            <CardDescription>
+              These rows failed to import due to errors
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <ScrollArea className="h-48">

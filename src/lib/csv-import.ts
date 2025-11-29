@@ -15,7 +15,6 @@ export interface CSVImportRow {
   purchaseDate?: string;
   purchaseCost?: string;
   currency?: string;
-  warrantyEndDate?: string;
   stockLocationCode?: string;
   lifecycleStateCode?: string;
   depreciationModel?: string;
@@ -115,10 +114,6 @@ function validateCSVRow(row: CSVImportRow, _rowNumber: number): string[] {
   // Validate dates if provided
   if (row.purchaseDate && !isValidDate(row.purchaseDate)) {
     errors.push("Purchase date must be in YYYY-MM-DD format");
-  }
-
-  if (row.warrantyEndDate && !isValidDate(row.warrantyEndDate)) {
-    errors.push("Warranty end date must be in YYYY-MM-DD format");
   }
 
   if (row.depreciationStart && !isValidDate(row.depreciationStart)) {
@@ -254,7 +249,6 @@ export function csvRowToDTO(
     purchaseDate: row.purchaseDate ? new Date(row.purchaseDate) : null,
     purchaseCost: row.purchaseCost ? parseFloat(row.purchaseCost) : null,
     currency: row.currency?.trim().toUpperCase() || null,
-    warrantyEndDate: row.warrantyEndDate ? new Date(row.warrantyEndDate) : null,
     currentStockLocationId: locationId,
     lifecycleStateId: stateId,
     depreciationModel: row.depreciationModel?.trim() || null,
@@ -283,7 +277,6 @@ export function exportFailedRowsToCSV(failedAssets: ParsedAsset[]): void {
     "purchaseDate",
     "purchaseCost",
     "currency",
-    "warrantyEndDate",
     "stockLocationCode",
     "lifecycleStateCode",
     "depreciationModel",
@@ -303,7 +296,6 @@ export function exportFailedRowsToCSV(failedAssets: ParsedAsset[]): void {
     asset.data.purchaseDate || "",
     asset.data.purchaseCost || "",
     asset.data.currency || "",
-    asset.data.warrantyEndDate || "",
     asset.data.stockLocationCode || "",
     asset.data.lifecycleStateCode || "",
     asset.data.depreciationModel || "",

@@ -96,7 +96,7 @@ const { prisma, container } = await setupTestDatabase();
 
 1. Starts PostgreSQL 16 Alpine container
 2. Exposes port 5432
-3. Runs Prisma migrations (`db:push`)
+3. Runs Prisma migrations (`migrate deploy`)
 4. Returns connected PrismaClient
 
 ### `teardownTestDatabase()`

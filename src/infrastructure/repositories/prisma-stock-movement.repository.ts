@@ -4,15 +4,20 @@
  */
 
 import { inject, injectable } from "inversify";
-import type { PrismaClient, $Enums } from "@/generated/prisma/server";
+import type { PrismaClient, $Enums, Prisma } from "@/generated/prisma/server";
 import type { StockMovement as PrismaStockMovement } from "@/generated/prisma";
 
 import { DI_TOKENS } from "@/di/types";
 import {
   StockMovement,
   type StockMovementType,
+  type StockMovementStatus,
+  type StockMovementSource,
 } from "@/core/domain/entities/stock-movement.entity";
-import type { IStockMovementRepository } from "@/core/repositories/stock-movement.repository.interface";
+import type {
+  IStockMovementRepository,
+  StockMovementFindAllOptions,
+} from "@/core/repositories/stock-movement.repository.interface";
 import { createRepositoryLogger } from "./repository-logger";
 
 @injectable()
@@ -39,15 +44,46 @@ export class PrismaStockMovementRepository implements IStockMovementRepository {
           reason: stockMovement.reason,
           performedById: stockMovement.performedById,
           occurredAt: stockMovement.occurredAt,
+          // New fields
+          status: stockMovement.status as $Enums.StockMovementStatusEnum,
+          source: stockMovement.source as $Enums.StockMovementSourceEnum,
+          sourceReferenceType: stockMovement.sourceReferenceType,
+          sourceReferenceId: stockMovement.sourceReferenceId,
         },
       });
 
       this.logger.timed("create", "Stock movement created", timer(), {
         id: created.id,
+        source: stockMovement.source,
       });
       return this.toDomain(created);
     } catch (error) {
       this.logger.error("create", "Failed to create stock movement", error);
+      throw error;
+    }
+  }
+
+  async update(stockMovement: StockMovement): Promise<StockMovement> {
+    const timer = this.logger.startTimer();
+
+    try {
+      const updated = await this.prisma.stockMovement.update({
+        where: { id: stockMovement.id },
+        data: {
+          status: stockMovement.status as $Enums.StockMovementStatusEnum,
+          voidedAt: stockMovement.voidedAt,
+          voidedById: stockMovement.voidedById,
+          voidReason: stockMovement.voidReason,
+        },
+      });
+
+      this.logger.timed("update", "Stock movement updated", timer(), {
+        id: updated.id,
+        status: stockMovement.status,
+      });
+      return this.toDomain(updated);
+    } catch (error) {
+      this.logger.error("update", "Failed to update stock movement", error);
       throw error;
     }
   }
@@ -60,9 +96,17 @@ export class PrismaStockMovementRepository implements IStockMovementRepository {
     return stockMovement ? this.toDomain(stockMovement) : null;
   }
 
-  async findByAsset(assetId: string): Promise<StockMovement[]> {
+  async findByAsset(
+    assetId: string,
+    includeVoided: boolean = false,
+  ): Promise<StockMovement[]> {
+    const where: Prisma.StockMovementWhereInput = { assetId };
+    if (!includeVoided) {
+      where.status = "ACTIVE";
+    }
+
     const stockMovements = await this.prisma.stockMovement.findMany({
-      where: { assetId },
+      where,
       orderBy: { occurredAt: "desc" },
     });
 
@@ -76,6 +120,7 @@ export class PrismaStockMovementRepository implements IStockMovementRepository {
           { stockLocationFromId: stockLocationId },
           { stockLocationToId: stockLocationId },
         ],
+        status: "ACTIVE",
       },
       orderBy: { occurredAt: "desc" },
     });
@@ -85,7 +130,7 @@ export class PrismaStockMovementRepository implements IStockMovementRepository {
 
   async findByPerformedBy(userId: string): Promise<StockMovement[]> {
     const stockMovements = await this.prisma.stockMovement.findMany({
-      where: { performedById: userId },
+      where: { performedById: userId, status: "ACTIVE" },
       orderBy: { occurredAt: "desc" },
     });
 
@@ -96,7 +141,10 @@ export class PrismaStockMovementRepository implements IStockMovementRepository {
     movementType: StockMovementType,
   ): Promise<StockMovement[]> {
     const stockMovements = await this.prisma.stockMovement.findMany({
-      where: { movementType: movementType as $Enums.StockMovementTypeEnum },
+      where: {
+        movementType: movementType as $Enums.StockMovementTypeEnum,
+        status: "ACTIVE",
+      },
       orderBy: { occurredAt: "desc" },
     });
 
@@ -113,6 +161,7 @@ export class PrismaStockMovementRepository implements IStockMovementRepository {
           gte: startDate,
           lte: endDate,
         },
+        status: "ACTIVE",
       },
       orderBy: { occurredAt: "desc" },
     });
@@ -120,13 +169,40 @@ export class PrismaStockMovementRepository implements IStockMovementRepository {
     return stockMovements.map((sm: PrismaStockMovement) => this.toDomain(sm));
   }
 
-  async findAll(options?: {
-    skip?: number;
-    take?: number;
-    orderBy?: "occurredAt" | "createdAt" | "movementType";
-    order?: "asc" | "desc";
-  }): Promise<StockMovement[]> {
+  async findAll(
+    options?: StockMovementFindAllOptions,
+  ): Promise<StockMovement[]> {
+    const where: Prisma.StockMovementWhereInput = {};
+
+    // Status filtering (default: only ACTIVE)
+    if (options?.status) {
+      where.status = options.status;
+    } else if (!options?.includeVoided) {
+      where.status = "ACTIVE";
+    }
+
+    // Additional filters
+    if (options?.source) {
+      where.source = options.source as $Enums.StockMovementSourceEnum;
+    }
+    if (options?.assetId) {
+      where.assetId = options.assetId;
+    }
+    if (options?.movementType) {
+      where.movementType = options.movementType as $Enums.StockMovementTypeEnum;
+    }
+    if (options?.startDate || options?.endDate) {
+      where.occurredAt = {};
+      if (options?.startDate) {
+        where.occurredAt.gte = options.startDate;
+      }
+      if (options?.endDate) {
+        where.occurredAt.lte = options.endDate;
+      }
+    }
+
     const stockMovements = await this.prisma.stockMovement.findMany({
+      where,
       skip: options?.skip,
       take: options?.take,
       orderBy: options?.orderBy
@@ -137,10 +213,15 @@ export class PrismaStockMovementRepository implements IStockMovementRepository {
     return stockMovements.map((sm: PrismaStockMovement) => this.toDomain(sm));
   }
 
-  async count(): Promise<number> {
-    return await this.prisma.stockMovement.count();
+  async count(includeVoided: boolean = false): Promise<number> {
+    return await this.prisma.stockMovement.count({
+      where: includeVoided ? undefined : { status: "ACTIVE" },
+    });
   }
 
+  /**
+   * @deprecated Use void() method on StockMovement entity and update() instead
+   */
   async delete(id: string): Promise<void> {
     const timer = this.logger.startTimer();
 
@@ -168,6 +249,15 @@ export class PrismaStockMovementRepository implements IStockMovementRepository {
       performedById: prismaStockMovement.performedById,
       occurredAt: prismaStockMovement.occurredAt,
       createdAt: prismaStockMovement.createdAt,
+      // Void/Cancel support
+      status: prismaStockMovement.status as StockMovementStatus,
+      voidedAt: prismaStockMovement.voidedAt,
+      voidedById: prismaStockMovement.voidedById,
+      voidReason: prismaStockMovement.voidReason,
+      // Source tracking
+      source: prismaStockMovement.source as StockMovementSource,
+      sourceReferenceType: prismaStockMovement.sourceReferenceType,
+      sourceReferenceId: prismaStockMovement.sourceReferenceId,
     });
   }
 }

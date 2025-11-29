@@ -4,7 +4,35 @@ The Entity Registry provides a centralized source of truth for entities that sup
 
 ## Overview
 
-The registry defines 20 business entities across 7 categories:
+The registry defines 20 business entities across 7 categories. **Only 3 entities currently have full custom fields implementation** with database schema and UI support.
+
+### Implementation Status
+
+| Status | Entity | Schema Support | UI Support |
+|--------|--------|----------------|------------|
+| **Full** | **Asset** | `AssetCategoryField` + `Asset.attributes` | Form + Detail page |
+| **Full** | **ConfigurationItem** | `CIClassField` + `ConfigurationItem.attributes` | Form + Detail page |
+| **Infra** | **LicenseProduct** | `LicenseProductField` + `LicenseProduct.attributes` | Backend ready, UI form pending |
+| **Future** | All other entities (17) | Registered for future use | Not implemented |
+
+**Legend:**
+- **Full**: Complete database schema, presenter, repository, controller, hooks, and UI components
+- **Infra**: Database schema and backend infrastructure ready, UI form not yet implemented
+- **Future**: Registered in entity registry but no custom fields infrastructure yet
+
+### Required Schema for Custom Fields Support
+
+To enable custom fields on an entity, you need:
+1. A `*Field` junction table (e.g., `AssetCategoryField`, `CIClassField`, `LicenseProductField`)
+2. An `attributes Json?` field on the entity to store custom field values
+3. Repository method `findBy*IdWithDefinition()` for enriched queries
+4. Enriched presenter types for UI rendering
+5. Controller action for listing enriched fields
+6. Client-side hook for fetching fields
+7. Form section component for input
+8. Display component for read-only view
+
+### Entity Categories
 
 | Category | Entities |
 |----------|----------|

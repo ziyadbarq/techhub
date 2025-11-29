@@ -1,6 +1,7 @@
 /**
  * CreateAsset Use Case
  * Business Logic: Create a new asset with validation
+ * Automatically creates stock movement when asset is placed in a stock location
  */
 
 import { injectable, inject } from "inversify";
@@ -12,6 +13,8 @@ import {
 } from "@/core/domain/entities/asset.entity";
 import type { ICodeGeneratorService } from "@/core/services/code-generator.service.interface";
 import type { ISarConversionService } from "@/core/services/sar-conversion.service.interface";
+import type { IAssetMovementService } from "@/core/services/asset-movement.service.interface";
+import type { ILoggerService } from "@/core/services/logger.service.interface";
 
 @injectable()
 export class CreateAssetUseCase {
@@ -22,6 +25,10 @@ export class CreateAssetUseCase {
     private readonly codeGenerator: ICodeGeneratorService,
     @inject(DI_TOKENS.ISarConversionService)
     private readonly sarConversionService: ISarConversionService,
+    @inject(DI_TOKENS.IAssetMovementService)
+    private readonly assetMovementService: IAssetMovementService,
+    @inject(DI_TOKENS.ILoggerService)
+    private readonly logger: ILoggerService,
   ) {}
 
   async execute(props: CreateAssetProps): Promise<Asset> {
@@ -61,6 +68,34 @@ export class CreateAssetUseCase {
     const asset = Asset.create({ ...props, assetTag, purchaseCostSar });
 
     // Persist to database
-    return await this.assetRepository.create(asset);
+    const createdAsset = await this.assetRepository.create(asset);
+
+    // Create automatic stock movement if asset is placed in a stock location
+    if (props.currentStockLocationId && props.performedById) {
+      try {
+        await this.assetMovementService.recordAssetReceived({
+          assetId: createdAsset.id,
+          stockLocationId: props.currentStockLocationId,
+          performedById: props.performedById,
+          reason: "Asset created in inventory",
+          source: "SYSTEM",
+          sourceReferenceType: "Asset",
+          sourceReferenceId: createdAsset.id,
+        });
+        this.logger.debug("Created automatic IN movement for new asset", {
+          assetId: createdAsset.id,
+          assetTag: createdAsset.assetTag,
+          stockLocationId: props.currentStockLocationId,
+        });
+      } catch (error) {
+        // Log but don't fail asset creation if movement creation fails
+        this.logger.warn("Failed to create automatic movement for new asset", {
+          assetId: createdAsset.id,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
+
+    return createdAsset;
   }
 }

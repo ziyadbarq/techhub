@@ -20,6 +20,7 @@ interface FeatureFlagDefinition {
   category: FeatureFlagCategory;
   isSystem: boolean;
   dependsOn: string[];
+  defaultEnabled?: boolean; // If true, enabled by default on first seed
 }
 
 /**
@@ -51,6 +52,7 @@ export const FEATURE_FLAGS: FeatureFlagDefinition[] = [
     category: "LAYER_1",
     isSystem: false,
     dependsOn: [],
+    defaultEnabled: true,
   },
   {
     name: "RBAC",
@@ -60,6 +62,7 @@ export const FEATURE_FLAGS: FeatureFlagDefinition[] = [
     category: "LAYER_1",
     isSystem: false,
     dependsOn: [],
+    defaultEnabled: true,
   },
   {
     name: "FX_RATES",
@@ -78,6 +81,7 @@ export const FEATURE_FLAGS: FeatureFlagDefinition[] = [
     category: "LAYER_1",
     isSystem: false,
     dependsOn: ["FOUNDATION"],
+    defaultEnabled: true,
   },
 
   // ============================================
@@ -91,6 +95,7 @@ export const FEATURE_FLAGS: FeatureFlagDefinition[] = [
     category: "LAYER_2",
     isSystem: false,
     dependsOn: ["FOUNDATION"],
+    defaultEnabled: true,
   },
   {
     name: "MAINTENANCE",
@@ -109,6 +114,7 @@ export const FEATURE_FLAGS: FeatureFlagDefinition[] = [
     category: "LAYER_2",
     isSystem: false,
     dependsOn: ["ASSETS"],
+    defaultEnabled: true,
   },
   {
     name: "WARRANTIES",
@@ -131,6 +137,7 @@ export const FEATURE_FLAGS: FeatureFlagDefinition[] = [
     category: "LAYER_3",
     isSystem: false,
     dependsOn: ["FOUNDATION"],
+    defaultEnabled: true,
   },
   {
     name: "CONTRACTS",
@@ -158,6 +165,7 @@ export const FEATURE_FLAGS: FeatureFlagDefinition[] = [
     category: "LAYER_3",
     isSystem: false,
     dependsOn: ["CMDB", "FOUNDATION"],
+    defaultEnabled: true,
   },
   {
     name: "GOVERNANCE",
@@ -212,6 +220,7 @@ export const FEATURE_FLAGS: FeatureFlagDefinition[] = [
     category: "LAYER_3",
     isSystem: false,
     dependsOn: ["FOUNDATION", "ASSETS"],
+    defaultEnabled: true,
   },
 ];
 
@@ -225,7 +234,8 @@ export async function seedFeatureFlags(prismaClient?: PrismaClient) {
   try {
     logStep("🚩", "Creating feature flags...");
 
-    // Upsert all feature flags (disabled by default)
+    // Upsert all feature flags
+    let enabledCount = 0;
     for (const flag of FEATURE_FLAGS) {
       await prisma.featureFlag.upsert({
         where: { name: flag.name },
@@ -242,15 +252,16 @@ export async function seedFeatureFlags(prismaClient?: PrismaClient) {
           displayName: flag.displayName,
           description: flag.description,
           category: flag.category,
-          isEnabled: false, // Default: DISABLED
+          isEnabled: flag.defaultEnabled ?? false,
           isSystem: flag.isSystem,
           dependsOn: flag.dependsOn,
         },
       });
+      if (flag.defaultEnabled) enabledCount++;
     }
 
     logSuccess(
-      `Created ${FEATURE_FLAGS.length} feature flags (default: disabled)`,
+      `Created ${FEATURE_FLAGS.length} feature flags (${enabledCount} enabled by default)`,
     );
 
     // Show summary by category

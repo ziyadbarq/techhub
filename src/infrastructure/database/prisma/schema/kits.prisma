@@ -15,20 +15,26 @@ model AssetKit {
   name        String
   code        String   @unique
   description String?  @db.Text
-  kitType     String   @map("kit_type") // NEW_HIRE, CONTRACTOR, EXECUTIVE, PROJECT, TEMPORARY, OTHER
-  isActive    Boolean  @default(true) @map("is_active")
+  kitType     String // NEW_HIRE, CONTRACTOR, EXECUTIVE, PROJECT, TEMPORARY, OTHER
+  isActive    Boolean  @default(true)
   metadata    Json?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Soft delete fields
+  deletedAt   DateTime?
+  deletedById String?
 
   // Relations
   items     AssetKitItem[]
   checkouts AssetKitCheckout[]
+  deletedBy Person?            @relation("AssetKitDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([code])
   @@index([kitType])
   @@index([isActive])
+  @@index([deletedAt])
   @@map("asset_kits")
 }
 
@@ -36,14 +42,14 @@ model AssetKit {
 // Items included in a kit template (category or specific model)
 model AssetKitItem {
   id              String   @id @default(cuid())
-  assetKitId      String   @map("asset_kit_id")
-  assetCategoryId String?  @map("asset_category_id")
-  assetModelId    String?  @map("asset_model_id")
+  assetKitId      String
+  assetCategoryId String?
+  assetModelId    String?
   quantity        Int      @default(1)
-  isRequired      Boolean  @default(true) @map("is_required")
+  isRequired      Boolean  @default(true)
   note            String?  @db.Text
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   // Relations
   assetKit      AssetKit               @relation(fields: [assetKitId], references: [id], onDelete: Cascade)
@@ -62,17 +68,17 @@ model AssetKitItem {
 // Actual kit checkout instance tracking
 model AssetKitCheckout {
   id                 String    @id @default(cuid())
-  assetKitId         String    @map("asset_kit_id")
-  assigneeType       String    @map("assignee_type") // PERSON, ORG_UNIT, LOCATION
-  assigneeId         String    @map("assignee_id")
-  checkoutDate       DateTime  @default(now()) @map("checkout_date")
-  expectedReturnDate DateTime? @map("expected_return_date")
-  actualReturnDate   DateTime? @map("actual_return_date")
-  status             String    @default("CHECKED_OUT") @map("status") // CHECKED_OUT, PARTIALLY_RETURNED, RETURNED, CANCELLED
-  checkedOutById     String    @map("checked_out_by_id")
+  assetKitId         String
+  assigneeType       String // PERSON, ORG_UNIT, LOCATION
+  assigneeId         String
+  checkoutDate       DateTime  @default(now())
+  expectedReturnDate DateTime?
+  actualReturnDate   DateTime?
+  status             String    @default("CHECKED_OUT") // CHECKED_OUT, PARTIALLY_RETURNED, RETURNED, CANCELLED
+  checkedOutById     String
   note               String?   @db.Text
-  createdAt          DateTime  @default(now()) @map("created_at")
-  updatedAt          DateTime  @updatedAt @map("updated_at")
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   // Relations
   assetKit     AssetKit               @relation(fields: [assetKitId], references: [id], onDelete: Restrict)
@@ -94,17 +100,17 @@ model AssetKitCheckout {
 // Individual assets tracked within a kit checkout
 model AssetKitCheckoutItem {
   id                  String    @id @default(cuid())
-  kitCheckoutId       String    @map("kit_checkout_id")
-  assetId             String    @map("asset_id")
-  kitItemId           String    @map("kit_item_id")
-  checkoutDate        DateTime  @default(now()) @map("checkout_date")
-  returnDate          DateTime? @map("return_date")
-  status              String    @default("CHECKED_OUT") @map("status") // CHECKED_OUT, RETURNED, DAMAGED, LOST
-  conditionAtCheckout String?   @map("condition_at_checkout") @db.Text
-  conditionAtReturn   String?   @map("condition_at_return") @db.Text
+  kitCheckoutId       String
+  assetId             String
+  kitItemId           String
+  checkoutDate        DateTime  @default(now())
+  returnDate          DateTime?
+  status              String    @default("CHECKED_OUT") // CHECKED_OUT, RETURNED, DAMAGED, LOST
+  conditionAtCheckout String?   @db.Text
+  conditionAtReturn   String?   @db.Text
   note                String?   @db.Text
-  createdAt           DateTime  @default(now()) @map("created_at")
-  updatedAt           DateTime  @updatedAt @map("updated_at")
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 
   // Relations
   kitCheckout AssetKitCheckout @relation(fields: [kitCheckoutId], references: [id], onDelete: Cascade)

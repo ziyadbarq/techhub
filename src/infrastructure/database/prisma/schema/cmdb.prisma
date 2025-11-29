@@ -22,6 +22,10 @@ model CIClass {
   createdAt          DateTime         @default(now())
   updatedAt          DateTime         @updatedAt
 
+  // Soft delete fields
+  deletedAt   DateTime?
+  deletedById String?
+
   // Relations
   parentClass                CIClass?                @relation("CIClassHierarchy", fields: [parentClassId], references: [id], onDelete: Restrict)
   childClasses               CIClass[]               @relation("CIClassHierarchy")
@@ -31,11 +35,13 @@ model CIClass {
   relationshipTypeScopesFrom RelationshipTypeScope[] @relation("RelationshipTypeScopeFrom")
   relationshipTypeScopesTo   RelationshipTypeScope[] @relation("RelationshipTypeScopeTo")
   dataOwnerships             DataOwnership[]
+  deletedBy                  Person?                 @relation("CIClassDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([parentClassId])
   @@index([code])
   @@index([lifecycleModelId])
+  @@index([deletedAt])
   @@map("ci_classes")
 }
 
@@ -82,6 +88,14 @@ model ConfigurationItem {
   createdAt             DateTime         @default(now())
   updatedAt             DateTime         @updatedAt
 
+  // Soft delete fields
+  deletedAt   DateTime?
+  deletedById String?
+
+  // Audit trail fields
+  createdById String?
+  updatedById String?
+
   // Relations
   ciClass             CIClass           @relation(fields: [ciClassId], references: [id], onDelete: Restrict)
   lifecycleState      LifecycleState?   @relation(fields: [lifecycleStateId], references: [id], onDelete: SetNull)
@@ -91,6 +105,9 @@ model ConfigurationItem {
   linkedAsset         Asset?            @relation(fields: [linkedAssetId], references: [id], onDelete: SetNull)
   relationshipsFrom   CIRelationship[]  @relation("CIRelationshipFrom")
   relationshipsTo     CIRelationship[]  @relation("CIRelationshipTo")
+  deletedBy           Person?           @relation("ConfigurationItemDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
+  createdBy           Person?           @relation("ConfigurationItemCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedBy           Person?           @relation("ConfigurationItemUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([ciClassId])
@@ -100,6 +117,7 @@ model ConfigurationItem {
   @@index([locationId])
   @@index([ciKey])
   @@index([name])
+  @@index([deletedAt])
   @@map("configuration_items")
 }
 

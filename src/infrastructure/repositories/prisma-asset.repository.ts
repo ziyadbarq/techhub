@@ -8,10 +8,13 @@ import type {
   Asset as PrismaAsset,
   Prisma,
 } from "@/generated/prisma/server";
+import type { DepreciationModelEnum } from "@/generated/prisma";
 import { DI_TOKENS } from "@/di/types";
 import type {
   IAssetRepository,
   AssetSearchOptions,
+  PaginatedResult,
+  AssetStatistics,
 } from "@/core/repositories/asset.repository.interface";
 import { Asset } from "@/core/domain/entities/asset.entity";
 import { createRepositoryLogger } from "./repository-logger";
@@ -43,10 +46,10 @@ export class PrismaAssetRepository implements IAssetRepository {
           purchaseCost: asset.purchaseCost || null,
           purchaseCostSar: asset.purchaseCostSar || null,
           currency: asset.currency,
-          depreciationModel: asset.depreciationModel,
+          depreciationModel:
+            (asset.depreciationModel as DepreciationModelEnum) ?? null,
           depreciationStart: asset.depreciationStart,
           depreciationEnd: asset.depreciationEnd,
-          warrantyEndDate: asset.warrantyEndDate,
           currentStockLocationId: asset.currentStockLocationId,
           attributes: toJsonValue(asset.attributes),
           note: asset.note,
@@ -218,20 +221,6 @@ export class PrismaAssetRepository implements IAssetRepository {
     return assets.map((a) => this.toDomain(a));
   }
 
-  async findWithActiveWarranty(): Promise<Asset[]> {
-    const now = new Date();
-    const assets = await this.prisma.asset.findMany({
-      where: {
-        warrantyEndDate: {
-          gte: now,
-        },
-      },
-      orderBy: { warrantyEndDate: "asc" },
-    });
-
-    return assets.map((a) => this.toDomain(a));
-  }
-
   async findDepreciating(): Promise<Asset[]> {
     const assets = await this.prisma.asset.findMany({
       where: {
@@ -272,6 +261,177 @@ export class PrismaAssetRepository implements IAssetRepository {
   }
 
   async search(options: AssetSearchOptions): Promise<Asset[]> {
+    const where = this.buildWhereClause(options);
+    const orderBy = this.buildOrderBy(options);
+
+    const assets = await this.prisma.asset.findMany({
+      where,
+      orderBy,
+      take: options.limit,
+      skip: options.offset,
+    });
+
+    return assets.map((a) => this.toDomain(a));
+  }
+
+  async searchPaginated(
+    options: AssetSearchOptions,
+  ): Promise<PaginatedResult<Asset>> {
+    const timer = this.logger.startTimer();
+
+    try {
+      const where = this.buildWhereClause(options);
+      const orderBy = this.buildOrderBy(options);
+      const pageSize = options.limit || 20;
+      const offset = options.offset || 0;
+
+      const [assets, total] = await Promise.all([
+        this.prisma.asset.findMany({
+          where,
+          orderBy,
+          take: pageSize,
+          skip: offset,
+        }),
+        this.prisma.asset.count({ where }),
+      ]);
+
+      const page = Math.floor(offset / pageSize) + 1;
+      const totalPages = Math.ceil(total / pageSize);
+
+      this.logger.timed("searchPaginated", "Assets searched", timer(), {
+        total,
+        page,
+        pageSize,
+      });
+
+      return {
+        items: assets.map((a) => this.toDomain(a)),
+        total,
+        page,
+        pageSize,
+        totalPages,
+      };
+    } catch (error) {
+      this.logger.error("searchPaginated", "Failed to search assets", error);
+      throw error;
+    }
+  }
+
+  async getStatistics(
+    filters?: Omit<
+      AssetSearchOptions,
+      "limit" | "offset" | "sortBy" | "sortOrder"
+    >,
+  ): Promise<AssetStatistics> {
+    const timer = this.logger.startTimer();
+
+    try {
+      const where = filters ? this.buildWhereClause(filters) : {};
+
+      const [total, assigned] = await Promise.all([
+        this.prisma.asset.count({ where }),
+        this.prisma.assetAssignment.count({
+          where: {
+            asset: where,
+            endDate: null, // Currently assigned (no end date)
+          },
+        }),
+      ]);
+
+      const available = total - assigned;
+
+      this.logger.timed("getStatistics", "Asset statistics fetched", timer(), {
+        total,
+        assigned,
+        available,
+      });
+
+      return {
+        total,
+        assigned,
+        available,
+      };
+    } catch (error) {
+      this.logger.error(
+        "getStatistics",
+        "Failed to get asset statistics",
+        error,
+      );
+      throw error;
+    }
+  }
+
+  async deleteMany(ids: string[]): Promise<number> {
+    if (ids.length === 0) return 0;
+
+    const timer = this.logger.startTimer();
+
+    try {
+      // Safety check: Only delete assets without active assignments
+      const result = await this.prisma.asset.deleteMany({
+        where: {
+          id: { in: ids },
+          assetAssignments: { none: { endDate: null } },
+        },
+      });
+
+      this.logger.timed("deleteMany", "Assets bulk deleted", timer(), {
+        requested: ids.length,
+        deleted: result.count,
+      });
+
+      return result.count;
+    } catch (error) {
+      this.logger.error("deleteMany", "Failed to bulk delete assets", error);
+      throw error;
+    }
+  }
+
+  async updateLifecycleStateMany(
+    ids: string[],
+    lifecycleStateId: string,
+  ): Promise<number> {
+    if (ids.length === 0) return 0;
+
+    const timer = this.logger.startTimer();
+
+    try {
+      const result = await this.prisma.asset.updateMany({
+        where: { id: { in: ids } },
+        data: {
+          lifecycleStateId,
+          updatedAt: new Date(),
+        },
+      });
+
+      this.logger.timed(
+        "updateLifecycleStateMany",
+        "Assets lifecycle state updated",
+        timer(),
+        {
+          requested: ids.length,
+          updated: result.count,
+          lifecycleStateId,
+        },
+      );
+
+      return result.count;
+    } catch (error) {
+      this.logger.error(
+        "updateLifecycleStateMany",
+        "Failed to update lifecycle state",
+        error,
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Build where clause from search options
+   */
+  private buildWhereClause(
+    options: AssetSearchOptions,
+  ): Prisma.AssetWhereInput {
     const where: Prisma.AssetWhereInput = {};
 
     // Category filter
@@ -328,18 +488,6 @@ export class PrismaAssetRepository implements IAssetRepository {
       ];
     }
 
-    // Warranty status filter
-    if (options.warrantyStatus) {
-      const now = new Date();
-      if (options.warrantyStatus === "active") {
-        where.warrantyEndDate = { gte: now };
-      } else if (options.warrantyStatus === "expired") {
-        where.warrantyEndDate = { lt: now };
-      } else if (options.warrantyStatus === "none") {
-        where.warrantyEndDate = null;
-      }
-    }
-
     // Depreciation status filter
     if (options.depreciationStatus) {
       const now = new Date();
@@ -360,14 +508,19 @@ export class PrismaAssetRepository implements IAssetRepository {
       }
     }
 
-    const assets = await this.prisma.asset.findMany({
-      where,
-      orderBy: { assetTag: "asc" },
-      take: options.limit,
-      skip: options.offset,
-    });
+    return where;
+  }
 
-    return assets.map((a) => this.toDomain(a));
+  /**
+   * Build orderBy clause from search options
+   */
+  private buildOrderBy(
+    options: AssetSearchOptions,
+  ): Prisma.AssetOrderByWithRelationInput {
+    const sortBy = options.sortBy || "assetTag";
+    const sortOrder = options.sortOrder || "asc";
+
+    return { [sortBy]: sortOrder };
   }
 
   async count(): Promise<number> {
@@ -375,42 +528,7 @@ export class PrismaAssetRepository implements IAssetRepository {
   }
 
   async countBySearch(options: AssetSearchOptions): Promise<number> {
-    const where: Prisma.AssetWhereInput = {};
-
-    if (options.assetCategoryId) {
-      where.assetCategoryId = options.assetCategoryId;
-    }
-
-    if (options.assetModelId) {
-      where.assetModelId = options.assetModelId;
-    }
-
-    if (options.vendorId) {
-      where.vendorId = options.vendorId;
-    }
-
-    if (options.lifecycleStateId) {
-      where.lifecycleStateId = options.lifecycleStateId;
-    }
-
-    if (options.currentStockLocationId) {
-      where.currentStockLocationId = options.currentStockLocationId;
-    }
-
-    if (options.contractId) {
-      where.contractId = options.contractId;
-    }
-
-    if (options.searchTerm && options.searchTerm.trim().length > 0) {
-      where.OR = [
-        { assetTag: { contains: options.searchTerm, mode: "insensitive" } },
-        {
-          serialNumber: { contains: options.searchTerm, mode: "insensitive" },
-        },
-        { note: { contains: options.searchTerm, mode: "insensitive" } },
-      ];
-    }
-
+    const where = this.buildWhereClause(options);
     return await this.prisma.asset.count({ where });
   }
 
@@ -431,10 +549,10 @@ export class PrismaAssetRepository implements IAssetRepository {
           purchaseCost: asset.purchaseCost || null,
           purchaseCostSar: asset.purchaseCostSar || null,
           currency: asset.currency,
-          depreciationModel: asset.depreciationModel,
+          depreciationModel:
+            (asset.depreciationModel as DepreciationModelEnum) ?? null,
           depreciationStart: asset.depreciationStart,
           depreciationEnd: asset.depreciationEnd,
-          warrantyEndDate: asset.warrantyEndDate,
           currentStockLocationId: asset.currentStockLocationId,
           attributes: toJsonValue(asset.attributes),
           note: asset.note,
@@ -535,7 +653,6 @@ export class PrismaAssetRepository implements IAssetRepository {
       depreciationModel: prismaAsset.depreciationModel,
       depreciationStart: prismaAsset.depreciationStart,
       depreciationEnd: prismaAsset.depreciationEnd,
-      warrantyEndDate: prismaAsset.warrantyEndDate,
       condition: prismaAsset.condition,
       currentStockLocationId: prismaAsset.currentStockLocationId,
       attributes: fromJsonValue(prismaAsset.attributes),

@@ -21,11 +21,17 @@ import { presentAsset, type AssetDTO } from "../presenters/asset.presenter";
 import type {
   CreateAssetUseCase,
   ListAssetsUseCase,
+  ListAssetsPaginatedUseCase,
   UpdateAssetUseCase,
   DeleteAssetUseCase,
+  GetAssetStatisticsUseCase,
+  BulkDeleteAssetsUseCase,
+  BulkUpdateAssetStatusUseCase,
 } from "@/core/use-cases/asset/asset";
+import type { AssetStatistics } from "@/core/repositories/asset.repository.interface";
 import type { ILoggerService } from "@/core/services";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
+import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import type { Asset } from "@/core/domain/entities/asset.entity";
 import type { ListAssetCategoriesUseCase } from "@/core/use-cases/asset/asset-category";
 import type { ListAssetModelsUseCase } from "@/core/use-cases/asset/asset-model";
@@ -34,6 +40,31 @@ import type { ListStockLocationsUseCase } from "@/core/use-cases/inventory/stock
 import type { ListLifecycleStatesUseCase } from "@/core/use-cases/foundation/lifecycle-state";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { getSession } from "@/lib/auth/session";
+
+/**
+ * Resolve current user's linked person ID
+ * Returns null if user is not linked to a person (movements will be skipped)
+ */
+async function resolveCurrentPersonId(
+  container: ReturnType<typeof getContainer>,
+): Promise<string | null> {
+  const { user } = await getSession();
+  if (!user) {
+    return null;
+  }
+
+  const personRepository = container.get<IPersonRepository>(
+    DI_TOKENS.IPersonRepository,
+  );
+
+  // Prefer explicit user linkage, fallback to email match for existing records
+  const person =
+    (await personRepository.findByUserId(user.id)) ||
+    (user.email ? await personRepository.findByEmail(user.email) : null);
+
+  return person?.id ?? null;
+}
 
 /**
  * Enrich assets with related entity display data
@@ -191,6 +222,9 @@ export async function createAssetAction(
       DI_TOKENS.CreateAssetUseCase,
     );
 
+    // Resolve current user's person ID for movement tracking
+    const performedById = await resolveCurrentPersonId(container);
+
     const asset = await useCase.execute({
       assetTag: validated.assetTag,
       assetCategoryId: validated.assetCategoryId,
@@ -205,13 +239,14 @@ export async function createAssetAction(
       depreciationModel: validated.depreciationModel ?? undefined,
       depreciationStart: validated.depreciationStart ?? undefined,
       depreciationEnd: validated.depreciationEnd ?? undefined,
-      warrantyEndDate: validated.warrantyEndDate ?? undefined,
       currentStockLocationId: validated.currentStockLocationId ?? undefined,
       attributes: validated.attributes ?? undefined,
       note: validated.note ?? undefined,
+      performedById: performedById ?? undefined,
     });
 
     revalidatePath("/assets");
+    revalidatePath("/stock-movements");
 
     return {
       success: true,
@@ -322,6 +357,9 @@ export async function updateAssetAction(
       DI_TOKENS.UpdateAssetUseCase,
     );
 
+    // Resolve current user's person ID for movement tracking
+    const performedById = await resolveCurrentPersonId(container);
+
     const asset = await useCase.execute({
       id: existingAsset.id,
       assetTag: validated.assetTag,
@@ -336,14 +374,15 @@ export async function updateAssetAction(
       depreciationModel: validated.depreciationModel,
       depreciationStart: validated.depreciationStart,
       depreciationEnd: validated.depreciationEnd,
-      warrantyEndDate: validated.warrantyEndDate,
       currentStockLocationId: validated.currentStockLocationId,
       attributes: validated.attributes,
       note: validated.note,
+      performedById: performedById ?? undefined,
     });
 
     revalidatePath("/assets");
     revalidatePath(`/assets/${assetTag}`);
+    revalidatePath("/stock-movements");
     // Also revalidate the new asset tag if it changed
     if (asset.assetTag !== assetTag) {
       revalidatePath(`/assets/${asset.assetTag}`);
@@ -456,7 +495,6 @@ export async function bulkCreateAssetsAction(
           depreciationModel: validated.depreciationModel ?? undefined,
           depreciationStart: validated.depreciationStart ?? undefined,
           depreciationEnd: validated.depreciationEnd ?? undefined,
-          warrantyEndDate: validated.warrantyEndDate ?? undefined,
           currentStockLocationId: validated.currentStockLocationId ?? undefined,
           attributes: validated.attributes ?? undefined,
           note: validated.note ?? undefined,
@@ -749,8 +787,6 @@ export async function bulkUpsertAssetsAction(
                 updateData.purchaseCost = validated.purchaseCost;
               }
               if (validated.currency) updateData.currency = validated.currency;
-              if (validated.warrantyEndDate)
-                updateData.warrantyEndDate = validated.warrantyEndDate;
               if (validated.currentStockLocationId) {
                 updateData.currentStockLocationId =
                   validated.currentStockLocationId;
@@ -806,7 +842,6 @@ export async function bulkUpsertAssetsAction(
             purchaseDate: validated.purchaseDate ?? undefined,
             purchaseCost: validated.purchaseCost ?? undefined,
             currency: validated.currency ?? undefined,
-            warrantyEndDate: validated.warrantyEndDate ?? undefined,
             currentStockLocationId:
               validated.currentStockLocationId ?? undefined,
             attributes: validated.attributes ?? undefined,
@@ -847,5 +882,266 @@ export async function bulkUpsertAssetsAction(
       error:
         error instanceof Error ? error.message : "Failed to bulk upsert assets",
     };
+  }
+}
+
+/**
+ * Paginated response type for assets list
+ */
+export interface PaginatedAssetsResponse {
+  assets: AssetDTO[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+/**
+ * List assets with server-side pagination
+ */
+export async function listAssetsPaginatedAction(
+  searchOptions?: AssetSearchDTO,
+  pagination?: { page?: number; pageSize?: number },
+): Promise<ActionResponse<PaginatedAssetsResponse>> {
+  try {
+    await requirePermission(PERMISSIONS.ASSETS_VIEW);
+
+    const validated = searchOptions
+      ? AssetSearchSchema.parse(searchOptions)
+      : undefined;
+
+    const page = pagination?.page ?? 1;
+    const pageSize = pagination?.pageSize ?? 20;
+    const offset = (page - 1) * pageSize;
+
+    const container = getContainer();
+    const useCase = container.get<ListAssetsPaginatedUseCase>(
+      DI_TOKENS.ListAssetsPaginatedUseCase,
+    );
+
+    const result = await useCase.execute({
+      ...validated,
+      limit: pageSize,
+      offset,
+    });
+
+    // Enrich with related entity names
+    const enrichedAssets = await enrichAssets(result.items);
+
+    return {
+      success: true,
+      data: {
+        assets: enrichedAssets,
+        total: result.total,
+        page: result.page,
+        pageSize: result.pageSize,
+        totalPages: result.totalPages,
+      },
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "listAssetsPaginatedAction" },
+      "Failed to list assets",
+    );
+  }
+}
+
+/**
+ * Get asset statistics for summary cards
+ */
+export async function getAssetStatisticsAction(
+  filters?: AssetSearchDTO,
+): Promise<ActionResponse<AssetStatistics>> {
+  try {
+    await requirePermission(PERMISSIONS.ASSETS_VIEW);
+
+    const validated = filters ? AssetSearchSchema.parse(filters) : undefined;
+
+    const container = getContainer();
+    const useCase = container.get<GetAssetStatisticsUseCase>(
+      DI_TOKENS.GetAssetStatisticsUseCase,
+    );
+
+    const statistics = await useCase.execute(validated);
+
+    return {
+      success: true,
+      data: statistics,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getAssetStatisticsAction" },
+      "Failed to get asset statistics",
+    );
+  }
+}
+
+/**
+ * Filter options for asset filtering UI
+ */
+export interface AssetFilterOptions {
+  categories: Array<{ value: string; label: string }>;
+  lifecycleStates: Array<{ value: string; label: string }>;
+  stockLocations: Array<{ value: string; label: string }>;
+  vendors: Array<{ value: string; label: string }>;
+}
+
+/**
+ * Get filter options for the assets page
+ */
+export async function getAssetFilterOptionsAction(): Promise<
+  ActionResponse<AssetFilterOptions>
+> {
+  try {
+    await requirePermission(PERMISSIONS.ASSETS_VIEW);
+
+    const container = getContainer();
+
+    const [categories, lifecycleStates, stockLocations, vendors] =
+      await Promise.all([
+        container
+          .get<ListAssetCategoriesUseCase>(DI_TOKENS.ListAssetCategoriesUseCase)
+          .execute(),
+        container
+          .get<ListLifecycleStatesUseCase>(DI_TOKENS.ListLifecycleStatesUseCase)
+          .execute(),
+        container
+          .get<ListStockLocationsUseCase>(DI_TOKENS.ListStockLocationsUseCase)
+          .execute(),
+        container
+          .get<ListVendorsUseCase>(DI_TOKENS.ListVendorsUseCase)
+          .execute(),
+      ]);
+
+    return {
+      success: true,
+      data: {
+        categories: categories.map((c) => ({ value: c.id, label: c.name })),
+        lifecycleStates: lifecycleStates.map((s) => ({
+          value: s.id,
+          label: s.name,
+        })),
+        stockLocations: stockLocations.map((l) => ({
+          value: l.id,
+          label: l.name,
+        })),
+        vendors: vendors.map((v) => ({ value: v.id, label: v.name })),
+      },
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getAssetFilterOptionsAction" },
+      "Failed to get filter options",
+    );
+  }
+}
+
+/**
+ * Bulk delete assets
+ */
+export async function bulkDeleteAssetsAction(assetIds: string[]): Promise<
+  ActionResponse<{
+    requestedCount: number;
+    deletedCount: number;
+    skippedCount: number;
+  }>
+> {
+  try {
+    await requirePermission(PERMISSIONS.ASSETS_DELETE);
+
+    if (!assetIds || assetIds.length === 0) {
+      return {
+        success: false,
+        error: "No assets selected for deletion",
+      };
+    }
+
+    if (assetIds.length > 100) {
+      return {
+        success: false,
+        error: "Cannot delete more than 100 assets at once",
+      };
+    }
+
+    const container = getContainer();
+    const useCase = container.get<BulkDeleteAssetsUseCase>(
+      DI_TOKENS.BulkDeleteAssetsUseCase,
+    );
+
+    const result = await useCase.execute(assetIds);
+
+    revalidatePath("/assets");
+
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "bulkDeleteAssetsAction" },
+      "Failed to bulk delete assets",
+    );
+  }
+}
+
+/**
+ * Bulk update asset lifecycle status
+ */
+export async function bulkUpdateAssetStatusAction(
+  assetIds: string[],
+  lifecycleStateId: string,
+): Promise<
+  ActionResponse<{
+    requestedCount: number;
+    updatedCount: number;
+  }>
+> {
+  try {
+    await requirePermission(PERMISSIONS.ASSETS_UPDATE);
+
+    if (!assetIds || assetIds.length === 0) {
+      return {
+        success: false,
+        error: "No assets selected for update",
+      };
+    }
+
+    if (assetIds.length > 100) {
+      return {
+        success: false,
+        error: "Cannot update more than 100 assets at once",
+      };
+    }
+
+    if (!lifecycleStateId) {
+      return {
+        success: false,
+        error: "Lifecycle state is required",
+      };
+    }
+
+    const container = getContainer();
+    const useCase = container.get<BulkUpdateAssetStatusUseCase>(
+      DI_TOKENS.BulkUpdateAssetStatusUseCase,
+    );
+
+    const result = await useCase.execute(assetIds, lifecycleStateId);
+
+    revalidatePath("/assets");
+
+    return {
+      success: true,
+      data: result,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "bulkUpdateAssetStatusAction" },
+      "Failed to bulk update asset status",
+    );
   }
 }

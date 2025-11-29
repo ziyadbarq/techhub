@@ -53,7 +53,6 @@ export interface AssetSummaryStats {
   totalAssets: number;
   totalValue: number;
   currency: string;
-  assetsUnderWarranty: number;
   unassignedAssets: number;
 }
 
@@ -68,13 +67,6 @@ export interface LifecycleStateBreakdown {
   stateId: string;
   stateName: string;
   count: number;
-}
-
-export interface WarrantyStatusBreakdown {
-  active: number;
-  expiringSoon: number; // Expiring in next 30 days
-  expired: number;
-  none: number;
 }
 
 export interface LocationBreakdown {
@@ -132,13 +124,8 @@ export async function getAssetSummaryStatsAction(): Promise<
       }
     }
 
-    // Count assets under warranty
-    const now = new Date();
-    const assetsUnderWarranty = assets.filter((asset) =>
-      asset.isUnderWarranty(),
-    ).length;
-
     // Count unassigned assets (assets with no active assignment)
+    const now = new Date();
     const assignedAssetIds = new Set(
       assignments
         .filter(
@@ -156,7 +143,6 @@ export async function getAssetSummaryStatsAction(): Promise<
         totalAssets: assets.length,
         totalValue: totalValueInSAR,
         currency: "SAR", // Always SAR for aggregated values
-        assetsUnderWarranty,
         unassignedAssets,
       },
     };
@@ -300,65 +286,6 @@ export async function getAssetsByLifecycleStateAction(): Promise<
       error,
       { function: "getAssetsByLifecycleStateAction" },
       "Failed to get assets by lifecycle state",
-    );
-  }
-}
-
-/**
- * Get warranty status breakdown
- */
-export async function getWarrantyStatusBreakdownAction(): Promise<
-  ActionResponse<WarrantyStatusBreakdown>
-> {
-  try {
-    await requirePermission(PERMISSIONS.ASSETS_VIEW);
-
-    const container = getContainer();
-    const listAssetsUseCase = container.get<ListAssetsUseCase>(
-      DI_TOKENS.ListAssetsUseCase,
-    );
-
-    const assets = await listAssetsUseCase.execute();
-
-    const now = new Date();
-    const thirtyDaysFromNow = new Date(
-      now.getTime() + 30 * 24 * 60 * 60 * 1000,
-    );
-
-    let active = 0;
-    let expiringSoon = 0;
-    let expired = 0;
-    let none = 0;
-
-    for (const asset of assets) {
-      if (!asset.warrantyEndDate) {
-        none++;
-      } else {
-        const warrantyEnd = new Date(asset.warrantyEndDate);
-        if (warrantyEnd < now) {
-          expired++;
-        } else if (warrantyEnd <= thirtyDaysFromNow) {
-          expiringSoon++;
-        } else {
-          active++;
-        }
-      }
-    }
-
-    return {
-      success: true,
-      data: {
-        active,
-        expiringSoon,
-        expired,
-        none,
-      },
-    };
-  } catch (error) {
-    return handleControllerError(
-      error,
-      { function: "getWarrantyStatusBreakdownAction" },
-      "Failed to get warranty status breakdown",
     );
   }
 }

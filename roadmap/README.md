@@ -2,6 +2,8 @@
 
 This folder contains detailed specifications for planned features that are not yet implemented.
 
+> **Quick Overview**: See [CONSOLIDATED_ROADMAP.md](CONSOLIDATED_ROADMAP.md) for a prioritized summary of all planned work and suggestions.
+
 ## Purpose
 
 - Document future feature ideas with complete technical designs

@@ -8,9 +8,16 @@
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetAssignmentRepository } from "@/core/repositories/asset-assignment.repository.interface";
+import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import type { ILoggerService } from "@/core/services";
 import { AssetAssignment } from "@/core/domain/entities/asset-assignment.entity";
 import type { AssignmentResult, UniversalImportSettings } from "./types";
+import type { Prisma } from "@/generated/prisma";
+
+/**
+ * Prisma transaction client type for transaction-aware methods
+ */
+export type TransactionClient = Prisma.TransactionClient;
 
 /**
  * Assignment Handler class
@@ -72,6 +79,15 @@ export class AssignmentHandler {
 
       // Different person - handle re-assignment
       if (settings.closeOldAssignmentsOnReassign) {
+        // Fetch old person's email for proper reporting
+        const personRepo = container.get<IPersonRepository>(
+          DI_TOKENS.IPersonRepository,
+        );
+        const oldPerson = await personRepo.findById(
+          currentAssignment.assigneeId,
+        );
+        const previousEmail = oldPerson?.email || "Unknown";
+
         // Close old assignment
         await this.closeAssignment(assignmentRepo, currentAssignment);
 
@@ -85,13 +101,16 @@ export class AssignmentHandler {
         this.logger.info("Re-assigned asset", {
           assetId,
           previousAssignee: currentAssignment.assigneeId,
+          previousEmail,
           newAssignee: personId,
+          newEmail: personEmail,
         });
 
         return {
           action: "reassigned",
           assignmentId: newAssignment.id,
-          previousAssigneeEmail: personEmail, // Note: This should be the OLD assignee's email
+          previousAssigneeEmail: previousEmail,
+          newAssigneeEmail: personEmail,
         };
       }
 
@@ -199,5 +218,125 @@ export class AssignmentHandler {
     }
 
     return result;
+  }
+
+  /**
+   * Handle assignment within a Prisma transaction
+   * Used for atomic asset creation + assignment
+   */
+  async handleAssignmentWithTransaction(
+    tx: TransactionClient,
+    assetId: string,
+    personId: string,
+    personEmail: string,
+    settings: UniversalImportSettings,
+  ): Promise<AssignmentResult> {
+    if (!settings.handleAssignmentChanges) {
+      return { action: "unchanged" };
+    }
+
+    try {
+      // Find current active assignment using raw Prisma query within transaction
+      const currentAssignment = await tx.assetAssignment.findFirst({
+        where: {
+          assetId,
+          endDate: null,
+          assigneeType: "PERSON",
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      if (!currentAssignment) {
+        // No existing assignment - create new within transaction
+        const newAssignment = await tx.assetAssignment.create({
+          data: {
+            assetId,
+            assigneeType: "PERSON",
+            assigneeId: personId,
+            startDate: new Date(),
+            isPrimary: true,
+          },
+        });
+
+        return {
+          action: "created",
+          assignmentId: newAssignment.id,
+        };
+      }
+
+      // Check if same person
+      if (currentAssignment.assigneeId === personId) {
+        return {
+          action: "unchanged",
+          assignmentId: currentAssignment.id,
+        };
+      }
+
+      // Different person - handle re-assignment
+      if (settings.closeOldAssignmentsOnReassign) {
+        // Get old person's email for reporting
+        const oldPerson = await tx.person.findUnique({
+          where: { id: currentAssignment.assigneeId },
+          select: { email: true },
+        });
+        const previousEmail = oldPerson?.email || "Unknown";
+
+        // Close old assignment within transaction
+        await tx.assetAssignment.update({
+          where: { id: currentAssignment.id },
+          data: { endDate: new Date() },
+        });
+
+        // Create new assignment within transaction
+        const newAssignment = await tx.assetAssignment.create({
+          data: {
+            assetId,
+            assigneeType: "PERSON",
+            assigneeId: personId,
+            startDate: new Date(),
+            isPrimary: true,
+          },
+        });
+
+        this.logger.info("Re-assigned asset within transaction", {
+          assetId,
+          previousAssignee: currentAssignment.assigneeId,
+          previousEmail,
+          newAssignee: personId,
+          newEmail: personEmail,
+        });
+
+        return {
+          action: "reassigned",
+          assignmentId: newAssignment.id,
+          previousAssigneeEmail: previousEmail,
+          newAssigneeEmail: personEmail,
+        };
+      }
+
+      // Don't close old assignments - just create new one
+      const newAssignment = await tx.assetAssignment.create({
+        data: {
+          assetId,
+          assigneeType: "PERSON",
+          assigneeId: personId,
+          startDate: new Date(),
+          isPrimary: true,
+        },
+      });
+
+      return {
+        action: "created",
+        assignmentId: newAssignment.id,
+      };
+    } catch (error) {
+      return {
+        action: "failed",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to handle assignment",
+      };
+    }
   }
 }

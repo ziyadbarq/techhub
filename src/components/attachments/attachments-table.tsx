@@ -37,6 +37,7 @@ import { deleteAttachment } from "@/interface-adapters/controllers/attachment.co
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { usePermissions } from "@/hooks/use-permissions";
 import { toast } from "sonner";
+import { formatDate } from "@/lib/utils/date-format";
 
 interface AttachmentsTableProps {
   data: AttachmentDTO[];
@@ -173,9 +174,7 @@ export function AttachmentsTable({
           </Button>
         );
       },
-      cell: ({ row }) => {
-        return new Date(row.original.uploadedAt).toLocaleDateString();
-      },
+      cell: ({ row }) => formatDate(row.original.uploadedAt),
     },
     {
       id: "actions",

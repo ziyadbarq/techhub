@@ -43,7 +43,7 @@ export type MaintenanceRecordMinAggregateOutputType = {
   scheduledDate: Date | null
   completedDate: Date | null
   performedById: string | null
-  status: string | null
+  status: $Enums.MaintenanceStatusEnum | null
   notes: string | null
   cost: runtime.Decimal | null
   currency: string | null
@@ -61,7 +61,7 @@ export type MaintenanceRecordMaxAggregateOutputType = {
   scheduledDate: Date | null
   completedDate: Date | null
   performedById: string | null
-  status: string | null
+  status: $Enums.MaintenanceStatusEnum | null
   notes: string | null
   cost: runtime.Decimal | null
   currency: string | null
@@ -250,7 +250,7 @@ export type MaintenanceRecordGroupByOutputType = {
   scheduledDate: Date
   completedDate: Date | null
   performedById: string | null
-  status: string
+  status: $Enums.MaintenanceStatusEnum
   notes: string | null
   cost: runtime.Decimal | null
   currency: string | null
@@ -292,7 +292,7 @@ export type MaintenanceRecordWhereInput = {
   scheduledDate?: Prisma.DateTimeFilter<"MaintenanceRecord"> | Date | string
   completedDate?: Prisma.DateTimeNullableFilter<"MaintenanceRecord"> | Date | string | null
   performedById?: Prisma.StringNullableFilter<"MaintenanceRecord"> | string | null
-  status?: Prisma.StringFilter<"MaintenanceRecord"> | string
+  status?: Prisma.EnumMaintenanceStatusEnumFilter<"MaintenanceRecord"> | $Enums.MaintenanceStatusEnum
   notes?: Prisma.StringNullableFilter<"MaintenanceRecord"> | string | null
   cost?: Prisma.DecimalNullableFilter<"MaintenanceRecord"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"MaintenanceRecord"> | string | null
@@ -339,7 +339,7 @@ export type MaintenanceRecordWhereUniqueInput = Prisma.AtLeast<{
   scheduledDate?: Prisma.DateTimeFilter<"MaintenanceRecord"> | Date | string
   completedDate?: Prisma.DateTimeNullableFilter<"MaintenanceRecord"> | Date | string | null
   performedById?: Prisma.StringNullableFilter<"MaintenanceRecord"> | string | null
-  status?: Prisma.StringFilter<"MaintenanceRecord"> | string
+  status?: Prisma.EnumMaintenanceStatusEnumFilter<"MaintenanceRecord"> | $Enums.MaintenanceStatusEnum
   notes?: Prisma.StringNullableFilter<"MaintenanceRecord"> | string | null
   cost?: Prisma.DecimalNullableFilter<"MaintenanceRecord"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"MaintenanceRecord"> | string | null
@@ -388,7 +388,7 @@ export type MaintenanceRecordScalarWhereWithAggregatesInput = {
   scheduledDate?: Prisma.DateTimeWithAggregatesFilter<"MaintenanceRecord"> | Date | string
   completedDate?: Prisma.DateTimeNullableWithAggregatesFilter<"MaintenanceRecord"> | Date | string | null
   performedById?: Prisma.StringNullableWithAggregatesFilter<"MaintenanceRecord"> | string | null
-  status?: Prisma.StringWithAggregatesFilter<"MaintenanceRecord"> | string
+  status?: Prisma.EnumMaintenanceStatusEnumWithAggregatesFilter<"MaintenanceRecord"> | $Enums.MaintenanceStatusEnum
   notes?: Prisma.StringNullableWithAggregatesFilter<"MaintenanceRecord"> | string | null
   cost?: Prisma.DecimalNullableWithAggregatesFilter<"MaintenanceRecord"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableWithAggregatesFilter<"MaintenanceRecord"> | string | null
@@ -404,7 +404,7 @@ export type MaintenanceRecordCreateInput = {
   description?: string | null
   scheduledDate: Date | string
   completedDate?: Date | string | null
-  status?: string
+  status?: $Enums.MaintenanceStatusEnum
   notes?: string | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -426,7 +426,7 @@ export type MaintenanceRecordUncheckedCreateInput = {
   scheduledDate: Date | string
   completedDate?: Date | string | null
   performedById?: string | null
-  status?: string
+  status?: $Enums.MaintenanceStatusEnum
   notes?: string | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -442,7 +442,7 @@ export type MaintenanceRecordUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMaintenanceStatusEnumFieldUpdateOperationsInput | $Enums.MaintenanceStatusEnum
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -464,7 +464,7 @@ export type MaintenanceRecordUncheckedUpdateInput = {
   scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   performedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMaintenanceStatusEnumFieldUpdateOperationsInput | $Enums.MaintenanceStatusEnum
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -483,7 +483,7 @@ export type MaintenanceRecordCreateManyInput = {
   scheduledDate: Date | string
   completedDate?: Date | string | null
   performedById?: string | null
-  status?: string
+  status?: $Enums.MaintenanceStatusEnum
   notes?: string | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -499,7 +499,7 @@ export type MaintenanceRecordUpdateManyMutationInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMaintenanceStatusEnumFieldUpdateOperationsInput | $Enums.MaintenanceStatusEnum
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -518,7 +518,7 @@ export type MaintenanceRecordUncheckedUpdateManyInput = {
   scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   performedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMaintenanceStatusEnumFieldUpdateOperationsInput | $Enums.MaintenanceStatusEnum
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -727,13 +727,17 @@ export type MaintenanceRecordUncheckedUpdateManyWithoutMaintenanceScheduleNested
   deleteMany?: Prisma.MaintenanceRecordScalarWhereInput | Prisma.MaintenanceRecordScalarWhereInput[]
 }
 
+export type EnumMaintenanceStatusEnumFieldUpdateOperationsInput = {
+  set?: $Enums.MaintenanceStatusEnum
+}
+
 export type MaintenanceRecordCreateWithoutAssetInput = {
   id?: string
   title: string
   description?: string | null
   scheduledDate: Date | string
   completedDate?: Date | string | null
-  status?: string
+  status?: $Enums.MaintenanceStatusEnum
   notes?: string | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -753,7 +757,7 @@ export type MaintenanceRecordUncheckedCreateWithoutAssetInput = {
   scheduledDate: Date | string
   completedDate?: Date | string | null
   performedById?: string | null
-  status?: string
+  status?: $Enums.MaintenanceStatusEnum
   notes?: string | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -801,7 +805,7 @@ export type MaintenanceRecordScalarWhereInput = {
   scheduledDate?: Prisma.DateTimeFilter<"MaintenanceRecord"> | Date | string
   completedDate?: Prisma.DateTimeNullableFilter<"MaintenanceRecord"> | Date | string | null
   performedById?: Prisma.StringNullableFilter<"MaintenanceRecord"> | string | null
-  status?: Prisma.StringFilter<"MaintenanceRecord"> | string
+  status?: Prisma.EnumMaintenanceStatusEnumFilter<"MaintenanceRecord"> | $Enums.MaintenanceStatusEnum
   notes?: Prisma.StringNullableFilter<"MaintenanceRecord"> | string | null
   cost?: Prisma.DecimalNullableFilter<"MaintenanceRecord"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"MaintenanceRecord"> | string | null
@@ -817,7 +821,7 @@ export type MaintenanceRecordCreateWithoutPerformedByInput = {
   description?: string | null
   scheduledDate: Date | string
   completedDate?: Date | string | null
-  status?: string
+  status?: $Enums.MaintenanceStatusEnum
   notes?: string | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -837,7 +841,7 @@ export type MaintenanceRecordUncheckedCreateWithoutPerformedByInput = {
   description?: string | null
   scheduledDate: Date | string
   completedDate?: Date | string | null
-  status?: string
+  status?: $Enums.MaintenanceStatusEnum
   notes?: string | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -879,7 +883,7 @@ export type MaintenanceRecordCreateWithoutMaintenanceScheduleInput = {
   description?: string | null
   scheduledDate: Date | string
   completedDate?: Date | string | null
-  status?: string
+  status?: $Enums.MaintenanceStatusEnum
   notes?: string | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -899,7 +903,7 @@ export type MaintenanceRecordUncheckedCreateWithoutMaintenanceScheduleInput = {
   scheduledDate: Date | string
   completedDate?: Date | string | null
   performedById?: string | null
-  status?: string
+  status?: $Enums.MaintenanceStatusEnum
   notes?: string | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -943,7 +947,7 @@ export type MaintenanceRecordCreateManyAssetInput = {
   scheduledDate: Date | string
   completedDate?: Date | string | null
   performedById?: string | null
-  status?: string
+  status?: $Enums.MaintenanceStatusEnum
   notes?: string | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -959,7 +963,7 @@ export type MaintenanceRecordUpdateWithoutAssetInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMaintenanceStatusEnumFieldUpdateOperationsInput | $Enums.MaintenanceStatusEnum
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -979,7 +983,7 @@ export type MaintenanceRecordUncheckedUpdateWithoutAssetInput = {
   scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   performedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMaintenanceStatusEnumFieldUpdateOperationsInput | $Enums.MaintenanceStatusEnum
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -997,7 +1001,7 @@ export type MaintenanceRecordUncheckedUpdateManyWithoutAssetInput = {
   scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   performedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMaintenanceStatusEnumFieldUpdateOperationsInput | $Enums.MaintenanceStatusEnum
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1015,7 +1019,7 @@ export type MaintenanceRecordCreateManyPerformedByInput = {
   description?: string | null
   scheduledDate: Date | string
   completedDate?: Date | string | null
-  status?: string
+  status?: $Enums.MaintenanceStatusEnum
   notes?: string | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1031,7 +1035,7 @@ export type MaintenanceRecordUpdateWithoutPerformedByInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMaintenanceStatusEnumFieldUpdateOperationsInput | $Enums.MaintenanceStatusEnum
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1051,7 +1055,7 @@ export type MaintenanceRecordUncheckedUpdateWithoutPerformedByInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMaintenanceStatusEnumFieldUpdateOperationsInput | $Enums.MaintenanceStatusEnum
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1069,7 +1073,7 @@ export type MaintenanceRecordUncheckedUpdateManyWithoutPerformedByInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMaintenanceStatusEnumFieldUpdateOperationsInput | $Enums.MaintenanceStatusEnum
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1087,7 +1091,7 @@ export type MaintenanceRecordCreateManyMaintenanceScheduleInput = {
   scheduledDate: Date | string
   completedDate?: Date | string | null
   performedById?: string | null
-  status?: string
+  status?: $Enums.MaintenanceStatusEnum
   notes?: string | null
   cost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1103,7 +1107,7 @@ export type MaintenanceRecordUpdateWithoutMaintenanceScheduleInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMaintenanceStatusEnumFieldUpdateOperationsInput | $Enums.MaintenanceStatusEnum
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1123,7 +1127,7 @@ export type MaintenanceRecordUncheckedUpdateWithoutMaintenanceScheduleInput = {
   scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   performedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMaintenanceStatusEnumFieldUpdateOperationsInput | $Enums.MaintenanceStatusEnum
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1141,7 +1145,7 @@ export type MaintenanceRecordUncheckedUpdateManyWithoutMaintenanceScheduleInput 
   scheduledDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   completedDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   performedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumMaintenanceStatusEnumFieldUpdateOperationsInput | $Enums.MaintenanceStatusEnum
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   cost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1271,7 +1275,7 @@ export type $MaintenanceRecordPayload<ExtArgs extends runtime.Types.Extensions.I
     scheduledDate: Date
     completedDate: Date | null
     performedById: string | null
-    status: string
+    status: $Enums.MaintenanceStatusEnum
     notes: string | null
     cost: runtime.Decimal | null
     currency: string | null
@@ -1713,7 +1717,7 @@ export interface MaintenanceRecordFieldRefs {
   readonly scheduledDate: Prisma.FieldRef<"MaintenanceRecord", 'DateTime'>
   readonly completedDate: Prisma.FieldRef<"MaintenanceRecord", 'DateTime'>
   readonly performedById: Prisma.FieldRef<"MaintenanceRecord", 'String'>
-  readonly status: Prisma.FieldRef<"MaintenanceRecord", 'String'>
+  readonly status: Prisma.FieldRef<"MaintenanceRecord", 'MaintenanceStatusEnum'>
   readonly notes: Prisma.FieldRef<"MaintenanceRecord", 'String'>
   readonly cost: Prisma.FieldRef<"MaintenanceRecord", 'Decimal'>
   readonly currency: Prisma.FieldRef<"MaintenanceRecord", 'String'>

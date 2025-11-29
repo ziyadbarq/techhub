@@ -8,6 +8,7 @@ import type {
   MaintenanceRecord as PrismaMaintenanceRecord,
   Prisma,
 } from "@/generated/prisma/server";
+import type { MaintenanceStatusEnum } from "@/generated/prisma";
 import { DI_TOKENS } from "@/di/types";
 import type {
   IMaintenanceRecordRepository,
@@ -195,7 +196,7 @@ export class PrismaMaintenanceRecordRepository
     }
 
     if (filters.status) {
-      where.status = filters.status;
+      where.status = filters.status as MaintenanceStatusEnum;
     }
 
     // Scheduled date range

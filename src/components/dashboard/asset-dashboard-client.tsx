@@ -13,9 +13,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  PieChart,
-  Pie,
-  Cell,
   BarChart,
   Bar,
   XAxis,
@@ -27,7 +24,6 @@ import {
 import {
   Package,
   DollarSign,
-  ShieldCheck,
   Archive,
   TrendingUp,
   Activity,
@@ -36,13 +32,11 @@ import {
   getAssetSummaryStatsAction,
   getAssetsByCategoryAction,
   getAssetsByLifecycleStateAction,
-  getWarrantyStatusBreakdownAction,
   getAssetsByLocationAction,
   getRecentActivityAction,
   type AssetSummaryStats,
   type CategoryBreakdown,
   type LifecycleStateBreakdown,
-  type WarrantyStatusBreakdown,
   type LocationBreakdown,
   type RecentActivity,
 } from "@/interface-adapters/controllers/asset-dashboard.controller";
@@ -106,8 +100,6 @@ export function AssetDashboardClient() {
   const [lifecycleData, setLifecycleData] = useState<LifecycleStateBreakdown[]>(
     [],
   );
-  const [warrantyData, setWarrantyData] =
-    useState<WarrantyStatusBreakdown | null>(null);
   const [locationData, setLocationData] = useState<LocationBreakdown[]>([]);
   const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
   const [loading, setLoading] = useState(true);
@@ -121,14 +113,12 @@ export function AssetDashboardClient() {
           summaryResult,
           categoryResult,
           lifecycleResult,
-          warrantyResult,
           locationResult,
           activityResult,
         ] = await Promise.all([
           getAssetSummaryStatsAction(),
           getAssetsByCategoryAction(),
           getAssetsByLifecycleStateAction(),
-          getWarrantyStatusBreakdownAction(),
           getAssetsByLocationAction(),
           getRecentActivityAction(),
         ]);
@@ -141,9 +131,6 @@ export function AssetDashboardClient() {
         }
         if (lifecycleResult.success && lifecycleResult.data) {
           setLifecycleData(lifecycleResult.data);
-        }
-        if (warrantyResult.success && warrantyResult.data) {
-          setWarrantyData(warrantyResult.data);
         }
         if (locationResult.success && locationResult.data) {
           setLocationData(locationResult.data);
@@ -170,28 +157,10 @@ export function AssetDashboardClient() {
     );
   }
 
-  // Prepare warranty pie chart data
-  const warrantyChartData = warrantyData
-    ? [
-        { name: "Active", value: warrantyData.active, color: COLORS.success },
-        {
-          name: "Expiring Soon",
-          value: warrantyData.expiringSoon,
-          color: COLORS.warning,
-        },
-        { name: "Expired", value: warrantyData.expired, color: COLORS.danger },
-        {
-          name: "No Warranty",
-          value: warrantyData.none,
-          color: COLORS.neutral,
-        },
-      ]
-    : [];
-
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-3">
         <SummaryCard
           title="Total Assets"
           value={summaryStats.totalAssets.toLocaleString()}
@@ -205,13 +174,6 @@ export function AssetDashboardClient() {
           icon={<DollarSign className="h-4 w-4" />}
           description="Total asset value (in SAR)"
           color="text-green-500"
-        />
-        <SummaryCard
-          title="Under Warranty"
-          value={summaryStats.assetsUnderWarranty.toLocaleString()}
-          icon={<ShieldCheck className="h-4 w-4" />}
-          description="Assets with active warranty"
-          color="text-purple-500"
         />
         <SummaryCard
           title="Unassigned"
@@ -283,43 +245,6 @@ export function AssetDashboardClient() {
             ) : (
               <div className="text-muted-foreground flex h-[300px] items-center justify-center">
                 No lifecycle data available
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Warranty Status */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Warranty Status</CardTitle>
-            <CardDescription>Warranty coverage breakdown</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {warrantyChartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={warrantyChartData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) =>
-                      `${name}: ${((percent || 0) * 100).toFixed(0)}%`
-                    }
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {warrantyChartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="text-muted-foreground flex h-[300px] items-center justify-center">
-                No warranty data available
               </div>
             )}
           </CardContent>

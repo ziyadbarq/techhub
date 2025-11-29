@@ -8,6 +8,7 @@
 import { useCurrentPersonContext } from "@/contexts/current-person-context";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatDateFull } from "@/lib/utils/date-format";
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -17,12 +18,7 @@ function getGreeting(): string {
 }
 
 function getFormattedDate(): string {
-  return new Date().toLocaleDateString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  return formatDateFull(new Date());
 }
 
 export function WelcomeBannerWidget() {

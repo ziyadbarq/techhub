@@ -20,7 +20,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import {
   Select,
   SelectContent,
@@ -200,9 +205,6 @@ export function AssetForm({
         : undefined,
       purchaseCost: asset?.purchaseCost ?? undefined,
       currency: asset?.currency ?? "SAR",
-      warrantyEndDate: asset?.warrantyEndDate
-        ? new Date(asset.warrantyEndDate)
-        : undefined,
       note: asset?.note ?? "",
       attributes: (asset?.attributes as Record<string, unknown>) ?? null,
     },
@@ -290,9 +292,6 @@ export function AssetForm({
         : undefined,
       purchaseCost: asset?.purchaseCost ?? undefined,
       currency: asset?.currency ?? "SAR",
-      warrantyEndDate: asset?.warrantyEndDate
-        ? new Date(asset.warrantyEndDate)
-        : undefined,
       note: asset?.note ?? "",
       attributes: (asset?.attributes as Record<string, unknown>) ?? null,
     });
@@ -321,7 +320,7 @@ export function AssetForm({
 
     try {
       const result = isEditing
-        ? await updateAssetAction(asset.id, submitData)
+        ? await updateAssetAction(asset.assetTag, submitData)
         : await createAssetAction(submitData);
 
       if (result.success) {
@@ -369,369 +368,367 @@ export function AssetForm({
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              {/* Asset Category */}
-              <FormField
-                control={form.control}
-                name="assetCategoryId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Asset Category</FormLabel>
-                    <SearchableSelect
-                      options={categoryOptions}
-                      value={field.value || undefined}
-                      onValueChange={field.onChange}
-                      placeholder="Select a category..."
-                      searchPlaceholder="Search categories..."
-                      emptyMessage="No categories found"
-                      disabled={loading}
+              <Accordion
+                type="multiple"
+                defaultValue={["identification"]}
+                className="w-full"
+              >
+                {/* Identification Section - Always Expanded */}
+                <AccordionItem value="identification">
+                  <AccordionTrigger>Identification</AccordionTrigger>
+                  <AccordionContent className="space-y-4">
+                    {/* Asset Category */}
+                    <FormField
+                      control={form.control}
+                      name="assetCategoryId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Asset Category</FormLabel>
+                          <SearchableSelect
+                            options={categoryOptions}
+                            value={field.value || undefined}
+                            onValueChange={field.onChange}
+                            placeholder="Select a category..."
+                            searchPlaceholder="Search categories..."
+                            emptyMessage="No categories found"
+                            disabled={loading}
+                          />
+                          <FormDescription>
+                            The category this asset belongs to
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                    <FormDescription>
-                      The category this asset belongs to
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
-              {/* Custom Fields Section - appears when a category is selected */}
-              {selectedCategoryId && (
-                <>
-                  <Separator className="my-4" />
-                  <CustomFieldsSection
-                    categoryId={selectedCategoryId}
-                    values={customFieldValues}
-                    onChange={setCustomFieldValues}
-                    errors={customFieldErrors}
-                    disabled={loading || form.formState.isSubmitting}
-                  />
-                  <Separator className="my-4" />
-                </>
-              )}
-
-              {/* Asset Model */}
-              <FormField
-                control={form.control}
-                name="assetModelId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Asset Model (Optional)</FormLabel>
-                    <SearchableSelect
-                      options={modelOptions}
-                      value={field.value ?? NONE_OPTION_VALUE}
-                      onValueChange={(value) =>
-                        field.onChange(
-                          value === NONE_OPTION_VALUE ? null : value,
-                        )
-                      }
-                      placeholder="Select a model..."
-                      searchPlaceholder="Search models..."
-                      emptyMessage="No models found"
-                      disabled={loading}
+                    {/* Asset Model */}
+                    <FormField
+                      control={form.control}
+                      name="assetModelId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Asset Model</FormLabel>
+                          <SearchableSelect
+                            options={modelOptions}
+                            value={field.value ?? NONE_OPTION_VALUE}
+                            onValueChange={(value) =>
+                              field.onChange(
+                                value === NONE_OPTION_VALUE ? null : value,
+                              )
+                            }
+                            placeholder="Select a model..."
+                            searchPlaceholder="Search models..."
+                            emptyMessage="No models found"
+                            disabled={loading}
+                          />
+                          <FormDescription>
+                            Specific model/make of this asset
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                    <FormDescription>
-                      Specific model/make of this asset
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
-              {/* Supplier (Override) */}
-              <FormField
-                control={form.control}
-                name="vendorId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Supplier (Optional)</FormLabel>
-                    <SearchableSelect
-                      options={vendorOptions}
-                      value={field.value ?? NONE_OPTION_VALUE}
-                      onValueChange={(value) =>
-                        field.onChange(
-                          value === NONE_OPTION_VALUE ? null : value,
-                        )
-                      }
-                      placeholder="Select a supplier..."
-                      searchPlaceholder="Search suppliers..."
-                      emptyMessage="No suppliers found"
-                      disabled={loading}
+                    {/* Serial Number */}
+                    <FormField
+                      control={form.control}
+                      name="serialNumber"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Serial Number</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="ABC123XYZ789"
+                              {...field}
+                              value={field.value || ""}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Manufacturer&apos;s serial number
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                    <FormDescription>
-                      The company that supplied this specific asset (overrides
-                      manufacturer from model)
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
-              {/* Stock Location */}
-              <FormField
-                control={form.control}
-                name="currentStockLocationId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Stock Location (Optional)</FormLabel>
-                    <SearchableSelect
-                      options={stockLocationOptions}
-                      value={field.value ?? NONE_OPTION_VALUE}
-                      onValueChange={(value) =>
-                        field.onChange(
-                          value === NONE_OPTION_VALUE ? null : value,
-                        )
-                      }
-                      placeholder="Select a location..."
-                      searchPlaceholder="Search locations..."
-                      emptyMessage="No locations found"
-                      disabled={loading}
-                    />
-                    <FormDescription>
-                      Current physical location of the asset
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Lifecycle State */}
-              <FormField
-                control={form.control}
-                name="lifecycleStateId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Lifecycle State (Optional)</FormLabel>
-                    <SearchableSelect
-                      options={lifecycleStateOptions}
-                      value={field.value ?? NONE_OPTION_VALUE}
-                      onValueChange={(value) =>
-                        field.onChange(
-                          value === NONE_OPTION_VALUE ? null : value,
-                        )
-                      }
-                      placeholder="Select a state..."
-                      searchPlaceholder="Search states..."
-                      emptyMessage="No states found"
-                      disabled={loading}
-                    />
-                    <FormDescription>
-                      Current lifecycle state of the asset
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Serial Number */}
-              <FormField
-                control={form.control}
-                name="serialNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Serial Number (Optional)</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="ABC123XYZ789"
-                        {...field}
-                        value={field.value || ""}
+                    {/* Custom Fields Section - appears when a category is selected */}
+                    {selectedCategoryId && (
+                      <CustomFieldsSection
+                        categoryId={selectedCategoryId}
+                        values={customFieldValues}
+                        onChange={setCustomFieldValues}
+                        errors={customFieldErrors}
+                        disabled={loading || form.formState.isSubmitting}
                       />
-                    </FormControl>
-                    <FormDescription>
-                      Manufacturer's serial number
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                    )}
+                  </AccordionContent>
+                </AccordionItem>
 
-              {/* Condition */}
-              <FormField
-                control={form.control}
-                name="condition"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Condition (Optional)</FormLabel>
-                    <Select
-                      onValueChange={(value) =>
-                        field.onChange(
-                          value === NONE_OPTION_VALUE ? null : value,
-                        )
-                      }
-                      value={field.value ?? undefined}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select condition" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
-                        <SelectItem value="NEW">New</SelectItem>
-                        <SelectItem value="GOOD">Good</SelectItem>
-                        <SelectItem value="FAIR">Fair</SelectItem>
-                        <SelectItem value="POOR">Poor</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormDescription>
-                      Physical condition of the asset
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                {/* Location & Status Section */}
+                <AccordionItem value="location-status">
+                  <AccordionTrigger>Location & Status</AccordionTrigger>
+                  <AccordionContent className="space-y-4">
+                    {/* Stock Location */}
+                    <FormField
+                      control={form.control}
+                      name="currentStockLocationId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Stock Location</FormLabel>
+                          <SearchableSelect
+                            options={stockLocationOptions}
+                            value={field.value ?? NONE_OPTION_VALUE}
+                            onValueChange={(value) =>
+                              field.onChange(
+                                value === NONE_OPTION_VALUE ? null : value,
+                              )
+                            }
+                            placeholder="Select a location..."
+                            searchPlaceholder="Search locations..."
+                            emptyMessage="No locations found"
+                            disabled={loading}
+                          />
+                          <FormDescription>
+                            Current physical location of the asset
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-              {/* Purchase Date */}
-              <FormField
-                control={form.control}
-                name="purchaseDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Purchase Date (Optional)</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="date"
-                        {...field}
-                        value={
-                          field.value && field.value instanceof Date
-                            ? field.value.toISOString().split("T")[0]
-                            : field.value && typeof field.value === "string"
-                              ? new Date(field.value)
-                                  .toISOString()
-                                  .split("T")[0]
-                              : ""
-                        }
-                        onChange={(e) => {
-                          field.onChange(
-                            e.target.value ? new Date(e.target.value) : null,
-                          );
-                        }}
+                    {/* Lifecycle State */}
+                    <FormField
+                      control={form.control}
+                      name="lifecycleStateId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Lifecycle State</FormLabel>
+                          <SearchableSelect
+                            options={lifecycleStateOptions}
+                            value={field.value ?? NONE_OPTION_VALUE}
+                            onValueChange={(value) =>
+                              field.onChange(
+                                value === NONE_OPTION_VALUE ? null : value,
+                              )
+                            }
+                            placeholder="Select a state..."
+                            searchPlaceholder="Search states..."
+                            emptyMessage="No states found"
+                            disabled={loading}
+                          />
+                          <FormDescription>
+                            Current lifecycle state of the asset
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Condition */}
+                    <FormField
+                      control={form.control}
+                      name="condition"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Condition</FormLabel>
+                          <Select
+                            onValueChange={(value) =>
+                              field.onChange(
+                                value === NONE_OPTION_VALUE ? null : value,
+                              )
+                            }
+                            value={field.value ?? undefined}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select condition" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value={NONE_OPTION_VALUE}>
+                                None
+                              </SelectItem>
+                              <SelectItem value="NEW">New</SelectItem>
+                              <SelectItem value="GOOD">Good</SelectItem>
+                              <SelectItem value="FAIR">Fair</SelectItem>
+                              <SelectItem value="POOR">Poor</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormDescription>
+                            Physical condition of the asset
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+
+                {/* Procurement Section */}
+                <AccordionItem value="procurement">
+                  <AccordionTrigger>Procurement</AccordionTrigger>
+                  <AccordionContent className="space-y-4">
+                    {/* Supplier (Override) */}
+                    <FormField
+                      control={form.control}
+                      name="vendorId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Supplier</FormLabel>
+                          <SearchableSelect
+                            options={vendorOptions}
+                            value={field.value ?? NONE_OPTION_VALUE}
+                            onValueChange={(value) =>
+                              field.onChange(
+                                value === NONE_OPTION_VALUE ? null : value,
+                              )
+                            }
+                            placeholder="Select a supplier..."
+                            searchPlaceholder="Search suppliers..."
+                            emptyMessage="No suppliers found"
+                            disabled={loading}
+                          />
+                          <FormDescription>
+                            The company that supplied this specific asset
+                            (overrides manufacturer from model)
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Purchase Date */}
+                    <FormField
+                      control={form.control}
+                      name="purchaseDate"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Purchase Date</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="date"
+                              {...field}
+                              value={
+                                field.value && field.value instanceof Date
+                                  ? field.value.toISOString().split("T")[0]
+                                  : field.value &&
+                                      typeof field.value === "string"
+                                    ? new Date(field.value)
+                                        .toISOString()
+                                        .split("T")[0]
+                                    : ""
+                              }
+                              onChange={(e) => {
+                                field.onChange(
+                                  e.target.value
+                                    ? new Date(e.target.value)
+                                    : null,
+                                );
+                              }}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            When the asset was purchased
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Purchase Cost */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="purchaseCost"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Purchase Cost</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                step="0.01"
+                                placeholder="999.99"
+                                {...field}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  field.onChange(
+                                    value === "" ? undefined : Number(value),
+                                  );
+                                }}
+                                value={field.value ?? ""}
+                              />
+                            </FormControl>
+                            <FormDescription>
+                              Cost in specified currency
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </FormControl>
-                    <FormDescription>
-                      When the asset was purchased
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
-              {/* Purchase Cost */}
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="purchaseCost"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Purchase Cost (Optional)</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          step="0.01"
-                          placeholder="999.99"
-                          {...field}
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            field.onChange(
-                              value === "" ? undefined : Number(value),
-                            );
-                          }}
-                          value={field.value ?? ""}
-                        />
-                      </FormControl>
-                      <FormDescription>
-                        Cost in specified currency
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="currency"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Currency</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value || "SAR"}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select currency" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {SUPPORTED_CURRENCIES.map((curr) => (
-                            <SelectItem key={curr.code} value={curr.code}>
-                              {curr.symbol} {curr.code} - {curr.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>
-                        Currency for purchase cost
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              {/* Warranty End Date */}
-              <FormField
-                control={form.control}
-                name="warrantyEndDate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Warranty End Date (Optional)</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="date"
-                        {...field}
-                        value={
-                          field.value && field.value instanceof Date
-                            ? field.value.toISOString().split("T")[0]
-                            : field.value && typeof field.value === "string"
-                              ? new Date(field.value)
-                                  .toISOString()
-                                  .split("T")[0]
-                              : ""
-                        }
-                        onChange={(e) => {
-                          field.onChange(
-                            e.target.value ? new Date(e.target.value) : null,
-                          );
-                        }}
+                      <FormField
+                        control={form.control}
+                        name="currency"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Currency</FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value || "SAR"}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select currency" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {SUPPORTED_CURRENCIES.map((curr) => (
+                                  <SelectItem key={curr.code} value={curr.code}>
+                                    {curr.symbol} {curr.code} - {curr.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormDescription>
+                              Currency for purchase cost
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </FormControl>
-                    <FormDescription>When the warranty expires</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
 
-              {/* Note */}
-              <FormField
-                control={form.control}
-                name="note"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Note (Optional)</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Additional notes about this asset"
-                        className="resize-none"
-                        {...field}
-                        value={field.value || ""}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      Any additional information
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                {/* Additional Details Section */}
+                <AccordionItem value="additional">
+                  <AccordionTrigger>Additional Details</AccordionTrigger>
+                  <AccordionContent className="space-y-4">
+                    {/* Note */}
+                    <FormField
+                      control={form.control}
+                      name="note"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Note</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Additional notes about this asset"
+                              className="resize-none"
+                              {...field}
+                              value={field.value || ""}
+                            />
+                          </FormControl>
+                          <FormDescription>
+                            Any additional information
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
 
               <DialogFooter>
                 <Button

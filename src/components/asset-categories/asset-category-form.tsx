@@ -21,7 +21,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -69,7 +68,6 @@ export function AssetCategoryForm({
       name: assetCategory?.name ?? "",
       code: assetCategory?.code ?? "",
       description: assetCategory?.description ?? "",
-      isConsumable: assetCategory?.isConsumable ?? false,
     },
   });
 
@@ -95,7 +93,6 @@ export function AssetCategoryForm({
       name: assetCategory?.name ?? "",
       code: assetCategory?.code ?? "",
       description: assetCategory?.description ?? "",
-      isConsumable: assetCategory?.isConsumable ?? false,
     });
   }, [assetCategory, form]);
 
@@ -189,28 +186,6 @@ export function AssetCategoryForm({
                       Optional description of this category
                     </FormDescription>
                     <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="isConsumable"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-y-0 space-x-3 rounded-md border p-4">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Consumable Category</FormLabel>
-                      <FormDescription>
-                        Consumable items (cables, mice, keyboards) don&apos;t
-                        require individual tracking or lifecycle management
-                      </FormDescription>
-                    </div>
                   </FormItem>
                 )}
               />

@@ -51,6 +51,10 @@ export function inferDataType(values: unknown[]): FieldDataTypeEnum {
     /^\d{2}\/\d{2}\/\d{4}$/, // US: 01/15/2024
     /^\d{2}-\d{2}-\d{4}$/, // EU: 15-01-2024
     /^\d{4}\/\d{2}\/\d{2}$/, // JP: 2024/01/15
+    /^\d{1,2}\/\d{1,2}\/\d{2}$/, // Short year: 1/15/24, 01/15/24
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/, // ISO datetime: 2024-01-15T10:30:00
+    /^\d{2}-[A-Za-z]{3}-\d{4}$/, // DD-MMM-YYYY: 15-Jan-2024
+    /^\d{4}\.\d{2}\.\d{2}$/, // ISO with dots: 2024.01.15
   ];
   if (nonEmpty.every((v) => datePatterns.some((p) => p.test(v)))) {
     return FieldDataTypeEnum.DATE;

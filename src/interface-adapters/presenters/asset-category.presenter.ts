@@ -11,7 +11,6 @@ export interface AssetCategoryDTO {
   code: string;
   description: string | null;
   lifecycleModelId: string | null;
-  isConsumable: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -25,7 +24,6 @@ export function presentAssetCategory(
     code: assetCategory.code,
     description: assetCategory.description,
     lifecycleModelId: assetCategory.lifecycleModelId,
-    isConsumable: assetCategory.isConsumable,
     createdAt: assetCategory.createdAt.toISOString(),
     updatedAt: assetCategory.updatedAt.toISOString(),
   };

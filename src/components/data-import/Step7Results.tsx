@@ -27,7 +27,6 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Table,
@@ -51,6 +50,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface Props {
   entity: EntityConfig;
@@ -60,14 +60,67 @@ interface Props {
 
 export function Step7Results({ entity, result, onReset }: Props) {
   const [activeTab, setActiveTab] = useState<string>("summary");
+  const router = useRouter();
 
   /**
-   * Download full report
+   * Generate filename with timestamp
    */
-  const handleDownloadReport = async () => {
+  const generateFilename = (suffix: string, extension: string) => {
+    const timestamp = new Date()
+      .toISOString()
+      .replace(/[:.]/g, "-")
+      .slice(0, 19);
+    return `import-${entity.key.toLowerCase()}-${suffix}-${timestamp}.${extension}`;
+  };
+
+  /**
+   * Trigger file download
+   */
+  const downloadFile = (
+    content: string,
+    filename: string,
+    mimeType: string,
+  ) => {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  /**
+   * Download full report as JSON
+   */
+  const handleDownloadReport = () => {
     try {
-      // TODO: Generate comprehensive report
-      toast.success("Import report has been downloaded");
+      const report = {
+        summary: {
+          entity: entity.name,
+          entityKey: entity.key,
+          importedAt: new Date().toISOString(),
+          totalRows: result.totalRows,
+          successCount: result.successCount,
+          createCount: result.createCount,
+          updateCount: result.updateCount,
+          skipCount: result.skipCount,
+          failureCount: result.failureCount,
+          duration: result.duration,
+          throughput: result.throughput,
+        },
+        createdRecords: result.createdRecords,
+        updatedRecords: result.updatedRecords,
+        skippedRows: result.skippedRows,
+        failedRows: result.failedRows,
+      };
+
+      const content = JSON.stringify(report, null, 2);
+      const filename = generateFilename("report", "json");
+      downloadFile(content, filename, "application/json");
+      toast.success("Import report downloaded");
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Failed to download report",
@@ -76,24 +129,55 @@ export function Step7Results({ entity, result, onReset }: Props) {
   };
 
   /**
-   * Download failed rows
+   * Download failed rows as CSV for re-import
    */
-  const handleDownloadFailed = async () => {
+  const handleDownloadFailed = () => {
     try {
-      // TODO: Export failed rows with errors
-      toast.success(`${result.failedRows.length} rows exported`);
+      if (result.failedRows.length === 0) {
+        return;
+      }
+
+      // Create CSV content
+      const headers = ["Row Number", "Error", "Suggestion"];
+      const rows = result.failedRows.map((fail) => [
+        fail.rowNumber?.toString() || "",
+        `"${(fail.message || "").replace(/"/g, '""')}"`,
+        `"${(fail.suggestion || "").replace(/"/g, '""')}"`,
+      ]);
+
+      const csvContent = [
+        headers.join(","),
+        ...rows.map((row) => row.join(",")),
+      ].join("\n");
+
+      const filename = generateFilename("failed-rows", "csv");
+      downloadFile(csvContent, filename, "text/csv");
+      toast.success(`${result.failedRows.length} failed rows exported`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to export");
     }
   };
 
   /**
-   * View imported data
+   * View imported data - navigate to entity list page
    */
+  const entityRouteMap: Record<string, { route: string; label: string }> = {
+    UNIVERSAL_ASSETS: { route: "/assets", label: "Assets" },
+    ASSET: { route: "/assets", label: "Assets" },
+    PERSON: { route: "/persons", label: "Persons" },
+    VENDOR: { route: "/vendors", label: "Vendors" },
+    LOCATION: { route: "/locations", label: "Locations" },
+    ASSET_CATEGORY: { route: "/asset-categories", label: "Asset Categories" },
+    ASSET_MODEL: { route: "/asset-models", label: "Asset Models" },
+  };
+
+  const viewDataConfig = entityRouteMap[entity.key] || {
+    route: `/admin/${entity.key.toLowerCase().replace(/_/g, "-")}s`,
+    label: entity.name,
+  };
+
   const handleViewData = () => {
-    // TODO: Navigate to entity list page
-    // For now, just show a toast
-    toast.info(`Viewing ${entity.name} list...`);
+    router.push(viewDataConfig.route);
   };
 
   /**
@@ -528,7 +612,7 @@ export function Step7Results({ entity, result, onReset }: Props) {
             {result.successCount > 0 && (
               <Button onClick={handleViewData} className="w-full">
                 <ExternalLink className="mr-2 h-4 w-4" />
-                View Imported {entity.name}
+                View {viewDataConfig.label}
               </Button>
             )}
 
@@ -545,20 +629,6 @@ export function Step7Results({ entity, result, onReset }: Props) {
               <Download className="mr-2 h-4 w-4" />
               Download Full Report
             </Button>
-          </div>
-
-          <Separator />
-
-          <div className="text-muted-foreground space-y-1 text-sm">
-            <p>
-              <strong>Entity:</strong> {entity.name}
-            </p>
-            <p>
-              <strong>Imported by:</strong> Current User
-            </p>
-            <p>
-              <strong>Completed:</strong> {new Date().toLocaleString()}
-            </p>
           </div>
         </CardContent>
       </Card>

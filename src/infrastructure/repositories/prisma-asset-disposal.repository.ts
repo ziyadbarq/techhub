@@ -1,5 +1,6 @@
 import { injectable, inject } from "inversify";
 import type { PrismaClient } from "@/generated/prisma/server";
+import type { DisposalTypeEnum, DisposalStatusEnum } from "@/generated/prisma";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetDisposalRepository } from "@/core/repositories/asset-disposal.repository.interface";
 import {
@@ -21,12 +22,12 @@ export class PrismaAssetDisposalRepository implements IAssetDisposalRepository {
     const data = {
       id: disposal.id,
       assetId: disposal.assetId,
-      disposalType: disposal.disposalType,
+      disposalType: disposal.disposalType as DisposalTypeEnum,
       reason: disposal.reason,
       initiatedById: disposal.initiatedById,
       approvedById: disposal.approvedById,
       approvedAt: disposal.approvedAt,
-      status: disposal.status,
+      status: disposal.status as DisposalStatusEnum,
       estimatedValue: disposal.estimatedValue,
       actualProceeds: disposal.actualProceeds,
       currency: disposal.currency,
@@ -99,7 +100,7 @@ export class PrismaAssetDisposalRepository implements IAssetDisposalRepository {
     options?: { skip?: number; take?: number },
   ): Promise<AssetDisposal[]> {
     const disposals = await this.prisma.assetDisposal.findMany({
-      where: { disposalType: type },
+      where: { disposalType: type as DisposalTypeEnum },
       skip: options?.skip,
       take: options?.take,
       orderBy: { createdAt: "desc" },

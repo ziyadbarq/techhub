@@ -29,6 +29,27 @@ export const StockMovementTypeEnum = {
 export type StockMovementTypeEnum = (typeof StockMovementTypeEnum)[keyof typeof StockMovementTypeEnum]
 
 
+export const StockMovementStatusEnum = {
+  ACTIVE: 'ACTIVE',
+  VOIDED: 'VOIDED'
+} as const
+
+export type StockMovementStatusEnum = (typeof StockMovementStatusEnum)[keyof typeof StockMovementStatusEnum]
+
+
+export const StockMovementSourceEnum = {
+  MANUAL: 'MANUAL',
+  ASSIGNMENT: 'ASSIGNMENT',
+  RETURN: 'RETURN',
+  DISPOSAL: 'DISPOSAL',
+  IMPORT: 'IMPORT',
+  LOCATION_CHANGE: 'LOCATION_CHANGE',
+  SYSTEM: 'SYSTEM'
+} as const
+
+export type StockMovementSourceEnum = (typeof StockMovementSourceEnum)[keyof typeof StockMovementSourceEnum]
+
+
 export const FieldDataTypeEnum = {
   STRING: 'STRING',
   TEXT: 'TEXT',
@@ -349,6 +370,83 @@ export const TargetObjectTypeEnum = {
 } as const
 
 export type TargetObjectTypeEnum = (typeof TargetObjectTypeEnum)[keyof typeof TargetObjectTypeEnum]
+
+
+export const AssetConditionEnum = {
+  NEW: 'NEW',
+  GOOD: 'GOOD',
+  FAIR: 'FAIR',
+  POOR: 'POOR'
+} as const
+
+export type AssetConditionEnum = (typeof AssetConditionEnum)[keyof typeof AssetConditionEnum]
+
+
+export const DepreciationModelEnum = {
+  STRAIGHT_LINE: 'STRAIGHT_LINE',
+  DECLINING_BALANCE: 'DECLINING_BALANCE',
+  UNITS_OF_PRODUCTION: 'UNITS_OF_PRODUCTION',
+  SUM_OF_YEARS_DIGITS: 'SUM_OF_YEARS_DIGITS'
+} as const
+
+export type DepreciationModelEnum = (typeof DepreciationModelEnum)[keyof typeof DepreciationModelEnum]
+
+
+export const DisposalTypeEnum = {
+  SALE: 'SALE',
+  DONATION: 'DONATION',
+  RECYCLE: 'RECYCLE',
+  SCRAP: 'SCRAP',
+  TRANSFER: 'TRANSFER',
+  DESTRUCTION: 'DESTRUCTION'
+} as const
+
+export type DisposalTypeEnum = (typeof DisposalTypeEnum)[keyof typeof DisposalTypeEnum]
+
+
+export const DisposalStatusEnum = {
+  PENDING_APPROVAL: 'PENDING_APPROVAL',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type DisposalStatusEnum = (typeof DisposalStatusEnum)[keyof typeof DisposalStatusEnum]
+
+
+export const MaintenanceScheduleTypeEnum = {
+  DAILY: 'DAILY',
+  WEEKLY: 'WEEKLY',
+  MONTHLY: 'MONTHLY',
+  QUARTERLY: 'QUARTERLY',
+  YEARLY: 'YEARLY',
+  CUSTOM: 'CUSTOM'
+} as const
+
+export type MaintenanceScheduleTypeEnum = (typeof MaintenanceScheduleTypeEnum)[keyof typeof MaintenanceScheduleTypeEnum]
+
+
+export const MaintenanceStatusEnum = {
+  SCHEDULED: 'SCHEDULED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
+  OVERDUE: 'OVERDUE'
+} as const
+
+export type MaintenanceStatusEnum = (typeof MaintenanceStatusEnum)[keyof typeof MaintenanceStatusEnum]
+
+
+export const PriorityEnum = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  CRITICAL: 'CRITICAL'
+} as const
+
+export type PriorityEnum = (typeof PriorityEnum)[keyof typeof PriorityEnum]
 
 
 export const TaskStatus = {

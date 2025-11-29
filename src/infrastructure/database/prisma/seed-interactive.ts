@@ -5,7 +5,7 @@
  * Features:
  * - Multi-select module picker with dependency resolution
  * - Preset system (load/save common configurations)
- * - Built-in presets: full, minimal, dev, rbac-only, etc.
+ * - Built-in presets: production, dev
  * - Estimated time calculation
  * - Validation with warnings and errors
  *
@@ -35,14 +35,18 @@ import {
 } from "./seed-presets-manager.js";
 import { seedPrompts } from "./seed-prompts.js";
 import { seedRBAC } from "./seed-rbac.js";
-import { seedFoundation } from "./seed-foundation.js";
-import { seedAssets } from "./seed-assets.js";
+import { seedFoundation, seedDemoPersons } from "./seed-foundation.js";
+import { seedAssetConfig, seedDemoAssets } from "./seed-assets.js";
 import { seedWarrantiesMaintenance } from "./seed-warranties-maintenance.js";
 import { seedCMDB } from "./seed-cmdb.js";
 import { seedLayer3ITAM } from "./seed-layer3-itam.js";
 import { seedAttachments } from "./seed-attachments.js";
 import { seedGovernance } from "./seed-governance.js";
-import { seedBusinessProcesses, seedServices } from "./seed-services.js";
+import {
+  seedBusinessProcesses,
+  seedServices,
+  seedServiceOwners,
+} from "./seed-services.js";
 import { logSection, logSuccess, logStep } from "./seed-utils.js";
 import {
   initializeCodeSequences,
@@ -56,8 +60,7 @@ import {
  */
 interface CLIArgs {
   preset?: string;
-  minimal?: boolean;
-  full?: boolean;
+  production?: boolean;
   dev?: boolean;
   cleanup?: boolean;
 }
@@ -71,10 +74,8 @@ function parseArgs(): CLIArgs {
     if (arg === "--preset" && i + 1 < argv.length) {
       args.preset = argv[i + 1];
       i++;
-    } else if (arg === "--minimal") {
-      args.minimal = true;
-    } else if (arg === "--full") {
-      args.full = true;
+    } else if (arg === "--production") {
+      args.production = true;
     } else if (arg === "--dev") {
       args.dev = true;
     } else if (arg === "--cleanup") {
@@ -90,11 +91,8 @@ function parseArgs(): CLIArgs {
  */
 async function getInitialSelection(args: CLIArgs): Promise<SeedModule[]> {
   // Check for CLI preset flags
-  if (args.minimal) {
-    return BUILTIN_PRESETS.find((p) => p.name === "minimal")!.modules;
-  }
-  if (args.full) {
-    return Object.values(SeedModule);
+  if (args.production) {
+    return BUILTIN_PRESETS.find((p) => p.name === "production")!.modules;
   }
   if (args.dev) {
     return BUILTIN_PRESETS.find((p) => p.name === "dev")!.modules;
@@ -133,26 +131,13 @@ async function promptUserSelection(): Promise<{
       message: "Load a preset or choose modules manually?",
       choices: [
         { name: "(Choose modules manually)", value: null },
-        { name: "full - Complete database seed (all modules)", value: "full" },
         {
-          name: "minimal - Minimal setup (RBAC + Foundation only)",
-          value: "minimal",
+          name: "production - Production config only (no demo data)",
+          value: "production",
         },
         {
-          name: "dev - Common dev data (RBAC + Foundation + Assets)",
+          name: "dev - Full development environment with all demo data",
           value: "dev",
-        },
-        {
-          name: "rbac-only - RBAC system only (permissions + roles)",
-          value: "rbac-only",
-        },
-        {
-          name: "itam-complete - Full ITAM stack (Assets + Warranties + Layer 3)",
-          value: "itam-complete",
-        },
-        {
-          name: "services-complete - Service management with dependencies",
-          value: "services-complete",
         },
       ],
     },
@@ -347,6 +332,7 @@ async function executeSeed(modules: SeedModule[]) {
 
     try {
       switch (seedModule) {
+        // Production modules
         case SeedModule.RBAC:
           await seedRBAC();
           break;
@@ -356,24 +342,34 @@ async function executeSeed(modules: SeedModule[]) {
         case SeedModule.BUSINESS_PROCESSES:
           await seedBusinessProcesses(prisma);
           break;
-        case SeedModule.ASSETS:
-          await seedAssets(prisma);
-          break;
-        case SeedModule.WARRANTIES_MAINTENANCE:
-          await seedWarrantiesMaintenance(prisma);
-          break;
-        case SeedModule.SERVICES:
-          await seedServices(prisma);
+        case SeedModule.ASSET_CONFIG:
+          await seedAssetConfig(prisma);
           break;
         case SeedModule.CMDB:
           await seedCMDB(prisma);
           break;
-        case SeedModule.LAYER3_ITAM:
-          await seedLayer3ITAM(prisma);
+        case SeedModule.SERVICES:
+          await seedServices(prisma);
           break;
         case SeedModule.ATTACHMENTS_GOVERNANCE:
           await seedAttachments(prisma);
           await seedGovernance(prisma);
+          break;
+        // Demo-only modules
+        case SeedModule.DEMO_PERSONS:
+          await seedDemoPersons(prisma);
+          break;
+        case SeedModule.DEMO_ASSETS:
+          await seedDemoAssets(prisma);
+          break;
+        case SeedModule.SERVICE_OWNERS:
+          await seedServiceOwners(prisma);
+          break;
+        case SeedModule.WARRANTIES_MAINTENANCE:
+          await seedWarrantiesMaintenance(prisma);
+          break;
+        case SeedModule.LAYER3_ITAM:
+          await seedLayer3ITAM(prisma);
           break;
         case SeedModule.AI_PROMPTS_TASKS:
           await seedPrompts(prisma);

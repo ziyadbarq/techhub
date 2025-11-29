@@ -20,7 +20,7 @@ import {
 /**
  * Perform full database cleanup (all tables)
  *
- * @deprecated Use `npm run db:reset` instead, which uses `prisma db push --force-reset`.
+ * @deprecated Use `npm run db:reset` instead, which uses `prisma migrate reset --force`.
  * This function is kept for backwards compatibility and testing purposes only.
  *
  * Order is critical to respect foreign key constraints
@@ -339,7 +339,7 @@ export async function seedExampleTasks(prisma: PrismaClient): Promise<number> {
       description:
         "1. Configure your DATABASE_URL in .env.local\n" +
         "2. Add your OPENAI_API_KEY\n" +
-        "3. Run npm run db:push\n" +
+        "3. Run npm run db:migrate\n" +
         "4. Run npm run dev",
       status: TaskStatus.COMPLETED,
     },

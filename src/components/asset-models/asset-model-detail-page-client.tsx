@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Edit, Trash2, Package, BarChart3 } from "lucide-react";
 
@@ -28,7 +28,10 @@ import type { AssetModelDTO } from "@/interface-adapters/presenters/asset-model.
 import type { AssetCategoryDTO } from "@/interface-adapters/presenters/asset-category.presenter";
 import type { VendorDTO } from "@/interface-adapters/presenters/vendor.presenter";
 import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
-import { deleteAssetModelAction } from "@/interface-adapters/controllers/asset-model.controller";
+import {
+  deleteAssetModelAction,
+  getAssetModelAction,
+} from "@/interface-adapters/controllers/asset-model.controller";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { AssetModelForm } from "./asset-model-form";
@@ -44,7 +47,7 @@ interface AssetModelDetailPageClientProps {
 }
 
 export function AssetModelDetailPageClient({
-  model,
+  model: initialModel,
   category,
   vendor,
   assets,
@@ -52,6 +55,7 @@ export function AssetModelDetailPageClient({
   const router = useRouter();
   const { hasPermission } = usePermissions();
 
+  const [model, setModel] = useState(initialModel);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -59,6 +63,15 @@ export function AssetModelDetailPageClient({
   const canUpdate = hasPermission(PERMISSIONS.ASSET_MODELS_UPDATE);
   const canDelete = hasPermission(PERMISSIONS.ASSET_MODELS_DELETE);
   const canViewAssets = hasPermission(PERMISSIONS.ASSETS_VIEW);
+
+  const handleFormSuccess = useCallback(async () => {
+    // Fetch updated model data to refresh UI immediately
+    const result = await getAssetModelAction(model.id);
+    if (result.success) {
+      setModel(result.data);
+    }
+    router.refresh();
+  }, [model.id, router]);
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -178,9 +191,7 @@ export function AssetModelDetailPageClient({
       <AssetModelForm
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
-        onSuccess={() => {
-          router.refresh();
-        }}
+        onSuccess={handleFormSuccess}
         assetModel={model}
       />
 

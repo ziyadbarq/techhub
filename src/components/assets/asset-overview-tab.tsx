@@ -17,7 +17,6 @@ import { Badge } from "@/components/ui/badge";
 import { CurrencyDisplay } from "@/components/ui/currency-display";
 import { CustomFieldsDisplay } from "@/components/custom-fields";
 import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
-import { CheckCircle2, XCircle } from "lucide-react";
 import { convertCurrencyAction } from "@/interface-adapters/controllers/exchange-rate.controller";
 
 interface AssetOverviewTabProps {
@@ -204,49 +203,6 @@ export function AssetOverviewTab({ asset }: AssetOverviewTabProps) {
                 )}
               </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Warranty Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Warranty Information</CardTitle>
-          <CardDescription>Warranty status and details</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {asset.warrantyEndDate ? (
-            <>
-              <div>
-                <p className="text-muted-foreground text-sm font-medium">
-                  Warranty End Date
-                </p>
-                <p className="text-sm">
-                  {format(new Date(asset.warrantyEndDate), "MMMM d, yyyy")}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-muted-foreground text-sm font-medium">
-                  Status
-                </p>
-                {asset.isUnderWarranty ? (
-                  <Badge variant="default" className="gap-1">
-                    <CheckCircle2 className="h-3 w-3" />
-                    Active
-                  </Badge>
-                ) : (
-                  <Badge variant="secondary" className="gap-1">
-                    <XCircle className="h-3 w-3" />
-                    Expired
-                  </Badge>
-                )}
-              </div>
-            </>
-          ) : (
-            <p className="text-muted-foreground text-sm">
-              No warranty information
-            </p>
           )}
         </CardContent>
       </Card>

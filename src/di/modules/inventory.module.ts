@@ -30,6 +30,11 @@ import { CreateStockMovementUseCase } from "@/core/use-cases/inventory/stock-mov
 import { GetStockMovementUseCase } from "@/core/use-cases/inventory/stock-movement/get-stock-movement.use-case";
 import { ListStockMovementsUseCase } from "@/core/use-cases/inventory/stock-movement/list-stock-movements.use-case";
 import { DeleteStockMovementUseCase } from "@/core/use-cases/inventory/stock-movement/delete-stock-movement.use-case";
+import { VoidStockMovementUseCase } from "@/core/use-cases/inventory/stock-movement/void-stock-movement.use-case";
+
+// Asset Movement Service
+import type { IAssetMovementService } from "@/core/services/asset-movement.service.interface";
+import { AssetMovementService } from "@/infrastructure/services/asset-movement.service";
 
 const diLogger = logger.scope("DI:InventoryModule");
 
@@ -112,6 +117,20 @@ export function bindInventoryDependencies(container: Container): void {
     .bind<DeleteStockMovementUseCase>(DI_TOKENS.DeleteStockMovementUseCase)
     .to(DeleteStockMovementUseCase)
     .inTransientScope();
+
+  container
+    .bind<VoidStockMovementUseCase>(DI_TOKENS.VoidStockMovementUseCase)
+    .to(VoidStockMovementUseCase)
+    .inTransientScope();
+
+  // ==========================================
+  // Asset Movement Service
+  // ==========================================
+
+  container
+    .bind<IAssetMovementService>(DI_TOKENS.IAssetMovementService)
+    .to(AssetMovementService)
+    .inSingletonScope();
 
   diLogger.debug(
     "bindInventoryDependencies",

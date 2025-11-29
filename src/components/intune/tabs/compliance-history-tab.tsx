@@ -38,6 +38,7 @@ import {
   getComplianceStateColor,
 } from "@/interface-adapters/presenters/intune-device.presenter";
 import { getDeviceComplianceHistoryAction } from "@/interface-adapters/controllers/intune-device.controller";
+import { formatDateShort, formatTime } from "@/lib/utils/date-format";
 
 interface ComplianceHistoryTabProps {
   deviceId: string;
@@ -85,20 +86,10 @@ export function ComplianceHistoryTab({ deviceId }: ComplianceHistoryTabProps) {
     setMaxAgeDays(value);
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return {
-      date: date.toLocaleDateString(undefined, {
-        weekday: "short",
-        month: "short",
-        day: "numeric",
-      }),
-      time: date.toLocaleTimeString(undefined, {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-    };
-  };
+  const formatHistoryDate = (dateString: string) => ({
+    date: formatDateShort(dateString),
+    time: formatTime(dateString),
+  });
 
   return (
     <Card>
@@ -171,7 +162,7 @@ export function ComplianceHistoryTab({ deviceId }: ComplianceHistoryTabProps) {
               {/* Timeline items */}
               <div className="space-y-4">
                 {history.map((item) => {
-                  const { date, time } = formatDate(item.changedAt);
+                  const { date, time } = formatHistoryDate(item.changedAt);
                   const isCritical =
                     item.previousState === "COMPLIANT" &&
                     item.newState === "NON_COMPLIANT";

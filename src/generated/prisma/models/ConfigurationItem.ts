@@ -39,6 +39,10 @@ export type ConfigurationItemMinAggregateOutputType = {
   description: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
+  createdById: string | null
+  updatedById: string | null
 }
 
 export type ConfigurationItemMaxAggregateOutputType = {
@@ -56,6 +60,10 @@ export type ConfigurationItemMaxAggregateOutputType = {
   description: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
+  createdById: string | null
+  updatedById: string | null
 }
 
 export type ConfigurationItemCountAggregateOutputType = {
@@ -74,6 +82,10 @@ export type ConfigurationItemCountAggregateOutputType = {
   attributes: number
   createdAt: number
   updatedAt: number
+  deletedAt: number
+  deletedById: number
+  createdById: number
+  updatedById: number
   _all: number
 }
 
@@ -93,6 +105,10 @@ export type ConfigurationItemMinAggregateInputType = {
   description?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
+  createdById?: true
+  updatedById?: true
 }
 
 export type ConfigurationItemMaxAggregateInputType = {
@@ -110,6 +126,10 @@ export type ConfigurationItemMaxAggregateInputType = {
   description?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
+  createdById?: true
+  updatedById?: true
 }
 
 export type ConfigurationItemCountAggregateInputType = {
@@ -128,6 +148,10 @@ export type ConfigurationItemCountAggregateInputType = {
   attributes?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
+  createdById?: true
+  updatedById?: true
   _all?: true
 }
 
@@ -219,6 +243,10 @@ export type ConfigurationItemGroupByOutputType = {
   attributes: runtime.JsonValue | null
   createdAt: Date
   updatedAt: Date
+  deletedAt: Date | null
+  deletedById: string | null
+  createdById: string | null
+  updatedById: string | null
   _count: ConfigurationItemCountAggregateOutputType | null
   _min: ConfigurationItemMinAggregateOutputType | null
   _max: ConfigurationItemMaxAggregateOutputType | null
@@ -258,6 +286,10 @@ export type ConfigurationItemWhereInput = {
   attributes?: Prisma.JsonNullableFilter<"ConfigurationItem">
   createdAt?: Prisma.DateTimeFilter<"ConfigurationItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ConfigurationItem"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"ConfigurationItem"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"ConfigurationItem"> | string | null
+  createdById?: Prisma.StringNullableFilter<"ConfigurationItem"> | string | null
+  updatedById?: Prisma.StringNullableFilter<"ConfigurationItem"> | string | null
   ciClass?: Prisma.XOR<Prisma.CIClassScalarRelationFilter, Prisma.CIClassWhereInput>
   lifecycleState?: Prisma.XOR<Prisma.LifecycleStateNullableScalarRelationFilter, Prisma.LifecycleStateWhereInput> | null
   primaryOwnerPerson?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
@@ -266,6 +298,9 @@ export type ConfigurationItemWhereInput = {
   linkedAsset?: Prisma.XOR<Prisma.AssetNullableScalarRelationFilter, Prisma.AssetWhereInput> | null
   relationshipsFrom?: Prisma.CIRelationshipListRelationFilter
   relationshipsTo?: Prisma.CIRelationshipListRelationFilter
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
+  createdBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
+  updatedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }
 
 export type ConfigurationItemOrderByWithRelationInput = {
@@ -284,6 +319,10 @@ export type ConfigurationItemOrderByWithRelationInput = {
   attributes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdById?: Prisma.SortOrderInput | Prisma.SortOrder
+  updatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   ciClass?: Prisma.CIClassOrderByWithRelationInput
   lifecycleState?: Prisma.LifecycleStateOrderByWithRelationInput
   primaryOwnerPerson?: Prisma.PersonOrderByWithRelationInput
@@ -292,6 +331,9 @@ export type ConfigurationItemOrderByWithRelationInput = {
   linkedAsset?: Prisma.AssetOrderByWithRelationInput
   relationshipsFrom?: Prisma.CIRelationshipOrderByRelationAggregateInput
   relationshipsTo?: Prisma.CIRelationshipOrderByRelationAggregateInput
+  deletedBy?: Prisma.PersonOrderByWithRelationInput
+  createdBy?: Prisma.PersonOrderByWithRelationInput
+  updatedBy?: Prisma.PersonOrderByWithRelationInput
 }
 
 export type ConfigurationItemWhereUniqueInput = Prisma.AtLeast<{
@@ -313,6 +355,10 @@ export type ConfigurationItemWhereUniqueInput = Prisma.AtLeast<{
   attributes?: Prisma.JsonNullableFilter<"ConfigurationItem">
   createdAt?: Prisma.DateTimeFilter<"ConfigurationItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ConfigurationItem"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"ConfigurationItem"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"ConfigurationItem"> | string | null
+  createdById?: Prisma.StringNullableFilter<"ConfigurationItem"> | string | null
+  updatedById?: Prisma.StringNullableFilter<"ConfigurationItem"> | string | null
   ciClass?: Prisma.XOR<Prisma.CIClassScalarRelationFilter, Prisma.CIClassWhereInput>
   lifecycleState?: Prisma.XOR<Prisma.LifecycleStateNullableScalarRelationFilter, Prisma.LifecycleStateWhereInput> | null
   primaryOwnerPerson?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
@@ -321,6 +367,9 @@ export type ConfigurationItemWhereUniqueInput = Prisma.AtLeast<{
   linkedAsset?: Prisma.XOR<Prisma.AssetNullableScalarRelationFilter, Prisma.AssetWhereInput> | null
   relationshipsFrom?: Prisma.CIRelationshipListRelationFilter
   relationshipsTo?: Prisma.CIRelationshipListRelationFilter
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
+  createdBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
+  updatedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }, "id" | "ciKey">
 
 export type ConfigurationItemOrderByWithAggregationInput = {
@@ -339,6 +388,10 @@ export type ConfigurationItemOrderByWithAggregationInput = {
   attributes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdById?: Prisma.SortOrderInput | Prisma.SortOrder
+  updatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ConfigurationItemCountOrderByAggregateInput
   _max?: Prisma.ConfigurationItemMaxOrderByAggregateInput
   _min?: Prisma.ConfigurationItemMinOrderByAggregateInput
@@ -363,6 +416,10 @@ export type ConfigurationItemScalarWhereWithAggregatesInput = {
   attributes?: Prisma.JsonNullableWithAggregatesFilter<"ConfigurationItem">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ConfigurationItem"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ConfigurationItem"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ConfigurationItem"> | Date | string | null
+  deletedById?: Prisma.StringNullableWithAggregatesFilter<"ConfigurationItem"> | string | null
+  createdById?: Prisma.StringNullableWithAggregatesFilter<"ConfigurationItem"> | string | null
+  updatedById?: Prisma.StringNullableWithAggregatesFilter<"ConfigurationItem"> | string | null
 }
 
 export type ConfigurationItemCreateInput = {
@@ -375,6 +432,7 @@ export type ConfigurationItemCreateInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   ciClass: Prisma.CIClassCreateNestedOneWithoutConfigurationItemsInput
   lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutConfigurationItemsInput
   primaryOwnerPerson?: Prisma.PersonCreateNestedOneWithoutConfigurationItemsInput
@@ -383,6 +441,9 @@ export type ConfigurationItemCreateInput = {
   linkedAsset?: Prisma.AssetCreateNestedOneWithoutConfigurationItemsInput
   relationshipsFrom?: Prisma.CIRelationshipCreateNestedManyWithoutFromCiInput
   relationshipsTo?: Prisma.CIRelationshipCreateNestedManyWithoutToCiInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedConfigurationItemsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedConfigurationItemsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedConfigurationItemsInput
 }
 
 export type ConfigurationItemUncheckedCreateInput = {
@@ -401,6 +462,10 @@ export type ConfigurationItemUncheckedCreateInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   relationshipsFrom?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutFromCiInput
   relationshipsTo?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutToCiInput
 }
@@ -415,6 +480,7 @@ export type ConfigurationItemUpdateInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ciClass?: Prisma.CIClassUpdateOneRequiredWithoutConfigurationItemsNestedInput
   lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutConfigurationItemsNestedInput
   primaryOwnerPerson?: Prisma.PersonUpdateOneWithoutConfigurationItemsNestedInput
@@ -423,6 +489,9 @@ export type ConfigurationItemUpdateInput = {
   linkedAsset?: Prisma.AssetUpdateOneWithoutConfigurationItemsNestedInput
   relationshipsFrom?: Prisma.CIRelationshipUpdateManyWithoutFromCiNestedInput
   relationshipsTo?: Prisma.CIRelationshipUpdateManyWithoutToCiNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedConfigurationItemsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedConfigurationItemsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedConfigurationItemsNestedInput
 }
 
 export type ConfigurationItemUncheckedUpdateInput = {
@@ -441,6 +510,10 @@ export type ConfigurationItemUncheckedUpdateInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relationshipsFrom?: Prisma.CIRelationshipUncheckedUpdateManyWithoutFromCiNestedInput
   relationshipsTo?: Prisma.CIRelationshipUncheckedUpdateManyWithoutToCiNestedInput
 }
@@ -461,6 +534,10 @@ export type ConfigurationItemCreateManyInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
 }
 
 export type ConfigurationItemUpdateManyMutationInput = {
@@ -473,6 +550,7 @@ export type ConfigurationItemUpdateManyMutationInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ConfigurationItemUncheckedUpdateManyInput = {
@@ -491,6 +569,10 @@ export type ConfigurationItemUncheckedUpdateManyInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ConfigurationItemListRelationFilter = {
@@ -519,6 +601,10 @@ export type ConfigurationItemCountOrderByAggregateInput = {
   attributes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
+  createdById?: Prisma.SortOrder
+  updatedById?: Prisma.SortOrder
 }
 
 export type ConfigurationItemMaxOrderByAggregateInput = {
@@ -536,6 +622,10 @@ export type ConfigurationItemMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
+  createdById?: Prisma.SortOrder
+  updatedById?: Prisma.SortOrder
 }
 
 export type ConfigurationItemMinOrderByAggregateInput = {
@@ -553,6 +643,10 @@ export type ConfigurationItemMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
+  createdById?: Prisma.SortOrder
+  updatedById?: Prisma.SortOrder
 }
 
 export type ConfigurationItemScalarRelationFilter = {
@@ -721,10 +815,52 @@ export type ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput = {
   connect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
 }
 
+export type ConfigurationItemCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutDeletedByInput, Prisma.ConfigurationItemUncheckedCreateWithoutDeletedByInput> | Prisma.ConfigurationItemCreateWithoutDeletedByInput[] | Prisma.ConfigurationItemUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.ConfigurationItemCreateOrConnectWithoutDeletedByInput | Prisma.ConfigurationItemCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.ConfigurationItemCreateManyDeletedByInputEnvelope
+  connect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+}
+
+export type ConfigurationItemCreateNestedManyWithoutCreatedByInput = {
+  create?: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutCreatedByInput, Prisma.ConfigurationItemUncheckedCreateWithoutCreatedByInput> | Prisma.ConfigurationItemCreateWithoutCreatedByInput[] | Prisma.ConfigurationItemUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.ConfigurationItemCreateOrConnectWithoutCreatedByInput | Prisma.ConfigurationItemCreateOrConnectWithoutCreatedByInput[]
+  createMany?: Prisma.ConfigurationItemCreateManyCreatedByInputEnvelope
+  connect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+}
+
+export type ConfigurationItemCreateNestedManyWithoutUpdatedByInput = {
+  create?: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutUpdatedByInput, Prisma.ConfigurationItemUncheckedCreateWithoutUpdatedByInput> | Prisma.ConfigurationItemCreateWithoutUpdatedByInput[] | Prisma.ConfigurationItemUncheckedCreateWithoutUpdatedByInput[]
+  connectOrCreate?: Prisma.ConfigurationItemCreateOrConnectWithoutUpdatedByInput | Prisma.ConfigurationItemCreateOrConnectWithoutUpdatedByInput[]
+  createMany?: Prisma.ConfigurationItemCreateManyUpdatedByInputEnvelope
+  connect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+}
+
 export type ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput = {
   create?: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutPrimaryOwnerPersonInput, Prisma.ConfigurationItemUncheckedCreateWithoutPrimaryOwnerPersonInput> | Prisma.ConfigurationItemCreateWithoutPrimaryOwnerPersonInput[] | Prisma.ConfigurationItemUncheckedCreateWithoutPrimaryOwnerPersonInput[]
   connectOrCreate?: Prisma.ConfigurationItemCreateOrConnectWithoutPrimaryOwnerPersonInput | Prisma.ConfigurationItemCreateOrConnectWithoutPrimaryOwnerPersonInput[]
   createMany?: Prisma.ConfigurationItemCreateManyPrimaryOwnerPersonInputEnvelope
+  connect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+}
+
+export type ConfigurationItemUncheckedCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutDeletedByInput, Prisma.ConfigurationItemUncheckedCreateWithoutDeletedByInput> | Prisma.ConfigurationItemCreateWithoutDeletedByInput[] | Prisma.ConfigurationItemUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.ConfigurationItemCreateOrConnectWithoutDeletedByInput | Prisma.ConfigurationItemCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.ConfigurationItemCreateManyDeletedByInputEnvelope
+  connect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+}
+
+export type ConfigurationItemUncheckedCreateNestedManyWithoutCreatedByInput = {
+  create?: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutCreatedByInput, Prisma.ConfigurationItemUncheckedCreateWithoutCreatedByInput> | Prisma.ConfigurationItemCreateWithoutCreatedByInput[] | Prisma.ConfigurationItemUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.ConfigurationItemCreateOrConnectWithoutCreatedByInput | Prisma.ConfigurationItemCreateOrConnectWithoutCreatedByInput[]
+  createMany?: Prisma.ConfigurationItemCreateManyCreatedByInputEnvelope
+  connect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+}
+
+export type ConfigurationItemUncheckedCreateNestedManyWithoutUpdatedByInput = {
+  create?: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutUpdatedByInput, Prisma.ConfigurationItemUncheckedCreateWithoutUpdatedByInput> | Prisma.ConfigurationItemCreateWithoutUpdatedByInput[] | Prisma.ConfigurationItemUncheckedCreateWithoutUpdatedByInput[]
+  connectOrCreate?: Prisma.ConfigurationItemCreateOrConnectWithoutUpdatedByInput | Prisma.ConfigurationItemCreateOrConnectWithoutUpdatedByInput[]
+  createMany?: Prisma.ConfigurationItemCreateManyUpdatedByInputEnvelope
   connect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
 }
 
@@ -742,6 +878,48 @@ export type ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput = {
   deleteMany?: Prisma.ConfigurationItemScalarWhereInput | Prisma.ConfigurationItemScalarWhereInput[]
 }
 
+export type ConfigurationItemUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutDeletedByInput, Prisma.ConfigurationItemUncheckedCreateWithoutDeletedByInput> | Prisma.ConfigurationItemCreateWithoutDeletedByInput[] | Prisma.ConfigurationItemUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.ConfigurationItemCreateOrConnectWithoutDeletedByInput | Prisma.ConfigurationItemCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.ConfigurationItemUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.ConfigurationItemUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.ConfigurationItemCreateManyDeletedByInputEnvelope
+  set?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  disconnect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  delete?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  connect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  update?: Prisma.ConfigurationItemUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.ConfigurationItemUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.ConfigurationItemUpdateManyWithWhereWithoutDeletedByInput | Prisma.ConfigurationItemUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.ConfigurationItemScalarWhereInput | Prisma.ConfigurationItemScalarWhereInput[]
+}
+
+export type ConfigurationItemUpdateManyWithoutCreatedByNestedInput = {
+  create?: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutCreatedByInput, Prisma.ConfigurationItemUncheckedCreateWithoutCreatedByInput> | Prisma.ConfigurationItemCreateWithoutCreatedByInput[] | Prisma.ConfigurationItemUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.ConfigurationItemCreateOrConnectWithoutCreatedByInput | Prisma.ConfigurationItemCreateOrConnectWithoutCreatedByInput[]
+  upsert?: Prisma.ConfigurationItemUpsertWithWhereUniqueWithoutCreatedByInput | Prisma.ConfigurationItemUpsertWithWhereUniqueWithoutCreatedByInput[]
+  createMany?: Prisma.ConfigurationItemCreateManyCreatedByInputEnvelope
+  set?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  disconnect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  delete?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  connect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  update?: Prisma.ConfigurationItemUpdateWithWhereUniqueWithoutCreatedByInput | Prisma.ConfigurationItemUpdateWithWhereUniqueWithoutCreatedByInput[]
+  updateMany?: Prisma.ConfigurationItemUpdateManyWithWhereWithoutCreatedByInput | Prisma.ConfigurationItemUpdateManyWithWhereWithoutCreatedByInput[]
+  deleteMany?: Prisma.ConfigurationItemScalarWhereInput | Prisma.ConfigurationItemScalarWhereInput[]
+}
+
+export type ConfigurationItemUpdateManyWithoutUpdatedByNestedInput = {
+  create?: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutUpdatedByInput, Prisma.ConfigurationItemUncheckedCreateWithoutUpdatedByInput> | Prisma.ConfigurationItemCreateWithoutUpdatedByInput[] | Prisma.ConfigurationItemUncheckedCreateWithoutUpdatedByInput[]
+  connectOrCreate?: Prisma.ConfigurationItemCreateOrConnectWithoutUpdatedByInput | Prisma.ConfigurationItemCreateOrConnectWithoutUpdatedByInput[]
+  upsert?: Prisma.ConfigurationItemUpsertWithWhereUniqueWithoutUpdatedByInput | Prisma.ConfigurationItemUpsertWithWhereUniqueWithoutUpdatedByInput[]
+  createMany?: Prisma.ConfigurationItemCreateManyUpdatedByInputEnvelope
+  set?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  disconnect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  delete?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  connect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  update?: Prisma.ConfigurationItemUpdateWithWhereUniqueWithoutUpdatedByInput | Prisma.ConfigurationItemUpdateWithWhereUniqueWithoutUpdatedByInput[]
+  updateMany?: Prisma.ConfigurationItemUpdateManyWithWhereWithoutUpdatedByInput | Prisma.ConfigurationItemUpdateManyWithWhereWithoutUpdatedByInput[]
+  deleteMany?: Prisma.ConfigurationItemScalarWhereInput | Prisma.ConfigurationItemScalarWhereInput[]
+}
+
 export type ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput = {
   create?: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutPrimaryOwnerPersonInput, Prisma.ConfigurationItemUncheckedCreateWithoutPrimaryOwnerPersonInput> | Prisma.ConfigurationItemCreateWithoutPrimaryOwnerPersonInput[] | Prisma.ConfigurationItemUncheckedCreateWithoutPrimaryOwnerPersonInput[]
   connectOrCreate?: Prisma.ConfigurationItemCreateOrConnectWithoutPrimaryOwnerPersonInput | Prisma.ConfigurationItemCreateOrConnectWithoutPrimaryOwnerPersonInput[]
@@ -753,6 +931,48 @@ export type ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedI
   connect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
   update?: Prisma.ConfigurationItemUpdateWithWhereUniqueWithoutPrimaryOwnerPersonInput | Prisma.ConfigurationItemUpdateWithWhereUniqueWithoutPrimaryOwnerPersonInput[]
   updateMany?: Prisma.ConfigurationItemUpdateManyWithWhereWithoutPrimaryOwnerPersonInput | Prisma.ConfigurationItemUpdateManyWithWhereWithoutPrimaryOwnerPersonInput[]
+  deleteMany?: Prisma.ConfigurationItemScalarWhereInput | Prisma.ConfigurationItemScalarWhereInput[]
+}
+
+export type ConfigurationItemUncheckedUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutDeletedByInput, Prisma.ConfigurationItemUncheckedCreateWithoutDeletedByInput> | Prisma.ConfigurationItemCreateWithoutDeletedByInput[] | Prisma.ConfigurationItemUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.ConfigurationItemCreateOrConnectWithoutDeletedByInput | Prisma.ConfigurationItemCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.ConfigurationItemUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.ConfigurationItemUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.ConfigurationItemCreateManyDeletedByInputEnvelope
+  set?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  disconnect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  delete?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  connect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  update?: Prisma.ConfigurationItemUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.ConfigurationItemUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.ConfigurationItemUpdateManyWithWhereWithoutDeletedByInput | Prisma.ConfigurationItemUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.ConfigurationItemScalarWhereInput | Prisma.ConfigurationItemScalarWhereInput[]
+}
+
+export type ConfigurationItemUncheckedUpdateManyWithoutCreatedByNestedInput = {
+  create?: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutCreatedByInput, Prisma.ConfigurationItemUncheckedCreateWithoutCreatedByInput> | Prisma.ConfigurationItemCreateWithoutCreatedByInput[] | Prisma.ConfigurationItemUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.ConfigurationItemCreateOrConnectWithoutCreatedByInput | Prisma.ConfigurationItemCreateOrConnectWithoutCreatedByInput[]
+  upsert?: Prisma.ConfigurationItemUpsertWithWhereUniqueWithoutCreatedByInput | Prisma.ConfigurationItemUpsertWithWhereUniqueWithoutCreatedByInput[]
+  createMany?: Prisma.ConfigurationItemCreateManyCreatedByInputEnvelope
+  set?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  disconnect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  delete?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  connect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  update?: Prisma.ConfigurationItemUpdateWithWhereUniqueWithoutCreatedByInput | Prisma.ConfigurationItemUpdateWithWhereUniqueWithoutCreatedByInput[]
+  updateMany?: Prisma.ConfigurationItemUpdateManyWithWhereWithoutCreatedByInput | Prisma.ConfigurationItemUpdateManyWithWhereWithoutCreatedByInput[]
+  deleteMany?: Prisma.ConfigurationItemScalarWhereInput | Prisma.ConfigurationItemScalarWhereInput[]
+}
+
+export type ConfigurationItemUncheckedUpdateManyWithoutUpdatedByNestedInput = {
+  create?: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutUpdatedByInput, Prisma.ConfigurationItemUncheckedCreateWithoutUpdatedByInput> | Prisma.ConfigurationItemCreateWithoutUpdatedByInput[] | Prisma.ConfigurationItemUncheckedCreateWithoutUpdatedByInput[]
+  connectOrCreate?: Prisma.ConfigurationItemCreateOrConnectWithoutUpdatedByInput | Prisma.ConfigurationItemCreateOrConnectWithoutUpdatedByInput[]
+  upsert?: Prisma.ConfigurationItemUpsertWithWhereUniqueWithoutUpdatedByInput | Prisma.ConfigurationItemUpsertWithWhereUniqueWithoutUpdatedByInput[]
+  createMany?: Prisma.ConfigurationItemCreateManyUpdatedByInputEnvelope
+  set?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  disconnect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  delete?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  connect?: Prisma.ConfigurationItemWhereUniqueInput | Prisma.ConfigurationItemWhereUniqueInput[]
+  update?: Prisma.ConfigurationItemUpdateWithWhereUniqueWithoutUpdatedByInput | Prisma.ConfigurationItemUpdateWithWhereUniqueWithoutUpdatedByInput[]
+  updateMany?: Prisma.ConfigurationItemUpdateManyWithWhereWithoutUpdatedByInput | Prisma.ConfigurationItemUpdateManyWithWhereWithoutUpdatedByInput[]
   deleteMany?: Prisma.ConfigurationItemScalarWhereInput | Prisma.ConfigurationItemScalarWhereInput[]
 }
 
@@ -850,6 +1070,7 @@ export type ConfigurationItemCreateWithoutLinkedAssetInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   ciClass: Prisma.CIClassCreateNestedOneWithoutConfigurationItemsInput
   lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutConfigurationItemsInput
   primaryOwnerPerson?: Prisma.PersonCreateNestedOneWithoutConfigurationItemsInput
@@ -857,6 +1078,9 @@ export type ConfigurationItemCreateWithoutLinkedAssetInput = {
   location?: Prisma.LocationCreateNestedOneWithoutConfigurationItemsInput
   relationshipsFrom?: Prisma.CIRelationshipCreateNestedManyWithoutFromCiInput
   relationshipsTo?: Prisma.CIRelationshipCreateNestedManyWithoutToCiInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedConfigurationItemsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedConfigurationItemsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedConfigurationItemsInput
 }
 
 export type ConfigurationItemUncheckedCreateWithoutLinkedAssetInput = {
@@ -874,6 +1098,10 @@ export type ConfigurationItemUncheckedCreateWithoutLinkedAssetInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   relationshipsFrom?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutFromCiInput
   relationshipsTo?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutToCiInput
 }
@@ -923,6 +1151,10 @@ export type ConfigurationItemScalarWhereInput = {
   attributes?: Prisma.JsonNullableFilter<"ConfigurationItem">
   createdAt?: Prisma.DateTimeFilter<"ConfigurationItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ConfigurationItem"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"ConfigurationItem"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"ConfigurationItem"> | string | null
+  createdById?: Prisma.StringNullableFilter<"ConfigurationItem"> | string | null
+  updatedById?: Prisma.StringNullableFilter<"ConfigurationItem"> | string | null
 }
 
 export type ConfigurationItemCreateWithoutCiClassInput = {
@@ -935,6 +1167,7 @@ export type ConfigurationItemCreateWithoutCiClassInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutConfigurationItemsInput
   primaryOwnerPerson?: Prisma.PersonCreateNestedOneWithoutConfigurationItemsInput
   primaryOwnerOrgUnit?: Prisma.OrganizationUnitCreateNestedOneWithoutConfigurationItemsInput
@@ -942,6 +1175,9 @@ export type ConfigurationItemCreateWithoutCiClassInput = {
   linkedAsset?: Prisma.AssetCreateNestedOneWithoutConfigurationItemsInput
   relationshipsFrom?: Prisma.CIRelationshipCreateNestedManyWithoutFromCiInput
   relationshipsTo?: Prisma.CIRelationshipCreateNestedManyWithoutToCiInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedConfigurationItemsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedConfigurationItemsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedConfigurationItemsInput
 }
 
 export type ConfigurationItemUncheckedCreateWithoutCiClassInput = {
@@ -959,6 +1195,10 @@ export type ConfigurationItemUncheckedCreateWithoutCiClassInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   relationshipsFrom?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutFromCiInput
   relationshipsTo?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutToCiInput
 }
@@ -999,6 +1239,7 @@ export type ConfigurationItemCreateWithoutRelationshipsFromInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   ciClass: Prisma.CIClassCreateNestedOneWithoutConfigurationItemsInput
   lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutConfigurationItemsInput
   primaryOwnerPerson?: Prisma.PersonCreateNestedOneWithoutConfigurationItemsInput
@@ -1006,6 +1247,9 @@ export type ConfigurationItemCreateWithoutRelationshipsFromInput = {
   location?: Prisma.LocationCreateNestedOneWithoutConfigurationItemsInput
   linkedAsset?: Prisma.AssetCreateNestedOneWithoutConfigurationItemsInput
   relationshipsTo?: Prisma.CIRelationshipCreateNestedManyWithoutToCiInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedConfigurationItemsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedConfigurationItemsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedConfigurationItemsInput
 }
 
 export type ConfigurationItemUncheckedCreateWithoutRelationshipsFromInput = {
@@ -1024,6 +1268,10 @@ export type ConfigurationItemUncheckedCreateWithoutRelationshipsFromInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   relationshipsTo?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutToCiInput
 }
 
@@ -1042,6 +1290,7 @@ export type ConfigurationItemCreateWithoutRelationshipsToInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   ciClass: Prisma.CIClassCreateNestedOneWithoutConfigurationItemsInput
   lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutConfigurationItemsInput
   primaryOwnerPerson?: Prisma.PersonCreateNestedOneWithoutConfigurationItemsInput
@@ -1049,6 +1298,9 @@ export type ConfigurationItemCreateWithoutRelationshipsToInput = {
   location?: Prisma.LocationCreateNestedOneWithoutConfigurationItemsInput
   linkedAsset?: Prisma.AssetCreateNestedOneWithoutConfigurationItemsInput
   relationshipsFrom?: Prisma.CIRelationshipCreateNestedManyWithoutFromCiInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedConfigurationItemsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedConfigurationItemsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedConfigurationItemsInput
 }
 
 export type ConfigurationItemUncheckedCreateWithoutRelationshipsToInput = {
@@ -1067,6 +1319,10 @@ export type ConfigurationItemUncheckedCreateWithoutRelationshipsToInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   relationshipsFrom?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutFromCiInput
 }
 
@@ -1096,6 +1352,7 @@ export type ConfigurationItemUpdateWithoutRelationshipsFromInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ciClass?: Prisma.CIClassUpdateOneRequiredWithoutConfigurationItemsNestedInput
   lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutConfigurationItemsNestedInput
   primaryOwnerPerson?: Prisma.PersonUpdateOneWithoutConfigurationItemsNestedInput
@@ -1103,6 +1360,9 @@ export type ConfigurationItemUpdateWithoutRelationshipsFromInput = {
   location?: Prisma.LocationUpdateOneWithoutConfigurationItemsNestedInput
   linkedAsset?: Prisma.AssetUpdateOneWithoutConfigurationItemsNestedInput
   relationshipsTo?: Prisma.CIRelationshipUpdateManyWithoutToCiNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedConfigurationItemsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedConfigurationItemsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedConfigurationItemsNestedInput
 }
 
 export type ConfigurationItemUncheckedUpdateWithoutRelationshipsFromInput = {
@@ -1121,6 +1381,10 @@ export type ConfigurationItemUncheckedUpdateWithoutRelationshipsFromInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relationshipsTo?: Prisma.CIRelationshipUncheckedUpdateManyWithoutToCiNestedInput
 }
 
@@ -1145,6 +1409,7 @@ export type ConfigurationItemUpdateWithoutRelationshipsToInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ciClass?: Prisma.CIClassUpdateOneRequiredWithoutConfigurationItemsNestedInput
   lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutConfigurationItemsNestedInput
   primaryOwnerPerson?: Prisma.PersonUpdateOneWithoutConfigurationItemsNestedInput
@@ -1152,6 +1417,9 @@ export type ConfigurationItemUpdateWithoutRelationshipsToInput = {
   location?: Prisma.LocationUpdateOneWithoutConfigurationItemsNestedInput
   linkedAsset?: Prisma.AssetUpdateOneWithoutConfigurationItemsNestedInput
   relationshipsFrom?: Prisma.CIRelationshipUpdateManyWithoutFromCiNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedConfigurationItemsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedConfigurationItemsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedConfigurationItemsNestedInput
 }
 
 export type ConfigurationItemUncheckedUpdateWithoutRelationshipsToInput = {
@@ -1170,6 +1438,10 @@ export type ConfigurationItemUncheckedUpdateWithoutRelationshipsToInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relationshipsFrom?: Prisma.CIRelationshipUncheckedUpdateManyWithoutFromCiNestedInput
 }
 
@@ -1183,6 +1455,7 @@ export type ConfigurationItemCreateWithoutPrimaryOwnerOrgUnitInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   ciClass: Prisma.CIClassCreateNestedOneWithoutConfigurationItemsInput
   lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutConfigurationItemsInput
   primaryOwnerPerson?: Prisma.PersonCreateNestedOneWithoutConfigurationItemsInput
@@ -1190,6 +1463,9 @@ export type ConfigurationItemCreateWithoutPrimaryOwnerOrgUnitInput = {
   linkedAsset?: Prisma.AssetCreateNestedOneWithoutConfigurationItemsInput
   relationshipsFrom?: Prisma.CIRelationshipCreateNestedManyWithoutFromCiInput
   relationshipsTo?: Prisma.CIRelationshipCreateNestedManyWithoutToCiInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedConfigurationItemsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedConfigurationItemsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedConfigurationItemsInput
 }
 
 export type ConfigurationItemUncheckedCreateWithoutPrimaryOwnerOrgUnitInput = {
@@ -1207,6 +1483,10 @@ export type ConfigurationItemUncheckedCreateWithoutPrimaryOwnerOrgUnitInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   relationshipsFrom?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutFromCiInput
   relationshipsTo?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutToCiInput
 }
@@ -1247,6 +1527,7 @@ export type ConfigurationItemCreateWithoutPrimaryOwnerPersonInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   ciClass: Prisma.CIClassCreateNestedOneWithoutConfigurationItemsInput
   lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutConfigurationItemsInput
   primaryOwnerOrgUnit?: Prisma.OrganizationUnitCreateNestedOneWithoutConfigurationItemsInput
@@ -1254,6 +1535,9 @@ export type ConfigurationItemCreateWithoutPrimaryOwnerPersonInput = {
   linkedAsset?: Prisma.AssetCreateNestedOneWithoutConfigurationItemsInput
   relationshipsFrom?: Prisma.CIRelationshipCreateNestedManyWithoutFromCiInput
   relationshipsTo?: Prisma.CIRelationshipCreateNestedManyWithoutToCiInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedConfigurationItemsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedConfigurationItemsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedConfigurationItemsInput
 }
 
 export type ConfigurationItemUncheckedCreateWithoutPrimaryOwnerPersonInput = {
@@ -1271,6 +1555,10 @@ export type ConfigurationItemUncheckedCreateWithoutPrimaryOwnerPersonInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   relationshipsFrom?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutFromCiInput
   relationshipsTo?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutToCiInput
 }
@@ -1282,6 +1570,174 @@ export type ConfigurationItemCreateOrConnectWithoutPrimaryOwnerPersonInput = {
 
 export type ConfigurationItemCreateManyPrimaryOwnerPersonInputEnvelope = {
   data: Prisma.ConfigurationItemCreateManyPrimaryOwnerPersonInput | Prisma.ConfigurationItemCreateManyPrimaryOwnerPersonInput[]
+  skipDuplicates?: boolean
+}
+
+export type ConfigurationItemCreateWithoutDeletedByInput = {
+  id?: string
+  name: string
+  criticality?: $Enums.CriticalityEnum | null
+  environment?: $Enums.EnvironmentEnum | null
+  ciKey?: string | null
+  description?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  ciClass: Prisma.CIClassCreateNestedOneWithoutConfigurationItemsInput
+  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutConfigurationItemsInput
+  primaryOwnerPerson?: Prisma.PersonCreateNestedOneWithoutConfigurationItemsInput
+  primaryOwnerOrgUnit?: Prisma.OrganizationUnitCreateNestedOneWithoutConfigurationItemsInput
+  location?: Prisma.LocationCreateNestedOneWithoutConfigurationItemsInput
+  linkedAsset?: Prisma.AssetCreateNestedOneWithoutConfigurationItemsInput
+  relationshipsFrom?: Prisma.CIRelationshipCreateNestedManyWithoutFromCiInput
+  relationshipsTo?: Prisma.CIRelationshipCreateNestedManyWithoutToCiInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedConfigurationItemsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedConfigurationItemsInput
+}
+
+export type ConfigurationItemUncheckedCreateWithoutDeletedByInput = {
+  id?: string
+  name: string
+  ciClassId: string
+  lifecycleStateId?: string | null
+  criticality?: $Enums.CriticalityEnum | null
+  environment?: $Enums.EnvironmentEnum | null
+  primaryOwnerPersonId?: string | null
+  primaryOwnerOrgUnitId?: string | null
+  locationId?: string | null
+  linkedAssetId?: string | null
+  ciKey?: string | null
+  description?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  createdById?: string | null
+  updatedById?: string | null
+  relationshipsFrom?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutFromCiInput
+  relationshipsTo?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutToCiInput
+}
+
+export type ConfigurationItemCreateOrConnectWithoutDeletedByInput = {
+  where: Prisma.ConfigurationItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutDeletedByInput, Prisma.ConfigurationItemUncheckedCreateWithoutDeletedByInput>
+}
+
+export type ConfigurationItemCreateManyDeletedByInputEnvelope = {
+  data: Prisma.ConfigurationItemCreateManyDeletedByInput | Prisma.ConfigurationItemCreateManyDeletedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type ConfigurationItemCreateWithoutCreatedByInput = {
+  id?: string
+  name: string
+  criticality?: $Enums.CriticalityEnum | null
+  environment?: $Enums.EnvironmentEnum | null
+  ciKey?: string | null
+  description?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  ciClass: Prisma.CIClassCreateNestedOneWithoutConfigurationItemsInput
+  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutConfigurationItemsInput
+  primaryOwnerPerson?: Prisma.PersonCreateNestedOneWithoutConfigurationItemsInput
+  primaryOwnerOrgUnit?: Prisma.OrganizationUnitCreateNestedOneWithoutConfigurationItemsInput
+  location?: Prisma.LocationCreateNestedOneWithoutConfigurationItemsInput
+  linkedAsset?: Prisma.AssetCreateNestedOneWithoutConfigurationItemsInput
+  relationshipsFrom?: Prisma.CIRelationshipCreateNestedManyWithoutFromCiInput
+  relationshipsTo?: Prisma.CIRelationshipCreateNestedManyWithoutToCiInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedConfigurationItemsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedConfigurationItemsInput
+}
+
+export type ConfigurationItemUncheckedCreateWithoutCreatedByInput = {
+  id?: string
+  name: string
+  ciClassId: string
+  lifecycleStateId?: string | null
+  criticality?: $Enums.CriticalityEnum | null
+  environment?: $Enums.EnvironmentEnum | null
+  primaryOwnerPersonId?: string | null
+  primaryOwnerOrgUnitId?: string | null
+  locationId?: string | null
+  linkedAssetId?: string | null
+  ciKey?: string | null
+  description?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  updatedById?: string | null
+  relationshipsFrom?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutFromCiInput
+  relationshipsTo?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutToCiInput
+}
+
+export type ConfigurationItemCreateOrConnectWithoutCreatedByInput = {
+  where: Prisma.ConfigurationItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutCreatedByInput, Prisma.ConfigurationItemUncheckedCreateWithoutCreatedByInput>
+}
+
+export type ConfigurationItemCreateManyCreatedByInputEnvelope = {
+  data: Prisma.ConfigurationItemCreateManyCreatedByInput | Prisma.ConfigurationItemCreateManyCreatedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type ConfigurationItemCreateWithoutUpdatedByInput = {
+  id?: string
+  name: string
+  criticality?: $Enums.CriticalityEnum | null
+  environment?: $Enums.EnvironmentEnum | null
+  ciKey?: string | null
+  description?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  ciClass: Prisma.CIClassCreateNestedOneWithoutConfigurationItemsInput
+  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutConfigurationItemsInput
+  primaryOwnerPerson?: Prisma.PersonCreateNestedOneWithoutConfigurationItemsInput
+  primaryOwnerOrgUnit?: Prisma.OrganizationUnitCreateNestedOneWithoutConfigurationItemsInput
+  location?: Prisma.LocationCreateNestedOneWithoutConfigurationItemsInput
+  linkedAsset?: Prisma.AssetCreateNestedOneWithoutConfigurationItemsInput
+  relationshipsFrom?: Prisma.CIRelationshipCreateNestedManyWithoutFromCiInput
+  relationshipsTo?: Prisma.CIRelationshipCreateNestedManyWithoutToCiInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedConfigurationItemsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedConfigurationItemsInput
+}
+
+export type ConfigurationItemUncheckedCreateWithoutUpdatedByInput = {
+  id?: string
+  name: string
+  ciClassId: string
+  lifecycleStateId?: string | null
+  criticality?: $Enums.CriticalityEnum | null
+  environment?: $Enums.EnvironmentEnum | null
+  primaryOwnerPersonId?: string | null
+  primaryOwnerOrgUnitId?: string | null
+  locationId?: string | null
+  linkedAssetId?: string | null
+  ciKey?: string | null
+  description?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  relationshipsFrom?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutFromCiInput
+  relationshipsTo?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutToCiInput
+}
+
+export type ConfigurationItemCreateOrConnectWithoutUpdatedByInput = {
+  where: Prisma.ConfigurationItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutUpdatedByInput, Prisma.ConfigurationItemUncheckedCreateWithoutUpdatedByInput>
+}
+
+export type ConfigurationItemCreateManyUpdatedByInputEnvelope = {
+  data: Prisma.ConfigurationItemCreateManyUpdatedByInput | Prisma.ConfigurationItemCreateManyUpdatedByInput[]
   skipDuplicates?: boolean
 }
 
@@ -1301,6 +1757,54 @@ export type ConfigurationItemUpdateManyWithWhereWithoutPrimaryOwnerPersonInput =
   data: Prisma.XOR<Prisma.ConfigurationItemUpdateManyMutationInput, Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonInput>
 }
 
+export type ConfigurationItemUpsertWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.ConfigurationItemWhereUniqueInput
+  update: Prisma.XOR<Prisma.ConfigurationItemUpdateWithoutDeletedByInput, Prisma.ConfigurationItemUncheckedUpdateWithoutDeletedByInput>
+  create: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutDeletedByInput, Prisma.ConfigurationItemUncheckedCreateWithoutDeletedByInput>
+}
+
+export type ConfigurationItemUpdateWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.ConfigurationItemWhereUniqueInput
+  data: Prisma.XOR<Prisma.ConfigurationItemUpdateWithoutDeletedByInput, Prisma.ConfigurationItemUncheckedUpdateWithoutDeletedByInput>
+}
+
+export type ConfigurationItemUpdateManyWithWhereWithoutDeletedByInput = {
+  where: Prisma.ConfigurationItemScalarWhereInput
+  data: Prisma.XOR<Prisma.ConfigurationItemUpdateManyMutationInput, Prisma.ConfigurationItemUncheckedUpdateManyWithoutDeletedByInput>
+}
+
+export type ConfigurationItemUpsertWithWhereUniqueWithoutCreatedByInput = {
+  where: Prisma.ConfigurationItemWhereUniqueInput
+  update: Prisma.XOR<Prisma.ConfigurationItemUpdateWithoutCreatedByInput, Prisma.ConfigurationItemUncheckedUpdateWithoutCreatedByInput>
+  create: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutCreatedByInput, Prisma.ConfigurationItemUncheckedCreateWithoutCreatedByInput>
+}
+
+export type ConfigurationItemUpdateWithWhereUniqueWithoutCreatedByInput = {
+  where: Prisma.ConfigurationItemWhereUniqueInput
+  data: Prisma.XOR<Prisma.ConfigurationItemUpdateWithoutCreatedByInput, Prisma.ConfigurationItemUncheckedUpdateWithoutCreatedByInput>
+}
+
+export type ConfigurationItemUpdateManyWithWhereWithoutCreatedByInput = {
+  where: Prisma.ConfigurationItemScalarWhereInput
+  data: Prisma.XOR<Prisma.ConfigurationItemUpdateManyMutationInput, Prisma.ConfigurationItemUncheckedUpdateManyWithoutCreatedByInput>
+}
+
+export type ConfigurationItemUpsertWithWhereUniqueWithoutUpdatedByInput = {
+  where: Prisma.ConfigurationItemWhereUniqueInput
+  update: Prisma.XOR<Prisma.ConfigurationItemUpdateWithoutUpdatedByInput, Prisma.ConfigurationItemUncheckedUpdateWithoutUpdatedByInput>
+  create: Prisma.XOR<Prisma.ConfigurationItemCreateWithoutUpdatedByInput, Prisma.ConfigurationItemUncheckedCreateWithoutUpdatedByInput>
+}
+
+export type ConfigurationItemUpdateWithWhereUniqueWithoutUpdatedByInput = {
+  where: Prisma.ConfigurationItemWhereUniqueInput
+  data: Prisma.XOR<Prisma.ConfigurationItemUpdateWithoutUpdatedByInput, Prisma.ConfigurationItemUncheckedUpdateWithoutUpdatedByInput>
+}
+
+export type ConfigurationItemUpdateManyWithWhereWithoutUpdatedByInput = {
+  where: Prisma.ConfigurationItemScalarWhereInput
+  data: Prisma.XOR<Prisma.ConfigurationItemUpdateManyMutationInput, Prisma.ConfigurationItemUncheckedUpdateManyWithoutUpdatedByInput>
+}
+
 export type ConfigurationItemCreateWithoutLocationInput = {
   id?: string
   name: string
@@ -1311,6 +1815,7 @@ export type ConfigurationItemCreateWithoutLocationInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   ciClass: Prisma.CIClassCreateNestedOneWithoutConfigurationItemsInput
   lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutConfigurationItemsInput
   primaryOwnerPerson?: Prisma.PersonCreateNestedOneWithoutConfigurationItemsInput
@@ -1318,6 +1823,9 @@ export type ConfigurationItemCreateWithoutLocationInput = {
   linkedAsset?: Prisma.AssetCreateNestedOneWithoutConfigurationItemsInput
   relationshipsFrom?: Prisma.CIRelationshipCreateNestedManyWithoutFromCiInput
   relationshipsTo?: Prisma.CIRelationshipCreateNestedManyWithoutToCiInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedConfigurationItemsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedConfigurationItemsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedConfigurationItemsInput
 }
 
 export type ConfigurationItemUncheckedCreateWithoutLocationInput = {
@@ -1335,6 +1843,10 @@ export type ConfigurationItemUncheckedCreateWithoutLocationInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   relationshipsFrom?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutFromCiInput
   relationshipsTo?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutToCiInput
 }
@@ -1375,6 +1887,7 @@ export type ConfigurationItemCreateWithoutLifecycleStateInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   ciClass: Prisma.CIClassCreateNestedOneWithoutConfigurationItemsInput
   primaryOwnerPerson?: Prisma.PersonCreateNestedOneWithoutConfigurationItemsInput
   primaryOwnerOrgUnit?: Prisma.OrganizationUnitCreateNestedOneWithoutConfigurationItemsInput
@@ -1382,6 +1895,9 @@ export type ConfigurationItemCreateWithoutLifecycleStateInput = {
   linkedAsset?: Prisma.AssetCreateNestedOneWithoutConfigurationItemsInput
   relationshipsFrom?: Prisma.CIRelationshipCreateNestedManyWithoutFromCiInput
   relationshipsTo?: Prisma.CIRelationshipCreateNestedManyWithoutToCiInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedConfigurationItemsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedConfigurationItemsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedConfigurationItemsInput
 }
 
 export type ConfigurationItemUncheckedCreateWithoutLifecycleStateInput = {
@@ -1399,6 +1915,10 @@ export type ConfigurationItemUncheckedCreateWithoutLifecycleStateInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   relationshipsFrom?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutFromCiInput
   relationshipsTo?: Prisma.CIRelationshipUncheckedCreateNestedManyWithoutToCiInput
 }
@@ -1444,6 +1964,10 @@ export type ConfigurationItemCreateManyLinkedAssetInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
 }
 
 export type ConfigurationItemUpdateWithoutLinkedAssetInput = {
@@ -1456,6 +1980,7 @@ export type ConfigurationItemUpdateWithoutLinkedAssetInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ciClass?: Prisma.CIClassUpdateOneRequiredWithoutConfigurationItemsNestedInput
   lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutConfigurationItemsNestedInput
   primaryOwnerPerson?: Prisma.PersonUpdateOneWithoutConfigurationItemsNestedInput
@@ -1463,6 +1988,9 @@ export type ConfigurationItemUpdateWithoutLinkedAssetInput = {
   location?: Prisma.LocationUpdateOneWithoutConfigurationItemsNestedInput
   relationshipsFrom?: Prisma.CIRelationshipUpdateManyWithoutFromCiNestedInput
   relationshipsTo?: Prisma.CIRelationshipUpdateManyWithoutToCiNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedConfigurationItemsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedConfigurationItemsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedConfigurationItemsNestedInput
 }
 
 export type ConfigurationItemUncheckedUpdateWithoutLinkedAssetInput = {
@@ -1480,6 +2008,10 @@ export type ConfigurationItemUncheckedUpdateWithoutLinkedAssetInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relationshipsFrom?: Prisma.CIRelationshipUncheckedUpdateManyWithoutFromCiNestedInput
   relationshipsTo?: Prisma.CIRelationshipUncheckedUpdateManyWithoutToCiNestedInput
 }
@@ -1499,6 +2031,10 @@ export type ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ConfigurationItemCreateManyCiClassInput = {
@@ -1516,6 +2052,10 @@ export type ConfigurationItemCreateManyCiClassInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
 }
 
 export type ConfigurationItemUpdateWithoutCiClassInput = {
@@ -1528,6 +2068,7 @@ export type ConfigurationItemUpdateWithoutCiClassInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutConfigurationItemsNestedInput
   primaryOwnerPerson?: Prisma.PersonUpdateOneWithoutConfigurationItemsNestedInput
   primaryOwnerOrgUnit?: Prisma.OrganizationUnitUpdateOneWithoutConfigurationItemsNestedInput
@@ -1535,6 +2076,9 @@ export type ConfigurationItemUpdateWithoutCiClassInput = {
   linkedAsset?: Prisma.AssetUpdateOneWithoutConfigurationItemsNestedInput
   relationshipsFrom?: Prisma.CIRelationshipUpdateManyWithoutFromCiNestedInput
   relationshipsTo?: Prisma.CIRelationshipUpdateManyWithoutToCiNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedConfigurationItemsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedConfigurationItemsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedConfigurationItemsNestedInput
 }
 
 export type ConfigurationItemUncheckedUpdateWithoutCiClassInput = {
@@ -1552,6 +2096,10 @@ export type ConfigurationItemUncheckedUpdateWithoutCiClassInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relationshipsFrom?: Prisma.CIRelationshipUncheckedUpdateManyWithoutFromCiNestedInput
   relationshipsTo?: Prisma.CIRelationshipUncheckedUpdateManyWithoutToCiNestedInput
 }
@@ -1571,6 +2119,10 @@ export type ConfigurationItemUncheckedUpdateManyWithoutCiClassInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ConfigurationItemCreateManyPrimaryOwnerOrgUnitInput = {
@@ -1588,6 +2140,10 @@ export type ConfigurationItemCreateManyPrimaryOwnerOrgUnitInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
 }
 
 export type ConfigurationItemUpdateWithoutPrimaryOwnerOrgUnitInput = {
@@ -1600,6 +2156,7 @@ export type ConfigurationItemUpdateWithoutPrimaryOwnerOrgUnitInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ciClass?: Prisma.CIClassUpdateOneRequiredWithoutConfigurationItemsNestedInput
   lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutConfigurationItemsNestedInput
   primaryOwnerPerson?: Prisma.PersonUpdateOneWithoutConfigurationItemsNestedInput
@@ -1607,6 +2164,9 @@ export type ConfigurationItemUpdateWithoutPrimaryOwnerOrgUnitInput = {
   linkedAsset?: Prisma.AssetUpdateOneWithoutConfigurationItemsNestedInput
   relationshipsFrom?: Prisma.CIRelationshipUpdateManyWithoutFromCiNestedInput
   relationshipsTo?: Prisma.CIRelationshipUpdateManyWithoutToCiNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedConfigurationItemsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedConfigurationItemsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedConfigurationItemsNestedInput
 }
 
 export type ConfigurationItemUncheckedUpdateWithoutPrimaryOwnerOrgUnitInput = {
@@ -1624,6 +2184,10 @@ export type ConfigurationItemUncheckedUpdateWithoutPrimaryOwnerOrgUnitInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relationshipsFrom?: Prisma.CIRelationshipUncheckedUpdateManyWithoutFromCiNestedInput
   relationshipsTo?: Prisma.CIRelationshipUncheckedUpdateManyWithoutToCiNestedInput
 }
@@ -1643,6 +2207,10 @@ export type ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerOrgUnitInput 
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ConfigurationItemCreateManyPrimaryOwnerPersonInput = {
@@ -1660,6 +2228,73 @@ export type ConfigurationItemCreateManyPrimaryOwnerPersonInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
+}
+
+export type ConfigurationItemCreateManyDeletedByInput = {
+  id?: string
+  name: string
+  ciClassId: string
+  lifecycleStateId?: string | null
+  criticality?: $Enums.CriticalityEnum | null
+  environment?: $Enums.EnvironmentEnum | null
+  primaryOwnerPersonId?: string | null
+  primaryOwnerOrgUnitId?: string | null
+  locationId?: string | null
+  linkedAssetId?: string | null
+  ciKey?: string | null
+  description?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  createdById?: string | null
+  updatedById?: string | null
+}
+
+export type ConfigurationItemCreateManyCreatedByInput = {
+  id?: string
+  name: string
+  ciClassId: string
+  lifecycleStateId?: string | null
+  criticality?: $Enums.CriticalityEnum | null
+  environment?: $Enums.EnvironmentEnum | null
+  primaryOwnerPersonId?: string | null
+  primaryOwnerOrgUnitId?: string | null
+  locationId?: string | null
+  linkedAssetId?: string | null
+  ciKey?: string | null
+  description?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  updatedById?: string | null
+}
+
+export type ConfigurationItemCreateManyUpdatedByInput = {
+  id?: string
+  name: string
+  ciClassId: string
+  lifecycleStateId?: string | null
+  criticality?: $Enums.CriticalityEnum | null
+  environment?: $Enums.EnvironmentEnum | null
+  primaryOwnerPersonId?: string | null
+  primaryOwnerOrgUnitId?: string | null
+  locationId?: string | null
+  linkedAssetId?: string | null
+  ciKey?: string | null
+  description?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
 }
 
 export type ConfigurationItemUpdateWithoutPrimaryOwnerPersonInput = {
@@ -1672,6 +2307,7 @@ export type ConfigurationItemUpdateWithoutPrimaryOwnerPersonInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ciClass?: Prisma.CIClassUpdateOneRequiredWithoutConfigurationItemsNestedInput
   lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutConfigurationItemsNestedInput
   primaryOwnerOrgUnit?: Prisma.OrganizationUnitUpdateOneWithoutConfigurationItemsNestedInput
@@ -1679,6 +2315,9 @@ export type ConfigurationItemUpdateWithoutPrimaryOwnerPersonInput = {
   linkedAsset?: Prisma.AssetUpdateOneWithoutConfigurationItemsNestedInput
   relationshipsFrom?: Prisma.CIRelationshipUpdateManyWithoutFromCiNestedInput
   relationshipsTo?: Prisma.CIRelationshipUpdateManyWithoutToCiNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedConfigurationItemsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedConfigurationItemsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedConfigurationItemsNestedInput
 }
 
 export type ConfigurationItemUncheckedUpdateWithoutPrimaryOwnerPersonInput = {
@@ -1696,6 +2335,10 @@ export type ConfigurationItemUncheckedUpdateWithoutPrimaryOwnerPersonInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relationshipsFrom?: Prisma.CIRelationshipUncheckedUpdateManyWithoutFromCiNestedInput
   relationshipsTo?: Prisma.CIRelationshipUncheckedUpdateManyWithoutToCiNestedInput
 }
@@ -1715,6 +2358,211 @@ export type ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonInput =
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type ConfigurationItemUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  criticality?: Prisma.NullableEnumCriticalityEnumFieldUpdateOperationsInput | $Enums.CriticalityEnum | null
+  environment?: Prisma.NullableEnumEnvironmentEnumFieldUpdateOperationsInput | $Enums.EnvironmentEnum | null
+  ciKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ciClass?: Prisma.CIClassUpdateOneRequiredWithoutConfigurationItemsNestedInput
+  lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutConfigurationItemsNestedInput
+  primaryOwnerPerson?: Prisma.PersonUpdateOneWithoutConfigurationItemsNestedInput
+  primaryOwnerOrgUnit?: Prisma.OrganizationUnitUpdateOneWithoutConfigurationItemsNestedInput
+  location?: Prisma.LocationUpdateOneWithoutConfigurationItemsNestedInput
+  linkedAsset?: Prisma.AssetUpdateOneWithoutConfigurationItemsNestedInput
+  relationshipsFrom?: Prisma.CIRelationshipUpdateManyWithoutFromCiNestedInput
+  relationshipsTo?: Prisma.CIRelationshipUpdateManyWithoutToCiNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedConfigurationItemsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedConfigurationItemsNestedInput
+}
+
+export type ConfigurationItemUncheckedUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ciClassId?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  criticality?: Prisma.NullableEnumCriticalityEnumFieldUpdateOperationsInput | $Enums.CriticalityEnum | null
+  environment?: Prisma.NullableEnumEnvironmentEnumFieldUpdateOperationsInput | $Enums.EnvironmentEnum | null
+  primaryOwnerPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryOwnerOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  linkedAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ciKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relationshipsFrom?: Prisma.CIRelationshipUncheckedUpdateManyWithoutFromCiNestedInput
+  relationshipsTo?: Prisma.CIRelationshipUncheckedUpdateManyWithoutToCiNestedInput
+}
+
+export type ConfigurationItemUncheckedUpdateManyWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ciClassId?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  criticality?: Prisma.NullableEnumCriticalityEnumFieldUpdateOperationsInput | $Enums.CriticalityEnum | null
+  environment?: Prisma.NullableEnumEnvironmentEnumFieldUpdateOperationsInput | $Enums.EnvironmentEnum | null
+  primaryOwnerPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryOwnerOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  linkedAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ciKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type ConfigurationItemUpdateWithoutCreatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  criticality?: Prisma.NullableEnumCriticalityEnumFieldUpdateOperationsInput | $Enums.CriticalityEnum | null
+  environment?: Prisma.NullableEnumEnvironmentEnumFieldUpdateOperationsInput | $Enums.EnvironmentEnum | null
+  ciKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ciClass?: Prisma.CIClassUpdateOneRequiredWithoutConfigurationItemsNestedInput
+  lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutConfigurationItemsNestedInput
+  primaryOwnerPerson?: Prisma.PersonUpdateOneWithoutConfigurationItemsNestedInput
+  primaryOwnerOrgUnit?: Prisma.OrganizationUnitUpdateOneWithoutConfigurationItemsNestedInput
+  location?: Prisma.LocationUpdateOneWithoutConfigurationItemsNestedInput
+  linkedAsset?: Prisma.AssetUpdateOneWithoutConfigurationItemsNestedInput
+  relationshipsFrom?: Prisma.CIRelationshipUpdateManyWithoutFromCiNestedInput
+  relationshipsTo?: Prisma.CIRelationshipUpdateManyWithoutToCiNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedConfigurationItemsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedConfigurationItemsNestedInput
+}
+
+export type ConfigurationItemUncheckedUpdateWithoutCreatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ciClassId?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  criticality?: Prisma.NullableEnumCriticalityEnumFieldUpdateOperationsInput | $Enums.CriticalityEnum | null
+  environment?: Prisma.NullableEnumEnvironmentEnumFieldUpdateOperationsInput | $Enums.EnvironmentEnum | null
+  primaryOwnerPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryOwnerOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  linkedAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ciKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relationshipsFrom?: Prisma.CIRelationshipUncheckedUpdateManyWithoutFromCiNestedInput
+  relationshipsTo?: Prisma.CIRelationshipUncheckedUpdateManyWithoutToCiNestedInput
+}
+
+export type ConfigurationItemUncheckedUpdateManyWithoutCreatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ciClassId?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  criticality?: Prisma.NullableEnumCriticalityEnumFieldUpdateOperationsInput | $Enums.CriticalityEnum | null
+  environment?: Prisma.NullableEnumEnvironmentEnumFieldUpdateOperationsInput | $Enums.EnvironmentEnum | null
+  primaryOwnerPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryOwnerOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  linkedAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ciKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type ConfigurationItemUpdateWithoutUpdatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  criticality?: Prisma.NullableEnumCriticalityEnumFieldUpdateOperationsInput | $Enums.CriticalityEnum | null
+  environment?: Prisma.NullableEnumEnvironmentEnumFieldUpdateOperationsInput | $Enums.EnvironmentEnum | null
+  ciKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  ciClass?: Prisma.CIClassUpdateOneRequiredWithoutConfigurationItemsNestedInput
+  lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutConfigurationItemsNestedInput
+  primaryOwnerPerson?: Prisma.PersonUpdateOneWithoutConfigurationItemsNestedInput
+  primaryOwnerOrgUnit?: Prisma.OrganizationUnitUpdateOneWithoutConfigurationItemsNestedInput
+  location?: Prisma.LocationUpdateOneWithoutConfigurationItemsNestedInput
+  linkedAsset?: Prisma.AssetUpdateOneWithoutConfigurationItemsNestedInput
+  relationshipsFrom?: Prisma.CIRelationshipUpdateManyWithoutFromCiNestedInput
+  relationshipsTo?: Prisma.CIRelationshipUpdateManyWithoutToCiNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedConfigurationItemsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedConfigurationItemsNestedInput
+}
+
+export type ConfigurationItemUncheckedUpdateWithoutUpdatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ciClassId?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  criticality?: Prisma.NullableEnumCriticalityEnumFieldUpdateOperationsInput | $Enums.CriticalityEnum | null
+  environment?: Prisma.NullableEnumEnvironmentEnumFieldUpdateOperationsInput | $Enums.EnvironmentEnum | null
+  primaryOwnerPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryOwnerOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  linkedAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ciKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relationshipsFrom?: Prisma.CIRelationshipUncheckedUpdateManyWithoutFromCiNestedInput
+  relationshipsTo?: Prisma.CIRelationshipUncheckedUpdateManyWithoutToCiNestedInput
+}
+
+export type ConfigurationItemUncheckedUpdateManyWithoutUpdatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  ciClassId?: Prisma.StringFieldUpdateOperationsInput | string
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  criticality?: Prisma.NullableEnumCriticalityEnumFieldUpdateOperationsInput | $Enums.CriticalityEnum | null
+  environment?: Prisma.NullableEnumEnvironmentEnumFieldUpdateOperationsInput | $Enums.EnvironmentEnum | null
+  primaryOwnerPersonId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  primaryOwnerOrgUnitId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  linkedAssetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ciKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ConfigurationItemCreateManyLocationInput = {
@@ -1732,6 +2580,10 @@ export type ConfigurationItemCreateManyLocationInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
 }
 
 export type ConfigurationItemUpdateWithoutLocationInput = {
@@ -1744,6 +2596,7 @@ export type ConfigurationItemUpdateWithoutLocationInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ciClass?: Prisma.CIClassUpdateOneRequiredWithoutConfigurationItemsNestedInput
   lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutConfigurationItemsNestedInput
   primaryOwnerPerson?: Prisma.PersonUpdateOneWithoutConfigurationItemsNestedInput
@@ -1751,6 +2604,9 @@ export type ConfigurationItemUpdateWithoutLocationInput = {
   linkedAsset?: Prisma.AssetUpdateOneWithoutConfigurationItemsNestedInput
   relationshipsFrom?: Prisma.CIRelationshipUpdateManyWithoutFromCiNestedInput
   relationshipsTo?: Prisma.CIRelationshipUpdateManyWithoutToCiNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedConfigurationItemsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedConfigurationItemsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedConfigurationItemsNestedInput
 }
 
 export type ConfigurationItemUncheckedUpdateWithoutLocationInput = {
@@ -1768,6 +2624,10 @@ export type ConfigurationItemUncheckedUpdateWithoutLocationInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relationshipsFrom?: Prisma.CIRelationshipUncheckedUpdateManyWithoutFromCiNestedInput
   relationshipsTo?: Prisma.CIRelationshipUncheckedUpdateManyWithoutToCiNestedInput
 }
@@ -1787,6 +2647,10 @@ export type ConfigurationItemUncheckedUpdateManyWithoutLocationInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ConfigurationItemCreateManyLifecycleStateInput = {
@@ -1804,6 +2668,10 @@ export type ConfigurationItemCreateManyLifecycleStateInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
 }
 
 export type ConfigurationItemUpdateWithoutLifecycleStateInput = {
@@ -1816,6 +2684,7 @@ export type ConfigurationItemUpdateWithoutLifecycleStateInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   ciClass?: Prisma.CIClassUpdateOneRequiredWithoutConfigurationItemsNestedInput
   primaryOwnerPerson?: Prisma.PersonUpdateOneWithoutConfigurationItemsNestedInput
   primaryOwnerOrgUnit?: Prisma.OrganizationUnitUpdateOneWithoutConfigurationItemsNestedInput
@@ -1823,6 +2692,9 @@ export type ConfigurationItemUpdateWithoutLifecycleStateInput = {
   linkedAsset?: Prisma.AssetUpdateOneWithoutConfigurationItemsNestedInput
   relationshipsFrom?: Prisma.CIRelationshipUpdateManyWithoutFromCiNestedInput
   relationshipsTo?: Prisma.CIRelationshipUpdateManyWithoutToCiNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedConfigurationItemsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedConfigurationItemsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedConfigurationItemsNestedInput
 }
 
 export type ConfigurationItemUncheckedUpdateWithoutLifecycleStateInput = {
@@ -1840,6 +2712,10 @@ export type ConfigurationItemUncheckedUpdateWithoutLifecycleStateInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   relationshipsFrom?: Prisma.CIRelationshipUncheckedUpdateManyWithoutFromCiNestedInput
   relationshipsTo?: Prisma.CIRelationshipUncheckedUpdateManyWithoutToCiNestedInput
 }
@@ -1859,6 +2735,10 @@ export type ConfigurationItemUncheckedUpdateManyWithoutLifecycleStateInput = {
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -1917,6 +2797,10 @@ export type ConfigurationItemSelect<ExtArgs extends runtime.Types.Extensions.Int
   attributes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
+  createdById?: boolean
+  updatedById?: boolean
   ciClass?: boolean | Prisma.CIClassDefaultArgs<ExtArgs>
   lifecycleState?: boolean | Prisma.ConfigurationItem$lifecycleStateArgs<ExtArgs>
   primaryOwnerPerson?: boolean | Prisma.ConfigurationItem$primaryOwnerPersonArgs<ExtArgs>
@@ -1925,6 +2809,9 @@ export type ConfigurationItemSelect<ExtArgs extends runtime.Types.Extensions.Int
   linkedAsset?: boolean | Prisma.ConfigurationItem$linkedAssetArgs<ExtArgs>
   relationshipsFrom?: boolean | Prisma.ConfigurationItem$relationshipsFromArgs<ExtArgs>
   relationshipsTo?: boolean | Prisma.ConfigurationItem$relationshipsToArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.ConfigurationItem$deletedByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.ConfigurationItem$createdByArgs<ExtArgs>
+  updatedBy?: boolean | Prisma.ConfigurationItem$updatedByArgs<ExtArgs>
   _count?: boolean | Prisma.ConfigurationItemCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["configurationItem"]>
 
@@ -1944,12 +2831,19 @@ export type ConfigurationItemSelectCreateManyAndReturn<ExtArgs extends runtime.T
   attributes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
+  createdById?: boolean
+  updatedById?: boolean
   ciClass?: boolean | Prisma.CIClassDefaultArgs<ExtArgs>
   lifecycleState?: boolean | Prisma.ConfigurationItem$lifecycleStateArgs<ExtArgs>
   primaryOwnerPerson?: boolean | Prisma.ConfigurationItem$primaryOwnerPersonArgs<ExtArgs>
   primaryOwnerOrgUnit?: boolean | Prisma.ConfigurationItem$primaryOwnerOrgUnitArgs<ExtArgs>
   location?: boolean | Prisma.ConfigurationItem$locationArgs<ExtArgs>
   linkedAsset?: boolean | Prisma.ConfigurationItem$linkedAssetArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.ConfigurationItem$deletedByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.ConfigurationItem$createdByArgs<ExtArgs>
+  updatedBy?: boolean | Prisma.ConfigurationItem$updatedByArgs<ExtArgs>
 }, ExtArgs["result"]["configurationItem"]>
 
 export type ConfigurationItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1968,12 +2862,19 @@ export type ConfigurationItemSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   attributes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
+  createdById?: boolean
+  updatedById?: boolean
   ciClass?: boolean | Prisma.CIClassDefaultArgs<ExtArgs>
   lifecycleState?: boolean | Prisma.ConfigurationItem$lifecycleStateArgs<ExtArgs>
   primaryOwnerPerson?: boolean | Prisma.ConfigurationItem$primaryOwnerPersonArgs<ExtArgs>
   primaryOwnerOrgUnit?: boolean | Prisma.ConfigurationItem$primaryOwnerOrgUnitArgs<ExtArgs>
   location?: boolean | Prisma.ConfigurationItem$locationArgs<ExtArgs>
   linkedAsset?: boolean | Prisma.ConfigurationItem$linkedAssetArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.ConfigurationItem$deletedByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.ConfigurationItem$createdByArgs<ExtArgs>
+  updatedBy?: boolean | Prisma.ConfigurationItem$updatedByArgs<ExtArgs>
 }, ExtArgs["result"]["configurationItem"]>
 
 export type ConfigurationItemSelectScalar = {
@@ -1992,9 +2893,13 @@ export type ConfigurationItemSelectScalar = {
   attributes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
+  createdById?: boolean
+  updatedById?: boolean
 }
 
-export type ConfigurationItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "ciClassId" | "lifecycleStateId" | "criticality" | "environment" | "primaryOwnerPersonId" | "primaryOwnerOrgUnitId" | "locationId" | "linkedAssetId" | "ciKey" | "description" | "attributes" | "createdAt" | "updatedAt", ExtArgs["result"]["configurationItem"]>
+export type ConfigurationItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "ciClassId" | "lifecycleStateId" | "criticality" | "environment" | "primaryOwnerPersonId" | "primaryOwnerOrgUnitId" | "locationId" | "linkedAssetId" | "ciKey" | "description" | "attributes" | "createdAt" | "updatedAt" | "deletedAt" | "deletedById" | "createdById" | "updatedById", ExtArgs["result"]["configurationItem"]>
 export type ConfigurationItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   ciClass?: boolean | Prisma.CIClassDefaultArgs<ExtArgs>
   lifecycleState?: boolean | Prisma.ConfigurationItem$lifecycleStateArgs<ExtArgs>
@@ -2004,6 +2909,9 @@ export type ConfigurationItemInclude<ExtArgs extends runtime.Types.Extensions.In
   linkedAsset?: boolean | Prisma.ConfigurationItem$linkedAssetArgs<ExtArgs>
   relationshipsFrom?: boolean | Prisma.ConfigurationItem$relationshipsFromArgs<ExtArgs>
   relationshipsTo?: boolean | Prisma.ConfigurationItem$relationshipsToArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.ConfigurationItem$deletedByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.ConfigurationItem$createdByArgs<ExtArgs>
+  updatedBy?: boolean | Prisma.ConfigurationItem$updatedByArgs<ExtArgs>
   _count?: boolean | Prisma.ConfigurationItemCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ConfigurationItemIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2013,6 +2921,9 @@ export type ConfigurationItemIncludeCreateManyAndReturn<ExtArgs extends runtime.
   primaryOwnerOrgUnit?: boolean | Prisma.ConfigurationItem$primaryOwnerOrgUnitArgs<ExtArgs>
   location?: boolean | Prisma.ConfigurationItem$locationArgs<ExtArgs>
   linkedAsset?: boolean | Prisma.ConfigurationItem$linkedAssetArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.ConfigurationItem$deletedByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.ConfigurationItem$createdByArgs<ExtArgs>
+  updatedBy?: boolean | Prisma.ConfigurationItem$updatedByArgs<ExtArgs>
 }
 export type ConfigurationItemIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   ciClass?: boolean | Prisma.CIClassDefaultArgs<ExtArgs>
@@ -2021,6 +2932,9 @@ export type ConfigurationItemIncludeUpdateManyAndReturn<ExtArgs extends runtime.
   primaryOwnerOrgUnit?: boolean | Prisma.ConfigurationItem$primaryOwnerOrgUnitArgs<ExtArgs>
   location?: boolean | Prisma.ConfigurationItem$locationArgs<ExtArgs>
   linkedAsset?: boolean | Prisma.ConfigurationItem$linkedAssetArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.ConfigurationItem$deletedByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.ConfigurationItem$createdByArgs<ExtArgs>
+  updatedBy?: boolean | Prisma.ConfigurationItem$updatedByArgs<ExtArgs>
 }
 
 export type $ConfigurationItemPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2034,6 +2948,9 @@ export type $ConfigurationItemPayload<ExtArgs extends runtime.Types.Extensions.I
     linkedAsset: Prisma.$AssetPayload<ExtArgs> | null
     relationshipsFrom: Prisma.$CIRelationshipPayload<ExtArgs>[]
     relationshipsTo: Prisma.$CIRelationshipPayload<ExtArgs>[]
+    deletedBy: Prisma.$PersonPayload<ExtArgs> | null
+    createdBy: Prisma.$PersonPayload<ExtArgs> | null
+    updatedBy: Prisma.$PersonPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2051,6 +2968,10 @@ export type $ConfigurationItemPayload<ExtArgs extends runtime.Types.Extensions.I
     attributes: runtime.JsonValue | null
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
+    deletedById: string | null
+    createdById: string | null
+    updatedById: string | null
   }, ExtArgs["result"]["configurationItem"]>
   composites: {}
 }
@@ -2453,6 +3374,9 @@ export interface Prisma__ConfigurationItemClient<T, Null = never, ExtArgs extend
   linkedAsset<T extends Prisma.ConfigurationItem$linkedAssetArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ConfigurationItem$linkedAssetArgs<ExtArgs>>): Prisma.Prisma__AssetClient<runtime.Types.Result.GetResult<Prisma.$AssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   relationshipsFrom<T extends Prisma.ConfigurationItem$relationshipsFromArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ConfigurationItem$relationshipsFromArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CIRelationshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   relationshipsTo<T extends Prisma.ConfigurationItem$relationshipsToArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ConfigurationItem$relationshipsToArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CIRelationshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deletedBy<T extends Prisma.ConfigurationItem$deletedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ConfigurationItem$deletedByArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  createdBy<T extends Prisma.ConfigurationItem$createdByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ConfigurationItem$createdByArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  updatedBy<T extends Prisma.ConfigurationItem$updatedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ConfigurationItem$updatedByArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2497,6 +3421,10 @@ export interface ConfigurationItemFieldRefs {
   readonly attributes: Prisma.FieldRef<"ConfigurationItem", 'Json'>
   readonly createdAt: Prisma.FieldRef<"ConfigurationItem", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ConfigurationItem", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"ConfigurationItem", 'DateTime'>
+  readonly deletedById: Prisma.FieldRef<"ConfigurationItem", 'String'>
+  readonly createdById: Prisma.FieldRef<"ConfigurationItem", 'String'>
+  readonly updatedById: Prisma.FieldRef<"ConfigurationItem", 'String'>
 }
     
 
@@ -3033,6 +3961,63 @@ export type ConfigurationItem$relationshipsToArgs<ExtArgs extends runtime.Types.
   take?: number
   skip?: number
   distinct?: Prisma.CIRelationshipScalarFieldEnum | Prisma.CIRelationshipScalarFieldEnum[]
+}
+
+/**
+ * ConfigurationItem.deletedBy
+ */
+export type ConfigurationItem$deletedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Person
+   */
+  select?: Prisma.PersonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Person
+   */
+  omit?: Prisma.PersonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PersonInclude<ExtArgs> | null
+  where?: Prisma.PersonWhereInput
+}
+
+/**
+ * ConfigurationItem.createdBy
+ */
+export type ConfigurationItem$createdByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Person
+   */
+  select?: Prisma.PersonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Person
+   */
+  omit?: Prisma.PersonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PersonInclude<ExtArgs> | null
+  where?: Prisma.PersonWhereInput
+}
+
+/**
+ * ConfigurationItem.updatedBy
+ */
+export type ConfigurationItem$updatedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Person
+   */
+  select?: Prisma.PersonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Person
+   */
+  omit?: Prisma.PersonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PersonInclude<ExtArgs> | null
+  where?: Prisma.PersonWhereInput
 }
 
 /**

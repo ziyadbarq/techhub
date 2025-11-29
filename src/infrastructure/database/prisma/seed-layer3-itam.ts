@@ -66,7 +66,7 @@ export async function seedLayer3ITAM(prisma: PrismaClient) {
   if (retiredAssets[0] && !existingDisposalAssetIds.has(retiredAssets[0].id)) {
     const disposal = await new AssetDisposalFactory({
       assetId: retiredAssets[0].id,
-      disposalType: DISPOSAL_TYPES.RECYCLING,
+      disposalType: DISPOSAL_TYPES.RECYCLE,
       reason: DISPOSAL_REASONS[0],
       initiatedById: persons[0].id,
       estimatedValue: 25,
@@ -112,7 +112,7 @@ export async function seedLayer3ITAM(prisma: PrismaClient) {
   if (retiredAssets[2] && !existingDisposalAssetIds.has(retiredAssets[2].id)) {
     await new AssetDisposalFactory({
       assetId: retiredAssets[2].id,
-      disposalType: DISPOSAL_TYPES.RECYCLING,
+      disposalType: DISPOSAL_TYPES.RECYCLE,
       reason: "End of life equipment - sanitization in progress",
       initiatedById: persons[0].id,
       approvedById: persons[1]?.id ?? persons[0].id,
@@ -132,7 +132,7 @@ export async function seedLayer3ITAM(prisma: PrismaClient) {
   if (retiredAssets[3] && !existingDisposalAssetIds.has(retiredAssets[3].id)) {
     await new AssetDisposalFactory({
       assetId: retiredAssets[3].id,
-      disposalType: DISPOSAL_TYPES.RECYCLING,
+      disposalType: DISPOSAL_TYPES.RECYCLE,
       reason: "Damaged beyond repair",
       initiatedById: persons[0].id,
       approvedById: persons[1]?.id ?? persons[0].id,

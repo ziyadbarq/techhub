@@ -15,7 +15,6 @@ export interface CreateAssetCategoryProps {
   name: string;
   description?: string;
   lifecycleModelId?: string | null;
-  isConsumable?: boolean;
 }
 
 @injectable()

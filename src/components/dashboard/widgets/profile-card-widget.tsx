@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { User, Building2, ExternalLink, Calendar, Hash } from "lucide-react";
 import Link from "next/link";
+import { formatDate } from "@/lib/utils/date-format";
 
 function getInitials(
   firstName?: string | null,
@@ -22,19 +23,6 @@ function getInitials(
   const first = firstName?.charAt(0) || "";
   const last = lastName?.charAt(0) || "";
   return (first + last).toUpperCase() || "?";
-}
-
-function formatDate(dateString: string | null): string | null {
-  if (!dateString) return null;
-  try {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  } catch {
-    return null;
-  }
 }
 
 export function ProfileCardWidget() {

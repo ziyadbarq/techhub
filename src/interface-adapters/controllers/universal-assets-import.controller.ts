@@ -3,6 +3,7 @@
  *
  * Server actions for the Universal Assets Import feature.
  * Handles the import of assets with automatic creation of related entities.
+ * Creates stock movements for imported assets with source tracking.
  */
 
 "use server";
@@ -11,14 +12,18 @@ import { revalidatePath } from "next/cache";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services";
+import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { getSession } from "@/lib/auth/session";
 import {
   processUniversalAssetsImport,
   detectPrefixedColumns,
   validateRequiredColumns,
   generateSampleTemplate,
   getTemplateColumns,
+  detectDuplicatesInFile,
+  groupRowByPrefix,
 } from "@/lib/data-import/universal-assets";
 import type {
   UniversalImportSettings,
@@ -27,6 +32,29 @@ import type {
   PrefixedColumn,
 } from "@/lib/data-import/universal-assets";
 import { DEFAULT_UNIVERSAL_IMPORT_SETTINGS } from "@/lib/data-import/universal-assets/types";
+
+/**
+ * Resolve current user's linked person ID for movement tracking
+ */
+async function resolveCurrentPersonId(
+  container: ReturnType<typeof getContainer>,
+): Promise<string | null> {
+  const { user } = await getSession();
+  if (!user) {
+    return null;
+  }
+
+  const personRepository = container.get<IPersonRepository>(
+    DI_TOKENS.IPersonRepository,
+  );
+
+  // Prefer explicit user linkage, fallback to email match for existing records
+  const person =
+    (await personRepository.findByUserId(user.id)) ||
+    (user.email ? await personRepository.findByEmail(user.email) : null);
+
+  return person?.id ?? null;
+}
 
 /**
  * Response type for import actions
@@ -95,10 +123,14 @@ export async function processUniversalAssetsImportAction(
 
     log.info("Universal Assets Import started");
 
-    // Merge with default settings
+    // Resolve current user's person ID for movement tracking
+    const performedById = await resolveCurrentPersonId(container);
+
+    // Merge with default settings, including performedById for movement tracking
     const mergedSettings: UniversalImportSettings = {
       ...DEFAULT_UNIVERSAL_IMPORT_SETTINGS,
       ...settings,
+      performedById: performedById ?? undefined,
     };
 
     // Process the import
@@ -108,17 +140,28 @@ export async function processUniversalAssetsImportAction(
       mergedSettings,
     );
 
-    log.info("Universal Assets Import completed", {
-      success: result.success,
-      assetsCreated: result.assetsCreated,
-      assetsUpdated: result.assetsUpdated,
-      failureCount: result.failureCount,
-      duration: result.duration,
-    });
+    // Log completion with appropriate level based on result
+    if (result.success) {
+      log.info("Universal Assets Import completed successfully", {
+        assetsCreated: result.assetsCreated,
+        assetsUpdated: result.assetsUpdated,
+        duration: result.duration,
+      });
+    } else {
+      log.warn("Universal Assets Import completed with issues", {
+        successCount: result.successCount,
+        failureCount: result.failureCount,
+        skipCount: result.skipCount,
+        errors: result.errors.slice(0, 5), // Log first 5 errors
+        skipped: result.skipped.slice(0, 5), // Log first 5 skipped reasons
+        duration: result.duration,
+      });
+    }
 
     // Revalidate asset-related pages
     revalidatePath("/dashboard/assets");
     revalidatePath("/dashboard/data-import");
+    revalidatePath("/stock-movements");
 
     return {
       success: result.success,
@@ -128,14 +171,25 @@ export async function processUniversalAssetsImportAction(
     const container = getContainer();
     const logger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
 
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    const errorStack = err instanceof Error ? err.stack : undefined;
+
     logger.error(
-      "Universal Assets Import failed",
+      "Universal Assets Import failed with exception",
       err instanceof Error ? err : undefined,
+      {
+        errorMessage,
+        errorStack,
+        rowCount: rows.length,
+        columnCount: columnHeaders.length,
+      },
     );
 
     return {
       success: false,
-      error: err instanceof Error ? err.message : "Import failed",
+      error:
+        errorMessage ||
+        "Import failed due to an unexpected error. Check server logs for details.",
     };
   }
 }
@@ -166,12 +220,17 @@ export async function processUniversalAssetsImportWithProgressAction(
   try {
     await requirePermission(PERMISSIONS.ASSETS_CREATE);
 
+    const container = getContainer();
     const progressHistory: UniversalImportProgress[] = [];
 
-    // Merge with default settings
+    // Resolve current user's person ID for movement tracking
+    const performedById = await resolveCurrentPersonId(container);
+
+    // Merge with default settings, including performedById for movement tracking
     const mergedSettings: UniversalImportSettings = {
       ...DEFAULT_UNIVERSAL_IMPORT_SETTINGS,
       ...settings,
+      performedById: performedById ?? undefined,
     };
 
     // Process with progress callback
@@ -187,6 +246,7 @@ export async function processUniversalAssetsImportWithProgressAction(
     // Revalidate asset-related pages
     revalidatePath("/dashboard/assets");
     revalidatePath("/dashboard/data-import");
+    revalidatePath("/stock-movements");
 
     return {
       success: result.success,
@@ -270,6 +330,20 @@ export async function validateUniversalAssetsImportAction(
       warnings.push(
         `Missing ${entities.join(", ")} entities will be auto-created if not found.`,
       );
+    }
+
+    // Check for duplicate serial numbers in sample rows
+    if (sampleRows && sampleRows.length > 0) {
+      const parsedSample = sampleRows.map((row, i) => ({
+        rowNumber: i + 1,
+        data: groupRowByPrefix(row, columns),
+      }));
+      const dupCheck = detectDuplicatesInFile(parsedSample);
+      if (dupCheck.hasDuplicates) {
+        warnings.push(
+          `Found ${dupCheck.duplicateSerialNumbers.length} duplicate serial number(s) in file. Later rows will update earlier ones.`,
+        );
+      }
     }
 
     return {
@@ -380,7 +454,7 @@ export async function getUniversalAssetsPrefixInfoAction(): Promise<{
           entity: "Person",
           autoCreate: false,
           description:
-            "Person/assignee information. Person must exist in the system.",
+            "Person/assignee information (optional). If provided, person must exist in the system. Assets can be imported without assignment.",
           examples: ["person.email"],
         },
         {

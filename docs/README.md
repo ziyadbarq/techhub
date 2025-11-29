@@ -88,7 +88,7 @@ Cross-cutting features and utilities:
 - **[MISSING]** Multi-Currency Support - Foreign exchange rates and currency conversion
 - **[MISSING]** Audit Logging (User Guide) - Viewing audit trails and compliance reports (technical docs exist)
 - [Entity Registry](./features/ENTITY_REGISTRY.md) - Centralized registry of 20 business entities supporting custom fields across 7 categories
-- **[PARTIALLY COMPLETE]** Field Definition System - Dynamic custom fields for assets, CIs, and licenses (Entity Registry complete, UI pending for CIs and Licenses)
+- Field Definition System - Dynamic custom fields for Assets and Configuration Items (complete), LicenseProduct infrastructure ready (UI pending)
 - **[MISSING]** Lifecycle Management - Lifecycle models, states, and transition rules
 
 ### Infrastructure & Systems

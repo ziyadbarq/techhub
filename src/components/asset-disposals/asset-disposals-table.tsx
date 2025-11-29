@@ -17,6 +17,7 @@ import {
   type ColumnFiltersState,
 } from "@tanstack/react-table";
 import { Eye, Tag } from "lucide-react";
+import { formatDate } from "@/lib/utils/date-format";
 import { Button } from "@/components/ui/button";
 import { EntityDisplay } from "@/components/ui/entity-display";
 import {
@@ -119,10 +120,11 @@ export function AssetDisposalsTable({
     {
       accessorKey: "createdAt",
       header: "Created",
-      cell: ({ row }) => {
-        const date = new Date(row.getValue<string>("createdAt"));
-        return <div className="text-sm">{date.toLocaleDateString()}</div>;
-      },
+      cell: ({ row }) => (
+        <div className="text-sm">
+          {formatDate(row.getValue<string>("createdAt"))}
+        </div>
+      ),
     },
     {
       id: "actions",

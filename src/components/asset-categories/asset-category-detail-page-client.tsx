@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Edit, Trash2, Layers, Package, Box } from "lucide-react";
 
@@ -29,7 +29,10 @@ import type { EnrichedAssetCategoryFieldDTO } from "@/interface-adapters/present
 import type { FieldDefinitionDTO } from "@/interface-adapters/presenters/field-definition.presenter";
 import type { AssetModelDTO } from "@/interface-adapters/presenters/asset-model.presenter";
 import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
-import { deleteAssetCategoryAction } from "@/interface-adapters/controllers/asset-category.controller";
+import {
+  deleteAssetCategoryAction,
+  getAssetCategoryAction,
+} from "@/interface-adapters/controllers/asset-category.controller";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { AssetCategoryForm } from "./asset-category-form";
@@ -47,7 +50,7 @@ interface AssetCategoryDetailPageClientProps {
 }
 
 export function AssetCategoryDetailPageClient({
-  category,
+  category: initialCategory,
   attachedFields: initialFields,
   fieldDefinitions,
   models,
@@ -56,6 +59,7 @@ export function AssetCategoryDetailPageClient({
   const router = useRouter();
   const { hasPermission } = usePermissions();
 
+  const [category, setCategory] = useState(initialCategory);
   const [attachedFields, setAttachedFields] =
     useState<EnrichedAssetCategoryFieldDTO[]>(initialFields);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -67,6 +71,15 @@ export function AssetCategoryDetailPageClient({
   const canManageFields = hasPermission(PERMISSIONS.ASSET_CATEGORY_FIELDS_VIEW);
   const canViewModels = hasPermission(PERMISSIONS.ASSET_MODELS_VIEW);
   const canViewAssets = hasPermission(PERMISSIONS.ASSETS_VIEW);
+
+  const handleFormSuccess = useCallback(async () => {
+    // Fetch updated category data to refresh UI immediately
+    const result = await getAssetCategoryAction(category.id);
+    if (result.success) {
+      setCategory(result.data);
+    }
+    router.refresh();
+  }, [category.id, router]);
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -110,11 +123,6 @@ export function AssetCategoryDetailPageClient({
               </Badge>
             </div>
             <div className="mt-1 flex items-center gap-2">
-              {category.isConsumable ? (
-                <Badge variant="secondary">Consumable</Badge>
-              ) : (
-                <Badge variant="default">Tracked Asset</Badge>
-              )}
               <span className="text-muted-foreground text-sm">
                 {attachedFields.length} custom field
                 {attachedFields.length !== 1 ? "s" : ""}
@@ -197,9 +205,7 @@ export function AssetCategoryDetailPageClient({
       <AssetCategoryForm
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
-        onSuccess={() => {
-          router.refresh();
-        }}
+        onSuccess={handleFormSuccess}
         assetCategory={category}
       />
 

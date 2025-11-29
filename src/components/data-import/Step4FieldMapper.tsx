@@ -54,7 +54,6 @@ import {
   Loader2,
   Puzzle,
 } from "lucide-react";
-import { toast } from "sonner";
 import Link from "next/link";
 
 interface Props {
@@ -84,8 +83,8 @@ export function Step4FieldMapper({
     ),
   );
 
-  // Track if we've shown the initial toast
-  const hasShownToast = useRef(false);
+  // Track last loaded category to prevent double-execution in React Strict Mode
+  const loadedCategoryRef = useRef<string | null>(null);
 
   // Custom fields state for Asset imports
   const [customFields, setCustomFields] = useState<EntityFieldConfig[]>([]);
@@ -166,8 +165,15 @@ export function Step4FieldMapper({
   useEffect(() => {
     if (!detectedCategoryId) {
       setCustomFields([]);
+      loadedCategoryRef.current = null;
       return;
     }
+
+    // Prevent double-execution in React Strict Mode for the same category
+    if (loadedCategoryRef.current === detectedCategoryId) {
+      return;
+    }
+    loadedCategoryRef.current = detectedCategoryId;
 
     const loadFields = async () => {
       setCustomFieldsLoading(true);
@@ -197,12 +203,6 @@ export function Step4FieldMapper({
             }
             return newMappings;
           });
-
-          if (customFieldAutoMapped.size > 0) {
-            toast.info(
-              `${customFieldAutoMapped.size} custom field(s) auto-mapped`,
-            );
-          }
         }
       } catch {
         setCustomFields([]);
@@ -213,18 +213,6 @@ export function Step4FieldMapper({
 
     loadFields();
   }, [detectedCategoryId, parsedFile.columns]);
-
-  /**
-   * Show toast for auto-mapping (only once on initial render)
-   */
-  useEffect(() => {
-    if (!hasShownToast.current && mappings.size > 0) {
-      toast.success(
-        `Auto-mapping complete: ${mappings.size} columns mapped automatically`,
-      );
-      hasShownToast.current = true;
-    }
-  }, [mappings.size]);
 
   /**
    * Get all fields including custom fields
@@ -321,8 +309,6 @@ export function Step4FieldMapper({
     );
 
     setMappings(autoMapped);
-
-    toast.success(`${autoMapped.size} columns auto-mapped`);
   };
 
   /**
@@ -330,7 +316,6 @@ export function Step4FieldMapper({
    */
   const handleClearAll = () => {
     setMappings(new Map());
-    toast.info("All mappings cleared");
   };
 
   /**

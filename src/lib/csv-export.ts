@@ -7,89 +7,91 @@ import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
 import { format } from "date-fns";
 
 /**
+ * Format a custom field value for export
+ */
+function formatCustomFieldValue(value: unknown): string {
+  if (value === null || value === undefined) {
+    return "";
+  }
+  if (typeof value === "boolean") {
+    return value ? "Yes" : "No";
+  }
+  if (value instanceof Date) {
+    return format(value, "yyyy-MM-dd");
+  }
+  if (typeof value === "object") {
+    return JSON.stringify(value);
+  }
+  return String(value);
+}
+
+/**
+ * Escape CSV fields (handle commas, quotes, newlines)
+ */
+function escapeCSVField(field: string): string {
+  if (
+    field.includes(",") ||
+    field.includes('"') ||
+    field.includes("\n") ||
+    field.includes("\r")
+  ) {
+    return `"${field.replace(/"/g, '""')}"`;
+  }
+  return field;
+}
+
+/**
  * Convert assets to CSV string
  */
 function assetsToCSV(assets: AssetDTO[]): string {
-  // Define headers with enriched names
+  // Collect all unique custom field keys from all assets
+  const customFieldKeys = new Set<string>();
+  for (const asset of assets) {
+    if (asset.attributes && typeof asset.attributes === "object") {
+      for (const key of Object.keys(asset.attributes)) {
+        customFieldKeys.add(key);
+      }
+    }
+  }
+  const sortedCustomFieldKeys = Array.from(customFieldKeys).sort();
+
+  // Define headers - core fields + custom fields
   const headers = [
     "Asset Tag",
-    "Category",
-    "Category Code",
-    "Model",
-    "Model Code",
-    "Vendor",
-    "Vendor Code",
     "Serial Number",
-    "Purchase Date",
-    "Purchase Cost",
-    "Currency",
-    "Warranty End Date",
-    "Stock Location",
-    "Location Code",
-    "Lifecycle State",
-    "State Code",
-    "Depreciation Model",
-    "Depreciation Start",
-    "Depreciation End",
-    "Under Warranty",
-    "Depreciated",
-    "Fully Depreciated",
-    "Note",
+    "Category",
+    "Model",
+    "Vendor",
+    "Location",
+    "Status",
+    "Condition",
+    "Notes",
     "Created At",
-    "Updated At",
+    ...sortedCustomFieldKeys,
   ];
 
   // Convert assets to rows
   const rows = assets.map((asset) => {
-    return [
+    const coreFields = [
       asset.assetTag,
-      asset.categoryName || "",
-      asset.assetCategoryId,
-      asset.modelName || "",
-      asset.assetModelId || "",
-      asset.vendorName || "",
-      asset.vendorId || "",
       asset.serialNumber || "",
-      asset.purchaseDate
-        ? format(new Date(asset.purchaseDate), "yyyy-MM-dd")
-        : "",
-      asset.purchaseCost?.toString() || "",
-      asset.currency || "",
-      asset.warrantyEndDate
-        ? format(new Date(asset.warrantyEndDate), "yyyy-MM-dd")
-        : "",
+      asset.categoryName || "",
+      asset.modelName || "",
+      asset.vendorName || "",
       asset.stockLocationName || "",
-      asset.currentStockLocationId || "",
       asset.lifecycleStateName || "",
-      asset.lifecycleStateId || "",
-      asset.depreciationModel || "",
-      asset.depreciationStart
-        ? format(new Date(asset.depreciationStart), "yyyy-MM-dd")
-        : "",
-      asset.depreciationEnd
-        ? format(new Date(asset.depreciationEnd), "yyyy-MM-dd")
-        : "",
-      asset.isUnderWarranty ? "Yes" : "No",
-      asset.isDepreciated ? "Yes" : "No",
-      asset.isFullyDepreciated ? "Yes" : "No",
+      asset.condition || "",
       asset.note || "",
       format(new Date(asset.createdAt), "yyyy-MM-dd HH:mm:ss"),
-      format(new Date(asset.updatedAt), "yyyy-MM-dd HH:mm:ss"),
     ];
-  });
 
-  // Escape CSV fields (handle commas, quotes, newlines)
-  const escapeCSVField = (field: string): string => {
-    if (
-      field.includes(",") ||
-      field.includes('"') ||
-      field.includes("\n") ||
-      field.includes("\r")
-    ) {
-      return `"${field.replace(/"/g, '""')}"`;
-    }
-    return field;
-  };
+    // Add custom field values
+    const customFieldValues = sortedCustomFieldKeys.map((key) =>
+      formatCustomFieldValue(asset.attributes?.[key]),
+    );
+
+    return [...coreFields, ...customFieldValues];
+  });
 
   // Build CSV
   const csvRows = [
@@ -144,19 +146,6 @@ export function arrayToCSV<
       key: keyof T;
       label: string;
     }[]);
-
-  // Escape CSV field
-  const escapeCSVField = (field: string): string => {
-    if (
-      field.includes(",") ||
-      field.includes('"') ||
-      field.includes("\n") ||
-      field.includes("\r")
-    ) {
-      return `"${field.replace(/"/g, '""')}"`;
-    }
-    return field;
-  };
 
   // Create header row
   const header = cols.map((col) => escapeCSVField(col.label)).join(",");

@@ -193,11 +193,6 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
         label: "Purchase Price",
       }),
       currencyCodeField(),
-      dateField({
-        name: "warrantyEndDate",
-        label: "Warranty End Date",
-        autoMap: ["warranty_end", "warranty_expiry", "warranty_expires"],
-      }),
       // Location and state
       lookupField({
         name: "currentStockLocationId",
@@ -228,20 +223,7 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
       }),
       notesField(),
     ],
-    businessRules: [
-      {
-        name: "warrantyDateConsistency",
-        description: "Warranty end date must be after purchase date",
-        validate: (row) => {
-          if (row.purchaseDate && row.warrantyEndDate) {
-            return new Date(row.warrantyEndDate) > new Date(row.purchaseDate);
-          }
-          return true;
-        },
-        message: "Warranty end date must be after purchase date",
-        severity: "error",
-      },
-    ],
+    businessRules: [],
     templateInstructions: `
 **Important Notes:**
 - Asset Tag must be unique across all assets

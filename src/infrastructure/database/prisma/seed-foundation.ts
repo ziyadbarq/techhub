@@ -2,14 +2,14 @@
  * Foundation Layer Seed Data (Refactored)
  *
  * Seeds comprehensive realistic data for all Foundation entities using factories.
- * Applies DRY principle and batch operations for better performance.
- *
- * Refactored from 749 lines to ~400 lines (47% reduction)
+ * Split into two functions:
+ * - seedFoundation(): Config/reference data (production-safe)
+ * - seedDemoPersons(): Demo persons (dev-only)
  */
 
 import type { PrismaClient } from "../../../generated/prisma/client.js";
 import { SEED_CONFIG } from "./seed-config.js";
-import { logStep, logSuccess } from "./seed-utils.js";
+import { logSection, logStep, logSuccess } from "./seed-utils.js";
 import {
   createLifecycleStates,
   createLifecycleTransitions,
@@ -228,43 +228,14 @@ export async function seedFoundation(prisma: PrismaClient) {
   // ==============================================
   logStep("🏢", "Seeding organization units...");
 
-  const orgUnitMap = await createOrganizationUnits(
-    prisma,
-    SEED_CONFIG.ORG_UNITS,
-  );
+  await createOrganizationUnits(prisma, SEED_CONFIG.ORG_UNITS);
 
   logSuccess(
     `Created ${await prisma.organizationUnit.count()} organization units`,
   );
 
   // ==============================================
-  // 8. PERSONS (Using Factory)
-  // ==============================================
-  logStep("👥", "Seeding persons...");
-
-  const { emailMap: personEmailMap, nameMap: personNameMap } =
-    await createPersons(prisma, SEED_CONFIG.PERSONS, orgUnitMap);
-
-  logSuccess(`Created ${await prisma.person.count()} persons`);
-
-  // ==============================================
-  // 9. PERSON ROLE ASSIGNMENTS
-  // ==============================================
-  logStep("🎭", "Seeding person role assignments...");
-
-  await createPersonRoleAssignments(
-    prisma,
-    SEED_CONFIG.PERSON_ROLE_ASSIGNMENTS,
-    personEmailMap,
-    personNameMap,
-  );
-
-  logSuccess(
-    `Created ${await prisma.personRoleAssignment.count()} person role assignments`,
-  );
-
-  // ==============================================
-  // 10. FIELD DEFINITIONS (Using Factory)
+  // 8. FIELD DEFINITIONS (Using Factory)
   // ==============================================
   logStep("📋", "Seeding field definitions...");
 
@@ -314,12 +285,6 @@ export async function seedFoundation(prisma: PrismaClient) {
       dataType: "STRING",
       description: "Assigned IP address",
     },
-    {
-      name: "Warranty Expiry",
-      code: "WARRANTY_EXP",
-      dataType: "DATE",
-      description: "Warranty expiration date",
-    },
   ]);
 
   logSuccess(
@@ -327,7 +292,7 @@ export async function seedFoundation(prisma: PrismaClient) {
   );
 
   // ==============================================
-  // 11. EXCHANGE RATES
+  // 9. EXCHANGE RATES
   // ==============================================
   logStep("💱", "Seeding exchange rates...");
 
@@ -335,5 +300,49 @@ export async function seedFoundation(prisma: PrismaClient) {
 
   logSuccess(`Created ${await prisma.exchangeRate.count()} exchange rates`);
 
-  console.log("✅ Foundation layer seeding complete!");
+  console.log("✅ Foundation config seeding complete!");
+}
+
+/**
+ * Seed Demo Persons (Dev-only)
+ *
+ * Seeds 21 demo persons for development environments.
+ * In production, persons are synced from Microsoft Graph.
+ */
+export async function seedDemoPersons(prisma: PrismaClient) {
+  logSection("Demo Persons (Dev Only)");
+
+  // Get org units for person assignment
+  const orgUnits = await prisma.organizationUnit.findMany({
+    select: { id: true, code: true },
+  });
+  const orgUnitMap = new Map(orgUnits.map((ou) => [ou.code, ou.id]));
+
+  // ==============================================
+  // 1. PERSONS (Using Factory)
+  // ==============================================
+  logStep("👥", "Seeding demo persons...");
+
+  const { emailMap: personEmailMap, nameMap: personNameMap } =
+    await createPersons(prisma, SEED_CONFIG.PERSONS, orgUnitMap);
+
+  logSuccess(`Created ${await prisma.person.count()} demo persons`);
+
+  // ==============================================
+  // 2. PERSON ROLE ASSIGNMENTS
+  // ==============================================
+  logStep("🎭", "Seeding person role assignments...");
+
+  await createPersonRoleAssignments(
+    prisma,
+    SEED_CONFIG.PERSON_ROLE_ASSIGNMENTS,
+    personEmailMap,
+    personNameMap,
+  );
+
+  logSuccess(
+    `Created ${await prisma.personRoleAssignment.count()} person role assignments`,
+  );
+
+  console.log("✅ Demo persons seeding complete!");
 }

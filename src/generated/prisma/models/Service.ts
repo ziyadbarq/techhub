@@ -47,6 +47,8 @@ export type ServiceMinAggregateOutputType = {
   updatedAt: Date | null
   createdBy: string | null
   updatedBy: string | null
+  deletedAt: Date | null
+  deletedById: string | null
 }
 
 export type ServiceMaxAggregateOutputType = {
@@ -72,6 +74,8 @@ export type ServiceMaxAggregateOutputType = {
   updatedAt: Date | null
   createdBy: string | null
   updatedBy: string | null
+  deletedAt: Date | null
+  deletedById: string | null
 }
 
 export type ServiceCountAggregateOutputType = {
@@ -99,6 +103,8 @@ export type ServiceCountAggregateOutputType = {
   updatedAt: number
   createdBy: number
   updatedBy: number
+  deletedAt: number
+  deletedById: number
   _all: number
 }
 
@@ -126,6 +132,8 @@ export type ServiceMinAggregateInputType = {
   updatedAt?: true
   createdBy?: true
   updatedBy?: true
+  deletedAt?: true
+  deletedById?: true
 }
 
 export type ServiceMaxAggregateInputType = {
@@ -151,6 +159,8 @@ export type ServiceMaxAggregateInputType = {
   updatedAt?: true
   createdBy?: true
   updatedBy?: true
+  deletedAt?: true
+  deletedById?: true
 }
 
 export type ServiceCountAggregateInputType = {
@@ -178,6 +188,8 @@ export type ServiceCountAggregateInputType = {
   updatedAt?: true
   createdBy?: true
   updatedBy?: true
+  deletedAt?: true
+  deletedById?: true
   _all?: true
 }
 
@@ -278,6 +290,8 @@ export type ServiceGroupByOutputType = {
   updatedAt: Date
   createdBy: string | null
   updatedBy: string | null
+  deletedAt: Date | null
+  deletedById: string | null
   _count: ServiceCountAggregateOutputType | null
   _min: ServiceMinAggregateOutputType | null
   _max: ServiceMaxAggregateOutputType | null
@@ -326,6 +340,8 @@ export type ServiceWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Service"> | Date | string
   createdBy?: Prisma.StringNullableFilter<"Service"> | string | null
   updatedBy?: Prisma.StringNullableFilter<"Service"> | string | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"Service"> | string | null
   vendor?: Prisma.XOR<Prisma.VendorNullableScalarRelationFilter, Prisma.VendorWhereInput> | null
   businessProcess?: Prisma.XOR<Prisma.BusinessProcessNullableScalarRelationFilter, Prisma.BusinessProcessWhereInput> | null
   owners?: Prisma.ServiceOwnershipListRelationFilter
@@ -333,6 +349,7 @@ export type ServiceWhereInput = {
   assets?: Prisma.ServiceAssetListRelationFilter
   outgoingRelationships?: Prisma.ServiceRelationshipListRelationFilter
   incomingRelationships?: Prisma.ServiceRelationshipListRelationFilter
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }
 
 export type ServiceOrderByWithRelationInput = {
@@ -360,6 +377,8 @@ export type ServiceOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   vendor?: Prisma.VendorOrderByWithRelationInput
   businessProcess?: Prisma.BusinessProcessOrderByWithRelationInput
   owners?: Prisma.ServiceOwnershipOrderByRelationAggregateInput
@@ -367,6 +386,7 @@ export type ServiceOrderByWithRelationInput = {
   assets?: Prisma.ServiceAssetOrderByRelationAggregateInput
   outgoingRelationships?: Prisma.ServiceRelationshipOrderByRelationAggregateInput
   incomingRelationships?: Prisma.ServiceRelationshipOrderByRelationAggregateInput
+  deletedBy?: Prisma.PersonOrderByWithRelationInput
 }
 
 export type ServiceWhereUniqueInput = Prisma.AtLeast<{
@@ -397,6 +417,8 @@ export type ServiceWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Service"> | Date | string
   createdBy?: Prisma.StringNullableFilter<"Service"> | string | null
   updatedBy?: Prisma.StringNullableFilter<"Service"> | string | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"Service"> | string | null
   vendor?: Prisma.XOR<Prisma.VendorNullableScalarRelationFilter, Prisma.VendorWhereInput> | null
   businessProcess?: Prisma.XOR<Prisma.BusinessProcessNullableScalarRelationFilter, Prisma.BusinessProcessWhereInput> | null
   owners?: Prisma.ServiceOwnershipListRelationFilter
@@ -404,6 +426,7 @@ export type ServiceWhereUniqueInput = Prisma.AtLeast<{
   assets?: Prisma.ServiceAssetListRelationFilter
   outgoingRelationships?: Prisma.ServiceRelationshipListRelationFilter
   incomingRelationships?: Prisma.ServiceRelationshipListRelationFilter
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }, "id" | "name">
 
 export type ServiceOrderByWithAggregationInput = {
@@ -431,6 +454,8 @@ export type ServiceOrderByWithAggregationInput = {
   updatedAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ServiceCountOrderByAggregateInput
   _max?: Prisma.ServiceMaxOrderByAggregateInput
   _min?: Prisma.ServiceMinOrderByAggregateInput
@@ -464,6 +489,8 @@ export type ServiceScalarWhereWithAggregatesInput = {
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Service"> | Date | string
   createdBy?: Prisma.StringNullableWithAggregatesFilter<"Service"> | string | null
   updatedBy?: Prisma.StringNullableWithAggregatesFilter<"Service"> | string | null
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Service"> | Date | string | null
+  deletedById?: Prisma.StringNullableWithAggregatesFilter<"Service"> | string | null
 }
 
 export type ServiceCreateInput = {
@@ -489,6 +516,7 @@ export type ServiceCreateInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  deletedAt?: Date | string | null
   vendor?: Prisma.VendorCreateNestedOneWithoutServicesInput
   businessProcess?: Prisma.BusinessProcessCreateNestedOneWithoutServicesInput
   owners?: Prisma.ServiceOwnershipCreateNestedManyWithoutServiceInput
@@ -496,6 +524,7 @@ export type ServiceCreateInput = {
   assets?: Prisma.ServiceAssetCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutToServiceInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedServicesInput
 }
 
 export type ServiceUncheckedCreateInput = {
@@ -523,6 +552,8 @@ export type ServiceUncheckedCreateInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   owners?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutServiceInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutServiceInput
@@ -553,6 +584,7 @@ export type ServiceUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   vendor?: Prisma.VendorUpdateOneWithoutServicesNestedInput
   businessProcess?: Prisma.BusinessProcessUpdateOneWithoutServicesNestedInput
   owners?: Prisma.ServiceOwnershipUpdateManyWithoutServiceNestedInput
@@ -560,6 +592,7 @@ export type ServiceUpdateInput = {
   assets?: Prisma.ServiceAssetUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutToServiceNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedServicesNestedInput
 }
 
 export type ServiceUncheckedUpdateInput = {
@@ -587,6 +620,8 @@ export type ServiceUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   owners?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutServiceNestedInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutServiceNestedInput
@@ -619,6 +654,8 @@ export type ServiceCreateManyInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type ServiceUpdateManyMutationInput = {
@@ -644,6 +681,7 @@ export type ServiceUpdateManyMutationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ServiceUncheckedUpdateManyInput = {
@@ -671,6 +709,8 @@ export type ServiceUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ServiceListRelationFilter = {
@@ -708,6 +748,8 @@ export type ServiceCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type ServiceMaxOrderByAggregateInput = {
@@ -733,6 +775,8 @@ export type ServiceMaxOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type ServiceMinOrderByAggregateInput = {
@@ -758,11 +802,55 @@ export type ServiceMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type ServiceScalarRelationFilter = {
   is?: Prisma.ServiceWhereInput
   isNot?: Prisma.ServiceWhereInput
+}
+
+export type ServiceCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.ServiceCreateWithoutDeletedByInput, Prisma.ServiceUncheckedCreateWithoutDeletedByInput> | Prisma.ServiceCreateWithoutDeletedByInput[] | Prisma.ServiceUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.ServiceCreateOrConnectWithoutDeletedByInput | Prisma.ServiceCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.ServiceCreateManyDeletedByInputEnvelope
+  connect?: Prisma.ServiceWhereUniqueInput | Prisma.ServiceWhereUniqueInput[]
+}
+
+export type ServiceUncheckedCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.ServiceCreateWithoutDeletedByInput, Prisma.ServiceUncheckedCreateWithoutDeletedByInput> | Prisma.ServiceCreateWithoutDeletedByInput[] | Prisma.ServiceUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.ServiceCreateOrConnectWithoutDeletedByInput | Prisma.ServiceCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.ServiceCreateManyDeletedByInputEnvelope
+  connect?: Prisma.ServiceWhereUniqueInput | Prisma.ServiceWhereUniqueInput[]
+}
+
+export type ServiceUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.ServiceCreateWithoutDeletedByInput, Prisma.ServiceUncheckedCreateWithoutDeletedByInput> | Prisma.ServiceCreateWithoutDeletedByInput[] | Prisma.ServiceUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.ServiceCreateOrConnectWithoutDeletedByInput | Prisma.ServiceCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.ServiceUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.ServiceUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.ServiceCreateManyDeletedByInputEnvelope
+  set?: Prisma.ServiceWhereUniqueInput | Prisma.ServiceWhereUniqueInput[]
+  disconnect?: Prisma.ServiceWhereUniqueInput | Prisma.ServiceWhereUniqueInput[]
+  delete?: Prisma.ServiceWhereUniqueInput | Prisma.ServiceWhereUniqueInput[]
+  connect?: Prisma.ServiceWhereUniqueInput | Prisma.ServiceWhereUniqueInput[]
+  update?: Prisma.ServiceUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.ServiceUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.ServiceUpdateManyWithWhereWithoutDeletedByInput | Prisma.ServiceUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.ServiceScalarWhereInput | Prisma.ServiceScalarWhereInput[]
+}
+
+export type ServiceUncheckedUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.ServiceCreateWithoutDeletedByInput, Prisma.ServiceUncheckedCreateWithoutDeletedByInput> | Prisma.ServiceCreateWithoutDeletedByInput[] | Prisma.ServiceUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.ServiceCreateOrConnectWithoutDeletedByInput | Prisma.ServiceCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.ServiceUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.ServiceUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.ServiceCreateManyDeletedByInputEnvelope
+  set?: Prisma.ServiceWhereUniqueInput | Prisma.ServiceWhereUniqueInput[]
+  disconnect?: Prisma.ServiceWhereUniqueInput | Prisma.ServiceWhereUniqueInput[]
+  delete?: Prisma.ServiceWhereUniqueInput | Prisma.ServiceWhereUniqueInput[]
+  connect?: Prisma.ServiceWhereUniqueInput | Prisma.ServiceWhereUniqueInput[]
+  update?: Prisma.ServiceUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.ServiceUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.ServiceUpdateManyWithWhereWithoutDeletedByInput | Prisma.ServiceUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.ServiceScalarWhereInput | Prisma.ServiceScalarWhereInput[]
 }
 
 export type ServiceCreateNestedManyWithoutVendorInput = {
@@ -939,6 +1027,130 @@ export type ServiceUpdateOneRequiredWithoutIncomingRelationshipsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ServiceUpdateToOneWithWhereWithoutIncomingRelationshipsInput, Prisma.ServiceUpdateWithoutIncomingRelationshipsInput>, Prisma.ServiceUncheckedUpdateWithoutIncomingRelationshipsInput>
 }
 
+export type ServiceCreateWithoutDeletedByInput = {
+  id?: string
+  name: string
+  serviceType: $Enums.ServiceType
+  description?: string | null
+  businessPurpose?: string | null
+  gitlabRepoUrl?: string | null
+  dataConfidentiality?: $Enums.DataConfidentiality
+  businessImpactLevel?: $Enums.BusinessImpactLevel
+  criticality?: $Enums.CriticalityLevel
+  isEssentialService?: boolean
+  deploymentDate?: Date | string | null
+  currentStatus?: $Enums.ServiceStatus
+  lastPatchDate?: Date | string | null
+  plannedDecommissionDate?: Date | string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isInCentralRegister?: boolean
+  complianceNotes?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdBy?: string | null
+  updatedBy?: string | null
+  deletedAt?: Date | string | null
+  vendor?: Prisma.VendorCreateNestedOneWithoutServicesInput
+  businessProcess?: Prisma.BusinessProcessCreateNestedOneWithoutServicesInput
+  owners?: Prisma.ServiceOwnershipCreateNestedManyWithoutServiceInput
+  infrastructure?: Prisma.ServiceInfrastructureCreateNestedManyWithoutServiceInput
+  assets?: Prisma.ServiceAssetCreateNestedManyWithoutServiceInput
+  outgoingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutFromServiceInput
+  incomingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutToServiceInput
+}
+
+export type ServiceUncheckedCreateWithoutDeletedByInput = {
+  id?: string
+  name: string
+  serviceType: $Enums.ServiceType
+  description?: string | null
+  businessPurpose?: string | null
+  gitlabRepoUrl?: string | null
+  dataConfidentiality?: $Enums.DataConfidentiality
+  businessImpactLevel?: $Enums.BusinessImpactLevel
+  criticality?: $Enums.CriticalityLevel
+  isEssentialService?: boolean
+  deploymentDate?: Date | string | null
+  currentStatus?: $Enums.ServiceStatus
+  lastPatchDate?: Date | string | null
+  plannedDecommissionDate?: Date | string | null
+  vendorId?: string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  businessProcessId?: string | null
+  isInCentralRegister?: boolean
+  complianceNotes?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdBy?: string | null
+  updatedBy?: string | null
+  deletedAt?: Date | string | null
+  owners?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutServiceInput
+  infrastructure?: Prisma.ServiceInfrastructureUncheckedCreateNestedManyWithoutServiceInput
+  assets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutServiceInput
+  outgoingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutFromServiceInput
+  incomingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutToServiceInput
+}
+
+export type ServiceCreateOrConnectWithoutDeletedByInput = {
+  where: Prisma.ServiceWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServiceCreateWithoutDeletedByInput, Prisma.ServiceUncheckedCreateWithoutDeletedByInput>
+}
+
+export type ServiceCreateManyDeletedByInputEnvelope = {
+  data: Prisma.ServiceCreateManyDeletedByInput | Prisma.ServiceCreateManyDeletedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type ServiceUpsertWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.ServiceWhereUniqueInput
+  update: Prisma.XOR<Prisma.ServiceUpdateWithoutDeletedByInput, Prisma.ServiceUncheckedUpdateWithoutDeletedByInput>
+  create: Prisma.XOR<Prisma.ServiceCreateWithoutDeletedByInput, Prisma.ServiceUncheckedCreateWithoutDeletedByInput>
+}
+
+export type ServiceUpdateWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.ServiceWhereUniqueInput
+  data: Prisma.XOR<Prisma.ServiceUpdateWithoutDeletedByInput, Prisma.ServiceUncheckedUpdateWithoutDeletedByInput>
+}
+
+export type ServiceUpdateManyWithWhereWithoutDeletedByInput = {
+  where: Prisma.ServiceScalarWhereInput
+  data: Prisma.XOR<Prisma.ServiceUpdateManyMutationInput, Prisma.ServiceUncheckedUpdateManyWithoutDeletedByInput>
+}
+
+export type ServiceScalarWhereInput = {
+  AND?: Prisma.ServiceScalarWhereInput | Prisma.ServiceScalarWhereInput[]
+  OR?: Prisma.ServiceScalarWhereInput[]
+  NOT?: Prisma.ServiceScalarWhereInput | Prisma.ServiceScalarWhereInput[]
+  id?: Prisma.StringFilter<"Service"> | string
+  name?: Prisma.StringFilter<"Service"> | string
+  serviceType?: Prisma.EnumServiceTypeFilter<"Service"> | $Enums.ServiceType
+  description?: Prisma.StringNullableFilter<"Service"> | string | null
+  businessPurpose?: Prisma.StringNullableFilter<"Service"> | string | null
+  gitlabRepoUrl?: Prisma.StringNullableFilter<"Service"> | string | null
+  dataConfidentiality?: Prisma.EnumDataConfidentialityFilter<"Service"> | $Enums.DataConfidentiality
+  businessImpactLevel?: Prisma.EnumBusinessImpactLevelFilter<"Service"> | $Enums.BusinessImpactLevel
+  criticality?: Prisma.EnumCriticalityLevelFilter<"Service"> | $Enums.CriticalityLevel
+  isEssentialService?: Prisma.BoolFilter<"Service"> | boolean
+  deploymentDate?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  currentStatus?: Prisma.EnumServiceStatusFilter<"Service"> | $Enums.ServiceStatus
+  lastPatchDate?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  plannedDecommissionDate?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  vendorId?: Prisma.StringNullableFilter<"Service"> | string | null
+  slaDetails?: Prisma.JsonNullableFilter<"Service">
+  businessProcessId?: Prisma.StringNullableFilter<"Service"> | string | null
+  isInCentralRegister?: Prisma.BoolFilter<"Service"> | boolean
+  complianceNotes?: Prisma.StringNullableFilter<"Service"> | string | null
+  metadata?: Prisma.JsonNullableFilter<"Service">
+  createdAt?: Prisma.DateTimeFilter<"Service"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Service"> | Date | string
+  createdBy?: Prisma.StringNullableFilter<"Service"> | string | null
+  updatedBy?: Prisma.StringNullableFilter<"Service"> | string | null
+  deletedAt?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"Service"> | string | null
+}
+
 export type ServiceCreateWithoutVendorInput = {
   id?: string
   name: string
@@ -962,12 +1174,14 @@ export type ServiceCreateWithoutVendorInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  deletedAt?: Date | string | null
   businessProcess?: Prisma.BusinessProcessCreateNestedOneWithoutServicesInput
   owners?: Prisma.ServiceOwnershipCreateNestedManyWithoutServiceInput
   infrastructure?: Prisma.ServiceInfrastructureCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutToServiceInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedServicesInput
 }
 
 export type ServiceUncheckedCreateWithoutVendorInput = {
@@ -994,6 +1208,8 @@ export type ServiceUncheckedCreateWithoutVendorInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   owners?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutServiceInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutServiceInput
@@ -1027,36 +1243,6 @@ export type ServiceUpdateManyWithWhereWithoutVendorInput = {
   data: Prisma.XOR<Prisma.ServiceUpdateManyMutationInput, Prisma.ServiceUncheckedUpdateManyWithoutVendorInput>
 }
 
-export type ServiceScalarWhereInput = {
-  AND?: Prisma.ServiceScalarWhereInput | Prisma.ServiceScalarWhereInput[]
-  OR?: Prisma.ServiceScalarWhereInput[]
-  NOT?: Prisma.ServiceScalarWhereInput | Prisma.ServiceScalarWhereInput[]
-  id?: Prisma.StringFilter<"Service"> | string
-  name?: Prisma.StringFilter<"Service"> | string
-  serviceType?: Prisma.EnumServiceTypeFilter<"Service"> | $Enums.ServiceType
-  description?: Prisma.StringNullableFilter<"Service"> | string | null
-  businessPurpose?: Prisma.StringNullableFilter<"Service"> | string | null
-  gitlabRepoUrl?: Prisma.StringNullableFilter<"Service"> | string | null
-  dataConfidentiality?: Prisma.EnumDataConfidentialityFilter<"Service"> | $Enums.DataConfidentiality
-  businessImpactLevel?: Prisma.EnumBusinessImpactLevelFilter<"Service"> | $Enums.BusinessImpactLevel
-  criticality?: Prisma.EnumCriticalityLevelFilter<"Service"> | $Enums.CriticalityLevel
-  isEssentialService?: Prisma.BoolFilter<"Service"> | boolean
-  deploymentDate?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
-  currentStatus?: Prisma.EnumServiceStatusFilter<"Service"> | $Enums.ServiceStatus
-  lastPatchDate?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
-  plannedDecommissionDate?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
-  vendorId?: Prisma.StringNullableFilter<"Service"> | string | null
-  slaDetails?: Prisma.JsonNullableFilter<"Service">
-  businessProcessId?: Prisma.StringNullableFilter<"Service"> | string | null
-  isInCentralRegister?: Prisma.BoolFilter<"Service"> | boolean
-  complianceNotes?: Prisma.StringNullableFilter<"Service"> | string | null
-  metadata?: Prisma.JsonNullableFilter<"Service">
-  createdAt?: Prisma.DateTimeFilter<"Service"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Service"> | Date | string
-  createdBy?: Prisma.StringNullableFilter<"Service"> | string | null
-  updatedBy?: Prisma.StringNullableFilter<"Service"> | string | null
-}
-
 export type ServiceCreateWithoutBusinessProcessInput = {
   id?: string
   name: string
@@ -1080,12 +1266,14 @@ export type ServiceCreateWithoutBusinessProcessInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  deletedAt?: Date | string | null
   vendor?: Prisma.VendorCreateNestedOneWithoutServicesInput
   owners?: Prisma.ServiceOwnershipCreateNestedManyWithoutServiceInput
   infrastructure?: Prisma.ServiceInfrastructureCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutToServiceInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedServicesInput
 }
 
 export type ServiceUncheckedCreateWithoutBusinessProcessInput = {
@@ -1112,6 +1300,8 @@ export type ServiceUncheckedCreateWithoutBusinessProcessInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   owners?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutServiceInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutServiceInput
@@ -1168,12 +1358,14 @@ export type ServiceCreateWithoutOwnersInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  deletedAt?: Date | string | null
   vendor?: Prisma.VendorCreateNestedOneWithoutServicesInput
   businessProcess?: Prisma.BusinessProcessCreateNestedOneWithoutServicesInput
   infrastructure?: Prisma.ServiceInfrastructureCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutToServiceInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedServicesInput
 }
 
 export type ServiceUncheckedCreateWithoutOwnersInput = {
@@ -1201,6 +1393,8 @@ export type ServiceUncheckedCreateWithoutOwnersInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   infrastructure?: Prisma.ServiceInfrastructureUncheckedCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutFromServiceInput
@@ -1246,12 +1440,14 @@ export type ServiceUpdateWithoutOwnersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   vendor?: Prisma.VendorUpdateOneWithoutServicesNestedInput
   businessProcess?: Prisma.BusinessProcessUpdateOneWithoutServicesNestedInput
   infrastructure?: Prisma.ServiceInfrastructureUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutToServiceNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedServicesNestedInput
 }
 
 export type ServiceUncheckedUpdateWithoutOwnersInput = {
@@ -1279,6 +1475,8 @@ export type ServiceUncheckedUpdateWithoutOwnersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   infrastructure?: Prisma.ServiceInfrastructureUncheckedUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutFromServiceNestedInput
@@ -1308,12 +1506,14 @@ export type ServiceCreateWithoutInfrastructureInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  deletedAt?: Date | string | null
   vendor?: Prisma.VendorCreateNestedOneWithoutServicesInput
   businessProcess?: Prisma.BusinessProcessCreateNestedOneWithoutServicesInput
   owners?: Prisma.ServiceOwnershipCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutToServiceInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedServicesInput
 }
 
 export type ServiceUncheckedCreateWithoutInfrastructureInput = {
@@ -1341,6 +1541,8 @@ export type ServiceUncheckedCreateWithoutInfrastructureInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   owners?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutFromServiceInput
@@ -1386,12 +1588,14 @@ export type ServiceUpdateWithoutInfrastructureInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   vendor?: Prisma.VendorUpdateOneWithoutServicesNestedInput
   businessProcess?: Prisma.BusinessProcessUpdateOneWithoutServicesNestedInput
   owners?: Prisma.ServiceOwnershipUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutToServiceNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedServicesNestedInput
 }
 
 export type ServiceUncheckedUpdateWithoutInfrastructureInput = {
@@ -1419,6 +1623,8 @@ export type ServiceUncheckedUpdateWithoutInfrastructureInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   owners?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutFromServiceNestedInput
@@ -1448,12 +1654,14 @@ export type ServiceCreateWithoutAssetsInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  deletedAt?: Date | string | null
   vendor?: Prisma.VendorCreateNestedOneWithoutServicesInput
   businessProcess?: Prisma.BusinessProcessCreateNestedOneWithoutServicesInput
   owners?: Prisma.ServiceOwnershipCreateNestedManyWithoutServiceInput
   infrastructure?: Prisma.ServiceInfrastructureCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutToServiceInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedServicesInput
 }
 
 export type ServiceUncheckedCreateWithoutAssetsInput = {
@@ -1481,6 +1689,8 @@ export type ServiceUncheckedCreateWithoutAssetsInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   owners?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutServiceInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutFromServiceInput
@@ -1526,12 +1736,14 @@ export type ServiceUpdateWithoutAssetsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   vendor?: Prisma.VendorUpdateOneWithoutServicesNestedInput
   businessProcess?: Prisma.BusinessProcessUpdateOneWithoutServicesNestedInput
   owners?: Prisma.ServiceOwnershipUpdateManyWithoutServiceNestedInput
   infrastructure?: Prisma.ServiceInfrastructureUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutToServiceNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedServicesNestedInput
 }
 
 export type ServiceUncheckedUpdateWithoutAssetsInput = {
@@ -1559,6 +1771,8 @@ export type ServiceUncheckedUpdateWithoutAssetsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   owners?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutServiceNestedInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutFromServiceNestedInput
@@ -1588,12 +1802,14 @@ export type ServiceCreateWithoutOutgoingRelationshipsInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  deletedAt?: Date | string | null
   vendor?: Prisma.VendorCreateNestedOneWithoutServicesInput
   businessProcess?: Prisma.BusinessProcessCreateNestedOneWithoutServicesInput
   owners?: Prisma.ServiceOwnershipCreateNestedManyWithoutServiceInput
   infrastructure?: Prisma.ServiceInfrastructureCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetCreateNestedManyWithoutServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutToServiceInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedServicesInput
 }
 
 export type ServiceUncheckedCreateWithoutOutgoingRelationshipsInput = {
@@ -1621,6 +1837,8 @@ export type ServiceUncheckedCreateWithoutOutgoingRelationshipsInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   owners?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutServiceInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutServiceInput
@@ -1655,12 +1873,14 @@ export type ServiceCreateWithoutIncomingRelationshipsInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  deletedAt?: Date | string | null
   vendor?: Prisma.VendorCreateNestedOneWithoutServicesInput
   businessProcess?: Prisma.BusinessProcessCreateNestedOneWithoutServicesInput
   owners?: Prisma.ServiceOwnershipCreateNestedManyWithoutServiceInput
   infrastructure?: Prisma.ServiceInfrastructureCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutFromServiceInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedServicesInput
 }
 
 export type ServiceUncheckedCreateWithoutIncomingRelationshipsInput = {
@@ -1688,6 +1908,8 @@ export type ServiceUncheckedCreateWithoutIncomingRelationshipsInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   owners?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutServiceInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutServiceInput
@@ -1733,12 +1955,14 @@ export type ServiceUpdateWithoutOutgoingRelationshipsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   vendor?: Prisma.VendorUpdateOneWithoutServicesNestedInput
   businessProcess?: Prisma.BusinessProcessUpdateOneWithoutServicesNestedInput
   owners?: Prisma.ServiceOwnershipUpdateManyWithoutServiceNestedInput
   infrastructure?: Prisma.ServiceInfrastructureUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUpdateManyWithoutServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutToServiceNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedServicesNestedInput
 }
 
 export type ServiceUncheckedUpdateWithoutOutgoingRelationshipsInput = {
@@ -1766,6 +1990,8 @@ export type ServiceUncheckedUpdateWithoutOutgoingRelationshipsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   owners?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutServiceNestedInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutServiceNestedInput
@@ -1806,12 +2032,14 @@ export type ServiceUpdateWithoutIncomingRelationshipsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   vendor?: Prisma.VendorUpdateOneWithoutServicesNestedInput
   businessProcess?: Prisma.BusinessProcessUpdateOneWithoutServicesNestedInput
   owners?: Prisma.ServiceOwnershipUpdateManyWithoutServiceNestedInput
   infrastructure?: Prisma.ServiceInfrastructureUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutFromServiceNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedServicesNestedInput
 }
 
 export type ServiceUncheckedUpdateWithoutIncomingRelationshipsInput = {
@@ -1839,10 +2067,134 @@ export type ServiceUncheckedUpdateWithoutIncomingRelationshipsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   owners?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutServiceNestedInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutFromServiceNestedInput
+}
+
+export type ServiceCreateManyDeletedByInput = {
+  id?: string
+  name: string
+  serviceType: $Enums.ServiceType
+  description?: string | null
+  businessPurpose?: string | null
+  gitlabRepoUrl?: string | null
+  dataConfidentiality?: $Enums.DataConfidentiality
+  businessImpactLevel?: $Enums.BusinessImpactLevel
+  criticality?: $Enums.CriticalityLevel
+  isEssentialService?: boolean
+  deploymentDate?: Date | string | null
+  currentStatus?: $Enums.ServiceStatus
+  lastPatchDate?: Date | string | null
+  plannedDecommissionDate?: Date | string | null
+  vendorId?: string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  businessProcessId?: string | null
+  isInCentralRegister?: boolean
+  complianceNotes?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdBy?: string | null
+  updatedBy?: string | null
+  deletedAt?: Date | string | null
+}
+
+export type ServiceUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceType?: Prisma.EnumServiceTypeFieldUpdateOperationsInput | $Enums.ServiceType
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
+  businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
+  criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
+  isEssentialService?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deploymentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentStatus?: Prisma.EnumServiceStatusFieldUpdateOperationsInput | $Enums.ServiceStatus
+  lastPatchDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plannedDecommissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isInCentralRegister?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  complianceNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vendor?: Prisma.VendorUpdateOneWithoutServicesNestedInput
+  businessProcess?: Prisma.BusinessProcessUpdateOneWithoutServicesNestedInput
+  owners?: Prisma.ServiceOwnershipUpdateManyWithoutServiceNestedInput
+  infrastructure?: Prisma.ServiceInfrastructureUpdateManyWithoutServiceNestedInput
+  assets?: Prisma.ServiceAssetUpdateManyWithoutServiceNestedInput
+  outgoingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutFromServiceNestedInput
+  incomingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutToServiceNestedInput
+}
+
+export type ServiceUncheckedUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceType?: Prisma.EnumServiceTypeFieldUpdateOperationsInput | $Enums.ServiceType
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
+  businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
+  criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
+  isEssentialService?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deploymentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentStatus?: Prisma.EnumServiceStatusFieldUpdateOperationsInput | $Enums.ServiceStatus
+  lastPatchDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plannedDecommissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  businessProcessId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isInCentralRegister?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  complianceNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  owners?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutServiceNestedInput
+  infrastructure?: Prisma.ServiceInfrastructureUncheckedUpdateManyWithoutServiceNestedInput
+  assets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutServiceNestedInput
+  outgoingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutFromServiceNestedInput
+  incomingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutToServiceNestedInput
+}
+
+export type ServiceUncheckedUpdateManyWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceType?: Prisma.EnumServiceTypeFieldUpdateOperationsInput | $Enums.ServiceType
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
+  businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
+  criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
+  isEssentialService?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deploymentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentStatus?: Prisma.EnumServiceStatusFieldUpdateOperationsInput | $Enums.ServiceStatus
+  lastPatchDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plannedDecommissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  businessProcessId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isInCentralRegister?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  complianceNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ServiceCreateManyVendorInput = {
@@ -1869,6 +2221,8 @@ export type ServiceCreateManyVendorInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type ServiceUpdateWithoutVendorInput = {
@@ -1894,12 +2248,14 @@ export type ServiceUpdateWithoutVendorInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   businessProcess?: Prisma.BusinessProcessUpdateOneWithoutServicesNestedInput
   owners?: Prisma.ServiceOwnershipUpdateManyWithoutServiceNestedInput
   infrastructure?: Prisma.ServiceInfrastructureUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutToServiceNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedServicesNestedInput
 }
 
 export type ServiceUncheckedUpdateWithoutVendorInput = {
@@ -1926,6 +2282,8 @@ export type ServiceUncheckedUpdateWithoutVendorInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   owners?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutServiceNestedInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutServiceNestedInput
@@ -1957,6 +2315,8 @@ export type ServiceUncheckedUpdateManyWithoutVendorInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ServiceCreateManyBusinessProcessInput = {
@@ -1983,6 +2343,8 @@ export type ServiceCreateManyBusinessProcessInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type ServiceUpdateWithoutBusinessProcessInput = {
@@ -2008,12 +2370,14 @@ export type ServiceUpdateWithoutBusinessProcessInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   vendor?: Prisma.VendorUpdateOneWithoutServicesNestedInput
   owners?: Prisma.ServiceOwnershipUpdateManyWithoutServiceNestedInput
   infrastructure?: Prisma.ServiceInfrastructureUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutToServiceNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedServicesNestedInput
 }
 
 export type ServiceUncheckedUpdateWithoutBusinessProcessInput = {
@@ -2040,6 +2404,8 @@ export type ServiceUncheckedUpdateWithoutBusinessProcessInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   owners?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutServiceNestedInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutServiceNestedInput
@@ -2071,6 +2437,8 @@ export type ServiceUncheckedUpdateManyWithoutBusinessProcessInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -2165,6 +2533,8 @@ export type ServiceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   updatedAt?: boolean
   createdBy?: boolean
   updatedBy?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   vendor?: boolean | Prisma.Service$vendorArgs<ExtArgs>
   businessProcess?: boolean | Prisma.Service$businessProcessArgs<ExtArgs>
   owners?: boolean | Prisma.Service$ownersArgs<ExtArgs>
@@ -2172,6 +2542,7 @@ export type ServiceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   assets?: boolean | Prisma.Service$assetsArgs<ExtArgs>
   outgoingRelationships?: boolean | Prisma.Service$outgoingRelationshipsArgs<ExtArgs>
   incomingRelationships?: boolean | Prisma.Service$incomingRelationshipsArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Service$deletedByArgs<ExtArgs>
   _count?: boolean | Prisma.ServiceCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["service"]>
 
@@ -2200,8 +2571,11 @@ export type ServiceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   updatedAt?: boolean
   createdBy?: boolean
   updatedBy?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   vendor?: boolean | Prisma.Service$vendorArgs<ExtArgs>
   businessProcess?: boolean | Prisma.Service$businessProcessArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Service$deletedByArgs<ExtArgs>
 }, ExtArgs["result"]["service"]>
 
 export type ServiceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -2229,8 +2603,11 @@ export type ServiceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   updatedAt?: boolean
   createdBy?: boolean
   updatedBy?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   vendor?: boolean | Prisma.Service$vendorArgs<ExtArgs>
   businessProcess?: boolean | Prisma.Service$businessProcessArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Service$deletedByArgs<ExtArgs>
 }, ExtArgs["result"]["service"]>
 
 export type ServiceSelectScalar = {
@@ -2258,9 +2635,11 @@ export type ServiceSelectScalar = {
   updatedAt?: boolean
   createdBy?: boolean
   updatedBy?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
 }
 
-export type ServiceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "serviceType" | "description" | "businessPurpose" | "gitlabRepoUrl" | "dataConfidentiality" | "businessImpactLevel" | "criticality" | "isEssentialService" | "deploymentDate" | "currentStatus" | "lastPatchDate" | "plannedDecommissionDate" | "vendorId" | "slaDetails" | "businessProcessId" | "isInCentralRegister" | "complianceNotes" | "metadata" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy", ExtArgs["result"]["service"]>
+export type ServiceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "serviceType" | "description" | "businessPurpose" | "gitlabRepoUrl" | "dataConfidentiality" | "businessImpactLevel" | "criticality" | "isEssentialService" | "deploymentDate" | "currentStatus" | "lastPatchDate" | "plannedDecommissionDate" | "vendorId" | "slaDetails" | "businessProcessId" | "isInCentralRegister" | "complianceNotes" | "metadata" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy" | "deletedAt" | "deletedById", ExtArgs["result"]["service"]>
 export type ServiceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vendor?: boolean | Prisma.Service$vendorArgs<ExtArgs>
   businessProcess?: boolean | Prisma.Service$businessProcessArgs<ExtArgs>
@@ -2269,15 +2648,18 @@ export type ServiceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   assets?: boolean | Prisma.Service$assetsArgs<ExtArgs>
   outgoingRelationships?: boolean | Prisma.Service$outgoingRelationshipsArgs<ExtArgs>
   incomingRelationships?: boolean | Prisma.Service$incomingRelationshipsArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Service$deletedByArgs<ExtArgs>
   _count?: boolean | Prisma.ServiceCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ServiceIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vendor?: boolean | Prisma.Service$vendorArgs<ExtArgs>
   businessProcess?: boolean | Prisma.Service$businessProcessArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Service$deletedByArgs<ExtArgs>
 }
 export type ServiceIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vendor?: boolean | Prisma.Service$vendorArgs<ExtArgs>
   businessProcess?: boolean | Prisma.Service$businessProcessArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Service$deletedByArgs<ExtArgs>
 }
 
 export type $ServicePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2290,6 +2672,7 @@ export type $ServicePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     assets: Prisma.$ServiceAssetPayload<ExtArgs>[]
     outgoingRelationships: Prisma.$ServiceRelationshipPayload<ExtArgs>[]
     incomingRelationships: Prisma.$ServiceRelationshipPayload<ExtArgs>[]
+    deletedBy: Prisma.$PersonPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2316,6 +2699,8 @@ export type $ServicePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     updatedAt: Date
     createdBy: string | null
     updatedBy: string | null
+    deletedAt: Date | null
+    deletedById: string | null
   }, ExtArgs["result"]["service"]>
   composites: {}
 }
@@ -2717,6 +3102,7 @@ export interface Prisma__ServiceClient<T, Null = never, ExtArgs extends runtime.
   assets<T extends Prisma.Service$assetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Service$assetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServiceAssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   outgoingRelationships<T extends Prisma.Service$outgoingRelationshipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Service$outgoingRelationshipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServiceRelationshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   incomingRelationships<T extends Prisma.Service$incomingRelationshipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Service$incomingRelationshipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServiceRelationshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deletedBy<T extends Prisma.Service$deletedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Service$deletedByArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2770,6 +3156,8 @@ export interface ServiceFieldRefs {
   readonly updatedAt: Prisma.FieldRef<"Service", 'DateTime'>
   readonly createdBy: Prisma.FieldRef<"Service", 'String'>
   readonly updatedBy: Prisma.FieldRef<"Service", 'String'>
+  readonly deletedAt: Prisma.FieldRef<"Service", 'DateTime'>
+  readonly deletedById: Prisma.FieldRef<"Service", 'String'>
 }
     
 
@@ -3321,6 +3709,25 @@ export type Service$incomingRelationshipsArgs<ExtArgs extends runtime.Types.Exte
   take?: number
   skip?: number
   distinct?: Prisma.ServiceRelationshipScalarFieldEnum | Prisma.ServiceRelationshipScalarFieldEnum[]
+}
+
+/**
+ * Service.deletedBy
+ */
+export type Service$deletedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Person
+   */
+  select?: Prisma.PersonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Person
+   */
+  omit?: Prisma.PersonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PersonInclude<ExtArgs> | null
+  where?: Prisma.PersonWhereInput
 }
 
 /**

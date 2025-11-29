@@ -15,6 +15,7 @@ import { handleControllerError } from "./error-handler";
 import { getSession } from "@/lib/auth/session";
 import type { CreateUserForPersonUseCase } from "@/core/use-cases/user-provisioning/create-user-for-person.use-case";
 import type { ResetUserPasswordUseCase } from "@/core/use-cases/user-provisioning/reset-user-password.use-case";
+import type { LinkUserToPersonUseCase } from "@/core/use-cases/user-provisioning/link-user-to-person.use-case";
 import type { CheckPermissionUseCase } from "@/core/use-cases/rbac/check-permission.use-case";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { prisma } from "@/infrastructure/database/prisma/client";
@@ -267,6 +268,350 @@ export async function resetUserPasswordAction(
         targetUserId: userId,
       },
       "Failed to reset user password",
+    );
+  }
+}
+
+// ============================================================================
+// User-Person Linking DTOs and Actions
+// ============================================================================
+
+/**
+ * User without Person DTO
+ */
+export interface UserWithoutPersonDTO {
+  id: string;
+  email: string;
+  name: string | null;
+  image: string | null;
+  createdAt: Date;
+}
+
+/**
+ * Person available for linking DTO
+ */
+export interface PersonForLinkingDTO {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  employeeId: string | null;
+  title: string | null;
+  orgUnit: {
+    id: string;
+    name: string;
+  };
+  primaryRole: {
+    id: string;
+    name: string;
+    displayName: string;
+  };
+}
+
+/**
+ * User available for linking DTO
+ */
+export interface UserForLinkingDTO {
+  id: string;
+  email: string;
+  name: string | null;
+  createdAt: Date;
+}
+
+/**
+ * Link result DTO
+ */
+export interface LinkResultDTO {
+  userId: string;
+  personId: string;
+  email: string;
+  personName: string;
+}
+
+/**
+ * List all Users without linked Person records
+ *
+ * Used for the user provisioning UI to show which users
+ * don't have Person records linked yet.
+ */
+export async function listUsersWithoutPersonsAction(): Promise<
+  ActionResponse<UserWithoutPersonDTO[]>
+> {
+  try {
+    // Check permission
+    const { user } = await getSession();
+    if (!user) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    const container = getContainer();
+    const checkPermission = container.get<CheckPermissionUseCase>(
+      DI_TOKENS.CheckPermissionUseCase,
+    );
+
+    const hasPermission = await checkPermission.execute({
+      userId: user.id,
+      permission: PERMISSIONS.USERS_MANAGE,
+    });
+
+    if (!hasPermission) {
+      return { success: false, error: "Insufficient permissions" };
+    }
+
+    // Fetch Users without linked Person
+    const users = await prisma.user.findMany({
+      where: {
+        person: null,
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        image: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return { success: true, data: users };
+  } catch (error) {
+    const { user } = await getSession();
+    return handleControllerError(
+      error,
+      {
+        function: "listUsersWithoutPersonsAction",
+        userId: user?.id,
+      },
+      "Failed to list users without persons",
+    );
+  }
+}
+
+/**
+ * List unlinked Persons that match a User's email
+ *
+ * Used to find Person records that can be linked to a specific User.
+ * Only returns Persons with matching email (case-insensitive).
+ */
+export async function listUnlinkedPersonsForUserAction(
+  userId: string,
+): Promise<ActionResponse<PersonForLinkingDTO[]>> {
+  try {
+    // Check permission
+    const { user } = await getSession();
+    if (!user) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    const container = getContainer();
+    const checkPermission = container.get<CheckPermissionUseCase>(
+      DI_TOKENS.CheckPermissionUseCase,
+    );
+
+    const hasPermission = await checkPermission.execute({
+      userId: user.id,
+      permission: PERMISSIONS.USERS_MANAGE,
+    });
+
+    if (!hasPermission) {
+      return { success: false, error: "Insufficient permissions" };
+    }
+
+    // Get the target user's email
+    const targetUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { email: true },
+    });
+
+    if (!targetUser) {
+      return { success: false, error: "User not found" };
+    }
+
+    // Find unlinked Persons with matching email
+    const persons = await prisma.person.findMany({
+      where: {
+        userId: null,
+        isActive: true,
+        email: {
+          equals: targetUser.email,
+          mode: "insensitive",
+        },
+      },
+      include: {
+        orgUnit: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+        primaryRole: {
+          select: {
+            id: true,
+            name: true,
+            displayName: true,
+          },
+        },
+      },
+      orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
+    });
+
+    const data: PersonForLinkingDTO[] = persons.map((person) => ({
+      id: person.id,
+      firstName: person.firstName,
+      lastName: person.lastName,
+      email: person.email,
+      employeeId: person.employeeId,
+      title: person.title,
+      orgUnit: person.orgUnit,
+      primaryRole: person.primaryRole,
+    }));
+
+    return { success: true, data };
+  } catch (error) {
+    const { user } = await getSession();
+    return handleControllerError(
+      error,
+      {
+        function: "listUnlinkedPersonsForUserAction",
+        userId: user?.id,
+        targetUserId: userId,
+      },
+      "Failed to list unlinked persons for user",
+    );
+  }
+}
+
+/**
+ * List unlinked Users that match a Person's email
+ *
+ * Used to find User records that can be linked to a specific Person.
+ * Only returns Users with matching email (case-insensitive).
+ */
+export async function listUnlinkedUsersForPersonAction(
+  personId: string,
+): Promise<ActionResponse<UserForLinkingDTO[]>> {
+  try {
+    // Check permission
+    const { user } = await getSession();
+    if (!user) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    const container = getContainer();
+    const checkPermission = container.get<CheckPermissionUseCase>(
+      DI_TOKENS.CheckPermissionUseCase,
+    );
+
+    const hasPermission = await checkPermission.execute({
+      userId: user.id,
+      permission: PERMISSIONS.USERS_MANAGE,
+    });
+
+    if (!hasPermission) {
+      return { success: false, error: "Insufficient permissions" };
+    }
+
+    // Get the target person's email
+    const targetPerson = await prisma.person.findUnique({
+      where: { id: personId },
+      select: { email: true },
+    });
+
+    if (!targetPerson) {
+      return { success: false, error: "Person not found" };
+    }
+
+    // Find unlinked Users with matching email
+    const users = await prisma.user.findMany({
+      where: {
+        person: null,
+        email: {
+          equals: targetPerson.email,
+          mode: "insensitive",
+        },
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return { success: true, data: users };
+  } catch (error) {
+    const { user } = await getSession();
+    return handleControllerError(
+      error,
+      {
+        function: "listUnlinkedUsersForPersonAction",
+        userId: user?.id,
+        targetPersonId: personId,
+      },
+      "Failed to list unlinked users for person",
+    );
+  }
+}
+
+/**
+ * Link an existing User to an existing Person
+ *
+ * Validates that both exist, are not already linked,
+ * and have matching emails.
+ */
+export async function linkUserToPersonAction(
+  userId: string,
+  personId: string,
+): Promise<ActionResponse<LinkResultDTO>> {
+  try {
+    // Check permission
+    const { user } = await getSession();
+    if (!user) {
+      return { success: false, error: "Unauthorized" };
+    }
+
+    const container = getContainer();
+    const checkPermission = container.get<CheckPermissionUseCase>(
+      DI_TOKENS.CheckPermissionUseCase,
+    );
+
+    const hasPermission = await checkPermission.execute({
+      userId: user.id,
+      permission: PERMISSIONS.USERS_MANAGE,
+    });
+
+    if (!hasPermission) {
+      return { success: false, error: "Insufficient permissions" };
+    }
+
+    // Execute use case
+    const linkUserToPerson = container.get<LinkUserToPersonUseCase>(
+      DI_TOKENS.LinkUserToPersonUseCase,
+    );
+
+    const result = await linkUserToPerson.execute({
+      userId,
+      personId,
+      linkedBy: user.id,
+    });
+
+    // Revalidate relevant pages
+    revalidatePath("/admin/users");
+    revalidatePath("/admin/user-provisioning");
+
+    return { success: true, data: result };
+  } catch (error) {
+    const { user } = await getSession();
+    return handleControllerError(
+      error,
+      {
+        function: "linkUserToPersonAction",
+        userId: user?.id,
+        targetUserId: userId,
+        targetPersonId: personId,
+      },
+      "Failed to link user to person",
     );
   }
 }

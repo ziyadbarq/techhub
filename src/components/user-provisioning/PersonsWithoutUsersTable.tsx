@@ -17,6 +17,7 @@ import {
   CheckCircle2,
   Copy,
   Check,
+  Link2,
 } from "lucide-react";
 import { toast } from "sonner";
 import type { PersonWithoutUserDTO } from "@/interface-adapters/controllers/user-provisioning.controller";
@@ -50,6 +51,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { LinkPersonToUserDialog } from "./LinkPersonToUserDialog";
 
 interface PersonsWithoutUsersTableProps {
   data: PersonWithoutUserDTO[];
@@ -69,6 +71,8 @@ export function PersonsWithoutUsersTable({
   const router = useRouter();
   const [isCreating, setIsCreating] = React.useState(false);
   const [selectedPerson, setSelectedPerson] =
+    React.useState<PersonWithoutUserDTO | null>(null);
+  const [personToLink, setPersonToLink] =
     React.useState<PersonWithoutUserDTO | null>(null);
   const [credentials, setCredentials] = React.useState<UserCredentials | null>(
     null,
@@ -93,6 +97,17 @@ export function PersonsWithoutUsersTable({
 
   const handleCreateUser = async (person: PersonWithoutUserDTO) => {
     setSelectedPerson(person);
+  };
+
+  const handleLinkToUser = (person: PersonWithoutUserDTO) => {
+    setPersonToLink(person);
+  };
+
+  const handleLinkDialogClose = (linked: boolean) => {
+    setPersonToLink(null);
+    if (linked) {
+      router.refresh();
+    }
   };
 
   const handleCredentialsOpenChange = (open: boolean) => {
@@ -241,13 +256,23 @@ Please change your password after first login.`;
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      size="sm"
-                      variant="default"
-                      onClick={() => handleCreateUser(person)}
-                    >
-                      Create User Account
-                    </Button>
+                    <div className="flex items-center justify-end gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleLinkToUser(person)}
+                      >
+                        <Link2 className="mr-1.5 h-3.5 w-3.5" />
+                        Link to Existing User
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="default"
+                        onClick={() => handleCreateUser(person)}
+                      >
+                        Create User Account
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -395,6 +420,12 @@ Please change your password after first login.`;
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Link to Existing User Dialog */}
+      <LinkPersonToUserDialog
+        person={personToLink}
+        onClose={handleLinkDialogClose}
+      />
     </>
   );
 }

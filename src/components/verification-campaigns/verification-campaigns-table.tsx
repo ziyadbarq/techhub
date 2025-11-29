@@ -19,6 +19,7 @@ import {
 import { Eye, Edit, Trash2, Play, CheckCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { formatDate } from "@/lib/utils/date-format";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -181,22 +182,20 @@ export function VerificationCampaignsTable({
     {
       accessorKey: "scheduledStart",
       header: "Scheduled Start",
-      cell: ({ row }) => {
-        const date = new Date(row.getValue<Date>("scheduledStart"));
-        return <div className="text-sm">{date.toLocaleDateString()}</div>;
-      },
+      cell: ({ row }) => (
+        <div className="text-sm">
+          {formatDate(row.getValue<Date>("scheduledStart"))}
+        </div>
+      ),
     },
     {
       accessorKey: "scheduledEnd",
       header: "Scheduled End",
-      cell: ({ row }) => {
-        const date = row.getValue<Date | null>("scheduledEnd");
-        return (
-          <div className="text-sm">
-            {date ? new Date(date).toLocaleDateString() : "-"}
-          </div>
-        );
-      },
+      cell: ({ row }) => (
+        <div className="text-sm">
+          {formatDate(row.getValue<Date | null>("scheduledEnd")) || "-"}
+        </div>
+      ),
     },
     {
       id: "status",

@@ -10,7 +10,12 @@ export {
   type CustomFieldValues,
   type CustomFieldErrors,
 } from "./custom-fields-section";
+export {
+  CICustomFieldsSection,
+  validateCICustomFields,
+} from "./ci-custom-fields-section";
 export { CustomFieldsDisplay } from "./custom-fields-display";
+export { CICustomFieldsDisplay } from "./ci-custom-fields-display";
 export {
   ConditionalCustomField,
   ConditionalCustomFieldsSection,

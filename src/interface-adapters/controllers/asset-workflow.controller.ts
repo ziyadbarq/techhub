@@ -1,6 +1,7 @@
 /**
  * Asset Workflow Controller
  * Guided workflows that perform multiple operations atomically
+ * Uses IAssetMovementService for automatic source tracking
  */
 
 "use server";
@@ -15,7 +16,7 @@ import type {
   CreateAssetAssignmentUseCase,
   UpdateAssetAssignmentUseCase,
 } from "@/core/use-cases/asset/asset-assignment";
-import type { CreateStockMovementUseCase } from "@/core/use-cases/inventory/stock-movement";
+import type { IAssetMovementService } from "@/core/services/asset-movement.service.interface";
 import type { UpdateAssetUseCase } from "@/core/use-cases/asset/asset";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import {
@@ -60,7 +61,7 @@ async function resolveCurrentPersonId(
 /**
  * Assign Asset to Employee Workflow
  * 1. Creates assignment (PERSON type)
- * 2. Creates stock movement OUT
+ * 2. Creates stock movement OUT with source tracking
  * 3. Updates asset location to null (with employee)
  */
 export async function assignAssetToEmployeeAction(data: {
@@ -99,19 +100,30 @@ export async function assignAssetToEmployeeAction(data: {
       note: data.note,
     });
 
-    // 2. Create stock movement OUT
-    const createMovementUseCase = container.get<CreateStockMovementUseCase>(
-      DI_TOKENS.CreateStockMovementUseCase,
+    // 2. Create stock movement OUT with source tracking
+    const assetMovementService = container.get<IAssetMovementService>(
+      DI_TOKENS.IAssetMovementService,
     );
-    const movement = await createMovementUseCase.execute({
-      movementType: "OUT",
-      stockLocationFromId: data.stockLocationFromId,
-      assetId: data.assetId,
-      quantity: 1,
-      reason: `Assigned to employee`,
-      performedById: personId, // Use current user's linked person
-      occurredAt: now,
-    });
+    const movement = data.stockLocationFromId
+      ? await assetMovementService.recordAssetIssued({
+          assetId: data.assetId,
+          stockLocationId: data.stockLocationFromId,
+          performedById: personId,
+          reason: `Assigned to employee`,
+          source: "ASSIGNMENT",
+          sourceReferenceType: "AssetAssignment",
+          sourceReferenceId: assignment.id,
+        })
+      : await assetMovementService.createMovement({
+          movementType: "OUT",
+          assetId: data.assetId,
+          stockLocationFromId: null,
+          performedById: personId,
+          reason: `Assigned to employee`,
+          source: "ASSIGNMENT",
+          sourceReferenceType: "AssetAssignment",
+          sourceReferenceId: assignment.id,
+        });
 
     // 3. Update asset location (set to null since assigned to person)
     const updateAssetUseCase = container.get<UpdateAssetUseCase>(
@@ -125,6 +137,7 @@ export async function assignAssetToEmployeeAction(data: {
     revalidatePath("/assets");
     revalidatePath(`/assets/${updatedAsset.assetTag}`);
     revalidatePath("/asset-assignments");
+    revalidatePath("/stock-movements");
 
     return {
       success: true,
@@ -145,7 +158,7 @@ export async function assignAssetToEmployeeAction(data: {
 /**
  * Return Asset to Inventory Workflow
  * 1. Ends assignment
- * 2. Creates stock movement IN
+ * 2. Creates stock movement IN with source tracking
  * 3. Updates asset location
  */
 export async function returnAssetAction(data: {
@@ -178,18 +191,18 @@ export async function returnAssetAction(data: {
       endDate: now,
     });
 
-    // 2. Create stock movement IN
-    const createMovementUseCase = container.get<CreateStockMovementUseCase>(
-      DI_TOKENS.CreateStockMovementUseCase,
+    // 2. Create stock movement IN with source tracking
+    const assetMovementService = container.get<IAssetMovementService>(
+      DI_TOKENS.IAssetMovementService,
     );
-    const movement = await createMovementUseCase.execute({
-      movementType: "IN",
-      stockLocationToId: data.stockLocationToId,
+    const movement = await assetMovementService.recordAssetReceived({
       assetId: data.assetId,
-      quantity: 1,
+      stockLocationId: data.stockLocationToId,
+      performedById: personId,
       reason: data.note || "Returned to inventory",
-      performedById: personId, // Use current user's linked person
-      occurredAt: now,
+      source: "RETURN",
+      sourceReferenceType: "AssetAssignment",
+      sourceReferenceId: data.assignmentId,
     });
 
     // 3. Update asset location
@@ -204,6 +217,7 @@ export async function returnAssetAction(data: {
     revalidatePath("/assets");
     revalidatePath(`/assets/${updatedAsset.assetTag}`);
     revalidatePath("/asset-assignments");
+    revalidatePath("/stock-movements");
 
     return {
       success: true,

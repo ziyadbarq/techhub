@@ -6,6 +6,7 @@
  */
 
 import type { Prisma, PrismaClient } from "@/generated/prisma/server";
+import type { AssetConditionEnum } from "@/generated/prisma";
 import {
   generateAssetTag,
   generateSerialNumber,
@@ -24,7 +25,7 @@ export interface AssetFactoryOptions {
   purchaseCost?: number;
   currency?: string;
   lifecycleStateId?: string;
-  condition?: string;
+  condition?: AssetConditionEnum;
   currentStockLocationId?: string;
   note?: string;
 }

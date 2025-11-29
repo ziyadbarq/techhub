@@ -51,83 +51,113 @@ export const ASSET_MODEL_DATA = {
   LAPTOP: [
     {
       vendor: "DELL",
-      name: "Dell Latitude 7490",
-      code: "LAT7490",
-      description: "14-inch business laptop",
+      name: "Dell Latitude 5540",
+      code: "LAT5540",
+      description: "15-inch business laptop",
     },
     {
       vendor: "HP",
-      name: "HP EliteBook 840 G8",
-      code: "EB840G8",
-      description: "14-inch premium laptop",
+      name: "HP EliteBook 860 G10",
+      code: "EB860G10",
+      description: "16-inch premium laptop",
     },
     {
       vendor: "LENOVO",
-      name: "Lenovo ThinkPad X1 Carbon",
-      code: "X1CG9",
-      description: "Ultralight business laptop",
+      name: "Lenovo ThinkPad T14s Gen 4",
+      code: "T14SG4",
+      description: "14-inch ultrabook",
     },
     {
       vendor: "APPLE",
-      name: "MacBook Pro 14-inch M2",
-      code: "MBP14M2",
-      description: "Apple Silicon laptop",
+      name: "MacBook Air 15-inch M3",
+      code: "MBA15M3",
+      description: "Lightweight Apple Silicon laptop",
     },
   ],
   DESKTOP: [
     {
       vendor: "DELL",
-      name: "Dell OptiPlex 7090",
-      code: "OP7090",
+      name: "Dell OptiPlex 7010",
+      code: "OP7010",
       description: "Business desktop workstation",
     },
     {
       vendor: "HP",
-      name: "HP EliteDesk 800 G8",
-      code: "ED800G8",
+      name: "HP EliteDesk 800 G9",
+      code: "ED800G9",
       description: "Tower workstation",
+    },
+    {
+      vendor: "APPLE",
+      name: "Mac Mini M2",
+      code: "MACMINI-M2",
+      description: "Compact Apple Silicon desktop",
+    },
+    {
+      vendor: "LENOVO",
+      name: "Lenovo ThinkCentre M90q Gen 4",
+      code: "M90QG4",
+      description: "Tiny form factor desktop",
     },
   ],
   MONITOR: [
     {
       vendor: "DELL",
-      name: "Dell UltraSharp U2720Q",
-      code: "U2720Q",
-      description: "27-inch 4K monitor",
+      name: "Dell UltraSharp U2723QE",
+      code: "U2723QE",
+      description: "27-inch 4K USB-C monitor",
     },
     {
       vendor: "HP",
-      name: "HP E24 G5",
-      code: "E24G5",
-      description: "24-inch FHD monitor",
+      name: "HP E27 G5",
+      code: "E27G5",
+      description: "27-inch FHD monitor",
+    },
+    {
+      vendor: "SAMSUNG",
+      name: "Samsung ViewFinity S8 32-inch",
+      code: "SAM-S832",
+      description: "32-inch 4K UHD monitor",
     },
   ],
   SERVER: [
     {
       vendor: "DELL",
-      name: "Dell PowerEdge R750",
-      code: "R750",
-      description: "2U rack server",
+      name: "Dell PowerEdge R760",
+      code: "R760",
+      description: "2U rack server (16th Gen)",
     },
     {
       vendor: "HP",
-      name: "HP ProLiant DL380 Gen10",
-      code: "DL380G10",
-      description: "2U rack server",
+      name: "HP ProLiant DL380 Gen11",
+      code: "DL380G11",
+      description: "2U rack server (Gen11)",
     },
   ],
   NETWORK: [
     {
       vendor: "CISCO",
-      name: "Cisco Catalyst 9300",
+      name: "Cisco Catalyst 9300-48P",
       code: "C9300-48P",
-      description: "48-port PoE switch",
+      description: "48-port PoE+ access switch",
+    },
+    {
+      vendor: "CISCO",
+      name: "Cisco Catalyst 9200-24P",
+      code: "C9200-24P",
+      description: "24-port PoE+ access switch",
     },
     {
       vendor: "CISCO",
       name: "Cisco ASR 1001-X",
       code: "ASR1001X",
-      description: "Aggregation router",
+      description: "Aggregation services router",
+    },
+    {
+      vendor: "CISCO",
+      name: "Cisco Meraki MS250-48",
+      code: "MS250-48",
+      description: "48-port cloud-managed switch",
     },
   ],
   PRINTER: [
@@ -147,29 +177,35 @@ export const ASSET_MODEL_DATA = {
   PHONE: [
     {
       vendor: "APPLE",
-      name: "iPhone 14 Pro",
-      code: "IP14PRO",
+      name: "iPhone 15 Pro",
+      code: "IP15PRO",
       description: "Corporate smartphone",
     },
     {
       vendor: "SAMSUNG",
-      name: "Samsung Galaxy S23",
-      code: "SGS23",
+      name: "Samsung Galaxy S24",
+      code: "SGS24",
       description: "Android corporate phone",
     },
   ],
   TABLET: [
     {
       vendor: "APPLE",
-      name: "iPad Pro 11-inch",
-      code: "IPADPRO11",
+      name: "iPad Pro 11-inch M4",
+      code: "IPADPRO11M4",
       description: "Professional tablet",
     },
     {
+      vendor: "APPLE",
+      name: "iPad Air 11-inch M2",
+      code: "IPADAIR11",
+      description: "Mid-tier business tablet",
+    },
+    {
       vendor: "SAMSUNG",
-      name: "Samsung Galaxy Tab S8",
-      code: "SGTABS8",
-      description: "Android tablet",
+      name: "Samsung Galaxy Tab S9",
+      code: "SGTABS9",
+      description: "Android business tablet",
     },
   ],
 } as const;
@@ -256,3 +292,33 @@ export const MAINTENANCE_TEMPLATES = {
       "Annual maintenance: OS reinstall, hardware upgrade assessment, SSD health check",
   },
 } as const;
+
+// ==============================================
+// Asset Category Field Mappings
+// Maps field definitions to asset categories
+// ==============================================
+
+export const ASSET_CATEGORY_FIELD_MAPPINGS: Record<string, string[]> = {
+  // Computing devices get hardware specs
+  LAPTOP: ["CPU_MODEL", "RAM_GB", "STORAGE_GB", "OS_VERSION", "MAC_ADDR"],
+  DESKTOP: ["CPU_MODEL", "RAM_GB", "STORAGE_GB", "OS_VERSION", "MAC_ADDR"],
+  SERVER: [
+    "CPU_MODEL",
+    "RAM_GB",
+    "STORAGE_GB",
+    "OS_VERSION",
+    "MAC_ADDR",
+    "IP_ADDR",
+  ],
+
+  // Mobile devices get storage and OS
+  PHONE: ["STORAGE_GB", "OS_VERSION"],
+  TABLET: ["STORAGE_GB", "RAM_GB", "OS_VERSION"],
+
+  // Network equipment gets network-specific fields
+  NETWORK: ["MAC_ADDR", "IP_ADDR"],
+
+  // Simple devices with minimal fields
+  MONITOR: [],
+  PRINTER: ["IP_ADDR"],
+};

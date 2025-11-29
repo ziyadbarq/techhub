@@ -15,7 +15,6 @@ export interface UpdateAssetCategoryProps {
   name?: string;
   description?: string | null;
   lifecycleModelId?: string | null;
-  isConsumable?: boolean;
 }
 
 @injectable()
@@ -71,7 +70,6 @@ export class UpdateAssetCategoryUseCase {
       name: props.name,
       description: props.description,
       lifecycleModelId: props.lifecycleModelId,
-      isConsumable: props.isConsumable,
     });
 
     return this.assetCategoryRepository.update(assetCategory);

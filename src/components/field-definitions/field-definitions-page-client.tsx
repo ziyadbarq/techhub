@@ -113,6 +113,7 @@ export function FieldDefinitionsPageClient({
       </Tabs>
 
       <FieldDefinitionForm
+        key={editingField?.id ?? "new"}
         open={isFormOpen}
         onOpenChange={handleFormClose}
         onSuccess={handleSuccess}

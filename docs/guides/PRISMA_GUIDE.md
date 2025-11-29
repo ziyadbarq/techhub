@@ -6,6 +6,7 @@ Complete guide for working with Prisma 7 in this project, including connection p
 
 - [Prisma 7 Overview](#prisma-7-overview)
 - [Multi-File Schema Organization](#multi-file-schema-organization)
+- [Database Migrations](#database-migrations) ⚠️ **CRITICAL**
 - [Connection Pool Management](#connection-pool-management)
 - [Type-Safe Imports](#type-safe-imports)
 - [Repository Implementation Patterns](#repository-implementation-patterns)
@@ -138,6 +139,300 @@ Each domain file includes a header comment:
 // Related DI Module: domain.module.ts
 // ============================================
 ```
+
+## Database Migrations
+
+### ⚠️ CRITICAL: Migration Rules
+
+**ALWAYS let Prisma generate migrations. NEVER create migration files manually.**
+
+Prisma uses a **shadow database** to validate migrations. When you run `prisma migrate dev`, Prisma:
+1. Creates a temporary shadow database
+2. Replays ALL migrations from scratch against it
+3. Compares the result to your current schema
+4. Generates a new migration if needed
+
+**Why manual migrations fail**: Hand-written SQL in a migration file was never validated by the shadow database. When Prisma tries to replay it, the shadow database state won't match what the SQL expects, causing errors like:
+
+```
+Error: P3006 - Migration failed to apply cleanly to shadow database
+The underlying table for model `table_name` does not exist.
+```
+
+### ❌ NEVER Do These
+
+1. **NEVER create migration files manually**
+   ```bash
+   # ❌ WRONG - Creating migration folder and SQL by hand
+   mkdir -p migrations/20251129_my_change
+   echo "ALTER TABLE..." > migrations/20251129_my_change/migration.sql
+   ```
+
+2. **NEVER use `prisma migrate resolve --applied`**
+   ```bash
+   # ❌ WRONG - This only marks migration in live DB, NOT shadow DB
+   npx prisma migrate resolve --applied "20251129_my_change"
+   ```
+   This command tells Prisma "trust me, this migration was applied" but the shadow database has no record of it. Next migration will fail.
+
+3. **NEVER execute schema changes via `$executeRaw`**
+   ```typescript
+   // ❌ WRONG - Bypasses migration history completely
+   await prisma.$executeRawUnsafe(`ALTER TABLE assets DROP COLUMN some_column`);
+   ```
+   The database changes but there's no migration record. Schema drift guaranteed.
+
+4. **NEVER edit existing migration files**
+   ```bash
+   # ❌ WRONG - Modifying an already-applied migration
+   vim migrations/20251101_existing/migration.sql
+   ```
+   If the migration was already applied, editing it causes shadow DB to differ from live DB.
+
+### ✅ Correct Migration Workflow
+
+#### Standard Workflow (Happy Path)
+
+```bash
+# 1. Edit your .prisma schema files
+vim src/infrastructure/database/prisma/schema/assets.prisma
+
+# 2. Let Prisma generate the migration
+npx prisma migrate dev --name descriptive_name
+
+# 3. Regenerate the client (creates browser-safe entry points)
+npm run db:generate
+```
+
+**That's it.** Prisma handles everything automatically.
+
+#### Adding a Field
+
+```bash
+# 1. Add field to schema
+# In assets.prisma:
+#   model Asset {
+#     newField String?
+#   }
+
+# 2. Generate migration
+npx prisma migrate dev --name add_new_field_to_asset
+
+# 3. Regenerate client
+npm run db:generate
+```
+
+#### Removing a Field
+
+```bash
+# 1. Remove field from schema
+# In assets.prisma, delete the line
+
+# 2. Generate migration (Prisma will create DROP COLUMN)
+npx prisma migrate dev --name remove_field_from_asset
+
+# 3. Regenerate client
+npm run db:generate
+```
+
+#### Renaming a Field
+
+```bash
+# 1. Rename in schema (Prisma will ask if it's a rename)
+# In assets.prisma, change field name
+
+# 2. Generate migration
+npx prisma migrate dev --name rename_old_field_to_new_field
+# Prisma will prompt: "Did you rename X to Y?" - answer yes
+
+# 3. Regenerate client
+npm run db:generate
+```
+
+5. **NEVER use `prisma db push`**
+   ```bash
+   # ❌ WRONG - Bypasses migration system, causes drift
+   npx prisma db push
+   npm run db:push
+   ```
+   `db push` applies schema changes without creating migration files. This causes the database to drift from migration history, breaking future migrations.
+
+### Fixing Migration Issues
+
+#### Issue: Schema Drift (DB differs from migrations)
+
+If your database is out of sync with migration history:
+
+```bash
+# Reset and replay all migrations (DELETES ALL DATA - dev only!)
+npx prisma migrate reset
+```
+
+**Note**: Do NOT use `prisma db push` to fix drift. Always use `migrate reset` in development to ensure clean state.
+
+#### Issue: Failed Migration
+
+If a migration fails partway through:
+
+```bash
+# 1. Check what failed
+npx prisma migrate status
+
+# 2. Fix the schema issue
+
+# 3. Mark the failed migration as rolled back
+npx prisma migrate resolve --rolled-back "20251129_failed_migration"
+
+# 4. Generate a new correct migration
+npx prisma migrate dev --name fix_previous_issue
+```
+
+#### Issue: Shadow Database Errors
+
+If you see `P3006 - Migration failed to apply cleanly to shadow database`:
+
+```bash
+# 1. Check migration history
+npx prisma migrate status
+
+# 2. If you have manually created migrations, delete them
+rm -rf src/infrastructure/database/prisma/schema/migrations/20251129_manual_migration
+
+# 3. Reset migration history (DELETES ALL DATA - dev only!)
+npx prisma migrate reset
+
+# 4. Generate fresh migration from clean state
+npx prisma migrate dev --name fresh_start
+```
+
+### Production Migrations
+
+For production deployments:
+
+```bash
+# Apply pending migrations (no generation, no prompts)
+npx prisma migrate deploy
+```
+
+**Never run `prisma migrate dev` in production** - it's interactive and may reset data.
+
+### Migration File Naming
+
+Prisma auto-generates timestamps. Use descriptive names:
+
+```bash
+# ✅ Good names
+npx prisma migrate dev --name add_warranty_end_date_to_asset
+npx prisma migrate dev --name remove_is_consumable_from_category
+npx prisma migrate dev --name add_stock_movement_void_tracking
+
+# ❌ Bad names
+npx prisma migrate dev --name update
+npx prisma migrate dev --name fix
+npx prisma migrate dev --name changes
+```
+
+### Quick Reference
+
+| Task | Command |
+|------|---------|
+| Create migration | `npx prisma migrate dev --name name` |
+| Apply migrations (prod) | `npx prisma migrate deploy` |
+| Check status | `npx prisma migrate status` |
+| Reset all (dev only) | `npx prisma migrate reset` |
+| Generate client | `npm run db:generate` |
+
+**Note**: Do NOT use `prisma db push` - always use migrations.
+
+## Schema Naming Conventions
+
+### Field Naming (DO NOT use @map)
+
+Use camelCase field names in Prisma schema files. Prisma automatically converts camelCase to snake_case in PostgreSQL:
+
+```prisma
+// ✅ CORRECT - camelCase without @map (idiomatic Prisma)
+model Asset {
+  id                     String    @id @default(cuid())
+  assetTag               String    @unique
+  assetCategoryId        String
+  purchaseDate           DateTime?
+  purchaseCost           Decimal?  @db.Decimal(12, 2)
+  currentStockLocationId String?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+}
+
+// ❌ WRONG - Redundant @map annotations
+model Asset {
+  assetTag               String    @unique @map("asset_tag")       // Unnecessary
+  assetCategoryId        String    @map("asset_category_id")       // Unnecessary
+  createdAt              DateTime  @default(now()) @map("created_at") // Unnecessary
+}
+```
+
+**Why no @map?**
+- Prisma automatically converts camelCase → snake_case in PostgreSQL
+- Less verbose, easier to maintain
+- Matches 80% of existing codebase
+- No functional difference in database schema
+
+### Table Naming (ALWAYS use @@map)
+
+Always use `@@map("snake_case_plural")` for explicit table names:
+
+```prisma
+// ✅ CORRECT - Explicit snake_case table name
+model AssetCategory {
+  id   String @id @default(cuid())
+  name String @unique
+  // ...
+  @@map("asset_categories")
+}
+
+model ConfigurationItem {
+  id   String @id @default(cuid())
+  name String
+  // ...
+  @@map("configuration_items")
+}
+```
+
+### Raw SQL Queries
+
+When writing raw SQL queries with `$queryRaw` or `$executeRaw`:
+
+```typescript
+// ✅ CORRECT - Quote camelCase column names
+const result = await prisma.$queryRaw`
+  SELECT COUNT(*) as count FROM assets
+  WHERE attributes IS NOT NULL
+  AND "deletedAt" IS NULL
+`;
+
+// ✅ CORRECT - Table names use snake_case (from @@map)
+const items = await prisma.$queryRaw`
+  SELECT * FROM configuration_items
+  WHERE "isActive" = true
+`;
+
+// ❌ WRONG - Unquoted camelCase columns will fail
+const result = await prisma.$queryRaw`
+  SELECT * FROM assets WHERE deletedAt IS NULL
+`;
+// Error: column "deletedat" does not exist
+
+// ❌ WRONG - Using snake_case for camelCase columns
+const result = await prisma.$queryRaw`
+  SELECT * FROM assets WHERE deleted_at IS NULL
+`;
+// Error: column "deleted_at" does not exist
+```
+
+**Key Rules**:
+- **Table names**: Use snake_case (matches `@@map` values): `assets`, `configuration_items`
+- **Column names**: Quote camelCase names: `"deletedAt"`, `"createdAt"`, `"isActive"`
+- PostgreSQL is case-insensitive for unquoted identifiers, converting them to lowercase
 
 ## Connection Pool Management
 

@@ -51,3 +51,96 @@ enum TargetObjectTypeEnum {
   LICENSE_ENTITLEMENT
   LICENSE_ALLOCATION
 }
+
+// ============================================
+// ASSET CONDITION & DEPRECIATION ENUMS
+// ============================================
+
+// Asset physical condition
+enum AssetConditionEnum {
+  NEW
+  GOOD
+  FAIR
+  POOR
+
+  @@map("asset_condition_enum")
+}
+
+// Asset depreciation calculation models
+enum DepreciationModelEnum {
+  STRAIGHT_LINE
+  DECLINING_BALANCE
+  UNITS_OF_PRODUCTION
+  SUM_OF_YEARS_DIGITS
+
+  @@map("depreciation_model_enum")
+}
+
+// ============================================
+// DISPOSAL ENUMS
+// ============================================
+
+// Asset disposal type
+enum DisposalTypeEnum {
+  SALE
+  DONATION
+  RECYCLE
+  SCRAP
+  TRANSFER
+  DESTRUCTION
+
+  @@map("disposal_type_enum")
+}
+
+// Asset disposal workflow status
+enum DisposalStatusEnum {
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+
+  @@map("disposal_status_enum")
+}
+
+// ============================================
+// MAINTENANCE ENUMS
+// ============================================
+
+// Maintenance schedule frequency type
+enum MaintenanceScheduleTypeEnum {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+  CUSTOM
+
+  @@map("maintenance_schedule_type_enum")
+}
+
+// Maintenance record status
+enum MaintenanceStatusEnum {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  OVERDUE
+
+  @@map("maintenance_status_enum")
+}
+
+// ============================================
+// PRIORITY ENUM (Shared)
+// ============================================
+
+// Priority levels for various entities
+enum PriorityEnum {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+
+  @@map("priority_enum")
+}

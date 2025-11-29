@@ -41,17 +41,19 @@ export type MaintenanceScheduleMinAggregateOutputType = {
   assetId: string | null
   title: string | null
   description: string | null
-  scheduleType: string | null
+  scheduleType: $Enums.MaintenanceScheduleTypeEnum | null
   intervalValue: number | null
   startDate: Date | null
   nextDueDate: Date | null
   isActive: boolean | null
   assignedToId: string | null
   estimatedDurationMinutes: number | null
-  priority: string | null
+  priority: $Enums.PriorityEnum | null
   instructions: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
 }
 
 export type MaintenanceScheduleMaxAggregateOutputType = {
@@ -59,17 +61,19 @@ export type MaintenanceScheduleMaxAggregateOutputType = {
   assetId: string | null
   title: string | null
   description: string | null
-  scheduleType: string | null
+  scheduleType: $Enums.MaintenanceScheduleTypeEnum | null
   intervalValue: number | null
   startDate: Date | null
   nextDueDate: Date | null
   isActive: boolean | null
   assignedToId: string | null
   estimatedDurationMinutes: number | null
-  priority: string | null
+  priority: $Enums.PriorityEnum | null
   instructions: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
 }
 
 export type MaintenanceScheduleCountAggregateOutputType = {
@@ -88,6 +92,8 @@ export type MaintenanceScheduleCountAggregateOutputType = {
   instructions: number
   createdAt: number
   updatedAt: number
+  deletedAt: number
+  deletedById: number
   _all: number
 }
 
@@ -118,6 +124,8 @@ export type MaintenanceScheduleMinAggregateInputType = {
   instructions?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
 }
 
 export type MaintenanceScheduleMaxAggregateInputType = {
@@ -136,6 +144,8 @@ export type MaintenanceScheduleMaxAggregateInputType = {
   instructions?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
 }
 
 export type MaintenanceScheduleCountAggregateInputType = {
@@ -154,6 +164,8 @@ export type MaintenanceScheduleCountAggregateInputType = {
   instructions?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
   _all?: true
 }
 
@@ -248,17 +260,19 @@ export type MaintenanceScheduleGroupByOutputType = {
   assetId: string
   title: string
   description: string | null
-  scheduleType: string
+  scheduleType: $Enums.MaintenanceScheduleTypeEnum
   intervalValue: number
   startDate: Date
   nextDueDate: Date
   isActive: boolean
   assignedToId: string | null
   estimatedDurationMinutes: number | null
-  priority: string
+  priority: $Enums.PriorityEnum
   instructions: string | null
   createdAt: Date
   updatedAt: Date
+  deletedAt: Date | null
+  deletedById: string | null
   _count: MaintenanceScheduleCountAggregateOutputType | null
   _avg: MaintenanceScheduleAvgAggregateOutputType | null
   _sum: MaintenanceScheduleSumAggregateOutputType | null
@@ -289,20 +303,23 @@ export type MaintenanceScheduleWhereInput = {
   assetId?: Prisma.StringFilter<"MaintenanceSchedule"> | string
   title?: Prisma.StringFilter<"MaintenanceSchedule"> | string
   description?: Prisma.StringNullableFilter<"MaintenanceSchedule"> | string | null
-  scheduleType?: Prisma.StringFilter<"MaintenanceSchedule"> | string
+  scheduleType?: Prisma.EnumMaintenanceScheduleTypeEnumFilter<"MaintenanceSchedule"> | $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: Prisma.IntFilter<"MaintenanceSchedule"> | number
   startDate?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
   nextDueDate?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
   isActive?: Prisma.BoolFilter<"MaintenanceSchedule"> | boolean
   assignedToId?: Prisma.StringNullableFilter<"MaintenanceSchedule"> | string | null
   estimatedDurationMinutes?: Prisma.IntNullableFilter<"MaintenanceSchedule"> | number | null
-  priority?: Prisma.StringFilter<"MaintenanceSchedule"> | string
+  priority?: Prisma.EnumPriorityEnumFilter<"MaintenanceSchedule"> | $Enums.PriorityEnum
   instructions?: Prisma.StringNullableFilter<"MaintenanceSchedule"> | string | null
   createdAt?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"MaintenanceSchedule"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"MaintenanceSchedule"> | string | null
   asset?: Prisma.XOR<Prisma.AssetScalarRelationFilter, Prisma.AssetWhereInput>
   assignedTo?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
   maintenanceRecords?: Prisma.MaintenanceRecordListRelationFilter
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }
 
 export type MaintenanceScheduleOrderByWithRelationInput = {
@@ -321,9 +338,12 @@ export type MaintenanceScheduleOrderByWithRelationInput = {
   instructions?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   asset?: Prisma.AssetOrderByWithRelationInput
   assignedTo?: Prisma.PersonOrderByWithRelationInput
   maintenanceRecords?: Prisma.MaintenanceRecordOrderByRelationAggregateInput
+  deletedBy?: Prisma.PersonOrderByWithRelationInput
 }
 
 export type MaintenanceScheduleWhereUniqueInput = Prisma.AtLeast<{
@@ -334,20 +354,23 @@ export type MaintenanceScheduleWhereUniqueInput = Prisma.AtLeast<{
   assetId?: Prisma.StringFilter<"MaintenanceSchedule"> | string
   title?: Prisma.StringFilter<"MaintenanceSchedule"> | string
   description?: Prisma.StringNullableFilter<"MaintenanceSchedule"> | string | null
-  scheduleType?: Prisma.StringFilter<"MaintenanceSchedule"> | string
+  scheduleType?: Prisma.EnumMaintenanceScheduleTypeEnumFilter<"MaintenanceSchedule"> | $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: Prisma.IntFilter<"MaintenanceSchedule"> | number
   startDate?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
   nextDueDate?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
   isActive?: Prisma.BoolFilter<"MaintenanceSchedule"> | boolean
   assignedToId?: Prisma.StringNullableFilter<"MaintenanceSchedule"> | string | null
   estimatedDurationMinutes?: Prisma.IntNullableFilter<"MaintenanceSchedule"> | number | null
-  priority?: Prisma.StringFilter<"MaintenanceSchedule"> | string
+  priority?: Prisma.EnumPriorityEnumFilter<"MaintenanceSchedule"> | $Enums.PriorityEnum
   instructions?: Prisma.StringNullableFilter<"MaintenanceSchedule"> | string | null
   createdAt?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"MaintenanceSchedule"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"MaintenanceSchedule"> | string | null
   asset?: Prisma.XOR<Prisma.AssetScalarRelationFilter, Prisma.AssetWhereInput>
   assignedTo?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
   maintenanceRecords?: Prisma.MaintenanceRecordListRelationFilter
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }, "id">
 
 export type MaintenanceScheduleOrderByWithAggregationInput = {
@@ -366,6 +389,8 @@ export type MaintenanceScheduleOrderByWithAggregationInput = {
   instructions?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.MaintenanceScheduleCountOrderByAggregateInput
   _avg?: Prisma.MaintenanceScheduleAvgOrderByAggregateInput
   _max?: Prisma.MaintenanceScheduleMaxOrderByAggregateInput
@@ -381,36 +406,40 @@ export type MaintenanceScheduleScalarWhereWithAggregatesInput = {
   assetId?: Prisma.StringWithAggregatesFilter<"MaintenanceSchedule"> | string
   title?: Prisma.StringWithAggregatesFilter<"MaintenanceSchedule"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"MaintenanceSchedule"> | string | null
-  scheduleType?: Prisma.StringWithAggregatesFilter<"MaintenanceSchedule"> | string
+  scheduleType?: Prisma.EnumMaintenanceScheduleTypeEnumWithAggregatesFilter<"MaintenanceSchedule"> | $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: Prisma.IntWithAggregatesFilter<"MaintenanceSchedule"> | number
   startDate?: Prisma.DateTimeWithAggregatesFilter<"MaintenanceSchedule"> | Date | string
   nextDueDate?: Prisma.DateTimeWithAggregatesFilter<"MaintenanceSchedule"> | Date | string
   isActive?: Prisma.BoolWithAggregatesFilter<"MaintenanceSchedule"> | boolean
   assignedToId?: Prisma.StringNullableWithAggregatesFilter<"MaintenanceSchedule"> | string | null
   estimatedDurationMinutes?: Prisma.IntNullableWithAggregatesFilter<"MaintenanceSchedule"> | number | null
-  priority?: Prisma.StringWithAggregatesFilter<"MaintenanceSchedule"> | string
+  priority?: Prisma.EnumPriorityEnumWithAggregatesFilter<"MaintenanceSchedule"> | $Enums.PriorityEnum
   instructions?: Prisma.StringNullableWithAggregatesFilter<"MaintenanceSchedule"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"MaintenanceSchedule"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"MaintenanceSchedule"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"MaintenanceSchedule"> | Date | string | null
+  deletedById?: Prisma.StringNullableWithAggregatesFilter<"MaintenanceSchedule"> | string | null
 }
 
 export type MaintenanceScheduleCreateInput = {
   id?: string
   title: string
   description?: string | null
-  scheduleType: string
+  scheduleType: $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: number
   startDate?: Date | string
   nextDueDate: Date | string
   isActive?: boolean
   estimatedDurationMinutes?: number | null
-  priority?: string
+  priority?: $Enums.PriorityEnum
   instructions?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   asset: Prisma.AssetCreateNestedOneWithoutMaintenanceSchedulesInput
   assignedTo?: Prisma.PersonCreateNestedOneWithoutAssignedMaintenanceSchedulesInput
   maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutMaintenanceScheduleInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedMaintenanceSchedulesInput
 }
 
 export type MaintenanceScheduleUncheckedCreateInput = {
@@ -418,17 +447,19 @@ export type MaintenanceScheduleUncheckedCreateInput = {
   assetId: string
   title: string
   description?: string | null
-  scheduleType: string
+  scheduleType: $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: number
   startDate?: Date | string
   nextDueDate: Date | string
   isActive?: boolean
   assignedToId?: string | null
   estimatedDurationMinutes?: number | null
-  priority?: string
+  priority?: $Enums.PriorityEnum
   instructions?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutMaintenanceScheduleInput
 }
 
@@ -436,19 +467,21 @@ export type MaintenanceScheduleUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scheduleType?: Prisma.StringFieldUpdateOperationsInput | string
+  scheduleType?: Prisma.EnumMaintenanceScheduleTypeEnumFieldUpdateOperationsInput | $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.EnumPriorityEnumFieldUpdateOperationsInput | $Enums.PriorityEnum
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   asset?: Prisma.AssetUpdateOneRequiredWithoutMaintenanceSchedulesNestedInput
   assignedTo?: Prisma.PersonUpdateOneWithoutAssignedMaintenanceSchedulesNestedInput
   maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutMaintenanceScheduleNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedMaintenanceSchedulesNestedInput
 }
 
 export type MaintenanceScheduleUncheckedUpdateInput = {
@@ -456,17 +489,19 @@ export type MaintenanceScheduleUncheckedUpdateInput = {
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scheduleType?: Prisma.StringFieldUpdateOperationsInput | string
+  scheduleType?: Prisma.EnumMaintenanceScheduleTypeEnumFieldUpdateOperationsInput | $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   assignedToId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.EnumPriorityEnumFieldUpdateOperationsInput | $Enums.PriorityEnum
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutMaintenanceScheduleNestedInput
 }
 
@@ -475,33 +510,36 @@ export type MaintenanceScheduleCreateManyInput = {
   assetId: string
   title: string
   description?: string | null
-  scheduleType: string
+  scheduleType: $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: number
   startDate?: Date | string
   nextDueDate: Date | string
   isActive?: boolean
   assignedToId?: string | null
   estimatedDurationMinutes?: number | null
-  priority?: string
+  priority?: $Enums.PriorityEnum
   instructions?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type MaintenanceScheduleUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scheduleType?: Prisma.StringFieldUpdateOperationsInput | string
+  scheduleType?: Prisma.EnumMaintenanceScheduleTypeEnumFieldUpdateOperationsInput | $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.EnumPriorityEnumFieldUpdateOperationsInput | $Enums.PriorityEnum
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type MaintenanceScheduleUncheckedUpdateManyInput = {
@@ -509,17 +547,19 @@ export type MaintenanceScheduleUncheckedUpdateManyInput = {
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scheduleType?: Prisma.StringFieldUpdateOperationsInput | string
+  scheduleType?: Prisma.EnumMaintenanceScheduleTypeEnumFieldUpdateOperationsInput | $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   assignedToId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.EnumPriorityEnumFieldUpdateOperationsInput | $Enums.PriorityEnum
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type MaintenanceScheduleListRelationFilter = {
@@ -548,6 +588,8 @@ export type MaintenanceScheduleCountOrderByAggregateInput = {
   instructions?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type MaintenanceScheduleAvgOrderByAggregateInput = {
@@ -571,6 +613,8 @@ export type MaintenanceScheduleMaxOrderByAggregateInput = {
   instructions?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type MaintenanceScheduleMinOrderByAggregateInput = {
@@ -589,6 +633,8 @@ export type MaintenanceScheduleMinOrderByAggregateInput = {
   instructions?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type MaintenanceScheduleSumOrderByAggregateInput = {
@@ -650,10 +696,24 @@ export type MaintenanceScheduleCreateNestedManyWithoutAssignedToInput = {
   connect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
 }
 
+export type MaintenanceScheduleCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutDeletedByInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutDeletedByInput> | Prisma.MaintenanceScheduleCreateWithoutDeletedByInput[] | Prisma.MaintenanceScheduleUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.MaintenanceScheduleCreateOrConnectWithoutDeletedByInput | Prisma.MaintenanceScheduleCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.MaintenanceScheduleCreateManyDeletedByInputEnvelope
+  connect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+}
+
 export type MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput = {
   create?: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutAssignedToInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput> | Prisma.MaintenanceScheduleCreateWithoutAssignedToInput[] | Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput[]
   connectOrCreate?: Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput | Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput[]
   createMany?: Prisma.MaintenanceScheduleCreateManyAssignedToInputEnvelope
+  connect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+}
+
+export type MaintenanceScheduleUncheckedCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutDeletedByInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutDeletedByInput> | Prisma.MaintenanceScheduleCreateWithoutDeletedByInput[] | Prisma.MaintenanceScheduleUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.MaintenanceScheduleCreateOrConnectWithoutDeletedByInput | Prisma.MaintenanceScheduleCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.MaintenanceScheduleCreateManyDeletedByInputEnvelope
   connect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
 }
 
@@ -671,6 +731,20 @@ export type MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput = {
   deleteMany?: Prisma.MaintenanceScheduleScalarWhereInput | Prisma.MaintenanceScheduleScalarWhereInput[]
 }
 
+export type MaintenanceScheduleUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutDeletedByInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutDeletedByInput> | Prisma.MaintenanceScheduleCreateWithoutDeletedByInput[] | Prisma.MaintenanceScheduleUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.MaintenanceScheduleCreateOrConnectWithoutDeletedByInput | Prisma.MaintenanceScheduleCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.MaintenanceScheduleUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.MaintenanceScheduleUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.MaintenanceScheduleCreateManyDeletedByInputEnvelope
+  set?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+  disconnect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+  delete?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+  connect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+  update?: Prisma.MaintenanceScheduleUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.MaintenanceScheduleUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.MaintenanceScheduleUpdateManyWithWhereWithoutDeletedByInput | Prisma.MaintenanceScheduleUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.MaintenanceScheduleScalarWhereInput | Prisma.MaintenanceScheduleScalarWhereInput[]
+}
+
 export type MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput = {
   create?: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutAssignedToInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput> | Prisma.MaintenanceScheduleCreateWithoutAssignedToInput[] | Prisma.MaintenanceScheduleUncheckedCreateWithoutAssignedToInput[]
   connectOrCreate?: Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput | Prisma.MaintenanceScheduleCreateOrConnectWithoutAssignedToInput[]
@@ -683,6 +757,28 @@ export type MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput =
   update?: Prisma.MaintenanceScheduleUpdateWithWhereUniqueWithoutAssignedToInput | Prisma.MaintenanceScheduleUpdateWithWhereUniqueWithoutAssignedToInput[]
   updateMany?: Prisma.MaintenanceScheduleUpdateManyWithWhereWithoutAssignedToInput | Prisma.MaintenanceScheduleUpdateManyWithWhereWithoutAssignedToInput[]
   deleteMany?: Prisma.MaintenanceScheduleScalarWhereInput | Prisma.MaintenanceScheduleScalarWhereInput[]
+}
+
+export type MaintenanceScheduleUncheckedUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutDeletedByInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutDeletedByInput> | Prisma.MaintenanceScheduleCreateWithoutDeletedByInput[] | Prisma.MaintenanceScheduleUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.MaintenanceScheduleCreateOrConnectWithoutDeletedByInput | Prisma.MaintenanceScheduleCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.MaintenanceScheduleUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.MaintenanceScheduleUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.MaintenanceScheduleCreateManyDeletedByInputEnvelope
+  set?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+  disconnect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+  delete?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+  connect?: Prisma.MaintenanceScheduleWhereUniqueInput | Prisma.MaintenanceScheduleWhereUniqueInput[]
+  update?: Prisma.MaintenanceScheduleUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.MaintenanceScheduleUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.MaintenanceScheduleUpdateManyWithWhereWithoutDeletedByInput | Prisma.MaintenanceScheduleUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.MaintenanceScheduleScalarWhereInput | Prisma.MaintenanceScheduleScalarWhereInput[]
+}
+
+export type EnumMaintenanceScheduleTypeEnumFieldUpdateOperationsInput = {
+  set?: $Enums.MaintenanceScheduleTypeEnum
+}
+
+export type EnumPriorityEnumFieldUpdateOperationsInput = {
+  set?: $Enums.PriorityEnum
 }
 
 export type MaintenanceScheduleCreateNestedOneWithoutMaintenanceRecordsInput = {
@@ -705,35 +801,39 @@ export type MaintenanceScheduleCreateWithoutAssetInput = {
   id?: string
   title: string
   description?: string | null
-  scheduleType: string
+  scheduleType: $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: number
   startDate?: Date | string
   nextDueDate: Date | string
   isActive?: boolean
   estimatedDurationMinutes?: number | null
-  priority?: string
+  priority?: $Enums.PriorityEnum
   instructions?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assignedTo?: Prisma.PersonCreateNestedOneWithoutAssignedMaintenanceSchedulesInput
   maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutMaintenanceScheduleInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedMaintenanceSchedulesInput
 }
 
 export type MaintenanceScheduleUncheckedCreateWithoutAssetInput = {
   id?: string
   title: string
   description?: string | null
-  scheduleType: string
+  scheduleType: $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: number
   startDate?: Date | string
   nextDueDate: Date | string
   isActive?: boolean
   assignedToId?: string | null
   estimatedDurationMinutes?: number | null
-  priority?: string
+  priority?: $Enums.PriorityEnum
   instructions?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutMaintenanceScheduleInput
 }
 
@@ -771,35 +871,39 @@ export type MaintenanceScheduleScalarWhereInput = {
   assetId?: Prisma.StringFilter<"MaintenanceSchedule"> | string
   title?: Prisma.StringFilter<"MaintenanceSchedule"> | string
   description?: Prisma.StringNullableFilter<"MaintenanceSchedule"> | string | null
-  scheduleType?: Prisma.StringFilter<"MaintenanceSchedule"> | string
+  scheduleType?: Prisma.EnumMaintenanceScheduleTypeEnumFilter<"MaintenanceSchedule"> | $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: Prisma.IntFilter<"MaintenanceSchedule"> | number
   startDate?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
   nextDueDate?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
   isActive?: Prisma.BoolFilter<"MaintenanceSchedule"> | boolean
   assignedToId?: Prisma.StringNullableFilter<"MaintenanceSchedule"> | string | null
   estimatedDurationMinutes?: Prisma.IntNullableFilter<"MaintenanceSchedule"> | number | null
-  priority?: Prisma.StringFilter<"MaintenanceSchedule"> | string
+  priority?: Prisma.EnumPriorityEnumFilter<"MaintenanceSchedule"> | $Enums.PriorityEnum
   instructions?: Prisma.StringNullableFilter<"MaintenanceSchedule"> | string | null
   createdAt?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MaintenanceSchedule"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"MaintenanceSchedule"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"MaintenanceSchedule"> | string | null
 }
 
 export type MaintenanceScheduleCreateWithoutAssignedToInput = {
   id?: string
   title: string
   description?: string | null
-  scheduleType: string
+  scheduleType: $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: number
   startDate?: Date | string
   nextDueDate: Date | string
   isActive?: boolean
   estimatedDurationMinutes?: number | null
-  priority?: string
+  priority?: $Enums.PriorityEnum
   instructions?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   asset: Prisma.AssetCreateNestedOneWithoutMaintenanceSchedulesInput
   maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutMaintenanceScheduleInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedMaintenanceSchedulesInput
 }
 
 export type MaintenanceScheduleUncheckedCreateWithoutAssignedToInput = {
@@ -807,16 +911,18 @@ export type MaintenanceScheduleUncheckedCreateWithoutAssignedToInput = {
   assetId: string
   title: string
   description?: string | null
-  scheduleType: string
+  scheduleType: $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: number
   startDate?: Date | string
   nextDueDate: Date | string
   isActive?: boolean
   estimatedDurationMinutes?: number | null
-  priority?: string
+  priority?: $Enums.PriorityEnum
   instructions?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutMaintenanceScheduleInput
 }
 
@@ -827,6 +933,56 @@ export type MaintenanceScheduleCreateOrConnectWithoutAssignedToInput = {
 
 export type MaintenanceScheduleCreateManyAssignedToInputEnvelope = {
   data: Prisma.MaintenanceScheduleCreateManyAssignedToInput | Prisma.MaintenanceScheduleCreateManyAssignedToInput[]
+  skipDuplicates?: boolean
+}
+
+export type MaintenanceScheduleCreateWithoutDeletedByInput = {
+  id?: string
+  title: string
+  description?: string | null
+  scheduleType: $Enums.MaintenanceScheduleTypeEnum
+  intervalValue?: number
+  startDate?: Date | string
+  nextDueDate: Date | string
+  isActive?: boolean
+  estimatedDurationMinutes?: number | null
+  priority?: $Enums.PriorityEnum
+  instructions?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  asset: Prisma.AssetCreateNestedOneWithoutMaintenanceSchedulesInput
+  assignedTo?: Prisma.PersonCreateNestedOneWithoutAssignedMaintenanceSchedulesInput
+  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutMaintenanceScheduleInput
+}
+
+export type MaintenanceScheduleUncheckedCreateWithoutDeletedByInput = {
+  id?: string
+  assetId: string
+  title: string
+  description?: string | null
+  scheduleType: $Enums.MaintenanceScheduleTypeEnum
+  intervalValue?: number
+  startDate?: Date | string
+  nextDueDate: Date | string
+  isActive?: boolean
+  assignedToId?: string | null
+  estimatedDurationMinutes?: number | null
+  priority?: $Enums.PriorityEnum
+  instructions?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutMaintenanceScheduleInput
+}
+
+export type MaintenanceScheduleCreateOrConnectWithoutDeletedByInput = {
+  where: Prisma.MaintenanceScheduleWhereUniqueInput
+  create: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutDeletedByInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutDeletedByInput>
+}
+
+export type MaintenanceScheduleCreateManyDeletedByInputEnvelope = {
+  data: Prisma.MaintenanceScheduleCreateManyDeletedByInput | Prisma.MaintenanceScheduleCreateManyDeletedByInput[]
   skipDuplicates?: boolean
 }
 
@@ -846,22 +1002,40 @@ export type MaintenanceScheduleUpdateManyWithWhereWithoutAssignedToInput = {
   data: Prisma.XOR<Prisma.MaintenanceScheduleUpdateManyMutationInput, Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToInput>
 }
 
+export type MaintenanceScheduleUpsertWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.MaintenanceScheduleWhereUniqueInput
+  update: Prisma.XOR<Prisma.MaintenanceScheduleUpdateWithoutDeletedByInput, Prisma.MaintenanceScheduleUncheckedUpdateWithoutDeletedByInput>
+  create: Prisma.XOR<Prisma.MaintenanceScheduleCreateWithoutDeletedByInput, Prisma.MaintenanceScheduleUncheckedCreateWithoutDeletedByInput>
+}
+
+export type MaintenanceScheduleUpdateWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.MaintenanceScheduleWhereUniqueInput
+  data: Prisma.XOR<Prisma.MaintenanceScheduleUpdateWithoutDeletedByInput, Prisma.MaintenanceScheduleUncheckedUpdateWithoutDeletedByInput>
+}
+
+export type MaintenanceScheduleUpdateManyWithWhereWithoutDeletedByInput = {
+  where: Prisma.MaintenanceScheduleScalarWhereInput
+  data: Prisma.XOR<Prisma.MaintenanceScheduleUpdateManyMutationInput, Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutDeletedByInput>
+}
+
 export type MaintenanceScheduleCreateWithoutMaintenanceRecordsInput = {
   id?: string
   title: string
   description?: string | null
-  scheduleType: string
+  scheduleType: $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: number
   startDate?: Date | string
   nextDueDate: Date | string
   isActive?: boolean
   estimatedDurationMinutes?: number | null
-  priority?: string
+  priority?: $Enums.PriorityEnum
   instructions?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   asset: Prisma.AssetCreateNestedOneWithoutMaintenanceSchedulesInput
   assignedTo?: Prisma.PersonCreateNestedOneWithoutAssignedMaintenanceSchedulesInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedMaintenanceSchedulesInput
 }
 
 export type MaintenanceScheduleUncheckedCreateWithoutMaintenanceRecordsInput = {
@@ -869,17 +1043,19 @@ export type MaintenanceScheduleUncheckedCreateWithoutMaintenanceRecordsInput = {
   assetId: string
   title: string
   description?: string | null
-  scheduleType: string
+  scheduleType: $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: number
   startDate?: Date | string
   nextDueDate: Date | string
   isActive?: boolean
   assignedToId?: string | null
   estimatedDurationMinutes?: number | null
-  priority?: string
+  priority?: $Enums.PriorityEnum
   instructions?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type MaintenanceScheduleCreateOrConnectWithoutMaintenanceRecordsInput = {
@@ -902,18 +1078,20 @@ export type MaintenanceScheduleUpdateWithoutMaintenanceRecordsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scheduleType?: Prisma.StringFieldUpdateOperationsInput | string
+  scheduleType?: Prisma.EnumMaintenanceScheduleTypeEnumFieldUpdateOperationsInput | $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.EnumPriorityEnumFieldUpdateOperationsInput | $Enums.PriorityEnum
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   asset?: Prisma.AssetUpdateOneRequiredWithoutMaintenanceSchedulesNestedInput
   assignedTo?: Prisma.PersonUpdateOneWithoutAssignedMaintenanceSchedulesNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedMaintenanceSchedulesNestedInput
 }
 
 export type MaintenanceScheduleUncheckedUpdateWithoutMaintenanceRecordsInput = {
@@ -921,69 +1099,77 @@ export type MaintenanceScheduleUncheckedUpdateWithoutMaintenanceRecordsInput = {
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scheduleType?: Prisma.StringFieldUpdateOperationsInput | string
+  scheduleType?: Prisma.EnumMaintenanceScheduleTypeEnumFieldUpdateOperationsInput | $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   assignedToId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.EnumPriorityEnumFieldUpdateOperationsInput | $Enums.PriorityEnum
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type MaintenanceScheduleCreateManyAssetInput = {
   id?: string
   title: string
   description?: string | null
-  scheduleType: string
+  scheduleType: $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: number
   startDate?: Date | string
   nextDueDate: Date | string
   isActive?: boolean
   assignedToId?: string | null
   estimatedDurationMinutes?: number | null
-  priority?: string
+  priority?: $Enums.PriorityEnum
   instructions?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type MaintenanceScheduleUpdateWithoutAssetInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scheduleType?: Prisma.StringFieldUpdateOperationsInput | string
+  scheduleType?: Prisma.EnumMaintenanceScheduleTypeEnumFieldUpdateOperationsInput | $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.EnumPriorityEnumFieldUpdateOperationsInput | $Enums.PriorityEnum
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assignedTo?: Prisma.PersonUpdateOneWithoutAssignedMaintenanceSchedulesNestedInput
   maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutMaintenanceScheduleNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedMaintenanceSchedulesNestedInput
 }
 
 export type MaintenanceScheduleUncheckedUpdateWithoutAssetInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scheduleType?: Prisma.StringFieldUpdateOperationsInput | string
+  scheduleType?: Prisma.EnumMaintenanceScheduleTypeEnumFieldUpdateOperationsInput | $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   assignedToId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.EnumPriorityEnumFieldUpdateOperationsInput | $Enums.PriorityEnum
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutMaintenanceScheduleNestedInput
 }
 
@@ -991,17 +1177,19 @@ export type MaintenanceScheduleUncheckedUpdateManyWithoutAssetInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scheduleType?: Prisma.StringFieldUpdateOperationsInput | string
+  scheduleType?: Prisma.EnumMaintenanceScheduleTypeEnumFieldUpdateOperationsInput | $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   assignedToId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.EnumPriorityEnumFieldUpdateOperationsInput | $Enums.PriorityEnum
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type MaintenanceScheduleCreateManyAssignedToInput = {
@@ -1009,34 +1197,57 @@ export type MaintenanceScheduleCreateManyAssignedToInput = {
   assetId: string
   title: string
   description?: string | null
-  scheduleType: string
+  scheduleType: $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: number
   startDate?: Date | string
   nextDueDate: Date | string
   isActive?: boolean
   estimatedDurationMinutes?: number | null
-  priority?: string
+  priority?: $Enums.PriorityEnum
   instructions?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+}
+
+export type MaintenanceScheduleCreateManyDeletedByInput = {
+  id?: string
+  assetId: string
+  title: string
+  description?: string | null
+  scheduleType: $Enums.MaintenanceScheduleTypeEnum
+  intervalValue?: number
+  startDate?: Date | string
+  nextDueDate: Date | string
+  isActive?: boolean
+  assignedToId?: string | null
+  estimatedDurationMinutes?: number | null
+  priority?: $Enums.PriorityEnum
+  instructions?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type MaintenanceScheduleUpdateWithoutAssignedToInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scheduleType?: Prisma.StringFieldUpdateOperationsInput | string
+  scheduleType?: Prisma.EnumMaintenanceScheduleTypeEnumFieldUpdateOperationsInput | $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.EnumPriorityEnumFieldUpdateOperationsInput | $Enums.PriorityEnum
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   asset?: Prisma.AssetUpdateOneRequiredWithoutMaintenanceSchedulesNestedInput
   maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutMaintenanceScheduleNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedMaintenanceSchedulesNestedInput
 }
 
 export type MaintenanceScheduleUncheckedUpdateWithoutAssignedToInput = {
@@ -1044,16 +1255,18 @@ export type MaintenanceScheduleUncheckedUpdateWithoutAssignedToInput = {
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scheduleType?: Prisma.StringFieldUpdateOperationsInput | string
+  scheduleType?: Prisma.EnumMaintenanceScheduleTypeEnumFieldUpdateOperationsInput | $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.EnumPriorityEnumFieldUpdateOperationsInput | $Enums.PriorityEnum
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutMaintenanceScheduleNestedInput
 }
 
@@ -1062,16 +1275,77 @@ export type MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToInput = {
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  scheduleType?: Prisma.StringFieldUpdateOperationsInput | string
+  scheduleType?: Prisma.EnumMaintenanceScheduleTypeEnumFieldUpdateOperationsInput | $Enums.MaintenanceScheduleTypeEnum
   intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
   startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  priority?: Prisma.StringFieldUpdateOperationsInput | string
+  priority?: Prisma.EnumPriorityEnumFieldUpdateOperationsInput | $Enums.PriorityEnum
   instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type MaintenanceScheduleUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scheduleType?: Prisma.EnumMaintenanceScheduleTypeEnumFieldUpdateOperationsInput | $Enums.MaintenanceScheduleTypeEnum
+  intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  priority?: Prisma.EnumPriorityEnumFieldUpdateOperationsInput | $Enums.PriorityEnum
+  instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  asset?: Prisma.AssetUpdateOneRequiredWithoutMaintenanceSchedulesNestedInput
+  assignedTo?: Prisma.PersonUpdateOneWithoutAssignedMaintenanceSchedulesNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutMaintenanceScheduleNestedInput
+}
+
+export type MaintenanceScheduleUncheckedUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetId?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scheduleType?: Prisma.EnumMaintenanceScheduleTypeEnumFieldUpdateOperationsInput | $Enums.MaintenanceScheduleTypeEnum
+  intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  assignedToId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  priority?: Prisma.EnumPriorityEnumFieldUpdateOperationsInput | $Enums.PriorityEnum
+  instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutMaintenanceScheduleNestedInput
+}
+
+export type MaintenanceScheduleUncheckedUpdateManyWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetId?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  scheduleType?: Prisma.EnumMaintenanceScheduleTypeEnumFieldUpdateOperationsInput | $Enums.MaintenanceScheduleTypeEnum
+  intervalValue?: Prisma.IntFieldUpdateOperationsInput | number
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  nextDueDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  assignedToId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estimatedDurationMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  priority?: Prisma.EnumPriorityEnumFieldUpdateOperationsInput | $Enums.PriorityEnum
+  instructions?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -1121,9 +1395,12 @@ export type MaintenanceScheduleSelect<ExtArgs extends runtime.Types.Extensions.I
   instructions?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
   assignedTo?: boolean | Prisma.MaintenanceSchedule$assignedToArgs<ExtArgs>
   maintenanceRecords?: boolean | Prisma.MaintenanceSchedule$maintenanceRecordsArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.MaintenanceSchedule$deletedByArgs<ExtArgs>
   _count?: boolean | Prisma.MaintenanceScheduleCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["maintenanceSchedule"]>
 
@@ -1143,8 +1420,11 @@ export type MaintenanceScheduleSelectCreateManyAndReturn<ExtArgs extends runtime
   instructions?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
   assignedTo?: boolean | Prisma.MaintenanceSchedule$assignedToArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.MaintenanceSchedule$deletedByArgs<ExtArgs>
 }, ExtArgs["result"]["maintenanceSchedule"]>
 
 export type MaintenanceScheduleSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1163,8 +1443,11 @@ export type MaintenanceScheduleSelectUpdateManyAndReturn<ExtArgs extends runtime
   instructions?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
   assignedTo?: boolean | Prisma.MaintenanceSchedule$assignedToArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.MaintenanceSchedule$deletedByArgs<ExtArgs>
 }, ExtArgs["result"]["maintenanceSchedule"]>
 
 export type MaintenanceScheduleSelectScalar = {
@@ -1183,22 +1466,27 @@ export type MaintenanceScheduleSelectScalar = {
   instructions?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
 }
 
-export type MaintenanceScheduleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "assetId" | "title" | "description" | "scheduleType" | "intervalValue" | "startDate" | "nextDueDate" | "isActive" | "assignedToId" | "estimatedDurationMinutes" | "priority" | "instructions" | "createdAt" | "updatedAt", ExtArgs["result"]["maintenanceSchedule"]>
+export type MaintenanceScheduleOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "assetId" | "title" | "description" | "scheduleType" | "intervalValue" | "startDate" | "nextDueDate" | "isActive" | "assignedToId" | "estimatedDurationMinutes" | "priority" | "instructions" | "createdAt" | "updatedAt" | "deletedAt" | "deletedById", ExtArgs["result"]["maintenanceSchedule"]>
 export type MaintenanceScheduleInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
   assignedTo?: boolean | Prisma.MaintenanceSchedule$assignedToArgs<ExtArgs>
   maintenanceRecords?: boolean | Prisma.MaintenanceSchedule$maintenanceRecordsArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.MaintenanceSchedule$deletedByArgs<ExtArgs>
   _count?: boolean | Prisma.MaintenanceScheduleCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MaintenanceScheduleIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
   assignedTo?: boolean | Prisma.MaintenanceSchedule$assignedToArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.MaintenanceSchedule$deletedByArgs<ExtArgs>
 }
 export type MaintenanceScheduleIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
   assignedTo?: boolean | Prisma.MaintenanceSchedule$assignedToArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.MaintenanceSchedule$deletedByArgs<ExtArgs>
 }
 
 export type $MaintenanceSchedulePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1207,23 +1495,26 @@ export type $MaintenanceSchedulePayload<ExtArgs extends runtime.Types.Extensions
     asset: Prisma.$AssetPayload<ExtArgs>
     assignedTo: Prisma.$PersonPayload<ExtArgs> | null
     maintenanceRecords: Prisma.$MaintenanceRecordPayload<ExtArgs>[]
+    deletedBy: Prisma.$PersonPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     assetId: string
     title: string
     description: string | null
-    scheduleType: string
+    scheduleType: $Enums.MaintenanceScheduleTypeEnum
     intervalValue: number
     startDate: Date
     nextDueDate: Date
     isActive: boolean
     assignedToId: string | null
     estimatedDurationMinutes: number | null
-    priority: string
+    priority: $Enums.PriorityEnum
     instructions: string | null
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
+    deletedById: string | null
   }, ExtArgs["result"]["maintenanceSchedule"]>
   composites: {}
 }
@@ -1621,6 +1912,7 @@ export interface Prisma__MaintenanceScheduleClient<T, Null = never, ExtArgs exte
   asset<T extends Prisma.AssetDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AssetDefaultArgs<ExtArgs>>): Prisma.Prisma__AssetClient<runtime.Types.Result.GetResult<Prisma.$AssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   assignedTo<T extends Prisma.MaintenanceSchedule$assignedToArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MaintenanceSchedule$assignedToArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   maintenanceRecords<T extends Prisma.MaintenanceSchedule$maintenanceRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MaintenanceSchedule$maintenanceRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MaintenanceRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deletedBy<T extends Prisma.MaintenanceSchedule$deletedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MaintenanceSchedule$deletedByArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1654,17 +1946,19 @@ export interface MaintenanceScheduleFieldRefs {
   readonly assetId: Prisma.FieldRef<"MaintenanceSchedule", 'String'>
   readonly title: Prisma.FieldRef<"MaintenanceSchedule", 'String'>
   readonly description: Prisma.FieldRef<"MaintenanceSchedule", 'String'>
-  readonly scheduleType: Prisma.FieldRef<"MaintenanceSchedule", 'String'>
+  readonly scheduleType: Prisma.FieldRef<"MaintenanceSchedule", 'MaintenanceScheduleTypeEnum'>
   readonly intervalValue: Prisma.FieldRef<"MaintenanceSchedule", 'Int'>
   readonly startDate: Prisma.FieldRef<"MaintenanceSchedule", 'DateTime'>
   readonly nextDueDate: Prisma.FieldRef<"MaintenanceSchedule", 'DateTime'>
   readonly isActive: Prisma.FieldRef<"MaintenanceSchedule", 'Boolean'>
   readonly assignedToId: Prisma.FieldRef<"MaintenanceSchedule", 'String'>
   readonly estimatedDurationMinutes: Prisma.FieldRef<"MaintenanceSchedule", 'Int'>
-  readonly priority: Prisma.FieldRef<"MaintenanceSchedule", 'String'>
+  readonly priority: Prisma.FieldRef<"MaintenanceSchedule", 'PriorityEnum'>
   readonly instructions: Prisma.FieldRef<"MaintenanceSchedule", 'String'>
   readonly createdAt: Prisma.FieldRef<"MaintenanceSchedule", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"MaintenanceSchedule", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"MaintenanceSchedule", 'DateTime'>
+  readonly deletedById: Prisma.FieldRef<"MaintenanceSchedule", 'String'>
 }
     
 
@@ -2101,6 +2395,25 @@ export type MaintenanceSchedule$maintenanceRecordsArgs<ExtArgs extends runtime.T
   take?: number
   skip?: number
   distinct?: Prisma.MaintenanceRecordScalarFieldEnum | Prisma.MaintenanceRecordScalarFieldEnum[]
+}
+
+/**
+ * MaintenanceSchedule.deletedBy
+ */
+export type MaintenanceSchedule$deletedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Person
+   */
+  select?: Prisma.PersonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Person
+   */
+  omit?: Prisma.PersonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PersonInclude<ExtArgs> | null
+  where?: Prisma.PersonWhereInput
 }
 
 /**

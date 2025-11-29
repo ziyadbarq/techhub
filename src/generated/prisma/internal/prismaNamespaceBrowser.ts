@@ -154,9 +154,10 @@ export const AssetCategoryScalarFieldEnum = {
   code: 'code',
   description: 'description',
   lifecycleModelId: 'lifecycleModelId',
-  isConsumable: 'isConsumable',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type AssetCategoryScalarFieldEnum = (typeof AssetCategoryScalarFieldEnum)[keyof typeof AssetCategoryScalarFieldEnum]
@@ -188,7 +189,9 @@ export const AssetModelScalarFieldEnum = {
   defaultWarrantyMonths: 'defaultWarrantyMonths',
   defaultAttributes: 'defaultAttributes',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type AssetModelScalarFieldEnum = (typeof AssetModelScalarFieldEnum)[keyof typeof AssetModelScalarFieldEnum]
@@ -217,7 +220,14 @@ export const StockMovementScalarFieldEnum = {
   reason: 'reason',
   performedById: 'performedById',
   occurredAt: 'occurredAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  status: 'status',
+  voidedAt: 'voidedAt',
+  voidedById: 'voidedById',
+  voidReason: 'voidReason',
+  source: 'source',
+  sourceReferenceType: 'sourceReferenceType',
+  sourceReferenceId: 'sourceReferenceId'
 } as const
 
 export type StockMovementScalarFieldEnum = (typeof StockMovementScalarFieldEnum)[keyof typeof StockMovementScalarFieldEnum]
@@ -239,14 +249,16 @@ export const AssetScalarFieldEnum = {
   depreciationModel: 'depreciationModel',
   depreciationStart: 'depreciationStart',
   depreciationEnd: 'depreciationEnd',
-  warrantyEndDate: 'warrantyEndDate',
   condition: 'condition',
   currentStockLocationId: 'currentStockLocationId',
   attributes: 'attributes',
   note: 'note',
-  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById',
+  createdById: 'createdById',
+  updatedById: 'updatedById'
 } as const
 
 export type AssetScalarFieldEnum = (typeof AssetScalarFieldEnum)[keyof typeof AssetScalarFieldEnum]
@@ -285,7 +297,9 @@ export const WarrantyScalarFieldEnum = {
   note: 'note',
   metadata: 'metadata',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type WarrantyScalarFieldEnum = (typeof WarrantyScalarFieldEnum)[keyof typeof WarrantyScalarFieldEnum]
@@ -396,7 +410,9 @@ export const CIClassScalarFieldEnum = {
   defaultEnvironment: 'defaultEnvironment',
   isDiscoverable: 'isDiscoverable',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type CIClassScalarFieldEnum = (typeof CIClassScalarFieldEnum)[keyof typeof CIClassScalarFieldEnum]
@@ -434,7 +450,11 @@ export const ConfigurationItemScalarFieldEnum = {
   description: 'description',
   attributes: 'attributes',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById',
+  createdById: 'createdById',
+  updatedById: 'updatedById'
 } as const
 
 export type ConfigurationItemScalarFieldEnum = (typeof ConfigurationItemScalarFieldEnum)[keyof typeof ConfigurationItemScalarFieldEnum]
@@ -490,7 +510,9 @@ export const ContractTypeScalarFieldEnum = {
   description: 'description',
   isActive: 'isActive',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type ContractTypeScalarFieldEnum = (typeof ContractTypeScalarFieldEnum)[keyof typeof ContractTypeScalarFieldEnum]
@@ -512,7 +534,9 @@ export const ContractScalarFieldEnum = {
   currency: 'currency',
   note: 'note',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type ContractScalarFieldEnum = (typeof ContractScalarFieldEnum)[keyof typeof ContractScalarFieldEnum]
@@ -599,7 +623,9 @@ export const OrganizationUnitScalarFieldEnum = {
   note: 'note',
   metadata: 'metadata',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type OrganizationUnitScalarFieldEnum = (typeof OrganizationUnitScalarFieldEnum)[keyof typeof OrganizationUnitScalarFieldEnum]
@@ -628,9 +654,12 @@ export const PersonScalarFieldEnum = {
   isActive: 'isActive',
   isExcluded: 'isExcluded',
   metadata: 'metadata',
-  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById',
+  createdById: 'createdById',
+  updatedById: 'updatedById'
 } as const
 
 export type PersonScalarFieldEnum = (typeof PersonScalarFieldEnum)[keyof typeof PersonScalarFieldEnum]
@@ -674,7 +703,9 @@ export const LocationScalarFieldEnum = {
   isActive: 'isActive',
   metadata: 'metadata',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type LocationScalarFieldEnum = (typeof LocationScalarFieldEnum)[keyof typeof LocationScalarFieldEnum]
@@ -703,7 +734,9 @@ export const VendorScalarFieldEnum = {
   note: 'note',
   metadata: 'metadata',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type VendorScalarFieldEnum = (typeof VendorScalarFieldEnum)[keyof typeof VendorScalarFieldEnum]
@@ -747,7 +780,9 @@ export const LifecycleModelScalarFieldEnum = {
   name: 'name',
   description: 'description',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type LifecycleModelScalarFieldEnum = (typeof LifecycleModelScalarFieldEnum)[keyof typeof LifecycleModelScalarFieldEnum]
@@ -766,7 +801,9 @@ export const LifecycleStateScalarFieldEnum = {
   isActive: 'isActive',
   metadata: 'metadata',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type LifecycleStateScalarFieldEnum = (typeof LifecycleStateScalarFieldEnum)[keyof typeof LifecycleStateScalarFieldEnum]
@@ -1032,7 +1069,9 @@ export const AssetKitScalarFieldEnum = {
   isActive: 'isActive',
   metadata: 'metadata',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type AssetKitScalarFieldEnum = (typeof AssetKitScalarFieldEnum)[keyof typeof AssetKitScalarFieldEnum]
@@ -1097,8 +1136,11 @@ export const LicenseProductScalarFieldEnum = {
   metricType: 'metricType',
   description: 'description',
   lifecycleModelId: 'lifecycleModelId',
+  attributes: 'attributes',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type LicenseProductScalarFieldEnum = (typeof LicenseProductScalarFieldEnum)[keyof typeof LicenseProductScalarFieldEnum]
@@ -1131,7 +1173,9 @@ export const LicenseEntitlementScalarFieldEnum = {
   unitCost: 'unitCost',
   currency: 'currency',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type LicenseEntitlementScalarFieldEnum = (typeof LicenseEntitlementScalarFieldEnum)[keyof typeof LicenseEntitlementScalarFieldEnum]
@@ -1196,7 +1240,9 @@ export const MaintenanceScheduleScalarFieldEnum = {
   priority: 'priority',
   instructions: 'instructions',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type MaintenanceScheduleScalarFieldEnum = (typeof MaintenanceScheduleScalarFieldEnum)[keyof typeof MaintenanceScheduleScalarFieldEnum]
@@ -1323,7 +1369,9 @@ export const AssetReservationScalarFieldEnum = {
   cancelledAt: 'cancelledAt',
   cancelledById: 'cancelledById',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type AssetReservationScalarFieldEnum = (typeof AssetReservationScalarFieldEnum)[keyof typeof AssetReservationScalarFieldEnum]
@@ -1379,7 +1427,9 @@ export const ServiceScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   createdBy: 'createdBy',
-  updatedBy: 'updatedBy'
+  updatedBy: 'updatedBy',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById'
 } as const
 
 export type ServiceScalarFieldEnum = (typeof ServiceScalarFieldEnum)[keyof typeof ServiceScalarFieldEnum]

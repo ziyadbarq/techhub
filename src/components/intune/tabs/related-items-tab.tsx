@@ -34,6 +34,7 @@ import { getAssetAction } from "@/interface-adapters/controllers/asset.controlle
 import { getPersonAction } from "@/interface-adapters/controllers/person.controller";
 import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
 import type { PersonDTO } from "@/interface-adapters/presenters/person.presenter";
+import { formatDate } from "@/lib/utils/date-format";
 
 interface RelatedItemsTabProps {
   device: IntuneDeviceDTO;
@@ -47,11 +48,11 @@ export function RelatedItemsTab({ device }: RelatedItemsTabProps) {
 
   // Load linked asset details
   const loadAsset = useCallback(async () => {
-    if (!device.linkedAssetId) return;
+    if (!device.linkedAssetTag) return;
 
     setLoadingAsset(true);
     try {
-      const result = await getAssetAction(device.linkedAssetId);
+      const result = await getAssetAction(device.linkedAssetTag);
       if (result.success && result.data) {
         setAsset(result.data);
       }
@@ -60,7 +61,7 @@ export function RelatedItemsTab({ device }: RelatedItemsTabProps) {
     } finally {
       setLoadingAsset(false);
     }
-  }, [device.linkedAssetId]);
+  }, [device.linkedAssetTag]);
 
   // Load linked person details
   const loadPerson = useCallback(async () => {
@@ -126,7 +127,7 @@ export function RelatedItemsTab({ device }: RelatedItemsTabProps) {
                 ? "serial number (auto)"
                 : "manual link"}
               {device.assetLinkedAt &&
-                ` on ${new Date(device.assetLinkedAt).toLocaleDateString()}`}
+                ` on ${formatDate(device.assetLinkedAt)}`}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -243,7 +244,7 @@ export function RelatedItemsTab({ device }: RelatedItemsTabProps) {
                 ? "Azure AD (auto)"
                 : "manual link"}
               {device.personLinkedAt &&
-                ` on ${new Date(device.personLinkedAt).toLocaleDateString()}`}
+                ` on ${formatDate(device.personLinkedAt)}`}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -327,7 +328,7 @@ export function RelatedItemsTab({ device }: RelatedItemsTabProps) {
                   {person.hireDate && (
                     <Badge variant="outline">
                       <Calendar className="mr-1 h-3 w-3" />
-                      Hired {new Date(person.hireDate).toLocaleDateString()}
+                      Hired {formatDate(person.hireDate)}
                     </Badge>
                   )}
                 </div>

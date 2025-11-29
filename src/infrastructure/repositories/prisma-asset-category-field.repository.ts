@@ -128,9 +128,14 @@ export class PrismaAssetCategoryFieldRepository
   /**
    * Find fields by asset category ID with FieldDefinition included
    * Returns raw Prisma result for enriched DTO creation
+   *
+   * This method returns:
+   * 1. Category-specific fields linked via AssetCategoryField
+   * 2. Global ASSET fields (isGlobal=true, entityType="ASSET")
    */
   async findByAssetCategoryIdWithDefinition(assetCategoryId: string) {
-    const fields = await prisma.assetCategoryField.findMany({
+    // 1. Get category-specific fields from AssetCategoryField
+    const categoryFields = await prisma.assetCategoryField.findMany({
       where: { assetCategoryId },
       orderBy: { uiOrder: "asc" },
       include: {
@@ -150,7 +155,59 @@ export class PrismaAssetCategoryFieldRepository
       },
     });
 
-    return fields;
+    // 2. Get global ASSET fields that aren't already linked to this category
+    const linkedFieldIds = categoryFields.map((f) => f.fieldDefinitionId);
+    const globalFields = await prisma.fieldDefinition.findMany({
+      where: {
+        entityType: "ASSET",
+        isGlobal: true,
+        isActive: true,
+        deletedAt: null,
+        id: { notIn: linkedFieldIds },
+      },
+      orderBy: { uiOrder: "asc" },
+      select: {
+        id: true,
+        name: true,
+        label: true,
+        description: true,
+        dataType: true,
+        enumOptions: true,
+        validationRules: true,
+        defaultValue: true,
+        uiGroup: true,
+        uiOrder: true,
+        isRequired: true,
+      },
+    });
+
+    // 3. Convert global fields to the same structure as category fields
+    const globalFieldsAsCategory = globalFields.map((gf, index) => ({
+      id: `global-${gf.id}`, // Virtual ID for global fields
+      assetCategoryId,
+      fieldDefinitionId: gf.id,
+      isRequired: gf.isRequired,
+      isUnique: false,
+      isVisible: true,
+      defaultValue: gf.defaultValue,
+      uiOrder: 1000 + (gf.uiOrder || index), // Put global fields after category fields
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      fieldDefinition: {
+        id: gf.id,
+        name: gf.name,
+        label: gf.label,
+        description: gf.description,
+        dataType: gf.dataType,
+        enumOptions: gf.enumOptions,
+        validationRules: gf.validationRules,
+        defaultValue: gf.defaultValue,
+        uiGroup: gf.uiGroup,
+      },
+    }));
+
+    // 4. Combine and return all fields
+    return [...categoryFields, ...globalFieldsAsCategory];
   }
 
   private toDomain(prismaField: PrismaAssetCategoryField): AssetCategoryField {

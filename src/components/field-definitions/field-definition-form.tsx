@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useForm, useWatch, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, X } from "lucide-react";
@@ -86,10 +86,11 @@ export function FieldDefinitionForm({
 }: FieldDefinitionFormProps) {
   const isEditing = !!field;
   const entityTypeOptions = useEntityTypeOptions();
-  const [enumOptions, setEnumOptions] = useState<string[]>([]);
+  // Compute initial enum options from field prop
+  const initialEnumOptions = getEnumOptionsFromRules(field?.validationRules);
+  const [enumOptions, setEnumOptions] = useState<string[]>(initialEnumOptions);
   const [newEnumOption, setNewEnumOption] = useState("");
   const [activeTab, setActiveTab] = useState<string>("basic");
-  const prevFieldIdRef = useRef<string | undefined>(undefined);
   const [availableFields, setAvailableFields] = useState<
     Array<{
       name: string;
@@ -97,12 +98,6 @@ export function FieldDefinitionForm({
       dataType: string;
     }>
   >([]);
-
-  // Compute initial enum options from field prop (memoized)
-  const initialEnumOptions = useMemo(
-    () => getEnumOptionsFromRules(field?.validationRules),
-    [field?.validationRules],
-  );
 
   const form = useForm<CreateFieldDefinitionDTO>({
     resolver: zodResolver(
@@ -127,27 +122,6 @@ export function FieldDefinitionForm({
 
   // Watch form values for live preview
   const watchedValues = useWatch({ control: form.control });
-
-  // Reset form and enum options when field prop changes (e.g., editing a different field)
-  if (field?.id !== prevFieldIdRef.current) {
-    prevFieldIdRef.current = field?.id;
-    setEnumOptions(initialEnumOptions);
-    form.reset({
-      name: field?.name ?? "",
-      label: field?.label ?? "",
-      description: field?.description ?? "",
-      dataType: field?.dataType ?? FieldDataTypeEnum.STRING,
-      entityType: field?.entityType ?? "",
-      isRequired: field?.isRequired ?? false,
-      isUnique: field?.isUnique ?? false,
-      defaultValue: field?.defaultValue ?? "",
-      displayOrder: field?.displayOrder ?? 0,
-      isActive: field?.isActive ?? true,
-      validationRules: field?.validationRules ?? null,
-      conditionalLogic:
-        (field?.conditionalLogic as FieldConditionalLogic) ?? null,
-    });
-  }
 
   // Fetch available fields when entity type changes (for conditional logic builder)
   useEffect(() => {

@@ -12,25 +12,30 @@
 // Reserve assets for future use with conflict detection
 model AssetReservation {
   id                   String    @id @default(uuid())
-  assetId              String    @map("asset_id")
-  reservedForPersonId  String?   @map("reserved_for_person_id")
-  reservedForOrgUnitId String?   @map("reserved_for_org_unit_id")
-  reservedById         String    @map("reserved_by_id")
-  startDate            DateTime  @map("start_date")
-  endDate              DateTime  @map("end_date")
-  status               String    @default("PENDING") @map("status") // PENDING, CONFIRMED, ACTIVE, COMPLETED, CANCELLED
+  assetId              String
+  reservedForPersonId  String?
+  reservedForOrgUnitId String?
+  reservedById         String
+  startDate            DateTime
+  endDate              DateTime
+  status               String    @default("PENDING") // PENDING, CONFIRMED, ACTIVE, COMPLETED, CANCELLED
   purpose              String?   @db.Text
   note                 String?   @db.Text
-  confirmationDate     DateTime? @map("confirmation_date")
-  confirmedById        String?   @map("confirmed_by_id")
-  cancellationReason   String?   @map("cancellation_reason") @db.Text
-  cancelledAt          DateTime? @map("cancelled_at")
-  cancelledById        String?   @map("cancelled_by_id")
-  createdAt            DateTime  @default(now()) @map("created_at")
-  updatedAt            DateTime  @updatedAt @map("updated_at")
+  confirmationDate     DateTime?
+  confirmedById        String?
+  cancellationReason   String?   @db.Text
+  cancelledAt          DateTime?
+  cancelledById        String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  // Soft delete fields
+  deletedAt            DateTime?
+  deletedById          String?
 
   // Relations
   asset                   Asset                      @relation(fields: [assetId], references: [id], onDelete: Restrict)
+  deletedBy               Person?                    @relation("AssetReservationDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
   reservedForPerson       Person?                    @relation("ReservationForPerson", fields: [reservedForPersonId], references: [id], onDelete: SetNull)
   reservedForOrgUnit      OrganizationUnit?          @relation("ReservationForOrgUnit", fields: [reservedForOrgUnitId], references: [id], onDelete: SetNull)
   reservedBy              Person                     @relation("ReservationBy", fields: [reservedById], references: [id], onDelete: Restrict)
@@ -47,6 +52,7 @@ model AssetReservation {
   @@index([status])
   @@index([startDate, endDate])
   @@index([status, assetId]) // CRITICAL: Asset availability checks
+  @@index([deletedAt])
   @@map("asset_reservations")
 }
 
@@ -54,11 +60,11 @@ model AssetReservation {
 // Tracks conflicts between overlapping reservations
 model AssetReservationConflict {
   id                       String    @id @default(cuid())
-  reservationId            String    @map("reservation_id")
-  conflictingReservationId String    @map("conflicting_reservation_id")
-  detectedAt               DateTime  @default(now()) @map("detected_at")
-  resolvedAt               DateTime? @map("resolved_at")
-  resolutionNote           String?   @map("resolution_note") @db.Text
+  reservationId            String
+  conflictingReservationId String
+  detectedAt               DateTime  @default(now())
+  resolvedAt               DateTime?
+  resolutionNote           String?   @db.Text
 
   // Relations
   reservation            AssetReservation @relation("ReservationConflicts", fields: [reservationId], references: [id], onDelete: Cascade)

@@ -52,7 +52,6 @@ export async function createAssetCategoryAction(
       code: validated.code,
       description: validated.description ?? undefined,
       lifecycleModelId: validated.lifecycleModelId ?? undefined,
-      isConsumable: validated.isConsumable ?? undefined,
     });
 
     revalidatePath("/asset-categories");
@@ -152,7 +151,6 @@ export async function updateAssetCategoryAction(
       code: validated.code,
       description: validated.description,
       lifecycleModelId: validated.lifecycleModelId,
-      isConsumable: validated.isConsumable,
     });
 
     revalidatePath("/asset-categories");
@@ -235,7 +233,6 @@ export async function bulkCreateAssetCategoriesAction(
           code: validated.code,
           description: validated.description ?? undefined,
           lifecycleModelId: validated.lifecycleModelId ?? undefined,
-          isConsumable: validated.isConsumable ?? undefined,
         });
 
         results.successCount++;
@@ -408,7 +405,6 @@ export async function bulkUpsertAssetCategoriesAction(
                 name: validated.name || undefined,
                 description: validated.description ?? undefined,
                 lifecycleModelId: validated.lifecycleModelId ?? undefined,
-                isConsumable: validated.isConsumable,
               });
               results.updatedCount++;
               results.updated.push({
@@ -432,7 +428,6 @@ export async function bulkUpsertAssetCategoriesAction(
                 code: modifiedCode,
                 description: validated.description ?? undefined,
                 lifecycleModelId: validated.lifecycleModelId ?? undefined,
-                isConsumable: validated.isConsumable ?? undefined,
               });
               results.createdCount++;
               results.created.push({
@@ -448,7 +443,6 @@ export async function bulkUpsertAssetCategoriesAction(
             code: validated.code,
             description: validated.description ?? undefined,
             lifecycleModelId: validated.lifecycleModelId ?? undefined,
-            isConsumable: validated.isConsumable ?? undefined,
           });
           results.createdCount++;
           results.created.push({

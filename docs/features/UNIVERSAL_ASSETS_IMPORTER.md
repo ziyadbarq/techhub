@@ -84,6 +84,8 @@ All columns must use a prefix to indicate which entity the field belongs to:
 | `asset.warranty_end_date` | Warranty expiration | No |
 | `asset.notes` | Additional notes | No |
 
+**Multi-Currency Support**: When `purchase_cost` and `currency` are provided, the importer automatically calculates `purchaseCostSar` (SAR equivalent) using the current exchange rates. This enables accurate financial reporting across all currencies.
+
 ### Manufacturer Fields (vendor.*)
 
 | Column | Description | Required |
@@ -160,12 +162,14 @@ If both match an existing record, the asset is **updated**. Otherwise, a new ass
 
 | Entity | Created When | Default Values |
 |--------|--------------|----------------|
-| Manufacturer (Vendor) | Code/name not found | `vendorType: OTHER`, `isActive: true` |
-| Category | Code/name not found | Generated code from name |
-| Model | Code/name not found | Linked to manufacturer from same row |
-| Location | Code/name not found | `locationType: BUILDING` |
-| StockLocation | Code/name not found | `isActive: true` |
+| Manufacturer (Vendor) | Code/name not found | `vendorType: OTHER`, `isActive: true`, sequential code via `CodeGeneratorService` |
+| Category | Code/name not found | Sequential code via `CodeGeneratorService` |
+| Model | Code/name not found | Linked to manufacturer from same row, sequential code via `CodeGeneratorService` |
+| Location | Code/name not found | `locationType: BUILDING`, sequential code via `CodeGeneratorService` |
+| StockLocation | Code/name not found | `isActive: true`, sequential code via `CodeGeneratorService` |
 | FieldDefinition | Custom field not defined | Inferred type, linked to category |
+
+**Note**: All auto-created entities use the centralized `CodeGeneratorService` for consistent, sequential codes (e.g., `VENDOR-000001`, `CAT-000002`). This ensures uniformity with manually created entities.
 
 ### Assignment Handling
 

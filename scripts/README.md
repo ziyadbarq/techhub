@@ -122,10 +122,10 @@ npm run format           # Format code
 npm run test             # Run tests
 
 # Database operations
-npm run db:push          # Push schema changes
+npm run db:migrate       # Create/apply migrations (dev)
+npm run db:migrate:deploy # Apply migrations (prod)
 npm run db:seed          # Seed data
 npm run db:studio        # Open Prisma Studio
-npm run db:migrate       # Create migration (production)
 ```
 
 ---
@@ -260,7 +260,7 @@ npx tsx scripts/your-script.ts
 - Verify `.env` configuration
 - Try running steps manually:
   ```bash
-  npm run db:push
+  npm run db:migrate
   npm run db:seed
   ```
 

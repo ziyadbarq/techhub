@@ -36,6 +36,17 @@ The code generation system automatically creates unique, sequential identifiers 
 3. **No Conflicts** - Database ensures uniqueness even with concurrent requests
 4. **Flexibility** - Manual override available for special cases
 
+### Where It's Used
+
+The `CodeGeneratorService` is used consistently across **all** code paths:
+
+- **Manual UI forms** - Create dialogs for Vendors, Categories, Models, etc.
+- **Universal Assets Importer** - Auto-creates entities during bulk import
+- **Intune Integration** - Creates Vendors/Models when syncing devices
+- **Seed scripts** - Initial data population
+
+**IMPORTANT**: Never use timestamp-based codes (`${Date.now()}`) or slugification (`generateCodeFromName()`) for entity codes. Always inject and use `ICodeGeneratorService`.
+
 ---
 
 ## Architecture

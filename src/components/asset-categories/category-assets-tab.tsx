@@ -8,7 +8,7 @@
 
 import Link from "next/link";
 import { type ColumnDef } from "@tanstack/react-table";
-import { Package, MapPin, Shield, Plus } from "lucide-react";
+import { Package, MapPin, Plus } from "lucide-react";
 import { format } from "date-fns";
 
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
@@ -121,32 +121,6 @@ export function CategoryAssetsTab({ assets }: CategoryAssetsTabProps) {
       },
       meta: {
         label: "Location",
-      },
-    },
-    {
-      accessorKey: "isUnderWarranty",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Warranty" />
-      ),
-      cell: ({ row }) => {
-        const isUnderWarranty = row.original.isUnderWarranty;
-        const warrantyEndDate = row.original.warrantyEndDate;
-        if (!warrantyEndDate) {
-          return <span className="text-muted-foreground text-sm">—</span>;
-        }
-        return (
-          <div className="flex items-center gap-1.5">
-            <Shield
-              className={`h-3.5 w-3.5 ${isUnderWarranty ? "text-green-500" : "text-muted-foreground"}`}
-            />
-            <span className="text-sm">
-              {isUnderWarranty ? "Active" : "Expired"}
-            </span>
-          </div>
-        );
-      },
-      meta: {
-        label: "Warranty",
       },
     },
     {

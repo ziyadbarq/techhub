@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { EmployeeDirectoryDTO } from "@/interface-adapters/presenters/employee-directory.presenter";
+import { formatDate } from "@/lib/utils/date-format";
 
 interface PersonOverviewTabProps {
   person: EmployeeDirectoryDTO;
@@ -127,9 +128,7 @@ export function PersonOverviewTab({
               <p className="text-muted-foreground">Hire Date</p>
               <p className="flex items-center gap-1 font-medium">
                 <Calendar className="h-3 w-3" />
-                {person.hireDate
-                  ? new Date(person.hireDate).toLocaleDateString()
-                  : "—"}
+                {formatDate(person.hireDate)}
               </p>
             </div>
           </div>

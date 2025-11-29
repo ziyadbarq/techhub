@@ -15,16 +15,16 @@ import { STANDARD_SANITIZATION } from "../field-builders";
  */
 const UNIVERSAL_ASSETS_FIELDS: EntityFieldConfig[] = [
   // ========================================
-  // PERSON (Required, no auto-create)
+  // PERSON (Optional - assets can be imported without assignment)
   // ========================================
   {
     name: "person.email",
     label: "Person Email",
     description:
-      "Email of the person to assign the asset to. Person must exist in the system.",
+      "Email of the person to assign the asset to. Optional - if empty, asset is imported without assignment. If provided, person must exist in the system.",
     type: "string",
-    required: true,
-    validations: [{ type: "required" }, { type: "email" }],
+    required: false,
+    validations: [{ type: "email" }],
     sanitization: STANDARD_SANITIZATION.TRIM,
     examples: ["john.doe@company.com", "ahmed@barq.com"],
     autoMap: [
@@ -94,15 +94,6 @@ const UNIVERSAL_ASSETS_FIELDS: EntityFieldConfig[] = [
     sanitization: [{ operation: "trim" }, { operation: "uppercase" }],
     examples: ["SAR", "USD", "EUR"],
     autoMap: ["currency_code", "curr"],
-  },
-  {
-    name: "asset.warranty_end_date",
-    label: "Warranty End Date",
-    description: "Date when warranty expires",
-    type: "date",
-    required: false,
-    examples: ["2026-01-15", "01/15/2026"],
-    autoMap: ["warrantyEndDate", "warranty_expiry", "warranty_end"],
   },
   {
     name: "asset.condition",
@@ -300,7 +291,7 @@ export const UNIVERSAL_ASSETS_CONFIG: EntityConfig = {
 
   // Field configuration
   fields: UNIVERSAL_ASSETS_FIELDS,
-  requiredFields: ["person.email", "asset.serial_number"],
+  requiredFields: ["asset.serial_number"], // Only serial_number is truly required
   uniqueFields: ["asset.serial_number"],
   lookupFields: [], // Handled internally by the processor
 
@@ -323,10 +314,10 @@ The system will automatically create missing manufacturers, categories, models, 
 ## Column Naming Convention
 
 Columns use a prefix.field format to identify which entity the data belongs to:
-- person.email - Assignee (must exist, no auto-create)
-- asset.* - Asset fields (serial_number required)
+- person.email - Assignee (OPTIONAL - if empty, asset imported without assignment; if provided, person must exist)
+- asset.* - Asset fields (serial_number REQUIRED)
 - vendor.* - Manufacturer (auto-created if not found)
-- category.* - Category (auto-created if not found)
+- category.* - Category (auto-created if not found, REQUIRED)
 - model.* - Model (auto-created, requires manufacturer)
 - location.* - Location (auto-created if not found)
 - stock_location.* - Stock Location (auto-created if not found)
@@ -335,11 +326,17 @@ Columns use a prefix.field format to identify which entity the data belongs to:
 
 ## Important Notes
 
-1. **Person must exist**: The person.email must match an existing person in the system
-2. **Serial number required**: Each row must have a unique asset.serial_number
-3. **Auto-creation**: Missing manufacturers, categories, models, and locations are created automatically
-4. **Custom fields**: Any column starting with custom. will create a new field definition
-5. **Updates**: If an asset with the same serial number exists, it will be updated
+1. **Person is OPTIONAL**: Leave person.email empty to import assets without assignment. If provided, the person must already exist in the system.
+2. **Serial number REQUIRED**: Each row must have a unique asset.serial_number
+3. **Category REQUIRED**: Each row must have category.code or category.name
+4. **Auto-creation**: Missing manufacturers, categories, models, and locations are created automatically
+5. **Custom fields**: Any column starting with custom. will create a new field definition
+6. **Updates**: If an asset with the same serial number exists, it will be updated
+
+## ⚠️ IMPORTANT: Replace Sample Data
+
+The sample rows below contain PLACEHOLDER emails (john.doe@company.com, jane.smith@company.com).
+You MUST replace these with real emails from your system, or leave the person.email column empty.
 
 ## Example Data
 
@@ -399,7 +396,6 @@ export function getTemplateColumns(): string[] {
     "asset.purchase_date",
     "asset.purchase_cost",
     "asset.currency",
-    "asset.warranty_end_date",
     "asset.condition",
     "asset.note",
     // Related entities

@@ -144,9 +144,8 @@ src/infrastructure/database/prisma/
 
 ```bash
 # Seed with preset (safe to run multiple times - idempotent)
-npm run db:seed              # production preset (RBAC + Foundation + Business Processes)
-npm run db:seed:dev          # dev preset (production + demo assets, warranties, Layer 3)
-npm run db:seed:full         # full preset (all modules)
+npm run db:seed              # production preset (config/reference data only, no demo data)
+npm run db:seed:dev          # dev preset (full development with all demo data)
 
 # Interactive seeding (choose modules interactively)
 npm run db:seed:interactive
@@ -158,6 +157,21 @@ npm run db:reset             # Wipes database + re-seeds
 npx tsx src/infrastructure/database/prisma/seed.ts
 npx tsx src/infrastructure/database/prisma/seed.ts dev
 ```
+
+### Presets
+
+Only two presets exist - simple and clear:
+
+| Preset | Description | Use Case |
+|--------|-------------|----------|
+| **production** | Config/reference data only (no demo data) | Fresh production deployment |
+| **dev** | Full development environment with all demo data | Development & testing |
+
+**Production preset modules (7)**:
+- RBAC, FOUNDATION, BUSINESS_PROCESSES, ASSET_CONFIG, CMDB, SERVICES, ATTACHMENTS_GOVERNANCE
+
+**Dev preset modules (13)**:
+- All production modules + DEMO_PERSONS, DEMO_ASSETS, SERVICE_OWNERS, WARRANTIES_MAINTENANCE, LAYER3_ITAM, AI_PROMPTS_TASKS
 
 ### Idempotent Behavior
 
@@ -207,7 +221,11 @@ All seed scripts are **fully idempotent**:
 
 ## Seed Modules
 
-### 1. seed-rbac.ts
+Modules are split into **Production** (config/reference data) and **Demo-only** (test data).
+
+### Production Modules
+
+#### 1. RBAC (seed-rbac.ts)
 
 Seeds Role-Based Access Control system.
 
@@ -215,141 +233,118 @@ Seeds Role-Based Access Control system.
 await seedRBAC();
 ```
 
-**Creates**:
+**Creates**: 269 permissions, 10 roles, role-permission assignments
 
-- Permissions (all CRUD + feature-specific)
-- Roles (System Administrator, IT Help Desk, Auditor, Finance Manager, Security Officer, Service Owner, Inventory Manager, Maintenance Technician, Data Steward, Asset Coordinator, Viewer)
-- Role-Permission assignments
+#### 2. FOUNDATION (seed-foundation.ts)
 
-**Key Features**:
-
-- Automatic permission discovery from codebase
-- Granular permissions per feature
-- Layer 3 feature permissions (Asset Disposals, Kits, Reservations, CMDB)
-
-### 2. seed-foundation.ts
-
-Seeds Foundation layer (Layer 1) entities.
+Seeds Foundation config (no demo persons).
 
 ```typescript
 await seedFoundation(prisma);
 ```
 
 **Creates**:
-
 - Lifecycle Models, States, Transitions
 - Vendors and Vendor Contacts
 - Organization Units (hierarchical)
 - Locations
-- Persons with role assignments
 - Field Definitions
+- Exchange Rates
 
-**Dependencies**: Requires RBAC seeded first (for role assignments)
+**Note**: Demo persons are now in DEMO_PERSONS module.
 
-### 3. seed-assets.ts
+#### 3. BUSINESS_PROCESSES (seed-services.ts)
 
-Seeds Asset layer (Layer 2) entities.
+Seeds 25 business processes for service management.
 
 ```typescript
-await seedAssets(prisma);
+await seedBusinessProcesses(prisma);
+```
+
+#### 4. ASSET_CONFIG (seed-assets.ts)
+
+Seeds asset config (no demo assets).
+
+```typescript
+await seedAssetConfig(prisma);
 ```
 
 **Creates**:
-
-- Asset Categories
-- Asset Models (linked to vendors)
-- Assets (50+, realistic data)
+- Asset Categories (8 types)
+- Asset Models (15+ models)
 - Stock Locations
-- Stock Movements
-- Asset Assignments
 
-**Dependencies**: Requires Foundation layer seeded first
+**Note**: Demo assets are now in DEMO_ASSETS module.
 
-**Configuration**:
+#### 5. CMDB (seed-cmdb.ts)
 
-```typescript
-// seed-config.ts
-QUANTITIES: {
-  ASSETS_PER_CATEGORY: {
-    LAPTOP: 15,
-    DESKTOP: 8,
-    SERVER: 5,
-    // ...
-  },
-  ASSET_ASSIGNMENTS_PERCENTAGE: 0.7, // 70% assigned
-}
-```
-
-### 4. seed-warranties-maintenance.ts
-
-Seeds Warranty and Maintenance entities.
-
-```typescript
-await seedWarrantiesMaintenance(prisma);
-```
-
-**Creates**:
-
-- Warranties (various coverage types)
-- Maintenance Schedules (recurring)
-- Maintenance Records (historical, scheduled, in-progress)
-
-**Uses Factories**:
-
-- `WarrantyFactory.fromAsset()` - Creates warranty from asset purchase date
-- `MaintenanceScheduleFactory.createRecurring()` - Creates recurring schedules
-- `MaintenanceRecordFactory.createCompleted()` - Historical records
-
-**Dependencies**: Requires Assets and Persons seeded first
-
-### 5. seed-cmdb.ts
-
-Seeds CMDB Relationship Types.
+Seeds CMDB config (CI classes, relationship types).
 
 ```typescript
 await seedCMDB(prisma);
 ```
 
-**Creates**:
+#### 6. SERVICES (seed-services.ts)
 
-- Relationship Types (DEPENDS_ON, RUNS_ON, CONNECTS_TO, etc.)
-- Bidirectional relationship support
-- Impact analysis flags
-
-**Note**: Configuration Items and CI Relationships created in Layer 3 ITAM seeder
-
-### 6. seed-layer3-itam.ts
-
-Seeds Advanced ITAM features (Layer 3).
+Seeds 74 real Barq services with infrastructure (no owners).
 
 ```typescript
-await seedLayer3ITAM(prisma);
+await seedServices(prisma);
 ```
 
-**Creates**:
+**Note**: Service owners are now in SERVICE_OWNERS module.
 
-- Asset Disposals (various statuses)
-- Disposal Approvals (approval chain)
-- Disposal Documents
-- Asset Kits (predefined bundles)
-- Asset Kit Items
-- Asset Kit Checkouts
-- Asset Reservations (future bookings)
-- Reservation Conflicts
-- Configuration Items
-- CI Relationships
+#### 7. ATTACHMENTS_GOVERNANCE (seed-attachments.ts, seed-governance.ts)
 
-**Dependencies**: Requires Assets, Persons, and CMDB Relationship Types
+Seeds attachment types, data domains, verification campaigns.
 
-### 7. seed-prompts.ts
+### Demo-only Modules
 
-Seeds AI Prompt Templates.
+#### 8. DEMO_PERSONS (seed-foundation.ts)
+
+Seeds 21 demo persons for development.
 
 ```typescript
-await seedPrompts(prisma);
+await seedDemoPersons(prisma);
 ```
 
-**Creates**: AI prompt templates for various tasks (documentation, analysis, etc.)
+**Note**: In production, persons are synced from Microsoft Graph.
+
+#### 9. DEMO_ASSETS (seed-assets.ts)
+
+Seeds 50+ demo assets with assignments and stock movements.
+
+```typescript
+await seedDemoAssets(prisma);
+```
+
+**Dependencies**: ASSET_CONFIG, DEMO_PERSONS
+
+#### 10. SERVICE_OWNERS (seed-services.ts)
+
+Seeds service ownership assignments.
+
+```typescript
+await seedServiceOwners(prisma);
+```
+
+**Dependencies**: SERVICES, DEMO_PERSONS
+
+#### 11. WARRANTIES_MAINTENANCE (seed-warranties-maintenance.ts)
+
+Seeds warranty records and maintenance schedules for demo assets.
+
+**Dependencies**: DEMO_ASSETS
+
+#### 12. LAYER3_ITAM (seed-layer3-itam.ts)
+
+Seeds asset disposals, kits, reservations, licenses, contracts, configuration items.
+
+**Dependencies**: DEMO_ASSETS, CMDB
+
+#### 13. AI_PROMPTS_TASKS (seed-prompts.ts, seed-operations.ts)
+
+Seeds AI prompt templates and example tasks.
 
 ---
 
@@ -1350,20 +1345,24 @@ export const SEED_QUANTITIES = {
 ### Conditional Seeding
 
 ```typescript
-// seed.ts
-const seedMode = process.env.SEED_MODE || "full";
+// seed.ts - Uses preset-based conditional seeding
+const { name: presetName, modules } = getSelectedPreset();
+const shouldSeed = (module: SeedModule) => modules.has(module);
 
-if (seedMode === "rbac-only") {
-  await seedRBAC();
-} else if (seedMode === "minimal") {
-  await seedRBAC();
+// Production modules (config/reference data)
+if (shouldSeed(SeedModule.FOUNDATION)) {
   await seedFoundation(prisma);
-} else {
-  // Full seed
-  await seedRBAC();
-  await seedFoundation(prisma);
-  await seedAssets(prisma);
-  // ...
+}
+if (shouldSeed(SeedModule.ASSET_CONFIG)) {
+  await seedAssetConfig(prisma);
+}
+
+// Demo-only modules
+if (shouldSeed(SeedModule.DEMO_PERSONS)) {
+  await seedDemoPersons(prisma);
+}
+if (shouldSeed(SeedModule.DEMO_ASSETS)) {
+  await seedDemoAssets(prisma);
 }
 ```
 

@@ -13,6 +13,72 @@ import {
 } from "./types";
 
 /**
+ * Mapping from snake_case field names to camelCase property names
+ * for each entity type. This ensures CSV columns can use any format
+ * (snake_case, spaces, etc.) while the typed objects use consistent camelCase.
+ */
+const FIELD_NAME_MAPPINGS: Record<string, Record<string, string>> = {
+  "person.": {
+    // PersonData - already camelCase
+  },
+  "asset.": {
+    serial_number: "serialNumber",
+    serialnumber: "serialNumber",
+    asset_tag: "assetTag",
+    assettag: "assetTag",
+    purchase_date: "purchaseDate",
+    purchasedate: "purchaseDate",
+    purchase_cost: "purchaseCost",
+    purchasecost: "purchaseCost",
+    depreciation_model: "depreciationModel",
+    depreciationmodel: "depreciationModel",
+    depreciation_start: "depreciationStart",
+    depreciationstart: "depreciationStart",
+    depreciation_end: "depreciationEnd",
+    depreciationend: "depreciationEnd",
+  },
+  "vendor.": {
+    // VendorData - all single words (code, name, type, email, phone, website)
+  },
+  "category.": {
+    // CategoryData - all single words (code, name, description)
+  },
+  "model.": {
+    default_warranty_months: "defaultWarrantyMonths",
+    defaultwarrantymonths: "defaultWarrantyMonths",
+  },
+  "location.": {
+    // LocationData - all single words (code, name, type, description)
+  },
+  "stock_location.": {
+    // StockLocationData - all single words (code, name, description)
+  },
+  "lifecycle.": {
+    // LifecycleData - single word (code)
+  },
+  "custom.": {
+    // Custom fields keep their snake_case names as-is
+  },
+};
+
+/**
+ * Map a normalized snake_case field name to its camelCase property name
+ * for the given entity prefix
+ */
+function mapFieldNameToProperty(
+  prefix: PrefixKey | null,
+  snakeCaseName: string,
+): string {
+  if (!prefix) return snakeCaseName;
+
+  const mapping = FIELD_NAME_MAPPINGS[prefix];
+  if (!mapping) return snakeCaseName;
+
+  // Return mapped name if exists, otherwise return original
+  return mapping[snakeCaseName] || snakeCaseName;
+}
+
+/**
  * Detect prefixed columns from CSV headers
  */
 export function detectPrefixedColumns(columns: string[]): PrefixedColumn[] {
@@ -131,51 +197,57 @@ export function groupRowByPrefix(
       continue;
     }
 
-    const fieldName = column.fieldName;
+    // Map snake_case field name to camelCase property name
+    const propertyName = mapFieldNameToProperty(
+      column.prefix,
+      column.fieldName,
+    );
 
     switch (column.prefix) {
       case "person.":
         if (!result.person) result.person = { email: "" };
-        (result.person as unknown as Record<string, unknown>)[fieldName] =
+        (result.person as unknown as Record<string, unknown>)[propertyName] =
           value;
         break;
 
       case "asset.":
-        (result.asset as unknown as Record<string, unknown>)[fieldName] = value;
+        (result.asset as unknown as Record<string, unknown>)[propertyName] =
+          value;
         break;
 
       case "vendor.":
         if (!result.vendor) result.vendor = {};
-        (result.vendor as Record<string, unknown>)[fieldName] = value;
+        (result.vendor as Record<string, unknown>)[propertyName] = value;
         break;
 
       case "category.":
         if (!result.category) result.category = {};
-        (result.category as Record<string, unknown>)[fieldName] = value;
+        (result.category as Record<string, unknown>)[propertyName] = value;
         break;
 
       case "model.":
         if (!result.model) result.model = {};
-        (result.model as Record<string, unknown>)[fieldName] = value;
+        (result.model as Record<string, unknown>)[propertyName] = value;
         break;
 
       case "location.":
         if (!result.location) result.location = {};
-        (result.location as Record<string, unknown>)[fieldName] = value;
+        (result.location as Record<string, unknown>)[propertyName] = value;
         break;
 
       case "stock_location.":
         if (!result.stockLocation) result.stockLocation = {};
-        (result.stockLocation as Record<string, unknown>)[fieldName] = value;
+        (result.stockLocation as Record<string, unknown>)[propertyName] = value;
         break;
 
       case "lifecycle.":
         if (!result.lifecycle) result.lifecycle = {};
-        (result.lifecycle as Record<string, unknown>)[fieldName] = value;
+        (result.lifecycle as Record<string, unknown>)[propertyName] = value;
         break;
 
       case "custom.":
-        result.custom[fieldName] = value;
+        // Custom fields keep their snake_case names
+        result.custom[column.fieldName] = value;
         break;
 
       default:
@@ -213,12 +285,14 @@ export function validateRequiredColumns(columns: PrefixedColumn[]): {
   const missingRequired: string[] = [];
   const warnings: string[] = [];
 
-  // Check for person.email
+  // Check for person.email (optional - assets can be imported without assignment)
   const hasPersonEmail = columns.some(
     (c) => c.prefix === "person." && c.fieldName === "email",
   );
   if (!hasPersonEmail) {
-    missingRequired.push("person.email (required for assignment)");
+    warnings.push(
+      "person.email column not found - assets will be imported without assignment",
+    );
   }
 
   // Check for asset.serial_number or asset.serialnumber
@@ -380,4 +454,62 @@ export function extractCustomFieldNames(
   }
 
   return Array.from(fieldNames);
+}
+
+/**
+ * Result of duplicate detection within an import file
+ */
+export interface DuplicateDetectionResult {
+  /** Whether any duplicates were found */
+  hasDuplicates: boolean;
+  /** List of duplicate serial numbers with their row numbers */
+  duplicateSerialNumbers: Array<{
+    serialNumber: string;
+    rowNumbers: number[];
+  }>;
+  /** Total count of duplicate rows (excludes first occurrence) */
+  totalDuplicateRows: number;
+}
+
+/**
+ * Detect duplicate serial numbers within the import file before processing
+ *
+ * This helps users identify data issues before import begins.
+ * Note: Duplicates within the file will result in the later rows updating
+ * the earlier ones, which may not be the intended behavior.
+ */
+export function detectDuplicatesInFile(
+  rows: Array<{ rowNumber: number; data: GroupedRowData }>,
+): DuplicateDetectionResult {
+  const serialNumberMap = new Map<string, number[]>();
+
+  for (const row of rows) {
+    const serialNumber = row.data.asset?.serialNumber;
+    if (!serialNumber) continue;
+
+    // Normalize for comparison (uppercase, trimmed)
+    const normalized = String(serialNumber).trim().toUpperCase();
+    if (!normalized) continue;
+
+    const existing = serialNumberMap.get(normalized) || [];
+    existing.push(row.rowNumber);
+    serialNumberMap.set(normalized, existing);
+  }
+
+  const duplicates: Array<{ serialNumber: string; rowNumbers: number[] }> = [];
+  let totalDuplicateRows = 0;
+
+  for (const [serialNumber, rowNumbers] of serialNumberMap) {
+    if (rowNumbers.length > 1) {
+      duplicates.push({ serialNumber, rowNumbers });
+      // Count extras (all occurrences after the first)
+      totalDuplicateRows += rowNumbers.length - 1;
+    }
+  }
+
+  return {
+    hasDuplicates: duplicates.length > 0,
+    duplicateSerialNumbers: duplicates,
+    totalDuplicateRows,
+  };
 }

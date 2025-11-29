@@ -795,9 +795,12 @@ model AssetCategory {
   code             String   @unique
   description      String?  @db.Text
   lifecycleModelId String?
-  isConsumable     Boolean  @default(false) // true for items like cables, mice
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+
+  // Soft delete fields
+  deletedAt   DateTime?
+  deletedById String?
 
   // Relations
   lifecycleModel LifecycleModel?      @relation(fields: [lifecycleModelId], references: [id], onDelete: SetNull)
@@ -806,10 +809,12 @@ model AssetCategory {
   assets         Asset[]
   dataOwnerships DataOwnership[]
   kitItems       AssetKitItem[]
+  deletedBy      Person?              @relation("AssetCategoryDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([code])
   @@index([lifecycleModelId])
+  @@index([deletedAt])
   @@map("asset_categories")
 }
 
@@ -931,7 +936,6 @@ model Asset {
   depreciationModel      String?
   depreciationStart      DateTime?
   depreciationEnd        DateTime?
-  warrantyEndDate        DateTime?
   condition              String? // Asset condition: NEW, GOOD, FAIR, POOR
   currentStockLocationId String?
   attributes             Json? // dynamic fields per AssetCategoryField
@@ -969,7 +973,6 @@ model Asset {
   @@index([serialNumber])
   @@index([currentStockLocationId])
   @@index([condition]) // High-priority: Filter by condition
-  @@index([warrantyEndDate]) // High-priority: Expiring warranties
   @@index([assetCategoryId, lifecycleStateId]) // High-priority: Dashboard queries
   @@index([condition, lifecycleStateId]) // High-priority: Filter by condition + state
   @@index([purchaseDate]) // Medium-priority: Age-based queries

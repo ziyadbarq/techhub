@@ -1,9 +1,10 @@
 /**
  * Service Management Seed Data
  *
- * Seeds comprehensive service management data:
- * - Business Processes (25 processes covering all business domains)
- * - Services (80 services with full metadata, owners, and infrastructure)
+ * Split into three functions:
+ * - seedBusinessProcesses(): 25 business processes (production-safe)
+ * - seedServices(): 74 real Barq services without owners (production-safe)
+ * - seedServiceOwners(): Service ownership assignments (dev-only)
  */
 
 import type { PrismaClient } from "../../../generated/prisma/client.js";
@@ -44,38 +45,35 @@ export async function seedBusinessProcesses(prisma: PrismaClient) {
 }
 
 /**
- * Seed Services with owners and infrastructure
+ * Seed Services (Production-safe)
+ *
+ * Seeds 74 real Barq services with infrastructure metadata.
+ * Does NOT create ownership assignments (use seedServiceOwners for that).
  */
 export async function seedServices(prisma: PrismaClient) {
-  logSection("Service Management: Services");
+  logSection("Services (Production)");
 
   // ==============================================
   // Prerequisites
   // ==============================================
-  const persons = await prisma.person.findMany({});
   const vendors = await prisma.vendor.findMany({});
   const businessProcesses = await prisma.businessProcess.findMany({});
 
-  requireEntities(persons, "persons");
   requireEntities(vendors, "vendors");
   requireEntities(businessProcesses, "business processes");
 
   // Create lookup maps
-  const personMap = new Map(
-    persons.map((p) => [`${p.firstName} ${p.lastName}`, p.id]),
-  );
   const vendorMap = new Map(vendors.map((v) => [v.code, v.id]));
   const businessProcessMap = new Map(
     businessProcesses.map((bp) => [bp.code, bp.id]),
   );
 
   // ==============================================
-  // Create Services with nested relations (idempotent - check before create)
+  // Create Services with infrastructure (no owners)
   // ==============================================
-  logStep("🔧", "Creating services with owners and infrastructure...");
+  logStep("🔧", "Creating services with infrastructure...");
 
   let serviceCount = 0;
-  let ownershipCount = 0;
   let infrastructureCount = 0;
 
   // Load existing services to support append mode
@@ -90,6 +88,7 @@ export async function seedServices(prisma: PrismaClient) {
       serviceCount++;
       continue; // Skip duplicate
     }
+
     // Resolve vendor ID (optional)
     const vendorCode =
       "vendorCode" in serviceData ? serviceData.vendorCode : undefined;
@@ -116,32 +115,12 @@ export async function seedServices(prisma: PrismaClient) {
       );
     }
 
-    // Prepare owners data
-    const owners = "owners" in serviceData ? serviceData.owners : undefined;
-    const ownersData =
-      owners
-        ?.map((owner) => {
-          const personId = personMap.get(owner.personName);
-          if (!personId) {
-            logWarning(
-              `Person ${owner.personName} not found for service ${serviceData.name}, skipping owner`,
-            );
-            return null;
-          }
-          return {
-            personId,
-            ownershipType: owner.type,
-            isPrimary: owner.isPrimary,
-          };
-        })
-        .filter(Boolean) || [];
-
     // Prepare infrastructure data
     const infrastructure =
       "infrastructure" in serviceData ? serviceData.infrastructure : undefined;
 
-    // Create service with nested relations
-    const _service = await prisma.service.create({
+    // Create service WITHOUT owners (owners added separately via seedServiceOwners)
+    await prisma.service.create({
       data: {
         name: serviceData.name,
         serviceType: serviceData.serviceType,
@@ -158,17 +137,6 @@ export async function seedServices(prisma: PrismaClient) {
         currentStatus: serviceData.currentStatus,
         vendorId,
         businessProcessId,
-        // Create owners inline
-        owners:
-          ownersData.length > 0
-            ? {
-                create: ownersData as Array<{
-                  personId: string;
-                  ownershipType: "TECHNICAL" | "PRODUCT" | "BUSINESS";
-                  isPrimary: boolean;
-                }>,
-              }
-            : undefined,
         // Create infrastructure inline (if present)
         infrastructure: infrastructure
           ? {
@@ -213,7 +181,6 @@ export async function seedServices(prisma: PrismaClient) {
     });
 
     serviceCount++;
-    ownershipCount += ownersData.length;
     if (infrastructure) {
       infrastructureCount++;
     }
@@ -225,7 +192,6 @@ export async function seedServices(prisma: PrismaClient) {
   }
 
   logSuccess(`Processed ${serviceCount} services`);
-  logSuccess(`Processed ${ownershipCount} service ownerships`);
   logSuccess(`Processed ${infrastructureCount} service infrastructure records`);
 
   // ==============================================
@@ -264,4 +230,95 @@ export async function seedServices(prisma: PrismaClient) {
   });
 
   console.log(`\nEssential Services: ${essentialServicesCount}`);
+}
+
+/**
+ * Seed Service Owners (Dev-only)
+ *
+ * Seeds service ownership assignments linking services to demo persons.
+ * Requires SERVICES and DEMO_PERSONS to be seeded first.
+ */
+export async function seedServiceOwners(prisma: PrismaClient) {
+  logSection("Service Owners (Dev Only)");
+
+  // ==============================================
+  // Prerequisites
+  // ==============================================
+  const persons = await prisma.person.findMany({});
+  const services = await prisma.service.findMany({
+    select: { id: true, name: true },
+  });
+
+  requireEntities(persons, "persons");
+  requireEntities(services, "services");
+
+  // Create lookup maps
+  const personMap = new Map(
+    persons.map((p) => [`${p.firstName} ${p.lastName}`, p.id]),
+  );
+  const serviceMap = new Map(services.map((s) => [s.name, s.id]));
+
+  // ==============================================
+  // Create Service Ownerships
+  // ==============================================
+  logStep("👥", "Creating service ownership assignments...");
+
+  let ownershipCount = 0;
+  let skippedCount = 0;
+
+  // Check existing ownerships to avoid duplicates
+  const existingOwnerships = await prisma.serviceOwnership.findMany({
+    select: { serviceId: true, personId: true },
+  });
+  const existingOwnershipSet = new Set(
+    existingOwnerships.map((o) => `${o.serviceId}-${o.personId}`),
+  );
+
+  for (const serviceData of SEED_CONFIG.SERVICES) {
+    const serviceId = serviceMap.get(serviceData.name);
+    if (!serviceId) {
+      logWarning(`Service ${serviceData.name} not found, skipping owners`);
+      continue;
+    }
+
+    // Get owners from config
+    const owners = "owners" in serviceData ? serviceData.owners : undefined;
+    if (!owners) {
+      continue;
+    }
+
+    for (const owner of owners) {
+      const personId = personMap.get(owner.personName);
+      if (!personId) {
+        logWarning(
+          `Person ${owner.personName} not found for service ${serviceData.name}, skipping`,
+        );
+        skippedCount++;
+        continue;
+      }
+
+      // Check if already exists (idempotent)
+      const key = `${serviceId}-${personId}`;
+      if (existingOwnershipSet.has(key)) {
+        ownershipCount++;
+        continue;
+      }
+
+      await prisma.serviceOwnership.create({
+        data: {
+          serviceId,
+          personId,
+          ownershipType: owner.type,
+          isPrimary: owner.isPrimary,
+        },
+      });
+
+      ownershipCount++;
+    }
+  }
+
+  logSuccess(`Processed ${ownershipCount} service ownerships`);
+  if (skippedCount > 0) {
+    logWarning(`Skipped ${skippedCount} ownerships (persons not found)`);
+  }
 }

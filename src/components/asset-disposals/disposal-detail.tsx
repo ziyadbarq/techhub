@@ -26,6 +26,7 @@ import {
 import { convertCurrencyAction } from "@/interface-adapters/controllers/exchange-rate.controller";
 import { ApprovalWorkflow } from "./approval-workflow";
 import { Play, X, CheckCircle2, FileText, Download } from "lucide-react";
+import { formatDate } from "@/lib/utils/date-format";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -266,12 +267,7 @@ export function DisposalDetail({
                         {disposal.certificateNumber}
                       </p>
                       <p className="text-muted-foreground text-sm">
-                        Generated on{" "}
-                        {disposal.certificateIssuedAt
-                          ? new Date(
-                              disposal.certificateIssuedAt,
-                            ).toLocaleDateString()
-                          : "N/A"}
+                        Generated on {formatDate(disposal.certificateIssuedAt)}
                       </p>
                     </div>
                     <Button variant="outline" size="sm" className="gap-2">

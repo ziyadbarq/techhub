@@ -39,12 +39,12 @@ export type AssetDisposalSumAggregateOutputType = {
 export type AssetDisposalMinAggregateOutputType = {
   id: string | null
   assetId: string | null
-  disposalType: string | null
+  disposalType: $Enums.DisposalTypeEnum | null
   reason: string | null
   initiatedById: string | null
   approvedById: string | null
   approvedAt: Date | null
-  status: string | null
+  status: $Enums.DisposalStatusEnum | null
   estimatedValue: runtime.Decimal | null
   actualProceeds: runtime.Decimal | null
   currency: string | null
@@ -61,12 +61,12 @@ export type AssetDisposalMinAggregateOutputType = {
 export type AssetDisposalMaxAggregateOutputType = {
   id: string | null
   assetId: string | null
-  disposalType: string | null
+  disposalType: $Enums.DisposalTypeEnum | null
   reason: string | null
   initiatedById: string | null
   approvedById: string | null
   approvedAt: Date | null
-  status: string | null
+  status: $Enums.DisposalStatusEnum | null
   estimatedValue: runtime.Decimal | null
   actualProceeds: runtime.Decimal | null
   currency: string | null
@@ -274,12 +274,12 @@ export type AssetDisposalGroupByArgs<ExtArgs extends runtime.Types.Extensions.In
 export type AssetDisposalGroupByOutputType = {
   id: string
   assetId: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason: string | null
   initiatedById: string
   approvedById: string | null
   approvedAt: Date | null
-  status: string
+  status: $Enums.DisposalStatusEnum
   estimatedValue: runtime.Decimal | null
   actualProceeds: runtime.Decimal | null
   currency: string | null
@@ -321,12 +321,12 @@ export type AssetDisposalWhereInput = {
   NOT?: Prisma.AssetDisposalWhereInput | Prisma.AssetDisposalWhereInput[]
   id?: Prisma.StringFilter<"AssetDisposal"> | string
   assetId?: Prisma.StringFilter<"AssetDisposal"> | string
-  disposalType?: Prisma.StringFilter<"AssetDisposal"> | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFilter<"AssetDisposal"> | $Enums.DisposalTypeEnum
   reason?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
   initiatedById?: Prisma.StringFilter<"AssetDisposal"> | string
   approvedById?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"AssetDisposal"> | Date | string | null
-  status?: Prisma.StringFilter<"AssetDisposal"> | string
+  status?: Prisma.EnumDisposalStatusEnumFilter<"AssetDisposal"> | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.DecimalNullableFilter<"AssetDisposal"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.DecimalNullableFilter<"AssetDisposal"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
@@ -385,12 +385,12 @@ export type AssetDisposalWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.AssetDisposalWhereInput[]
   NOT?: Prisma.AssetDisposalWhereInput | Prisma.AssetDisposalWhereInput[]
   assetId?: Prisma.StringFilter<"AssetDisposal"> | string
-  disposalType?: Prisma.StringFilter<"AssetDisposal"> | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFilter<"AssetDisposal"> | $Enums.DisposalTypeEnum
   reason?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
   initiatedById?: Prisma.StringFilter<"AssetDisposal"> | string
   approvedById?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"AssetDisposal"> | Date | string | null
-  status?: Prisma.StringFilter<"AssetDisposal"> | string
+  status?: Prisma.EnumDisposalStatusEnumFilter<"AssetDisposal"> | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.DecimalNullableFilter<"AssetDisposal"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.DecimalNullableFilter<"AssetDisposal"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
@@ -446,12 +446,12 @@ export type AssetDisposalScalarWhereWithAggregatesInput = {
   NOT?: Prisma.AssetDisposalScalarWhereWithAggregatesInput | Prisma.AssetDisposalScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"AssetDisposal"> | string
   assetId?: Prisma.StringWithAggregatesFilter<"AssetDisposal"> | string
-  disposalType?: Prisma.StringWithAggregatesFilter<"AssetDisposal"> | string
+  disposalType?: Prisma.EnumDisposalTypeEnumWithAggregatesFilter<"AssetDisposal"> | $Enums.DisposalTypeEnum
   reason?: Prisma.StringNullableWithAggregatesFilter<"AssetDisposal"> | string | null
   initiatedById?: Prisma.StringWithAggregatesFilter<"AssetDisposal"> | string
   approvedById?: Prisma.StringNullableWithAggregatesFilter<"AssetDisposal"> | string | null
   approvedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"AssetDisposal"> | Date | string | null
-  status?: Prisma.StringWithAggregatesFilter<"AssetDisposal"> | string
+  status?: Prisma.EnumDisposalStatusEnumWithAggregatesFilter<"AssetDisposal"> | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.DecimalNullableWithAggregatesFilter<"AssetDisposal"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.DecimalNullableWithAggregatesFilter<"AssetDisposal"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableWithAggregatesFilter<"AssetDisposal"> | string | null
@@ -469,10 +469,10 @@ export type AssetDisposalScalarWhereWithAggregatesInput = {
 
 export type AssetDisposalCreateInput = {
   id?: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason?: string | null
   approvedAt?: Date | string | null
-  status?: string
+  status?: $Enums.DisposalStatusEnum
   estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -496,12 +496,12 @@ export type AssetDisposalCreateInput = {
 export type AssetDisposalUncheckedCreateInput = {
   id?: string
   assetId: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason?: string | null
   initiatedById: string
   approvedById?: string | null
   approvedAt?: Date | string | null
-  status?: string
+  status?: $Enums.DisposalStatusEnum
   estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -521,10 +521,10 @@ export type AssetDisposalUncheckedCreateInput = {
 
 export type AssetDisposalUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -548,12 +548,12 @@ export type AssetDisposalUpdateInput = {
 export type AssetDisposalUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   initiatedById?: Prisma.StringFieldUpdateOperationsInput | string
   approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -574,12 +574,12 @@ export type AssetDisposalUncheckedUpdateInput = {
 export type AssetDisposalCreateManyInput = {
   id?: string
   assetId: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason?: string | null
   initiatedById: string
   approvedById?: string | null
   approvedAt?: Date | string | null
-  status?: string
+  status?: $Enums.DisposalStatusEnum
   estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -597,10 +597,10 @@ export type AssetDisposalCreateManyInput = {
 
 export type AssetDisposalUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -618,12 +618,12 @@ export type AssetDisposalUpdateManyMutationInput = {
 export type AssetDisposalUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   initiatedById?: Prisma.StringFieldUpdateOperationsInput | string
   approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -772,6 +772,14 @@ export type AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput = {
   update?: Prisma.AssetDisposalUpdateWithWhereUniqueWithoutAssetInput | Prisma.AssetDisposalUpdateWithWhereUniqueWithoutAssetInput[]
   updateMany?: Prisma.AssetDisposalUpdateManyWithWhereWithoutAssetInput | Prisma.AssetDisposalUpdateManyWithWhereWithoutAssetInput[]
   deleteMany?: Prisma.AssetDisposalScalarWhereInput | Prisma.AssetDisposalScalarWhereInput[]
+}
+
+export type EnumDisposalTypeEnumFieldUpdateOperationsInput = {
+  set?: $Enums.DisposalTypeEnum
+}
+
+export type EnumDisposalStatusEnumFieldUpdateOperationsInput = {
+  set?: $Enums.DisposalStatusEnum
 }
 
 export type AssetDisposalCreateNestedOneWithoutApprovalsInput = {
@@ -930,10 +938,10 @@ export type AssetDisposalUncheckedUpdateManyWithoutDisposalVendorNestedInput = {
 
 export type AssetDisposalCreateWithoutAssetInput = {
   id?: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason?: string | null
   approvedAt?: Date | string | null
-  status?: string
+  status?: $Enums.DisposalStatusEnum
   estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -955,12 +963,12 @@ export type AssetDisposalCreateWithoutAssetInput = {
 
 export type AssetDisposalUncheckedCreateWithoutAssetInput = {
   id?: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason?: string | null
   initiatedById: string
   approvedById?: string | null
   approvedAt?: Date | string | null
-  status?: string
+  status?: $Enums.DisposalStatusEnum
   estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1010,12 +1018,12 @@ export type AssetDisposalScalarWhereInput = {
   NOT?: Prisma.AssetDisposalScalarWhereInput | Prisma.AssetDisposalScalarWhereInput[]
   id?: Prisma.StringFilter<"AssetDisposal"> | string
   assetId?: Prisma.StringFilter<"AssetDisposal"> | string
-  disposalType?: Prisma.StringFilter<"AssetDisposal"> | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFilter<"AssetDisposal"> | $Enums.DisposalTypeEnum
   reason?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
   initiatedById?: Prisma.StringFilter<"AssetDisposal"> | string
   approvedById?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
   approvedAt?: Prisma.DateTimeNullableFilter<"AssetDisposal"> | Date | string | null
-  status?: Prisma.StringFilter<"AssetDisposal"> | string
+  status?: Prisma.EnumDisposalStatusEnumFilter<"AssetDisposal"> | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.DecimalNullableFilter<"AssetDisposal"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.DecimalNullableFilter<"AssetDisposal"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"AssetDisposal"> | string | null
@@ -1033,10 +1041,10 @@ export type AssetDisposalScalarWhereInput = {
 
 export type AssetDisposalCreateWithoutApprovalsInput = {
   id?: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason?: string | null
   approvedAt?: Date | string | null
-  status?: string
+  status?: $Enums.DisposalStatusEnum
   estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1059,12 +1067,12 @@ export type AssetDisposalCreateWithoutApprovalsInput = {
 export type AssetDisposalUncheckedCreateWithoutApprovalsInput = {
   id?: string
   assetId: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason?: string | null
   initiatedById: string
   approvedById?: string | null
   approvedAt?: Date | string | null
-  status?: string
+  status?: $Enums.DisposalStatusEnum
   estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1099,10 +1107,10 @@ export type AssetDisposalUpdateToOneWithWhereWithoutApprovalsInput = {
 
 export type AssetDisposalUpdateWithoutApprovalsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1125,12 +1133,12 @@ export type AssetDisposalUpdateWithoutApprovalsInput = {
 export type AssetDisposalUncheckedUpdateWithoutApprovalsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   initiatedById?: Prisma.StringFieldUpdateOperationsInput | string
   approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1149,10 +1157,10 @@ export type AssetDisposalUncheckedUpdateWithoutApprovalsInput = {
 
 export type AssetDisposalCreateWithoutDocumentsInput = {
   id?: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason?: string | null
   approvedAt?: Date | string | null
-  status?: string
+  status?: $Enums.DisposalStatusEnum
   estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1175,12 +1183,12 @@ export type AssetDisposalCreateWithoutDocumentsInput = {
 export type AssetDisposalUncheckedCreateWithoutDocumentsInput = {
   id?: string
   assetId: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason?: string | null
   initiatedById: string
   approvedById?: string | null
   approvedAt?: Date | string | null
-  status?: string
+  status?: $Enums.DisposalStatusEnum
   estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1215,10 +1223,10 @@ export type AssetDisposalUpdateToOneWithWhereWithoutDocumentsInput = {
 
 export type AssetDisposalUpdateWithoutDocumentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1241,12 +1249,12 @@ export type AssetDisposalUpdateWithoutDocumentsInput = {
 export type AssetDisposalUncheckedUpdateWithoutDocumentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   initiatedById?: Prisma.StringFieldUpdateOperationsInput | string
   approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1265,10 +1273,10 @@ export type AssetDisposalUncheckedUpdateWithoutDocumentsInput = {
 
 export type AssetDisposalCreateWithoutInitiatedByInput = {
   id?: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason?: string | null
   approvedAt?: Date | string | null
-  status?: string
+  status?: $Enums.DisposalStatusEnum
   estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1291,11 +1299,11 @@ export type AssetDisposalCreateWithoutInitiatedByInput = {
 export type AssetDisposalUncheckedCreateWithoutInitiatedByInput = {
   id?: string
   assetId: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason?: string | null
   approvedById?: string | null
   approvedAt?: Date | string | null
-  status?: string
+  status?: $Enums.DisposalStatusEnum
   estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1325,10 +1333,10 @@ export type AssetDisposalCreateManyInitiatedByInputEnvelope = {
 
 export type AssetDisposalCreateWithoutApprovedByInput = {
   id?: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason?: string | null
   approvedAt?: Date | string | null
-  status?: string
+  status?: $Enums.DisposalStatusEnum
   estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1351,11 +1359,11 @@ export type AssetDisposalCreateWithoutApprovedByInput = {
 export type AssetDisposalUncheckedCreateWithoutApprovedByInput = {
   id?: string
   assetId: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason?: string | null
   initiatedById: string
   approvedAt?: Date | string | null
-  status?: string
+  status?: $Enums.DisposalStatusEnum
   estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1417,10 +1425,10 @@ export type AssetDisposalUpdateManyWithWhereWithoutApprovedByInput = {
 
 export type AssetDisposalCreateWithoutDisposalVendorInput = {
   id?: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason?: string | null
   approvedAt?: Date | string | null
-  status?: string
+  status?: $Enums.DisposalStatusEnum
   estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1443,12 +1451,12 @@ export type AssetDisposalCreateWithoutDisposalVendorInput = {
 export type AssetDisposalUncheckedCreateWithoutDisposalVendorInput = {
   id?: string
   assetId: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason?: string | null
   initiatedById: string
   approvedById?: string | null
   approvedAt?: Date | string | null
-  status?: string
+  status?: $Enums.DisposalStatusEnum
   estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1493,12 +1501,12 @@ export type AssetDisposalUpdateManyWithWhereWithoutDisposalVendorInput = {
 
 export type AssetDisposalCreateManyAssetInput = {
   id?: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason?: string | null
   initiatedById: string
   approvedById?: string | null
   approvedAt?: Date | string | null
-  status?: string
+  status?: $Enums.DisposalStatusEnum
   estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1516,10 +1524,10 @@ export type AssetDisposalCreateManyAssetInput = {
 
 export type AssetDisposalUpdateWithoutAssetInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1541,12 +1549,12 @@ export type AssetDisposalUpdateWithoutAssetInput = {
 
 export type AssetDisposalUncheckedUpdateWithoutAssetInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   initiatedById?: Prisma.StringFieldUpdateOperationsInput | string
   approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1566,12 +1574,12 @@ export type AssetDisposalUncheckedUpdateWithoutAssetInput = {
 
 export type AssetDisposalUncheckedUpdateManyWithoutAssetInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   initiatedById?: Prisma.StringFieldUpdateOperationsInput | string
   approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1590,11 +1598,11 @@ export type AssetDisposalUncheckedUpdateManyWithoutAssetInput = {
 export type AssetDisposalCreateManyInitiatedByInput = {
   id?: string
   assetId: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason?: string | null
   approvedById?: string | null
   approvedAt?: Date | string | null
-  status?: string
+  status?: $Enums.DisposalStatusEnum
   estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1613,11 +1621,11 @@ export type AssetDisposalCreateManyInitiatedByInput = {
 export type AssetDisposalCreateManyApprovedByInput = {
   id?: string
   assetId: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason?: string | null
   initiatedById: string
   approvedAt?: Date | string | null
-  status?: string
+  status?: $Enums.DisposalStatusEnum
   estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1635,10 +1643,10 @@ export type AssetDisposalCreateManyApprovedByInput = {
 
 export type AssetDisposalUpdateWithoutInitiatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1661,11 +1669,11 @@ export type AssetDisposalUpdateWithoutInitiatedByInput = {
 export type AssetDisposalUncheckedUpdateWithoutInitiatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1686,11 +1694,11 @@ export type AssetDisposalUncheckedUpdateWithoutInitiatedByInput = {
 export type AssetDisposalUncheckedUpdateManyWithoutInitiatedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1708,10 +1716,10 @@ export type AssetDisposalUncheckedUpdateManyWithoutInitiatedByInput = {
 
 export type AssetDisposalUpdateWithoutApprovedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1734,11 +1742,11 @@ export type AssetDisposalUpdateWithoutApprovedByInput = {
 export type AssetDisposalUncheckedUpdateWithoutApprovedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   initiatedById?: Prisma.StringFieldUpdateOperationsInput | string
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1759,11 +1767,11 @@ export type AssetDisposalUncheckedUpdateWithoutApprovedByInput = {
 export type AssetDisposalUncheckedUpdateManyWithoutApprovedByInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   initiatedById?: Prisma.StringFieldUpdateOperationsInput | string
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1782,12 +1790,12 @@ export type AssetDisposalUncheckedUpdateManyWithoutApprovedByInput = {
 export type AssetDisposalCreateManyDisposalVendorInput = {
   id?: string
   assetId: string
-  disposalType: string
+  disposalType: $Enums.DisposalTypeEnum
   reason?: string | null
   initiatedById: string
   approvedById?: string | null
   approvedAt?: Date | string | null
-  status?: string
+  status?: $Enums.DisposalStatusEnum
   estimatedValue?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
@@ -1804,10 +1812,10 @@ export type AssetDisposalCreateManyDisposalVendorInput = {
 
 export type AssetDisposalUpdateWithoutDisposalVendorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1830,12 +1838,12 @@ export type AssetDisposalUpdateWithoutDisposalVendorInput = {
 export type AssetDisposalUncheckedUpdateWithoutDisposalVendorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   initiatedById?: Prisma.StringFieldUpdateOperationsInput | string
   approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1855,12 +1863,12 @@ export type AssetDisposalUncheckedUpdateWithoutDisposalVendorInput = {
 export type AssetDisposalUncheckedUpdateManyWithoutDisposalVendorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
-  disposalType?: Prisma.StringFieldUpdateOperationsInput | string
+  disposalType?: Prisma.EnumDisposalTypeEnumFieldUpdateOperationsInput | $Enums.DisposalTypeEnum
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   initiatedById?: Prisma.StringFieldUpdateOperationsInput | string
   approvedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  status?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumDisposalStatusEnumFieldUpdateOperationsInput | $Enums.DisposalStatusEnum
   estimatedValue?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   actualProceeds?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2062,12 +2070,12 @@ export type $AssetDisposalPayload<ExtArgs extends runtime.Types.Extensions.Inter
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     assetId: string
-    disposalType: string
+    disposalType: $Enums.DisposalTypeEnum
     reason: string | null
     initiatedById: string
     approvedById: string | null
     approvedAt: Date | null
-    status: string
+    status: $Enums.DisposalStatusEnum
     estimatedValue: runtime.Decimal | null
     actualProceeds: runtime.Decimal | null
     currency: string | null
@@ -2512,12 +2520,12 @@ export interface Prisma__AssetDisposalClient<T, Null = never, ExtArgs extends ru
 export interface AssetDisposalFieldRefs {
   readonly id: Prisma.FieldRef<"AssetDisposal", 'String'>
   readonly assetId: Prisma.FieldRef<"AssetDisposal", 'String'>
-  readonly disposalType: Prisma.FieldRef<"AssetDisposal", 'String'>
+  readonly disposalType: Prisma.FieldRef<"AssetDisposal", 'DisposalTypeEnum'>
   readonly reason: Prisma.FieldRef<"AssetDisposal", 'String'>
   readonly initiatedById: Prisma.FieldRef<"AssetDisposal", 'String'>
   readonly approvedById: Prisma.FieldRef<"AssetDisposal", 'String'>
   readonly approvedAt: Prisma.FieldRef<"AssetDisposal", 'DateTime'>
-  readonly status: Prisma.FieldRef<"AssetDisposal", 'String'>
+  readonly status: Prisma.FieldRef<"AssetDisposal", 'DisposalStatusEnum'>
   readonly estimatedValue: Prisma.FieldRef<"AssetDisposal", 'Decimal'>
   readonly actualProceeds: Prisma.FieldRef<"AssetDisposal", 'Decimal'>
   readonly currency: Prisma.FieldRef<"AssetDisposal", 'String'>

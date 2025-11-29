@@ -52,9 +52,13 @@ import { PrismaAssetRepository } from "@/infrastructure/repositories/prisma-asse
 import { CreateAssetUseCase } from "@/core/use-cases/asset/asset/create-asset.use-case";
 import { GetAssetUseCase } from "@/core/use-cases/asset/asset/get-asset.use-case";
 import { ListAssetsUseCase } from "@/core/use-cases/asset/asset/list-assets.use-case";
+import { ListAssetsPaginatedUseCase } from "@/core/use-cases/asset/asset/list-assets-paginated.use-case";
 import { UpdateAssetUseCase } from "@/core/use-cases/asset/asset/update-asset.use-case";
 import { DeleteAssetUseCase } from "@/core/use-cases/asset/asset/delete-asset.use-case";
 import { DeleteAssetWithConfirmationUseCase } from "@/core/use-cases/asset/asset/delete-asset-with-confirmation.use-case";
+import { GetAssetStatisticsUseCase } from "@/core/use-cases/asset/asset/get-asset-statistics.use-case";
+import { BulkDeleteAssetsUseCase } from "@/core/use-cases/asset/asset/bulk-delete-assets.use-case";
+import { BulkUpdateAssetStatusUseCase } from "@/core/use-cases/asset/asset/bulk-update-asset-status.use-case";
 
 // Asset Assignment Repository
 import type { IAssetAssignmentRepository } from "@/core/repositories/asset-assignment.repository.interface";
@@ -301,6 +305,26 @@ export function bindAssetDependencies(container: Container): void {
       DI_TOKENS.DeleteAssetWithConfirmationUseCase,
     )
     .to(DeleteAssetWithConfirmationUseCase)
+    .inTransientScope();
+
+  container
+    .bind<ListAssetsPaginatedUseCase>(DI_TOKENS.ListAssetsPaginatedUseCase)
+    .to(ListAssetsPaginatedUseCase)
+    .inTransientScope();
+
+  container
+    .bind<GetAssetStatisticsUseCase>(DI_TOKENS.GetAssetStatisticsUseCase)
+    .to(GetAssetStatisticsUseCase)
+    .inTransientScope();
+
+  container
+    .bind<BulkDeleteAssetsUseCase>(DI_TOKENS.BulkDeleteAssetsUseCase)
+    .to(BulkDeleteAssetsUseCase)
+    .inTransientScope();
+
+  container
+    .bind<BulkUpdateAssetStatusUseCase>(DI_TOKENS.BulkUpdateAssetStatusUseCase)
+    .to(BulkUpdateAssetStatusUseCase)
     .inTransientScope();
 
   // ==========================================

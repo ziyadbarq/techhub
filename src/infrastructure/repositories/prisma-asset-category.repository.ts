@@ -31,7 +31,6 @@ export class PrismaAssetCategoryRepository implements IAssetCategoryRepository {
           name: assetCategory.name,
           description: assetCategory.description,
           lifecycleModelId: assetCategory.lifecycleModelId,
-          isConsumable: assetCategory.isConsumable,
         },
       });
 
@@ -120,24 +119,6 @@ export class PrismaAssetCategoryRepository implements IAssetCategoryRepository {
     return assetCategories.map((ac: PrismaAssetCategory) => this.toDomain(ac));
   }
 
-  async findConsumable(): Promise<AssetCategory[]> {
-    const assetCategories = await this.prisma.assetCategory.findMany({
-      where: { isConsumable: true },
-      orderBy: { name: "asc" },
-    });
-
-    return assetCategories.map((ac: PrismaAssetCategory) => this.toDomain(ac));
-  }
-
-  async findNonConsumable(): Promise<AssetCategory[]> {
-    const assetCategories = await this.prisma.assetCategory.findMany({
-      where: { isConsumable: false },
-      orderBy: { name: "asc" },
-    });
-
-    return assetCategories.map((ac: PrismaAssetCategory) => this.toDomain(ac));
-  }
-
   async findAll(options?: {
     skip?: number;
     take?: number;
@@ -161,22 +142,14 @@ export class PrismaAssetCategoryRepository implements IAssetCategoryRepository {
     options?: {
       skip?: number;
       take?: number;
-      isConsumable?: boolean;
     },
   ): Promise<AssetCategory[]> {
     const assetCategories = await this.prisma.assetCategory.findMany({
       where: {
-        AND: [
-          {
-            OR: [
-              { name: { contains: query, mode: "insensitive" } },
-              { code: { contains: query, mode: "insensitive" } },
-              { description: { contains: query, mode: "insensitive" } },
-            ],
-          },
-          options?.isConsumable !== undefined
-            ? { isConsumable: options.isConsumable }
-            : {},
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { code: { contains: query, mode: "insensitive" } },
+          { description: { contains: query, mode: "insensitive" } },
         ],
       },
       skip: options?.skip,
@@ -214,7 +187,6 @@ export class PrismaAssetCategoryRepository implements IAssetCategoryRepository {
           name: assetCategory.name,
           description: assetCategory.description,
           lifecycleModelId: assetCategory.lifecycleModelId,
-          isConsumable: assetCategory.isConsumable,
         },
       });
 
@@ -282,7 +254,6 @@ export class PrismaAssetCategoryRepository implements IAssetCategoryRepository {
       name: prismaAssetCategory.name,
       description: prismaAssetCategory.description,
       lifecycleModelId: prismaAssetCategory.lifecycleModelId,
-      isConsumable: prismaAssetCategory.isConsumable,
       createdAt: prismaAssetCategory.createdAt,
       updatedAt: prismaAssetCategory.updatedAt,
     });

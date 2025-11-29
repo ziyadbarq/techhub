@@ -10,7 +10,6 @@ export interface AssetCategoryProps {
   code: string;
   description: string | null;
   lifecycleModelId: string | null;
-  isConsumable: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,7 +19,6 @@ export interface CreateAssetCategoryProps {
   code: string;
   description?: string | null;
   lifecycleModelId?: string | null;
-  isConsumable?: boolean;
 }
 
 export class AssetCategory {
@@ -42,7 +40,6 @@ export class AssetCategory {
       code: props.code.trim().toUpperCase(),
       description: props.description?.trim() || null,
       lifecycleModelId: props.lifecycleModelId || null,
-      isConsumable: props.isConsumable || false,
       createdAt: now,
       updatedAt: now,
     });
@@ -63,7 +60,6 @@ export class AssetCategory {
     code?: string;
     description?: string | null;
     lifecycleModelId?: string | null;
-    isConsumable?: boolean;
   }): void {
     if (props.name !== undefined) {
       AssetCategory.validateName(props.name);
@@ -83,39 +79,14 @@ export class AssetCategory {
       this.props.lifecycleModelId = props.lifecycleModelId;
     }
 
-    if (props.isConsumable !== undefined) {
-      this.props.isConsumable = props.isConsumable;
-    }
-
     this.props.updatedAt = new Date();
   }
 
   /**
    * Link to a lifecycle model
-   * Business rule: Consumable items typically don't have lifecycle models
    */
   setLifecycleModel(lifecycleModelId: string | null): void {
-    if (this.props.isConsumable && lifecycleModelId) {
-      // Warning: Consumable items typically don't have lifecycle models
-      // but we allow it for flexibility
-    }
-
     this.props.lifecycleModelId = lifecycleModelId;
-    this.props.updatedAt = new Date();
-  }
-
-  /**
-   * Mark as consumable or non-consumable
-   * Business rule: Consumable items cannot have assigned lifecycles typically
-   */
-  setConsumable(isConsumable: boolean): void {
-    if (isConsumable && this.props.lifecycleModelId) {
-      throw new Error(
-        "Cannot mark category as consumable when it has a lifecycle model. Remove lifecycle model first.",
-      );
-    }
-
-    this.props.isConsumable = isConsumable;
     this.props.updatedAt = new Date();
   }
 
@@ -165,14 +136,6 @@ export class AssetCategory {
   }
 
   /**
-   * Check if this is a consumable category
-   * Consumables: cables, mice, keyboards, etc. (no tracking, no lifecycle)
-   */
-  isConsumableCategory(): boolean {
-    return this.props.isConsumable;
-  }
-
-  /**
    * Check if has lifecycle model
    */
   hasLifecycleModel(): boolean {
@@ -199,10 +162,6 @@ export class AssetCategory {
 
   get lifecycleModelId(): string | null {
     return this.props.lifecycleModelId;
-  }
-
-  get isConsumable(): boolean {
-    return this.props.isConsumable;
   }
 
   get createdAt(): Date {

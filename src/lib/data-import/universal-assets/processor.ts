@@ -3,17 +3,21 @@
  *
  * Main orchestrator for the universal assets import process.
  * Coordinates prefix parsing, entity resolution, field inference, and asset creation.
+ * Creates stock movements for imported assets with source tracking.
  */
 
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
-import type { ILoggerService } from "@/core/services";
 import type {
-  CreateAssetUseCase,
-  UpdateAssetUseCase,
-} from "@/core/use-cases/asset/asset";
+  ILoggerService,
+  ICodeGeneratorService,
+  ISarConversionService,
+} from "@/core/services";
+import type { IAssetMovementService } from "@/core/services/asset-movement.service.interface";
+import type { UpdateAssetUseCase } from "@/core/use-cases/asset/asset";
 import type { UpdateAssetInput } from "@/core/use-cases/asset/asset/update-asset.use-case";
+import { prisma } from "@/infrastructure/database/prisma/client";
 import type {
   GroupedRowData,
   UniversalImportSettings,
@@ -27,7 +31,9 @@ import {
   groupRowByPrefix,
   validateRequiredColumns,
   extractUniquePersonEmails,
+  detectDuplicatesInFile,
 } from "./prefix-parser";
+import { csvSanitizer } from "../csv-sanitizer";
 import { AutoCreateResolver } from "./auto-create-resolver";
 import { CustomFieldInferrer } from "./custom-field-inferrer";
 import { AssignmentHandler } from "./assignment-handler";
@@ -44,6 +50,12 @@ export async function processUniversalAssetsImport(
   const startTime = Date.now();
   const container = getContainer();
   const logger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
+  const codeGenerator = container.get<ICodeGeneratorService>(
+    DI_TOKENS.ICodeGeneratorService,
+  );
+  const sarConversionService = container.get<ISarConversionService>(
+    DI_TOKENS.ISarConversionService,
+  );
 
   logger.info("Starting Universal Assets Import", {
     rowCount: rows.length,
@@ -64,6 +76,8 @@ export async function processUniversalAssetsImport(
     failureCount: 0,
     assetsCreated: 0,
     assetsUpdated: 0,
+    createdAssets: [],
+    updatedAssets: [],
     assignmentsCreated: 0,
     assignmentsReassigned: 0,
     assignmentsUnchanged: 0,
@@ -112,11 +126,98 @@ export async function processUniversalAssetsImport(
       return result;
     }
 
+    // Pre-process rows based on settings
+    let processedRows = rows;
+
+    // Skip empty rows if configured
+    if (settings.skipEmptyRows !== false) {
+      const originalCount = processedRows.length;
+      processedRows = processedRows.filter(
+        (row) => !csvSanitizer.isEmptyRow(row),
+      );
+      if (processedRows.length < originalCount) {
+        logger.info("Skipped empty rows", {
+          skipped: originalCount - processedRows.length,
+        });
+      }
+    }
+
+    // Apply data sanitization
+    processedRows = processedRows.map((row) => {
+      let processed = { ...row };
+
+      // Trim whitespace
+      if (settings.autoTrimWhitespace !== false) {
+        processed = csvSanitizer.trimAllFields(processed);
+      }
+
+      // Auto-fix common errors (smart quotes, etc.)
+      if (settings.autoFixCommonErrors !== false) {
+        // Apply string-level fixes without field config
+        for (const [key, value] of Object.entries(processed)) {
+          if (typeof value === "string") {
+            // Fix smart quotes and dashes
+            processed[key] = value
+              .replace(/[\u2018\u2019]/g, "'") // Smart single quotes
+              .replace(/[\u201C\u201D]/g, '"') // Smart double quotes
+              .replace(/[\u2013\u2014]/g, "-"); // Em-dash and en-dash
+          }
+        }
+      }
+
+      // Normalize text case
+      if (settings.normalizeText !== false) {
+        for (const [key, value] of Object.entries(processed)) {
+          if (typeof value === "string") {
+            const lowerKey = key.toLowerCase();
+            if (lowerKey.includes("email")) {
+              processed[key] = value.toLowerCase().trim();
+            } else if (
+              lowerKey.includes("code") ||
+              lowerKey.includes("lifecycle")
+            ) {
+              processed[key] = value.toUpperCase().trim();
+            } else if (lowerKey.includes("name")) {
+              processed[key] = value
+                .split(" ")
+                .map(
+                  (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase(),
+                )
+                .join(" ")
+                .trim();
+            }
+          }
+        }
+      }
+
+      return processed;
+    });
+
+    // Update row count after filtering
+    result.totalRows = processedRows.length;
+
     // Parse all rows
-    const parsedRows = rows.map((row, index) => ({
+    const parsedRows = processedRows.map((row, index) => ({
       rowNumber: index + 1,
       data: groupRowByPrefix(row, columns),
     }));
+
+    // Check for duplicates within file (warning only, doesn't block import)
+    const duplicateCheck = detectDuplicatesInFile(parsedRows);
+    if (duplicateCheck.hasDuplicates) {
+      result.warnings = result.warnings || [];
+      for (const dup of duplicateCheck.duplicateSerialNumbers) {
+        result.warnings.push({
+          type: "duplicate_serial_number",
+          message: `Serial number "${dup.serialNumber}" appears ${dup.rowNumbers.length} times (rows: ${dup.rowNumbers.join(", ")}). Later rows will update earlier ones.`,
+          rowNumbers: dup.rowNumbers,
+        });
+      }
+      logger.warn("Duplicate serial numbers detected in import file", {
+        duplicateCount: duplicateCheck.duplicateSerialNumbers.length,
+        totalDuplicateRows: duplicateCheck.totalDuplicateRows,
+      });
+    }
 
     // Phase 2: Validate persons exist
     reportProgress(
@@ -129,25 +230,38 @@ export async function processUniversalAssetsImport(
     const uniqueEmails = extractUniquePersonEmails(parsedRows);
     await autoCreateResolver.preloadPersons(uniqueEmails);
 
-    // Check each row's person
+    // Check each row's person (optional unless requirePersonForImport is true)
     const validRows: Array<{
       rowNumber: number;
       data: GroupedRowData;
-      personId: string;
+      personId: string | null;
     }> = [];
 
     for (const row of parsedRows) {
       const email = row.data.person?.email;
-      if (!email || String(email).trim() === "") {
-        result.skipCount++;
-        result.skipped.push({
+      const hasEmail = email && String(email).trim() !== "";
+
+      if (!hasEmail) {
+        if (settings.requirePersonForImport) {
+          // Skip row - person required but missing
+          result.skipCount++;
+          result.skipped.push({
+            rowNumber: row.rowNumber,
+            identifier: `Row ${row.rowNumber}`,
+            reason: "Missing person.email (required by settings)",
+          });
+          continue;
+        }
+        // No email provided - will create asset without assignment
+        validRows.push({
           rowNumber: row.rowNumber,
-          identifier: `Row ${row.rowNumber}`,
-          reason: "Missing person.email",
+          data: row.data,
+          personId: null,
         });
         continue;
       }
 
+      // Has email - validate person exists
       const personResult = await autoCreateResolver.resolvePerson(email);
       if (!personResult.id) {
         result.skipCount++;
@@ -179,6 +293,48 @@ export async function processUniversalAssetsImport(
       return result;
     }
 
+    // Dry run mode - validate without importing
+    if (settings.dryRun) {
+      reportProgress(
+        "complete",
+        "Dry run complete - no changes made",
+        validRows.length,
+        validRows.length,
+        11,
+      );
+
+      // Count what would be created vs updated
+      const assetRepo = container.get<IAssetRepository>(
+        DI_TOKENS.IAssetRepository,
+      );
+      for (const row of validRows) {
+        const serialNumber = row.data.asset?.serialNumber;
+        if (serialNumber) {
+          const exists = await assetRepo.findBySerialNumber(
+            String(serialNumber),
+          );
+          if (exists) {
+            result.assetsUpdated++;
+          } else {
+            result.assetsCreated++;
+          }
+        }
+        result.successCount++;
+      }
+
+      logger.info("Universal Assets Import dry run completed", {
+        totalRows: validRows.length,
+        wouldCreate: result.assetsCreated,
+        wouldUpdate: result.assetsUpdated,
+      });
+
+      const endTime = Date.now();
+      result.duration = (endTime - startTime) / 1000;
+      result.throughput =
+        result.duration > 0 ? validRows.length / result.duration : 0;
+      return result;
+    }
+
     // Pre-load custom field definitions
     await customFieldInferrer.preloadCache();
 
@@ -193,6 +349,7 @@ export async function processUniversalAssetsImport(
         if (row.data.vendor && (row.data.vendor.code || row.data.vendor.name)) {
           const vendorResult = await autoCreateResolver.resolveOrCreateVendor(
             row.data.vendor,
+            settings.autoCreateMissingEntities,
           );
           if (vendorResult.error && settings.skipRowOnAutoCreateFailure) {
             result.failureCount++;
@@ -262,7 +419,10 @@ export async function processUniversalAssetsImport(
           result.errors.push({
             rowNumber: row.rowNumber,
             identifier,
-            error: "Category code or name is required",
+            error:
+              "Category is required for all assets. Provide category.code or category.name.",
+            suggestion:
+              "Add a category.code column (e.g., LAPTOP, DESKTOP, MONITOR) or category.name column (e.g., Laptop Computers)",
           });
           continue;
         }
@@ -293,10 +453,18 @@ export async function processUniversalAssetsImport(
         let modelId: string | undefined;
         if (row.data.model && (row.data.model.code || row.data.model.name)) {
           if (!vendorId) {
-            // Model requires vendor - skip model but continue with asset
+            // Model requires vendor - add warning but continue with asset
+            const modelName = row.data.model.code || row.data.model.name;
             logger.warn("Skipping model creation - vendor required", {
               rowNumber: row.rowNumber,
-              model: row.data.model.code || row.data.model.name,
+              model: modelName,
+            });
+            result.errors.push({
+              rowNumber: row.rowNumber,
+              identifier,
+              error: `Cannot create model "${modelName}" - manufacturer is required. Provide vendor.code or vendor.name column with the manufacturer.`,
+              suggestion:
+                "Add vendor.code or vendor.name columns to specify the manufacturer",
             });
           } else {
             const modelResult = await autoCreateResolver.resolveOrCreateModel(
@@ -363,9 +531,73 @@ export async function processUniversalAssetsImport(
         );
 
         let assetId: string;
+        let effectiveSerialNumber = String(serialNumber);
 
+        // Handle duplicate strategy for existing assets
         if (existingAsset) {
-          // Update existing asset
+          const strategy = settings.duplicateStrategy || "overwrite";
+
+          if (strategy === "skip") {
+            result.skipCount++;
+            result.skipped.push({
+              rowNumber: row.rowNumber,
+              identifier: effectiveSerialNumber,
+              reason: `Skipped: asset with serial number "${effectiveSerialNumber}" already exists`,
+            });
+            result.assignmentsUnchanged++;
+            continue;
+          }
+
+          if (strategy === "fail") {
+            result.failureCount++;
+            result.errors.push({
+              rowNumber: row.rowNumber,
+              identifier: effectiveSerialNumber,
+              error: `Duplicate: asset with serial number "${effectiveSerialNumber}" already exists`,
+            });
+            // Check error tolerance
+            if (settings.stopOnFirstError) {
+              logger.info("Stopping on first error as configured");
+              break;
+            }
+            const maxErrors = settings.maxErrorsBeforeAbort ?? 100;
+            if (maxErrors > 0 && result.failureCount >= maxErrors) {
+              logger.info("Max errors reached, aborting import", {
+                maxErrors,
+                failureCount: result.failureCount,
+              });
+              break;
+            }
+            continue;
+          }
+
+          if (strategy === "append") {
+            // Create new asset with modified serial number
+            effectiveSerialNumber = `${serialNumber}-COPY-${Date.now()}`;
+            // Check if appended serial also exists
+            const appendedExists = await assetRepo.findBySerialNumber(
+              effectiveSerialNumber,
+            );
+            if (appendedExists) {
+              result.failureCount++;
+              result.errors.push({
+                rowNumber: row.rowNumber,
+                identifier: effectiveSerialNumber,
+                error: `Cannot append suffix: asset with serial number "${effectiveSerialNumber}" also exists`,
+              });
+              continue;
+            }
+            // Fall through to create new asset with appended serial
+          }
+
+          // strategy === "overwrite" - continue with update logic below
+        }
+
+        if (
+          existingAsset &&
+          (settings.duplicateStrategy || "overwrite") === "overwrite"
+        ) {
+          // Update existing asset (use case handles validation)
           const updateUseCase = container.get<UpdateAssetUseCase>(
             DI_TOKENS.UpdateAssetUseCase,
           );
@@ -385,10 +617,6 @@ export async function processUniversalAssetsImport(
             updateData.purchaseCost = Number(assetData.purchaseCost);
           if (assetData.currency)
             updateData.currency = String(assetData.currency);
-          if (assetData.warrantyEndDate)
-            updateData.warrantyEndDate = new Date(
-              String(assetData.warrantyEndDate),
-            );
           if (assetData.condition)
             updateData.condition = String(assetData.condition);
           if (assetData.note) updateData.note = String(assetData.note);
@@ -408,75 +636,184 @@ export async function processUniversalAssetsImport(
           );
           assetId = existingAsset.id;
           result.assetsUpdated++;
-        } else {
-          // Create new asset
-          const createUseCase = container.get<CreateAssetUseCase>(
-            DI_TOKENS.CreateAssetUseCase,
-          );
-
-          const created = await createUseCase.execute({
-            assetTag: assetData.assetTag
-              ? String(assetData.assetTag)
-              : undefined,
+          result.updatedAssets.push({
+            id: existingAsset.id,
+            assetTag: existingAsset.assetTag,
             serialNumber: String(serialNumber),
-            assetCategoryId: categoryId,
-            assetModelId: modelId,
-            vendorId,
-            currentStockLocationId: stockLocationId,
-            lifecycleStateId,
-            purchaseDate: assetData.purchaseDate
-              ? new Date(String(assetData.purchaseDate))
-              : undefined,
-            purchaseCost: assetData.purchaseCost
-              ? Number(assetData.purchaseCost)
-              : undefined,
-            currency: assetData.currency
-              ? String(assetData.currency)
-              : undefined,
-            warrantyEndDate: assetData.warrantyEndDate
-              ? new Date(String(assetData.warrantyEndDate))
-              : undefined,
-            condition: assetData.condition as
-              | "NEW"
-              | "GOOD"
-              | "FAIR"
-              | "POOR"
-              | undefined,
-            note: assetData.note ? String(assetData.note) : undefined,
-            attributes:
-              Object.keys(transformedCustomFields).length > 0
-                ? transformedCustomFields
-                : undefined,
+            rowNumber: row.rowNumber,
           });
 
-          assetId = created.id;
-          result.assetsCreated++;
-        }
-
-        // Phase 11: Handle assignment
-        const assignmentResult = await assignmentHandler.handleAssignment(
-          assetId,
-          row.personId,
-          row.data.person.email,
-          settings,
-        );
-
-        switch (assignmentResult.action) {
-          case "created":
-            result.assignmentsCreated++;
-            break;
-          case "reassigned":
-            result.assignmentsReassigned++;
-            break;
-          case "unchanged":
-            result.assignmentsUnchanged++;
-            break;
-          case "failed":
-            logger.warn("Assignment failed", {
+          // Handle assignment for existing asset (non-transactional - less critical)
+          if (row.personId) {
+            const assignmentResult = await assignmentHandler.handleAssignment(
               assetId,
-              error: assignmentResult.error,
+              row.personId,
+              row.data.person.email,
+              settings,
+            );
+            switch (assignmentResult.action) {
+              case "created":
+                result.assignmentsCreated++;
+                break;
+              case "reassigned":
+                result.assignmentsReassigned++;
+                break;
+              case "unchanged":
+                result.assignmentsUnchanged++;
+                break;
+              case "failed":
+                logger.warn("Assignment failed for existing asset", {
+                  assetId,
+                  error: assignmentResult.error,
+                });
+                break;
+            }
+          } else {
+            result.assignmentsUnchanged++;
+          }
+        } else {
+          // Create new asset (or append-suffix case when existing asset with "append" strategy)
+          // Generate asset tag before transaction (uses CodeGeneratorService for sequential tags)
+          const generatedTag = assetData.assetTag
+            ? String(assetData.assetTag)
+            : await codeGenerator.generateCode("ASSET", "ASSET");
+
+          // Calculate SAR conversion for purchase cost (consistent with CreateAssetUseCase)
+          const purchaseCost = assetData.purchaseCost
+            ? Number(assetData.purchaseCost)
+            : null;
+          const currency = assetData.currency
+            ? String(assetData.currency)
+            : null;
+          const purchaseCostSar =
+            await sarConversionService.convertToSarIfNeeded(
+              purchaseCost,
+              currency,
+            );
+
+          // Get movement service for creating stock movements
+          const assetMovementService = container.get<IAssetMovementService>(
+            DI_TOKENS.IAssetMovementService,
+          );
+
+          // Create new asset + movement + assignment atomically within a transaction
+          const txResult = await prisma.$transaction(async (tx) => {
+            // Prepare asset data for transaction
+            // Use effectiveSerialNumber which may be modified for "append" strategy
+            const assetCreateData: Parameters<
+              typeof tx.asset.create
+            >[0]["data"] = {
+              serialNumber: effectiveSerialNumber,
+              assetCategoryId: categoryId,
+              assetTag: generatedTag,
+            };
+
+            // Optional fields
+            if (modelId) assetCreateData.assetModelId = modelId;
+            if (vendorId) assetCreateData.vendorId = vendorId;
+            if (stockLocationId)
+              assetCreateData.currentStockLocationId = stockLocationId;
+            if (lifecycleStateId)
+              assetCreateData.lifecycleStateId = lifecycleStateId;
+            if (assetData.purchaseDate)
+              assetCreateData.purchaseDate = new Date(
+                String(assetData.purchaseDate),
+              );
+            if (purchaseCost !== null)
+              assetCreateData.purchaseCost = purchaseCost;
+            if (currency) assetCreateData.currency = currency;
+            if (purchaseCostSar !== null)
+              assetCreateData.purchaseCostSar = purchaseCostSar;
+            if (assetData.condition)
+              assetCreateData.condition = assetData.condition as
+                | "NEW"
+                | "GOOD"
+                | "FAIR"
+                | "POOR";
+            if (assetData.note) assetCreateData.note = String(assetData.note);
+            if (Object.keys(transformedCustomFields).length > 0) {
+              assetCreateData.attributes = transformedCustomFields as object;
+            }
+
+            // Create asset within transaction
+            const created = await tx.asset.create({
+              data: assetCreateData,
             });
-            break;
+
+            // Create stock movement if asset has stock location and we have performedById
+            if (stockLocationId && settings.performedById) {
+              try {
+                await assetMovementService.createMovementTx(tx, {
+                  movementType: "IN",
+                  assetId: created.id,
+                  stockLocationToId: stockLocationId,
+                  performedById: settings.performedById,
+                  reason: "Asset imported into inventory",
+                  source: "IMPORT",
+                  sourceReferenceType: "ImportBatch",
+                  sourceReferenceId: `import-${new Date().toISOString()}`,
+                });
+              } catch (movementError) {
+                // Log but don't fail the import if movement creation fails
+                logger.warn("Failed to create movement during import", {
+                  assetId: created.id,
+                  error:
+                    movementError instanceof Error
+                      ? movementError.message
+                      : String(movementError),
+                });
+              }
+            }
+
+            // Handle assignment within same transaction (if personId exists)
+            let assignmentAction:
+              | "created"
+              | "reassigned"
+              | "unchanged"
+              | "failed" = "unchanged";
+            if (row.personId) {
+              const assignmentResult =
+                await assignmentHandler.handleAssignmentWithTransaction(
+                  tx,
+                  created.id,
+                  row.personId,
+                  row.data.person.email,
+                  settings,
+                );
+              assignmentAction = assignmentResult.action;
+            }
+
+            return {
+              assetId: created.id,
+              assetTag: created.assetTag,
+              assignmentAction,
+            };
+          });
+
+          assetId = txResult.assetId;
+          result.assetsCreated++;
+          result.createdAssets.push({
+            id: txResult.assetId,
+            assetTag: txResult.assetTag,
+            serialNumber: effectiveSerialNumber,
+            rowNumber: row.rowNumber,
+          });
+
+          // Update assignment counters
+          switch (txResult.assignmentAction) {
+            case "created":
+              result.assignmentsCreated++;
+              break;
+            case "reassigned":
+              result.assignmentsReassigned++;
+              break;
+            case "unchanged":
+              result.assignmentsUnchanged++;
+              break;
+            case "failed":
+              logger.warn("Assignment failed within transaction", { assetId });
+              break;
+          }
         }
 
         result.successCount++;
@@ -498,6 +835,32 @@ export async function processUniversalAssetsImport(
           identifier,
           error: error instanceof Error ? error.message : "Unknown error",
         });
+
+        // Check error tolerance settings
+        if (settings.stopOnFirstError) {
+          logger.info(
+            "Stopping import on first error (stopOnFirstError enabled)",
+            {
+              rowNumber: row.rowNumber,
+              error: error instanceof Error ? error.message : "Unknown error",
+            },
+          );
+          break;
+        }
+
+        const maxErrors = settings.maxErrorsBeforeAbort ?? 100;
+        if (maxErrors > 0 && result.failureCount >= maxErrors) {
+          logger.info("Stopping import - max errors reached", {
+            failureCount: result.failureCount,
+            maxErrors,
+          });
+          result.errors.push({
+            rowNumber: row.rowNumber,
+            identifier: "System",
+            error: `Import aborted: Maximum error count (${maxErrors}) reached`,
+          });
+          break;
+        }
       }
     }
 
@@ -526,6 +889,17 @@ export async function processUniversalAssetsImport(
       err instanceof Error ? err : undefined,
     );
     result.success = false;
+    result.failureCount++;
+    result.errors.push({
+      rowNumber: 0,
+      identifier: "System",
+      error:
+        err instanceof Error
+          ? err.message
+          : "Unexpected system error occurred during import",
+      suggestion:
+        "Check server logs for detailed error information or contact support.",
+    });
   }
 
   // Calculate metrics

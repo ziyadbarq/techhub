@@ -36,6 +36,7 @@ import {
 } from "@/interface-adapters/controllers/attachment.controller";
 import type { AttachmentDTO } from "@/interface-adapters/presenters/attachment.presenter";
 import type { TargetObjectTypeEnum } from "@/generated/prisma";
+import { formatDateTime } from "@/lib/utils/date-format";
 
 interface AttachmentListProps {
   targetType: TargetObjectTypeEnum;
@@ -224,19 +225,7 @@ export function AttachmentList({
                   )}
                 </div>
                 <div className="flex items-center gap-1 text-xs">
-                  <span>
-                    Uploaded{" "}
-                    {new Date(attachment.uploadedAt).toLocaleDateString(
-                      "en-US",
-                      {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      },
-                    )}
-                  </span>
+                  <span>Uploaded {formatDateTime(attachment.uploadedAt)}</span>
                 </div>
               </div>
 

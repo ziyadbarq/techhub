@@ -6,6 +6,7 @@
  */
 
 import type { FieldDataTypeEnum } from "@/core/domain/value-objects/foundation-enums";
+import type { DuplicateStrategy } from "../entity-config.types";
 
 /**
  * Prefix configuration for parsing CSV columns
@@ -109,7 +110,6 @@ export interface AssetData {
   purchaseDate?: string | Date;
   purchaseCost?: number | string;
   currency?: string;
-  warrantyEndDate?: string | Date;
   condition?: string;
   note?: string;
   depreciationModel?: string;
@@ -136,7 +136,6 @@ export interface CategoryData {
   code?: string;
   name?: string;
   description?: string;
-  isConsumable?: boolean | string;
 }
 
 /**
@@ -209,16 +208,52 @@ export interface UniversalImportSettings {
   handleAssignmentChanges: boolean;
   /** Close old assignments when person changes */
   closeOldAssignmentsOnReassign: boolean;
+  /** Whether person.email is required for import (default: false - allows unassigned assets) */
+  requirePersonForImport: boolean;
+  /** Person ID of the user performing the import (used for stock movement tracking) */
+  performedById?: string;
+
+  // Standard import settings (optional - defaults applied if not specified)
+
+  /** How to handle duplicate assets (by serial number) */
+  duplicateStrategy?: DuplicateStrategy;
+  /** Remove leading/trailing whitespace from all fields */
+  autoTrimWhitespace?: boolean;
+  /** Normalize text case (uppercase codes, title case names, lowercase emails) */
+  normalizeText?: boolean;
+  /** Skip rows where all fields are empty */
+  skipEmptyRows?: boolean;
+  /** Auto-fix common errors (smart quotes, boolean variations, number formats) */
+  autoFixCommonErrors?: boolean;
+  /** Validate without actually importing */
+  dryRun?: boolean;
+  /** Stop processing on first error */
+  stopOnFirstError?: boolean;
+  /** Maximum errors before aborting import */
+  maxErrorsBeforeAbort?: number;
 }
 
 /**
  * Default settings for universal assets import
  */
 export const DEFAULT_UNIVERSAL_IMPORT_SETTINGS: UniversalImportSettings = {
+  // Universal-specific settings
   autoCreateMissingEntities: true,
   skipRowOnAutoCreateFailure: true,
   handleAssignmentChanges: true,
   closeOldAssignmentsOnReassign: true,
+  requirePersonForImport: false,
+  performedById: undefined,
+
+  // Standard import settings defaults
+  duplicateStrategy: "overwrite", // Current behavior - update existing assets
+  autoTrimWhitespace: true,
+  normalizeText: true,
+  skipEmptyRows: true,
+  autoFixCommonErrors: true,
+  dryRun: false,
+  stopOnFirstError: false,
+  maxErrorsBeforeAbort: 100,
 };
 
 /**
@@ -260,6 +295,16 @@ export interface UniversalImportProgress {
 }
 
 /**
+ * Individual asset record for result display
+ */
+export interface ImportedAssetRecord {
+  id: string;
+  assetTag: string;
+  serialNumber: string;
+  rowNumber: number;
+}
+
+/**
  * Result of universal assets import
  */
 export interface UniversalImportResult {
@@ -275,6 +320,10 @@ export interface UniversalImportResult {
   /** Asset-specific metrics */
   assetsCreated: number;
   assetsUpdated: number;
+
+  /** Individual asset records for result display */
+  createdAssets: ImportedAssetRecord[];
+  updatedAssets: ImportedAssetRecord[];
 
   /** Assignment-specific metrics */
   assignmentsCreated: number;
@@ -312,6 +361,13 @@ export interface UniversalImportResult {
     identifier: string;
     reason: string;
   }>;
+
+  /** Warnings (non-blocking issues like duplicates) */
+  warnings?: Array<{
+    type: string;
+    message: string;
+    rowNumbers?: number[];
+  }>;
 }
 
 /**
@@ -321,6 +377,7 @@ export interface AssignmentResult {
   action: "created" | "reassigned" | "unchanged" | "failed";
   assignmentId?: string;
   previousAssigneeEmail?: string;
+  newAssigneeEmail?: string;
   error?: string;
 }
 

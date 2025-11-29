@@ -6,15 +6,8 @@
 "use client";
 
 import { useMemo } from "react";
-import {
-  Package,
-  Shield,
-  MapPin,
-  Activity,
-  DollarSign,
-  Calendar,
-} from "lucide-react";
-import { differenceInDays, differenceInMonths } from "date-fns";
+import { Package, MapPin, Activity, DollarSign, Calendar } from "lucide-react";
+import { differenceInMonths } from "date-fns";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -80,18 +73,6 @@ export function ModelStatisticsTab({ assets, model }: ModelStatisticsTabProps) {
       locationCounts[location] = (locationCounts[location] || 0) + 1;
     });
 
-    // Warranty statistics
-    const assetsWithWarranty = assets.filter((a) => a.warrantyEndDate);
-    const assetsUnderWarranty = assets.filter((a) => a.isUnderWarranty);
-    const warrantyExpiringIn30Days = assets.filter((asset) => {
-      if (!asset.warrantyEndDate || !asset.isUnderWarranty) return false;
-      const daysUntilExpiry = differenceInDays(
-        new Date(asset.warrantyEndDate),
-        new Date(),
-      );
-      return daysUntilExpiry >= 0 && daysUntilExpiry <= 30;
-    });
-
     // Value statistics
     const assetsWithCost = assets.filter(
       (a) => a.purchaseCostSar !== null && a.purchaseCostSar !== undefined,
@@ -126,13 +107,6 @@ export function ModelStatisticsTab({ assets, model }: ModelStatisticsTabProps) {
       conditionCounts,
       lifecycleStateCounts,
       locationCounts,
-      assetsUnderWarranty: assetsUnderWarranty.length,
-      assetsWithWarranty: assetsWithWarranty.length,
-      warrantyExpiringIn30Days: warrantyExpiringIn30Days.length,
-      warrantyCoverage:
-        assets.length > 0
-          ? Math.round((assetsUnderWarranty.length / assets.length) * 100)
-          : 0,
       totalValueSAR,
       averageValueSAR,
       averageAgeMonths: Math.round(averageAgeMonths),
@@ -177,18 +151,12 @@ export function ModelStatisticsTab({ assets, model }: ModelStatisticsTabProps) {
   return (
     <div className="space-y-6">
       {/* Summary Stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <StatCard
           title="Total Assets"
           value={statistics.totalAssets}
           description={`Using ${model.name}`}
           icon={Package}
-        />
-        <StatCard
-          title="Under Warranty"
-          value={`${statistics.assetsUnderWarranty} / ${statistics.totalAssets}`}
-          description={`${statistics.warrantyCoverage}% coverage`}
-          icon={Shield}
         />
         <StatCard
           title="Total Value"
@@ -328,56 +296,6 @@ export function ModelStatisticsTab({ assets, model }: ModelStatisticsTabProps) {
                   </div>
                 );
               })}
-          </CardContent>
-        </Card>
-
-        {/* Warranty Details */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Warranty Overview</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm">Assets Under Warranty</span>
-              <Badge variant="default">{statistics.assetsUnderWarranty}</Badge>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm">Warranty Expired</span>
-              <Badge variant="secondary">
-                {statistics.assetsWithWarranty - statistics.assetsUnderWarranty}
-              </Badge>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm">No Warranty Info</span>
-              <Badge variant="outline">
-                {statistics.totalAssets - statistics.assetsWithWarranty}
-              </Badge>
-            </div>
-            {statistics.warrantyExpiringIn30Days > 0 && (
-              <div className="flex items-center justify-between border-t pt-3">
-                <span className="text-sm text-amber-600">
-                  Expiring in 30 days
-                </span>
-                <Badge
-                  variant="outline"
-                  className="border-amber-600 text-amber-600"
-                >
-                  {statistics.warrantyExpiringIn30Days}
-                </Badge>
-              </div>
-            )}
-            <div className="pt-2">
-              <div className="mb-1 flex justify-between text-sm">
-                <span>Coverage Rate</span>
-                <span className="font-medium">
-                  {statistics.warrantyCoverage}%
-                </span>
-              </div>
-              <Progress
-                value={statistics.warrantyCoverage}
-                className="h-2 [&>*]:bg-emerald-500"
-              />
-            </div>
           </CardContent>
         </Card>
       </div>

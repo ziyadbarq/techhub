@@ -16,7 +16,7 @@ import type { ILocationRepository } from "@/core/repositories/location.repositor
 import type { IStockLocationRepository } from "@/core/repositories/stock-location.repository.interface";
 import type { ILifecycleStateRepository } from "@/core/repositories/lifecycle-state.repository.interface";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
-import type { ILoggerService } from "@/core/services";
+import type { ILoggerService, ICodeGeneratorService } from "@/core/services";
 import { Vendor } from "@/core/domain/entities/vendor.entity";
 import { AssetCategory } from "@/core/domain/entities/asset-category.entity";
 import { AssetModel } from "@/core/domain/entities/asset-model.entity";
@@ -37,25 +37,13 @@ import type {
 } from "./types";
 
 /**
- * Generate a code from a name (slugify)
- */
-function generateCodeFromName(name: string): string {
-  return name
-    .toUpperCase()
-    .replace(/[^A-Z0-9\s-]/g, "") // Remove special chars
-    .replace(/\s+/g, "-") // Spaces to hyphens
-    .replace(/-+/g, "-") // Collapse multiple hyphens
-    .replace(/^-|-$/g, "") // Trim hyphens
-    .substring(0, 50); // Max 50 chars
-}
-
-/**
  * Auto-Create Resolver class
  * Manages entity resolution and creation with caching
  */
 export class AutoCreateResolver {
   private cache: EntityCache;
   private logger: ILoggerService;
+  private codeGenerator: ICodeGeneratorService;
   private autoCreated: AutoCreateResult[] = [];
 
   constructor() {
@@ -71,6 +59,9 @@ export class AutoCreateResolver {
     };
     const container = getContainer();
     this.logger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
+    this.codeGenerator = container.get<ICodeGeneratorService>(
+      DI_TOKENS.ICodeGeneratorService,
+    );
   }
 
   /**
@@ -135,9 +126,12 @@ export class AutoCreateResolver {
 
   /**
    * Resolve or create vendor
+   * @param data Vendor data from CSV
+   * @param allowCreate Whether to create if not found (default: true)
    */
   async resolveOrCreateVendor(
     data: VendorData,
+    allowCreate = true,
   ): Promise<{ id: string | null; error?: string }> {
     // Need at least code or name
     const lookupKey = data.code || data.name;
@@ -175,9 +169,17 @@ export class AutoCreateResolver {
       }
     }
 
-    // Not found - create new vendor
+    // Not found - skip creation if not allowed
+    if (!allowCreate) {
+      return { id: null };
+    }
+
+    // Create new vendor
     try {
-      const code = data.code || generateCodeFromName(data.name || "VENDOR");
+      // Use CodeGeneratorService for consistent sequential codes (matching CreateVendorUseCase)
+      const code =
+        data.code ||
+        (await this.codeGenerator.generateCode("VENDOR", "VENDOR"));
       const name = data.name || code;
 
       const vendor = Vendor.create({
@@ -258,17 +260,16 @@ export class AutoCreateResolver {
 
     // Not found - create new category
     try {
-      const code = data.code || generateCodeFromName(data.name || "CATEGORY");
+      // Use CodeGeneratorService for consistent sequential codes (matching CreateAssetCategoryUseCase)
+      const code =
+        data.code ||
+        (await this.codeGenerator.generateCode("ASSET_CATEGORY", "CAT"));
       const name = data.name || code;
 
       const category = AssetCategory.create({
         code,
         name,
         description: data.description || undefined,
-        isConsumable:
-          data.isConsumable === true ||
-          data.isConsumable === "true" ||
-          data.isConsumable === "yes",
       });
 
       const created = await categoryRepo.create(category);
@@ -346,7 +347,10 @@ export class AutoCreateResolver {
 
     // Not found - create new model
     try {
-      const code = data.code || generateCodeFromName(data.name || "MODEL");
+      // Use CodeGeneratorService for consistent sequential codes (matching CreateAssetModelUseCase)
+      const code =
+        data.code ||
+        (await this.codeGenerator.generateCode("ASSET_MODEL", "MODEL"));
       const name = data.name || code;
 
       const model = AssetModel.create({
@@ -420,7 +424,9 @@ export class AutoCreateResolver {
 
     // Not found - create new location
     try {
-      const code = data.code || generateCodeFromName(data.name || "LOCATION");
+      // Use CodeGeneratorService for consistent sequential codes (matching CreateLocationUseCase)
+      const code =
+        data.code || (await this.codeGenerator.generateCode("LOCATION", "LOC"));
       const name = data.name || code;
 
       const location = Location.create({
@@ -491,8 +497,10 @@ export class AutoCreateResolver {
 
     // Not found - create new stock location
     try {
+      // Use CodeGeneratorService for consistent sequential codes (matching CreateStockLocationUseCase)
       const code =
-        data.code || generateCodeFromName(data.name || "STOCK-LOCATION");
+        data.code ||
+        (await this.codeGenerator.generateCode("STOCK_LOCATION", "STOCK"));
       const name = data.name || code;
 
       const stockLocation = StockLocation.create({

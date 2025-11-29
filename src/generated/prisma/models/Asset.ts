@@ -49,16 +49,18 @@ export type AssetMinAggregateOutputType = {
   purchaseCost: runtime.Decimal | null
   purchaseCostSar: runtime.Decimal | null
   currency: string | null
-  depreciationModel: string | null
+  depreciationModel: $Enums.DepreciationModelEnum | null
   depreciationStart: Date | null
   depreciationEnd: Date | null
-  warrantyEndDate: Date | null
-  condition: string | null
+  condition: $Enums.AssetConditionEnum | null
   currentStockLocationId: string | null
   note: string | null
-  deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
+  createdById: string | null
+  updatedById: string | null
 }
 
 export type AssetMaxAggregateOutputType = {
@@ -74,16 +76,18 @@ export type AssetMaxAggregateOutputType = {
   purchaseCost: runtime.Decimal | null
   purchaseCostSar: runtime.Decimal | null
   currency: string | null
-  depreciationModel: string | null
+  depreciationModel: $Enums.DepreciationModelEnum | null
   depreciationStart: Date | null
   depreciationEnd: Date | null
-  warrantyEndDate: Date | null
-  condition: string | null
+  condition: $Enums.AssetConditionEnum | null
   currentStockLocationId: string | null
   note: string | null
-  deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
+  createdById: string | null
+  updatedById: string | null
 }
 
 export type AssetCountAggregateOutputType = {
@@ -102,14 +106,16 @@ export type AssetCountAggregateOutputType = {
   depreciationModel: number
   depreciationStart: number
   depreciationEnd: number
-  warrantyEndDate: number
   condition: number
   currentStockLocationId: number
   attributes: number
   note: number
-  deletedAt: number
   createdAt: number
   updatedAt: number
+  deletedAt: number
+  deletedById: number
+  createdById: number
+  updatedById: number
   _all: number
 }
 
@@ -140,13 +146,15 @@ export type AssetMinAggregateInputType = {
   depreciationModel?: true
   depreciationStart?: true
   depreciationEnd?: true
-  warrantyEndDate?: true
   condition?: true
   currentStockLocationId?: true
   note?: true
-  deletedAt?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
+  createdById?: true
+  updatedById?: true
 }
 
 export type AssetMaxAggregateInputType = {
@@ -165,13 +173,15 @@ export type AssetMaxAggregateInputType = {
   depreciationModel?: true
   depreciationStart?: true
   depreciationEnd?: true
-  warrantyEndDate?: true
   condition?: true
   currentStockLocationId?: true
   note?: true
-  deletedAt?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
+  createdById?: true
+  updatedById?: true
 }
 
 export type AssetCountAggregateInputType = {
@@ -190,14 +200,16 @@ export type AssetCountAggregateInputType = {
   depreciationModel?: true
   depreciationStart?: true
   depreciationEnd?: true
-  warrantyEndDate?: true
   condition?: true
   currentStockLocationId?: true
   attributes?: true
   note?: true
-  deletedAt?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
+  createdById?: true
+  updatedById?: true
   _all?: true
 }
 
@@ -300,17 +312,19 @@ export type AssetGroupByOutputType = {
   purchaseCost: runtime.Decimal | null
   purchaseCostSar: runtime.Decimal | null
   currency: string | null
-  depreciationModel: string | null
+  depreciationModel: $Enums.DepreciationModelEnum | null
   depreciationStart: Date | null
   depreciationEnd: Date | null
-  warrantyEndDate: Date | null
-  condition: string | null
+  condition: $Enums.AssetConditionEnum | null
   currentStockLocationId: string | null
   attributes: runtime.JsonValue | null
   note: string | null
-  deletedAt: Date | null
   createdAt: Date
   updatedAt: Date
+  deletedAt: Date | null
+  deletedById: string | null
+  createdById: string | null
+  updatedById: string | null
   _count: AssetCountAggregateOutputType | null
   _avg: AssetAvgAggregateOutputType | null
   _sum: AssetSumAggregateOutputType | null
@@ -349,17 +363,19 @@ export type AssetWhereInput = {
   purchaseCost?: Prisma.DecimalNullableFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.DecimalNullableFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"Asset"> | string | null
-  depreciationModel?: Prisma.StringNullableFilter<"Asset"> | string | null
+  depreciationModel?: Prisma.EnumDepreciationModelEnumNullableFilter<"Asset"> | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
   depreciationEnd?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
-  warrantyEndDate?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
-  condition?: Prisma.StringNullableFilter<"Asset"> | string | null
+  condition?: Prisma.EnumAssetConditionEnumNullableFilter<"Asset"> | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.StringNullableFilter<"Asset"> | string | null
   attributes?: Prisma.JsonNullableFilter<"Asset">
   note?: Prisma.StringNullableFilter<"Asset"> | string | null
-  deletedAt?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Asset"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Asset"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"Asset"> | string | null
+  createdById?: Prisma.StringNullableFilter<"Asset"> | string | null
+  updatedById?: Prisma.StringNullableFilter<"Asset"> | string | null
   assetCategory?: Prisma.XOR<Prisma.AssetCategoryScalarRelationFilter, Prisma.AssetCategoryWhereInput>
   assetModel?: Prisma.XOR<Prisma.AssetModelNullableScalarRelationFilter, Prisma.AssetModelWhereInput> | null
   vendor?: Prisma.XOR<Prisma.VendorNullableScalarRelationFilter, Prisma.VendorWhereInput> | null
@@ -377,6 +393,9 @@ export type AssetWhereInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemListRelationFilter
   serviceAssets?: Prisma.ServiceAssetListRelationFilter
   intuneDevice?: Prisma.XOR<Prisma.IntuneDeviceNullableScalarRelationFilter, Prisma.IntuneDeviceWhereInput> | null
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
+  createdBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
+  updatedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }
 
 export type AssetOrderByWithRelationInput = {
@@ -395,14 +414,16 @@ export type AssetOrderByWithRelationInput = {
   depreciationModel?: Prisma.SortOrderInput | Prisma.SortOrder
   depreciationStart?: Prisma.SortOrderInput | Prisma.SortOrder
   depreciationEnd?: Prisma.SortOrderInput | Prisma.SortOrder
-  warrantyEndDate?: Prisma.SortOrderInput | Prisma.SortOrder
   condition?: Prisma.SortOrderInput | Prisma.SortOrder
   currentStockLocationId?: Prisma.SortOrderInput | Prisma.SortOrder
   attributes?: Prisma.SortOrderInput | Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdById?: Prisma.SortOrderInput | Prisma.SortOrder
+  updatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   assetCategory?: Prisma.AssetCategoryOrderByWithRelationInput
   assetModel?: Prisma.AssetModelOrderByWithRelationInput
   vendor?: Prisma.VendorOrderByWithRelationInput
@@ -420,6 +441,9 @@ export type AssetOrderByWithRelationInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemOrderByRelationAggregateInput
   serviceAssets?: Prisma.ServiceAssetOrderByRelationAggregateInput
   intuneDevice?: Prisma.IntuneDeviceOrderByWithRelationInput
+  deletedBy?: Prisma.PersonOrderByWithRelationInput
+  createdBy?: Prisma.PersonOrderByWithRelationInput
+  updatedBy?: Prisma.PersonOrderByWithRelationInput
 }
 
 export type AssetWhereUniqueInput = Prisma.AtLeast<{
@@ -438,17 +462,19 @@ export type AssetWhereUniqueInput = Prisma.AtLeast<{
   purchaseCost?: Prisma.DecimalNullableFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.DecimalNullableFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"Asset"> | string | null
-  depreciationModel?: Prisma.StringNullableFilter<"Asset"> | string | null
+  depreciationModel?: Prisma.EnumDepreciationModelEnumNullableFilter<"Asset"> | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
   depreciationEnd?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
-  warrantyEndDate?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
-  condition?: Prisma.StringNullableFilter<"Asset"> | string | null
+  condition?: Prisma.EnumAssetConditionEnumNullableFilter<"Asset"> | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.StringNullableFilter<"Asset"> | string | null
   attributes?: Prisma.JsonNullableFilter<"Asset">
   note?: Prisma.StringNullableFilter<"Asset"> | string | null
-  deletedAt?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Asset"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Asset"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"Asset"> | string | null
+  createdById?: Prisma.StringNullableFilter<"Asset"> | string | null
+  updatedById?: Prisma.StringNullableFilter<"Asset"> | string | null
   assetCategory?: Prisma.XOR<Prisma.AssetCategoryScalarRelationFilter, Prisma.AssetCategoryWhereInput>
   assetModel?: Prisma.XOR<Prisma.AssetModelNullableScalarRelationFilter, Prisma.AssetModelWhereInput> | null
   vendor?: Prisma.XOR<Prisma.VendorNullableScalarRelationFilter, Prisma.VendorWhereInput> | null
@@ -466,6 +492,9 @@ export type AssetWhereUniqueInput = Prisma.AtLeast<{
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemListRelationFilter
   serviceAssets?: Prisma.ServiceAssetListRelationFilter
   intuneDevice?: Prisma.XOR<Prisma.IntuneDeviceNullableScalarRelationFilter, Prisma.IntuneDeviceWhereInput> | null
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
+  createdBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
+  updatedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }, "id" | "assetTag" | "serialNumber">
 
 export type AssetOrderByWithAggregationInput = {
@@ -484,14 +513,16 @@ export type AssetOrderByWithAggregationInput = {
   depreciationModel?: Prisma.SortOrderInput | Prisma.SortOrder
   depreciationStart?: Prisma.SortOrderInput | Prisma.SortOrder
   depreciationEnd?: Prisma.SortOrderInput | Prisma.SortOrder
-  warrantyEndDate?: Prisma.SortOrderInput | Prisma.SortOrder
   condition?: Prisma.SortOrderInput | Prisma.SortOrder
   currentStockLocationId?: Prisma.SortOrderInput | Prisma.SortOrder
   attributes?: Prisma.SortOrderInput | Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
-  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdById?: Prisma.SortOrderInput | Prisma.SortOrder
+  updatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.AssetCountOrderByAggregateInput
   _avg?: Prisma.AssetAvgOrderByAggregateInput
   _max?: Prisma.AssetMaxOrderByAggregateInput
@@ -515,17 +546,19 @@ export type AssetScalarWhereWithAggregatesInput = {
   purchaseCost?: Prisma.DecimalNullableWithAggregatesFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.DecimalNullableWithAggregatesFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableWithAggregatesFilter<"Asset"> | string | null
-  depreciationModel?: Prisma.StringNullableWithAggregatesFilter<"Asset"> | string | null
+  depreciationModel?: Prisma.EnumDepreciationModelEnumNullableWithAggregatesFilter<"Asset"> | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.DateTimeNullableWithAggregatesFilter<"Asset"> | Date | string | null
   depreciationEnd?: Prisma.DateTimeNullableWithAggregatesFilter<"Asset"> | Date | string | null
-  warrantyEndDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Asset"> | Date | string | null
-  condition?: Prisma.StringNullableWithAggregatesFilter<"Asset"> | string | null
+  condition?: Prisma.EnumAssetConditionEnumNullableWithAggregatesFilter<"Asset"> | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.StringNullableWithAggregatesFilter<"Asset"> | string | null
   attributes?: Prisma.JsonNullableWithAggregatesFilter<"Asset">
   note?: Prisma.StringNullableWithAggregatesFilter<"Asset"> | string | null
-  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Asset"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Asset"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Asset"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Asset"> | Date | string | null
+  deletedById?: Prisma.StringNullableWithAggregatesFilter<"Asset"> | string | null
+  createdById?: Prisma.StringNullableWithAggregatesFilter<"Asset"> | string | null
+  updatedById?: Prisma.StringNullableWithAggregatesFilter<"Asset"> | string | null
 }
 
 export type AssetCreateInput = {
@@ -536,16 +569,15 @@ export type AssetCreateInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
   assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
   vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
@@ -563,6 +595,9 @@ export type AssetCreateInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
   intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
 }
 
 export type AssetUncheckedCreateInput = {
@@ -578,17 +613,19 @@ export type AssetUncheckedCreateInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
@@ -610,16 +647,15 @@ export type AssetUpdateInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
   assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
   vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
@@ -637,6 +673,9 @@ export type AssetUpdateInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
   intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
 }
 
 export type AssetUncheckedUpdateInput = {
@@ -652,17 +691,19 @@ export type AssetUncheckedUpdateInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
@@ -689,17 +730,19 @@ export type AssetCreateManyInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
 }
 
 export type AssetUpdateManyMutationInput = {
@@ -710,16 +753,15 @@ export type AssetUpdateManyMutationInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type AssetUncheckedUpdateManyInput = {
@@ -735,17 +777,19 @@ export type AssetUncheckedUpdateManyInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AssetListRelationFilter = {
@@ -779,14 +823,16 @@ export type AssetCountOrderByAggregateInput = {
   depreciationModel?: Prisma.SortOrder
   depreciationStart?: Prisma.SortOrder
   depreciationEnd?: Prisma.SortOrder
-  warrantyEndDate?: Prisma.SortOrder
   condition?: Prisma.SortOrder
   currentStockLocationId?: Prisma.SortOrder
   attributes?: Prisma.SortOrder
   note?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
+  createdById?: Prisma.SortOrder
+  updatedById?: Prisma.SortOrder
 }
 
 export type AssetAvgOrderByAggregateInput = {
@@ -810,13 +856,15 @@ export type AssetMaxOrderByAggregateInput = {
   depreciationModel?: Prisma.SortOrder
   depreciationStart?: Prisma.SortOrder
   depreciationEnd?: Prisma.SortOrder
-  warrantyEndDate?: Prisma.SortOrder
   condition?: Prisma.SortOrder
   currentStockLocationId?: Prisma.SortOrder
   note?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
+  createdById?: Prisma.SortOrder
+  updatedById?: Prisma.SortOrder
 }
 
 export type AssetMinOrderByAggregateInput = {
@@ -835,13 +883,15 @@ export type AssetMinOrderByAggregateInput = {
   depreciationModel?: Prisma.SortOrder
   depreciationStart?: Prisma.SortOrder
   depreciationEnd?: Prisma.SortOrder
-  warrantyEndDate?: Prisma.SortOrder
   condition?: Prisma.SortOrder
   currentStockLocationId?: Prisma.SortOrder
   note?: Prisma.SortOrder
-  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
+  createdById?: Prisma.SortOrder
+  updatedById?: Prisma.SortOrder
 }
 
 export type AssetSumOrderByAggregateInput = {
@@ -996,16 +1046,20 @@ export type AssetUpdateOneWithoutStockMovementsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutStockMovementsInput, Prisma.AssetUpdateWithoutStockMovementsInput>, Prisma.AssetUncheckedUpdateWithoutStockMovementsInput>
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type NullableDecimalFieldUpdateOperationsInput = {
   set?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
   decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
   multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
   divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
+}
+
+export type NullableEnumDepreciationModelEnumFieldUpdateOperationsInput = {
+  set?: $Enums.DepreciationModelEnum | null
+}
+
+export type NullableEnumAssetConditionEnumFieldUpdateOperationsInput = {
+  set?: $Enums.AssetConditionEnum | null
 }
 
 export type AssetCreateNestedOneWithoutAssetAssignmentsInput = {
@@ -1106,6 +1160,132 @@ export type AssetUpdateOneRequiredWithoutDisposalsNestedInput = {
   upsert?: Prisma.AssetUpsertWithoutDisposalsInput
   connect?: Prisma.AssetWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutDisposalsInput, Prisma.AssetUpdateWithoutDisposalsInput>, Prisma.AssetUncheckedUpdateWithoutDisposalsInput>
+}
+
+export type AssetCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutDeletedByInput, Prisma.AssetUncheckedCreateWithoutDeletedByInput> | Prisma.AssetCreateWithoutDeletedByInput[] | Prisma.AssetUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutDeletedByInput | Prisma.AssetCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.AssetCreateManyDeletedByInputEnvelope
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+}
+
+export type AssetCreateNestedManyWithoutCreatedByInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutCreatedByInput, Prisma.AssetUncheckedCreateWithoutCreatedByInput> | Prisma.AssetCreateWithoutCreatedByInput[] | Prisma.AssetUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutCreatedByInput | Prisma.AssetCreateOrConnectWithoutCreatedByInput[]
+  createMany?: Prisma.AssetCreateManyCreatedByInputEnvelope
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+}
+
+export type AssetCreateNestedManyWithoutUpdatedByInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutUpdatedByInput, Prisma.AssetUncheckedCreateWithoutUpdatedByInput> | Prisma.AssetCreateWithoutUpdatedByInput[] | Prisma.AssetUncheckedCreateWithoutUpdatedByInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutUpdatedByInput | Prisma.AssetCreateOrConnectWithoutUpdatedByInput[]
+  createMany?: Prisma.AssetCreateManyUpdatedByInputEnvelope
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+}
+
+export type AssetUncheckedCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutDeletedByInput, Prisma.AssetUncheckedCreateWithoutDeletedByInput> | Prisma.AssetCreateWithoutDeletedByInput[] | Prisma.AssetUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutDeletedByInput | Prisma.AssetCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.AssetCreateManyDeletedByInputEnvelope
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+}
+
+export type AssetUncheckedCreateNestedManyWithoutCreatedByInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutCreatedByInput, Prisma.AssetUncheckedCreateWithoutCreatedByInput> | Prisma.AssetCreateWithoutCreatedByInput[] | Prisma.AssetUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutCreatedByInput | Prisma.AssetCreateOrConnectWithoutCreatedByInput[]
+  createMany?: Prisma.AssetCreateManyCreatedByInputEnvelope
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+}
+
+export type AssetUncheckedCreateNestedManyWithoutUpdatedByInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutUpdatedByInput, Prisma.AssetUncheckedCreateWithoutUpdatedByInput> | Prisma.AssetCreateWithoutUpdatedByInput[] | Prisma.AssetUncheckedCreateWithoutUpdatedByInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutUpdatedByInput | Prisma.AssetCreateOrConnectWithoutUpdatedByInput[]
+  createMany?: Prisma.AssetCreateManyUpdatedByInputEnvelope
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+}
+
+export type AssetUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutDeletedByInput, Prisma.AssetUncheckedCreateWithoutDeletedByInput> | Prisma.AssetCreateWithoutDeletedByInput[] | Prisma.AssetUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutDeletedByInput | Prisma.AssetCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.AssetUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.AssetUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.AssetCreateManyDeletedByInputEnvelope
+  set?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  disconnect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  delete?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  update?: Prisma.AssetUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.AssetUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.AssetUpdateManyWithWhereWithoutDeletedByInput | Prisma.AssetUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
+}
+
+export type AssetUpdateManyWithoutCreatedByNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutCreatedByInput, Prisma.AssetUncheckedCreateWithoutCreatedByInput> | Prisma.AssetCreateWithoutCreatedByInput[] | Prisma.AssetUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutCreatedByInput | Prisma.AssetCreateOrConnectWithoutCreatedByInput[]
+  upsert?: Prisma.AssetUpsertWithWhereUniqueWithoutCreatedByInput | Prisma.AssetUpsertWithWhereUniqueWithoutCreatedByInput[]
+  createMany?: Prisma.AssetCreateManyCreatedByInputEnvelope
+  set?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  disconnect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  delete?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  update?: Prisma.AssetUpdateWithWhereUniqueWithoutCreatedByInput | Prisma.AssetUpdateWithWhereUniqueWithoutCreatedByInput[]
+  updateMany?: Prisma.AssetUpdateManyWithWhereWithoutCreatedByInput | Prisma.AssetUpdateManyWithWhereWithoutCreatedByInput[]
+  deleteMany?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
+}
+
+export type AssetUpdateManyWithoutUpdatedByNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutUpdatedByInput, Prisma.AssetUncheckedCreateWithoutUpdatedByInput> | Prisma.AssetCreateWithoutUpdatedByInput[] | Prisma.AssetUncheckedCreateWithoutUpdatedByInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutUpdatedByInput | Prisma.AssetCreateOrConnectWithoutUpdatedByInput[]
+  upsert?: Prisma.AssetUpsertWithWhereUniqueWithoutUpdatedByInput | Prisma.AssetUpsertWithWhereUniqueWithoutUpdatedByInput[]
+  createMany?: Prisma.AssetCreateManyUpdatedByInputEnvelope
+  set?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  disconnect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  delete?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  update?: Prisma.AssetUpdateWithWhereUniqueWithoutUpdatedByInput | Prisma.AssetUpdateWithWhereUniqueWithoutUpdatedByInput[]
+  updateMany?: Prisma.AssetUpdateManyWithWhereWithoutUpdatedByInput | Prisma.AssetUpdateManyWithWhereWithoutUpdatedByInput[]
+  deleteMany?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
+}
+
+export type AssetUncheckedUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutDeletedByInput, Prisma.AssetUncheckedCreateWithoutDeletedByInput> | Prisma.AssetCreateWithoutDeletedByInput[] | Prisma.AssetUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutDeletedByInput | Prisma.AssetCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.AssetUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.AssetUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.AssetCreateManyDeletedByInputEnvelope
+  set?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  disconnect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  delete?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  update?: Prisma.AssetUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.AssetUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.AssetUpdateManyWithWhereWithoutDeletedByInput | Prisma.AssetUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
+}
+
+export type AssetUncheckedUpdateManyWithoutCreatedByNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutCreatedByInput, Prisma.AssetUncheckedCreateWithoutCreatedByInput> | Prisma.AssetCreateWithoutCreatedByInput[] | Prisma.AssetUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutCreatedByInput | Prisma.AssetCreateOrConnectWithoutCreatedByInput[]
+  upsert?: Prisma.AssetUpsertWithWhereUniqueWithoutCreatedByInput | Prisma.AssetUpsertWithWhereUniqueWithoutCreatedByInput[]
+  createMany?: Prisma.AssetCreateManyCreatedByInputEnvelope
+  set?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  disconnect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  delete?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  update?: Prisma.AssetUpdateWithWhereUniqueWithoutCreatedByInput | Prisma.AssetUpdateWithWhereUniqueWithoutCreatedByInput[]
+  updateMany?: Prisma.AssetUpdateManyWithWhereWithoutCreatedByInput | Prisma.AssetUpdateManyWithWhereWithoutCreatedByInput[]
+  deleteMany?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
+}
+
+export type AssetUncheckedUpdateManyWithoutUpdatedByNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutUpdatedByInput, Prisma.AssetUncheckedCreateWithoutUpdatedByInput> | Prisma.AssetCreateWithoutUpdatedByInput[] | Prisma.AssetUncheckedCreateWithoutUpdatedByInput[]
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutUpdatedByInput | Prisma.AssetCreateOrConnectWithoutUpdatedByInput[]
+  upsert?: Prisma.AssetUpsertWithWhereUniqueWithoutUpdatedByInput | Prisma.AssetUpsertWithWhereUniqueWithoutUpdatedByInput[]
+  createMany?: Prisma.AssetCreateManyUpdatedByInputEnvelope
+  set?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  disconnect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  delete?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  connect?: Prisma.AssetWhereUniqueInput | Prisma.AssetWhereUniqueInput[]
+  update?: Prisma.AssetUpdateWithWhereUniqueWithoutUpdatedByInput | Prisma.AssetUpdateWithWhereUniqueWithoutUpdatedByInput[]
+  updateMany?: Prisma.AssetUpdateManyWithWhereWithoutUpdatedByInput | Prisma.AssetUpdateManyWithWhereWithoutUpdatedByInput[]
+  deleteMany?: Prisma.AssetScalarWhereInput | Prisma.AssetScalarWhereInput[]
 }
 
 export type AssetCreateNestedManyWithoutVendorInput = {
@@ -1288,16 +1468,15 @@ export type AssetCreateWithoutAssetCategoryInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
   vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
   contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
@@ -1314,6 +1493,9 @@ export type AssetCreateWithoutAssetCategoryInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
   intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
 }
 
 export type AssetUncheckedCreateWithoutAssetCategoryInput = {
@@ -1328,17 +1510,19 @@ export type AssetUncheckedCreateWithoutAssetCategoryInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
@@ -1394,17 +1578,19 @@ export type AssetScalarWhereInput = {
   purchaseCost?: Prisma.DecimalNullableFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.DecimalNullableFilter<"Asset"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.StringNullableFilter<"Asset"> | string | null
-  depreciationModel?: Prisma.StringNullableFilter<"Asset"> | string | null
+  depreciationModel?: Prisma.EnumDepreciationModelEnumNullableFilter<"Asset"> | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
   depreciationEnd?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
-  warrantyEndDate?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
-  condition?: Prisma.StringNullableFilter<"Asset"> | string | null
+  condition?: Prisma.EnumAssetConditionEnumNullableFilter<"Asset"> | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.StringNullableFilter<"Asset"> | string | null
   attributes?: Prisma.JsonNullableFilter<"Asset">
   note?: Prisma.StringNullableFilter<"Asset"> | string | null
-  deletedAt?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Asset"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Asset"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Asset"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"Asset"> | string | null
+  createdById?: Prisma.StringNullableFilter<"Asset"> | string | null
+  updatedById?: Prisma.StringNullableFilter<"Asset"> | string | null
 }
 
 export type AssetCreateWithoutAssetModelInput = {
@@ -1415,16 +1601,15 @@ export type AssetCreateWithoutAssetModelInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
   vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
   contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
@@ -1441,6 +1626,9 @@ export type AssetCreateWithoutAssetModelInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
   intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
 }
 
 export type AssetUncheckedCreateWithoutAssetModelInput = {
@@ -1455,17 +1643,19 @@ export type AssetUncheckedCreateWithoutAssetModelInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
@@ -1513,16 +1703,15 @@ export type AssetCreateWithoutCurrentStockLocationInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
   assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
   vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
@@ -1539,6 +1728,9 @@ export type AssetCreateWithoutCurrentStockLocationInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
   intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
 }
 
 export type AssetUncheckedCreateWithoutCurrentStockLocationInput = {
@@ -1554,16 +1746,18 @@ export type AssetUncheckedCreateWithoutCurrentStockLocationInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
@@ -1611,16 +1805,15 @@ export type AssetCreateWithoutStockMovementsInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
   assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
   vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
@@ -1637,6 +1830,9 @@ export type AssetCreateWithoutStockMovementsInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
   intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
 }
 
 export type AssetUncheckedCreateWithoutStockMovementsInput = {
@@ -1652,17 +1848,19 @@ export type AssetUncheckedCreateWithoutStockMovementsInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
   assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
@@ -1699,16 +1897,15 @@ export type AssetUpdateWithoutStockMovementsInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
   assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
   vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
@@ -1725,6 +1922,9 @@ export type AssetUpdateWithoutStockMovementsInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
   intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutStockMovementsInput = {
@@ -1740,17 +1940,19 @@ export type AssetUncheckedUpdateWithoutStockMovementsInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
   assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
@@ -1771,16 +1973,15 @@ export type AssetCreateWithoutAssetAssignmentsInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
   assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
   vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
@@ -1797,6 +1998,9 @@ export type AssetCreateWithoutAssetAssignmentsInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
   intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
 }
 
 export type AssetUncheckedCreateWithoutAssetAssignmentsInput = {
@@ -1812,17 +2016,19 @@ export type AssetUncheckedCreateWithoutAssetAssignmentsInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
@@ -1859,16 +2065,15 @@ export type AssetUpdateWithoutAssetAssignmentsInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
   assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
   vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
@@ -1885,6 +2090,9 @@ export type AssetUpdateWithoutAssetAssignmentsInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
   intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutAssetAssignmentsInput = {
@@ -1900,17 +2108,19 @@ export type AssetUncheckedUpdateWithoutAssetAssignmentsInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
@@ -1931,16 +2141,15 @@ export type AssetCreateWithoutWarrantiesInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
   assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
   vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
@@ -1957,6 +2166,9 @@ export type AssetCreateWithoutWarrantiesInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
   intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
 }
 
 export type AssetUncheckedCreateWithoutWarrantiesInput = {
@@ -1972,17 +2184,19 @@ export type AssetUncheckedCreateWithoutWarrantiesInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
   assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
@@ -2019,16 +2233,15 @@ export type AssetUpdateWithoutWarrantiesInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
   assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
   vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
@@ -2045,6 +2258,9 @@ export type AssetUpdateWithoutWarrantiesInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
   intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutWarrantiesInput = {
@@ -2060,17 +2276,19 @@ export type AssetUncheckedUpdateWithoutWarrantiesInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
   assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
@@ -2091,16 +2309,15 @@ export type AssetCreateWithoutConfigurationItemsInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
   assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
   vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
@@ -2117,6 +2334,9 @@ export type AssetCreateWithoutConfigurationItemsInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
   intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
 }
 
 export type AssetUncheckedCreateWithoutConfigurationItemsInput = {
@@ -2132,17 +2352,19 @@ export type AssetUncheckedCreateWithoutConfigurationItemsInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
   assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
@@ -2179,16 +2401,15 @@ export type AssetUpdateWithoutConfigurationItemsInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
   assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
   vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
@@ -2205,6 +2426,9 @@ export type AssetUpdateWithoutConfigurationItemsInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
   intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutConfigurationItemsInput = {
@@ -2220,17 +2444,19 @@ export type AssetUncheckedUpdateWithoutConfigurationItemsInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
   assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
@@ -2251,16 +2477,15 @@ export type AssetCreateWithoutContractInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
   assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
   vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
@@ -2277,6 +2502,9 @@ export type AssetCreateWithoutContractInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
   intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
 }
 
 export type AssetUncheckedCreateWithoutContractInput = {
@@ -2291,17 +2519,19 @@ export type AssetUncheckedCreateWithoutContractInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
@@ -2349,16 +2579,15 @@ export type AssetCreateWithoutDisposalsInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
   assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
   vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
@@ -2375,6 +2604,9 @@ export type AssetCreateWithoutDisposalsInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
   intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
 }
 
 export type AssetUncheckedCreateWithoutDisposalsInput = {
@@ -2390,17 +2622,19 @@ export type AssetUncheckedCreateWithoutDisposalsInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
@@ -2437,16 +2671,15 @@ export type AssetUpdateWithoutDisposalsInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
   assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
   vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
@@ -2463,6 +2696,9 @@ export type AssetUpdateWithoutDisposalsInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
   intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutDisposalsInput = {
@@ -2478,17 +2714,19 @@ export type AssetUncheckedUpdateWithoutDisposalsInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
@@ -2501,6 +2739,312 @@ export type AssetUncheckedUpdateWithoutDisposalsInput = {
   intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
 }
 
+export type AssetCreateWithoutDeletedByInput = {
+  id?: string
+  assetTag: string
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  condition?: $Enums.AssetConditionEnum | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
+  assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
+  vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
+  contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
+  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutAssetsInput
+  currentStockLocation?: Prisma.StockLocationCreateNestedOneWithoutAssetsInput
+  warranties?: Prisma.WarrantyCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
+}
+
+export type AssetUncheckedCreateWithoutDeletedByInput = {
+  id?: string
+  assetTag: string
+  assetCategoryId: string
+  assetModelId?: string | null
+  vendorId?: string | null
+  contractId?: string | null
+  lifecycleStateId?: string | null
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  condition?: $Enums.AssetConditionEnum | null
+  currentStockLocationId?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  createdById?: string | null
+  updatedById?: string | null
+  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
+}
+
+export type AssetCreateOrConnectWithoutDeletedByInput = {
+  where: Prisma.AssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCreateWithoutDeletedByInput, Prisma.AssetUncheckedCreateWithoutDeletedByInput>
+}
+
+export type AssetCreateManyDeletedByInputEnvelope = {
+  data: Prisma.AssetCreateManyDeletedByInput | Prisma.AssetCreateManyDeletedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type AssetCreateWithoutCreatedByInput = {
+  id?: string
+  assetTag: string
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  condition?: $Enums.AssetConditionEnum | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
+  assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
+  vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
+  contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
+  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutAssetsInput
+  currentStockLocation?: Prisma.StockLocationCreateNestedOneWithoutAssetsInput
+  warranties?: Prisma.WarrantyCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
+}
+
+export type AssetUncheckedCreateWithoutCreatedByInput = {
+  id?: string
+  assetTag: string
+  assetCategoryId: string
+  assetModelId?: string | null
+  vendorId?: string | null
+  contractId?: string | null
+  lifecycleStateId?: string | null
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  condition?: $Enums.AssetConditionEnum | null
+  currentStockLocationId?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  updatedById?: string | null
+  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
+}
+
+export type AssetCreateOrConnectWithoutCreatedByInput = {
+  where: Prisma.AssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCreateWithoutCreatedByInput, Prisma.AssetUncheckedCreateWithoutCreatedByInput>
+}
+
+export type AssetCreateManyCreatedByInputEnvelope = {
+  data: Prisma.AssetCreateManyCreatedByInput | Prisma.AssetCreateManyCreatedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type AssetCreateWithoutUpdatedByInput = {
+  id?: string
+  assetTag: string
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  condition?: $Enums.AssetConditionEnum | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
+  assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
+  vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
+  contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
+  lifecycleState?: Prisma.LifecycleStateCreateNestedOneWithoutAssetsInput
+  currentStockLocation?: Prisma.StockLocationCreateNestedOneWithoutAssetsInput
+  warranties?: Prisma.WarrantyCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+}
+
+export type AssetUncheckedCreateWithoutUpdatedByInput = {
+  id?: string
+  assetTag: string
+  assetCategoryId: string
+  assetModelId?: string | null
+  vendorId?: string | null
+  contractId?: string | null
+  lifecycleStateId?: string | null
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  condition?: $Enums.AssetConditionEnum | null
+  currentStockLocationId?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
+  stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssetInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutAssetInput
+  disposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutAssetInput
+  reservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutAssetInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedCreateNestedManyWithoutAssetInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutAssetInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedCreateNestedOneWithoutLinkedAssetInput
+}
+
+export type AssetCreateOrConnectWithoutUpdatedByInput = {
+  where: Prisma.AssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCreateWithoutUpdatedByInput, Prisma.AssetUncheckedCreateWithoutUpdatedByInput>
+}
+
+export type AssetCreateManyUpdatedByInputEnvelope = {
+  data: Prisma.AssetCreateManyUpdatedByInput | Prisma.AssetCreateManyUpdatedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type AssetUpsertWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.AssetWhereUniqueInput
+  update: Prisma.XOR<Prisma.AssetUpdateWithoutDeletedByInput, Prisma.AssetUncheckedUpdateWithoutDeletedByInput>
+  create: Prisma.XOR<Prisma.AssetCreateWithoutDeletedByInput, Prisma.AssetUncheckedCreateWithoutDeletedByInput>
+}
+
+export type AssetUpdateWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.AssetWhereUniqueInput
+  data: Prisma.XOR<Prisma.AssetUpdateWithoutDeletedByInput, Prisma.AssetUncheckedUpdateWithoutDeletedByInput>
+}
+
+export type AssetUpdateManyWithWhereWithoutDeletedByInput = {
+  where: Prisma.AssetScalarWhereInput
+  data: Prisma.XOR<Prisma.AssetUpdateManyMutationInput, Prisma.AssetUncheckedUpdateManyWithoutDeletedByInput>
+}
+
+export type AssetUpsertWithWhereUniqueWithoutCreatedByInput = {
+  where: Prisma.AssetWhereUniqueInput
+  update: Prisma.XOR<Prisma.AssetUpdateWithoutCreatedByInput, Prisma.AssetUncheckedUpdateWithoutCreatedByInput>
+  create: Prisma.XOR<Prisma.AssetCreateWithoutCreatedByInput, Prisma.AssetUncheckedCreateWithoutCreatedByInput>
+}
+
+export type AssetUpdateWithWhereUniqueWithoutCreatedByInput = {
+  where: Prisma.AssetWhereUniqueInput
+  data: Prisma.XOR<Prisma.AssetUpdateWithoutCreatedByInput, Prisma.AssetUncheckedUpdateWithoutCreatedByInput>
+}
+
+export type AssetUpdateManyWithWhereWithoutCreatedByInput = {
+  where: Prisma.AssetScalarWhereInput
+  data: Prisma.XOR<Prisma.AssetUpdateManyMutationInput, Prisma.AssetUncheckedUpdateManyWithoutCreatedByInput>
+}
+
+export type AssetUpsertWithWhereUniqueWithoutUpdatedByInput = {
+  where: Prisma.AssetWhereUniqueInput
+  update: Prisma.XOR<Prisma.AssetUpdateWithoutUpdatedByInput, Prisma.AssetUncheckedUpdateWithoutUpdatedByInput>
+  create: Prisma.XOR<Prisma.AssetCreateWithoutUpdatedByInput, Prisma.AssetUncheckedCreateWithoutUpdatedByInput>
+}
+
+export type AssetUpdateWithWhereUniqueWithoutUpdatedByInput = {
+  where: Prisma.AssetWhereUniqueInput
+  data: Prisma.XOR<Prisma.AssetUpdateWithoutUpdatedByInput, Prisma.AssetUncheckedUpdateWithoutUpdatedByInput>
+}
+
+export type AssetUpdateManyWithWhereWithoutUpdatedByInput = {
+  where: Prisma.AssetScalarWhereInput
+  data: Prisma.XOR<Prisma.AssetUpdateManyMutationInput, Prisma.AssetUncheckedUpdateManyWithoutUpdatedByInput>
+}
+
 export type AssetCreateWithoutVendorInput = {
   id?: string
   assetTag: string
@@ -2509,16 +3053,15 @@ export type AssetCreateWithoutVendorInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
   assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
   contract?: Prisma.ContractCreateNestedOneWithoutAssetsInput
@@ -2535,6 +3078,9 @@ export type AssetCreateWithoutVendorInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
   intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
 }
 
 export type AssetUncheckedCreateWithoutVendorInput = {
@@ -2549,17 +3095,19 @@ export type AssetUncheckedCreateWithoutVendorInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
@@ -2607,16 +3155,15 @@ export type AssetCreateWithoutLifecycleStateInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
   assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
   vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
@@ -2633,6 +3180,9 @@ export type AssetCreateWithoutLifecycleStateInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
   intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
 }
 
 export type AssetUncheckedCreateWithoutLifecycleStateInput = {
@@ -2647,17 +3197,19 @@ export type AssetUncheckedCreateWithoutLifecycleStateInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
@@ -2705,16 +3257,15 @@ export type AssetCreateWithoutIntuneDeviceInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
   assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
   vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
@@ -2731,6 +3282,9 @@ export type AssetCreateWithoutIntuneDeviceInput = {
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
 }
 
 export type AssetUncheckedCreateWithoutIntuneDeviceInput = {
@@ -2746,17 +3300,19 @@ export type AssetUncheckedCreateWithoutIntuneDeviceInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
@@ -2793,16 +3349,15 @@ export type AssetUpdateWithoutIntuneDeviceInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
   assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
   vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
@@ -2819,6 +3374,9 @@ export type AssetUpdateWithoutIntuneDeviceInput = {
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutIntuneDeviceInput = {
@@ -2834,17 +3392,19 @@ export type AssetUncheckedUpdateWithoutIntuneDeviceInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
@@ -2865,16 +3425,15 @@ export type AssetCreateWithoutKitCheckoutItemsInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
   assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
   vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
@@ -2891,6 +3450,9 @@ export type AssetCreateWithoutKitCheckoutItemsInput = {
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
   intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
 }
 
 export type AssetUncheckedCreateWithoutKitCheckoutItemsInput = {
@@ -2906,17 +3468,19 @@ export type AssetUncheckedCreateWithoutKitCheckoutItemsInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
@@ -2953,16 +3517,15 @@ export type AssetUpdateWithoutKitCheckoutItemsInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
   assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
   vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
@@ -2979,6 +3542,9 @@ export type AssetUpdateWithoutKitCheckoutItemsInput = {
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
   intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutKitCheckoutItemsInput = {
@@ -2994,17 +3560,19 @@ export type AssetUncheckedUpdateWithoutKitCheckoutItemsInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
@@ -3025,16 +3593,15 @@ export type AssetCreateWithoutMaintenanceSchedulesInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
   assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
   vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
@@ -3051,6 +3618,9 @@ export type AssetCreateWithoutMaintenanceSchedulesInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
   intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
 }
 
 export type AssetUncheckedCreateWithoutMaintenanceSchedulesInput = {
@@ -3066,17 +3636,19 @@ export type AssetUncheckedCreateWithoutMaintenanceSchedulesInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
@@ -3113,16 +3685,15 @@ export type AssetUpdateWithoutMaintenanceSchedulesInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
   assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
   vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
@@ -3139,6 +3710,9 @@ export type AssetUpdateWithoutMaintenanceSchedulesInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
   intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutMaintenanceSchedulesInput = {
@@ -3154,17 +3728,19 @@ export type AssetUncheckedUpdateWithoutMaintenanceSchedulesInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
@@ -3185,16 +3761,15 @@ export type AssetCreateWithoutMaintenanceRecordsInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
   assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
   vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
@@ -3211,6 +3786,9 @@ export type AssetCreateWithoutMaintenanceRecordsInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
   intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
 }
 
 export type AssetUncheckedCreateWithoutMaintenanceRecordsInput = {
@@ -3226,17 +3804,19 @@ export type AssetUncheckedCreateWithoutMaintenanceRecordsInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
@@ -3273,16 +3853,15 @@ export type AssetUpdateWithoutMaintenanceRecordsInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
   assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
   vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
@@ -3299,6 +3878,9 @@ export type AssetUpdateWithoutMaintenanceRecordsInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
   intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutMaintenanceRecordsInput = {
@@ -3314,17 +3896,19 @@ export type AssetUncheckedUpdateWithoutMaintenanceRecordsInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
@@ -3345,16 +3929,15 @@ export type AssetCreateWithoutReservationsInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
   assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
   vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
@@ -3371,6 +3954,9 @@ export type AssetCreateWithoutReservationsInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   serviceAssets?: Prisma.ServiceAssetCreateNestedManyWithoutAssetInput
   intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
 }
 
 export type AssetUncheckedCreateWithoutReservationsInput = {
@@ -3386,17 +3972,19 @@ export type AssetUncheckedCreateWithoutReservationsInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
@@ -3433,16 +4021,15 @@ export type AssetUpdateWithoutReservationsInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
   assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
   vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
@@ -3459,6 +4046,9 @@ export type AssetUpdateWithoutReservationsInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
   intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutReservationsInput = {
@@ -3474,17 +4064,19 @@ export type AssetUncheckedUpdateWithoutReservationsInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
@@ -3505,16 +4097,15 @@ export type AssetCreateWithoutServiceAssetsInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetsInput
   assetModel?: Prisma.AssetModelCreateNestedOneWithoutAssetsInput
   vendor?: Prisma.VendorCreateNestedOneWithoutAssetsInput
@@ -3531,6 +4122,9 @@ export type AssetCreateWithoutServiceAssetsInput = {
   reservations?: Prisma.AssetReservationCreateNestedManyWithoutAssetInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemCreateNestedManyWithoutAssetInput
   intuneDevice?: Prisma.IntuneDeviceCreateNestedOneWithoutLinkedAssetInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetsInput
+  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedAssetsInput
+  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedAssetsInput
 }
 
 export type AssetUncheckedCreateWithoutServiceAssetsInput = {
@@ -3546,17 +4140,19 @@ export type AssetUncheckedCreateWithoutServiceAssetsInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
   warranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutAssetInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutLinkedAssetInput
   stockMovements?: Prisma.StockMovementUncheckedCreateNestedManyWithoutAssetInput
@@ -3593,16 +4189,15 @@ export type AssetUpdateWithoutServiceAssetsInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
   assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
   vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
@@ -3619,6 +4214,9 @@ export type AssetUpdateWithoutServiceAssetsInput = {
   reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutServiceAssetsInput = {
@@ -3634,17 +4232,19 @@ export type AssetUncheckedUpdateWithoutServiceAssetsInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
@@ -3669,17 +4269,19 @@ export type AssetCreateManyAssetCategoryInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
 }
 
 export type AssetUpdateWithoutAssetCategoryInput = {
@@ -3690,16 +4292,15 @@ export type AssetUpdateWithoutAssetCategoryInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
   vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
   contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
@@ -3716,6 +4317,9 @@ export type AssetUpdateWithoutAssetCategoryInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
   intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutAssetCategoryInput = {
@@ -3730,17 +4334,19 @@ export type AssetUncheckedUpdateWithoutAssetCategoryInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
@@ -3766,17 +4372,19 @@ export type AssetUncheckedUpdateManyWithoutAssetCategoryInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AssetCreateManyAssetModelInput = {
@@ -3791,17 +4399,19 @@ export type AssetCreateManyAssetModelInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
 }
 
 export type AssetUpdateWithoutAssetModelInput = {
@@ -3812,16 +4422,15 @@ export type AssetUpdateWithoutAssetModelInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
   vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
   contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
@@ -3838,6 +4447,9 @@ export type AssetUpdateWithoutAssetModelInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
   intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutAssetModelInput = {
@@ -3852,17 +4464,19 @@ export type AssetUncheckedUpdateWithoutAssetModelInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
@@ -3888,17 +4502,19 @@ export type AssetUncheckedUpdateManyWithoutAssetModelInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AssetCreateManyCurrentStockLocationInput = {
@@ -3914,16 +4530,18 @@ export type AssetCreateManyCurrentStockLocationInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
 }
 
 export type AssetUpdateWithoutCurrentStockLocationInput = {
@@ -3934,16 +4552,15 @@ export type AssetUpdateWithoutCurrentStockLocationInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
   assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
   vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
@@ -3960,6 +4577,9 @@ export type AssetUpdateWithoutCurrentStockLocationInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
   intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutCurrentStockLocationInput = {
@@ -3975,16 +4595,18 @@ export type AssetUncheckedUpdateWithoutCurrentStockLocationInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
@@ -4011,16 +4633,18 @@ export type AssetUncheckedUpdateManyWithoutCurrentStockLocationInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AssetCreateManyContractInput = {
@@ -4035,17 +4659,19 @@ export type AssetCreateManyContractInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
 }
 
 export type AssetUpdateWithoutContractInput = {
@@ -4056,16 +4682,15 @@ export type AssetUpdateWithoutContractInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
   assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
   vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
@@ -4082,6 +4707,9 @@ export type AssetUpdateWithoutContractInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
   intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutContractInput = {
@@ -4096,17 +4724,19 @@ export type AssetUncheckedUpdateWithoutContractInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
@@ -4132,17 +4762,409 @@ export type AssetUncheckedUpdateManyWithoutContractInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type AssetCreateManyDeletedByInput = {
+  id?: string
+  assetTag: string
+  assetCategoryId: string
+  assetModelId?: string | null
+  vendorId?: string | null
+  contractId?: string | null
+  lifecycleStateId?: string | null
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  condition?: $Enums.AssetConditionEnum | null
+  currentStockLocationId?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  createdById?: string | null
+  updatedById?: string | null
+}
+
+export type AssetCreateManyCreatedByInput = {
+  id?: string
+  assetTag: string
+  assetCategoryId: string
+  assetModelId?: string | null
+  vendorId?: string | null
+  contractId?: string | null
+  lifecycleStateId?: string | null
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  condition?: $Enums.AssetConditionEnum | null
+  currentStockLocationId?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  updatedById?: string | null
+}
+
+export type AssetCreateManyUpdatedByInput = {
+  id?: string
+  assetTag: string
+  assetCategoryId: string
+  assetModelId?: string | null
+  vendorId?: string | null
+  contractId?: string | null
+  lifecycleStateId?: string | null
+  serialNumber?: string | null
+  purchaseDate?: Date | string | null
+  purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
+  depreciationStart?: Date | string | null
+  depreciationEnd?: Date | string | null
+  condition?: $Enums.AssetConditionEnum | null
+  currentStockLocationId?: string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+}
+
+export type AssetUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
+  assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
+  vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
+  contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
+  lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutAssetsNestedInput
+  currentStockLocation?: Prisma.StockLocationUpdateOneWithoutAssetsNestedInput
+  warranties?: Prisma.WarrantyUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
+}
+
+export type AssetUncheckedUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
+  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
+}
+
+export type AssetUncheckedUpdateManyWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
+  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type AssetUpdateWithoutCreatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
+  assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
+  vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
+  contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
+  lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutAssetsNestedInput
+  currentStockLocation?: Prisma.StockLocationUpdateOneWithoutAssetsNestedInput
+  warranties?: Prisma.WarrantyUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
+}
+
+export type AssetUncheckedUpdateWithoutCreatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
+  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
+}
+
+export type AssetUncheckedUpdateManyWithoutCreatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
+  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type AssetUpdateWithoutUpdatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
+  assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
+  vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
+  contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
+  lifecycleState?: Prisma.LifecycleStateUpdateOneWithoutAssetsNestedInput
+  currentStockLocation?: Prisma.StockLocationUpdateOneWithoutAssetsNestedInput
+  warranties?: Prisma.WarrantyUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+}
+
+export type AssetUncheckedUpdateWithoutUpdatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
+  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
+  stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
+  assetAssignments?: Prisma.AssetAssignmentUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssetNestedInput
+  maintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutAssetNestedInput
+  disposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutAssetNestedInput
+  reservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutAssetNestedInput
+  kitCheckoutItems?: Prisma.AssetKitCheckoutItemUncheckedUpdateManyWithoutAssetNestedInput
+  serviceAssets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutAssetNestedInput
+  intuneDevice?: Prisma.IntuneDeviceUncheckedUpdateOneWithoutLinkedAssetNestedInput
+}
+
+export type AssetUncheckedUpdateManyWithoutUpdatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetTag?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  assetModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  contractId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lifecycleStateId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serialNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  purchaseDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
+  depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
+  currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AssetCreateManyVendorInput = {
@@ -4157,17 +5179,19 @@ export type AssetCreateManyVendorInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
 }
 
 export type AssetUpdateWithoutVendorInput = {
@@ -4178,16 +5202,15 @@ export type AssetUpdateWithoutVendorInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
   assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
   contract?: Prisma.ContractUpdateOneWithoutAssetsNestedInput
@@ -4204,6 +5227,9 @@ export type AssetUpdateWithoutVendorInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
   intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutVendorInput = {
@@ -4218,17 +5244,19 @@ export type AssetUncheckedUpdateWithoutVendorInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
@@ -4254,17 +5282,19 @@ export type AssetUncheckedUpdateManyWithoutVendorInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AssetCreateManyLifecycleStateInput = {
@@ -4279,17 +5309,19 @@ export type AssetCreateManyLifecycleStateInput = {
   purchaseCost?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: string | null
-  depreciationModel?: string | null
+  depreciationModel?: $Enums.DepreciationModelEnum | null
   depreciationStart?: Date | string | null
   depreciationEnd?: Date | string | null
-  warrantyEndDate?: Date | string | null
-  condition?: string | null
+  condition?: $Enums.AssetConditionEnum | null
   currentStockLocationId?: string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: string | null
-  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  createdById?: string | null
+  updatedById?: string | null
 }
 
 export type AssetUpdateWithoutLifecycleStateInput = {
@@ -4300,16 +5332,15 @@ export type AssetUpdateWithoutLifecycleStateInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetsNestedInput
   assetModel?: Prisma.AssetModelUpdateOneWithoutAssetsNestedInput
   vendor?: Prisma.VendorUpdateOneWithoutAssetsNestedInput
@@ -4326,6 +5357,9 @@ export type AssetUpdateWithoutLifecycleStateInput = {
   kitCheckoutItems?: Prisma.AssetKitCheckoutItemUpdateManyWithoutAssetNestedInput
   serviceAssets?: Prisma.ServiceAssetUpdateManyWithoutAssetNestedInput
   intuneDevice?: Prisma.IntuneDeviceUpdateOneWithoutLinkedAssetNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetsNestedInput
+  createdBy?: Prisma.PersonUpdateOneWithoutCreatedAssetsNestedInput
+  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedAssetsNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutLifecycleStateInput = {
@@ -4340,17 +5374,19 @@ export type AssetUncheckedUpdateWithoutLifecycleStateInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   warranties?: Prisma.WarrantyUncheckedUpdateManyWithoutAssetNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutLinkedAssetNestedInput
   stockMovements?: Prisma.StockMovementUncheckedUpdateManyWithoutAssetNestedInput
@@ -4376,17 +5412,19 @@ export type AssetUncheckedUpdateManyWithoutLifecycleStateInput = {
   purchaseCost?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   purchaseCostSar?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  depreciationModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  depreciationModel?: Prisma.NullableEnumDepreciationModelEnumFieldUpdateOperationsInput | $Enums.DepreciationModelEnum | null
   depreciationStart?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   depreciationEnd?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  warrantyEndDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  condition?: Prisma.NullableEnumAssetConditionEnumFieldUpdateOperationsInput | $Enums.AssetConditionEnum | null
   currentStockLocationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   attributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -4517,14 +5555,16 @@ export type AssetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   depreciationModel?: boolean
   depreciationStart?: boolean
   depreciationEnd?: boolean
-  warrantyEndDate?: boolean
   condition?: boolean
   currentStockLocationId?: boolean
   attributes?: boolean
   note?: boolean
-  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
+  createdById?: boolean
+  updatedById?: boolean
   assetCategory?: boolean | Prisma.AssetCategoryDefaultArgs<ExtArgs>
   assetModel?: boolean | Prisma.Asset$assetModelArgs<ExtArgs>
   vendor?: boolean | Prisma.Asset$vendorArgs<ExtArgs>
@@ -4542,6 +5582,9 @@ export type AssetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   kitCheckoutItems?: boolean | Prisma.Asset$kitCheckoutItemsArgs<ExtArgs>
   serviceAssets?: boolean | Prisma.Asset$serviceAssetsArgs<ExtArgs>
   intuneDevice?: boolean | Prisma.Asset$intuneDeviceArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Asset$deletedByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.Asset$createdByArgs<ExtArgs>
+  updatedBy?: boolean | Prisma.Asset$updatedByArgs<ExtArgs>
   _count?: boolean | Prisma.AssetCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["asset"]>
 
@@ -4561,20 +5604,25 @@ export type AssetSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   depreciationModel?: boolean
   depreciationStart?: boolean
   depreciationEnd?: boolean
-  warrantyEndDate?: boolean
   condition?: boolean
   currentStockLocationId?: boolean
   attributes?: boolean
   note?: boolean
-  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
+  createdById?: boolean
+  updatedById?: boolean
   assetCategory?: boolean | Prisma.AssetCategoryDefaultArgs<ExtArgs>
   assetModel?: boolean | Prisma.Asset$assetModelArgs<ExtArgs>
   vendor?: boolean | Prisma.Asset$vendorArgs<ExtArgs>
   contract?: boolean | Prisma.Asset$contractArgs<ExtArgs>
   lifecycleState?: boolean | Prisma.Asset$lifecycleStateArgs<ExtArgs>
   currentStockLocation?: boolean | Prisma.Asset$currentStockLocationArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Asset$deletedByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.Asset$createdByArgs<ExtArgs>
+  updatedBy?: boolean | Prisma.Asset$updatedByArgs<ExtArgs>
 }, ExtArgs["result"]["asset"]>
 
 export type AssetSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -4593,20 +5641,25 @@ export type AssetSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   depreciationModel?: boolean
   depreciationStart?: boolean
   depreciationEnd?: boolean
-  warrantyEndDate?: boolean
   condition?: boolean
   currentStockLocationId?: boolean
   attributes?: boolean
   note?: boolean
-  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
+  createdById?: boolean
+  updatedById?: boolean
   assetCategory?: boolean | Prisma.AssetCategoryDefaultArgs<ExtArgs>
   assetModel?: boolean | Prisma.Asset$assetModelArgs<ExtArgs>
   vendor?: boolean | Prisma.Asset$vendorArgs<ExtArgs>
   contract?: boolean | Prisma.Asset$contractArgs<ExtArgs>
   lifecycleState?: boolean | Prisma.Asset$lifecycleStateArgs<ExtArgs>
   currentStockLocation?: boolean | Prisma.Asset$currentStockLocationArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Asset$deletedByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.Asset$createdByArgs<ExtArgs>
+  updatedBy?: boolean | Prisma.Asset$updatedByArgs<ExtArgs>
 }, ExtArgs["result"]["asset"]>
 
 export type AssetSelectScalar = {
@@ -4625,17 +5678,19 @@ export type AssetSelectScalar = {
   depreciationModel?: boolean
   depreciationStart?: boolean
   depreciationEnd?: boolean
-  warrantyEndDate?: boolean
   condition?: boolean
   currentStockLocationId?: boolean
   attributes?: boolean
   note?: boolean
-  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
+  createdById?: boolean
+  updatedById?: boolean
 }
 
-export type AssetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "assetTag" | "assetCategoryId" | "assetModelId" | "vendorId" | "contractId" | "lifecycleStateId" | "serialNumber" | "purchaseDate" | "purchaseCost" | "purchaseCostSar" | "currency" | "depreciationModel" | "depreciationStart" | "depreciationEnd" | "warrantyEndDate" | "condition" | "currentStockLocationId" | "attributes" | "note" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["asset"]>
+export type AssetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "assetTag" | "assetCategoryId" | "assetModelId" | "vendorId" | "contractId" | "lifecycleStateId" | "serialNumber" | "purchaseDate" | "purchaseCost" | "purchaseCostSar" | "currency" | "depreciationModel" | "depreciationStart" | "depreciationEnd" | "condition" | "currentStockLocationId" | "attributes" | "note" | "createdAt" | "updatedAt" | "deletedAt" | "deletedById" | "createdById" | "updatedById", ExtArgs["result"]["asset"]>
 export type AssetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   assetCategory?: boolean | Prisma.AssetCategoryDefaultArgs<ExtArgs>
   assetModel?: boolean | Prisma.Asset$assetModelArgs<ExtArgs>
@@ -4654,6 +5709,9 @@ export type AssetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   kitCheckoutItems?: boolean | Prisma.Asset$kitCheckoutItemsArgs<ExtArgs>
   serviceAssets?: boolean | Prisma.Asset$serviceAssetsArgs<ExtArgs>
   intuneDevice?: boolean | Prisma.Asset$intuneDeviceArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Asset$deletedByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.Asset$createdByArgs<ExtArgs>
+  updatedBy?: boolean | Prisma.Asset$updatedByArgs<ExtArgs>
   _count?: boolean | Prisma.AssetCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AssetIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4663,6 +5721,9 @@ export type AssetIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   contract?: boolean | Prisma.Asset$contractArgs<ExtArgs>
   lifecycleState?: boolean | Prisma.Asset$lifecycleStateArgs<ExtArgs>
   currentStockLocation?: boolean | Prisma.Asset$currentStockLocationArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Asset$deletedByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.Asset$createdByArgs<ExtArgs>
+  updatedBy?: boolean | Prisma.Asset$updatedByArgs<ExtArgs>
 }
 export type AssetIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   assetCategory?: boolean | Prisma.AssetCategoryDefaultArgs<ExtArgs>
@@ -4671,6 +5732,9 @@ export type AssetIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   contract?: boolean | Prisma.Asset$contractArgs<ExtArgs>
   lifecycleState?: boolean | Prisma.Asset$lifecycleStateArgs<ExtArgs>
   currentStockLocation?: boolean | Prisma.Asset$currentStockLocationArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.Asset$deletedByArgs<ExtArgs>
+  createdBy?: boolean | Prisma.Asset$createdByArgs<ExtArgs>
+  updatedBy?: boolean | Prisma.Asset$updatedByArgs<ExtArgs>
 }
 
 export type $AssetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4693,6 +5757,9 @@ export type $AssetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     kitCheckoutItems: Prisma.$AssetKitCheckoutItemPayload<ExtArgs>[]
     serviceAssets: Prisma.$ServiceAssetPayload<ExtArgs>[]
     intuneDevice: Prisma.$IntuneDevicePayload<ExtArgs> | null
+    deletedBy: Prisma.$PersonPayload<ExtArgs> | null
+    createdBy: Prisma.$PersonPayload<ExtArgs> | null
+    updatedBy: Prisma.$PersonPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -4707,17 +5774,19 @@ export type $AssetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     purchaseCost: runtime.Decimal | null
     purchaseCostSar: runtime.Decimal | null
     currency: string | null
-    depreciationModel: string | null
+    depreciationModel: $Enums.DepreciationModelEnum | null
     depreciationStart: Date | null
     depreciationEnd: Date | null
-    warrantyEndDate: Date | null
-    condition: string | null
+    condition: $Enums.AssetConditionEnum | null
     currentStockLocationId: string | null
     attributes: runtime.JsonValue | null
     note: string | null
-    deletedAt: Date | null
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
+    deletedById: string | null
+    createdById: string | null
+    updatedById: string | null
   }, ExtArgs["result"]["asset"]>
   composites: {}
 }
@@ -5129,6 +6198,9 @@ export interface Prisma__AssetClient<T, Null = never, ExtArgs extends runtime.Ty
   kitCheckoutItems<T extends Prisma.Asset$kitCheckoutItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$kitCheckoutItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetKitCheckoutItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   serviceAssets<T extends Prisma.Asset$serviceAssetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$serviceAssetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServiceAssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   intuneDevice<T extends Prisma.Asset$intuneDeviceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$intuneDeviceArgs<ExtArgs>>): Prisma.Prisma__IntuneDeviceClient<runtime.Types.Result.GetResult<Prisma.$IntuneDevicePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  deletedBy<T extends Prisma.Asset$deletedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$deletedByArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  createdBy<T extends Prisma.Asset$createdByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$createdByArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  updatedBy<T extends Prisma.Asset$updatedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$updatedByArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5170,17 +6242,19 @@ export interface AssetFieldRefs {
   readonly purchaseCost: Prisma.FieldRef<"Asset", 'Decimal'>
   readonly purchaseCostSar: Prisma.FieldRef<"Asset", 'Decimal'>
   readonly currency: Prisma.FieldRef<"Asset", 'String'>
-  readonly depreciationModel: Prisma.FieldRef<"Asset", 'String'>
+  readonly depreciationModel: Prisma.FieldRef<"Asset", 'DepreciationModelEnum'>
   readonly depreciationStart: Prisma.FieldRef<"Asset", 'DateTime'>
   readonly depreciationEnd: Prisma.FieldRef<"Asset", 'DateTime'>
-  readonly warrantyEndDate: Prisma.FieldRef<"Asset", 'DateTime'>
-  readonly condition: Prisma.FieldRef<"Asset", 'String'>
+  readonly condition: Prisma.FieldRef<"Asset", 'AssetConditionEnum'>
   readonly currentStockLocationId: Prisma.FieldRef<"Asset", 'String'>
   readonly attributes: Prisma.FieldRef<"Asset", 'Json'>
   readonly note: Prisma.FieldRef<"Asset", 'String'>
-  readonly deletedAt: Prisma.FieldRef<"Asset", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Asset", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Asset", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"Asset", 'DateTime'>
+  readonly deletedById: Prisma.FieldRef<"Asset", 'String'>
+  readonly createdById: Prisma.FieldRef<"Asset", 'String'>
+  readonly updatedById: Prisma.FieldRef<"Asset", 'String'>
 }
     
 
@@ -5928,6 +7002,63 @@ export type Asset$intuneDeviceArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   include?: Prisma.IntuneDeviceInclude<ExtArgs> | null
   where?: Prisma.IntuneDeviceWhereInput
+}
+
+/**
+ * Asset.deletedBy
+ */
+export type Asset$deletedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Person
+   */
+  select?: Prisma.PersonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Person
+   */
+  omit?: Prisma.PersonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PersonInclude<ExtArgs> | null
+  where?: Prisma.PersonWhereInput
+}
+
+/**
+ * Asset.createdBy
+ */
+export type Asset$createdByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Person
+   */
+  select?: Prisma.PersonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Person
+   */
+  omit?: Prisma.PersonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PersonInclude<ExtArgs> | null
+  where?: Prisma.PersonWhereInput
+}
+
+/**
+ * Asset.updatedBy
+ */
+export type Asset$updatedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Person
+   */
+  select?: Prisma.PersonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Person
+   */
+  omit?: Prisma.PersonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PersonInclude<ExtArgs> | null
+  where?: Prisma.PersonWhereInput
 }
 
 /**

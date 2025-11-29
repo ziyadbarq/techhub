@@ -12,6 +12,7 @@ import { ValidationError } from "@/core/domain/errors/validation.error";
 import type { Task } from "@/core/domain/entities/task.entity";
 import type { ITaskRepository } from "@/core/repositories/task.repository.interface";
 import type { IJobQueueService } from "@/core/services/job-queue.service.interface";
+import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { QUEUE_NAMES, TASK_JOBS } from "@/core/domain/jobs/job-names";
 import type { TaskCompletedNotificationJobData } from "@/core/domain/jobs/job-data.types";
 
@@ -22,6 +23,8 @@ export class CompleteTaskUseCase {
     private readonly taskRepository: ITaskRepository,
     @inject(DI_TOKENS.IJobQueueService)
     private readonly jobQueueService: IJobQueueService,
+    @inject(DI_TOKENS.ILoggerService)
+    private readonly logger: ILoggerService,
   ) {}
 
   /**
@@ -65,9 +68,9 @@ export class CompleteTaskUseCase {
       },
     );
 
-    console.log(
-      `[CompleteTaskUseCase] Queued completion notification for task: ${completedTask.id}`,
-    );
+    this.logger.debug("Queued completion notification for task", {
+      taskId: completedTask.id,
+    });
 
     return completedTask;
   }

@@ -10,6 +10,7 @@ import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { requirePermission } from "@/lib/permissions/server";
 import { DataImportWizard } from "@/components/data-import/DataImportWizard";
+import { HowItWorksSection } from "@/components/data-import/HowItWorksSection";
 import {
   Card,
   CardContent,
@@ -115,90 +116,7 @@ export default async function DataImportPage() {
         </Card>
 
         {/* Help Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>How it Works</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div className="space-y-2">
-                <h3 className="flex items-center gap-2 font-semibold">
-                  <span className="bg-primary text-primary-foreground flex h-6 w-6 items-center justify-center rounded-full text-xs">
-                    1
-                  </span>
-                  Select Entity
-                </h3>
-                <p className="text-muted-foreground ml-8 text-sm">
-                  Choose which entity you want to import data into (Assets,
-                  Persons, etc.)
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="flex items-center gap-2 font-semibold">
-                  <span className="bg-primary text-primary-foreground flex h-6 w-6 items-center justify-center rounded-full text-xs">
-                    2
-                  </span>
-                  Configure Settings
-                </h3>
-                <p className="text-muted-foreground ml-8 text-sm">
-                  Set import options like duplicate handling and data
-                  sanitization
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="flex items-center gap-2 font-semibold">
-                  <span className="bg-primary text-primary-foreground flex h-6 w-6 items-center justify-center rounded-full text-xs">
-                    3
-                  </span>
-                  Upload File
-                </h3>
-                <p className="text-muted-foreground ml-8 text-sm">
-                  Drag and drop your CSV or Excel file, or download a template
-                  first
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="flex items-center gap-2 font-semibold">
-                  <span className="bg-primary text-primary-foreground flex h-6 w-6 items-center justify-center rounded-full text-xs">
-                    4
-                  </span>
-                  Map Columns
-                </h3>
-                <p className="text-muted-foreground ml-8 text-sm">
-                  Match your file columns to entity fields (auto-mapped when
-                  possible)
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="flex items-center gap-2 font-semibold">
-                  <span className="bg-primary text-primary-foreground flex h-6 w-6 items-center justify-center rounded-full text-xs">
-                    5
-                  </span>
-                  Validate Data
-                </h3>
-                <p className="text-muted-foreground ml-8 text-sm">
-                  Review validation results and download error reports if needed
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="flex items-center gap-2 font-semibold">
-                  <span className="bg-primary text-primary-foreground flex h-6 w-6 items-center justify-center rounded-full text-xs">
-                    6
-                  </span>
-                  Import
-                </h3>
-                <p className="text-muted-foreground ml-8 text-sm">
-                  Watch real-time progress as your data is imported
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <HowItWorksSection />
       </div>
     </PermissionGuard>
   );

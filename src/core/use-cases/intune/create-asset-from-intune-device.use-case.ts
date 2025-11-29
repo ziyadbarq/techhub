@@ -117,8 +117,11 @@ export class CreateAssetFromIntuneDeviceUseCase {
       let vendor = await this.vendorRepository.findByName(device.manufacturer);
 
       if (!vendor) {
-        // Generate a unique vendor code
-        const vendorCode = await this.generateVendorCode(device.manufacturer);
+        // Use CodeGeneratorService for consistent sequential codes (matching CreateVendorUseCase)
+        const vendorCode = await this.codeGenerator.generateCode(
+          "VENDOR",
+          "VENDOR",
+        );
 
         vendor = Vendor.create({
           name: device.manufacturer,
@@ -158,8 +161,11 @@ export class CreateAssetFromIntuneDeviceUseCase {
       if (searchResults.length > 0) {
         assetModelId = searchResults[0].id;
       } else {
-        // Generate a unique model code
-        const modelCode = await this.generateModelCode(device.model);
+        // Use CodeGeneratorService for consistent sequential codes (matching CreateAssetModelUseCase)
+        const modelCode = await this.codeGenerator.generateCode(
+          "ASSET_MODEL",
+          "MODEL",
+        );
 
         const assetModel = AssetModel.create({
           assetCategoryId: categoryId,
@@ -231,53 +237,5 @@ export class CreateAssetFromIntuneDeviceUseCase {
       vendorCreated,
       modelCreated,
     };
-  }
-
-  /**
-   * Generate a unique vendor code from manufacturer name
-   */
-  private async generateVendorCode(manufacturerName: string): Promise<string> {
-    // Take first 3-4 letters of manufacturer, uppercase
-    const prefix = manufacturerName
-      .replace(/[^a-zA-Z0-9]/g, "")
-      .substring(0, 4)
-      .toUpperCase();
-
-    // Add timestamp suffix to ensure uniqueness
-    const suffix = Date.now().toString(36).toUpperCase().slice(-4);
-    let code = `${prefix}-${suffix}`;
-
-    // Verify uniqueness
-    const existing = await this.vendorRepository.findByCode(code);
-    if (existing) {
-      // Add random chars if collision
-      code = `${prefix}-${suffix}${Math.random().toString(36).slice(2, 4).toUpperCase()}`;
-    }
-
-    return code;
-  }
-
-  /**
-   * Generate a unique asset model code from model name
-   */
-  private async generateModelCode(modelName: string): Promise<string> {
-    // Take first 5 letters of model, uppercase
-    const prefix = modelName
-      .replace(/[^a-zA-Z0-9]/g, "")
-      .substring(0, 5)
-      .toUpperCase();
-
-    // Add timestamp suffix to ensure uniqueness
-    const suffix = Date.now().toString(36).toUpperCase().slice(-4);
-    let code = `${prefix}-${suffix}`;
-
-    // Verify uniqueness
-    const existing = await this.assetModelRepository.findByCode(code);
-    if (existing) {
-      // Add random chars if collision
-      code = `${prefix}-${suffix}${Math.random().toString(36).slice(2, 4).toUpperCase()}`;
-    }
-
-    return code;
   }
 }

@@ -10,15 +10,20 @@
 
 // LicenseProduct model
 model LicenseProduct {
-  id               String   @id @default(cuid())
-  name             String   @unique
-  code             String   @unique
+  id               String    @id @default(cuid())
+  name             String    @unique
+  code             String    @unique
   vendorId         String
   metricType       String // per_device, per_user, per_core, per_vm, per_cluster
-  description      String?  @db.Text
+  description      String?   @db.Text
   lifecycleModelId String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  attributes       Json? // Dynamic custom fields per LicenseProductField
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  // Soft delete fields
+  deletedAt   DateTime?
+  deletedById String?
 
   // Relations
   vendor              Vendor                @relation(fields: [vendorId], references: [id], onDelete: Restrict)
@@ -26,11 +31,13 @@ model LicenseProduct {
   fields              LicenseProductField[]
   licenseEntitlements LicenseEntitlement[]
   addons              LicenseAddon[]
+  deletedBy           Person?               @relation("LicenseProductDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([code])
   @@index([vendorId])
   @@index([lifecycleModelId])
+  @@index([deletedAt])
   @@map("license_products")
 }
 
@@ -72,16 +79,22 @@ model LicenseEntitlement {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
+  // Soft delete fields
+  deletedAt   DateTime?
+  deletedById String?
+
   // Relations
   licenseProduct    LicenseProduct            @relation(fields: [licenseProductId], references: [id], onDelete: Restrict)
   contract          Contract?                 @relation(fields: [contractId], references: [id], onDelete: SetNull)
   allocations       LicenseAllocation[]
   entitlementAddons LicenseEntitlementAddon[]
+  deletedBy         Person?                   @relation("LicenseEntitlementDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([licenseProductId])
   @@index([contractId])
   @@index([effectiveStart, effectiveEnd])
+  @@index([deletedAt])
   @@map("license_entitlements")
 }
 
@@ -100,7 +113,7 @@ model LicenseAllocation {
   updatedAt            DateTime                 @updatedAt
 
   // Relations
-  licenseEntitlement LicenseEntitlement @relation(fields: [licenseEntitlementId], references: [id], onDelete: Cascade)
+  licenseEntitlement LicenseEntitlement @relation(fields: [licenseEntitlementId], references: [id], onDelete: Restrict)
 
   // Indexes
   @@index([licenseEntitlementId])

@@ -44,6 +44,8 @@ export type AssetModelMinAggregateOutputType = {
   defaultWarrantyMonths: number | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
 }
 
 export type AssetModelMaxAggregateOutputType = {
@@ -56,6 +58,8 @@ export type AssetModelMaxAggregateOutputType = {
   defaultWarrantyMonths: number | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
 }
 
 export type AssetModelCountAggregateOutputType = {
@@ -69,6 +73,8 @@ export type AssetModelCountAggregateOutputType = {
   defaultAttributes: number
   createdAt: number
   updatedAt: number
+  deletedAt: number
+  deletedById: number
   _all: number
 }
 
@@ -91,6 +97,8 @@ export type AssetModelMinAggregateInputType = {
   defaultWarrantyMonths?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
 }
 
 export type AssetModelMaxAggregateInputType = {
@@ -103,6 +111,8 @@ export type AssetModelMaxAggregateInputType = {
   defaultWarrantyMonths?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
 }
 
 export type AssetModelCountAggregateInputType = {
@@ -116,6 +126,8 @@ export type AssetModelCountAggregateInputType = {
   defaultAttributes?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
   _all?: true
 }
 
@@ -216,6 +228,8 @@ export type AssetModelGroupByOutputType = {
   defaultAttributes: runtime.JsonValue | null
   createdAt: Date
   updatedAt: Date
+  deletedAt: Date | null
+  deletedById: string | null
   _count: AssetModelCountAggregateOutputType | null
   _avg: AssetModelAvgAggregateOutputType | null
   _sum: AssetModelSumAggregateOutputType | null
@@ -252,10 +266,13 @@ export type AssetModelWhereInput = {
   defaultAttributes?: Prisma.JsonNullableFilter<"AssetModel">
   createdAt?: Prisma.DateTimeFilter<"AssetModel"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AssetModel"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"AssetModel"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"AssetModel"> | string | null
   assetCategory?: Prisma.XOR<Prisma.AssetCategoryScalarRelationFilter, Prisma.AssetCategoryWhereInput>
   vendor?: Prisma.XOR<Prisma.VendorScalarRelationFilter, Prisma.VendorWhereInput>
   assets?: Prisma.AssetListRelationFilter
   kitItems?: Prisma.AssetKitItemListRelationFilter
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }
 
 export type AssetModelOrderByWithRelationInput = {
@@ -269,10 +286,13 @@ export type AssetModelOrderByWithRelationInput = {
   defaultAttributes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   assetCategory?: Prisma.AssetCategoryOrderByWithRelationInput
   vendor?: Prisma.VendorOrderByWithRelationInput
   assets?: Prisma.AssetOrderByRelationAggregateInput
   kitItems?: Prisma.AssetKitItemOrderByRelationAggregateInput
+  deletedBy?: Prisma.PersonOrderByWithRelationInput
 }
 
 export type AssetModelWhereUniqueInput = Prisma.AtLeast<{
@@ -289,10 +309,13 @@ export type AssetModelWhereUniqueInput = Prisma.AtLeast<{
   defaultAttributes?: Prisma.JsonNullableFilter<"AssetModel">
   createdAt?: Prisma.DateTimeFilter<"AssetModel"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AssetModel"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"AssetModel"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"AssetModel"> | string | null
   assetCategory?: Prisma.XOR<Prisma.AssetCategoryScalarRelationFilter, Prisma.AssetCategoryWhereInput>
   vendor?: Prisma.XOR<Prisma.VendorScalarRelationFilter, Prisma.VendorWhereInput>
   assets?: Prisma.AssetListRelationFilter
   kitItems?: Prisma.AssetKitItemListRelationFilter
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }, "id" | "code">
 
 export type AssetModelOrderByWithAggregationInput = {
@@ -306,6 +329,8 @@ export type AssetModelOrderByWithAggregationInput = {
   defaultAttributes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.AssetModelCountOrderByAggregateInput
   _avg?: Prisma.AssetModelAvgOrderByAggregateInput
   _max?: Prisma.AssetModelMaxOrderByAggregateInput
@@ -327,6 +352,8 @@ export type AssetModelScalarWhereWithAggregatesInput = {
   defaultAttributes?: Prisma.JsonNullableWithAggregatesFilter<"AssetModel">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AssetModel"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"AssetModel"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"AssetModel"> | Date | string | null
+  deletedById?: Prisma.StringNullableWithAggregatesFilter<"AssetModel"> | string | null
 }
 
 export type AssetModelCreateInput = {
@@ -338,10 +365,12 @@ export type AssetModelCreateInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetModelsInput
   vendor: Prisma.VendorCreateNestedOneWithoutAssetModelsInput
   assets?: Prisma.AssetCreateNestedManyWithoutAssetModelInput
   kitItems?: Prisma.AssetKitItemCreateNestedManyWithoutAssetModelInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetModelsInput
 }
 
 export type AssetModelUncheckedCreateInput = {
@@ -355,6 +384,8 @@ export type AssetModelUncheckedCreateInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutAssetModelInput
   kitItems?: Prisma.AssetKitItemUncheckedCreateNestedManyWithoutAssetModelInput
 }
@@ -368,10 +399,12 @@ export type AssetModelUpdateInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetModelsNestedInput
   vendor?: Prisma.VendorUpdateOneRequiredWithoutAssetModelsNestedInput
   assets?: Prisma.AssetUpdateManyWithoutAssetModelNestedInput
   kitItems?: Prisma.AssetKitItemUpdateManyWithoutAssetModelNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetModelsNestedInput
 }
 
 export type AssetModelUncheckedUpdateInput = {
@@ -385,6 +418,8 @@ export type AssetModelUncheckedUpdateInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assets?: Prisma.AssetUncheckedUpdateManyWithoutAssetModelNestedInput
   kitItems?: Prisma.AssetKitItemUncheckedUpdateManyWithoutAssetModelNestedInput
 }
@@ -400,6 +435,8 @@ export type AssetModelCreateManyInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type AssetModelUpdateManyMutationInput = {
@@ -411,6 +448,7 @@ export type AssetModelUpdateManyMutationInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type AssetModelUncheckedUpdateManyInput = {
@@ -424,6 +462,8 @@ export type AssetModelUncheckedUpdateManyInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AssetModelListRelationFilter = {
@@ -447,6 +487,8 @@ export type AssetModelCountOrderByAggregateInput = {
   defaultAttributes?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type AssetModelAvgOrderByAggregateInput = {
@@ -463,6 +505,8 @@ export type AssetModelMaxOrderByAggregateInput = {
   defaultWarrantyMonths?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type AssetModelMinOrderByAggregateInput = {
@@ -475,6 +519,8 @@ export type AssetModelMinOrderByAggregateInput = {
   defaultWarrantyMonths?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type AssetModelSumOrderByAggregateInput = {
@@ -552,6 +598,48 @@ export type AssetModelUpdateOneWithoutAssetsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AssetModelUpdateToOneWithWhereWithoutAssetsInput, Prisma.AssetModelUpdateWithoutAssetsInput>, Prisma.AssetModelUncheckedUpdateWithoutAssetsInput>
 }
 
+export type AssetModelCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.AssetModelCreateWithoutDeletedByInput, Prisma.AssetModelUncheckedCreateWithoutDeletedByInput> | Prisma.AssetModelCreateWithoutDeletedByInput[] | Prisma.AssetModelUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.AssetModelCreateOrConnectWithoutDeletedByInput | Prisma.AssetModelCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.AssetModelCreateManyDeletedByInputEnvelope
+  connect?: Prisma.AssetModelWhereUniqueInput | Prisma.AssetModelWhereUniqueInput[]
+}
+
+export type AssetModelUncheckedCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.AssetModelCreateWithoutDeletedByInput, Prisma.AssetModelUncheckedCreateWithoutDeletedByInput> | Prisma.AssetModelCreateWithoutDeletedByInput[] | Prisma.AssetModelUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.AssetModelCreateOrConnectWithoutDeletedByInput | Prisma.AssetModelCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.AssetModelCreateManyDeletedByInputEnvelope
+  connect?: Prisma.AssetModelWhereUniqueInput | Prisma.AssetModelWhereUniqueInput[]
+}
+
+export type AssetModelUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetModelCreateWithoutDeletedByInput, Prisma.AssetModelUncheckedCreateWithoutDeletedByInput> | Prisma.AssetModelCreateWithoutDeletedByInput[] | Prisma.AssetModelUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.AssetModelCreateOrConnectWithoutDeletedByInput | Prisma.AssetModelCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.AssetModelUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.AssetModelUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.AssetModelCreateManyDeletedByInputEnvelope
+  set?: Prisma.AssetModelWhereUniqueInput | Prisma.AssetModelWhereUniqueInput[]
+  disconnect?: Prisma.AssetModelWhereUniqueInput | Prisma.AssetModelWhereUniqueInput[]
+  delete?: Prisma.AssetModelWhereUniqueInput | Prisma.AssetModelWhereUniqueInput[]
+  connect?: Prisma.AssetModelWhereUniqueInput | Prisma.AssetModelWhereUniqueInput[]
+  update?: Prisma.AssetModelUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.AssetModelUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.AssetModelUpdateManyWithWhereWithoutDeletedByInput | Prisma.AssetModelUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.AssetModelScalarWhereInput | Prisma.AssetModelScalarWhereInput[]
+}
+
+export type AssetModelUncheckedUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetModelCreateWithoutDeletedByInput, Prisma.AssetModelUncheckedCreateWithoutDeletedByInput> | Prisma.AssetModelCreateWithoutDeletedByInput[] | Prisma.AssetModelUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.AssetModelCreateOrConnectWithoutDeletedByInput | Prisma.AssetModelCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.AssetModelUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.AssetModelUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.AssetModelCreateManyDeletedByInputEnvelope
+  set?: Prisma.AssetModelWhereUniqueInput | Prisma.AssetModelWhereUniqueInput[]
+  disconnect?: Prisma.AssetModelWhereUniqueInput | Prisma.AssetModelWhereUniqueInput[]
+  delete?: Prisma.AssetModelWhereUniqueInput | Prisma.AssetModelWhereUniqueInput[]
+  connect?: Prisma.AssetModelWhereUniqueInput | Prisma.AssetModelWhereUniqueInput[]
+  update?: Prisma.AssetModelUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.AssetModelUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.AssetModelUpdateManyWithWhereWithoutDeletedByInput | Prisma.AssetModelUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.AssetModelScalarWhereInput | Prisma.AssetModelScalarWhereInput[]
+}
+
 export type AssetModelCreateNestedManyWithoutVendorInput = {
   create?: Prisma.XOR<Prisma.AssetModelCreateWithoutVendorInput, Prisma.AssetModelUncheckedCreateWithoutVendorInput> | Prisma.AssetModelCreateWithoutVendorInput[] | Prisma.AssetModelUncheckedCreateWithoutVendorInput[]
   connectOrCreate?: Prisma.AssetModelCreateOrConnectWithoutVendorInput | Prisma.AssetModelCreateOrConnectWithoutVendorInput[]
@@ -619,9 +707,11 @@ export type AssetModelCreateWithoutAssetCategoryInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   vendor: Prisma.VendorCreateNestedOneWithoutAssetModelsInput
   assets?: Prisma.AssetCreateNestedManyWithoutAssetModelInput
   kitItems?: Prisma.AssetKitItemCreateNestedManyWithoutAssetModelInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetModelsInput
 }
 
 export type AssetModelUncheckedCreateWithoutAssetCategoryInput = {
@@ -634,6 +724,8 @@ export type AssetModelUncheckedCreateWithoutAssetCategoryInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutAssetModelInput
   kitItems?: Prisma.AssetKitItemUncheckedCreateNestedManyWithoutAssetModelInput
 }
@@ -678,6 +770,8 @@ export type AssetModelScalarWhereInput = {
   defaultAttributes?: Prisma.JsonNullableFilter<"AssetModel">
   createdAt?: Prisma.DateTimeFilter<"AssetModel"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AssetModel"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"AssetModel"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"AssetModel"> | string | null
 }
 
 export type AssetModelCreateWithoutAssetsInput = {
@@ -689,9 +783,11 @@ export type AssetModelCreateWithoutAssetsInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetModelsInput
   vendor: Prisma.VendorCreateNestedOneWithoutAssetModelsInput
   kitItems?: Prisma.AssetKitItemCreateNestedManyWithoutAssetModelInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetModelsInput
 }
 
 export type AssetModelUncheckedCreateWithoutAssetsInput = {
@@ -705,6 +801,8 @@ export type AssetModelUncheckedCreateWithoutAssetsInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   kitItems?: Prisma.AssetKitItemUncheckedCreateNestedManyWithoutAssetModelInput
 }
 
@@ -733,9 +831,11 @@ export type AssetModelUpdateWithoutAssetsInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetModelsNestedInput
   vendor?: Prisma.VendorUpdateOneRequiredWithoutAssetModelsNestedInput
   kitItems?: Prisma.AssetKitItemUpdateManyWithoutAssetModelNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetModelsNestedInput
 }
 
 export type AssetModelUncheckedUpdateWithoutAssetsInput = {
@@ -749,7 +849,67 @@ export type AssetModelUncheckedUpdateWithoutAssetsInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kitItems?: Prisma.AssetKitItemUncheckedUpdateManyWithoutAssetModelNestedInput
+}
+
+export type AssetModelCreateWithoutDeletedByInput = {
+  id?: string
+  name: string
+  code: string
+  description?: string | null
+  defaultWarrantyMonths?: number | null
+  defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetModelsInput
+  vendor: Prisma.VendorCreateNestedOneWithoutAssetModelsInput
+  assets?: Prisma.AssetCreateNestedManyWithoutAssetModelInput
+  kitItems?: Prisma.AssetKitItemCreateNestedManyWithoutAssetModelInput
+}
+
+export type AssetModelUncheckedCreateWithoutDeletedByInput = {
+  id?: string
+  assetCategoryId: string
+  vendorId: string
+  name: string
+  code: string
+  description?: string | null
+  defaultWarrantyMonths?: number | null
+  defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  assets?: Prisma.AssetUncheckedCreateNestedManyWithoutAssetModelInput
+  kitItems?: Prisma.AssetKitItemUncheckedCreateNestedManyWithoutAssetModelInput
+}
+
+export type AssetModelCreateOrConnectWithoutDeletedByInput = {
+  where: Prisma.AssetModelWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetModelCreateWithoutDeletedByInput, Prisma.AssetModelUncheckedCreateWithoutDeletedByInput>
+}
+
+export type AssetModelCreateManyDeletedByInputEnvelope = {
+  data: Prisma.AssetModelCreateManyDeletedByInput | Prisma.AssetModelCreateManyDeletedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type AssetModelUpsertWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.AssetModelWhereUniqueInput
+  update: Prisma.XOR<Prisma.AssetModelUpdateWithoutDeletedByInput, Prisma.AssetModelUncheckedUpdateWithoutDeletedByInput>
+  create: Prisma.XOR<Prisma.AssetModelCreateWithoutDeletedByInput, Prisma.AssetModelUncheckedCreateWithoutDeletedByInput>
+}
+
+export type AssetModelUpdateWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.AssetModelWhereUniqueInput
+  data: Prisma.XOR<Prisma.AssetModelUpdateWithoutDeletedByInput, Prisma.AssetModelUncheckedUpdateWithoutDeletedByInput>
+}
+
+export type AssetModelUpdateManyWithWhereWithoutDeletedByInput = {
+  where: Prisma.AssetModelScalarWhereInput
+  data: Prisma.XOR<Prisma.AssetModelUpdateManyMutationInput, Prisma.AssetModelUncheckedUpdateManyWithoutDeletedByInput>
 }
 
 export type AssetModelCreateWithoutVendorInput = {
@@ -761,9 +921,11 @@ export type AssetModelCreateWithoutVendorInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetModelsInput
   assets?: Prisma.AssetCreateNestedManyWithoutAssetModelInput
   kitItems?: Prisma.AssetKitItemCreateNestedManyWithoutAssetModelInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetModelsInput
 }
 
 export type AssetModelUncheckedCreateWithoutVendorInput = {
@@ -776,6 +938,8 @@ export type AssetModelUncheckedCreateWithoutVendorInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutAssetModelInput
   kitItems?: Prisma.AssetKitItemUncheckedCreateNestedManyWithoutAssetModelInput
 }
@@ -815,9 +979,11 @@ export type AssetModelCreateWithoutKitItemsInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   assetCategory: Prisma.AssetCategoryCreateNestedOneWithoutAssetModelsInput
   vendor: Prisma.VendorCreateNestedOneWithoutAssetModelsInput
   assets?: Prisma.AssetCreateNestedManyWithoutAssetModelInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedAssetModelsInput
 }
 
 export type AssetModelUncheckedCreateWithoutKitItemsInput = {
@@ -831,6 +997,8 @@ export type AssetModelUncheckedCreateWithoutKitItemsInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   assets?: Prisma.AssetUncheckedCreateNestedManyWithoutAssetModelInput
 }
 
@@ -859,9 +1027,11 @@ export type AssetModelUpdateWithoutKitItemsInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetModelsNestedInput
   vendor?: Prisma.VendorUpdateOneRequiredWithoutAssetModelsNestedInput
   assets?: Prisma.AssetUpdateManyWithoutAssetModelNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetModelsNestedInput
 }
 
 export type AssetModelUncheckedUpdateWithoutKitItemsInput = {
@@ -875,6 +1045,8 @@ export type AssetModelUncheckedUpdateWithoutKitItemsInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assets?: Prisma.AssetUncheckedUpdateManyWithoutAssetModelNestedInput
 }
 
@@ -888,6 +1060,8 @@ export type AssetModelCreateManyAssetCategoryInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type AssetModelUpdateWithoutAssetCategoryInput = {
@@ -899,9 +1073,11 @@ export type AssetModelUpdateWithoutAssetCategoryInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   vendor?: Prisma.VendorUpdateOneRequiredWithoutAssetModelsNestedInput
   assets?: Prisma.AssetUpdateManyWithoutAssetModelNestedInput
   kitItems?: Prisma.AssetKitItemUpdateManyWithoutAssetModelNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetModelsNestedInput
 }
 
 export type AssetModelUncheckedUpdateWithoutAssetCategoryInput = {
@@ -914,6 +1090,8 @@ export type AssetModelUncheckedUpdateWithoutAssetCategoryInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assets?: Prisma.AssetUncheckedUpdateManyWithoutAssetModelNestedInput
   kitItems?: Prisma.AssetKitItemUncheckedUpdateManyWithoutAssetModelNestedInput
 }
@@ -928,6 +1106,68 @@ export type AssetModelUncheckedUpdateManyWithoutAssetCategoryInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type AssetModelCreateManyDeletedByInput = {
+  id?: string
+  assetCategoryId: string
+  vendorId: string
+  name: string
+  code: string
+  description?: string | null
+  defaultWarrantyMonths?: number | null
+  defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type AssetModelUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  defaultWarrantyMonths?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetModelsNestedInput
+  vendor?: Prisma.VendorUpdateOneRequiredWithoutAssetModelsNestedInput
+  assets?: Prisma.AssetUpdateManyWithoutAssetModelNestedInput
+  kitItems?: Prisma.AssetKitItemUpdateManyWithoutAssetModelNestedInput
+}
+
+export type AssetModelUncheckedUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  vendorId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  defaultWarrantyMonths?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  assets?: Prisma.AssetUncheckedUpdateManyWithoutAssetModelNestedInput
+  kitItems?: Prisma.AssetKitItemUncheckedUpdateManyWithoutAssetModelNestedInput
+}
+
+export type AssetModelUncheckedUpdateManyWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  assetCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
+  vendorId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  defaultWarrantyMonths?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type AssetModelCreateManyVendorInput = {
@@ -940,6 +1180,8 @@ export type AssetModelCreateManyVendorInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type AssetModelUpdateWithoutVendorInput = {
@@ -951,9 +1193,11 @@ export type AssetModelUpdateWithoutVendorInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   assetCategory?: Prisma.AssetCategoryUpdateOneRequiredWithoutAssetModelsNestedInput
   assets?: Prisma.AssetUpdateManyWithoutAssetModelNestedInput
   kitItems?: Prisma.AssetKitItemUpdateManyWithoutAssetModelNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedAssetModelsNestedInput
 }
 
 export type AssetModelUncheckedUpdateWithoutVendorInput = {
@@ -966,6 +1210,8 @@ export type AssetModelUncheckedUpdateWithoutVendorInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assets?: Prisma.AssetUncheckedUpdateManyWithoutAssetModelNestedInput
   kitItems?: Prisma.AssetKitItemUncheckedUpdateManyWithoutAssetModelNestedInput
 }
@@ -980,6 +1226,8 @@ export type AssetModelUncheckedUpdateManyWithoutVendorInput = {
   defaultAttributes?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -1033,10 +1281,13 @@ export type AssetModelSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   defaultAttributes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   assetCategory?: boolean | Prisma.AssetCategoryDefaultArgs<ExtArgs>
   vendor?: boolean | Prisma.VendorDefaultArgs<ExtArgs>
   assets?: boolean | Prisma.AssetModel$assetsArgs<ExtArgs>
   kitItems?: boolean | Prisma.AssetModel$kitItemsArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.AssetModel$deletedByArgs<ExtArgs>
   _count?: boolean | Prisma.AssetModelCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["assetModel"]>
 
@@ -1051,8 +1302,11 @@ export type AssetModelSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   defaultAttributes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   assetCategory?: boolean | Prisma.AssetCategoryDefaultArgs<ExtArgs>
   vendor?: boolean | Prisma.VendorDefaultArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.AssetModel$deletedByArgs<ExtArgs>
 }, ExtArgs["result"]["assetModel"]>
 
 export type AssetModelSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1066,8 +1320,11 @@ export type AssetModelSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   defaultAttributes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   assetCategory?: boolean | Prisma.AssetCategoryDefaultArgs<ExtArgs>
   vendor?: boolean | Prisma.VendorDefaultArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.AssetModel$deletedByArgs<ExtArgs>
 }, ExtArgs["result"]["assetModel"]>
 
 export type AssetModelSelectScalar = {
@@ -1081,23 +1338,28 @@ export type AssetModelSelectScalar = {
   defaultAttributes?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
 }
 
-export type AssetModelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "assetCategoryId" | "vendorId" | "name" | "code" | "description" | "defaultWarrantyMonths" | "defaultAttributes" | "createdAt" | "updatedAt", ExtArgs["result"]["assetModel"]>
+export type AssetModelOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "assetCategoryId" | "vendorId" | "name" | "code" | "description" | "defaultWarrantyMonths" | "defaultAttributes" | "createdAt" | "updatedAt" | "deletedAt" | "deletedById", ExtArgs["result"]["assetModel"]>
 export type AssetModelInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   assetCategory?: boolean | Prisma.AssetCategoryDefaultArgs<ExtArgs>
   vendor?: boolean | Prisma.VendorDefaultArgs<ExtArgs>
   assets?: boolean | Prisma.AssetModel$assetsArgs<ExtArgs>
   kitItems?: boolean | Prisma.AssetModel$kitItemsArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.AssetModel$deletedByArgs<ExtArgs>
   _count?: boolean | Prisma.AssetModelCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AssetModelIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   assetCategory?: boolean | Prisma.AssetCategoryDefaultArgs<ExtArgs>
   vendor?: boolean | Prisma.VendorDefaultArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.AssetModel$deletedByArgs<ExtArgs>
 }
 export type AssetModelIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   assetCategory?: boolean | Prisma.AssetCategoryDefaultArgs<ExtArgs>
   vendor?: boolean | Prisma.VendorDefaultArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.AssetModel$deletedByArgs<ExtArgs>
 }
 
 export type $AssetModelPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1107,6 +1369,7 @@ export type $AssetModelPayload<ExtArgs extends runtime.Types.Extensions.Internal
     vendor: Prisma.$VendorPayload<ExtArgs>
     assets: Prisma.$AssetPayload<ExtArgs>[]
     kitItems: Prisma.$AssetKitItemPayload<ExtArgs>[]
+    deletedBy: Prisma.$PersonPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1119,6 +1382,8 @@ export type $AssetModelPayload<ExtArgs extends runtime.Types.Extensions.Internal
     defaultAttributes: runtime.JsonValue | null
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
+    deletedById: string | null
   }, ExtArgs["result"]["assetModel"]>
   composites: {}
 }
@@ -1517,6 +1782,7 @@ export interface Prisma__AssetModelClient<T, Null = never, ExtArgs extends runti
   vendor<T extends Prisma.VendorDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.VendorDefaultArgs<ExtArgs>>): Prisma.Prisma__VendorClient<runtime.Types.Result.GetResult<Prisma.$VendorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   assets<T extends Prisma.AssetModel$assetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AssetModel$assetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   kitItems<T extends Prisma.AssetModel$kitItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AssetModel$kitItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AssetKitItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deletedBy<T extends Prisma.AssetModel$deletedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AssetModel$deletedByArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1556,6 +1822,8 @@ export interface AssetModelFieldRefs {
   readonly defaultAttributes: Prisma.FieldRef<"AssetModel", 'Json'>
   readonly createdAt: Prisma.FieldRef<"AssetModel", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"AssetModel", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"AssetModel", 'DateTime'>
+  readonly deletedById: Prisma.FieldRef<"AssetModel", 'String'>
 }
     
 
@@ -1997,6 +2265,25 @@ export type AssetModel$kitItemsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.AssetKitItemScalarFieldEnum | Prisma.AssetKitItemScalarFieldEnum[]
+}
+
+/**
+ * AssetModel.deletedBy
+ */
+export type AssetModel$deletedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Person
+   */
+  select?: Prisma.PersonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Person
+   */
+  omit?: Prisma.PersonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PersonInclude<ExtArgs> | null
+  where?: Prisma.PersonWhereInput
 }
 
 /**

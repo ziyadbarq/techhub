@@ -106,8 +106,6 @@ export function Step1EntitySelector({ onEntitySelected }: Props) {
       }
 
       onEntitySelected(entity, lookupMaps);
-
-      toast.success(`Ready to import ${entity.name}`);
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "Failed to select entity",
@@ -209,8 +207,9 @@ export function Step1EntitySelector({ onEntitySelected }: Props) {
               <Badge
                 variant="outline"
                 className="border-emerald-300 text-emerald-700 dark:border-emerald-700 dark:text-emerald-400"
+                title="Optional - assets can be imported without assignment"
               >
-                person.email
+                person.email (optional)
               </Badge>
               <Badge
                 variant="outline"

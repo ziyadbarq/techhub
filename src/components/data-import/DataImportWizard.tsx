@@ -227,13 +227,20 @@ export function DataImportWizard() {
    * Can go back?
    */
   /**
-   * Always bring the wizard back to the top when changing steps
+   * Always bring the wizard back to the top when changing steps,
+   * accounting for the top navigation height
    */
   useEffect(() => {
-    wizardRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+    if (wizardRef.current) {
+      const topNavHeight = 64; // Standard top nav height
+      const additionalPadding = 100; // Extra room for top section elements
+      const elementPosition =
+        wizardRef.current.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({
+        top: elementPosition - topNavHeight - additionalPadding,
+        behavior: "smooth",
+      });
+    }
   }, [state.currentStep]);
 
   return (

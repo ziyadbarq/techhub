@@ -67,12 +67,18 @@ model Service {
   updatedAt               DateTime                 @updatedAt
   createdBy               String?
   updatedBy               String?
+
+  // Soft delete fields
+  deletedAt   DateTime?
+  deletedById String?
+
   // Relations
   owners                  ServiceOwnership[]
   infrastructure          ServiceInfrastructure[]
   assets                  ServiceAsset[]
   outgoingRelationships   ServiceRelationship[]    @relation("ServiceRelationshipFrom")
   incomingRelationships   ServiceRelationship[]    @relation("ServiceRelationshipTo")
+  deletedBy               Person?                  @relation("ServiceDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([serviceType])
@@ -83,6 +89,7 @@ model Service {
   @@index([businessProcessId])
   @@index([isEssentialService])
   @@index([plannedDecommissionDate])
+  @@index([deletedAt])
   @@map("services")
 }
 
@@ -166,17 +173,17 @@ model ServiceAsset {
 // Service-to-service dependencies for microservices architecture
 model ServiceRelationship {
   id               String                  @id @default(cuid())
-  fromServiceId    String                  @map("from_service_id")
-  toServiceId      String                  @map("to_service_id")
-  relationshipType ServiceRelationshipType @map("relationship_type")
-  isCritical       Boolean                 @default(false) @map("is_critical")
+  fromServiceId    String
+  toServiceId      String
+  relationshipType ServiceRelationshipType
+  isCritical       Boolean                 @default(false)
   description      String?                 @db.Text
   metadata         Json?
-  isActive         Boolean                 @default(true) @map("is_active")
-  validFrom        DateTime                @default(now()) @map("valid_from")
-  validTo          DateTime?               @map("valid_to")
-  createdAt        DateTime                @default(now()) @map("created_at")
-  updatedAt        DateTime                @updatedAt @map("updated_at")
+  isActive         Boolean                 @default(true)
+  validFrom        DateTime                @default(now())
+  validTo          DateTime?
+  createdAt        DateTime                @default(now())
+  updatedAt        DateTime                @updatedAt
 
   // Relations
   fromService Service @relation("ServiceRelationshipFrom", fields: [fromServiceId], references: [id], onDelete: Restrict)

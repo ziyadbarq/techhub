@@ -6,7 +6,30 @@
 import type {
   StockMovement,
   StockMovementType,
+  StockMovementSource,
+  StockMovementStatus,
 } from "../domain/entities/stock-movement.entity";
+
+export interface StockMovementFindAllOptions {
+  skip?: number;
+  take?: number;
+  orderBy?: "occurredAt" | "createdAt" | "movementType";
+  order?: "asc" | "desc";
+  /** Filter by status (default: only ACTIVE movements) */
+  status?: StockMovementStatus;
+  /** Include voided movements (default: false) */
+  includeVoided?: boolean;
+  /** Filter by source */
+  source?: StockMovementSource;
+  /** Filter by asset */
+  assetId?: string;
+  /** Filter by movement type */
+  movementType?: StockMovementType;
+  /** Filter by date range - start */
+  startDate?: Date;
+  /** Filter by date range - end */
+  endDate?: Date;
+}
 
 export interface IStockMovementRepository {
   /**
@@ -15,14 +38,23 @@ export interface IStockMovementRepository {
   create(stockMovement: StockMovement): Promise<StockMovement>;
 
   /**
+   * Update an existing stock movement (for voiding)
+   */
+  update(stockMovement: StockMovement): Promise<StockMovement>;
+
+  /**
    * Find stock movement by ID
    */
   findById(id: string): Promise<StockMovement | null>;
 
   /**
    * Find stock movements by asset
+   * @param includeVoided - Include voided movements (default: false)
    */
-  findByAsset(assetId: string): Promise<StockMovement[]>;
+  findByAsset(
+    assetId: string,
+    includeVoided?: boolean,
+  ): Promise<StockMovement[]>;
 
   /**
    * Find stock movements by stock location (from or to)
@@ -45,22 +77,18 @@ export interface IStockMovementRepository {
   findByDateRange(startDate: Date, endDate: Date): Promise<StockMovement[]>;
 
   /**
-   * Find all stock movements
+   * Find all stock movements with filtering options
    */
-  findAll(options?: {
-    skip?: number;
-    take?: number;
-    orderBy?: "occurredAt" | "createdAt" | "movementType";
-    order?: "asc" | "desc";
-  }): Promise<StockMovement[]>;
+  findAll(options?: StockMovementFindAllOptions): Promise<StockMovement[]>;
 
   /**
-   * Count all stock movements
+   * Count stock movements (optionally include voided)
    */
-  count(): Promise<number>;
+  count(includeVoided?: boolean): Promise<number>;
 
   /**
    * Delete stock movement (use with caution - impacts audit trail)
+   * @deprecated Use void() method on StockMovement entity instead
    */
   delete(id: string): Promise<void>;
 }

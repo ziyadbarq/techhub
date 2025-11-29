@@ -30,14 +30,6 @@ export function CategoryOverviewTab({ category }: CategoryOverviewTabProps) {
             <p className="text-muted-foreground text-sm font-medium">Code</p>
             <p className="font-mono text-sm">{category.code}</p>
           </div>
-          <div>
-            <p className="text-muted-foreground text-sm font-medium">Type</p>
-            <p className="text-sm">
-              {category.isConsumable
-                ? "Consumable (no lifecycle tracking)"
-                : "Tracked Asset (full lifecycle)"}
-            </p>
-          </div>
           {category.description && (
             <div>
               <p className="text-muted-foreground text-sm font-medium">

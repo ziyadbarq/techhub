@@ -18,6 +18,7 @@ import { Pencil, X } from "lucide-react";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { format } from "date-fns";
+import { CICustomFieldsDisplay } from "@/components/custom-fields";
 
 interface ConfigurationItemDetailProps {
   item: ConfigurationItemDTO;
@@ -178,21 +179,21 @@ export function ConfigurationItemDetail({
             </>
           )}
 
-          {item.attributes && Object.keys(item.attributes).length > 0 && (
-            <>
-              <Separator />
-              <div>
-                <h3 className="mb-3 text-lg font-semibold">
-                  Additional Attributes
-                </h3>
-                <div className="bg-muted/50 rounded-lg p-4">
-                  <pre className="overflow-auto text-xs">
-                    {JSON.stringify(item.attributes, null, 2)}
-                  </pre>
+          {/* Custom Fields */}
+          {item.ciClassId &&
+            item.attributes &&
+            Object.keys(item.attributes).length > 0 && (
+              <>
+                <Separator />
+                <div>
+                  <h3 className="mb-3 text-lg font-semibold">Custom Fields</h3>
+                  <CICustomFieldsDisplay
+                    ciClassId={item.ciClassId}
+                    attributes={item.attributes as Record<string, unknown>}
+                  />
                 </div>
-              </div>
-            </>
-          )}
+              </>
+            )}
 
           <Separator />
 

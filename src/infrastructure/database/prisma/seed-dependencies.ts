@@ -7,15 +7,21 @@
  */
 
 export enum SeedModule {
+  // Production modules (config/reference data)
   RBAC = "RBAC",
   FOUNDATION = "FOUNDATION",
   BUSINESS_PROCESSES = "BUSINESS_PROCESSES",
-  ASSETS = "ASSETS",
-  WARRANTIES_MAINTENANCE = "WARRANTIES_MAINTENANCE",
+  ASSET_CONFIG = "ASSET_CONFIG",
   SERVICES = "SERVICES",
   CMDB = "CMDB",
-  LAYER3_ITAM = "LAYER3_ITAM",
   ATTACHMENTS_GOVERNANCE = "ATTACHMENTS_GOVERNANCE",
+
+  // Demo-only modules
+  DEMO_PERSONS = "DEMO_PERSONS",
+  DEMO_ASSETS = "DEMO_ASSETS",
+  SERVICE_OWNERS = "SERVICE_OWNERS",
+  WARRANTIES_MAINTENANCE = "WARRANTIES_MAINTENANCE",
+  LAYER3_ITAM = "LAYER3_ITAM",
   AI_PROMPTS_TASKS = "AI_PROMPTS_TASKS",
 }
 
@@ -32,6 +38,10 @@ export interface SeedModuleMetadata {
  * Module metadata with dependencies and affected tables
  */
 export const MODULE_METADATA: Record<SeedModule, SeedModuleMetadata> = {
+  // ==============================================
+  // Production Modules (config/reference data)
+  // ==============================================
+
   [SeedModule.RBAC]: {
     key: SeedModule.RBAC,
     name: "RBAC System",
@@ -49,13 +59,12 @@ export const MODULE_METADATA: Record<SeedModule, SeedModuleMetadata> = {
 
   [SeedModule.FOUNDATION]: {
     key: SeedModule.FOUNDATION,
-    name: "Foundation Layer",
-    description: "Vendors, locations, org units, persons, lifecycle models",
-    estimatedTime: 3,
+    name: "Foundation Config",
+    description:
+      "Vendors, locations, org units, lifecycle models (no demo persons)",
+    estimatedTime: 2,
     dependencies: [SeedModule.RBAC],
     tables: [
-      "PersonRoleAssignment",
-      "Person",
       "FieldDefinition",
       "Location",
       "OrganizationUnit",
@@ -79,58 +88,40 @@ export const MODULE_METADATA: Record<SeedModule, SeedModuleMetadata> = {
     tables: ["BusinessProcess"],
   },
 
-  [SeedModule.ASSETS]: {
-    key: SeedModule.ASSETS,
-    name: "Assets",
-    description: "Asset categories, models, 50+ assets with assignments",
-    estimatedTime: 4,
+  [SeedModule.ASSET_CONFIG]: {
+    key: SeedModule.ASSET_CONFIG,
+    name: "Asset Config",
+    description: "Asset categories, models, stock locations (no demo assets)",
+    estimatedTime: 1,
     dependencies: [SeedModule.RBAC, SeedModule.FOUNDATION],
     tables: [
-      "AssetAssignment",
-      "StockMovement",
-      "Asset",
+      "AssetCategoryField",
       "AssetModel",
       "AssetCategory",
       "StockLocation",
     ],
   },
 
-  [SeedModule.WARRANTIES_MAINTENANCE]: {
-    key: SeedModule.WARRANTIES_MAINTENANCE,
-    name: "Warranties & Maintenance",
-    description: "Warranty records and preventive maintenance schedules",
-    estimatedTime: 2,
-    dependencies: [SeedModule.ASSETS],
-    tables: ["MaintenanceRecord", "MaintenanceSchedule", "Warranty"],
-  },
-
   [SeedModule.SERVICES]: {
     key: SeedModule.SERVICES,
     name: "Services",
-    description: "80 services with ownership and infrastructure tracking",
-    estimatedTime: 3,
+    description: "74 real Barq services with infrastructure (no owners)",
+    estimatedTime: 2,
     dependencies: [
       SeedModule.RBAC,
       SeedModule.FOUNDATION,
       SeedModule.BUSINESS_PROCESSES,
     ],
-    tables: [
-      "ServiceAsset",
-      "ServiceInfrastructure",
-      "ServiceOwnership",
-      "Service",
-    ],
+    tables: ["ServiceInfrastructure", "Service"],
   },
 
   [SeedModule.CMDB]: {
     key: SeedModule.CMDB,
-    name: "CMDB",
-    description: "Configuration items, CI classes, relationships",
-    estimatedTime: 2,
+    name: "CMDB Config",
+    description: "CI classes, relationship types (no demo CIs)",
+    estimatedTime: 1,
     dependencies: [SeedModule.RBAC, SeedModule.FOUNDATION],
     tables: [
-      "CIRelationship",
-      "ConfigurationItem",
       "RelationshipType",
       "CIClassField",
       "CIClass",
@@ -138,12 +129,69 @@ export const MODULE_METADATA: Record<SeedModule, SeedModuleMetadata> = {
     ],
   },
 
+  [SeedModule.ATTACHMENTS_GOVERNANCE]: {
+    key: SeedModule.ATTACHMENTS_GOVERNANCE,
+    name: "Attachments & Governance",
+    description: "Attachment types, data domains, verification campaigns",
+    estimatedTime: 1,
+    dependencies: [SeedModule.RBAC],
+    tables: [
+      "Attachment",
+      "AttachmentType",
+      "VerificationItem",
+      "VerificationCampaign",
+      "DataOwnership",
+      "DataDomain",
+    ],
+  },
+
+  // ==============================================
+  // Demo-only Modules
+  // ==============================================
+
+  [SeedModule.DEMO_PERSONS]: {
+    key: SeedModule.DEMO_PERSONS,
+    name: "Demo Persons",
+    description: "21 demo persons for development (production uses Graph sync)",
+    estimatedTime: 1,
+    dependencies: [SeedModule.RBAC, SeedModule.FOUNDATION],
+    tables: ["PersonRoleAssignment", "Person"],
+  },
+
+  [SeedModule.DEMO_ASSETS]: {
+    key: SeedModule.DEMO_ASSETS,
+    name: "Demo Assets",
+    description: "50+ demo assets with assignments and stock movements",
+    estimatedTime: 3,
+    dependencies: [SeedModule.ASSET_CONFIG, SeedModule.DEMO_PERSONS],
+    tables: ["AssetAssignment", "StockMovement", "Asset"],
+  },
+
+  [SeedModule.SERVICE_OWNERS]: {
+    key: SeedModule.SERVICE_OWNERS,
+    name: "Service Owners",
+    description:
+      "Service ownership assignments (links services to demo persons)",
+    estimatedTime: 1,
+    dependencies: [SeedModule.SERVICES, SeedModule.DEMO_PERSONS],
+    tables: ["ServiceOwnership"],
+  },
+
+  [SeedModule.WARRANTIES_MAINTENANCE]: {
+    key: SeedModule.WARRANTIES_MAINTENANCE,
+    name: "Warranties & Maintenance",
+    description: "Warranty records and maintenance schedules for demo assets",
+    estimatedTime: 2,
+    dependencies: [SeedModule.DEMO_ASSETS],
+    tables: ["MaintenanceRecord", "MaintenanceSchedule", "Warranty"],
+  },
+
   [SeedModule.LAYER3_ITAM]: {
     key: SeedModule.LAYER3_ITAM,
     name: "Advanced ITAM",
     description: "Asset disposals, kits, reservations, licenses, contracts",
     estimatedTime: 2,
-    dependencies: [SeedModule.ASSETS, SeedModule.CMDB],
+    dependencies: [SeedModule.DEMO_ASSETS, SeedModule.CMDB],
     tables: [
       // Disposals
       "DisposalDocument",
@@ -166,22 +214,9 @@ export const MODULE_METADATA: Record<SeedModule, SeedModuleMetadata> = {
       "LicenseEntitlement",
       "LicenseProductField",
       "LicenseProduct",
-    ],
-  },
-
-  [SeedModule.ATTACHMENTS_GOVERNANCE]: {
-    key: SeedModule.ATTACHMENTS_GOVERNANCE,
-    name: "Attachments & Governance",
-    description: "Attachment types, data domains, verification campaigns",
-    estimatedTime: 1,
-    dependencies: [SeedModule.RBAC],
-    tables: [
-      "Attachment",
-      "AttachmentType",
-      "VerificationItem",
-      "VerificationCampaign",
-      "DataOwnership",
-      "DataDomain",
+      // Demo CIs
+      "CIRelationship",
+      "ConfigurationItem",
     ],
   },
 
@@ -313,11 +348,18 @@ export function validateSelection(selectedModules: SeedModule[]): {
 
   if (
     selected.has(SeedModule.LAYER3_ITAM) &&
-    !selected.has(SeedModule.ASSETS)
+    !selected.has(SeedModule.DEMO_ASSETS)
   ) {
     warnings.push(
-      "Layer 3 ITAM features require Assets to be seeded for full functionality",
+      "Layer 3 ITAM features require Demo Assets to be seeded for full functionality",
     );
+  }
+
+  if (
+    selected.has(SeedModule.SERVICE_OWNERS) &&
+    !selected.has(SeedModule.DEMO_PERSONS)
+  ) {
+    warnings.push("Service Owners require Demo Persons to be seeded");
   }
 
   if (
@@ -363,67 +405,15 @@ export const BUILTIN_PRESETS: SeedPreset[] = [
       SeedModule.RBAC,
       SeedModule.FOUNDATION,
       SeedModule.BUSINESS_PROCESSES,
+      SeedModule.ASSET_CONFIG,
       SeedModule.CMDB,
+      SeedModule.SERVICES,
+      SeedModule.ATTACHMENTS_GOVERNANCE,
     ],
-  },
-  {
-    name: "full",
-    description: "Complete database seed with demo data (all modules)",
-    modules: Object.values(SeedModule),
   },
   {
     name: "dev",
-    description:
-      "Development with demo data (requires seeded persons for demo assets)",
-    modules: [
-      SeedModule.RBAC,
-      SeedModule.FOUNDATION,
-      SeedModule.BUSINESS_PROCESSES,
-      SeedModule.ASSETS,
-      SeedModule.WARRANTIES_MAINTENANCE,
-      SeedModule.CMDB,
-      SeedModule.LAYER3_ITAM,
-      SeedModule.ATTACHMENTS_GOVERNANCE,
-      SeedModule.AI_PROMPTS_TASKS,
-    ],
-  },
-  {
-    name: "minimal",
-    description: "Minimal setup (RBAC + Foundation only)",
-    modules: [SeedModule.RBAC, SeedModule.FOUNDATION],
-  },
-  {
-    name: "rbac-only",
-    description: "RBAC system only (permissions + roles)",
-    modules: [SeedModule.RBAC],
-  },
-  {
-    name: "services-only",
-    description:
-      "Services module only (run after Graph sync when persons exist)",
-    modules: [SeedModule.SERVICES],
-  },
-  {
-    name: "itam-complete",
-    description:
-      "Full ITAM stack with demo data (Assets + Warranties + Layer 3)",
-    modules: [
-      SeedModule.RBAC,
-      SeedModule.FOUNDATION,
-      SeedModule.ASSETS,
-      SeedModule.WARRANTIES_MAINTENANCE,
-      SeedModule.CMDB,
-      SeedModule.LAYER3_ITAM,
-    ],
-  },
-  {
-    name: "services-complete",
-    description: "Service management with dependencies (requires persons)",
-    modules: [
-      SeedModule.RBAC,
-      SeedModule.FOUNDATION,
-      SeedModule.BUSINESS_PROCESSES,
-      SeedModule.SERVICES,
-    ],
+    description: "Full development environment with all demo data",
+    modules: Object.values(SeedModule),
   },
 ];

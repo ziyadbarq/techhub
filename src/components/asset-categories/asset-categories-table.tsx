@@ -14,7 +14,6 @@ import { toast } from "sonner";
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -141,23 +140,6 @@ export function AssetCategoriesTable({
       },
       meta: {
         label: "Description",
-      },
-    },
-    {
-      accessorKey: "isConsumable",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Type" />
-      ),
-      cell: ({ row }) => {
-        const isConsumable = row.getValue("isConsumable") as boolean;
-        return (
-          <Badge variant={isConsumable ? "secondary" : "default"}>
-            {isConsumable ? "Consumable" : "Tracked"}
-          </Badge>
-        );
-      },
-      meta: {
-        label: "Type",
       },
     },
     {

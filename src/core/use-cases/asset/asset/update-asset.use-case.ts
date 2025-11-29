@@ -1,6 +1,7 @@
 /**
  * UpdateAsset Use Case
  * Business Logic: Update an existing asset with validation
+ * Automatically creates stock movements when location changes
  */
 
 import { injectable, inject } from "inversify";
@@ -8,6 +9,8 @@ import { DI_TOKENS } from "@/di/types";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import type { Asset } from "@/core/domain/entities/asset.entity";
 import type { ISarConversionService } from "@/core/services/sar-conversion.service.interface";
+import type { IAssetMovementService } from "@/core/services/asset-movement.service.interface";
+import type { ILoggerService } from "@/core/services/logger.service.interface";
 
 export interface UpdateAssetInput {
   id: string;
@@ -23,10 +26,11 @@ export interface UpdateAssetInput {
   depreciationModel?: string | null;
   depreciationStart?: Date | null;
   depreciationEnd?: Date | null;
-  warrantyEndDate?: Date | null;
   currentStockLocationId?: string | null;
   attributes?: Record<string, unknown> | null;
   note?: string | null;
+  /** Person ID of the user performing the action (used for movement tracking) */
+  performedById?: string;
 }
 
 @injectable()
@@ -36,6 +40,10 @@ export class UpdateAssetUseCase {
     private readonly assetRepository: IAssetRepository,
     @inject(DI_TOKENS.ISarConversionService)
     private readonly sarConversionService: ISarConversionService,
+    @inject(DI_TOKENS.IAssetMovementService)
+    private readonly assetMovementService: IAssetMovementService,
+    @inject(DI_TOKENS.ILoggerService)
+    private readonly logger: ILoggerService,
   ) {}
 
   async execute(input: UpdateAssetInput): Promise<Asset> {
@@ -44,6 +52,9 @@ export class UpdateAssetUseCase {
     if (!asset) {
       throw new Error(`Asset with ID "${input.id}" not found`);
     }
+
+    // Capture original location for movement tracking
+    const originalLocationId = asset.currentStockLocationId;
 
     // Business Rule: Asset tag must be unique
     if (input.assetTag && input.assetTag !== asset.assetTag) {
@@ -101,13 +112,53 @@ export class UpdateAssetUseCase {
       depreciationModel: input.depreciationModel,
       depreciationStart: input.depreciationStart,
       depreciationEnd: input.depreciationEnd,
-      warrantyEndDate: input.warrantyEndDate,
       currentStockLocationId: input.currentStockLocationId,
       attributes: input.attributes,
       note: input.note,
     });
 
     // Persist changes
-    return await this.assetRepository.update(asset);
+    const updatedAsset = await this.assetRepository.update(asset);
+
+    // Create automatic stock movement if location changed
+    // Only create movement if currentStockLocationId was explicitly provided in input
+    if (
+      input.currentStockLocationId !== undefined &&
+      input.performedById &&
+      originalLocationId !== input.currentStockLocationId
+    ) {
+      try {
+        const result = await this.assetMovementService.syncAssetLocation({
+          assetId: updatedAsset.id,
+          oldLocationId: originalLocationId,
+          newLocationId: input.currentStockLocationId,
+          performedById: input.performedById,
+          source: "LOCATION_CHANGE",
+          sourceReferenceType: "Asset",
+          sourceReferenceId: updatedAsset.id,
+          reason: "Asset location updated",
+        });
+
+        if (result.movement) {
+          this.logger.debug("Created automatic movement for location change", {
+            assetId: updatedAsset.id,
+            movementType: result.movementType,
+            from: originalLocationId,
+            to: input.currentStockLocationId,
+          });
+        }
+      } catch (error) {
+        // Log but don't fail asset update if movement creation fails
+        this.logger.warn(
+          "Failed to create automatic movement for location change",
+          {
+            assetId: updatedAsset.id,
+            error: error instanceof Error ? error.message : String(error),
+          },
+        );
+      }
+    }
+
+    return updatedAsset;
   }
 }

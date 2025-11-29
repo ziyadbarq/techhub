@@ -40,7 +40,10 @@ export {
   validateRequiredColumns,
   extractUniquePersonEmails,
   generateFieldLabel,
+  detectDuplicatesInFile,
 } from "./prefix-parser";
+
+export type { DuplicateDetectionResult } from "./prefix-parser";
 
 // Auto-Create Resolver
 export { AutoCreateResolver } from "./auto-create-resolver";

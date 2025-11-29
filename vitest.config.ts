@@ -5,7 +5,10 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "node",
-    setupFiles: ["./tests/setup/vitest.setup.ts"],
+    setupFiles: [
+      "./tests/setup/vitest.setup.ts",
+      "./tests/setup/vitest.component.setup.ts",
+    ],
     include: ["**/*.{test,spec}.{ts,tsx}"],
     exclude: ["node_modules", ".next", "dist", "build"],
     // Increase timeout for container startup
@@ -24,6 +27,7 @@ export default defineConfig({
         "**/*.d.ts",
       ],
     },
+    // Component tests use jsdom via @vitest-environment directive in test files
   },
   resolve: {
     alias: {

@@ -3,7 +3,7 @@
  */
 
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
@@ -38,8 +38,20 @@ import {
 
 import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
 import type { AssetAssignmentDTO } from "@/interface-adapters/presenters/asset-assignment.presenter";
-import { deleteAssetAction } from "@/interface-adapters/controllers/asset.controller";
-import { getActiveAssignmentAction } from "@/interface-adapters/controllers/asset-assignment.controller";
+import {
+  deleteAssetAction,
+  getAssetAction,
+} from "@/interface-adapters/controllers/asset.controller";
+import {
+  getActiveAssignmentAction,
+  listAssetAssignmentsAction,
+} from "@/interface-adapters/controllers/asset-assignment.controller";
+import { listWarrantiesByAssetAction } from "@/interface-adapters/controllers/warranty.controller";
+import { listStockMovementsAction } from "@/interface-adapters/controllers/stock-movement.controller";
+import { listReservationsByAssetAction } from "@/interface-adapters/controllers/asset-reservation.controller";
+import { listConfigurationItemsAction } from "@/interface-adapters/controllers/configuration-item.controller";
+import { getAssetServicesAction } from "@/interface-adapters/controllers/service-asset.controller";
+import { getIntuneDevicesByAssetAction } from "@/interface-adapters/controllers/intune-device.controller";
 import { AssetForm } from "./asset-form";
 import { AssetOverviewTab } from "./asset-overview-tab";
 import { AssetWarrantiesTab } from "./asset-warranties-tab";
@@ -64,7 +76,7 @@ export function AssetDetailPageClient({
 }: AssetDetailPageClientProps) {
   const router = useRouter();
   const { hasPermission } = usePermissions();
-  const asset = initialAsset;
+  const [asset, setAsset] = useState(initialAsset);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -73,10 +85,36 @@ export function AssetDetailPageClient({
   const [activeAssignment, setActiveAssignment] =
     useState<AssetAssignmentDTO | null>(null);
 
+  // Tab counts for hiding empty tabs
+  const [tabCounts, setTabCounts] = useState<{
+    warranties: number;
+    assignments: number;
+    movements: number;
+    reservations: number;
+    cmdb: number;
+    services: number;
+    intune: number;
+  } | null>(null);
+
   // Permission checks for additional tabs
   const canViewCmdb = hasPermission(PERMISSIONS.CONFIGURATION_ITEMS_VIEW);
   const canViewServices = hasPermission(PERMISSIONS.SERVICES_VIEW);
   const canViewIntune = hasPermission(PERMISSIONS.INTUNE_DEVICES_VIEW);
+
+  // Fetch updated asset data from server
+  const refreshAsset = useCallback(async () => {
+    const result = await getAssetAction(asset.assetTag);
+    if (result.success) {
+      setAsset(result.data);
+    }
+    // Also refresh active assignment
+    const assignmentResult = await getActiveAssignmentAction(asset.id);
+    if (assignmentResult.success) {
+      setActiveAssignment(assignmentResult.data);
+    } else {
+      setActiveAssignment(null);
+    }
+  }, [asset.assetTag, asset.id]);
 
   // Fetch active assignment for Return Wizard
   useEffect(() => {
@@ -90,6 +128,51 @@ export function AssetDetailPageClient({
     fetchActiveAssignment();
   }, [asset.id]);
 
+  // Fetch tab counts to hide empty tabs
+  useEffect(() => {
+    const fetchTabCounts = async () => {
+      const [
+        warrantiesResult,
+        assignmentsResult,
+        movementsResult,
+        reservationsResult,
+        cmdbResult,
+        servicesResult,
+        intuneResult,
+      ] = await Promise.all([
+        listWarrantiesByAssetAction(asset.id),
+        listAssetAssignmentsAction({ assetId: asset.id }),
+        listStockMovementsAction({ assetId: asset.id }),
+        listReservationsByAssetAction(asset.id),
+        canViewCmdb
+          ? listConfigurationItemsAction({ linkedAssetId: asset.id })
+          : Promise.resolve({ success: true, data: [] }),
+        canViewServices
+          ? getAssetServicesAction(asset.id)
+          : Promise.resolve({ success: true, data: [] }),
+        canViewIntune
+          ? getIntuneDevicesByAssetAction(asset.id)
+          : Promise.resolve({ success: true, data: [] }),
+      ]);
+
+      setTabCounts({
+        warranties: warrantiesResult.success ? warrantiesResult.data.length : 0,
+        assignments: assignmentsResult.success
+          ? assignmentsResult.data.length
+          : 0,
+        movements: movementsResult.success ? movementsResult.data.length : 0,
+        reservations: reservationsResult.success
+          ? reservationsResult.data.length
+          : 0,
+        cmdb: cmdbResult.success ? cmdbResult.data.length : 0,
+        services: servicesResult.success ? servicesResult.data.length : 0,
+        intune: intuneResult.success ? intuneResult.data.length : 0,
+      });
+    };
+
+    fetchTabCounts();
+  }, [asset.id, canViewCmdb, canViewServices, canViewIntune]);
+
   const handleEdit = () => {
     setIsFormOpen(true);
   };
@@ -98,15 +181,16 @@ export function AssetDetailPageClient({
     setIsFormOpen(false);
   };
 
-  const handleSuccess = () => {
-    // Reload the page to get fresh data
+  const handleSuccess = useCallback(async () => {
+    // Fetch updated asset data to refresh UI immediately
+    await refreshAsset();
     router.refresh();
-  };
+  }, [refreshAsset, router]);
 
   const handleDelete = async () => {
     setIsDeleting(true);
     try {
-      const result = await deleteAssetAction(asset.id);
+      const result = await deleteAssetAction(asset.assetTag);
       if (result.success) {
         toast.success("Asset deleted successfully");
         router.push("/assets");
@@ -138,12 +222,6 @@ export function AssetDetailPageClient({
 
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold">{asset.assetTag}</h1>
-            {asset.isUnderWarranty && (
-              <Badge variant="default" className="gap-1">
-                <FileText className="h-3 w-3" />
-                Under Warranty
-              </Badge>
-            )}
           </div>
 
           <div className="text-muted-foreground flex flex-wrap gap-2 text-sm">
@@ -204,42 +282,100 @@ export function AssetDetailPageClient({
       {/* Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
         <TabsList className="h-auto flex-wrap gap-1">
+          {/* Overview - always shown */}
           <TabsTrigger value="overview" className="gap-2">
             <Package className="h-4 w-4" />
             Overview
           </TabsTrigger>
-          <TabsTrigger value="warranties" className="gap-2">
-            <FileText className="h-4 w-4" />
-            Warranties
-          </TabsTrigger>
-          <TabsTrigger value="assignments" className="gap-2">
-            <Users className="h-4 w-4" />
-            Assignments
-          </TabsTrigger>
-          <TabsTrigger value="movements" className="gap-2">
-            <TrendingUp className="h-4 w-4" />
-            Movements
-          </TabsTrigger>
-          <TabsTrigger value="reservations" className="gap-2">
-            <Calendar className="h-4 w-4" />
-            Reservations
-          </TabsTrigger>
-          {canViewCmdb && (
+
+          {/* Warranties - hide if empty */}
+          {(!tabCounts || tabCounts.warranties > 0) && (
+            <TabsTrigger value="warranties" className="gap-2">
+              <FileText className="h-4 w-4" />
+              Warranties
+              {tabCounts && tabCounts.warranties > 0 && (
+                <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                  {tabCounts.warranties}
+                </Badge>
+              )}
+            </TabsTrigger>
+          )}
+
+          {/* Assignments - hide if empty */}
+          {(!tabCounts || tabCounts.assignments > 0) && (
+            <TabsTrigger value="assignments" className="gap-2">
+              <Users className="h-4 w-4" />
+              Assignments
+              {tabCounts && tabCounts.assignments > 0 && (
+                <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                  {tabCounts.assignments}
+                </Badge>
+              )}
+            </TabsTrigger>
+          )}
+
+          {/* Movements - hide if empty */}
+          {(!tabCounts || tabCounts.movements > 0) && (
+            <TabsTrigger value="movements" className="gap-2">
+              <TrendingUp className="h-4 w-4" />
+              Movements
+              {tabCounts && tabCounts.movements > 0 && (
+                <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                  {tabCounts.movements}
+                </Badge>
+              )}
+            </TabsTrigger>
+          )}
+
+          {/* Reservations - hide if empty */}
+          {(!tabCounts || tabCounts.reservations > 0) && (
+            <TabsTrigger value="reservations" className="gap-2">
+              <Calendar className="h-4 w-4" />
+              Reservations
+              {tabCounts && tabCounts.reservations > 0 && (
+                <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                  {tabCounts.reservations}
+                </Badge>
+              )}
+            </TabsTrigger>
+          )}
+
+          {/* CMDB - hide if empty or no permission */}
+          {canViewCmdb && (!tabCounts || tabCounts.cmdb > 0) && (
             <TabsTrigger value="cmdb" className="gap-2">
               <Server className="h-4 w-4" />
               CMDB
+              {tabCounts && tabCounts.cmdb > 0 && (
+                <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                  {tabCounts.cmdb}
+                </Badge>
+              )}
             </TabsTrigger>
           )}
-          {canViewServices && (
+
+          {/* Services - hide if empty or no permission */}
+          {canViewServices && (!tabCounts || tabCounts.services > 0) && (
             <TabsTrigger value="services" className="gap-2">
               <Globe className="h-4 w-4" />
               Services
+              {tabCounts && tabCounts.services > 0 && (
+                <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                  {tabCounts.services}
+                </Badge>
+              )}
             </TabsTrigger>
           )}
-          {canViewIntune && (
+
+          {/* Intune - hide if empty or no permission */}
+          {canViewIntune && (!tabCounts || tabCounts.intune > 0) && (
             <TabsTrigger value="intune" className="gap-2">
               <Laptop className="h-4 w-4" />
               Intune
+              {tabCounts && tabCounts.intune > 0 && (
+                <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
+                  {tabCounts.intune}
+                </Badge>
+              )}
             </TabsTrigger>
           )}
         </TabsList>
@@ -248,35 +384,43 @@ export function AssetDetailPageClient({
           <AssetOverviewTab asset={asset} />
         </TabsContent>
 
-        <TabsContent value="warranties">
-          <AssetWarrantiesTab assetId={asset.id} />
-        </TabsContent>
+        {(!tabCounts || tabCounts.warranties > 0) && (
+          <TabsContent value="warranties">
+            <AssetWarrantiesTab assetId={asset.id} />
+          </TabsContent>
+        )}
 
-        <TabsContent value="assignments">
-          <AssetAssignmentsTab assetId={asset.id} />
-        </TabsContent>
+        {(!tabCounts || tabCounts.assignments > 0) && (
+          <TabsContent value="assignments">
+            <AssetAssignmentsTab assetId={asset.id} />
+          </TabsContent>
+        )}
 
-        <TabsContent value="movements">
-          <AssetMovementsTab assetId={asset.id} />
-        </TabsContent>
+        {(!tabCounts || tabCounts.movements > 0) && (
+          <TabsContent value="movements">
+            <AssetMovementsTab assetId={asset.id} />
+          </TabsContent>
+        )}
 
-        <TabsContent value="reservations">
-          <AssetReservationsTab assetId={asset.id} />
-        </TabsContent>
+        {(!tabCounts || tabCounts.reservations > 0) && (
+          <TabsContent value="reservations">
+            <AssetReservationsTab assetId={asset.id} />
+          </TabsContent>
+        )}
 
-        {canViewCmdb && (
+        {canViewCmdb && (!tabCounts || tabCounts.cmdb > 0) && (
           <TabsContent value="cmdb">
             <AssetCmdbTab assetId={asset.id} />
           </TabsContent>
         )}
 
-        {canViewServices && (
+        {canViewServices && (!tabCounts || tabCounts.services > 0) && (
           <TabsContent value="services">
             <AssetServicesTab assetId={asset.id} />
           </TabsContent>
         )}
 
-        {canViewIntune && (
+        {canViewIntune && (!tabCounts || tabCounts.intune > 0) && (
           <TabsContent value="intune">
             <AssetIntuneTab assetId={asset.id} />
           </TabsContent>

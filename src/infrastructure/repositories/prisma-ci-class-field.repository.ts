@@ -120,6 +120,92 @@ export class PrismaCIClassFieldRepository implements ICIClassFieldRepository {
     });
   }
 
+  /**
+   * Find fields by CI class ID with FieldDefinition included
+   * Returns raw Prisma result for enriched DTO creation
+   *
+   * This method returns:
+   * 1. Class-specific fields linked via CIClassField
+   * 2. Global CONFIGURATION_ITEM fields (isGlobal=true, entityType="CONFIGURATION_ITEM")
+   */
+  async findByCIClassIdWithDefinition(ciClassId: string) {
+    // 1. Get class-specific fields from CIClassField
+    const classFields = await prisma.cIClassField.findMany({
+      where: { ciClassId },
+      orderBy: { uiOrder: "asc" },
+      include: {
+        fieldDefinition: {
+          select: {
+            id: true,
+            name: true,
+            label: true,
+            description: true,
+            dataType: true,
+            enumOptions: true,
+            validationRules: true,
+            defaultValue: true,
+            uiGroup: true,
+          },
+        },
+      },
+    });
+
+    // 2. Get global CONFIGURATION_ITEM fields that aren't already linked to this class
+    const linkedFieldIds = classFields.map((f) => f.fieldDefinitionId);
+    const globalFields = await prisma.fieldDefinition.findMany({
+      where: {
+        entityType: "CONFIGURATION_ITEM",
+        isGlobal: true,
+        isActive: true,
+        deletedAt: null,
+        id: { notIn: linkedFieldIds },
+      },
+      orderBy: { uiOrder: "asc" },
+      select: {
+        id: true,
+        name: true,
+        label: true,
+        description: true,
+        dataType: true,
+        enumOptions: true,
+        validationRules: true,
+        defaultValue: true,
+        uiGroup: true,
+        uiOrder: true,
+        isRequired: true,
+      },
+    });
+
+    // 3. Convert global fields to the same structure as class fields
+    const globalFieldsAsClassFields = globalFields.map((gf, index) => ({
+      id: `global-${gf.id}`, // Virtual ID for global fields
+      ciClassId,
+      fieldDefinitionId: gf.id,
+      isRequired: gf.isRequired,
+      isUnique: false,
+      isVisible: true,
+      defaultValue: gf.defaultValue,
+      uiOrder: 1000 + (gf.uiOrder || index), // Put global fields after class fields
+      note: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      fieldDefinition: {
+        id: gf.id,
+        name: gf.name,
+        label: gf.label,
+        description: gf.description,
+        dataType: gf.dataType,
+        enumOptions: gf.enumOptions,
+        validationRules: gf.validationRules,
+        defaultValue: gf.defaultValue,
+        uiGroup: gf.uiGroup,
+      },
+    }));
+
+    // 4. Combine and return all fields
+    return [...classFields, ...globalFieldsAsClassFields];
+  }
+
   private toDomain(prismaCF: PrismaCIClassField): CIClassField {
     return CIClassField.reconstitute({
       id: prismaCF.id,

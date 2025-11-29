@@ -4,9 +4,14 @@
 
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState, useMemo, useCallback } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Separator } from "@/components/ui/separator";
+import {
+  CICustomFieldsSection,
+  type CustomFieldValues,
+} from "@/components/custom-fields";
 import {
   Dialog,
   DialogContent,
@@ -76,6 +81,11 @@ export function ConfigurationItemForm({
   const [ciClasses, setCIClasses] = useState<CIClassDTO[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Custom field values (managed separately from form)
+  const [customFieldValues, setCustomFieldValues] = useState<CustomFieldValues>(
+    {},
+  );
+
   // Memoized options for searchable dropdown
   const ciClassOptions: SearchableSelectOption[] = useMemo(
     () =>
@@ -142,6 +152,25 @@ export function ConfigurationItemForm({
     },
   });
 
+  // Watch ciClassId for create form to track changes
+  const watchedCIClassId = useWatch({
+    control: createForm.control,
+    name: "ciClassId",
+  });
+
+  // Reset custom fields when CI class changes (create form only)
+  useEffect(() => {
+    if (!isEditing && watchedCIClassId) {
+      // Reset custom field values when CI class changes
+      setCustomFieldValues({});
+    }
+  }, [watchedCIClassId, isEditing]);
+
+  // Handle custom field value changes
+  const handleCustomFieldsChange = useCallback((values: CustomFieldValues) => {
+    setCustomFieldValues(values);
+  }, []);
+
   useEffect(() => {
     if (open && editingItem) {
       updateForm.reset({
@@ -171,14 +200,23 @@ export function ConfigurationItemForm({
         description: editingItem.description,
         attributes: editingItem.attributes,
       });
+      // Initialize custom field values from existing attributes
+      setCustomFieldValues((editingItem.attributes as CustomFieldValues) || {});
     } else if (open && !editingItem) {
       createForm.reset();
+      setCustomFieldValues({});
     }
   }, [open, editingItem, createForm, updateForm]);
 
   const onCreateSubmit = async (data: CreateFormOutput) => {
     try {
-      const result = await createConfigurationItemAction(data);
+      // Include custom field values in attributes
+      const submitData = {
+        ...data,
+        attributes:
+          Object.keys(customFieldValues).length > 0 ? customFieldValues : null,
+      };
+      const result = await createConfigurationItemAction(submitData);
       if (result.success) {
         toast.success("Configuration item created successfully");
         onSuccess();
@@ -193,7 +231,16 @@ export function ConfigurationItemForm({
 
   const onUpdateSubmit = async (data: UpdateFormOutput) => {
     try {
-      const result = await updateConfigurationItemAction(editingItem!.id, data);
+      // Include custom field values in attributes
+      const submitData = {
+        ...data,
+        attributes:
+          Object.keys(customFieldValues).length > 0 ? customFieldValues : null,
+      };
+      const result = await updateConfigurationItemAction(
+        editingItem!.id,
+        submitData,
+      );
       if (result.success) {
         toast.success("Configuration item updated successfully");
         onSuccess();
@@ -366,6 +413,19 @@ export function ConfigurationItemForm({
                 )}
               />
 
+              {/* Custom Fields Section */}
+              {watchedCIClassId && (
+                <>
+                  <Separator className="my-4" />
+                  <CICustomFieldsSection
+                    ciClassId={watchedCIClassId}
+                    values={customFieldValues}
+                    onChange={handleCustomFieldsChange}
+                    disabled={createForm.formState.isSubmitting}
+                  />
+                </>
+              )}
+
               <DialogFooter>
                 <Button
                   type="button"
@@ -505,6 +565,19 @@ export function ConfigurationItemForm({
                   </FormItem>
                 )}
               />
+
+              {/* Custom Fields Section */}
+              {editingItem?.ciClassId && (
+                <>
+                  <Separator className="my-4" />
+                  <CICustomFieldsSection
+                    ciClassId={editingItem.ciClassId}
+                    values={customFieldValues}
+                    onChange={handleCustomFieldsChange}
+                    disabled={updateForm.formState.isSubmitting}
+                  />
+                </>
+              )}
 
               <DialogFooter>
                 <Button

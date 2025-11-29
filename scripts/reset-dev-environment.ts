@@ -120,8 +120,7 @@ async function reset() {
   // Show what will be cleared
   console.log("This will:");
   console.log("  1. Clear build caches (.next, coverage)");
-  console.log("  2. Reset database (drop all data)");
-  console.log("  3. Push database schema");
+  console.log("  2. Reset database (drop all data, replay migrations)");
   console.log("");
 
   // Calculate sizes
@@ -164,37 +163,20 @@ async function reset() {
   }
   console.log("");
 
-  // Step 2: Reset database
+  // Step 2: Reset database using Prisma migrations
   console.log("🗄️  Step 2: Resetting database...");
+  console.log("   → Running prisma migrate reset...");
   try {
-    // Use pg Pool directly instead of Prisma for schema operations
-    // Prisma may wrap operations in transactions that don't commit properly
-    const { Pool } = await import("pg");
-    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-
-    // Drop all data
-    console.log("   → Dropping all tables...");
-    await pool.query("DROP SCHEMA public CASCADE;");
-    await pool.query("CREATE SCHEMA public;");
-
-    await pool.end();
-    console.log("   ✓ Database reset");
-  } catch (error) {
-    console.error("   ✗ Database reset failed:", error);
-    process.exit(1);
-  }
-  console.log("");
-
-  // Step 3: Push schema
-  console.log("📊 Step 3: Pushing database schema...");
-  try {
-    execSync("npm run db:push", {
-      cwd: PROJECT_ROOT,
-      stdio: "inherit",
-    });
-    console.log("   ✓ Schema pushed");
+    execSync(
+      "dotenv -e .env.local -- prisma migrate reset --force --skip-seed",
+      {
+        cwd: PROJECT_ROOT,
+        stdio: "inherit",
+      },
+    );
+    console.log("   ✓ Database reset and migrations applied");
   } catch (_error) {
-    console.error("   ✗ Schema push failed");
+    console.error("   ✗ Database reset failed");
     process.exit(1);
   }
   console.log("");

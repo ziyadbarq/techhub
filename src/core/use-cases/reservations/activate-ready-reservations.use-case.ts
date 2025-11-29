@@ -5,6 +5,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetReservationRepository } from "@/core/repositories/asset-reservation.repository.interface";
+import type { ILoggerService } from "@/core/services/logger.service.interface";
 
 export interface ActivateReadyReservationsResponse {
   activatedIds: string[];
@@ -20,6 +21,8 @@ export class ActivateReadyReservationsUseCase {
   constructor(
     @inject(DI_TOKENS.IAssetReservationRepository)
     private readonly reservationRepository: IAssetReservationRepository,
+    @inject(DI_TOKENS.ILoggerService)
+    private readonly logger: ILoggerService,
   ) {}
 
   async execute(): Promise<ActivateReadyReservationsResponse> {
@@ -34,10 +37,10 @@ export class ActivateReadyReservationsUseCase {
         activatedIds.push(reservation.id);
       } catch (error) {
         // Log error but continue with other reservations
-        console.error(
-          `Failed to activate reservation ${reservation.id}:`,
-          error,
-        );
+        this.logger.error("Failed to activate reservation", {
+          reservationId: reservation.id,
+          error: error instanceof Error ? error.message : String(error),
+        });
       }
     }
 

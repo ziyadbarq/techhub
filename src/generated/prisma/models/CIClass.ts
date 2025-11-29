@@ -36,6 +36,8 @@ export type CIClassMinAggregateOutputType = {
   isDiscoverable: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
 }
 
 export type CIClassMaxAggregateOutputType = {
@@ -50,6 +52,8 @@ export type CIClassMaxAggregateOutputType = {
   isDiscoverable: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
+  deletedById: string | null
 }
 
 export type CIClassCountAggregateOutputType = {
@@ -64,6 +68,8 @@ export type CIClassCountAggregateOutputType = {
   isDiscoverable: number
   createdAt: number
   updatedAt: number
+  deletedAt: number
+  deletedById: number
   _all: number
 }
 
@@ -80,6 +86,8 @@ export type CIClassMinAggregateInputType = {
   isDiscoverable?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
 }
 
 export type CIClassMaxAggregateInputType = {
@@ -94,6 +102,8 @@ export type CIClassMaxAggregateInputType = {
   isDiscoverable?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
 }
 
 export type CIClassCountAggregateInputType = {
@@ -108,6 +118,8 @@ export type CIClassCountAggregateInputType = {
   isDiscoverable?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
+  deletedById?: true
   _all?: true
 }
 
@@ -195,6 +207,8 @@ export type CIClassGroupByOutputType = {
   isDiscoverable: boolean
   createdAt: Date
   updatedAt: Date
+  deletedAt: Date | null
+  deletedById: string | null
   _count: CIClassCountAggregateOutputType | null
   _min: CIClassMinAggregateOutputType | null
   _max: CIClassMaxAggregateOutputType | null
@@ -230,6 +244,8 @@ export type CIClassWhereInput = {
   isDiscoverable?: Prisma.BoolFilter<"CIClass"> | boolean
   createdAt?: Prisma.DateTimeFilter<"CIClass"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CIClass"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"CIClass"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"CIClass"> | string | null
   parentClass?: Prisma.XOR<Prisma.CIClassNullableScalarRelationFilter, Prisma.CIClassWhereInput> | null
   childClasses?: Prisma.CIClassListRelationFilter
   lifecycleModel?: Prisma.XOR<Prisma.LifecycleModelNullableScalarRelationFilter, Prisma.LifecycleModelWhereInput> | null
@@ -238,6 +254,7 @@ export type CIClassWhereInput = {
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeListRelationFilter
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeListRelationFilter
   dataOwnerships?: Prisma.DataOwnershipListRelationFilter
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }
 
 export type CIClassOrderByWithRelationInput = {
@@ -252,6 +269,8 @@ export type CIClassOrderByWithRelationInput = {
   isDiscoverable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   parentClass?: Prisma.CIClassOrderByWithRelationInput
   childClasses?: Prisma.CIClassOrderByRelationAggregateInput
   lifecycleModel?: Prisma.LifecycleModelOrderByWithRelationInput
@@ -260,6 +279,7 @@ export type CIClassOrderByWithRelationInput = {
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeOrderByRelationAggregateInput
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeOrderByRelationAggregateInput
   dataOwnerships?: Prisma.DataOwnershipOrderByRelationAggregateInput
+  deletedBy?: Prisma.PersonOrderByWithRelationInput
 }
 
 export type CIClassWhereUniqueInput = Prisma.AtLeast<{
@@ -277,6 +297,8 @@ export type CIClassWhereUniqueInput = Prisma.AtLeast<{
   isDiscoverable?: Prisma.BoolFilter<"CIClass"> | boolean
   createdAt?: Prisma.DateTimeFilter<"CIClass"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CIClass"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"CIClass"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"CIClass"> | string | null
   parentClass?: Prisma.XOR<Prisma.CIClassNullableScalarRelationFilter, Prisma.CIClassWhereInput> | null
   childClasses?: Prisma.CIClassListRelationFilter
   lifecycleModel?: Prisma.XOR<Prisma.LifecycleModelNullableScalarRelationFilter, Prisma.LifecycleModelWhereInput> | null
@@ -285,6 +307,7 @@ export type CIClassWhereUniqueInput = Prisma.AtLeast<{
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeListRelationFilter
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeListRelationFilter
   dataOwnerships?: Prisma.DataOwnershipListRelationFilter
+  deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }, "id" | "name" | "code">
 
 export type CIClassOrderByWithAggregationInput = {
@@ -299,6 +322,8 @@ export type CIClassOrderByWithAggregationInput = {
   isDiscoverable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.CIClassCountOrderByAggregateInput
   _max?: Prisma.CIClassMaxOrderByAggregateInput
   _min?: Prisma.CIClassMinOrderByAggregateInput
@@ -319,6 +344,8 @@ export type CIClassScalarWhereWithAggregatesInput = {
   isDiscoverable?: Prisma.BoolWithAggregatesFilter<"CIClass"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"CIClass"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"CIClass"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"CIClass"> | Date | string | null
+  deletedById?: Prisma.StringNullableWithAggregatesFilter<"CIClass"> | string | null
 }
 
 export type CIClassCreateInput = {
@@ -331,6 +358,7 @@ export type CIClassCreateInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   parentClass?: Prisma.CIClassCreateNestedOneWithoutChildClassesInput
   childClasses?: Prisma.CIClassCreateNestedManyWithoutParentClassInput
   lifecycleModel?: Prisma.LifecycleModelCreateNestedOneWithoutCiClassesInput
@@ -339,6 +367,7 @@ export type CIClassCreateInput = {
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutFromCiClassInput
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutToCiClassInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutCiClassInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedCIClassesInput
 }
 
 export type CIClassUncheckedCreateInput = {
@@ -353,6 +382,8 @@ export type CIClassUncheckedCreateInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   childClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutParentClassInput
   fields?: Prisma.CIClassFieldUncheckedCreateNestedManyWithoutCiClassInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutCiClassInput
@@ -371,6 +402,7 @@ export type CIClassUpdateInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   parentClass?: Prisma.CIClassUpdateOneWithoutChildClassesNestedInput
   childClasses?: Prisma.CIClassUpdateManyWithoutParentClassNestedInput
   lifecycleModel?: Prisma.LifecycleModelUpdateOneWithoutCiClassesNestedInput
@@ -379,6 +411,7 @@ export type CIClassUpdateInput = {
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUpdateManyWithoutFromCiClassNestedInput
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeUpdateManyWithoutToCiClassNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutCiClassNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedCIClassesNestedInput
 }
 
 export type CIClassUncheckedUpdateInput = {
@@ -393,6 +426,8 @@ export type CIClassUncheckedUpdateInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   childClasses?: Prisma.CIClassUncheckedUpdateManyWithoutParentClassNestedInput
   fields?: Prisma.CIClassFieldUncheckedUpdateManyWithoutCiClassNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutCiClassNestedInput
@@ -413,6 +448,8 @@ export type CIClassCreateManyInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type CIClassUpdateManyMutationInput = {
@@ -425,6 +462,7 @@ export type CIClassUpdateManyMutationInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type CIClassUncheckedUpdateManyInput = {
@@ -439,6 +477,8 @@ export type CIClassUncheckedUpdateManyInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type CIClassNullableScalarRelationFilter = {
@@ -468,6 +508,8 @@ export type CIClassCountOrderByAggregateInput = {
   isDiscoverable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type CIClassMaxOrderByAggregateInput = {
@@ -482,6 +524,8 @@ export type CIClassMaxOrderByAggregateInput = {
   isDiscoverable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type CIClassMinOrderByAggregateInput = {
@@ -496,6 +540,8 @@ export type CIClassMinOrderByAggregateInput = {
   isDiscoverable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  deletedById?: Prisma.SortOrder
 }
 
 export type CIClassScalarRelationFilter = {
@@ -625,6 +671,48 @@ export type CIClassUpdateOneRequiredWithoutRelationshipTypeScopesToNestedInput =
   update?: Prisma.XOR<Prisma.XOR<Prisma.CIClassUpdateToOneWithWhereWithoutRelationshipTypeScopesToInput, Prisma.CIClassUpdateWithoutRelationshipTypeScopesToInput>, Prisma.CIClassUncheckedUpdateWithoutRelationshipTypeScopesToInput>
 }
 
+export type CIClassCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.CIClassCreateWithoutDeletedByInput, Prisma.CIClassUncheckedCreateWithoutDeletedByInput> | Prisma.CIClassCreateWithoutDeletedByInput[] | Prisma.CIClassUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.CIClassCreateOrConnectWithoutDeletedByInput | Prisma.CIClassCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.CIClassCreateManyDeletedByInputEnvelope
+  connect?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+}
+
+export type CIClassUncheckedCreateNestedManyWithoutDeletedByInput = {
+  create?: Prisma.XOR<Prisma.CIClassCreateWithoutDeletedByInput, Prisma.CIClassUncheckedCreateWithoutDeletedByInput> | Prisma.CIClassCreateWithoutDeletedByInput[] | Prisma.CIClassUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.CIClassCreateOrConnectWithoutDeletedByInput | Prisma.CIClassCreateOrConnectWithoutDeletedByInput[]
+  createMany?: Prisma.CIClassCreateManyDeletedByInputEnvelope
+  connect?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+}
+
+export type CIClassUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.CIClassCreateWithoutDeletedByInput, Prisma.CIClassUncheckedCreateWithoutDeletedByInput> | Prisma.CIClassCreateWithoutDeletedByInput[] | Prisma.CIClassUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.CIClassCreateOrConnectWithoutDeletedByInput | Prisma.CIClassCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.CIClassUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.CIClassUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.CIClassCreateManyDeletedByInputEnvelope
+  set?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+  disconnect?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+  delete?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+  connect?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+  update?: Prisma.CIClassUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.CIClassUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.CIClassUpdateManyWithWhereWithoutDeletedByInput | Prisma.CIClassUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.CIClassScalarWhereInput | Prisma.CIClassScalarWhereInput[]
+}
+
+export type CIClassUncheckedUpdateManyWithoutDeletedByNestedInput = {
+  create?: Prisma.XOR<Prisma.CIClassCreateWithoutDeletedByInput, Prisma.CIClassUncheckedCreateWithoutDeletedByInput> | Prisma.CIClassCreateWithoutDeletedByInput[] | Prisma.CIClassUncheckedCreateWithoutDeletedByInput[]
+  connectOrCreate?: Prisma.CIClassCreateOrConnectWithoutDeletedByInput | Prisma.CIClassCreateOrConnectWithoutDeletedByInput[]
+  upsert?: Prisma.CIClassUpsertWithWhereUniqueWithoutDeletedByInput | Prisma.CIClassUpsertWithWhereUniqueWithoutDeletedByInput[]
+  createMany?: Prisma.CIClassCreateManyDeletedByInputEnvelope
+  set?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+  disconnect?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+  delete?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+  connect?: Prisma.CIClassWhereUniqueInput | Prisma.CIClassWhereUniqueInput[]
+  update?: Prisma.CIClassUpdateWithWhereUniqueWithoutDeletedByInput | Prisma.CIClassUpdateWithWhereUniqueWithoutDeletedByInput[]
+  updateMany?: Prisma.CIClassUpdateManyWithWhereWithoutDeletedByInput | Prisma.CIClassUpdateManyWithWhereWithoutDeletedByInput[]
+  deleteMany?: Prisma.CIClassScalarWhereInput | Prisma.CIClassScalarWhereInput[]
+}
+
 export type CIClassCreateNestedManyWithoutLifecycleModelInput = {
   create?: Prisma.XOR<Prisma.CIClassCreateWithoutLifecycleModelInput, Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput> | Prisma.CIClassCreateWithoutLifecycleModelInput[] | Prisma.CIClassUncheckedCreateWithoutLifecycleModelInput[]
   connectOrCreate?: Prisma.CIClassCreateOrConnectWithoutLifecycleModelInput | Prisma.CIClassCreateOrConnectWithoutLifecycleModelInput[]
@@ -693,6 +781,7 @@ export type CIClassCreateWithoutChildClassesInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   parentClass?: Prisma.CIClassCreateNestedOneWithoutChildClassesInput
   lifecycleModel?: Prisma.LifecycleModelCreateNestedOneWithoutCiClassesInput
   fields?: Prisma.CIClassFieldCreateNestedManyWithoutCiClassInput
@@ -700,6 +789,7 @@ export type CIClassCreateWithoutChildClassesInput = {
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutFromCiClassInput
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutToCiClassInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutCiClassInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedCIClassesInput
 }
 
 export type CIClassUncheckedCreateWithoutChildClassesInput = {
@@ -714,6 +804,8 @@ export type CIClassUncheckedCreateWithoutChildClassesInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   fields?: Prisma.CIClassFieldUncheckedCreateNestedManyWithoutCiClassInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutCiClassInput
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUncheckedCreateNestedManyWithoutFromCiClassInput
@@ -736,6 +828,7 @@ export type CIClassCreateWithoutParentClassInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   childClasses?: Prisma.CIClassCreateNestedManyWithoutParentClassInput
   lifecycleModel?: Prisma.LifecycleModelCreateNestedOneWithoutCiClassesInput
   fields?: Prisma.CIClassFieldCreateNestedManyWithoutCiClassInput
@@ -743,6 +836,7 @@ export type CIClassCreateWithoutParentClassInput = {
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutFromCiClassInput
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutToCiClassInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutCiClassInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedCIClassesInput
 }
 
 export type CIClassUncheckedCreateWithoutParentClassInput = {
@@ -756,6 +850,8 @@ export type CIClassUncheckedCreateWithoutParentClassInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   childClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutParentClassInput
   fields?: Prisma.CIClassFieldUncheckedCreateNestedManyWithoutCiClassInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutCiClassInput
@@ -795,6 +891,7 @@ export type CIClassUpdateWithoutChildClassesInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   parentClass?: Prisma.CIClassUpdateOneWithoutChildClassesNestedInput
   lifecycleModel?: Prisma.LifecycleModelUpdateOneWithoutCiClassesNestedInput
   fields?: Prisma.CIClassFieldUpdateManyWithoutCiClassNestedInput
@@ -802,6 +899,7 @@ export type CIClassUpdateWithoutChildClassesInput = {
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUpdateManyWithoutFromCiClassNestedInput
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeUpdateManyWithoutToCiClassNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutCiClassNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedCIClassesNestedInput
 }
 
 export type CIClassUncheckedUpdateWithoutChildClassesInput = {
@@ -816,6 +914,8 @@ export type CIClassUncheckedUpdateWithoutChildClassesInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   fields?: Prisma.CIClassFieldUncheckedUpdateManyWithoutCiClassNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutCiClassNestedInput
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUncheckedUpdateManyWithoutFromCiClassNestedInput
@@ -854,6 +954,8 @@ export type CIClassScalarWhereInput = {
   isDiscoverable?: Prisma.BoolFilter<"CIClass"> | boolean
   createdAt?: Prisma.DateTimeFilter<"CIClass"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"CIClass"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"CIClass"> | Date | string | null
+  deletedById?: Prisma.StringNullableFilter<"CIClass"> | string | null
 }
 
 export type CIClassCreateWithoutFieldsInput = {
@@ -866,6 +968,7 @@ export type CIClassCreateWithoutFieldsInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   parentClass?: Prisma.CIClassCreateNestedOneWithoutChildClassesInput
   childClasses?: Prisma.CIClassCreateNestedManyWithoutParentClassInput
   lifecycleModel?: Prisma.LifecycleModelCreateNestedOneWithoutCiClassesInput
@@ -873,6 +976,7 @@ export type CIClassCreateWithoutFieldsInput = {
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutFromCiClassInput
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutToCiClassInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutCiClassInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedCIClassesInput
 }
 
 export type CIClassUncheckedCreateWithoutFieldsInput = {
@@ -887,6 +991,8 @@ export type CIClassUncheckedCreateWithoutFieldsInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   childClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutParentClassInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutCiClassInput
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUncheckedCreateNestedManyWithoutFromCiClassInput
@@ -920,6 +1026,7 @@ export type CIClassUpdateWithoutFieldsInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   parentClass?: Prisma.CIClassUpdateOneWithoutChildClassesNestedInput
   childClasses?: Prisma.CIClassUpdateManyWithoutParentClassNestedInput
   lifecycleModel?: Prisma.LifecycleModelUpdateOneWithoutCiClassesNestedInput
@@ -927,6 +1034,7 @@ export type CIClassUpdateWithoutFieldsInput = {
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUpdateManyWithoutFromCiClassNestedInput
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeUpdateManyWithoutToCiClassNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutCiClassNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedCIClassesNestedInput
 }
 
 export type CIClassUncheckedUpdateWithoutFieldsInput = {
@@ -941,6 +1049,8 @@ export type CIClassUncheckedUpdateWithoutFieldsInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   childClasses?: Prisma.CIClassUncheckedUpdateManyWithoutParentClassNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutCiClassNestedInput
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUncheckedUpdateManyWithoutFromCiClassNestedInput
@@ -958,6 +1068,7 @@ export type CIClassCreateWithoutConfigurationItemsInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   parentClass?: Prisma.CIClassCreateNestedOneWithoutChildClassesInput
   childClasses?: Prisma.CIClassCreateNestedManyWithoutParentClassInput
   lifecycleModel?: Prisma.LifecycleModelCreateNestedOneWithoutCiClassesInput
@@ -965,6 +1076,7 @@ export type CIClassCreateWithoutConfigurationItemsInput = {
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutFromCiClassInput
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutToCiClassInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutCiClassInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedCIClassesInput
 }
 
 export type CIClassUncheckedCreateWithoutConfigurationItemsInput = {
@@ -979,6 +1091,8 @@ export type CIClassUncheckedCreateWithoutConfigurationItemsInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   childClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutParentClassInput
   fields?: Prisma.CIClassFieldUncheckedCreateNestedManyWithoutCiClassInput
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUncheckedCreateNestedManyWithoutFromCiClassInput
@@ -1012,6 +1126,7 @@ export type CIClassUpdateWithoutConfigurationItemsInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   parentClass?: Prisma.CIClassUpdateOneWithoutChildClassesNestedInput
   childClasses?: Prisma.CIClassUpdateManyWithoutParentClassNestedInput
   lifecycleModel?: Prisma.LifecycleModelUpdateOneWithoutCiClassesNestedInput
@@ -1019,6 +1134,7 @@ export type CIClassUpdateWithoutConfigurationItemsInput = {
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUpdateManyWithoutFromCiClassNestedInput
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeUpdateManyWithoutToCiClassNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutCiClassNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedCIClassesNestedInput
 }
 
 export type CIClassUncheckedUpdateWithoutConfigurationItemsInput = {
@@ -1033,6 +1149,8 @@ export type CIClassUncheckedUpdateWithoutConfigurationItemsInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   childClasses?: Prisma.CIClassUncheckedUpdateManyWithoutParentClassNestedInput
   fields?: Prisma.CIClassFieldUncheckedUpdateManyWithoutCiClassNestedInput
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUncheckedUpdateManyWithoutFromCiClassNestedInput
@@ -1050,6 +1168,7 @@ export type CIClassCreateWithoutRelationshipTypeScopesFromInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   parentClass?: Prisma.CIClassCreateNestedOneWithoutChildClassesInput
   childClasses?: Prisma.CIClassCreateNestedManyWithoutParentClassInput
   lifecycleModel?: Prisma.LifecycleModelCreateNestedOneWithoutCiClassesInput
@@ -1057,6 +1176,7 @@ export type CIClassCreateWithoutRelationshipTypeScopesFromInput = {
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutCiClassInput
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutToCiClassInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutCiClassInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedCIClassesInput
 }
 
 export type CIClassUncheckedCreateWithoutRelationshipTypeScopesFromInput = {
@@ -1071,6 +1191,8 @@ export type CIClassUncheckedCreateWithoutRelationshipTypeScopesFromInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   childClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutParentClassInput
   fields?: Prisma.CIClassFieldUncheckedCreateNestedManyWithoutCiClassInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutCiClassInput
@@ -1093,6 +1215,7 @@ export type CIClassCreateWithoutRelationshipTypeScopesToInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   parentClass?: Prisma.CIClassCreateNestedOneWithoutChildClassesInput
   childClasses?: Prisma.CIClassCreateNestedManyWithoutParentClassInput
   lifecycleModel?: Prisma.LifecycleModelCreateNestedOneWithoutCiClassesInput
@@ -1100,6 +1223,7 @@ export type CIClassCreateWithoutRelationshipTypeScopesToInput = {
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutCiClassInput
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutFromCiClassInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutCiClassInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedCIClassesInput
 }
 
 export type CIClassUncheckedCreateWithoutRelationshipTypeScopesToInput = {
@@ -1114,6 +1238,8 @@ export type CIClassUncheckedCreateWithoutRelationshipTypeScopesToInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   childClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutParentClassInput
   fields?: Prisma.CIClassFieldUncheckedCreateNestedManyWithoutCiClassInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutCiClassInput
@@ -1147,6 +1273,7 @@ export type CIClassUpdateWithoutRelationshipTypeScopesFromInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   parentClass?: Prisma.CIClassUpdateOneWithoutChildClassesNestedInput
   childClasses?: Prisma.CIClassUpdateManyWithoutParentClassNestedInput
   lifecycleModel?: Prisma.LifecycleModelUpdateOneWithoutCiClassesNestedInput
@@ -1154,6 +1281,7 @@ export type CIClassUpdateWithoutRelationshipTypeScopesFromInput = {
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutCiClassNestedInput
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeUpdateManyWithoutToCiClassNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutCiClassNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedCIClassesNestedInput
 }
 
 export type CIClassUncheckedUpdateWithoutRelationshipTypeScopesFromInput = {
@@ -1168,6 +1296,8 @@ export type CIClassUncheckedUpdateWithoutRelationshipTypeScopesFromInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   childClasses?: Prisma.CIClassUncheckedUpdateManyWithoutParentClassNestedInput
   fields?: Prisma.CIClassFieldUncheckedUpdateManyWithoutCiClassNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutCiClassNestedInput
@@ -1196,6 +1326,7 @@ export type CIClassUpdateWithoutRelationshipTypeScopesToInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   parentClass?: Prisma.CIClassUpdateOneWithoutChildClassesNestedInput
   childClasses?: Prisma.CIClassUpdateManyWithoutParentClassNestedInput
   lifecycleModel?: Prisma.LifecycleModelUpdateOneWithoutCiClassesNestedInput
@@ -1203,6 +1334,7 @@ export type CIClassUpdateWithoutRelationshipTypeScopesToInput = {
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutCiClassNestedInput
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUpdateManyWithoutFromCiClassNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutCiClassNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedCIClassesNestedInput
 }
 
 export type CIClassUncheckedUpdateWithoutRelationshipTypeScopesToInput = {
@@ -1217,11 +1349,81 @@ export type CIClassUncheckedUpdateWithoutRelationshipTypeScopesToInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   childClasses?: Prisma.CIClassUncheckedUpdateManyWithoutParentClassNestedInput
   fields?: Prisma.CIClassFieldUncheckedUpdateManyWithoutCiClassNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutCiClassNestedInput
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUncheckedUpdateManyWithoutFromCiClassNestedInput
   dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutCiClassNestedInput
+}
+
+export type CIClassCreateWithoutDeletedByInput = {
+  id?: string
+  name: string
+  code: string
+  description?: string | null
+  defaultCriticality?: $Enums.CriticalityEnum | null
+  defaultEnvironment?: $Enums.EnvironmentEnum | null
+  isDiscoverable?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  parentClass?: Prisma.CIClassCreateNestedOneWithoutChildClassesInput
+  childClasses?: Prisma.CIClassCreateNestedManyWithoutParentClassInput
+  lifecycleModel?: Prisma.LifecycleModelCreateNestedOneWithoutCiClassesInput
+  fields?: Prisma.CIClassFieldCreateNestedManyWithoutCiClassInput
+  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutCiClassInput
+  relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutFromCiClassInput
+  relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutToCiClassInput
+  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutCiClassInput
+}
+
+export type CIClassUncheckedCreateWithoutDeletedByInput = {
+  id?: string
+  name: string
+  code: string
+  parentClassId?: string | null
+  description?: string | null
+  lifecycleModelId?: string | null
+  defaultCriticality?: $Enums.CriticalityEnum | null
+  defaultEnvironment?: $Enums.EnvironmentEnum | null
+  isDiscoverable?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  childClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutParentClassInput
+  fields?: Prisma.CIClassFieldUncheckedCreateNestedManyWithoutCiClassInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutCiClassInput
+  relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUncheckedCreateNestedManyWithoutFromCiClassInput
+  relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeUncheckedCreateNestedManyWithoutToCiClassInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutCiClassInput
+}
+
+export type CIClassCreateOrConnectWithoutDeletedByInput = {
+  where: Prisma.CIClassWhereUniqueInput
+  create: Prisma.XOR<Prisma.CIClassCreateWithoutDeletedByInput, Prisma.CIClassUncheckedCreateWithoutDeletedByInput>
+}
+
+export type CIClassCreateManyDeletedByInputEnvelope = {
+  data: Prisma.CIClassCreateManyDeletedByInput | Prisma.CIClassCreateManyDeletedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type CIClassUpsertWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.CIClassWhereUniqueInput
+  update: Prisma.XOR<Prisma.CIClassUpdateWithoutDeletedByInput, Prisma.CIClassUncheckedUpdateWithoutDeletedByInput>
+  create: Prisma.XOR<Prisma.CIClassCreateWithoutDeletedByInput, Prisma.CIClassUncheckedCreateWithoutDeletedByInput>
+}
+
+export type CIClassUpdateWithWhereUniqueWithoutDeletedByInput = {
+  where: Prisma.CIClassWhereUniqueInput
+  data: Prisma.XOR<Prisma.CIClassUpdateWithoutDeletedByInput, Prisma.CIClassUncheckedUpdateWithoutDeletedByInput>
+}
+
+export type CIClassUpdateManyWithWhereWithoutDeletedByInput = {
+  where: Prisma.CIClassScalarWhereInput
+  data: Prisma.XOR<Prisma.CIClassUpdateManyMutationInput, Prisma.CIClassUncheckedUpdateManyWithoutDeletedByInput>
 }
 
 export type CIClassCreateWithoutLifecycleModelInput = {
@@ -1234,6 +1436,7 @@ export type CIClassCreateWithoutLifecycleModelInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   parentClass?: Prisma.CIClassCreateNestedOneWithoutChildClassesInput
   childClasses?: Prisma.CIClassCreateNestedManyWithoutParentClassInput
   fields?: Prisma.CIClassFieldCreateNestedManyWithoutCiClassInput
@@ -1241,6 +1444,7 @@ export type CIClassCreateWithoutLifecycleModelInput = {
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutFromCiClassInput
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutToCiClassInput
   dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutCiClassInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedCIClassesInput
 }
 
 export type CIClassUncheckedCreateWithoutLifecycleModelInput = {
@@ -1254,6 +1458,8 @@ export type CIClassUncheckedCreateWithoutLifecycleModelInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   childClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutParentClassInput
   fields?: Prisma.CIClassFieldUncheckedCreateNestedManyWithoutCiClassInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutCiClassInput
@@ -1298,6 +1504,7 @@ export type CIClassCreateWithoutDataOwnershipsInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   parentClass?: Prisma.CIClassCreateNestedOneWithoutChildClassesInput
   childClasses?: Prisma.CIClassCreateNestedManyWithoutParentClassInput
   lifecycleModel?: Prisma.LifecycleModelCreateNestedOneWithoutCiClassesInput
@@ -1305,6 +1512,7 @@ export type CIClassCreateWithoutDataOwnershipsInput = {
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutCiClassInput
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutFromCiClassInput
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeCreateNestedManyWithoutToCiClassInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedCIClassesInput
 }
 
 export type CIClassUncheckedCreateWithoutDataOwnershipsInput = {
@@ -1319,6 +1527,8 @@ export type CIClassUncheckedCreateWithoutDataOwnershipsInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
   childClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutParentClassInput
   fields?: Prisma.CIClassFieldUncheckedCreateNestedManyWithoutCiClassInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutCiClassInput
@@ -1352,6 +1562,7 @@ export type CIClassUpdateWithoutDataOwnershipsInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   parentClass?: Prisma.CIClassUpdateOneWithoutChildClassesNestedInput
   childClasses?: Prisma.CIClassUpdateManyWithoutParentClassNestedInput
   lifecycleModel?: Prisma.LifecycleModelUpdateOneWithoutCiClassesNestedInput
@@ -1359,6 +1570,7 @@ export type CIClassUpdateWithoutDataOwnershipsInput = {
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutCiClassNestedInput
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUpdateManyWithoutFromCiClassNestedInput
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeUpdateManyWithoutToCiClassNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedCIClassesNestedInput
 }
 
 export type CIClassUncheckedUpdateWithoutDataOwnershipsInput = {
@@ -1373,6 +1585,8 @@ export type CIClassUncheckedUpdateWithoutDataOwnershipsInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   childClasses?: Prisma.CIClassUncheckedUpdateManyWithoutParentClassNestedInput
   fields?: Prisma.CIClassFieldUncheckedUpdateManyWithoutCiClassNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutCiClassNestedInput
@@ -1391,6 +1605,8 @@ export type CIClassCreateManyParentClassInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type CIClassUpdateWithoutParentClassInput = {
@@ -1403,6 +1619,7 @@ export type CIClassUpdateWithoutParentClassInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   childClasses?: Prisma.CIClassUpdateManyWithoutParentClassNestedInput
   lifecycleModel?: Prisma.LifecycleModelUpdateOneWithoutCiClassesNestedInput
   fields?: Prisma.CIClassFieldUpdateManyWithoutCiClassNestedInput
@@ -1410,6 +1627,7 @@ export type CIClassUpdateWithoutParentClassInput = {
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUpdateManyWithoutFromCiClassNestedInput
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeUpdateManyWithoutToCiClassNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutCiClassNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedCIClassesNestedInput
 }
 
 export type CIClassUncheckedUpdateWithoutParentClassInput = {
@@ -1423,6 +1641,8 @@ export type CIClassUncheckedUpdateWithoutParentClassInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   childClasses?: Prisma.CIClassUncheckedUpdateManyWithoutParentClassNestedInput
   fields?: Prisma.CIClassFieldUncheckedUpdateManyWithoutCiClassNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutCiClassNestedInput
@@ -1442,6 +1662,80 @@ export type CIClassUncheckedUpdateManyWithoutParentClassInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type CIClassCreateManyDeletedByInput = {
+  id?: string
+  name: string
+  code: string
+  parentClassId?: string | null
+  description?: string | null
+  lifecycleModelId?: string | null
+  defaultCriticality?: $Enums.CriticalityEnum | null
+  defaultEnvironment?: $Enums.EnvironmentEnum | null
+  isDiscoverable?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type CIClassUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  defaultCriticality?: Prisma.NullableEnumCriticalityEnumFieldUpdateOperationsInput | $Enums.CriticalityEnum | null
+  defaultEnvironment?: Prisma.NullableEnumEnvironmentEnumFieldUpdateOperationsInput | $Enums.EnvironmentEnum | null
+  isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  parentClass?: Prisma.CIClassUpdateOneWithoutChildClassesNestedInput
+  childClasses?: Prisma.CIClassUpdateManyWithoutParentClassNestedInput
+  lifecycleModel?: Prisma.LifecycleModelUpdateOneWithoutCiClassesNestedInput
+  fields?: Prisma.CIClassFieldUpdateManyWithoutCiClassNestedInput
+  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutCiClassNestedInput
+  relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUpdateManyWithoutFromCiClassNestedInput
+  relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeUpdateManyWithoutToCiClassNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutCiClassNestedInput
+}
+
+export type CIClassUncheckedUpdateWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  parentClassId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lifecycleModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  defaultCriticality?: Prisma.NullableEnumCriticalityEnumFieldUpdateOperationsInput | $Enums.CriticalityEnum | null
+  defaultEnvironment?: Prisma.NullableEnumEnvironmentEnumFieldUpdateOperationsInput | $Enums.EnvironmentEnum | null
+  isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  childClasses?: Prisma.CIClassUncheckedUpdateManyWithoutParentClassNestedInput
+  fields?: Prisma.CIClassFieldUncheckedUpdateManyWithoutCiClassNestedInput
+  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutCiClassNestedInput
+  relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUncheckedUpdateManyWithoutFromCiClassNestedInput
+  relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeUncheckedUpdateManyWithoutToCiClassNestedInput
+  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutCiClassNestedInput
+}
+
+export type CIClassUncheckedUpdateManyWithoutDeletedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  parentClassId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lifecycleModelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  defaultCriticality?: Prisma.NullableEnumCriticalityEnumFieldUpdateOperationsInput | $Enums.CriticalityEnum | null
+  defaultEnvironment?: Prisma.NullableEnumEnvironmentEnumFieldUpdateOperationsInput | $Enums.EnvironmentEnum | null
+  isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type CIClassCreateManyLifecycleModelInput = {
@@ -1455,6 +1749,8 @@ export type CIClassCreateManyLifecycleModelInput = {
   isDiscoverable?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  deletedById?: string | null
 }
 
 export type CIClassUpdateWithoutLifecycleModelInput = {
@@ -1467,6 +1763,7 @@ export type CIClassUpdateWithoutLifecycleModelInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   parentClass?: Prisma.CIClassUpdateOneWithoutChildClassesNestedInput
   childClasses?: Prisma.CIClassUpdateManyWithoutParentClassNestedInput
   fields?: Prisma.CIClassFieldUpdateManyWithoutCiClassNestedInput
@@ -1474,6 +1771,7 @@ export type CIClassUpdateWithoutLifecycleModelInput = {
   relationshipTypeScopesFrom?: Prisma.RelationshipTypeScopeUpdateManyWithoutFromCiClassNestedInput
   relationshipTypeScopesTo?: Prisma.RelationshipTypeScopeUpdateManyWithoutToCiClassNestedInput
   dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutCiClassNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedCIClassesNestedInput
 }
 
 export type CIClassUncheckedUpdateWithoutLifecycleModelInput = {
@@ -1487,6 +1785,8 @@ export type CIClassUncheckedUpdateWithoutLifecycleModelInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   childClasses?: Prisma.CIClassUncheckedUpdateManyWithoutParentClassNestedInput
   fields?: Prisma.CIClassFieldUncheckedUpdateManyWithoutCiClassNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutCiClassNestedInput
@@ -1506,6 +1806,8 @@ export type CIClassUncheckedUpdateManyWithoutLifecycleModelInput = {
   isDiscoverable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -1596,6 +1898,8 @@ export type CIClassSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   isDiscoverable?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   parentClass?: boolean | Prisma.CIClass$parentClassArgs<ExtArgs>
   childClasses?: boolean | Prisma.CIClass$childClassesArgs<ExtArgs>
   lifecycleModel?: boolean | Prisma.CIClass$lifecycleModelArgs<ExtArgs>
@@ -1604,6 +1908,7 @@ export type CIClassSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   relationshipTypeScopesFrom?: boolean | Prisma.CIClass$relationshipTypeScopesFromArgs<ExtArgs>
   relationshipTypeScopesTo?: boolean | Prisma.CIClass$relationshipTypeScopesToArgs<ExtArgs>
   dataOwnerships?: boolean | Prisma.CIClass$dataOwnershipsArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.CIClass$deletedByArgs<ExtArgs>
   _count?: boolean | Prisma.CIClassCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["cIClass"]>
 
@@ -1619,8 +1924,11 @@ export type CIClassSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   isDiscoverable?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   parentClass?: boolean | Prisma.CIClass$parentClassArgs<ExtArgs>
   lifecycleModel?: boolean | Prisma.CIClass$lifecycleModelArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.CIClass$deletedByArgs<ExtArgs>
 }, ExtArgs["result"]["cIClass"]>
 
 export type CIClassSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1635,8 +1943,11 @@ export type CIClassSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   isDiscoverable?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
   parentClass?: boolean | Prisma.CIClass$parentClassArgs<ExtArgs>
   lifecycleModel?: boolean | Prisma.CIClass$lifecycleModelArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.CIClass$deletedByArgs<ExtArgs>
 }, ExtArgs["result"]["cIClass"]>
 
 export type CIClassSelectScalar = {
@@ -1651,9 +1962,11 @@ export type CIClassSelectScalar = {
   isDiscoverable?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
+  deletedById?: boolean
 }
 
-export type CIClassOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "code" | "parentClassId" | "description" | "lifecycleModelId" | "defaultCriticality" | "defaultEnvironment" | "isDiscoverable" | "createdAt" | "updatedAt", ExtArgs["result"]["cIClass"]>
+export type CIClassOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "code" | "parentClassId" | "description" | "lifecycleModelId" | "defaultCriticality" | "defaultEnvironment" | "isDiscoverable" | "createdAt" | "updatedAt" | "deletedAt" | "deletedById", ExtArgs["result"]["cIClass"]>
 export type CIClassInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   parentClass?: boolean | Prisma.CIClass$parentClassArgs<ExtArgs>
   childClasses?: boolean | Prisma.CIClass$childClassesArgs<ExtArgs>
@@ -1663,15 +1976,18 @@ export type CIClassInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   relationshipTypeScopesFrom?: boolean | Prisma.CIClass$relationshipTypeScopesFromArgs<ExtArgs>
   relationshipTypeScopesTo?: boolean | Prisma.CIClass$relationshipTypeScopesToArgs<ExtArgs>
   dataOwnerships?: boolean | Prisma.CIClass$dataOwnershipsArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.CIClass$deletedByArgs<ExtArgs>
   _count?: boolean | Prisma.CIClassCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CIClassIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   parentClass?: boolean | Prisma.CIClass$parentClassArgs<ExtArgs>
   lifecycleModel?: boolean | Prisma.CIClass$lifecycleModelArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.CIClass$deletedByArgs<ExtArgs>
 }
 export type CIClassIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   parentClass?: boolean | Prisma.CIClass$parentClassArgs<ExtArgs>
   lifecycleModel?: boolean | Prisma.CIClass$lifecycleModelArgs<ExtArgs>
+  deletedBy?: boolean | Prisma.CIClass$deletedByArgs<ExtArgs>
 }
 
 export type $CIClassPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1685,6 +2001,7 @@ export type $CIClassPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     relationshipTypeScopesFrom: Prisma.$RelationshipTypeScopePayload<ExtArgs>[]
     relationshipTypeScopesTo: Prisma.$RelationshipTypeScopePayload<ExtArgs>[]
     dataOwnerships: Prisma.$DataOwnershipPayload<ExtArgs>[]
+    deletedBy: Prisma.$PersonPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1698,6 +2015,8 @@ export type $CIClassPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     isDiscoverable: boolean
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
+    deletedById: string | null
   }, ExtArgs["result"]["cIClass"]>
   composites: {}
 }
@@ -2100,6 +2419,7 @@ export interface Prisma__CIClassClient<T, Null = never, ExtArgs extends runtime.
   relationshipTypeScopesFrom<T extends Prisma.CIClass$relationshipTypeScopesFromArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CIClass$relationshipTypeScopesFromArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RelationshipTypeScopePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   relationshipTypeScopesTo<T extends Prisma.CIClass$relationshipTypeScopesToArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CIClass$relationshipTypeScopesToArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RelationshipTypeScopePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   dataOwnerships<T extends Prisma.CIClass$dataOwnershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CIClass$dataOwnershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DataOwnershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deletedBy<T extends Prisma.CIClass$deletedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CIClass$deletedByArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2140,6 +2460,8 @@ export interface CIClassFieldRefs {
   readonly isDiscoverable: Prisma.FieldRef<"CIClass", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"CIClass", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"CIClass", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"CIClass", 'DateTime'>
+  readonly deletedById: Prisma.FieldRef<"CIClass", 'String'>
 }
     
 
@@ -2715,6 +3037,25 @@ export type CIClass$dataOwnershipsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.DataOwnershipScalarFieldEnum | Prisma.DataOwnershipScalarFieldEnum[]
+}
+
+/**
+ * CIClass.deletedBy
+ */
+export type CIClass$deletedByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Person
+   */
+  select?: Prisma.PersonSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Person
+   */
+  omit?: Prisma.PersonOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PersonInclude<ExtArgs> | null
+  where?: Prisma.PersonWhereInput
 }
 
 /**

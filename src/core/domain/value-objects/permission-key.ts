@@ -201,6 +201,7 @@ export const PERMISSIONS = {
   STOCK_MOVEMENTS_VIEW: "stock-movements:view",
   STOCK_MOVEMENTS_CREATE: "stock-movements:create",
   STOCK_MOVEMENTS_DELETE: "stock-movements:delete",
+  STOCK_MOVEMENTS_VOID: "stock-movements:void",
   STOCK_MOVEMENTS_MANAGE: "stock-movements:manage",
 
   // Asset Disposals

@@ -20,6 +20,7 @@ import {
 import {
   CIClassFieldPresenter,
   type CIClassFieldDTO,
+  type EnrichedCIClassFieldDTO,
 } from "@/interface-adapters/presenters/ci-class-field.presenter";
 import type {
   CreateCIClassFieldUseCase,
@@ -28,6 +29,7 @@ import type {
   UpdateCIClassFieldUseCase,
   DeleteCIClassFieldUseCase,
 } from "@/core/use-cases/ci-class-field";
+import { PrismaCIClassFieldRepository } from "@/infrastructure/repositories/prisma-ci-class-field.repository";
 
 /**
  * Create a new CI class field
@@ -251,6 +253,36 @@ export async function bulkCreateCIClassFieldsAction(
       successCount: 0,
       errorCount: 0,
       errors: [],
+    };
+  }
+}
+
+/**
+ * List enriched CI class fields for a specific CI class
+ * Returns fields with full FieldDefinition details for form rendering
+ */
+export async function listEnrichedCIClassFieldsAction(
+  ciClassId: string,
+): Promise<ActionResponse<EnrichedCIClassFieldDTO[]>> {
+  try {
+    await requirePermission(PERMISSIONS.CI_CLASS_FIELDS_VIEW);
+
+    // Use repository directly for enriched query
+    const repository = new PrismaCIClassFieldRepository();
+    const fieldsWithDefinition =
+      await repository.findByCIClassIdWithDefinition(ciClassId);
+
+    return {
+      success: true,
+      data: CIClassFieldPresenter.toEnrichedDTOList(fieldsWithDefinition),
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to list enriched CI class fields",
     };
   }
 }

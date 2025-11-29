@@ -24,10 +24,14 @@ import {
 import {
   LicenseProductFieldPresenter,
   type LicenseProductFieldDTO,
+  type EnrichedLicenseProductFieldDTO,
 } from "@/interface-adapters/presenters/license-product-field.presenter";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { BulkCreateResult } from "./types";
+import { PrismaLicenseProductFieldRepository } from "@/infrastructure/repositories/prisma-license-product-field.repository";
+import type { PrismaClient } from "@/generated/prisma/server";
+import type { ILoggerService } from "@/core/services";
 
 /**
  * Create a new license product field
@@ -274,6 +278,44 @@ export async function bulkCreateLicenseProductFieldsAction(
       successCount: 0,
       errorCount: 0,
       errors: [],
+    };
+  }
+}
+
+/**
+ * List enriched license product fields for a specific license product
+ * Returns fields with full FieldDefinition details for form rendering
+ */
+export async function listEnrichedLicenseProductFieldsAction(
+  licenseProductId: string,
+): Promise<
+  | { success: true; data: EnrichedLicenseProductFieldDTO[] }
+  | { success: false; error: string }
+> {
+  try {
+    await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_VIEW);
+
+    // Use repository directly for enriched query
+    const container = getContainer();
+    const prisma = container.get<PrismaClient>(DI_TOKENS.PrismaClient);
+    const logger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
+    const repository = new PrismaLicenseProductFieldRepository(prisma, logger);
+    const fieldsWithDefinition =
+      await repository.findByLicenseProductIdWithDefinition(licenseProductId);
+
+    return {
+      success: true,
+      data: LicenseProductFieldPresenter.toEnrichedDTOList(
+        fieldsWithDefinition,
+      ),
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to list enriched license product fields",
     };
   }
 }

@@ -11,26 +11,31 @@
 // MaintenanceSchedule model
 // Defines recurring preventive maintenance schedules for assets
 model MaintenanceSchedule {
-  id                       String   @id @default(cuid())
+  id                       String                      @id @default(cuid())
   assetId                  String
   title                    String
-  description              String?  @db.Text
-  scheduleType             String // ScheduleType enum: WEEKLY, MONTHLY, QUARTERLY, YEARLY, CUSTOM
-  intervalValue            Int      @default(1)
-  startDate                DateTime @default(now())
+  description              String?                     @db.Text
+  scheduleType             MaintenanceScheduleTypeEnum
+  intervalValue            Int                         @default(1)
+  startDate                DateTime                    @default(now())
   nextDueDate              DateTime
-  isActive                 Boolean  @default(true)
+  isActive                 Boolean                     @default(true)
   assignedToId             String?
   estimatedDurationMinutes Int?
-  priority                 String   @default("MEDIUM") // MaintenancePriority enum: LOW, MEDIUM, HIGH, CRITICAL
-  instructions             String?  @db.Text
-  createdAt                DateTime @default(now())
-  updatedAt                DateTime @updatedAt
+  priority                 PriorityEnum                @default(MEDIUM)
+  instructions             String?                     @db.Text
+  createdAt                DateTime                    @default(now())
+  updatedAt                DateTime                    @updatedAt
+
+  // Soft delete fields
+  deletedAt   DateTime?
+  deletedById String?
 
   // Relations
   asset              Asset               @relation(fields: [assetId], references: [id], onDelete: Restrict)
   assignedTo         Person?             @relation(fields: [assignedToId], references: [id], onDelete: SetNull)
   maintenanceRecords MaintenanceRecord[]
+  deletedBy          Person?             @relation("MaintenanceScheduleDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([assetId])
@@ -40,28 +45,29 @@ model MaintenanceSchedule {
   @@index([scheduleType])
   @@index([priority])
   @@index([startDate]) // Medium-priority: Schedule activation
+  @@index([deletedAt])
   @@map("maintenance_schedules")
 }
 
 // MaintenanceRecord model
 // Tracks actual maintenance work performed or scheduled on assets
 model MaintenanceRecord {
-  id                    String    @id @default(cuid())
+  id                    String                @id @default(cuid())
   assetId               String
   maintenanceScheduleId String?
   title                 String
-  description           String?   @db.Text
+  description           String?               @db.Text
   scheduledDate         DateTime
   completedDate         DateTime?
   performedById         String?
-  status                String    @default("SCHEDULED") // MaintenanceStatus enum: SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED, OVERDUE
-  notes                 String?   @db.Text
-  cost                  Decimal?  @db.Decimal(12, 2)
+  status                MaintenanceStatusEnum @default(SCHEDULED)
+  notes                 String?               @db.Text
+  cost                  Decimal?              @db.Decimal(12, 2)
   currency              String? // Currency code (USD, EUR, GBP, SAR, etc.)
   partsUsed             Json? // Array of strings
   nextMaintenanceDate   DateTime?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
 
   // Relations
   asset               Asset                @relation(fields: [assetId], references: [id], onDelete: Restrict)

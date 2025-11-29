@@ -221,3 +221,83 @@ export async function getPersonDirectReportsAction(
     );
   }
 }
+
+/**
+ * Linked User info DTO for person detail page
+ */
+export interface PersonLinkedUserDTO {
+  userId: string;
+  email: string;
+  name: string | null;
+  createdAt: Date;
+}
+
+/**
+ * Get the linked User account for a Person
+ * Returns null if the person has no linked user
+ * Used for the person detail page to show user status
+ */
+export async function getPersonLinkedUserAction(
+  personId: string,
+): Promise<ActionResponse<PersonLinkedUserDTO | null>> {
+  try {
+    await requirePermission(PERMISSIONS.PERSONS_VIEW);
+
+    if (!personId) {
+      return {
+        success: false,
+        error: "Person ID is required",
+      };
+    }
+
+    const container = getContainer();
+    const prisma = container.get<PrismaClient>(DI_TOKENS.PrismaClient);
+
+    // Find the person with their linked user
+    const person = await prisma.person.findUnique({
+      where: { id: personId },
+      select: {
+        userId: true,
+        user: {
+          select: {
+            id: true,
+            email: true,
+            name: true,
+            createdAt: true,
+          },
+        },
+      },
+    });
+
+    if (!person) {
+      return {
+        success: false,
+        error: "Person not found",
+      };
+    }
+
+    // Return null if no linked user
+    if (!person.user) {
+      return {
+        success: true,
+        data: null,
+      };
+    }
+
+    return {
+      success: true,
+      data: {
+        userId: person.user.id,
+        email: person.user.email,
+        name: person.user.name,
+        createdAt: person.user.createdAt,
+      },
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getPersonLinkedUserAction" },
+      "Failed to get linked user",
+    );
+  }
+}
