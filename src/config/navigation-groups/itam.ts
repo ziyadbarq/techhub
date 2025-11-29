@@ -1,10 +1,7 @@
 /**
- * ITAM (IT Asset Management) Navigation Groups
+ * Services & CMDB Navigation Group
  *
- * Groups:
- * - CMDB: Configuration Management Database (CI classes, items, relationships)
- * - Service Management: Services and business processes
- * - Maintenance: Schedules and records
+ * Combines service management, CMDB, and maintenance into a single section.
  */
 
 import {
@@ -19,10 +16,42 @@ import {
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { NavGroup } from "../navigation.types";
 
-export const cmdbGroup: NavGroup = {
-  id: "cmdb",
-  title: "CMDB",
+export const servicesCmdbGroup: NavGroup = {
+  id: "services-cmdb",
+  title: "Services & CMDB",
   items: [
+    {
+      title: "Services",
+      href: "/services",
+      icon: Server,
+      description: "IT services and application catalog",
+      permission: PERMISSIONS.SERVICES_VIEW,
+      featureFlag: "SERVICES",
+    },
+    {
+      title: "Business Processes",
+      href: "/business-processes",
+      icon: GitPullRequest,
+      description: "Business processes linked to services",
+      permission: PERMISSIONS.BUSINESS_PROCESSES_VIEW,
+      featureFlag: "SERVICES",
+    },
+    {
+      title: "Schedules",
+      href: "/maintenance/schedules",
+      icon: Wrench,
+      description: "Preventive maintenance schedules",
+      permission: PERMISSIONS.MAINTENANCE_SCHEDULES_VIEW,
+      featureFlag: "MAINTENANCE",
+    },
+    {
+      title: "Records",
+      href: "/maintenance/records",
+      icon: ClipboardList,
+      description: "Maintenance history and work logs",
+      permission: PERMISSIONS.MAINTENANCE_RECORDS_VIEW,
+      featureFlag: "MAINTENANCE",
+    },
     {
       title: "CI Classes",
       href: "/ci-classes",
@@ -56,59 +85,7 @@ export const cmdbGroup: NavGroup = {
       featureFlag: "CMDB",
     },
   ],
-  visible: false, // Hidden for initial deployment
   collapsible: true,
   defaultCollapsed: false,
-};
-
-export const serviceManagementGroup: NavGroup = {
-  id: "service-management",
-  title: "Service Management",
-  items: [
-    {
-      title: "Services",
-      href: "/services",
-      icon: Server,
-      description: "IT services and application catalog",
-      permission: PERMISSIONS.SERVICES_VIEW,
-      featureFlag: "SERVICES",
-    },
-    {
-      title: "Business Processes",
-      href: "/business-processes",
-      icon: GitPullRequest,
-      description: "Business processes linked to services",
-      permission: PERMISSIONS.BUSINESS_PROCESSES_VIEW,
-      featureFlag: "SERVICES",
-    },
-  ],
-  visible: false, // Hidden for initial deployment
-  collapsible: true,
-  defaultCollapsed: false,
-};
-
-export const maintenanceGroup: NavGroup = {
-  id: "maintenance",
-  title: "Maintenance",
-  items: [
-    {
-      title: "Schedules",
-      href: "/maintenance/schedules",
-      icon: Wrench,
-      description: "Preventive maintenance schedules",
-      permission: PERMISSIONS.MAINTENANCE_SCHEDULES_VIEW,
-      featureFlag: "MAINTENANCE",
-    },
-    {
-      title: "Records",
-      href: "/maintenance/records",
-      icon: ClipboardList,
-      description: "Maintenance history and work logs",
-      permission: PERMISSIONS.MAINTENANCE_RECORDS_VIEW,
-      featureFlag: "MAINTENANCE",
-    },
-  ],
-  visible: false,
-  collapsible: true,
-  defaultCollapsed: false,
+  visible: true,
 };

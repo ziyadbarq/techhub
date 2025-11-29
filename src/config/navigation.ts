@@ -43,42 +43,23 @@ export type {
 import { mainNavGroup } from "./navigation-groups/main";
 
 // Setup group (consolidated for initial deployment)
-import { setupGroup } from "./navigation-groups/setup";
+import { itamGroup } from "./navigation-groups/setup";
 
-// Asset-related groups (hidden for initial deployment)
-import {
-  assetManagementGroup,
-  assetOperationsGroup,
-  inventoryGroup,
-} from "./navigation-groups/assets";
+// Asset-related groups
+import { assetsInventoryGroup } from "./navigation-groups/assets";
 
-// ITAM groups (hidden for initial deployment)
-import {
-  cmdbGroup,
-  serviceManagementGroup,
-  maintenanceGroup,
-} from "./navigation-groups/itam";
+// Services, CMDB, and maintenance
+import { servicesCmdbGroup } from "./navigation-groups/itam";
 
-// Compliance & documentation groups (hidden for initial deployment)
+// Compliance & extensions
 import {
-  intuneGroup,
-  contractsGroup,
-  licensesGroup,
-  governanceGroup,
-  attachmentsGroup,
+  licensesContractsGroup,
+  governanceAttachmentsGroup,
 } from "./navigation-groups/compliance";
-
-// Foundation layer groups (hidden for initial deployment)
-import {
-  lifecycleGroup,
-  organizationGroup,
-  configurationGroup,
-} from "./navigation-groups/foundation";
 
 // System & administration groups
 import {
-  systemSettingsGroup,
-  adminGroup,
+  adminSettingsGroup,
   documentationGroup,
 } from "./navigation-groups/system";
 
@@ -90,39 +71,39 @@ import {
  * All navigation groups in display order
  * Organized into logical sections for better user experience
  *
- * For initial deployment, simplified to 3 active groups:
- * 1. Main (Dashboard, Data Import)
- * 2. Setup (entities in dependency order)
- * 3. Admin (Stock Movements, Admin Dashboard, Feature Flags)
- *
- * Other groups remain in array for future use but are hidden via visible: false
+ * Groups are arranged to keep data entry and key workflows near the top:
+ * 1. Main (Dashboard, Intune devices, Data Import)
+ * 2. ITAM (foundation data entry)
+ * 3. Assets & Inventory
+ * 4. Services & CMDB
+ * 5. Licenses & Contracts
+ * 6. Governance & Attachments
+ * 7. Admin & Settings
+ * 8. Documentation
  */
 export const navGroups = [
   // Core navigation (always visible)
   mainNavGroup,
 
-  // Setup - consolidated group for initial deployment
-  setupGroup,
+  // ITAM data entry
+  itamGroup,
 
-  // Admin group
-  adminGroup,
+  // Assets & inventory workflows
+  assetsInventoryGroup,
 
-  // Hidden groups (visible: false) - kept for future use
-  assetManagementGroup,
-  assetOperationsGroup,
-  inventoryGroup,
-  maintenanceGroup,
-  cmdbGroup,
-  serviceManagementGroup,
-  intuneGroup,
-  contractsGroup,
-  licensesGroup,
-  governanceGroup,
-  attachmentsGroup,
-  lifecycleGroup,
-  organizationGroup,
-  configurationGroup,
-  systemSettingsGroup,
+  // Services, CMDB, and maintenance
+  servicesCmdbGroup,
+
+  // Licensing and contracts
+  licensesContractsGroup,
+
+  // Governance and attachments
+  governanceAttachmentsGroup,
+
+  // Administration and platform settings
+  adminSettingsGroup,
+
+  // Documentation
   documentationGroup,
 ];
 

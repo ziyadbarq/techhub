@@ -1,12 +1,9 @@
 /**
- * Compliance & Documentation Navigation Groups
+ * Compliance & Extensions Navigation Groups
  *
  * Groups:
- * - Intune: Microsoft Intune device management and compliance
- * - Contracts: Contract types and management
- * - Licenses: License products, entitlements, and allocations
- * - Governance: Data domains, ownership, and verification campaigns
- * - Attachments: Attachment types and file management
+ * - Licenses & Contracts: License management plus contract tracking
+ * - Governance & Attachments: Data governance plus shared attachments
  */
 
 import {
@@ -20,68 +17,13 @@ import {
   CheckCircle2,
   FileType,
   Paperclip,
-  Laptop,
-  Shield,
 } from "lucide-react";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { NavGroup } from "../navigation.types";
 
-export const intuneGroup: NavGroup = {
-  id: "intune",
-  title: "Intune",
-  items: [
-    {
-      title: "Managed Devices",
-      href: "/intune/devices",
-      icon: Laptop,
-      description: "View and manage Microsoft Intune devices",
-      permission: PERMISSIONS.INTUNE_DEVICES_VIEW,
-      featureFlag: "INTUNE",
-    },
-    {
-      title: "Compliance Status",
-      href: "/intune/compliance",
-      icon: Shield,
-      description: "Device compliance monitoring and reports",
-      permission: PERMISSIONS.INTUNE_COMPLIANCE_VIEW,
-      featureFlag: "INTUNE",
-      visible: false, // Coming soon
-    },
-  ],
-  visible: false,
-  collapsible: true,
-  defaultCollapsed: false,
-};
-
-export const contractsGroup: NavGroup = {
-  id: "contracts",
-  title: "Contracts",
-  items: [
-    {
-      title: "Contract Types",
-      href: "/contract-types",
-      icon: FileKey,
-      description: "Manage contract types and templates",
-      permission: PERMISSIONS.CONTRACT_TYPES_VIEW,
-      featureFlag: "CONTRACTS",
-    },
-    {
-      title: "Contracts",
-      href: "/contracts",
-      icon: FileSignature,
-      description: "Manage vendor and service contracts",
-      permission: PERMISSIONS.CONTRACTS_VIEW,
-      featureFlag: "CONTRACTS",
-    },
-  ],
-  visible: false,
-  collapsible: true,
-  defaultCollapsed: false,
-};
-
-export const licensesGroup: NavGroup = {
-  id: "licenses",
-  title: "Licenses",
+export const licensesContractsGroup: NavGroup = {
+  id: "licenses-contracts",
+  title: "Licenses & Contracts",
   items: [
     {
       title: "License Products",
@@ -107,14 +49,30 @@ export const licensesGroup: NavGroup = {
       permission: PERMISSIONS.LICENSE_ALLOCATIONS_VIEW,
       featureFlag: "LICENSES",
     },
+    {
+      title: "Contract Types",
+      href: "/contract-types",
+      icon: FileKey,
+      description: "Manage contract types and templates",
+      permission: PERMISSIONS.CONTRACT_TYPES_VIEW,
+      featureFlag: "CONTRACTS",
+    },
+    {
+      title: "Contracts",
+      href: "/contracts",
+      icon: FileSignature,
+      description: "Manage vendor and service contracts",
+      permission: PERMISSIONS.CONTRACTS_VIEW,
+      featureFlag: "CONTRACTS",
+    },
   ],
-  visible: false,
+  visible: true,
   collapsible: true,
   defaultCollapsed: false,
 };
 
-export const governanceGroup: NavGroup = {
-  id: "governance",
+export const governanceAttachmentsGroup: NavGroup = {
+  id: "governance-attachments",
   title: "Governance",
   items: [
     {
@@ -140,18 +98,7 @@ export const governanceGroup: NavGroup = {
       description: "Schedule and track compliance verification campaigns",
       permission: PERMISSIONS.VERIFICATION_CAMPAIGNS_VIEW,
       featureFlag: "GOVERNANCE",
-      visible: false,
     },
-  ],
-  visible: false, // Hidden for initial deployment
-  collapsible: true,
-  defaultCollapsed: true,
-};
-
-export const attachmentsGroup: NavGroup = {
-  id: "attachments",
-  title: "Attachments",
-  items: [
     {
       title: "Attachment Types",
       href: "/attachment-types",
@@ -169,7 +116,7 @@ export const attachmentsGroup: NavGroup = {
       featureFlag: "ATTACHMENTS",
     },
   ],
-  visible: false,
   collapsible: true,
   defaultCollapsed: false,
+  visible: true,
 };

@@ -1,5 +1,5 @@
 /**
- * Setup Navigation Group
+ * ITAM Navigation Group
  *
  * Consolidated group for initial data entry workflow.
  * Items ordered by entity dependencies for optimal data population flow.
@@ -23,14 +23,13 @@ import {
   Warehouse,
   Package,
   Settings2,
-  TrendingUp,
 } from "lucide-react";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { NavGroup } from "../navigation.types";
 
-export const setupGroup: NavGroup = {
-  id: "setup",
-  title: "Setup",
+export const itamGroup: NavGroup = {
+  id: "itam",
+  title: "ITAM",
   items: [
     // No dependencies - can be created first
     {
@@ -100,24 +99,6 @@ export const setupGroup: NavGroup = {
       description: "Manage custom field definitions",
       permission: PERMISSIONS.FIELD_DEFINITIONS_VIEW,
       featureFlag: "FOUNDATION",
-    },
-    // Depends on AssetCategory (rest optional)
-    {
-      title: "Assets",
-      href: "/assets",
-      icon: Package,
-      description: "Manage assets",
-      permission: PERMISSIONS.ASSETS_VIEW,
-      featureFlag: "ASSETS",
-    },
-    // Depends on Assets (track inventory movements)
-    {
-      title: "Stock Movements",
-      href: "/stock-movements",
-      icon: TrendingUp,
-      description: "Track inventory movements",
-      permission: PERMISSIONS.STOCK_MOVEMENTS_VIEW,
-      featureFlag: "INVENTORY",
     },
   ],
   visible: true,

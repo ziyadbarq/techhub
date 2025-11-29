@@ -2,8 +2,7 @@
  * System & Administration Navigation Groups
  *
  * Groups:
- * - System Settings: Platform configuration, authentication, notifications, operations, integrations
- * - Administration: Admin dashboard, system setup, RBAC analytics, data import, feature flags
+ * - Admin & Settings: Admin dashboard, system setup, RBAC analytics, feature flags, and platform settings
  * - Documentation: Getting started, entity reference, workflows, admin guide
  */
 
@@ -24,10 +23,39 @@ import {
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { NavGroup } from "../navigation.types";
 
-export const systemSettingsGroup: NavGroup = {
-  id: "system-settings",
-  title: "System Settings",
+export const adminSettingsGroup: NavGroup = {
+  id: "admin-settings",
+  title: "Admin & Settings",
   items: [
+    {
+      title: "Admin Dashboard",
+      href: "/admin",
+      icon: Shield,
+      description: "System administration and settings",
+      permission: PERMISSIONS.USERS_MANAGE,
+    },
+    {
+      title: "System Setup",
+      href: "/admin/system-setup",
+      icon: ServerCog,
+      description: "System health, diagnostics, and database operations",
+      permission: PERMISSIONS.USERS_MANAGE,
+    },
+    {
+      title: "RBAC Analytics",
+      href: "/rbac-analytics",
+      icon: LayoutDashboard,
+      description: "Role and permission usage statistics",
+      permission: PERMISSIONS.ROLES_VIEW,
+      visible: false,
+    },
+    {
+      title: "Feature Flags",
+      href: "/admin/features",
+      icon: Settings2,
+      description: "Manage feature flags and system capabilities",
+      permission: PERMISSIONS.FEATURE_FLAGS_MANAGE,
+    },
     {
       title: "Platform Settings",
       href: "/settings/platform",
@@ -62,56 +90,6 @@ export const systemSettingsGroup: NavGroup = {
       icon: Cloud,
       description: "External system integrations and webhooks",
       permission: PERMISSIONS.SETTINGS_MANAGE,
-    },
-  ],
-  visible: false,
-  collapsible: true,
-  defaultCollapsed: true,
-  permission: PERMISSIONS.SETTINGS_MANAGE,
-};
-
-export const adminGroup: NavGroup = {
-  id: "admin",
-  title: "Admin",
-  items: [
-    {
-      title: "Admin Dashboard",
-      href: "/admin",
-      icon: Shield,
-      description: "System administration and settings",
-      permission: PERMISSIONS.USERS_MANAGE,
-    },
-    {
-      title: "System Setup",
-      href: "/admin/system-setup",
-      icon: ServerCog,
-      description: "System health, diagnostics, and database operations",
-      permission: PERMISSIONS.USERS_MANAGE,
-      visible: false, // Hidden for initial deployment
-    },
-    {
-      title: "RBAC Analytics",
-      href: "/rbac-analytics",
-      icon: LayoutDashboard,
-      description: "Role and permission usage statistics",
-      permission: PERMISSIONS.ROLES_VIEW,
-      visible: false, // Hidden for initial deployment
-    },
-    {
-      title: "Data Import",
-      href: "/data-import",
-      icon: Database,
-      description: "Universal data importer for all entities",
-      permission: PERMISSIONS.DATA_IMPORT_MANAGE,
-      featureFlag: "DATA_IMPORT",
-      visible: false, // Moved to Main group
-    },
-    {
-      title: "Feature Flags",
-      href: "/admin/features",
-      icon: Settings2,
-      description: "Manage feature flags and system capabilities",
-      permission: PERMISSIONS.FEATURE_FLAGS_MANAGE,
     },
   ],
   visible: true,
@@ -149,7 +127,7 @@ export const documentationGroup: NavGroup = {
       description: "Complete guide to all entities",
     },
   ],
-  visible: false,
+  visible: true,
   collapsible: true,
   defaultCollapsed: true,
 };
