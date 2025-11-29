@@ -6,10 +6,16 @@
 
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
-import type { PrismaClient } from "@/generated/prisma/server";
+import type {
+  $Enums,
+  PrismaClient,
+  LicenseProduct as PrismaLicenseProduct,
+} from "@/generated/prisma/server";
 import type { ILicenseProductRepository } from "@/core/repositories/license-product.repository.interface";
-import type { LicenseMetricType } from "@/core/domain/entities/license-product.entity";
-import { LicenseProduct } from "@/core/domain/entities/license-product.entity";
+import {
+  LicenseProduct,
+  LicenseMetricType,
+} from "@/core/domain/entities/license-product.entity";
 import type { ILoggerService } from "@/core/services";
 
 @injectable()
@@ -30,7 +36,7 @@ export class PrismaLicenseProductRepository
         name: licenseProduct.name,
         code: licenseProduct.code,
         vendorId: licenseProduct.vendorId,
-        metricType: licenseProduct.metricType,
+        metricType: this.toPrismaMetricType(licenseProduct.metricType),
         description: licenseProduct.description,
         lifecycleModelId: licenseProduct.lifecycleModelId,
         createdAt: licenseProduct.createdAt,
@@ -128,7 +134,7 @@ export class PrismaLicenseProductRepository
         name: licenseProduct.name,
         code: licenseProduct.code,
         vendorId: licenseProduct.vendorId,
-        metricType: licenseProduct.metricType,
+        metricType: this.toPrismaMetricType(licenseProduct.metricType),
         description: licenseProduct.description,
         lifecycleModelId: licenseProduct.lifecycleModelId,
         updatedAt: new Date(),
@@ -171,27 +177,45 @@ export class PrismaLicenseProductRepository
   /**
    * Maps Prisma model to domain entity
    */
-  private toDomain(data: {
-    id: string;
-    name: string;
-    code: string;
-    vendorId: string;
-    metricType: string;
-    description: string | null;
-    lifecycleModelId: string | null;
-    createdAt: Date;
-    updatedAt: Date;
-  }): LicenseProduct {
+  private toDomain(data: PrismaLicenseProduct): LicenseProduct {
     return LicenseProduct.restore({
       id: data.id,
       name: data.name,
       code: data.code,
       vendorId: data.vendorId,
-      metricType: data.metricType as LicenseMetricType,
+      metricType: this.toDomainMetricType(data.metricType),
       description: data.description,
       lifecycleModelId: data.lifecycleModelId,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
     });
+  }
+
+  private toPrismaMetricType(
+    metricType: LicenseMetricType,
+  ): $Enums.LicenseMetricTypeEnum {
+    const mapping: Record<LicenseMetricType, $Enums.LicenseMetricTypeEnum> = {
+      [LicenseMetricType.PER_DEVICE]: "PER_DEVICE",
+      [LicenseMetricType.PER_USER]: "PER_USER",
+      [LicenseMetricType.PER_CORE]: "PER_CORE",
+      [LicenseMetricType.PER_VM]: "PER_VM",
+      [LicenseMetricType.PER_CLUSTER]: "PER_CLUSTER",
+    };
+
+    return mapping[metricType];
+  }
+
+  private toDomainMetricType(
+    metricType: $Enums.LicenseMetricTypeEnum,
+  ): LicenseMetricType {
+    const mapping: Record<$Enums.LicenseMetricTypeEnum, LicenseMetricType> = {
+      PER_DEVICE: LicenseMetricType.PER_DEVICE,
+      PER_USER: LicenseMetricType.PER_USER,
+      PER_CORE: LicenseMetricType.PER_CORE,
+      PER_VM: LicenseMetricType.PER_VM,
+      PER_CLUSTER: LicenseMetricType.PER_CLUSTER,
+    };
+
+    return mapping[metricType];
   }
 }
