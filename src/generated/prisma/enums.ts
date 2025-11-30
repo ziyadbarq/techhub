@@ -91,6 +91,26 @@ export const WarrantyCoverageType = {
 export type WarrantyCoverageType = (typeof WarrantyCoverageType)[keyof typeof WarrantyCoverageType]
 
 
+export const BackupStatus = {
+  PENDING: 'PENDING',
+  RUNNING: 'RUNNING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+} as const
+
+export type BackupStatus = (typeof BackupStatus)[keyof typeof BackupStatus]
+
+
+export const BackupStage = {
+  INITIALIZING: 'INITIALIZING',
+  DUMPING: 'DUMPING',
+  COMPRESSING: 'COMPRESSING',
+  FINALIZING: 'FINALIZING'
+} as const
+
+export type BackupStage = (typeof BackupStage)[keyof typeof BackupStage]
+
+
 export const EnvironmentEnum = {
   PROD: 'PROD',
   UAT: 'UAT',

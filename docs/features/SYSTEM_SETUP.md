@@ -141,7 +141,7 @@ Located in **Administration** section:
 
 ### Dashboard Layout
 
-Tabbed interface with 3 panels:
+Tabbed interface with 4 panels:
 
 #### Tab 1: System Health
 
@@ -206,6 +206,17 @@ Tabbed interface with 3 panels:
 - Uptime
 
 **Format**: Grid layout with label-value pairs
+
+#### Tab 4: Database Backups
+
+**Purpose**: Run, monitor, download, restore, and cancel PostgreSQL backups.
+
+**Worker Requirement**: Maintenance worker must be running before starting a backup/restore (`npm run worker:start` in a separate terminal). The UI blocks new jobs if no worker is active.
+
+**Safety & Controls**:
+- Actions lock while a backup/restore is running to prevent collisions.
+- Force-cancel is available for stuck jobs; it removes the queued/active job and marks the backup as cancelled.
+- Download/restore are only enabled for completed backups.
 
 ## Use Cases
 

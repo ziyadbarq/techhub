@@ -17,3 +17,5 @@ export type { IRoleRepository } from "./role-repository.interface";
 export type { IPermissionRepository } from "./permission-repository.interface";
 export type { IUserRoleRepository } from "./user-role-repository.interface";
 export type { IAuditLogRepository } from "./audit-log-repository.interface";
+export type { ISystemSetupRepository } from "./system-setup-repository.interface";
+export type { IDatabaseBackupRepository } from "./database-backup.repository.interface";

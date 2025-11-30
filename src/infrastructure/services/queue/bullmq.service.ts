@@ -6,7 +6,7 @@
  */
 
 import { inject, injectable } from "inversify";
-import type { QueueOptions, JobsOptions } from "bullmq";
+import type { QueueOptions, JobsOptions, JobType } from "bullmq";
 import { Queue } from "bullmq";
 import IORedis from "ioredis";
 import type { Redis } from "ioredis";
@@ -73,7 +73,7 @@ export class BullMQService implements IJobQueueService {
           },
         });
 
-        connection.on("error", (error) => {
+        connection.on("error", (error: Error) => {
           this.logger.error("[JobQueue] Redis connection error", error);
         });
 
@@ -110,7 +110,7 @@ export class BullMQService implements IJobQueueService {
    * Gets or creates a queue instance.
    * Queues are created lazily on first access.
    */
-  private getQueue(queueName: string): Queue {
+  private async getQueue(queueName: string): Promise<Queue> {
     if (this.isShuttingDown) {
       throw new Error("Cannot get queue during shutdown");
     }
@@ -122,6 +122,7 @@ export class BullMQService implements IJobQueueService {
         const queueOptions: QueueOptions = {
           connection: this.getRedisConnection(),
           defaultJobOptions: {
+            priority: 5,
             attempts: 3,
             backoff: {
               type: "exponential",
@@ -140,9 +141,11 @@ export class BullMQService implements IJobQueueService {
         queue = new Queue(queueName, queueOptions);
 
         // Set up queue event listeners
-        queue.on("error", (error) => {
+        queue.on("error", (error: Error) => {
           this.logger.error(`[JobQueue] Queue '${queueName}' error`, error);
         });
+
+        await queue.waitUntilReady();
 
         this.queues.set(queueName, queue);
         this.logger.info(`[JobQueue] Queue '${queueName}' initialized`);
@@ -156,6 +159,46 @@ export class BullMQService implements IJobQueueService {
     }
 
     return queue;
+  }
+
+  private buildJobOptions(options?: JobOptions): JobsOptions | undefined {
+    if (!options) {
+      return undefined;
+    }
+
+    const jobOptions: JobsOptions = {};
+
+    if (options.priority !== undefined) {
+      jobOptions.priority = options.priority;
+    }
+
+    if (options.delay !== undefined) {
+      jobOptions.delay = options.delay;
+    }
+
+    if (options.attempts !== undefined) {
+      jobOptions.attempts = options.attempts;
+    }
+
+    if (options.backoff !== undefined) {
+      jobOptions.backoff = options.backoff;
+    }
+
+    if (options.removeOnComplete !== undefined) {
+      jobOptions.removeOnComplete =
+        typeof options.removeOnComplete === "boolean"
+          ? options.removeOnComplete
+          : { count: options.removeOnComplete };
+    }
+
+    if (options.removeOnFail !== undefined) {
+      jobOptions.removeOnFail =
+        typeof options.removeOnFail === "boolean"
+          ? options.removeOnFail
+          : { count: options.removeOnFail };
+    }
+
+    return jobOptions;
   }
 
   /**
@@ -187,32 +230,14 @@ export class BullMQService implements IJobQueueService {
     options?: JobOptions,
   ): Promise<string> {
     try {
-      const queue = this.getQueue(queueName);
-
-      const jobOptions: JobsOptions = {
-        priority: options?.priority,
-        delay: options?.delay,
-        attempts: options?.attempts,
-        backoff: options?.backoff,
-        removeOnComplete:
-          options?.removeOnComplete !== undefined
-            ? typeof options.removeOnComplete === "boolean"
-              ? options.removeOnComplete
-              : { count: options.removeOnComplete }
-            : undefined,
-        removeOnFail:
-          options?.removeOnFail !== undefined
-            ? typeof options.removeOnFail === "boolean"
-              ? options.removeOnFail
-              : { count: options.removeOnFail }
-            : undefined,
-      };
+      const queue = await this.getQueue(queueName);
+      const jobOptions: JobsOptions | undefined = this.buildJobOptions(options);
 
       const job = await queue.add(jobName, data, jobOptions);
 
       this.logger.info(
         `[JobQueue] Job '${jobName}' added to queue '${queueName}'`,
-        { jobId: job.id, priority: options?.priority },
+        { jobId: job.id, priority: job.opts.priority },
       );
 
       return job.id!;
@@ -232,7 +257,7 @@ export class BullMQService implements IJobQueueService {
     repeatOptions: RepeatableJobOptions,
   ): Promise<void> {
     try {
-      const queue = this.getQueue(queueName);
+      const queue = await this.getQueue(queueName);
 
       await queue.add(jobName, data, {
         repeat: {
@@ -258,7 +283,7 @@ export class BullMQService implements IJobQueueService {
 
   async removeJob(queueName: string, jobId: string): Promise<void> {
     try {
-      const queue = this.getQueue(queueName);
+      const queue = await this.getQueue(queueName);
       const job = await queue.getJob(jobId);
 
       if (job) {
@@ -286,7 +311,7 @@ export class BullMQService implements IJobQueueService {
     repeatJobKey: string,
   ): Promise<void> {
     try {
-      const queue = this.getQueue(queueName);
+      const queue = await this.getQueue(queueName);
       const removed = await queue.removeRepeatableByKey(repeatJobKey);
 
       if (removed) {
@@ -319,7 +344,7 @@ export class BullMQService implements IJobQueueService {
     jobId: string,
   ): Promise<JobStatus | null> {
     try {
-      const queue = this.getQueue(queueName);
+      const queue = await this.getQueue(queueName);
       const job = await queue.getJob(jobId);
 
       if (!job) {
@@ -360,7 +385,7 @@ export class BullMQService implements IJobQueueService {
     delayed: number;
   }> {
     try {
-      const queue = this.getQueue(queueName);
+      const queue = await this.getQueue(queueName);
       const counts = await queue.getJobCounts(
         "waiting",
         "active",
@@ -385,13 +410,59 @@ export class BullMQService implements IJobQueueService {
     }
   }
 
+  async hasActiveWorkers(queueName: string): Promise<boolean> {
+    try {
+      const queue = await this.getQueue(queueName);
+      const count = await queue.getWorkersCount();
+      return count > 0;
+    } catch (error) {
+      this.logger.warn(
+        `[JobQueue] Failed to check worker status for '${queueName}'`,
+        {
+          error: error instanceof Error ? error.message : String(error),
+        },
+      );
+      return false;
+    }
+  }
+
+  async findJob(
+    queueName: string,
+    jobName: string,
+    states: JobType[],
+    predicate?: (data: unknown) => boolean,
+  ): Promise<{ id: string; state: string; data: unknown } | null> {
+    try {
+      const queue = await this.getQueue(queueName);
+      const jobs = await queue.getJobs(states);
+      const match = jobs.find(
+        (job) =>
+          job.name === jobName &&
+          (!predicate || predicate(job.data as unknown)),
+      );
+
+      if (!match || !match.id) {
+        return null;
+      }
+
+      const state = await match.getState();
+      return { id: match.id, state, data: match.data };
+    } catch (error) {
+      this.logger.error(
+        `[JobQueue] Failed to find job '${jobName}' in queue '${queueName}'`,
+        error as Error,
+      );
+      throw error;
+    }
+  }
+
   // ========================================
   // Queue Control
   // ========================================
 
   async pauseQueue(queueName: string): Promise<void> {
     try {
-      const queue = this.getQueue(queueName);
+      const queue = await this.getQueue(queueName);
       await queue.pause();
       this.logger.info(`[JobQueue] Queue '${queueName}' paused`);
     } catch (error) {
@@ -405,7 +476,7 @@ export class BullMQService implements IJobQueueService {
 
   async resumeQueue(queueName: string): Promise<void> {
     try {
-      const queue = this.getQueue(queueName);
+      const queue = await this.getQueue(queueName);
       await queue.resume();
       this.logger.info(`[JobQueue] Queue '${queueName}' resumed`);
     } catch (error) {
@@ -472,6 +543,10 @@ export class BullMQService implements IJobQueueService {
 
       const redis = this.getRedisConnection();
       await redis.ping();
+
+      await Promise.all(
+        Array.from(this.queues.values()).map((queue) => queue.waitUntilReady()),
+      );
 
       return true;
     } catch (error) {

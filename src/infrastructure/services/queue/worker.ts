@@ -36,6 +36,10 @@ import {
   handleUserSyncFromGraph,
   handleIntuneDeviceSync,
 } from "./handlers";
+import {
+  handleDatabaseBackup,
+  handleDatabaseRestore,
+} from "./handlers/database-backup.handler";
 
 /**
  * Worker instances
@@ -149,6 +153,16 @@ function createMaintenanceWorker(): BaseWorker {
   worker.registerHandler(
     MAINTENANCE_JOBS.INTUNE_DEVICE_SYNC,
     handleIntuneDeviceSync,
+  );
+
+  // Register database backup/restore handlers
+  worker.registerHandler(
+    MAINTENANCE_JOBS.DATABASE_BACKUP,
+    handleDatabaseBackup,
+  );
+  worker.registerHandler(
+    MAINTENANCE_JOBS.DATABASE_RESTORE,
+    handleDatabaseRestore,
   );
 
   /**

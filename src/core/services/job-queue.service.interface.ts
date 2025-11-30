@@ -1,3 +1,5 @@
+import type { JobType } from "bullmq";
+
 /**
  * Job Queue Service Interface
  *
@@ -32,11 +34,6 @@ export interface JobOptions {
    * - object: Exponential or custom backoff
    */
   backoff?: number | { type: "exponential" | "fixed"; delay: number };
-
-  /**
-   * Job timeout in milliseconds
-   */
-  timeout?: number;
 
   /**
    * Remove job after completion
@@ -241,6 +238,21 @@ export interface IJobQueueService {
     failed: number;
     delayed: number;
   }>;
+
+  /**
+   * Checks if there is at least one active worker processing the queue.
+   */
+  hasActiveWorkers(queueName: string): Promise<boolean>;
+
+  /**
+   * Finds a job by name and optional predicate across queue states.
+   */
+  findJob(
+    queueName: string,
+    jobName: string,
+    states: JobType[],
+    predicate?: (data: unknown) => boolean,
+  ): Promise<{ id: string; state: string; data: unknown } | null>;
 
   // ========================================
   // Queue Control

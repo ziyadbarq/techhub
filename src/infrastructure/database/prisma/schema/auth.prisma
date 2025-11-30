@@ -27,6 +27,8 @@ model User {
   roles           UserRole[]
   person          Person? // Optional link to organizational person
   auditLogsAsUser AuditLogEntry[] @relation("AuditLogChangedByUser")
+  backupsCreated  DatabaseBackup[] @relation("BackupCreator")
+  backupsDeleted  DatabaseBackup[] @relation("BackupDeletedByUser")
 
   @@index([email])
   @@map("users")

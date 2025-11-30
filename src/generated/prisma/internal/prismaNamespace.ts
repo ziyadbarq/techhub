@@ -398,6 +398,7 @@ export const ModelName = {
   Account: 'Account',
   Session: 'Session',
   Verification: 'Verification',
+  DatabaseBackup: 'DatabaseBackup',
   CIClass: 'CIClass',
   CIClassField: 'CIClassField',
   ConfigurationItem: 'ConfigurationItem',
@@ -480,7 +481,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "attachmentType" | "attachment" | "user" | "account" | "session" | "verification" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "contractType" | "contract" | "contractLinkedObject" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "organizationUnit" | "person" | "personRoleAssignment" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "fieldTemplate" | "fieldTemplateItem" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "intuneDevice" | "intuneComplianceHistory" | "intuneSyncLog" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "maintenanceSchedule" | "maintenanceRecord" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "serviceHealthHistory" | "serviceSlaMetric" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock" | "featureFlag" | "featureFlagAuditLog"
+    modelProps: "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "attachmentType" | "attachment" | "user" | "account" | "session" | "verification" | "databaseBackup" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "contractType" | "contract" | "contractLinkedObject" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "organizationUnit" | "person" | "personRoleAssignment" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "fieldTemplate" | "fieldTemplateItem" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "intuneDevice" | "intuneComplianceHistory" | "intuneSyncLog" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "maintenanceSchedule" | "maintenanceRecord" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "serviceHealthHistory" | "serviceSlaMetric" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock" | "featureFlag" | "featureFlagAuditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1517,6 +1518,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.VerificationCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.VerificationCountAggregateOutputType> | number
+        }
+      }
+    }
+    DatabaseBackup: {
+      payload: Prisma.$DatabaseBackupPayload<ExtArgs>
+      fields: Prisma.DatabaseBackupFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DatabaseBackupFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DatabaseBackupPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DatabaseBackupFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DatabaseBackupPayload>
+        }
+        findFirst: {
+          args: Prisma.DatabaseBackupFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DatabaseBackupPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DatabaseBackupFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DatabaseBackupPayload>
+        }
+        findMany: {
+          args: Prisma.DatabaseBackupFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DatabaseBackupPayload>[]
+        }
+        create: {
+          args: Prisma.DatabaseBackupCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DatabaseBackupPayload>
+        }
+        createMany: {
+          args: Prisma.DatabaseBackupCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DatabaseBackupCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DatabaseBackupPayload>[]
+        }
+        delete: {
+          args: Prisma.DatabaseBackupDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DatabaseBackupPayload>
+        }
+        update: {
+          args: Prisma.DatabaseBackupUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DatabaseBackupPayload>
+        }
+        deleteMany: {
+          args: Prisma.DatabaseBackupDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DatabaseBackupUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DatabaseBackupUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DatabaseBackupPayload>[]
+        }
+        upsert: {
+          args: Prisma.DatabaseBackupUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DatabaseBackupPayload>
+        }
+        aggregate: {
+          args: Prisma.DatabaseBackupAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDatabaseBackup>
+        }
+        groupBy: {
+          args: Prisma.DatabaseBackupGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DatabaseBackupGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DatabaseBackupCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DatabaseBackupCountAggregateOutputType> | number
         }
       }
     }
@@ -6768,6 +6843,36 @@ export const VerificationScalarFieldEnum = {
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
 
 
+export const DatabaseBackupScalarFieldEnum = {
+  id: 'id',
+  filename: 'filename',
+  filePath: 'filePath',
+  fileSize: 'fileSize',
+  status: 'status',
+  stage: 'stage',
+  percentage: 'percentage',
+  currentStep: 'currentStep',
+  createdById: 'createdById',
+  notes: 'notes',
+  databaseName: 'databaseName',
+  postgresVersion: 'postgresVersion',
+  tableCount: 'tableCount',
+  recordCount: 'recordCount',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  durationSeconds: 'durationSeconds',
+  errorMessage: 'errorMessage',
+  errorCode: 'errorCode',
+  errorDetails: 'errorDetails',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DatabaseBackupScalarFieldEnum = (typeof DatabaseBackupScalarFieldEnum)[keyof typeof DatabaseBackupScalarFieldEnum]
+
+
 export const CIClassScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -8274,6 +8379,34 @@ export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMod
 
 
 /**
+ * Reference to a field of type 'BackupStatus'
+ */
+export type EnumBackupStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BackupStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'BackupStatus[]'
+ */
+export type ListEnumBackupStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BackupStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BackupStage'
+ */
+export type EnumBackupStageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BackupStage'>
+    
+
+
+/**
+ * Reference to a field of type 'BackupStage[]'
+ */
+export type ListEnumBackupStageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BackupStage[]'>
+    
+
+
+/**
  * Reference to a field of type 'CriticalityEnum'
  */
 export type EnumCriticalityEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CriticalityEnum'>
@@ -8981,6 +9114,7 @@ export type GlobalOmitConfig = {
   account?: Prisma.AccountOmit
   session?: Prisma.SessionOmit
   verification?: Prisma.VerificationOmit
+  databaseBackup?: Prisma.DatabaseBackupOmit
   cIClass?: Prisma.CIClassOmit
   cIClassField?: Prisma.CIClassFieldOmit
   configurationItem?: Prisma.ConfigurationItemOmit

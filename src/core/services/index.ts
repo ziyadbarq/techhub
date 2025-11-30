@@ -77,6 +77,14 @@ export type {
   CodeGenerationOptions,
 } from "./code-generator.service.interface";
 
+// Database Backup Service
+export type {
+  IDatabaseBackupService,
+  BackupProgressEvent,
+  CreateBackupOptions,
+  RestoreBackupOptions,
+} from "./database-backup.service.interface";
+
 // Microsoft Graph Service
 export type { IMicrosoftGraphService } from "./microsoft-graph.service.interface";
 export type {

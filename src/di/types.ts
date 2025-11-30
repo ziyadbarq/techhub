@@ -51,6 +51,7 @@ export const DI_TOKENS = {
 
   // System Setup Repository
   ISystemSetupRepository: Symbol.for("ISystemSetupRepository"),
+  IDatabaseBackupRepository: Symbol.for("IDatabaseBackupRepository"),
 
   // Feature Flags Repository
   IFeatureFlagRepository: Symbol.for("IFeatureFlagRepository"),
@@ -187,6 +188,12 @@ export const DI_TOKENS = {
   IJobQueueService: Symbol.for("IJobQueueService"),
 
   /**
+   * Token for IDatabaseBackupService
+   * Provides pg_dump/restore operations with progress reporting
+   */
+  IDatabaseBackupService: Symbol.for("IDatabaseBackupService"),
+
+  /**
    * Token for IEmailService
    * Provides email sending capabilities
    */
@@ -261,6 +268,14 @@ export const DI_TOKENS = {
   SeedMinimalDataUseCase: Symbol.for("SeedMinimalDataUseCase"),
   ResetDatabaseUseCase: Symbol.for("ResetDatabaseUseCase"),
   GetSystemInfoUseCase: Symbol.for("GetSystemInfoUseCase"),
+  CreateDatabaseBackupUseCase: Symbol.for("CreateDatabaseBackupUseCase"),
+  ListDatabaseBackupsUseCase: Symbol.for("ListDatabaseBackupsUseCase"),
+  GetDatabaseBackupUseCase: Symbol.for("GetDatabaseBackupUseCase"),
+  DeleteDatabaseBackupUseCase: Symbol.for("DeleteDatabaseBackupUseCase"),
+  RestoreDatabaseFromBackupUseCase: Symbol.for(
+    "RestoreDatabaseFromBackupUseCase",
+  ),
+  CancelDatabaseBackupUseCase: Symbol.for("CancelDatabaseBackupUseCase"),
 
   // Feature Flags Use Cases
   ListFeatureFlagsUseCase: Symbol.for("ListFeatureFlagsUseCase"),

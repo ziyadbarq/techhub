@@ -196,6 +196,18 @@ const BASE_PERMISSIONS: PermissionDefinition[] = [
   }),
 
   // ==========================================
+  // Database Backups
+  // ==========================================
+  createPermission("database-backups", "manage", {
+    displayName: "Manage Database Backups",
+    description: "Create and manage database backup files",
+  }),
+  createPermission("database-restore", "execute", {
+    displayName: "Restore Database",
+    description: "Restore database from a backup file",
+  }),
+
+  // ==========================================
   // Dashboard
   // ==========================================
   createPermission("dashboard", "view", {

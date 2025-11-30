@@ -65,6 +65,7 @@ export const ModelName = {
   Account: 'Account',
   Session: 'Session',
   Verification: 'Verification',
+  DatabaseBackup: 'DatabaseBackup',
   CIClass: 'CIClass',
   CIClassField: 'CIClassField',
   ConfigurationItem: 'ConfigurationItem',
@@ -399,6 +400,36 @@ export const VerificationScalarFieldEnum = {
 } as const
 
 export type VerificationScalarFieldEnum = (typeof VerificationScalarFieldEnum)[keyof typeof VerificationScalarFieldEnum]
+
+
+export const DatabaseBackupScalarFieldEnum = {
+  id: 'id',
+  filename: 'filename',
+  filePath: 'filePath',
+  fileSize: 'fileSize',
+  status: 'status',
+  stage: 'stage',
+  percentage: 'percentage',
+  currentStep: 'currentStep',
+  createdById: 'createdById',
+  notes: 'notes',
+  databaseName: 'databaseName',
+  postgresVersion: 'postgresVersion',
+  tableCount: 'tableCount',
+  recordCount: 'recordCount',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  durationSeconds: 'durationSeconds',
+  errorMessage: 'errorMessage',
+  errorCode: 'errorCode',
+  errorDetails: 'errorDetails',
+  deletedAt: 'deletedAt',
+  deletedById: 'deletedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DatabaseBackupScalarFieldEnum = (typeof DatabaseBackupScalarFieldEnum)[keyof typeof DatabaseBackupScalarFieldEnum]
 
 
 export const CIClassScalarFieldEnum = {

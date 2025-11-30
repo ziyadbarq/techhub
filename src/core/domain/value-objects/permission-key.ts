@@ -47,6 +47,10 @@ export const PERMISSIONS = {
   // Feature Flags
   FEATURE_FLAGS_MANAGE: "feature-flags:manage",
 
+  // Database Backups
+  DATABASE_BACKUP: "database-backups:manage",
+  DATABASE_RESTORE: "database-restore:execute",
+
   // Dashboard
   DASHBOARD_VIEW: "dashboard:view",
   DASHBOARD_ANALYTICS: "dashboard:analytics",

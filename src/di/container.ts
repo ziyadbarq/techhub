@@ -46,6 +46,7 @@ import { bindIntuneDependencies } from "./modules/intune.module";
 import { loadDisposalModule } from "./modules/disposal.module";
 import { loadAssetKitsModule } from "./modules/asset-kits.module";
 import { loadReservationsModule } from "./modules/reservations.module";
+import { bindDatabaseBackupDependencies } from "./modules/database-backup.module";
 
 /**
  * AI Services Module - Currently Disabled
@@ -121,6 +122,9 @@ function createContainer(): Container {
 
   // Bind System Setup dependencies (health checks, migration status, seeding)
   bindSystemSetupDependencies(newContainer);
+
+  // Bind Database Backup dependencies
+  bindDatabaseBackupDependencies(newContainer);
 
   // Bind Feature Flags dependencies (feature flags management)
   bindFeatureFlagsDependencies(newContainer);

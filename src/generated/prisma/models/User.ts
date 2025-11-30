@@ -219,6 +219,8 @@ export type UserWhereInput = {
   roles?: Prisma.UserRoleListRelationFilter
   person?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
   auditLogsAsUser?: Prisma.AuditLogEntryListRelationFilter
+  backupsCreated?: Prisma.DatabaseBackupListRelationFilter
+  backupsDeleted?: Prisma.DatabaseBackupListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -236,6 +238,8 @@ export type UserOrderByWithRelationInput = {
   roles?: Prisma.UserRoleOrderByRelationAggregateInput
   person?: Prisma.PersonOrderByWithRelationInput
   auditLogsAsUser?: Prisma.AuditLogEntryOrderByRelationAggregateInput
+  backupsCreated?: Prisma.DatabaseBackupOrderByRelationAggregateInput
+  backupsDeleted?: Prisma.DatabaseBackupOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -256,6 +260,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   roles?: Prisma.UserRoleListRelationFilter
   person?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
   auditLogsAsUser?: Prisma.AuditLogEntryListRelationFilter
+  backupsCreated?: Prisma.DatabaseBackupListRelationFilter
+  backupsDeleted?: Prisma.DatabaseBackupListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -303,6 +309,8 @@ export type UserCreateInput = {
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   person?: Prisma.PersonCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -320,6 +328,8 @@ export type UserUncheckedCreateInput = {
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserUpdateInput = {
@@ -337,6 +347,8 @@ export type UserUpdateInput = {
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -354,6 +366,8 @@ export type UserUncheckedUpdateInput = {
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -466,6 +480,36 @@ export type UserUpdateOneRequiredWithoutSessionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSessionsInput, Prisma.UserUpdateWithoutSessionsInput>, Prisma.UserUncheckedUpdateWithoutSessionsInput>
 }
 
+export type UserCreateNestedOneWithoutBackupsCreatedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutBackupsCreatedInput, Prisma.UserUncheckedCreateWithoutBackupsCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBackupsCreatedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutBackupsDeletedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutBackupsDeletedInput, Prisma.UserUncheckedCreateWithoutBackupsDeletedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBackupsDeletedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutBackupsCreatedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutBackupsCreatedInput, Prisma.UserUncheckedCreateWithoutBackupsCreatedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBackupsCreatedInput
+  upsert?: Prisma.UserUpsertWithoutBackupsCreatedInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutBackupsCreatedInput, Prisma.UserUpdateWithoutBackupsCreatedInput>, Prisma.UserUncheckedUpdateWithoutBackupsCreatedInput>
+}
+
+export type UserUpdateOneWithoutBackupsDeletedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutBackupsDeletedInput, Prisma.UserUncheckedCreateWithoutBackupsDeletedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBackupsDeletedInput
+  upsert?: Prisma.UserUpsertWithoutBackupsDeletedInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutBackupsDeletedInput, Prisma.UserUpdateWithoutBackupsDeletedInput>, Prisma.UserUncheckedUpdateWithoutBackupsDeletedInput>
+}
+
 export type UserCreateNestedOneWithoutPersonInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutPersonInput, Prisma.UserUncheckedCreateWithoutPersonInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutPersonInput
@@ -526,6 +570,8 @@ export type UserCreateWithoutAccountsInput = {
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   person?: Prisma.PersonCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -542,6 +588,8 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -574,6 +622,8 @@ export type UserUpdateWithoutAccountsInput = {
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -590,6 +640,8 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -606,6 +658,8 @@ export type UserCreateWithoutSessionsInput = {
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   person?: Prisma.PersonCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -622,6 +676,8 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -654,6 +710,8 @@ export type UserUpdateWithoutSessionsInput = {
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -670,6 +728,184 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
+}
+
+export type UserCreateWithoutBackupsCreatedInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginMethod?: string | null
+  lastLoginAt?: Date | string | null
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  person?: Prisma.PersonCreateNestedOneWithoutUserInput
+  auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
+  backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
+}
+
+export type UserUncheckedCreateWithoutBackupsCreatedInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginMethod?: string | null
+  lastLoginAt?: Date | string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
+}
+
+export type UserCreateOrConnectWithoutBackupsCreatedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutBackupsCreatedInput, Prisma.UserUncheckedCreateWithoutBackupsCreatedInput>
+}
+
+export type UserCreateWithoutBackupsDeletedInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginMethod?: string | null
+  lastLoginAt?: Date | string | null
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  person?: Prisma.PersonCreateNestedOneWithoutUserInput
+  auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutBackupsDeletedInput = {
+  id?: string
+  email: string
+  name?: string | null
+  image?: string | null
+  emailVerified?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  lastLoginMethod?: string | null
+  lastLoginAt?: Date | string | null
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutBackupsDeletedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutBackupsDeletedInput, Prisma.UserUncheckedCreateWithoutBackupsDeletedInput>
+}
+
+export type UserUpsertWithoutBackupsCreatedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutBackupsCreatedInput, Prisma.UserUncheckedUpdateWithoutBackupsCreatedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutBackupsCreatedInput, Prisma.UserUncheckedCreateWithoutBackupsCreatedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutBackupsCreatedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutBackupsCreatedInput, Prisma.UserUncheckedUpdateWithoutBackupsCreatedInput>
+}
+
+export type UserUpdateWithoutBackupsCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  person?: Prisma.PersonUpdateOneWithoutUserNestedInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutBackupsCreatedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
+}
+
+export type UserUpsertWithoutBackupsDeletedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutBackupsDeletedInput, Prisma.UserUncheckedUpdateWithoutBackupsDeletedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutBackupsDeletedInput, Prisma.UserUncheckedCreateWithoutBackupsDeletedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutBackupsDeletedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutBackupsDeletedInput, Prisma.UserUncheckedUpdateWithoutBackupsDeletedInput>
+}
+
+export type UserUpdateWithoutBackupsDeletedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  person?: Prisma.PersonUpdateOneWithoutUserNestedInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutBackupsDeletedInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  lastLoginMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
+  auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutPersonInput = {
@@ -686,6 +922,8 @@ export type UserCreateWithoutPersonInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserUncheckedCreateWithoutPersonInput = {
@@ -702,6 +940,8 @@ export type UserUncheckedCreateWithoutPersonInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserCreateOrConnectWithoutPersonInput = {
@@ -734,6 +974,8 @@ export type UserUpdateWithoutPersonInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPersonInput = {
@@ -750,6 +992,8 @@ export type UserUncheckedUpdateWithoutPersonInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserCreateWithoutAuditLogsAsUserInput = {
@@ -766,6 +1010,8 @@ export type UserCreateWithoutAuditLogsAsUserInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   roles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   person?: Prisma.PersonCreateNestedOneWithoutUserInput
+  backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserUncheckedCreateWithoutAuditLogsAsUserInput = {
@@ -782,6 +1028,8 @@ export type UserUncheckedCreateWithoutAuditLogsAsUserInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   roles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserCreateOrConnectWithoutAuditLogsAsUserInput = {
@@ -814,6 +1062,8 @@ export type UserUpdateWithoutAuditLogsAsUserInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   roles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUpdateOneWithoutUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditLogsAsUserInput = {
@@ -830,6 +1080,8 @@ export type UserUncheckedUpdateWithoutAuditLogsAsUserInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   roles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserCreateWithoutRolesInput = {
@@ -846,6 +1098,8 @@ export type UserCreateWithoutRolesInput = {
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   person?: Prisma.PersonCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserUncheckedCreateWithoutRolesInput = {
@@ -862,6 +1116,8 @@ export type UserUncheckedCreateWithoutRolesInput = {
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   person?: Prisma.PersonUncheckedCreateNestedOneWithoutUserInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByUserInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutCreatedByInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedCreateNestedManyWithoutDeletedByInput
 }
 
 export type UserCreateOrConnectWithoutRolesInput = {
@@ -894,6 +1150,8 @@ export type UserUpdateWithoutRolesInput = {
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUpdateManyWithoutDeletedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRolesInput = {
@@ -910,6 +1168,8 @@ export type UserUncheckedUpdateWithoutRolesInput = {
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   person?: Prisma.PersonUncheckedUpdateOneWithoutUserNestedInput
   auditLogsAsUser?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByUserNestedInput
+  backupsCreated?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutCreatedByNestedInput
+  backupsDeleted?: Prisma.DatabaseBackupUncheckedUpdateManyWithoutDeletedByNestedInput
 }
 
 
@@ -922,6 +1182,8 @@ export type UserCountOutputType = {
   sessions: number
   roles: number
   auditLogsAsUser: number
+  backupsCreated: number
+  backupsDeleted: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -929,6 +1191,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   roles?: boolean | UserCountOutputTypeCountRolesArgs
   auditLogsAsUser?: boolean | UserCountOutputTypeCountAuditLogsAsUserArgs
+  backupsCreated?: boolean | UserCountOutputTypeCountBackupsCreatedArgs
+  backupsDeleted?: boolean | UserCountOutputTypeCountBackupsDeletedArgs
 }
 
 /**
@@ -969,6 +1233,20 @@ export type UserCountOutputTypeCountAuditLogsAsUserArgs<ExtArgs extends runtime.
   where?: Prisma.AuditLogEntryWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountBackupsCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DatabaseBackupWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountBackupsDeletedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DatabaseBackupWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -985,6 +1263,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   roles?: boolean | Prisma.User$rolesArgs<ExtArgs>
   person?: boolean | Prisma.User$personArgs<ExtArgs>
   auditLogsAsUser?: boolean | Prisma.User$auditLogsAsUserArgs<ExtArgs>
+  backupsCreated?: boolean | Prisma.User$backupsCreatedArgs<ExtArgs>
+  backupsDeleted?: boolean | Prisma.User$backupsDeletedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1031,6 +1311,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   roles?: boolean | Prisma.User$rolesArgs<ExtArgs>
   person?: boolean | Prisma.User$personArgs<ExtArgs>
   auditLogsAsUser?: boolean | Prisma.User$auditLogsAsUserArgs<ExtArgs>
+  backupsCreated?: boolean | Prisma.User$backupsCreatedArgs<ExtArgs>
+  backupsDeleted?: boolean | Prisma.User$backupsDeletedArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1044,6 +1326,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     roles: Prisma.$UserRolePayload<ExtArgs>[]
     person: Prisma.$PersonPayload<ExtArgs> | null
     auditLogsAsUser: Prisma.$AuditLogEntryPayload<ExtArgs>[]
+    backupsCreated: Prisma.$DatabaseBackupPayload<ExtArgs>[]
+    backupsDeleted: Prisma.$DatabaseBackupPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1454,6 +1738,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   roles<T extends Prisma.User$rolesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$rolesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   person<T extends Prisma.User$personArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$personArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   auditLogsAsUser<T extends Prisma.User$auditLogsAsUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$auditLogsAsUserArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  backupsCreated<T extends Prisma.User$backupsCreatedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$backupsCreatedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DatabaseBackupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  backupsDeleted<T extends Prisma.User$backupsDeletedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$backupsDeletedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DatabaseBackupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1992,6 +2278,54 @@ export type User$auditLogsAsUserArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.AuditLogEntryScalarFieldEnum | Prisma.AuditLogEntryScalarFieldEnum[]
+}
+
+/**
+ * User.backupsCreated
+ */
+export type User$backupsCreatedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DatabaseBackup
+   */
+  select?: Prisma.DatabaseBackupSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DatabaseBackup
+   */
+  omit?: Prisma.DatabaseBackupOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DatabaseBackupInclude<ExtArgs> | null
+  where?: Prisma.DatabaseBackupWhereInput
+  orderBy?: Prisma.DatabaseBackupOrderByWithRelationInput | Prisma.DatabaseBackupOrderByWithRelationInput[]
+  cursor?: Prisma.DatabaseBackupWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DatabaseBackupScalarFieldEnum | Prisma.DatabaseBackupScalarFieldEnum[]
+}
+
+/**
+ * User.backupsDeleted
+ */
+export type User$backupsDeletedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DatabaseBackup
+   */
+  select?: Prisma.DatabaseBackupSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DatabaseBackup
+   */
+  omit?: Prisma.DatabaseBackupOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DatabaseBackupInclude<ExtArgs> | null
+  where?: Prisma.DatabaseBackupWhereInput
+  orderBy?: Prisma.DatabaseBackupOrderByWithRelationInput | Prisma.DatabaseBackupOrderByWithRelationInput[]
+  cursor?: Prisma.DatabaseBackupWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DatabaseBackupScalarFieldEnum | Prisma.DatabaseBackupScalarFieldEnum[]
 }
 
 /**

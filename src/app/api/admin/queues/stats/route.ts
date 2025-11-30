@@ -53,6 +53,9 @@ export async function GET(): Promise<NextResponse> {
 
   try {
     const queueMap = getQueues();
+    await Promise.all(
+      Array.from(queueMap.values()).map((queue) => queue.waitUntilReady()),
+    );
     const stats = await Promise.all(
       Array.from(queueMap.entries()).map(async ([name, queue]) => {
         const counts = await queue.getJobCounts(

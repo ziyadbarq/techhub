@@ -10,6 +10,7 @@ import type {
   JobStatus,
   RepeatableJobOptions,
 } from "@/core/services/job-queue.service.interface";
+import type { JobType } from "bullmq";
 
 /**
  * Mock job queue service for testing.
@@ -19,6 +20,8 @@ import type {
  */
 export class MockJobQueueService implements IJobQueueService {
   private jobs: Map<string, JobStatus> = new Map();
+  private jobStates: Map<string, JobType> = new Map();
+  private jobQueues: Map<string, string> = new Map();
   private jobCounter = 0;
   private queueMetrics: Map<
     string,
@@ -38,6 +41,7 @@ export class MockJobQueueService implements IJobQueueService {
     options?: JobOptions,
   ): Promise<string> {
     const jobId = `mock-job-${++this.jobCounter}`;
+    const state: JobType = options?.delay ? "delayed" : "wait";
 
     const job: JobStatus = {
       id: jobId,
@@ -49,15 +53,10 @@ export class MockJobQueueService implements IJobQueueService {
     };
 
     this.jobs.set(jobId, job);
+    this.jobStates.set(jobId, state);
+    this.jobQueues.set(jobId, _queueName);
 
-    // Update queue metrics
-    const metrics = this.getQueueMetricsSync(_queueName);
-    if (options?.delay) {
-      metrics.delayed++;
-    } else {
-      metrics.waiting++;
-    }
-    this.queueMetrics.set(_queueName, metrics);
+    this.updateMetrics(_queueName, null, state);
 
     return jobId;
   }
@@ -73,11 +72,12 @@ export class MockJobQueueService implements IJobQueueService {
   }
 
   async removeJob(_queueName: string, jobId: string): Promise<void> {
+    const prevState = this.jobStates.get(jobId) ?? null;
     this.jobs.delete(jobId);
+    this.jobStates.delete(jobId);
+    this.jobQueues.delete(jobId);
 
-    const metrics = this.getQueueMetricsSync(_queueName);
-    metrics.waiting = Math.max(0, metrics.waiting - 1);
-    this.queueMetrics.set(_queueName, metrics);
+    this.updateMetrics(_queueName, prevState, null);
   }
 
   async removeRepeatableJob(
@@ -131,8 +131,43 @@ export class MockJobQueueService implements IJobQueueService {
     // Mock implementation - no-op for tests
   }
 
+  async hasActiveWorkers(_queueName: string): Promise<boolean> {
+    // Simulate at least one worker running in tests
+    return true;
+  }
+
+  async findJob(
+    queueName: string,
+    jobName: string,
+    states: JobType[],
+    predicate?: (data: unknown) => boolean,
+  ): Promise<{ id: string; state: string; data: unknown } | null> {
+    const jobs = Array.from(this.jobs.entries());
+    const match = jobs.find(([jobId, job]) => {
+      const state = this.jobStates.get(jobId) ?? "wait";
+      const stateMatches = states.length === 0 || states.includes(state);
+      const queueMatches = this.jobQueues.get(jobId) === queueName;
+      const predicateMatches = !predicate || predicate(job.data as unknown);
+
+      return (
+        queueMatches && job.name === jobName && stateMatches && predicateMatches
+      );
+    });
+
+    if (!match) {
+      return null;
+    }
+
+    const [jobId, job] = match;
+    const state = this.jobStates.get(jobId) ?? "wait";
+
+    return { id: jobId, state, data: job.data };
+  }
+
   async close(): Promise<void> {
     this.jobs.clear();
+    this.jobStates.clear();
+    this.jobQueues.clear();
     this.queueMetrics.clear();
   }
 
@@ -159,10 +194,20 @@ export class MockJobQueueService implements IJobQueueService {
    */
   async completeJob(jobId: string, result?: unknown): Promise<void> {
     const job = this.jobs.get(jobId);
-    if (job) {
-      job.progress = 100;
-      job.returnValue = result;
-      job.finishedOn = Date.now();
+    if (!job) {
+      return;
+    }
+
+    job.progress = 100;
+    job.returnValue = result;
+    job.finishedOn = Date.now();
+
+    const queueName = this.jobQueues.get(jobId);
+    const prevState = this.jobStates.get(jobId) ?? "wait";
+    this.jobStates.set(jobId, "completed");
+
+    if (queueName) {
+      this.updateMetrics(queueName, prevState, "completed");
     }
   }
 
@@ -171,9 +216,19 @@ export class MockJobQueueService implements IJobQueueService {
    */
   async failJob(jobId: string, reason: string): Promise<void> {
     const job = this.jobs.get(jobId);
-    if (job) {
-      job.failedReason = reason;
-      job.attemptsMade++;
+    if (!job) {
+      return;
+    }
+
+    job.failedReason = reason;
+    job.attemptsMade++;
+
+    const queueName = this.jobQueues.get(jobId);
+    const prevState = this.jobStates.get(jobId) ?? "wait";
+    this.jobStates.set(jobId, "failed");
+
+    if (queueName) {
+      this.updateMetrics(queueName, prevState, "failed");
     }
   }
 
@@ -182,8 +237,52 @@ export class MockJobQueueService implements IJobQueueService {
    */
   clear(): void {
     this.jobs.clear();
+    this.jobStates.clear();
+    this.jobQueues.clear();
     this.queueMetrics.clear();
     this.jobCounter = 0;
+  }
+
+  private updateMetrics(
+    queueName: string,
+    prevState: JobType | null,
+    nextState: JobType | null,
+  ): void {
+    const metrics = this.getQueueMetricsSync(queueName);
+
+    const adjust = (state: JobType | null, delta: number) => {
+      if (!state) return;
+      const key = this.stateToMetricKey(state);
+      if (!key) return;
+      metrics[key] = Math.max(0, metrics[key] + delta);
+    };
+
+    adjust(prevState, -1);
+    adjust(nextState, 1);
+
+    this.queueMetrics.set(queueName, metrics);
+  }
+
+  private stateToMetricKey(
+    state: JobType,
+  ): "waiting" | "active" | "completed" | "failed" | "delayed" | null {
+    switch (state) {
+      case "wait":
+      case "waiting":
+      case "waiting-children":
+      case "paused":
+        return "waiting";
+      case "active":
+        return "active";
+      case "completed":
+        return "completed";
+      case "failed":
+        return "failed";
+      case "delayed":
+        return "delayed";
+      default:
+        return null;
+    }
   }
 }
 

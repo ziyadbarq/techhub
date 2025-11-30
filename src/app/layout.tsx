@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
@@ -7,8 +6,6 @@ import { BRANDING, getPageTitle, getPageDescription } from "@/config/branding";
 
 // DI container is initialized lazily via getContainer() on first request
 // This allows the app to build without environment variables
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: getPageTitle("home"),
@@ -27,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
-      <body className={inter.className}>
+      <body className="font-sans antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

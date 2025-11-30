@@ -122,6 +122,23 @@ export interface HealthCheckJobData extends BaseJobData {
 }
 
 // ========================================
+// Backup Jobs
+// ========================================
+
+export interface DatabaseBackupJobData extends BaseJobData {
+  backupId: string;
+  filename: string;
+  userId: string;
+  notes?: string | null;
+}
+
+export interface DatabaseRestoreJobData extends BaseJobData {
+  backupId: string;
+  userId: string;
+  filePath: string;
+}
+
+// ========================================
 // User Sync Jobs
 // ========================================
 

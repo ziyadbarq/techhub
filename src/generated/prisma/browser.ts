@@ -88,6 +88,11 @@ export type Session = Prisma.SessionModel
  */
 export type Verification = Prisma.VerificationModel
 /**
+ * Model DatabaseBackup
+ * 
+ */
+export type DatabaseBackup = Prisma.DatabaseBackupModel
+/**
  * Model CIClass
  * 
  */

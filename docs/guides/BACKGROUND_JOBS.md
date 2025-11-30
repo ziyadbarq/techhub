@@ -35,6 +35,13 @@ The background job system provides robust, scalable job processing using:
 - ✅ Graceful shutdown
 - ✅ Full DI integration
 
+### Reliability Defaults
+
+- Queue scheduler is auto-initialized per queue so delayed/repeatable jobs move out of `delayed` without manual wiring.
+- Shared Redis connection is reused by queues and schedulers and waits for readiness before queuing work.
+- Default job options: priority `5`, `3` attempts, exponential backoff (1s), keep last 100 completed jobs (24h) and last 1000 failures.
+- Health probe: `await jobQueue.isHealthy()` pings Redis and verifies queues/schedulers are ready (useful for readiness checks).
+
 ## Quick Start
 
 ### 1. Start Redis
@@ -969,6 +976,12 @@ console.log(`Operation took ${Date.now() - start}ms`);
 8. **Logging**: Log job start, progress, and completion
 9. **Timeouts**: Set reasonable job timeouts
 10. **Dead Letter Queue**: Monitor and handle failed jobs
+
+## Database Backup/Restore Jobs
+
+- Backups and restores run on the **maintenance** queue; keep the worker running (`npm run worker:start`) before starting a backup/restore from `/admin/system-setup`.
+- The UI blocks new backup/restore jobs if no worker is active and locks actions while a job is running to avoid collisions.
+- If a job is stuck (worker crashed or offline), use **Force cancel job** in the Backups tab to remove the queued/active job and mark the backup as cancelled. Restart the worker before retrying.
 
 ## Resources
 
