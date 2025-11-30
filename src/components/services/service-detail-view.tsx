@@ -28,6 +28,8 @@ import type {
   ServiceOwnerDTO,
   ServiceInfrastructureDTO,
   ServiceAssetDTO,
+  ServiceHealthHistoryDTO,
+  ServiceSlaMetricDTO,
 } from "@/interface-adapters/presenters/service.presenter";
 import type { PersonDTO } from "@/interface-adapters/presenters/person.presenter";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
@@ -53,6 +55,12 @@ import {
 } from "./service-detail-fields";
 import { ServiceDependenciesTab } from "./dependencies/service-dependencies-tab";
 import { ServiceOwnersManager } from "./service-owners-manager";
+import { ServiceHealthBadge } from "./service-health-badge";
+import { ServiceSlaBadge } from "./service-sla-badge";
+import { ServiceHealthMonitoringCard } from "./service-health-monitoring-card";
+import { ServiceHealthHistoryTable } from "./service-health-history-table";
+import { ServiceSlaMonitoringCard } from "./service-sla-monitoring-card";
+import { ServiceSlaMetricsTable } from "./service-sla-metrics-table";
 
 interface ServiceDetailViewProps {
   service: ServiceDTO;
@@ -60,6 +68,9 @@ interface ServiceDetailViewProps {
   infrastructure: ServiceInfrastructureDTO | null;
   linkedAssets: ServiceAssetDTO[];
   persons: PersonDTO[];
+  healthHistory: ServiceHealthHistoryDTO[];
+  slaMetrics: ServiceSlaMetricDTO[];
+  healthSlaEnabled: boolean;
 }
 
 export function ServiceDetailView({
@@ -68,6 +79,9 @@ export function ServiceDetailView({
   infrastructure,
   linkedAssets,
   persons,
+  healthHistory,
+  slaMetrics,
+  healthSlaEnabled,
 }: ServiceDetailViewProps) {
   const router = useRouter();
   const { hasPermission } = usePermissions();
@@ -88,7 +102,7 @@ export function ServiceDetailView({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">{service.name}</h1>
-          <div className="mt-2 flex gap-2">
+          <div className="mt-2 flex flex-wrap gap-2">
             <Badge variant={getStatusBadgeVariant(service.currentStatus)}>
               {service.currentStatus}
             </Badge>
@@ -97,6 +111,14 @@ export function ServiceDetailView({
             </Badge>
             {service.isEssentialService && (
               <Badge variant="outline">Essential Service</Badge>
+            )}
+            {healthSlaEnabled && (
+              <>
+                <ServiceHealthBadge status={service.healthStatus} />
+                {service.hasSlaTargets && (
+                  <ServiceSlaBadge status={service.slaComplianceStatus} />
+                )}
+              </>
             )}
           </div>
         </div>
@@ -133,6 +155,9 @@ export function ServiceDetailView({
       <Tabs defaultValue="overview" className="w-full">
         <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          {healthSlaEnabled && (
+            <TabsTrigger value="health-sla">Health & SLA</TabsTrigger>
+          )}
           <TabsTrigger value="owners">Owners ({owners.length})</TabsTrigger>
           <TabsTrigger value="infrastructure">Infrastructure</TabsTrigger>
           <TabsTrigger value="assets">
@@ -214,6 +239,18 @@ export function ServiceDetailView({
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* Health & SLA Tab */}
+        {healthSlaEnabled && (
+          <TabsContent value="health-sla" className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <ServiceHealthMonitoringCard service={service} />
+              <ServiceSlaMonitoringCard service={service} />
+            </div>
+            <ServiceHealthHistoryTable histories={healthHistory} />
+            <ServiceSlaMetricsTable metrics={slaMetrics} />
+          </TabsContent>
+        )}
 
         {/* Owners Tab */}
         <TabsContent value="owners" className="space-y-4">

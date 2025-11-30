@@ -70,6 +70,7 @@ Advanced IT Asset Management features:
 - [Governance System](./features/GOVERNANCE_SYSTEM.md) - Data governance, ownership tracking, and verification campaigns for SAMA compliance
 - [Attachments System](./features/ATTACHMENTS_SYSTEM.md) - Polymorphic file attachments for compliance documentation and audit trails
 - [Service Management](./features/SERVICE_MANAGEMENT.md) - IT service catalog with ownership, infrastructure tracking, and business process alignment
+- [Service SLA & Health Monitoring](./features/SERVICE_SLA_HEALTH_MONITORING.md) - Enterprise-grade SLA tracking and automated health monitoring with compliance status, performance metrics, and proactive alerting (can be disabled via `SERVICE_HEALTH_SLA` feature flag)
 - [Intune Integration](./features/INTUNE_INTEGRATION.md) - Microsoft Intune/MDM device sync with compliance monitoring, asset linking, and SAMA governance reporting
 
 ### Global Features

@@ -8,9 +8,11 @@
 "use client";
 
 import type { Control, FieldPath, FieldValues } from "react-hook-form";
+import { ChevronUp, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -377,13 +379,49 @@ export function NumberField<TFieldValues extends FieldValues>({
             {label} {required && "*"}
           </FormLabel>
           <FormControl>
-            <div className="relative">
+            <div className="relative flex items-center">
+              {/* Custom spinner buttons on the left */}
+              <div className="absolute left-1 z-10 flex flex-col">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="hover:bg-muted h-4 w-4 rounded-none p-0"
+                  onClick={() => {
+                    const currentValue = field.value ?? min ?? 0;
+                    const stepValue = step ?? 1;
+                    const newValue = Number(currentValue) + stepValue;
+                    if (max === undefined || newValue <= max) {
+                      field.onChange(newValue);
+                    }
+                  }}
+                >
+                  <ChevronUp className="h-3 w-3" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="hover:bg-muted h-4 w-4 rounded-none p-0"
+                  onClick={() => {
+                    const currentValue = field.value ?? min ?? 0;
+                    const stepValue = step ?? 1;
+                    const newValue = Number(currentValue) - stepValue;
+                    if (min === undefined || newValue >= min) {
+                      field.onChange(newValue);
+                    }
+                  }}
+                >
+                  <ChevronDown className="h-3 w-3" />
+                </Button>
+              </div>
               <Input
                 type="number"
                 placeholder={placeholder}
                 min={min}
                 max={max}
                 step={step}
+                className="[appearance:textfield] pl-7 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                 {...field}
                 value={field.value ?? ""}
                 onChange={(e) => {
@@ -392,7 +430,7 @@ export function NumberField<TFieldValues extends FieldValues>({
                 }}
               />
               {unit && (
-                <span className="text-muted-foreground absolute top-2.5 right-3 text-sm">
+                <span className="text-muted-foreground pointer-events-none absolute top-2.5 right-3 text-sm">
                   {unit}
                 </span>
               )}

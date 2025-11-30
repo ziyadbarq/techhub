@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useIsFeatureEnabledContext } from "@/contexts/feature-flags-context";
 
 // Extracted reusable form field components
 import {
@@ -67,6 +68,7 @@ export function ServiceForm({
 }: ServiceFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const healthSlaEnabled = useIsFeatureEnabledContext("SERVICE_HEALTH_SLA");
 
   const form = useForm<ServiceFormValues, undefined, CreateServiceDTO>({
     resolver: zodResolver(CreateServiceSchema),
@@ -99,24 +101,23 @@ export function ServiceForm({
       slaDetails: service?.slaDetails ?? null,
       metadata: service?.metadata ?? null,
 
-      // SLA Fields
-      slaResponseTimeP50: service?.slaResponseTimeP50 ?? undefined,
-      slaResponseTimeP95: service?.slaResponseTimeP95 ?? undefined,
-      slaResponseTimeP99: service?.slaResponseTimeP99 ?? undefined,
-      slaResolutionTimeCritical:
-        service?.slaResolutionTimeCritical ?? undefined,
-      slaResolutionTimeHigh: service?.slaResolutionTimeHigh ?? undefined,
-      slaResolutionTimeMedium: service?.slaResolutionTimeMedium ?? undefined,
-      slaUptimePercentage: service?.slaUptimePercentage ?? undefined,
-      slaErrorRateThreshold: service?.slaErrorRateThreshold ?? undefined,
-      slaSupportTier: service?.slaSupportTier ?? "",
-      slaContactEmail: service?.slaContactEmail ?? "",
+      // SLA Fields (with sensible defaults)
+      slaResponseTimeP50: service?.slaResponseTimeP50 ?? 200,
+      slaResponseTimeP95: service?.slaResponseTimeP95 ?? 500,
+      slaResponseTimeP99: service?.slaResponseTimeP99 ?? 1000,
+      slaResolutionTimeCritical: service?.slaResolutionTimeCritical ?? 60,
+      slaResolutionTimeHigh: service?.slaResolutionTimeHigh ?? 240,
+      slaResolutionTimeMedium: service?.slaResolutionTimeMedium ?? 1440,
+      slaUptimePercentage: service?.slaUptimePercentage ?? 99.9,
+      slaErrorRateThreshold: service?.slaErrorRateThreshold ?? 1.0,
+      slaSupportTier: service?.slaSupportTier ?? "Business Hours",
+      slaContactEmail: service?.slaContactEmail ?? undefined,
       slaEscalationPath: service?.slaEscalationPath ?? "",
 
-      // Health Monitoring Fields
+      // Health Monitoring Fields (with sensible defaults)
       healthCheckUrl: service?.healthCheckUrl ?? "",
-      healthCheckInterval: service?.healthCheckInterval ?? undefined,
-      healthCheckTimeout: service?.healthCheckTimeout ?? undefined,
+      healthCheckInterval: service?.healthCheckInterval ?? 5,
+      healthCheckTimeout: service?.healthCheckTimeout ?? 30,
       healthCheckEnabled: service?.healthCheckEnabled ?? false,
     },
   });
@@ -136,6 +137,11 @@ export function ServiceForm({
         businessPurpose: data.businessPurpose || undefined,
         gitlabRepoUrl: data.gitlabRepoUrl || undefined,
         complianceNotes: data.complianceNotes || undefined,
+        // SLA & Health fields
+        slaSupportTier: data.slaSupportTier || undefined,
+        slaContactEmail: data.slaContactEmail || undefined,
+        slaEscalationPath: data.slaEscalationPath || undefined,
+        healthCheckUrl: data.healthCheckUrl || undefined,
       };
 
       const result =
@@ -167,11 +173,15 @@ export function ServiceForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <Tabs defaultValue="basic" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList
+            className={`grid w-full ${healthSlaEnabled ? "grid-cols-5" : "grid-cols-4"}`}
+          >
             <TabsTrigger value="basic">Basic Info</TabsTrigger>
             <TabsTrigger value="classification">Classification</TabsTrigger>
             <TabsTrigger value="lifecycle">Lifecycle</TabsTrigger>
-            <TabsTrigger value="sla">SLA & Monitoring</TabsTrigger>
+            {healthSlaEnabled && (
+              <TabsTrigger value="sla">SLA & Monitoring</TabsTrigger>
+            )}
             <TabsTrigger value="governance">Governance</TabsTrigger>
           </TabsList>
 
@@ -305,189 +315,191 @@ export function ServiceForm({
           </TabsContent>
 
           {/* SLA & Monitoring Tab */}
-          <TabsContent value="sla">
-            <div className="space-y-6">
-              {/* SLA Response Time */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>SLA Response Time Targets</CardTitle>
-                </CardHeader>
-                <CardContent className="grid gap-4 md:grid-cols-3">
-                  <NumberField
-                    control={form.control}
-                    name="slaResponseTimeP50"
-                    label="P50 Response Time"
-                    description="50th percentile (median) response time target"
-                    unit="ms"
-                    min={0}
-                  />
-
-                  <NumberField
-                    control={form.control}
-                    name="slaResponseTimeP95"
-                    label="P95 Response Time"
-                    description="95th percentile response time target"
-                    unit="ms"
-                    min={0}
-                  />
-
-                  <NumberField
-                    control={form.control}
-                    name="slaResponseTimeP99"
-                    label="P99 Response Time"
-                    description="99th percentile response time target"
-                    unit="ms"
-                    min={0}
-                  />
-                </CardContent>
-              </Card>
-
-              {/* SLA Resolution Time */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>SLA Resolution Time Targets</CardTitle>
-                </CardHeader>
-                <CardContent className="grid gap-4 md:grid-cols-3">
-                  <NumberField
-                    control={form.control}
-                    name="slaResolutionTimeCritical"
-                    label="Critical Incidents"
-                    description="Time to resolve critical severity incidents"
-                    unit="min"
-                    min={0}
-                  />
-
-                  <NumberField
-                    control={form.control}
-                    name="slaResolutionTimeHigh"
-                    label="High Priority"
-                    description="Time to resolve high priority incidents"
-                    unit="min"
-                    min={0}
-                  />
-
-                  <NumberField
-                    control={form.control}
-                    name="slaResolutionTimeMedium"
-                    label="Medium Priority"
-                    description="Time to resolve medium priority incidents"
-                    unit="min"
-                    min={0}
-                  />
-                </CardContent>
-              </Card>
-
-              {/* SLA Performance Targets */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>SLA Performance Targets</CardTitle>
-                </CardHeader>
-                <CardContent className="grid gap-4 md:grid-cols-2">
-                  <NumberField
-                    control={form.control}
-                    name="slaUptimePercentage"
-                    label="Uptime Target"
-                    description="Target uptime percentage (e.g., 99.9 for three nines)"
-                    unit="%"
-                    min={0}
-                    max={100}
-                    step={0.001}
-                  />
-
-                  <NumberField
-                    control={form.control}
-                    name="slaErrorRateThreshold"
-                    label="Error Rate Threshold"
-                    description="Maximum acceptable error rate percentage"
-                    unit="%"
-                    min={0}
-                    max={100}
-                    step={0.001}
-                  />
-                </CardContent>
-              </Card>
-
-              {/* SLA Support Details */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>SLA Support Details</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <TextField
-                    control={form.control}
-                    name="slaSupportTier"
-                    label="Support Tier"
-                    placeholder="e.g., 24/7, Business Hours, Best Effort"
-                    description="The level of support provided for this service"
-                  />
-
-                  <TextField
-                    control={form.control}
-                    name="slaContactEmail"
-                    label="SLA Contact Email"
-                    type="email"
-                    placeholder="sla-contact@example.com"
-                    description="Primary contact for SLA-related issues"
-                  />
-
-                  <TextareaField
-                    control={form.control}
-                    name="slaEscalationPath"
-                    label="Escalation Path"
-                    placeholder="Describe the escalation process..."
-                    rows={3}
-                    description="Steps to escalate SLA violations"
-                  />
-                </CardContent>
-              </Card>
-
-              {/* Health Monitoring */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Health Monitoring Configuration</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <CheckboxField
-                    control={form.control}
-                    name="healthCheckEnabled"
-                    label="Enable Health Checks"
-                    description="Automatically monitor the health status of this service"
-                  />
-
-                  <TextField
-                    control={form.control}
-                    name="healthCheckUrl"
-                    label="Health Check URL"
-                    type="url"
-                    placeholder="https://service.example.com/health"
-                    description="HTTP endpoint for health status checks"
-                  />
-
-                  <div className="grid gap-4 md:grid-cols-2">
+          {healthSlaEnabled && (
+            <TabsContent value="sla">
+              <div className="space-y-6">
+                {/* SLA Response Time */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>SLA Response Time Targets</CardTitle>
+                  </CardHeader>
+                  <CardContent className="grid gap-4 md:grid-cols-3">
                     <NumberField
                       control={form.control}
-                      name="healthCheckInterval"
-                      label="Check Interval"
-                      description="How often to check health status"
+                      name="slaResponseTimeP50"
+                      label="P50 Response Time"
+                      description="50th percentile (median) response time target"
+                      unit="ms"
+                      min={0}
+                    />
+
+                    <NumberField
+                      control={form.control}
+                      name="slaResponseTimeP95"
+                      label="P95 Response Time"
+                      description="95th percentile response time target"
+                      unit="ms"
+                      min={0}
+                    />
+
+                    <NumberField
+                      control={form.control}
+                      name="slaResponseTimeP99"
+                      label="P99 Response Time"
+                      description="99th percentile response time target"
+                      unit="ms"
+                      min={0}
+                    />
+                  </CardContent>
+                </Card>
+
+                {/* SLA Resolution Time */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>SLA Resolution Time Targets</CardTitle>
+                  </CardHeader>
+                  <CardContent className="grid gap-4 md:grid-cols-3">
+                    <NumberField
+                      control={form.control}
+                      name="slaResolutionTimeCritical"
+                      label="Critical Incidents"
+                      description="Time to resolve critical severity incidents"
                       unit="min"
-                      min={1}
-                      max={1440}
+                      min={0}
                     />
 
                     <NumberField
                       control={form.control}
-                      name="healthCheckTimeout"
-                      label="Check Timeout"
-                      description="Maximum time to wait for health check response"
-                      unit="sec"
-                      min={1}
-                      max={300}
+                      name="slaResolutionTimeHigh"
+                      label="High Priority"
+                      description="Time to resolve high priority incidents"
+                      unit="min"
+                      min={0}
                     />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
+
+                    <NumberField
+                      control={form.control}
+                      name="slaResolutionTimeMedium"
+                      label="Medium Priority"
+                      description="Time to resolve medium priority incidents"
+                      unit="min"
+                      min={0}
+                    />
+                  </CardContent>
+                </Card>
+
+                {/* SLA Performance Targets */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>SLA Performance Targets</CardTitle>
+                  </CardHeader>
+                  <CardContent className="grid gap-4 md:grid-cols-2">
+                    <NumberField
+                      control={form.control}
+                      name="slaUptimePercentage"
+                      label="Uptime Target"
+                      description="Target uptime percentage (e.g., 99.9 for three nines)"
+                      unit="%"
+                      min={0}
+                      max={100}
+                      step={0.001}
+                    />
+
+                    <NumberField
+                      control={form.control}
+                      name="slaErrorRateThreshold"
+                      label="Error Rate Threshold"
+                      description="Maximum acceptable error rate percentage"
+                      unit="%"
+                      min={0}
+                      max={100}
+                      step={0.001}
+                    />
+                  </CardContent>
+                </Card>
+
+                {/* SLA Support Details */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>SLA Support Details</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <TextField
+                      control={form.control}
+                      name="slaSupportTier"
+                      label="Support Tier"
+                      placeholder="e.g., 24/7, Business Hours, Best Effort"
+                      description="The level of support provided for this service"
+                    />
+
+                    <TextField
+                      control={form.control}
+                      name="slaContactEmail"
+                      label="SLA Contact Email"
+                      type="email"
+                      placeholder="sla-contact@example.com"
+                      description="Primary contact for SLA-related issues"
+                    />
+
+                    <TextareaField
+                      control={form.control}
+                      name="slaEscalationPath"
+                      label="Escalation Path"
+                      placeholder="Describe the escalation process..."
+                      rows={3}
+                      description="Steps to escalate SLA violations"
+                    />
+                  </CardContent>
+                </Card>
+
+                {/* Health Monitoring */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Health Monitoring Configuration</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <CheckboxField
+                      control={form.control}
+                      name="healthCheckEnabled"
+                      label="Enable Health Checks"
+                      description="Automatically monitor the health status of this service"
+                    />
+
+                    <TextField
+                      control={form.control}
+                      name="healthCheckUrl"
+                      label="Health Check URL"
+                      type="url"
+                      placeholder="https://service.example.com/health"
+                      description="HTTP endpoint for health status checks"
+                    />
+
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <NumberField
+                        control={form.control}
+                        name="healthCheckInterval"
+                        label="Check Interval"
+                        description="How often to check health status"
+                        unit="min"
+                        min={1}
+                        max={1440}
+                      />
+
+                      <NumberField
+                        control={form.control}
+                        name="healthCheckTimeout"
+                        label="Check Timeout"
+                        description="Maximum time to wait for health check response"
+                        unit="sec"
+                        min={1}
+                        max={300}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          )}
 
           {/* Governance Tab */}
           <TabsContent value="governance">

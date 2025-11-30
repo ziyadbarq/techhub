@@ -168,6 +168,15 @@ export const FEATURE_FLAGS: FeatureFlagDefinition[] = [
     defaultEnabled: true,
   },
   {
+    name: "SERVICE_HEALTH_SLA",
+    displayName: "Service Health & SLA Monitoring",
+    description:
+      "Real-time health monitoring and SLA compliance tracking for services. Includes performance metrics, uptime tracking, SLA targets, and automated health checks.",
+    category: "LAYER_3",
+    isSystem: false,
+    dependsOn: ["SERVICES"],
+  },
+  {
     name: "GOVERNANCE",
     displayName: "Data Governance",
     description:

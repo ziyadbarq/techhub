@@ -20,7 +20,11 @@ import {
 import {
   presentService,
   presentServiceList,
+  presentServiceHealthHistoryList,
+  presentServiceSlaMetricList,
   type ServiceDTO,
+  type ServiceHealthHistoryDTO,
+  type ServiceSlaMetricDTO,
 } from "../presenters/service.presenter";
 import type {
   CreateServiceUseCase,
@@ -32,7 +36,9 @@ import type {
   GetEssentialServicesUseCase,
   GetRetiringServicesUseCase,
   RetireServiceUseCase,
+  GetServiceHealthHistoryUseCase,
 } from "@/core/use-cases/service";
+import type { GetServiceSlaMetricsUseCase } from "@/core/use-cases/service-sla-metric";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
@@ -403,6 +409,62 @@ export async function bulkCreateServicesAction(
       error,
       { function: "bulkCreateServicesAction" },
       "Failed to bulk create services",
+    );
+  }
+}
+
+// ==================== Service Health & SLA Monitoring ====================
+
+export async function getServiceHealthHistoryAction(
+  serviceId: string,
+  limit: number = 50,
+): Promise<ActionResponse<ServiceHealthHistoryDTO[]>> {
+  try {
+    await requirePermission(PERMISSIONS.SERVICES_VIEW);
+
+    const container = getContainer();
+    const useCase = container.get<GetServiceHealthHistoryUseCase>(
+      DI_TOKENS.GetServiceHealthHistoryUseCase,
+    );
+
+    const histories = await useCase.execute({ serviceId, limit });
+
+    return {
+      success: true,
+      data: presentServiceHealthHistoryList(histories),
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getServiceHealthHistoryAction", serviceId },
+      "Failed to get service health history",
+    );
+  }
+}
+
+export async function getServiceSlaMetricsAction(
+  serviceId: string,
+  limit: number = 50,
+): Promise<ActionResponse<ServiceSlaMetricDTO[]>> {
+  try {
+    await requirePermission(PERMISSIONS.SERVICES_VIEW);
+
+    const container = getContainer();
+    const useCase = container.get<GetServiceSlaMetricsUseCase>(
+      DI_TOKENS.GetServiceSlaMetricsUseCase,
+    );
+
+    const metrics = await useCase.execute({ serviceId, limit });
+
+    return {
+      success: true,
+      data: presentServiceSlaMetricList(metrics),
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getServiceSlaMetricsAction", serviceId },
+      "Failed to get service SLA metrics",
     );
   }
 }

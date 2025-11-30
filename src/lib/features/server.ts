@@ -170,6 +170,7 @@ export async function getEnabledFeatures(): Promise<Set<string>> {
       "CONTRACTS",
       "LICENSES",
       "SERVICES",
+      "SERVICE_HEALTH_SLA",
       "GOVERNANCE",
       "ATTACHMENTS",
       "ASSET_DISPOSALS",

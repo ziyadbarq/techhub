@@ -52,7 +52,7 @@ This file provides high-level guidance when working with this repository.
   - **License Management**: LicenseProduct, LicenseProductField, LicenseEntitlement, LicenseAllocation, LicenseAddon, LicenseEntitlementAddon (6 entities, 33 use cases) - includes cost tracking with multi-currency support
   - **Governance**: DataDomain, DataOwnership, VerificationCampaign, VerificationItem (4 entities, 24 use cases)
   - **Attachments**: AttachmentType, Attachment (2 entities, 11 use cases)
-  - **Service Management**: Service, ServiceOwnership, BusinessProcess, ServiceInfrastructure, ServiceAsset, ServiceHealthHistory, ServiceSlaMetric (7 entities, 37 use cases) - includes SLA management, health monitoring, and compliance tracking
+  - **Service Management**: Service, ServiceOwnership, BusinessProcess, ServiceInfrastructure, ServiceAsset, ServiceHealthHistory, ServiceSlaMetric (7 entities, 37 use cases) - includes SLA management, health monitoring, and compliance tracking (Health & SLA features can be toggled independently via `SERVICE_HEALTH_SLA` flag)
   - **Intune Integration**: IntuneDevice, IntuneComplianceHistory (2 entities, 9 use cases) - MS Graph device sync with compliance tracking
 - **Reference**: Task entity (complete implementation, hidden from UI)
 - **Marketing**: Public landing page showcasing system capabilities

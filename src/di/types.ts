@@ -866,6 +866,7 @@ export const DI_TOKENS = {
   CalculateSlaComplianceUseCase: Symbol.for("CalculateSlaComplianceUseCase"),
   RecordSlaMetricUseCase: Symbol.for("RecordSlaMetricUseCase"),
   GetServiceHealthHistoryUseCase: Symbol.for("GetServiceHealthHistoryUseCase"),
+  GetServiceSlaMetricsUseCase: Symbol.for("GetServiceSlaMetricsUseCase"),
 
   // Service Management: Service Ownership Use Cases
   AddServiceOwnerUseCase: Symbol.for("AddServiceOwnerUseCase"),

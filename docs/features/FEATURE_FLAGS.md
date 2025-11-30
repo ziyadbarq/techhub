@@ -167,7 +167,7 @@ User Request
 4. **WARRANTIES** - Warranty tracking and expiration alerts
    - Depends on: ASSETS
 
-#### LAYER_3 (Advanced ITAM - 9 features)
+#### LAYER_3 (Advanced ITAM - 11 features)
 
 1. **ASSET_DISPOSALS** - Asset disposal workflow with approvals
    - Depends on: ASSETS
@@ -183,10 +183,14 @@ User Request
    - Depends on: FOUNDATION
 7. **SERVICES** - IT service catalog and ownership tracking
    - Depends on: CMDB, FOUNDATION
-8. **GOVERNANCE** - Data governance, ownership, and verification campaigns
+8. **SERVICE_HEALTH_SLA** - Service health monitoring and SLA compliance tracking
+   - Depends on: SERVICES
+9. **GOVERNANCE** - Data governance, ownership, and verification campaigns
    - Depends on: FOUNDATION
-9. **ATTACHMENTS** - Polymorphic file attachments for all entities
+10. **ATTACHMENTS** - Polymorphic file attachments for all entities
    - Depends on: FOUNDATION
+11. **INTUNE** - Microsoft Intune/MDM device sync with compliance monitoring
+   - Depends on: FOUNDATION, ASSETS
 
 ### Feature Dependency Graph
 
@@ -197,6 +201,7 @@ FOUNDATION
   ├── DATA_IMPORT
   ├── CMDB
   │   └── SERVICES
+  │       └── SERVICE_HEALTH_SLA
   ├── CONTRACTS
   ├── LICENSES
   ├── GOVERNANCE
@@ -213,6 +218,9 @@ ASSETS
   ├── ASSET_DISPOSALS
   ├── ASSET_KITS
   └── ASSET_RESERVATIONS
+
+FOUNDATION + ASSETS
+  └── INTUNE
 ```
 
 ## Usage
