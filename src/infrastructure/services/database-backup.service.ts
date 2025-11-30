@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import { constants as fsConstants } from "node:fs";
 import path from "node:path";
@@ -47,6 +48,12 @@ export class DatabaseBackupService implements IDatabaseBackupService {
     durationSeconds: number;
     tableCount?: number;
     recordCount?: number;
+    checksum?: string;
+    dbSchemaVersion?: string | null;
+    codeSchemaVersion?: string | null;
+    schemaDrift?: boolean;
+    verificationStatus?: string;
+    verificationError?: string | null;
   }> {
     const timer = this.logger.startTimer("createBackupFile", {
       backupId: options.backupId,
@@ -59,6 +66,8 @@ export class DatabaseBackupService implements IDatabaseBackupService {
 
     const pgDumpPath = process.env.PG_DUMP_PATH || "pg_dump";
     const filePath = path.join(backupDir, options.filename);
+    const extraDumpFlags =
+      process.env.PG_DUMP_FLAGS?.split(/\s+/).filter(Boolean) ?? [];
 
     await this.emitProgress(options.onProgress, {
       backupId: options.backupId,
@@ -71,7 +80,17 @@ export class DatabaseBackupService implements IDatabaseBackupService {
     const start = performance.now();
     await this.runCommand(
       pgDumpPath,
-      ["--file", filePath, "--format=plain", `--dbname=${databaseUrl}`],
+      [
+        "--clean",
+        "--if-exists",
+        "--no-owner",
+        "--no-privileges",
+        "--format=plain",
+        "--file",
+        filePath,
+        `--dbname=${databaseUrl}`,
+        ...extraDumpFlags,
+      ],
       options.backupId,
       options.onProgress,
     );
@@ -91,6 +110,14 @@ export class DatabaseBackupService implements IDatabaseBackupService {
     });
 
     const metadata = await this.fetchMetadata();
+    const checksum = await this.computeChecksum(filePath);
+    const { dbSchemaVersion, codeSchemaVersion, schemaDrift } =
+      await this.getSchemaVersions();
+    const verificationResult = await this.verifyBackupFile(
+      filePath,
+      options.backupId,
+      options.onProgress,
+    );
 
     await this.emitProgress(options.onProgress, {
       backupId: options.backupId,
@@ -112,6 +139,12 @@ export class DatabaseBackupService implements IDatabaseBackupService {
       durationSeconds,
       tableCount: metadata.tableCount,
       recordCount: metadata.recordCount,
+      checksum,
+      dbSchemaVersion,
+      codeSchemaVersion,
+      schemaDrift,
+      verificationStatus: verificationResult.status,
+      verificationError: verificationResult.error,
     };
   }
 
@@ -135,12 +168,17 @@ export class DatabaseBackupService implements IDatabaseBackupService {
     });
 
     const psqlPath = process.env.PSQL_PATH || "psql";
+    const extraPsqlFlags =
+      process.env.PSQL_FLAGS?.split(/\s+/).filter(Boolean) ?? [];
     await this.runCommand(
       psqlPath,
       [
         `--dbname=${databaseUrl}`,
+        "--set",
+        "ON_ERROR_STOP=1",
         "-c",
         "DROP SCHEMA public CASCADE; CREATE SCHEMA public;",
+        ...extraPsqlFlags,
       ],
       options.backupId,
       options.onProgress,
@@ -149,7 +187,15 @@ export class DatabaseBackupService implements IDatabaseBackupService {
 
     await this.runCommand(
       psqlPath,
-      [`--dbname=${databaseUrl}`, "-f", options.filePath],
+      [
+        `--dbname=${databaseUrl}`,
+        "--set",
+        "ON_ERROR_STOP=1",
+        "--single-transaction",
+        "-f",
+        options.filePath,
+        ...extraPsqlFlags,
+      ],
       options.backupId,
       options.onProgress,
       "Restoring from backup file",
@@ -164,6 +210,183 @@ export class DatabaseBackupService implements IDatabaseBackupService {
     });
 
     this.logger.endTimer(timer, { backupId: options.backupId });
+  }
+
+  private async computeChecksum(filePath: string): Promise<string> {
+    const hash = crypto.createHash("sha256");
+    const fileHandle = await fs.open(filePath, "r");
+    const stream = fileHandle.createReadStream();
+    return new Promise<string>((resolve, reject) => {
+      stream.on("data", (chunk) => hash.update(chunk));
+      stream.on("end", async () => {
+        await fileHandle.close();
+        resolve(hash.digest("hex"));
+      });
+      stream.on("error", async (err) => {
+        await fileHandle.close();
+        reject(err);
+      });
+    });
+  }
+
+  private async getSchemaVersions(): Promise<{
+    dbSchemaVersion: string | null;
+    codeSchemaVersion: string | null;
+    schemaDrift: boolean;
+  }> {
+    let dbSchemaVersion: string | null = null;
+    let codeSchemaVersion: string | null = null;
+
+    try {
+      const result = await this.prisma.$queryRaw<
+        Array<{ migration_name: string | null }>
+      >`SELECT migration_name FROM "_prisma_migrations" ORDER BY finished_at DESC NULLS LAST LIMIT 1`;
+      dbSchemaVersion = result[0]?.migration_name ?? null;
+    } catch (error) {
+      this.logger.warn("Unable to read DB schema version", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+
+    try {
+      const migrationsDir = path.resolve(
+        process.cwd(),
+        "src/infrastructure/database/prisma/schema/migrations",
+      );
+      const entries = await fs.readdir(migrationsDir, { withFileTypes: true });
+      const folders = entries
+        .filter((entry) => entry.isDirectory())
+        .map((entry) => entry.name)
+        .sort()
+        .reverse();
+      codeSchemaVersion = folders[0] ?? null;
+    } catch (error) {
+      this.logger.warn("Unable to read code schema version", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+
+    const schemaDrift =
+      Boolean(dbSchemaVersion) &&
+      Boolean(codeSchemaVersion) &&
+      dbSchemaVersion !== codeSchemaVersion;
+
+    return { dbSchemaVersion, codeSchemaVersion, schemaDrift };
+  }
+
+  private async verifyBackupFile(
+    filePath: string,
+    backupId: string,
+    onProgress?: (progress: BackupProgressEvent) => Promise<void> | void,
+  ): Promise<{ status: string; error: string | null }> {
+    const shouldVerify =
+      (process.env.BACKUP_VERIFY_TEMP_DB ?? "").toLowerCase() === "true";
+    if (!shouldVerify) {
+      return { status: "skipped", error: null };
+    }
+
+    const databaseUrl = process.env.DATABASE_URL;
+    if (!databaseUrl) {
+      return { status: "failed", error: "DATABASE_URL not configured" };
+    }
+
+    const adminUrl = new URL(databaseUrl);
+    adminUrl.pathname = "/postgres";
+    const tempDbName = `backup_verify_${crypto.randomUUID().replace(/-/g, "")}`;
+    const psqlPath = process.env.PSQL_PATH || "psql";
+    const extraPsqlFlags =
+      process.env.PSQL_FLAGS?.split(/\s+/).filter(Boolean) ?? [];
+
+    const progress = async (currentStep: string, percentage: number) => {
+      await this.emitProgress(onProgress, {
+        backupId,
+        status: BackupStatus.RUNNING,
+        stage: BackupStage.FINALIZING,
+        percentage,
+        currentStep,
+      });
+    };
+
+    try {
+      await progress("Verifying backup (creating temp db)", 96);
+      await this.runCommand(
+        psqlPath,
+        [
+          `--dbname=${adminUrl.toString()}`,
+          "--set",
+          "ON_ERROR_STOP=1",
+          "-c",
+          `CREATE DATABASE ${tempDbName};`,
+          ...extraPsqlFlags,
+        ],
+        backupId,
+        onProgress,
+        "Creating verification database",
+      );
+
+      await progress("Verifying backup (replay into temp db)", 97);
+      await this.runCommand(
+        psqlPath,
+        [
+          `--dbname=${adminUrl
+            .toString()
+            .replace(/\/[^/]+$/, `/${tempDbName}`)}`,
+          "--set",
+          "ON_ERROR_STOP=1",
+          "--single-transaction",
+          "-f",
+          filePath,
+          ...extraPsqlFlags,
+        ],
+        backupId,
+        onProgress,
+        "Replaying backup into temp db",
+      );
+
+      await progress("Cleaning up verification db", 99);
+      await this.runCommand(
+        psqlPath,
+        [
+          `--dbname=${adminUrl.toString()}`,
+          "--set",
+          "ON_ERROR_STOP=1",
+          "-c",
+          `DROP DATABASE IF EXISTS ${tempDbName};`,
+          ...extraPsqlFlags,
+        ],
+        backupId,
+        onProgress,
+        "Dropping verification database",
+      );
+
+      return { status: "passed", error: null };
+    } catch (error) {
+      try {
+        await this.runCommand(
+          psqlPath,
+          [
+            `--dbname=${adminUrl.toString()}`,
+            "--set",
+            "ON_ERROR_STOP=1",
+            "-c",
+            `DROP DATABASE IF EXISTS ${tempDbName};`,
+            ...extraPsqlFlags,
+          ],
+          backupId,
+          undefined,
+        );
+      } catch (_cleanupError) {
+        // ignore cleanup failures
+      }
+
+      const message =
+        error instanceof Error ? error.message : "Backup verification failed";
+      this.logger.warn("Backup verification failed", {
+        backupId,
+        error: message,
+      });
+      return { status: "failed", error: message };
+    }
   }
 
   private async runCommand(

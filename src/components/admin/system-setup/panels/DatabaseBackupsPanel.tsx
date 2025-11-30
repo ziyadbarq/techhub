@@ -73,6 +73,10 @@ export function DatabaseBackupsPanel() {
   );
   const runningBackupId = activeJob?.id ?? null;
   const disableMutations = Boolean(runningBackupId);
+  const latestCompleted = useMemo(
+    () => backups.find((b) => b.status === "COMPLETED"),
+    [backups],
+  );
 
   const fetchBackups = useCallback(async () => {
     setIsLoading(true);
@@ -322,6 +326,33 @@ export function DatabaseBackupsPanel() {
                 Actions locked while a job is running
               </Badge>
             )}
+            {latestCompleted && (
+              <>
+                <Separator
+                  orientation="vertical"
+                  className="hidden h-4 sm:inline"
+                />
+                <span className="flex flex-wrap items-center gap-2">
+                  <Badge variant="outline" className="text-xs">
+                    Last DB schema:{" "}
+                    {latestCompleted.dbSchemaVersion ?? "unknown"}
+                  </Badge>
+                  <Badge variant="outline" className="text-xs">
+                    Code schema:{" "}
+                    {latestCompleted.codeSchemaVersion ?? "unknown"}
+                  </Badge>
+                  {latestCompleted.schemaDrift ? (
+                    <Badge variant="destructive" className="text-xs">
+                      Drift detected
+                    </Badge>
+                  ) : (
+                    <Badge variant="secondary" className="text-xs">
+                      Schemas in sync
+                    </Badge>
+                  )}
+                </span>
+              </>
+            )}
           </div>
 
           {activeJob && (
@@ -400,16 +431,16 @@ export function DatabaseBackupsPanel() {
               Restore Database from Backup
             </AlertDialogTitle>
             <AlertDialogDescription className="space-y-3">
-              <p>
+              <span className="block">
                 You are about to restore the database from{" "}
                 <span className="font-mono text-sm">
                   {restoreTarget?.filename}
                 </span>
                 . This will overwrite all existing data.
-              </p>
-              <p className="text-sm font-semibold text-red-600">
+              </span>
+              <span className="block text-sm font-semibold text-red-600">
                 This action cannot be undone. Type RESTORE DATABASE to confirm.
-              </p>
+              </span>
               <Input
                 value={restoreConfirmation}
                 onChange={(e) => setRestoreConfirmation(e.target.value)}

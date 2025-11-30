@@ -55,6 +55,15 @@ export interface IAssetReservationRepository {
   ): Promise<AssetReservation[]>;
 
   /**
+   * Find reservations by reserver (person or org unit)
+   */
+  findByReserver(
+    reserverId: string,
+    type: "person" | "orgunit",
+    options?: { skip?: number; take?: number },
+  ): Promise<AssetReservation[]>;
+
+  /**
    * Find reservations created by a person
    */
   findByReservedBy(
@@ -91,6 +100,15 @@ export interface IAssetReservationRepository {
    */
   findUpcoming(
     daysAhead?: number,
+    options?: { skip?: number; take?: number },
+  ): Promise<AssetReservation[]>;
+
+  /**
+   * Find reservations with startDate between the given dates
+   */
+  findInDateRange(
+    startDate: Date,
+    endDate: Date,
     options?: { skip?: number; take?: number },
   ): Promise<AssetReservation[]>;
 

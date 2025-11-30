@@ -22,6 +22,12 @@ export class DatabaseBackupPresenter {
       postgresVersion: props.postgresVersion,
       notes: props.notes ?? null,
       errorMessage: props.errorMessage ?? null,
+      checksum: props.checksum ?? null,
+      dbSchemaVersion: props.dbSchemaVersion ?? null,
+      codeSchemaVersion: props.codeSchemaVersion ?? null,
+      schemaDrift: props.schemaDrift ?? false,
+      verificationStatus: props.verificationStatus ?? null,
+      verificationError: props.verificationError ?? null,
     };
   }
 

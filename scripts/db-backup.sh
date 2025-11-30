@@ -11,19 +11,23 @@ BACKUP_FILE=""
 BACKUP_DIR="${ROOT_DIR}/local/backups"
 FORCE=0
 RESTORE_VERBOSE=0
+DROP_SCHEMA=0
+AUTO_SELECT_LATEST=1
 
 usage() {
   cat <<'EOF'
 Usage:
   ./scripts/db-backup.sh backup  [--file path] [--env-file path] [--force]
-  ./scripts/db-backup.sh restore --file path  [--env-file path] [--force] [--verbose]
+  ./scripts/db-backup.sh restore [--file path] [--env-file path] [--force] [--verbose] [--drop-schema] [--no-auto-latest]
 
 Options:
-  --file, -f      Override backup file path (default: local/backups/barq-assets-YYYYMMDD_HHMMSS.sql)
-  --env-file, -e  Env file to load DATABASE_URL from (default: .env.local)
-  --force, -y     Skip confirmation prompts and allow overwrite
-  --verbose, -v   Show full psql output during restore (default is quiet)
-  --help, -h      Show this message
+  --file, -f       Override backup file path (default: timestamped under local/backups)
+  --env-file, -e   Env file to load DATABASE_URL from (default: .env.local)
+  --force, -y      Skip confirmation prompts and allow overwrite
+  --verbose, -v    Show full psql output during restore (default is quiet)
+  --drop-schema    Drop and recreate the public schema before restore (use on drifted DBs)
+  --no-auto-latest Disable auto-selection of latest backup when --file is not provided
+  --help, -h       Show this message
 
 Notes:
   - Uses PostgreSQL client tools (pg_dump, psql)
@@ -134,6 +138,57 @@ confirm_restore() {
   fi
 }
 
+prompt_yes_no() {
+  local prompt_msg="$1"
+  local default_answer="$2" # y or n
+  local reply
+
+  if [[ $FORCE -eq 1 ]]; then
+    echo "Auto-selecting '${default_answer}' for: ${prompt_msg}"
+    [[ "$default_answer" == "y" ]] && return 0 || return 1
+  fi
+
+  local hint="[y/N]"
+  [[ "$default_answer" == "y" ]] && hint="[Y/n]"
+
+  read -r -p "${prompt_msg} ${hint} " reply
+  if [[ -z "$reply" ]]; then
+    reply="$default_answer"
+  fi
+
+  [[ "$reply" =~ ^[Yy]$ ]]
+}
+
+resolve_backup_file() {
+  if [[ -n "$BACKUP_FILE" ]]; then
+    if [[ "$BACKUP_FILE" != /* ]]; then
+      BACKUP_FILE="${ROOT_DIR}/${BACKUP_FILE}"
+    fi
+    [[ -f "$BACKUP_FILE" ]] || abort "Backup file not found: $BACKUP_FILE"
+    return
+  fi
+
+  ensure_backup_dir
+
+  if [[ $AUTO_SELECT_LATEST -eq 1 ]]; then
+    local latest
+    latest=$(ls -1t "${BACKUP_DIR}"/*.sql 2>/dev/null | head -n 1 || true)
+    if [[ -n "$latest" && -f "$latest" ]]; then
+      if prompt_yes_no "Use latest backup: $(basename "$latest")?" "y"; then
+        BACKUP_FILE="$latest"
+        return
+      fi
+    fi
+  fi
+
+  read -r -p "Enter path to backup file: " BACKUP_FILE
+  [[ -z "$BACKUP_FILE" ]] && abort "No backup file provided."
+  if [[ "$BACKUP_FILE" != /* ]]; then
+    BACKUP_FILE="${ROOT_DIR}/${BACKUP_FILE}"
+  fi
+  [[ -f "$BACKUP_FILE" ]] || abort "Backup file not found: $BACKUP_FILE"
+}
+
 parse_args() {
   if [[ $# -eq 0 ]]; then
     usage
@@ -162,6 +217,12 @@ parse_args() {
         ;;
       --verbose|-v)
         RESTORE_VERBOSE=1
+        ;;
+      --drop-schema)
+        DROP_SCHEMA=1
+        ;;
+      --no-auto-latest)
+        AUTO_SELECT_LATEST=0
         ;;
       --help|-h)
         usage
@@ -193,7 +254,10 @@ perform_backup() {
   fi
 
   if [[ -f "$BACKUP_FILE" && $FORCE -ne 1 ]]; then
-    abort "Backup file already exists: $BACKUP_FILE (use --force to overwrite)"
+    if ! prompt_yes_no "Backup file already exists: $(basename "$BACKUP_FILE"). Overwrite?" "n"; then
+      echo "Backup cancelled."
+      exit 0
+    fi
   fi
 
   echo "Creating backup at $BACKUP_FILE"
@@ -206,15 +270,20 @@ perform_restore() {
   require_command psql
   verify_database_connection
 
-  if [[ -z "$BACKUP_FILE" ]]; then
-    abort "Restore requires --file pointing to a backup SQL file."
-  elif [[ "$BACKUP_FILE" != /* ]]; then
-    BACKUP_FILE="${ROOT_DIR}/${BACKUP_FILE}"
-  fi
-
-  [[ -f "$BACKUP_FILE" ]] || abort "Backup file not found: $BACKUP_FILE"
+  resolve_backup_file
 
   confirm_restore
+
+  if [[ $DROP_SCHEMA -eq 0 ]]; then
+    if prompt_yes_no "Drop and recreate schema 'public' before restore? (fixes drifted constraints on target DB)" "n"; then
+      DROP_SCHEMA=1
+    fi
+  fi
+
+  if [[ $DROP_SCHEMA -eq 1 ]]; then
+    echo "Dropping and recreating schema 'public' before restore (destructive)..."
+    psql --set ON_ERROR_STOP=1 --dbname="$DATABASE_URL" --command "DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO CURRENT_USER;" --quiet
+  fi
 
   local PSQL_ARGS=(--set ON_ERROR_STOP=1 --dbname="$DATABASE_URL" --file="$BACKUP_FILE" --single-transaction --set client_min_messages=warning)
   if [[ $RESTORE_VERBOSE -eq 0 ]]; then

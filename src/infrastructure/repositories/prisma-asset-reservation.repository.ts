@@ -128,6 +128,16 @@ export class PrismaAssetReservationRepository
     return reservations.map((r) => this.toDomain(r));
   }
 
+  async findByReserver(
+    reserverId: string,
+    type: "person" | "orgunit",
+    options?: { skip?: number; take?: number },
+  ): Promise<AssetReservation[]> {
+    return type === "person"
+      ? this.findByPersonId(reserverId, options)
+      : this.findByOrgUnitId(reserverId, options);
+  }
+
   async findByReservedBy(
     reservedById: string,
     options?: { skip?: number; take?: number },
@@ -212,6 +222,14 @@ export class PrismaAssetReservationRepository
     });
 
     return reservations.map((r) => this.toDomain(r));
+  }
+
+  async findInDateRange(
+    startDate: Date,
+    endDate: Date,
+    options?: { skip?: number; take?: number },
+  ): Promise<AssetReservation[]> {
+    return this.findStartingInDateRange(startDate, endDate, options);
   }
 
   async findStartingInDateRange(

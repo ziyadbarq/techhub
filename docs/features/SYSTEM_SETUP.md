@@ -211,12 +211,15 @@ Tabbed interface with 4 panels:
 
 **Purpose**: Run, monitor, download, restore, and cancel PostgreSQL backups.
 
-**Worker Requirement**: Maintenance worker must be running before starting a backup/restore (`npm run worker:start` in a separate terminal). The UI blocks new jobs if no worker is active.
+**Worker Requirement**: Maintenance worker is preferred for queued jobs (`npm run worker:start`), but the UI now falls back to running backups/restores inline if no worker is active. Progress still streams in the UI either way.
 
 **Safety & Controls**:
 - Actions lock while a backup/restore is running to prevent collisions.
 - Force-cancel is available for stuck jobs; it removes the queued/active job and marks the backup as cancelled.
 - Download/restore are only enabled for completed backups.
+- Restores drop and recreate the `public` schema before replaying the dump (drift-safe). Dump/restore are executed with `--clean --if-exists --no-owner --no-privileges` and `ON_ERROR_STOP`.
+- Advanced: override tool paths/flags with `PG_DUMP_PATH`, `PG_DUMP_FLAGS`, `PSQL_PATH`, `PSQL_FLAGS` in the environment if the default binaries are unavailable.
+- Backups capture checksum + schema versions (DB vs code); if versions diverge, the UI can warn about schema drift. Optional temp-DB verification is available via `BACKUP_VERIFY_TEMP_DB=true` (requires permission to create/drop databases).
 
 ## Use Cases
 

@@ -42,6 +42,12 @@ The background job system provides robust, scalable job processing using:
 - Default job options: priority `5`, `3` attempts, exponential backoff (1s), keep last 100 completed jobs (24h) and last 1000 failures.
 - Health probe: `await jobQueue.isHealthy()` pings Redis and verifies queues/schedulers are ready (useful for readiness checks).
 
+### Queues at a Glance
+
+- **tasks** (concurrency 5): `task-completed-notification`, `cleanup-old-tasks`, `task-reminder`
+- **maintenance** (concurrency 1): reservations (`activate-ready`, `complete-expired`, `send-reminders`), warranty checks, MS Graph user sync, Intune device sync, DB backup/restore
+- **email** (concurrency 10): scaffolded, handlers TBD
+
 ## Quick Start
 
 ### 1. Start Redis
@@ -166,7 +172,14 @@ src/
 │   └── handlers/
 │       ├── task-completed-notification.handler.ts
 │       ├── cleanup-old-tasks.handler.ts
-│       └── send-task-reminder.handler.ts
+│       ├── send-task-reminder.handler.ts
+│       ├── activate-ready-reservations.handler.ts
+│       ├── complete-expired-reservations.handler.ts
+│       ├── send-reservation-reminders.handler.ts
+│       ├── warranty-expiration-check.handler.ts
+│       ├── user-sync-from-graph.handler.ts
+│       ├── intune-device-sync.handler.ts
+│       └── database-backup.handler.ts
 ├── di/modules/
 │   └── queue.module.ts            # DI bindings
 └── app/api/admin/queues/
@@ -385,26 +398,27 @@ Set up in `src/infrastructure/services/queue/scheduled-jobs.ts`:
 export async function setupScheduledJobs(
   jobQueueService: IJobQueueService,
 ): Promise<void> {
-  // Daily cleanup at 2 AM UTC
-  await jobQueueService.scheduleJob(
-    QUEUE_NAMES.TASKS,
-    TASK_JOBS.CLEANUP_OLD_TASKS,
-    { olderThanDays: 30 },
-    {
-      pattern: "0 2 * * *",
-      tz: "UTC",
-    },
-  );
+  // Tasks: daily cleanup (2:00 AM UTC)
+  await jobQueueService.scheduleJob(QUEUE_NAMES.TASKS, TASK_JOBS.CLEANUP_OLD_TASKS, {
+    olderThanDays: 30,
+    batchSize: 100,
+    createdAt: Date.now(),
+  }, { pattern: "0 2 * * *", tz: "UTC" });
 
-  // Every 15 minutes
-  await jobQueueService.scheduleJob(
-    QUEUE_NAMES.MAINTENANCE,
-    MAINTENANCE_JOBS.HEALTH_CHECK,
-    { checks: ["database", "redis"] },
-    {
-      pattern: "*/15 * * * *",
-    },
-  );
+  // Reservations (maintenance queue)
+  await jobQueueService.scheduleJob(QUEUE_NAMES.MAINTENANCE, RESERVATION_JOBS.ACTIVATE_READY, {}, { pattern: "*/15 * * * *", tz: "UTC" });
+  await jobQueueService.scheduleJob(QUEUE_NAMES.MAINTENANCE, RESERVATION_JOBS.COMPLETE_EXPIRED, {}, { pattern: "0 * * * *", tz: "UTC" });
+  await jobQueueService.scheduleJob(QUEUE_NAMES.MAINTENANCE, RESERVATION_JOBS.SEND_REMINDERS, {}, { pattern: "*/30 * * * *", tz: "UTC" });
+
+  // Intune device sync (maintenance queue, 3:00 AM UTC)
+  await jobQueueService.scheduleJob(QUEUE_NAMES.MAINTENANCE, MAINTENANCE_JOBS.INTUNE_DEVICE_SYNC, {
+    autoLinkToAssets: true,
+    autoLinkToPersons: true,
+    trackComplianceHistory: true,
+    deactivateMissing: true,
+    dryRun: false,
+    createdAt: Date.now(),
+  }, { pattern: "0 3 * * *", tz: "UTC" });
 }
 ```
 
@@ -447,6 +461,15 @@ Shows:
 - Queue names
 - Job counts (waiting, active, completed, failed)
 - Real-time updates
+
+### Bull Board (Full UI)
+
+For full queue management (inspect jobs, retry, move, clean):
+
+1) Start worker and Redis as usual.  
+2) Run `npm run queues:board` (default at http://localhost:3010/bull-board).  
+3) Optional auth: set `BULL_BOARD_TOKEN` to require `Authorization: Bearer <token>`.  
+4) Production is blocked by default; set `ENABLE_BULL_BOARD=true` (plus a token) to allow.
 
 ### Programmatic Monitoring
 
@@ -979,9 +1002,12 @@ console.log(`Operation took ${Date.now() - start}ms`);
 
 ## Database Backup/Restore Jobs
 
-- Backups and restores run on the **maintenance** queue; keep the worker running (`npm run worker:start`) before starting a backup/restore from `/admin/system-setup`.
-- The UI blocks new backup/restore jobs if no worker is active and locks actions while a job is running to avoid collisions.
-- If a job is stuck (worker crashed or offline), use **Force cancel job** in the Backups tab to remove the queued/active job and mark the backup as cancelled. Restart the worker before retrying.
+- **Preferred path**: Backups/restores run on the **maintenance** queue; keep the worker running (`npm run worker:start`) for asynchronous jobs and progress streaming.
+- **Fallback path**: If no worker is detected, the UI runs backups/restores inline (synchronously) and still updates progress; you can proceed without a worker in emergencies.
+- **Restore safety**: Restores drop/recreate the `public` schema, run `pg_dump` with `--clean --if-exists --no-owner --no-privileges`, and replay via `psql` with `ON_ERROR_STOP` + single transaction to avoid partial applies.
+- **Configurable binaries/flags**: Override tool paths/flags with env vars (`PG_DUMP_PATH`, `PG_DUMP_FLAGS`, `PSQL_PATH`, `PSQL_FLAGS`) when system binaries differ.
+- **Controls**: Actions lock while a job is running. Force-cancel removes queued/active jobs and marks the backup cancelled if stuck; restart the worker before retrying the queued flow.
+- **Integrity checks**: Backups store checksums and schema versions (DB vs code); enable temp-DB verification via `BACKUP_VERIFY_TEMP_DB=true` to replay a dump into a disposable database and surface drift/validation errors.
 
 ## Resources
 

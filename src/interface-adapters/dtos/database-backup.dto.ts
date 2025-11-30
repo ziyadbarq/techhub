@@ -28,6 +28,12 @@ export interface DatabaseBackupDto {
   postgresVersion: string;
   notes?: string | null;
   errorMessage?: string | null;
+  checksum?: string | null;
+  dbSchemaVersion?: string | null;
+  codeSchemaVersion?: string | null;
+  schemaDrift?: boolean;
+  verificationStatus?: string | null;
+  verificationError?: string | null;
 }
 
 export interface BackupProgressDto {

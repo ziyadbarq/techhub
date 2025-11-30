@@ -46,6 +46,12 @@ export interface IDatabaseBackupService {
     durationSeconds: number;
     tableCount?: number;
     recordCount?: number;
+    checksum?: string;
+    dbSchemaVersion?: string | null;
+    codeSchemaVersion?: string | null;
+    schemaDrift?: boolean;
+    verificationStatus?: string;
+    verificationError?: string | null;
   }>;
 
   /**

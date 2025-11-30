@@ -25,6 +25,12 @@ export interface CreateDatabaseBackupData {
   errorMessage?: string | null;
   errorCode?: string | null;
   errorDetails?: string | null;
+  checksum?: string | null;
+  dbSchemaVersion?: string | null;
+  codeSchemaVersion?: string | null;
+  schemaDrift?: boolean;
+  verificationStatus?: string | null;
+  verificationError?: string | null;
 }
 
 export type UpdateDatabaseBackupData = Partial<
@@ -39,6 +45,12 @@ export interface BackupProgressUpdate {
   errorMessage?: string | null;
   errorCode?: string | null;
   errorDetails?: string | null;
+  checksum?: string | null;
+  dbSchemaVersion?: string | null;
+  codeSchemaVersion?: string | null;
+  schemaDrift?: boolean;
+  verificationStatus?: string | null;
+  verificationError?: string | null;
   completedAt?: Date | null;
   durationSeconds?: number | null;
   fileSize?: number;

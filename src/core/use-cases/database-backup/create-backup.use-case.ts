@@ -51,11 +51,6 @@ export class CreateDatabaseBackupUseCase {
     const hasWorkers = await this.jobQueue.hasActiveWorkers(
       QUEUE_NAMES.MAINTENANCE,
     );
-    if (!hasWorkers) {
-      throw new Error(
-        "Backup worker is not running. Start the maintenance worker before triggering a backup.",
-      );
-    }
 
     const filename = this.buildFilename();
     const backupDir = await this.backupService.ensureBackupDirectory();
@@ -80,41 +75,118 @@ export class CreateDatabaseBackupUseCase {
 
     const backupData = backup.toJSON();
 
-    try {
-      await this.jobQueue.addJob<DatabaseBackupJobData>(
-        QUEUE_NAMES.MAINTENANCE,
-        MAINTENANCE_JOBS.DATABASE_BACKUP,
-        {
+    if (hasWorkers) {
+      try {
+        await this.jobQueue.addJob<DatabaseBackupJobData>(
+          QUEUE_NAMES.MAINTENANCE,
+          MAINTENANCE_JOBS.DATABASE_BACKUP,
+          {
+            backupId: backupData.id,
+            filename,
+            userId: input.userId,
+            notes: input.notes ?? null,
+          },
+          {
+            attempts: 1,
+            removeOnComplete: true,
+            removeOnFail: false,
+          },
+        );
+      } catch (error) {
+        await this.repository.updateProgress(backupData.id, {
+          status: BackupStatus.FAILED,
+          stage: BackupStage.FINALIZING,
+          percentage: 100,
+          currentStep: "Failed to enqueue backup job",
+          errorMessage:
+            error instanceof Error ? error.message : "Failed to enqueue backup",
+          completedAt: new Date(),
+        });
+        throw error;
+      }
+
+      this.logger.info("Database backup job queued", {
+        backupId: backupData.id,
+        filename,
+      });
+    } else {
+      this.logger.warn(
+        "Maintenance worker not detected, running backup inline (synchronous)",
+        { backupId: backupData.id },
+      );
+
+      const progressHandler = async (
+        progress: Partial<{
+          status: BackupStatus;
+          stage: BackupStage | null;
+          percentage: number;
+          currentStep?: string | null;
+          errorMessage?: string | null;
+        }>,
+      ) => {
+        await this.repository.updateProgress(backupData.id, {
+          status: progress.status,
+          stage: progress.stage ?? undefined,
+          percentage: progress.percentage,
+          currentStep: progress.currentStep,
+          errorMessage: progress.errorMessage,
+        });
+      };
+
+      await this.repository.updateProgress(backupData.id, {
+        status: BackupStatus.RUNNING,
+        stage: BackupStage.DUMPING,
+        percentage: 10,
+        currentStep: "Running backup inline (no worker detected)",
+      });
+
+      try {
+        const result = await this.backupService.createBackupFile({
           backupId: backupData.id,
           filename,
-          userId: input.userId,
           notes: input.notes ?? null,
-        },
-        {
-          attempts: 1,
-          removeOnComplete: true,
-          removeOnFail: false,
-        },
-      );
-    } catch (error) {
-      await this.repository.updateProgress(backupData.id, {
-        status: BackupStatus.FAILED,
-        stage: BackupStage.FINALIZING,
-        percentage: 100,
-        currentStep: "Failed to enqueue backup job",
-        errorMessage:
-          error instanceof Error ? error.message : "Failed to enqueue backup",
-        completedAt: new Date(),
-      });
-      throw error;
+          onProgress: (progress) =>
+            progressHandler({
+              status: progress.status,
+              stage: progress.stage ?? undefined,
+              percentage: progress.percentage,
+              currentStep: progress.currentStep ?? undefined,
+              errorMessage: progress.errorMessage ?? undefined,
+            }),
+        });
+
+        await this.repository.update(backupData.id, {
+          status: BackupStatus.COMPLETED,
+          stage: BackupStage.FINALIZING,
+          percentage: 100,
+          completedAt: new Date(),
+          durationSeconds: result.durationSeconds,
+          fileSize: result.fileSize,
+          tableCount: result.tableCount,
+          recordCount: result.recordCount,
+          checksum: result.checksum ?? null,
+          dbSchemaVersion: result.dbSchemaVersion ?? null,
+          codeSchemaVersion: result.codeSchemaVersion ?? null,
+          schemaDrift: result.schemaDrift ?? false,
+          verificationStatus: result.verificationStatus ?? null,
+          verificationError: result.verificationError ?? null,
+          currentStep: "Backup completed inline",
+        });
+      } catch (error) {
+        await this.repository.updateProgress(backupData.id, {
+          status: BackupStatus.FAILED,
+          stage: BackupStage.FINALIZING,
+          percentage: 100,
+          currentStep: "Backup failed inline",
+          errorMessage:
+            error instanceof Error ? error.message : "Backup failed inline",
+        });
+        throw error;
+      }
     }
 
-    this.logger.info("Database backup job queued", {
-      backupId: backupData.id,
-      filename,
-    });
-
-    return backup;
+    const latest = await this.repository.findById(backupData.id);
+    return latest ?? backup;
   }
 
   private buildFilename(): string {

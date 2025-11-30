@@ -51,6 +51,12 @@ model DatabaseBackup {
   errorMessage String?
   errorCode    String?
   errorDetails String?
+  checksum     String?
+  dbSchemaVersion   String?
+  codeSchemaVersion String?
+  schemaDrift       Boolean? @default(false)
+  verificationStatus String?
+  verificationError  String?
 
   deletedAt   DateTime?
   deletedById String?

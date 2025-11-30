@@ -63,6 +63,12 @@ export type DatabaseBackupMinAggregateOutputType = {
   errorMessage: string | null
   errorCode: string | null
   errorDetails: string | null
+  checksum: string | null
+  dbSchemaVersion: string | null
+  codeSchemaVersion: string | null
+  schemaDrift: boolean | null
+  verificationStatus: string | null
+  verificationError: string | null
   deletedAt: Date | null
   deletedById: string | null
   createdAt: Date | null
@@ -90,6 +96,12 @@ export type DatabaseBackupMaxAggregateOutputType = {
   errorMessage: string | null
   errorCode: string | null
   errorDetails: string | null
+  checksum: string | null
+  dbSchemaVersion: string | null
+  codeSchemaVersion: string | null
+  schemaDrift: boolean | null
+  verificationStatus: string | null
+  verificationError: string | null
   deletedAt: Date | null
   deletedById: string | null
   createdAt: Date | null
@@ -117,6 +129,12 @@ export type DatabaseBackupCountAggregateOutputType = {
   errorMessage: number
   errorCode: number
   errorDetails: number
+  checksum: number
+  dbSchemaVersion: number
+  codeSchemaVersion: number
+  schemaDrift: number
+  verificationStatus: number
+  verificationError: number
   deletedAt: number
   deletedById: number
   createdAt: number
@@ -162,6 +180,12 @@ export type DatabaseBackupMinAggregateInputType = {
   errorMessage?: true
   errorCode?: true
   errorDetails?: true
+  checksum?: true
+  dbSchemaVersion?: true
+  codeSchemaVersion?: true
+  schemaDrift?: true
+  verificationStatus?: true
+  verificationError?: true
   deletedAt?: true
   deletedById?: true
   createdAt?: true
@@ -189,6 +213,12 @@ export type DatabaseBackupMaxAggregateInputType = {
   errorMessage?: true
   errorCode?: true
   errorDetails?: true
+  checksum?: true
+  dbSchemaVersion?: true
+  codeSchemaVersion?: true
+  schemaDrift?: true
+  verificationStatus?: true
+  verificationError?: true
   deletedAt?: true
   deletedById?: true
   createdAt?: true
@@ -216,6 +246,12 @@ export type DatabaseBackupCountAggregateInputType = {
   errorMessage?: true
   errorCode?: true
   errorDetails?: true
+  checksum?: true
+  dbSchemaVersion?: true
+  codeSchemaVersion?: true
+  schemaDrift?: true
+  verificationStatus?: true
+  verificationError?: true
   deletedAt?: true
   deletedById?: true
   createdAt?: true
@@ -330,6 +366,12 @@ export type DatabaseBackupGroupByOutputType = {
   errorMessage: string | null
   errorCode: string | null
   errorDetails: string | null
+  checksum: string | null
+  dbSchemaVersion: string | null
+  codeSchemaVersion: string | null
+  schemaDrift: boolean | null
+  verificationStatus: string | null
+  verificationError: string | null
   deletedAt: Date | null
   deletedById: string | null
   createdAt: Date
@@ -380,6 +422,12 @@ export type DatabaseBackupWhereInput = {
   errorMessage?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
   errorCode?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
   errorDetails?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
+  checksum?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
+  dbSchemaVersion?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
+  codeSchemaVersion?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
+  schemaDrift?: Prisma.BoolNullableFilter<"DatabaseBackup"> | boolean | null
+  verificationStatus?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
+  verificationError?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"DatabaseBackup"> | Date | string | null
   deletedById?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DatabaseBackup"> | Date | string
@@ -409,6 +457,12 @@ export type DatabaseBackupOrderByWithRelationInput = {
   errorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   errorCode?: Prisma.SortOrderInput | Prisma.SortOrder
   errorDetails?: Prisma.SortOrderInput | Prisma.SortOrder
+  checksum?: Prisma.SortOrderInput | Prisma.SortOrder
+  dbSchemaVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  codeSchemaVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  schemaDrift?: Prisma.SortOrderInput | Prisma.SortOrder
+  verificationStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  verificationError?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -441,6 +495,12 @@ export type DatabaseBackupWhereUniqueInput = Prisma.AtLeast<{
   errorMessage?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
   errorCode?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
   errorDetails?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
+  checksum?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
+  dbSchemaVersion?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
+  codeSchemaVersion?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
+  schemaDrift?: Prisma.BoolNullableFilter<"DatabaseBackup"> | boolean | null
+  verificationStatus?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
+  verificationError?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"DatabaseBackup"> | Date | string | null
   deletedById?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DatabaseBackup"> | Date | string
@@ -470,6 +530,12 @@ export type DatabaseBackupOrderByWithAggregationInput = {
   errorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   errorCode?: Prisma.SortOrderInput | Prisma.SortOrder
   errorDetails?: Prisma.SortOrderInput | Prisma.SortOrder
+  checksum?: Prisma.SortOrderInput | Prisma.SortOrder
+  dbSchemaVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  codeSchemaVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  schemaDrift?: Prisma.SortOrderInput | Prisma.SortOrder
+  verificationStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  verificationError?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -505,6 +571,12 @@ export type DatabaseBackupScalarWhereWithAggregatesInput = {
   errorMessage?: Prisma.StringNullableWithAggregatesFilter<"DatabaseBackup"> | string | null
   errorCode?: Prisma.StringNullableWithAggregatesFilter<"DatabaseBackup"> | string | null
   errorDetails?: Prisma.StringNullableWithAggregatesFilter<"DatabaseBackup"> | string | null
+  checksum?: Prisma.StringNullableWithAggregatesFilter<"DatabaseBackup"> | string | null
+  dbSchemaVersion?: Prisma.StringNullableWithAggregatesFilter<"DatabaseBackup"> | string | null
+  codeSchemaVersion?: Prisma.StringNullableWithAggregatesFilter<"DatabaseBackup"> | string | null
+  schemaDrift?: Prisma.BoolNullableWithAggregatesFilter<"DatabaseBackup"> | boolean | null
+  verificationStatus?: Prisma.StringNullableWithAggregatesFilter<"DatabaseBackup"> | string | null
+  verificationError?: Prisma.StringNullableWithAggregatesFilter<"DatabaseBackup"> | string | null
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"DatabaseBackup"> | Date | string | null
   deletedById?: Prisma.StringNullableWithAggregatesFilter<"DatabaseBackup"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"DatabaseBackup"> | Date | string
@@ -531,6 +603,12 @@ export type DatabaseBackupCreateInput = {
   errorMessage?: string | null
   errorCode?: string | null
   errorDetails?: string | null
+  checksum?: string | null
+  dbSchemaVersion?: string | null
+  codeSchemaVersion?: string | null
+  schemaDrift?: boolean | null
+  verificationStatus?: string | null
+  verificationError?: string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -559,6 +637,12 @@ export type DatabaseBackupUncheckedCreateInput = {
   errorMessage?: string | null
   errorCode?: string | null
   errorDetails?: string | null
+  checksum?: string | null
+  dbSchemaVersion?: string | null
+  codeSchemaVersion?: string | null
+  schemaDrift?: boolean | null
+  verificationStatus?: string | null
+  verificationError?: string | null
   deletedAt?: Date | string | null
   deletedById?: string | null
   createdAt?: Date | string
@@ -585,6 +669,12 @@ export type DatabaseBackupUpdateInput = {
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorDetails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checksum?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dbSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  codeSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  schemaDrift?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  verificationStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -613,6 +703,12 @@ export type DatabaseBackupUncheckedUpdateInput = {
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorDetails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checksum?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dbSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  codeSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  schemaDrift?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  verificationStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -640,6 +736,12 @@ export type DatabaseBackupCreateManyInput = {
   errorMessage?: string | null
   errorCode?: string | null
   errorDetails?: string | null
+  checksum?: string | null
+  dbSchemaVersion?: string | null
+  codeSchemaVersion?: string | null
+  schemaDrift?: boolean | null
+  verificationStatus?: string | null
+  verificationError?: string | null
   deletedAt?: Date | string | null
   deletedById?: string | null
   createdAt?: Date | string
@@ -666,6 +768,12 @@ export type DatabaseBackupUpdateManyMutationInput = {
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorDetails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checksum?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dbSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  codeSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  schemaDrift?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  verificationStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -692,6 +800,12 @@ export type DatabaseBackupUncheckedUpdateManyInput = {
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorDetails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checksum?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dbSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  codeSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  schemaDrift?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  verificationStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -729,6 +843,12 @@ export type DatabaseBackupCountOrderByAggregateInput = {
   errorMessage?: Prisma.SortOrder
   errorCode?: Prisma.SortOrder
   errorDetails?: Prisma.SortOrder
+  checksum?: Prisma.SortOrder
+  dbSchemaVersion?: Prisma.SortOrder
+  codeSchemaVersion?: Prisma.SortOrder
+  schemaDrift?: Prisma.SortOrder
+  verificationStatus?: Prisma.SortOrder
+  verificationError?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   deletedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -764,6 +884,12 @@ export type DatabaseBackupMaxOrderByAggregateInput = {
   errorMessage?: Prisma.SortOrder
   errorCode?: Prisma.SortOrder
   errorDetails?: Prisma.SortOrder
+  checksum?: Prisma.SortOrder
+  dbSchemaVersion?: Prisma.SortOrder
+  codeSchemaVersion?: Prisma.SortOrder
+  schemaDrift?: Prisma.SortOrder
+  verificationStatus?: Prisma.SortOrder
+  verificationError?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   deletedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -791,6 +917,12 @@ export type DatabaseBackupMinOrderByAggregateInput = {
   errorMessage?: Prisma.SortOrder
   errorCode?: Prisma.SortOrder
   errorDetails?: Prisma.SortOrder
+  checksum?: Prisma.SortOrder
+  dbSchemaVersion?: Prisma.SortOrder
+  codeSchemaVersion?: Prisma.SortOrder
+  schemaDrift?: Prisma.SortOrder
+  verificationStatus?: Prisma.SortOrder
+  verificationError?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   deletedById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -905,6 +1037,10 @@ export type NullableEnumBackupStageFieldUpdateOperationsInput = {
   set?: $Enums.BackupStage | null
 }
 
+export type NullableBoolFieldUpdateOperationsInput = {
+  set?: boolean | null
+}
+
 export type DatabaseBackupCreateWithoutCreatedByInput = {
   id?: string
   filename: string
@@ -925,6 +1061,12 @@ export type DatabaseBackupCreateWithoutCreatedByInput = {
   errorMessage?: string | null
   errorCode?: string | null
   errorDetails?: string | null
+  checksum?: string | null
+  dbSchemaVersion?: string | null
+  codeSchemaVersion?: string | null
+  schemaDrift?: boolean | null
+  verificationStatus?: string | null
+  verificationError?: string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -951,6 +1093,12 @@ export type DatabaseBackupUncheckedCreateWithoutCreatedByInput = {
   errorMessage?: string | null
   errorCode?: string | null
   errorDetails?: string | null
+  checksum?: string | null
+  dbSchemaVersion?: string | null
+  codeSchemaVersion?: string | null
+  schemaDrift?: boolean | null
+  verificationStatus?: string | null
+  verificationError?: string | null
   deletedAt?: Date | string | null
   deletedById?: string | null
   createdAt?: Date | string
@@ -987,6 +1135,12 @@ export type DatabaseBackupCreateWithoutDeletedByInput = {
   errorMessage?: string | null
   errorCode?: string | null
   errorDetails?: string | null
+  checksum?: string | null
+  dbSchemaVersion?: string | null
+  codeSchemaVersion?: string | null
+  schemaDrift?: boolean | null
+  verificationStatus?: string | null
+  verificationError?: string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1014,6 +1168,12 @@ export type DatabaseBackupUncheckedCreateWithoutDeletedByInput = {
   errorMessage?: string | null
   errorCode?: string | null
   errorDetails?: string | null
+  checksum?: string | null
+  dbSchemaVersion?: string | null
+  codeSchemaVersion?: string | null
+  schemaDrift?: boolean | null
+  verificationStatus?: string | null
+  verificationError?: string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1069,6 +1229,12 @@ export type DatabaseBackupScalarWhereInput = {
   errorMessage?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
   errorCode?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
   errorDetails?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
+  checksum?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
+  dbSchemaVersion?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
+  codeSchemaVersion?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
+  schemaDrift?: Prisma.BoolNullableFilter<"DatabaseBackup"> | boolean | null
+  verificationStatus?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
+  verificationError?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"DatabaseBackup"> | Date | string | null
   deletedById?: Prisma.StringNullableFilter<"DatabaseBackup"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DatabaseBackup"> | Date | string
@@ -1111,6 +1277,12 @@ export type DatabaseBackupCreateManyCreatedByInput = {
   errorMessage?: string | null
   errorCode?: string | null
   errorDetails?: string | null
+  checksum?: string | null
+  dbSchemaVersion?: string | null
+  codeSchemaVersion?: string | null
+  schemaDrift?: boolean | null
+  verificationStatus?: string | null
+  verificationError?: string | null
   deletedAt?: Date | string | null
   deletedById?: string | null
   createdAt?: Date | string
@@ -1138,6 +1310,12 @@ export type DatabaseBackupCreateManyDeletedByInput = {
   errorMessage?: string | null
   errorCode?: string | null
   errorDetails?: string | null
+  checksum?: string | null
+  dbSchemaVersion?: string | null
+  codeSchemaVersion?: string | null
+  schemaDrift?: boolean | null
+  verificationStatus?: string | null
+  verificationError?: string | null
   deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1163,6 +1341,12 @@ export type DatabaseBackupUpdateWithoutCreatedByInput = {
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorDetails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checksum?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dbSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  codeSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  schemaDrift?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  verificationStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1189,6 +1373,12 @@ export type DatabaseBackupUncheckedUpdateWithoutCreatedByInput = {
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorDetails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checksum?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dbSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  codeSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  schemaDrift?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  verificationStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1215,6 +1405,12 @@ export type DatabaseBackupUncheckedUpdateManyWithoutCreatedByInput = {
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorDetails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checksum?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dbSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  codeSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  schemaDrift?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  verificationStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1241,6 +1437,12 @@ export type DatabaseBackupUpdateWithoutDeletedByInput = {
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorDetails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checksum?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dbSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  codeSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  schemaDrift?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  verificationStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1268,6 +1470,12 @@ export type DatabaseBackupUncheckedUpdateWithoutDeletedByInput = {
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorDetails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checksum?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dbSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  codeSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  schemaDrift?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  verificationStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1294,6 +1502,12 @@ export type DatabaseBackupUncheckedUpdateManyWithoutDeletedByInput = {
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorDetails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  checksum?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dbSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  codeSchemaVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  schemaDrift?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  verificationStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  verificationError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1322,6 +1536,12 @@ export type DatabaseBackupSelect<ExtArgs extends runtime.Types.Extensions.Intern
   errorMessage?: boolean
   errorCode?: boolean
   errorDetails?: boolean
+  checksum?: boolean
+  dbSchemaVersion?: boolean
+  codeSchemaVersion?: boolean
+  schemaDrift?: boolean
+  verificationStatus?: boolean
+  verificationError?: boolean
   deletedAt?: boolean
   deletedById?: boolean
   createdAt?: boolean
@@ -1351,6 +1571,12 @@ export type DatabaseBackupSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   errorMessage?: boolean
   errorCode?: boolean
   errorDetails?: boolean
+  checksum?: boolean
+  dbSchemaVersion?: boolean
+  codeSchemaVersion?: boolean
+  schemaDrift?: boolean
+  verificationStatus?: boolean
+  verificationError?: boolean
   deletedAt?: boolean
   deletedById?: boolean
   createdAt?: boolean
@@ -1380,6 +1606,12 @@ export type DatabaseBackupSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   errorMessage?: boolean
   errorCode?: boolean
   errorDetails?: boolean
+  checksum?: boolean
+  dbSchemaVersion?: boolean
+  codeSchemaVersion?: boolean
+  schemaDrift?: boolean
+  verificationStatus?: boolean
+  verificationError?: boolean
   deletedAt?: boolean
   deletedById?: boolean
   createdAt?: boolean
@@ -1409,13 +1641,19 @@ export type DatabaseBackupSelectScalar = {
   errorMessage?: boolean
   errorCode?: boolean
   errorDetails?: boolean
+  checksum?: boolean
+  dbSchemaVersion?: boolean
+  codeSchemaVersion?: boolean
+  schemaDrift?: boolean
+  verificationStatus?: boolean
+  verificationError?: boolean
   deletedAt?: boolean
   deletedById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DatabaseBackupOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "filename" | "filePath" | "fileSize" | "status" | "stage" | "percentage" | "currentStep" | "createdById" | "notes" | "databaseName" | "postgresVersion" | "tableCount" | "recordCount" | "startedAt" | "completedAt" | "durationSeconds" | "errorMessage" | "errorCode" | "errorDetails" | "deletedAt" | "deletedById" | "createdAt" | "updatedAt", ExtArgs["result"]["databaseBackup"]>
+export type DatabaseBackupOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "filename" | "filePath" | "fileSize" | "status" | "stage" | "percentage" | "currentStep" | "createdById" | "notes" | "databaseName" | "postgresVersion" | "tableCount" | "recordCount" | "startedAt" | "completedAt" | "durationSeconds" | "errorMessage" | "errorCode" | "errorDetails" | "checksum" | "dbSchemaVersion" | "codeSchemaVersion" | "schemaDrift" | "verificationStatus" | "verificationError" | "deletedAt" | "deletedById" | "createdAt" | "updatedAt", ExtArgs["result"]["databaseBackup"]>
 export type DatabaseBackupInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   deletedBy?: boolean | Prisma.DatabaseBackup$deletedByArgs<ExtArgs>
@@ -1456,6 +1694,12 @@ export type $DatabaseBackupPayload<ExtArgs extends runtime.Types.Extensions.Inte
     errorMessage: string | null
     errorCode: string | null
     errorDetails: string | null
+    checksum: string | null
+    dbSchemaVersion: string | null
+    codeSchemaVersion: string | null
+    schemaDrift: boolean | null
+    verificationStatus: string | null
+    verificationError: string | null
     deletedAt: Date | null
     deletedById: string | null
     createdAt: Date
@@ -1905,6 +2149,12 @@ export interface DatabaseBackupFieldRefs {
   readonly errorMessage: Prisma.FieldRef<"DatabaseBackup", 'String'>
   readonly errorCode: Prisma.FieldRef<"DatabaseBackup", 'String'>
   readonly errorDetails: Prisma.FieldRef<"DatabaseBackup", 'String'>
+  readonly checksum: Prisma.FieldRef<"DatabaseBackup", 'String'>
+  readonly dbSchemaVersion: Prisma.FieldRef<"DatabaseBackup", 'String'>
+  readonly codeSchemaVersion: Prisma.FieldRef<"DatabaseBackup", 'String'>
+  readonly schemaDrift: Prisma.FieldRef<"DatabaseBackup", 'Boolean'>
+  readonly verificationStatus: Prisma.FieldRef<"DatabaseBackup", 'String'>
+  readonly verificationError: Prisma.FieldRef<"DatabaseBackup", 'String'>
   readonly deletedAt: Prisma.FieldRef<"DatabaseBackup", 'DateTime'>
   readonly deletedById: Prisma.FieldRef<"DatabaseBackup", 'String'>
   readonly createdAt: Prisma.FieldRef<"DatabaseBackup", 'DateTime'>

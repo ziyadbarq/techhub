@@ -41,6 +41,12 @@ export interface DatabaseBackupProps {
   errorMessage?: string | null;
   errorCode?: string | null;
   errorDetails?: string | null;
+  checksum?: string | null;
+  dbSchemaVersion?: string | null;
+  codeSchemaVersion?: string | null;
+  schemaDrift?: boolean;
+  verificationStatus?: string | null;
+  verificationError?: string | null;
   deletedAt?: Date | null;
   deletedById?: string | null;
   createdAt: Date;
@@ -64,6 +70,7 @@ export class DatabaseBackup {
       startedAt: new Date(),
       percentage: 0,
       status: BackupStatus.PENDING,
+      schemaDrift: false,
     });
   }
 

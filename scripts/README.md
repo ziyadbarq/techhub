@@ -80,8 +80,8 @@ bash scripts/type-check-staged.sh
 
 ```bash
 bash scripts/db-backup.sh backup
-# Restore (drops/recreates objects): will prompt for confirmation unless --force is passed
-bash scripts/db-backup.sh restore --file local/backups/<your-backup>.sql
+# Restore (interactive): picks latest backup automatically unless you choose a path
+bash scripts/db-backup.sh restore
 ```
 
 **Details:**
@@ -93,6 +93,8 @@ bash scripts/db-backup.sh restore --file local/backups/<your-backup>.sql
 - Verifies env file readability and DB connectivity before running to fail fast with clear errors
 - Post-backup validation prints size + SHA-256 checksum and warns if the dump looks empty
 - Restore runs quietly by default (errors still surface); add `--verbose` to see full psql output
+- Interactive restore picks the most recent backup if you don’t pass `--file`, asks before dropping schema, and offers a `--drop-schema` escape hatch for drifted DBs
+- Use `--no-auto-latest` if you prefer to manually input the backup path every time
 
 ## Common Workflows
 

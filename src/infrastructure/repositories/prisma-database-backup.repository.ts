@@ -57,6 +57,12 @@ export class PrismaDatabaseBackupRepository
           errorMessage: data.errorMessage ?? null,
           errorCode: data.errorCode ?? null,
           errorDetails: data.errorDetails ?? null,
+          checksum: data.checksum ?? null,
+          dbSchemaVersion: data.dbSchemaVersion ?? null,
+          codeSchemaVersion: data.codeSchemaVersion ?? null,
+          schemaDrift: data.schemaDrift ?? false,
+          verificationStatus: data.verificationStatus ?? null,
+          verificationError: data.verificationError ?? null,
         },
       }),
     );
@@ -142,6 +148,12 @@ export class PrismaDatabaseBackupRepository
             data.recordCount !== undefined && data.recordCount !== null
               ? BigInt(data.recordCount)
               : undefined,
+          checksum: data.checksum,
+          dbSchemaVersion: data.dbSchemaVersion,
+          codeSchemaVersion: data.codeSchemaVersion,
+          schemaDrift: data.schemaDrift,
+          verificationStatus: data.verificationStatus,
+          verificationError: data.verificationError,
         },
       }),
     );
@@ -182,6 +194,12 @@ export class PrismaDatabaseBackupRepository
       errorMessage: backup.errorMessage,
       errorCode: backup.errorCode,
       errorDetails: backup.errorDetails,
+      checksum: backup.checksum,
+      dbSchemaVersion: backup.dbSchemaVersion,
+      codeSchemaVersion: backup.codeSchemaVersion,
+      schemaDrift: backup.schemaDrift ?? false,
+      verificationStatus: backup.verificationStatus,
+      verificationError: backup.verificationError,
       deletedAt: backup.deletedAt,
       deletedById: backup.deletedById,
       createdAt: backup.createdAt,

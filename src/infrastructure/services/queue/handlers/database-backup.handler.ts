@@ -108,6 +108,12 @@ export async function handleDatabaseBackup(
       fileSize: result.fileSize,
       tableCount: result.tableCount,
       recordCount: result.recordCount,
+      checksum: result.checksum ?? null,
+      dbSchemaVersion: result.dbSchemaVersion ?? null,
+      codeSchemaVersion: result.codeSchemaVersion ?? null,
+      schemaDrift: result.schemaDrift ?? false,
+      verificationStatus: result.verificationStatus ?? null,
+      verificationError: result.verificationError ?? null,
       currentStep: "Backup completed successfully",
     });
 

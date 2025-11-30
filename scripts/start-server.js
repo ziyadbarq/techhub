@@ -38,6 +38,8 @@ loadEnv({ path: ".env.production" });
 loadEnv({ path: ".env.local" });
 loadEnv();
 
+const IS_PM2 = Boolean(process.env.pm_id || process.env.PM2_HOME || process.env.PM2_USAGE);
+
 // Process references
 let serverProcess = null;
 let workerProcess = null;
@@ -548,13 +550,17 @@ async function main() {
   console.log("═".repeat(60) + "\n");
 
   // Stop any existing processes to ensure clean start
-  log("🛑", "Stopping existing processes...");
-  try {
-    execSync("bash scripts/stop-services.sh --force", { stdio: "inherit" });
-  } catch (_error) {
-    // Ignore errors - processes may not be running
+  if (IS_PM2) {
+    log("⏭️", "Running under PM2 - skipping stop-services to avoid self-termination");
+  } else {
+    log("🛑", "Stopping existing processes...");
+    try {
+      execSync("bash scripts/stop-services.sh --force", { stdio: "inherit" });
+    } catch (_error) {
+      // Ignore errors - processes may not be running
+    }
+    console.log("");
   }
-  console.log("");
 
   // Validate environment first
   validateEnvironment();

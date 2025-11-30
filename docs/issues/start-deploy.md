@@ -1,0 +1,12 @@
+* **scripts/deploy.js** uses **npm run build:fast** (skips type-check) while **scripts/start-server.js --deploy** uses full **npm run build**; production builds differ depending on entrypoint. Risk: shipping TS errors when using **npm run deploy** (the documented path). Recommend making both paths run the same full build with type-check/lint or clearly documenting the intentional fast build.
+* **scripts/start-server.js**’s **--deploy** pipeline does not start PM2; it spawns **next start** + worker directly after running migrations/seed. Meanwhile **npm run deploy** (and **start:deploy**) start PM2. This divergence can confuse operators and produce different runtime behavior. Suggest standardizing on one deployment path (likely **deploy.js** + PM2) and positioning **start-server.js** strictly as “use existing build, start processes only.”
+* **killProcessOnPort** in **scripts/start-server.js** sends **kill -9** to any PID on the target port. If another service is bound to that port, this will hard-kill it without confirmation. Consider a softer kill or an opt-in flag to reduce accidental termination.
+* **runDeployment** in **scripts/start-server.js** runs **npx prisma migrate deploy** without the dotenv wrapper used elsewhere; it assumes the earlier **dotenv** calls are sufficient. If operators rely on **.env.production** only, that’s fine, but if you expect per-command dotenv behavior like **deploy.js**, align the approach to avoid env surprises.
+* Background worker now has **findInDateRange**, but the handler still runs under **node --import tsx** (in **scripts/start-server.js**) while dev uses **tsx --import ./scripts/shim-server-only.js** with dotenv. If you plan to start the worker via **start-server.js** in production, verify the loader/env behavior matches the dev/PM2 paths to avoid mismatched setup.
+
+**Recommendations**
+
+1. Align deployment paths: choose **deploy.js** + PM2 as the canonical route, document it, and simplify or limit **start-server.js --deploy** to “start from existing build.”
+2. Make production builds consistent (either full build everywhere or clearly mark the fast build as optional with a flag).
+3. Harden process management: avoid unconditional **kill -9** on **PORT**, or gate it behind a confirmation/flag.
+4. Verify worker startup parity between dev/PM2 and the **start-server.js** path (loader, env, shim) to prevent subtle prod-only failures.

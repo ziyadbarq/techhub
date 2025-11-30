@@ -12,6 +12,7 @@ import { BackupStatusBadge } from "./BackupStatusBadge";
 import { BackupActionsMenu } from "./BackupActionsMenu";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 interface Props {
   backups: DatabaseBackupDto[];
@@ -55,6 +56,12 @@ export function DatabaseBackupsTable({
   onRestore,
   disableMutations = false,
 }: Props) {
+  const truncate = (value?: string | null, len = 12) => {
+    if (!value) return "—";
+    if (value.length <= len) return value;
+    return `${value.slice(0, len)}…`;
+  };
+
   return (
     <div className="overflow-hidden rounded-lg border">
       <Table>
@@ -66,6 +73,7 @@ export function DatabaseBackupsTable({
             <TableHead>Duration</TableHead>
             <TableHead>Created</TableHead>
             <TableHead className="w-[220px]">Notes / Errors</TableHead>
+            <TableHead className="w-[240px]">Integrity</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -121,6 +129,46 @@ export function DatabaseBackupsTable({
                     title={backup.errorMessage || backup.notes || undefined}
                   >
                     {backup.errorMessage || backup.notes || "—"}
+                  </div>
+                </TableCell>
+                <TableCell className="text-sm">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground text-xs">
+                        SHA-256
+                      </span>
+                      <span
+                        className="font-mono text-xs"
+                        title={backup.checksum || undefined}
+                      >
+                        {truncate(backup.checksum)}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge variant="outline" className="text-xs">
+                        DB: {backup.dbSchemaVersion ?? "unknown"}
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        Code: {backup.codeSchemaVersion ?? "unknown"}
+                      </Badge>
+                      {backup.schemaDrift ? (
+                        <Badge variant="destructive" className="text-xs">
+                          Drift detected
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary" className="text-xs">
+                          In sync
+                        </Badge>
+                      )}
+                    </div>
+                    {backup.verificationStatus && (
+                      <div className="text-muted-foreground text-xs">
+                        Verify: {backup.verificationStatus}
+                        {backup.verificationError
+                          ? ` (${backup.verificationError})`
+                          : ""}
+                      </div>
+                    )}
                   </div>
                 </TableCell>
                 <TableCell>
