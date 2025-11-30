@@ -550,6 +550,21 @@ export class PrismaServiceRepository implements IServiceRepository {
       assets?: unknown;
     },
   ): Service {
+    const toNumber = (value: unknown): number | null => {
+      if (value === null || value === undefined) {
+        return null;
+      }
+      if (typeof value === "number") {
+        return value;
+      }
+      if (
+        typeof (value as { toNumber?: () => number }).toNumber === "function"
+      ) {
+        return (value as { toNumber: () => number }).toNumber();
+      }
+      return Number(value);
+    };
+
     return Service.reconstitute({
       id: prismaService.id,
       name: prismaService.name,
@@ -577,6 +592,38 @@ export class PrismaServiceRepository implements IServiceRepository {
       updatedAt: prismaService.updatedAt,
       createdBy: prismaService.createdBy,
       updatedBy: prismaService.updatedBy,
+      slaResponseTimeP50: prismaService.slaResponseTimeP50,
+      slaResponseTimeP95: prismaService.slaResponseTimeP95,
+      slaResponseTimeP99: prismaService.slaResponseTimeP99,
+      slaResolutionTimeCritical: prismaService.slaResolutionTimeCritical,
+      slaResolutionTimeHigh: prismaService.slaResolutionTimeHigh,
+      slaResolutionTimeMedium: prismaService.slaResolutionTimeMedium,
+      slaUptimePercentage: toNumber(prismaService.slaUptimePercentage),
+      slaErrorRateThreshold: toNumber(prismaService.slaErrorRateThreshold),
+      slaComplianceStatus: prismaService.slaComplianceStatus,
+      lastSlaReviewDate: prismaService.lastSlaReviewDate,
+      slaViolationCount: prismaService.slaViolationCount,
+      slaSupportTier: prismaService.slaSupportTier,
+      slaContactEmail: prismaService.slaContactEmail,
+      slaEscalationPath: prismaService.slaEscalationPath,
+      healthStatus: prismaService.healthStatus,
+      lastHealthCheck: prismaService.lastHealthCheck,
+      nextScheduledHealthCheck: prismaService.nextScheduledHealthCheck,
+      uptimePercentage24h: toNumber(prismaService.uptimePercentage24h),
+      uptimePercentage7d: toNumber(prismaService.uptimePercentage7d),
+      uptimePercentage30d: toNumber(prismaService.uptimePercentage30d),
+      healthCheckUrl: prismaService.healthCheckUrl,
+      healthCheckInterval: prismaService.healthCheckInterval,
+      healthCheckTimeout: prismaService.healthCheckTimeout,
+      healthCheckEnabled: prismaService.healthCheckEnabled,
+      currentResponseTimeP50: toNumber(prismaService.currentResponseTimeP50),
+      currentResponseTimeP95: toNumber(prismaService.currentResponseTimeP95),
+      currentErrorRate: toNumber(prismaService.currentErrorRate),
+      lastIncidentDate: prismaService.lastIncidentDate,
+      lastDowntimeDate: prismaService.lastDowntimeDate,
+      lastDowntimeDuration: toNumber(prismaService.lastDowntimeDuration),
+      mttrMinutes: toNumber(prismaService.mttrMinutes),
+      mtbfHours: toNumber(prismaService.mtbfHours),
     });
   }
 }

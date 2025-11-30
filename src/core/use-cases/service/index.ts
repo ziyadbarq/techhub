@@ -13,3 +13,7 @@ export { SearchServicesUseCase } from "./search-services.use-case";
 export { GetEssentialServicesUseCase } from "./get-essential-services.use-case";
 export { GetRetiringServicesUseCase } from "./get-retiring-services.use-case";
 export { RetireServiceUseCase } from "./retire-service.use-case";
+export { UpdateServiceHealthUseCase } from "./update-service-health.use-case";
+export { CalculateSlaComplianceUseCase } from "./calculate-sla-compliance.use-case";
+export { RecordSlaMetricUseCase } from "./record-sla-metric.use-case";
+export { GetServiceHealthHistoryUseCase } from "./get-service-health-history.use-case";

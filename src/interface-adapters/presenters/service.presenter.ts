@@ -7,6 +7,8 @@
 import type { Service } from "@/core/domain/entities/service.entity";
 import type { ServiceInfrastructure } from "@/core/domain/entities/service-infrastructure.entity";
 import type { BusinessProcess } from "@/core/domain/entities/business-process.entity";
+import type { ServiceHealthHistory } from "@/core/domain/entities/service-health-history.entity";
+import type { ServiceSlaMetric } from "@/core/domain/entities/service-sla-metric.entity";
 import type {
   ServiceType,
   ServiceStatus,
@@ -16,6 +18,9 @@ import type {
   OwnershipType,
   ServiceLocation,
   AssetRelationship,
+  ServiceHealthStatus,
+  SlaComplianceStatus,
+  SlaMetricType,
 } from "@/generated/prisma";
 
 // ==================== Service DTOs ====================
@@ -46,11 +51,52 @@ export interface ServiceDTO {
   createdBy: string | null;
   updatedBy: string | null;
 
+  // SLA Fields
+  slaResponseTimeP50: number | null;
+  slaResponseTimeP95: number | null;
+  slaResponseTimeP99: number | null;
+  slaResolutionTimeCritical: number | null;
+  slaResolutionTimeHigh: number | null;
+  slaResolutionTimeMedium: number | null;
+  slaUptimePercentage: number | null;
+  slaErrorRateThreshold: number | null;
+  slaComplianceStatus: SlaComplianceStatus;
+  lastSlaReviewDate: string | null;
+  slaViolationCount: number;
+  slaSupportTier: string | null;
+  slaContactEmail: string | null;
+  slaEscalationPath: string | null;
+
+  // Health Monitoring Fields
+  healthStatus: ServiceHealthStatus;
+  lastHealthCheck: string | null;
+  nextScheduledHealthCheck: string | null;
+  uptimePercentage24h: number | null;
+  uptimePercentage7d: number | null;
+  uptimePercentage30d: number | null;
+  healthCheckUrl: string | null;
+  healthCheckInterval: number | null;
+  healthCheckTimeout: number | null;
+  healthCheckEnabled: boolean;
+  currentResponseTimeP50: number | null;
+  currentResponseTimeP95: number | null;
+  currentErrorRate: number | null;
+  lastIncidentDate: string | null;
+  lastDowntimeDate: string | null;
+  lastDowntimeDuration: number | null;
+  mttrMinutes: number | null;
+  mtbfHours: number | null;
+
   // Computed fields
   isActive: boolean;
   isRetired: boolean;
   daysUntilDecommission: number | null;
   isRetiringSoon: boolean;
+  isSlaCompliant: boolean;
+  hasSlaTargets: boolean;
+  isHealthy: boolean;
+  isUnhealthy: boolean;
+  needsHealthCheck: boolean;
 
   // Optional enriched data
   vendorName?: string;
@@ -154,11 +200,53 @@ export function presentService(
     createdBy: service.createdBy,
     updatedBy: service.updatedBy,
 
+    // SLA Fields
+    slaResponseTimeP50: service.slaResponseTimeP50,
+    slaResponseTimeP95: service.slaResponseTimeP95,
+    slaResponseTimeP99: service.slaResponseTimeP99,
+    slaResolutionTimeCritical: service.slaResolutionTimeCritical,
+    slaResolutionTimeHigh: service.slaResolutionTimeHigh,
+    slaResolutionTimeMedium: service.slaResolutionTimeMedium,
+    slaUptimePercentage: service.slaUptimePercentage,
+    slaErrorRateThreshold: service.slaErrorRateThreshold,
+    slaComplianceStatus: service.slaComplianceStatus,
+    lastSlaReviewDate: service.lastSlaReviewDate?.toISOString() || null,
+    slaViolationCount: service.slaViolationCount,
+    slaSupportTier: service.slaSupportTier,
+    slaContactEmail: service.slaContactEmail,
+    slaEscalationPath: service.slaEscalationPath,
+
+    // Health Monitoring Fields
+    healthStatus: service.healthStatus,
+    lastHealthCheck: service.lastHealthCheck?.toISOString() || null,
+    nextScheduledHealthCheck:
+      service.nextScheduledHealthCheck?.toISOString() || null,
+    uptimePercentage24h: service.uptimePercentage24h,
+    uptimePercentage7d: service.uptimePercentage7d,
+    uptimePercentage30d: service.uptimePercentage30d,
+    healthCheckUrl: service.healthCheckUrl,
+    healthCheckInterval: service.healthCheckInterval,
+    healthCheckTimeout: service.healthCheckTimeout,
+    healthCheckEnabled: service.healthCheckEnabled,
+    currentResponseTimeP50: service.currentResponseTimeP50,
+    currentResponseTimeP95: service.currentResponseTimeP95,
+    currentErrorRate: service.currentErrorRate,
+    lastIncidentDate: service.lastIncidentDate?.toISOString() || null,
+    lastDowntimeDate: service.lastDowntimeDate?.toISOString() || null,
+    lastDowntimeDuration: service.lastDowntimeDuration,
+    mttrMinutes: service.mttrMinutes,
+    mtbfHours: service.mtbfHours,
+
     // Computed fields
     isActive: service.isActive(),
     isRetired: service.isRetired(),
     daysUntilDecommission: service.getDaysUntilDecommission(),
     isRetiringSoon: service.isRetiringSoon(90),
+    isSlaCompliant: service.isSlaCompliant(),
+    hasSlaTargets: service.hasSlaTargets(),
+    isHealthy: service.isHealthy(),
+    isUnhealthy: service.isUnhealthy(),
+    needsHealthCheck: service.needsHealthCheck(),
 
     // Enriched data
     vendorName: enrichment?.vendorName,
@@ -337,4 +425,130 @@ export function presentServiceAssetList(
   return serviceAssets.map((serviceAsset) =>
     presentServiceAsset(serviceAsset, enrichment?.get(serviceAsset.id)),
   );
+}
+
+// ==================== Service Health History Presenter ====================
+
+export interface ServiceHealthHistoryDTO {
+  id: string;
+  serviceId: string;
+  previousStatus: ServiceHealthStatus;
+  newStatus: ServiceHealthStatus;
+  checkTimestamp: string;
+  responseTime: number | null;
+  errorMessage: string | null;
+  statusCode: number | null;
+  checkDuration: number | null;
+  triggeredBy: string | null;
+  metadata: Record<string, unknown> | null;
+  createdAt: string;
+
+  // Computed fields
+  isStatusChange: boolean;
+  isImprovement: boolean;
+  isDegradation: boolean;
+  hasError: boolean;
+  isSlowResponse: boolean;
+}
+
+export function presentServiceHealthHistory(
+  history: ServiceHealthHistory,
+): ServiceHealthHistoryDTO {
+  return {
+    id: history.id,
+    serviceId: history.serviceId,
+    previousStatus: history.previousStatus,
+    newStatus: history.newStatus,
+    checkTimestamp: history.checkTimestamp.toISOString(),
+    responseTime: history.responseTime,
+    errorMessage: history.errorMessage,
+    statusCode: history.statusCode,
+    checkDuration: history.checkDuration,
+    triggeredBy: history.triggeredBy,
+    metadata: history.metadata,
+    createdAt: history.createdAt.toISOString(),
+
+    // Computed fields
+    isStatusChange: history.isStatusChange(),
+    isImprovement: history.isImprovement(),
+    isDegradation: history.isDegradation(),
+    hasError: history.hasError(),
+    isSlowResponse: history.isSlowResponse(1000),
+  };
+}
+
+export function presentServiceHealthHistoryList(
+  histories: ServiceHealthHistory[],
+): ServiceHealthHistoryDTO[] {
+  return histories.map((history) => presentServiceHealthHistory(history));
+}
+
+// ==================== Service SLA Metric Presenter ====================
+
+export interface ServiceSlaMetricDTO {
+  id: string;
+  serviceId: string;
+  metricType: SlaMetricType;
+  periodStart: string;
+  periodEnd: string;
+  targetValue: number;
+  actualValue: number;
+  complianceStatus: SlaComplianceStatus;
+  breachDuration: number | null;
+  incidentCount: number;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+
+  // Computed fields
+  isBreached: boolean;
+  isCompliant: boolean;
+  isAtRisk: boolean;
+  hasBreachDuration: boolean;
+  hasIncidents: boolean;
+  breachPercentage: number;
+  compliancePercentage: number;
+  periodDurationHours: number;
+  periodDurationDays: number;
+  isCurrentPeriod: boolean;
+  isPastPeriod: boolean;
+}
+
+export function presentServiceSlaMetric(
+  metric: ServiceSlaMetric,
+): ServiceSlaMetricDTO {
+  return {
+    id: metric.id,
+    serviceId: metric.serviceId,
+    metricType: metric.metricType,
+    periodStart: metric.periodStart.toISOString(),
+    periodEnd: metric.periodEnd.toISOString(),
+    targetValue: metric.targetValue,
+    actualValue: metric.actualValue,
+    complianceStatus: metric.complianceStatus,
+    breachDuration: metric.breachDuration,
+    incidentCount: metric.incidentCount,
+    notes: metric.notes,
+    createdAt: metric.createdAt.toISOString(),
+    updatedAt: metric.updatedAt.toISOString(),
+
+    // Computed fields
+    isBreached: metric.isBreached(),
+    isCompliant: metric.isCompliant(),
+    isAtRisk: metric.isAtRisk(),
+    hasBreachDuration: metric.hasBreachDuration(),
+    hasIncidents: metric.hasIncidents(),
+    breachPercentage: metric.getBreachPercentage(),
+    compliancePercentage: metric.getCompliancePercentage(),
+    periodDurationHours: metric.getPeriodDurationHours(),
+    periodDurationDays: metric.getPeriodDurationDays(),
+    isCurrentPeriod: metric.isCurrentPeriod(),
+    isPastPeriod: metric.isPastPeriod(),
+  };
+}
+
+export function presentServiceSlaMetricList(
+  metrics: ServiceSlaMetric[],
+): ServiceSlaMetricDTO[] {
+  return metrics.map((metric) => presentServiceSlaMetric(metric));
 }

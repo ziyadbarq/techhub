@@ -24,6 +24,9 @@ import type { IServiceRepository } from "@/core/repositories/service.repository.
 import type { IAssetKitCheckoutRepository } from "@/core/repositories/asset-kit-checkout.repository.interface";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import { AllocationTargetType } from "@/core/domain/entities/license-allocation.entity";
+import { z } from "zod";
+import type { PrismaClient } from "@/generated/prisma/server";
+import { getRedis } from "@/lib/redis";
 
 // ============================================================================
 // Person / Profile Actions
@@ -58,6 +61,187 @@ export async function getCurrentPersonAction(): Promise<
       error,
       { function: "getCurrentPersonAction" },
       "Failed to get current person",
+    );
+  }
+}
+
+// ============================================================================
+// Profile / Settings Actions
+// ============================================================================
+
+const UpdateProfileSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(2, "Name must be at least 2 characters")
+    .max(120, "Name must be at most 120 characters")
+    .optional(),
+  image: z
+    .string()
+    .url("Image must be a valid URL")
+    .max(500, "Image URL too long")
+    .optional()
+    .or(z.literal("")),
+});
+
+export type UpdateProfileDTO = z.infer<typeof UpdateProfileSchema>;
+
+/**
+ * Update current Better Auth user profile (name, image)
+ */
+export async function updateMyProfileAction(
+  data: UpdateProfileDTO,
+): Promise<ActionResponse<{ name?: string; image?: string | null }>> {
+  try {
+    const userId = await getCurrentUserId();
+    if (!userId) {
+      return { success: false, error: "Not authenticated" };
+    }
+
+    const validated = UpdateProfileSchema.parse(data);
+
+    const container = getContainer();
+    const prisma = container.get<PrismaClient>(DI_TOKENS.PrismaClient);
+
+    const updated = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        name: validated.name,
+        image: validated.image === "" ? null : validated.image,
+      },
+      select: {
+        name: true,
+        image: true,
+      },
+    });
+
+    return {
+      success: true,
+      data: {
+        name: updated.name ?? undefined,
+        image: updated.image ?? null,
+      },
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "updateMyProfileAction" },
+      "Failed to update profile",
+    );
+  }
+}
+
+// Preferences stored in Redis (per-user key)
+const preferencesKey = (userId: string) => `user:preferences:${userId}`;
+
+const PreferencesSchema = z.object({
+  timezone: z.string().optional(),
+  dateFormat: z
+    .enum(["dd/MM/yyyy", "MM/dd/yyyy", "yyyy-MM-dd"])
+    .optional()
+    .default("dd/MM/yyyy"),
+  currencyDisplay: z.enum(["sar", "original", "dual"]).optional(),
+  notifications: z
+    .object({
+      emailNotifications: z.boolean().optional(),
+      teamsNotifications: z.boolean().optional(),
+      whatsappNotifications: z.boolean().optional(),
+      weeklyDigest: z.boolean().optional(),
+      assetAlerts: z.boolean().optional(),
+      approvalAlerts: z.boolean().optional(),
+      warrantyAlerts: z.boolean().optional(),
+    })
+    .optional(),
+});
+
+export type UserPreferencesDTO = z.infer<typeof PreferencesSchema>;
+
+const defaultPreferences: Required<UserPreferencesDTO> = {
+  timezone: "Asia/Riyadh",
+  dateFormat: "dd/MM/yyyy",
+  currencyDisplay: "dual",
+  notifications: {
+    emailNotifications: true,
+    teamsNotifications: false,
+    whatsappNotifications: false,
+    weeklyDigest: true,
+    assetAlerts: true,
+    approvalAlerts: true,
+    warrantyAlerts: true,
+  },
+};
+
+/**
+ * Get current user's preferences (Redis-backed)
+ */
+export async function getMyPreferencesAction(): Promise<
+  ActionResponse<UserPreferencesDTO>
+> {
+  try {
+    const userId = await getCurrentUserId();
+    if (!userId) {
+      return { success: false, error: "Not authenticated" };
+    }
+
+    const redis = getRedis();
+    const raw = await redis.get(preferencesKey(userId));
+    if (!raw) {
+      return { success: true, data: defaultPreferences };
+    }
+
+    const parsed = PreferencesSchema.partial().parse(JSON.parse(raw));
+    return {
+      success: true,
+      data: {
+        ...defaultPreferences,
+        ...parsed,
+        notifications: {
+          ...defaultPreferences.notifications,
+          ...(parsed.notifications ?? {}),
+        },
+      },
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getMyPreferencesAction" },
+      "Failed to load preferences",
+    );
+  }
+}
+
+/**
+ * Update current user's preferences (Redis-backed)
+ */
+export async function updateMyPreferencesAction(
+  data: UserPreferencesDTO,
+): Promise<ActionResponse<UserPreferencesDTO>> {
+  try {
+    const userId = await getCurrentUserId();
+    if (!userId) {
+      return { success: false, error: "Not authenticated" };
+    }
+
+    const redis = getRedis();
+    const validated = PreferencesSchema.parse(data);
+
+    const merged: UserPreferencesDTO = {
+      ...defaultPreferences,
+      ...validated,
+      notifications: {
+        ...defaultPreferences.notifications,
+        ...(validated.notifications ?? {}),
+      },
+    };
+
+    await redis.set(preferencesKey(userId), JSON.stringify(merged));
+
+    return { success: true, data: merged };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "updateMyPreferencesAction" },
+      "Failed to update preferences",
     );
   }
 }

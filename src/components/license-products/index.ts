@@ -5,3 +5,4 @@
 export * from "./license-products-page-client";
 export * from "./license-products-table";
 export * from "./product-addons-panel";
+export * from "./license-product-form";

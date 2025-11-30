@@ -5,6 +5,7 @@ import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { handleControllerError } from "./error-handler";
 import type { ActionResponse, BulkCreateResult } from "./types";
+import type { PrismaClient } from "@/generated/prisma/server";
 import type {
   CIRelationshipDTO,
   CreateCIRelationshipDTO,
@@ -60,7 +61,38 @@ export async function getCIRelationshipAction(
     );
 
     const relationship = await useCase.execute({ id });
-    const dto = CIRelationshipPresenter.toDTO(relationship);
+    if (!relationship) {
+      return {
+        success: false,
+        error: "CI relationship not found",
+      };
+    }
+
+    const prisma = container.get<PrismaClient>(DI_TOKENS.PrismaClient);
+
+    const [fromCi, toCi, relType] = await Promise.all([
+      prisma.configurationItem.findUnique({
+        where: { id: relationship.fromCiId },
+        select: { name: true, ciClass: { select: { name: true } } },
+      }),
+      prisma.configurationItem.findUnique({
+        where: { id: relationship.toCiId },
+        select: { name: true, ciClass: { select: { name: true } } },
+      }),
+      prisma.relationshipType.findUnique({
+        where: { id: relationship.relationshipTypeId },
+        select: { name: true, code: true },
+      }),
+    ]);
+
+    const dto = CIRelationshipPresenter.toDTO(relationship, {
+      fromCiName: fromCi
+        ? `${fromCi.name} (${fromCi.ciClass.name})`
+        : undefined,
+      toCiName: toCi ? `${toCi.name} (${toCi.ciClass.name})` : undefined,
+      relationshipTypeName: relType?.name,
+      relationshipTypeCode: relType?.code,
+    });
 
     return { success: true, data: dto };
   } catch (error) {
@@ -88,8 +120,53 @@ export async function listCIRelationshipsAction(
       relationshipTypeId,
       activeOnly,
     });
+
+    if (relationships.length === 0) {
+      return { success: true, data: [] };
+    }
+
+    const prisma = container.get<PrismaClient>(DI_TOKENS.PrismaClient);
+
+    const fromIds = Array.from(new Set(relationships.map((r) => r.fromCiId)));
+    const toIds = Array.from(new Set(relationships.map((r) => r.toCiId)));
+    const relTypeIds = Array.from(
+      new Set(relationships.map((r) => r.relationshipTypeId)),
+    );
+
+    const [fromCis, toCis, relTypes] = await Promise.all([
+      prisma.configurationItem.findMany({
+        where: { id: { in: fromIds } },
+        select: { id: true, name: true, ciClass: { select: { name: true } } },
+      }),
+      prisma.configurationItem.findMany({
+        where: { id: { in: toIds } },
+        select: { id: true, name: true, ciClass: { select: { name: true } } },
+      }),
+      prisma.relationshipType.findMany({
+        where: { id: { in: relTypeIds } },
+        select: { id: true, name: true, code: true },
+      }),
+    ]);
+
+    const fromMap = new Map(
+      fromCis.map((ci) => [ci.id, `${ci.name} (${ci.ciClass.name})`]),
+    );
+    const toMap = new Map(
+      toCis.map((ci) => [ci.id, `${ci.name} (${ci.ciClass.name})`]),
+    );
+    const relTypeMap = new Map(
+      relTypes.map((rt) => [rt.id, { name: rt.name, code: rt.code }]),
+    );
+
     const dtos = relationships.map((relationship) =>
-      CIRelationshipPresenter.toDTO(relationship),
+      CIRelationshipPresenter.toDTO(relationship, {
+        fromCiName: fromMap.get(relationship.fromCiId),
+        toCiName: toMap.get(relationship.toCiId),
+        relationshipTypeName: relTypeMap.get(relationship.relationshipTypeId)
+          ?.name,
+        relationshipTypeCode: relTypeMap.get(relationship.relationshipTypeId)
+          ?.code,
+      }),
     );
 
     return { success: true, data: dtos };

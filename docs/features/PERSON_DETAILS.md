@@ -1,8 +1,8 @@
 # Person Details Page
 
 **Status**: Implemented (Layer 1 Feature)
-**Version**: 1.0.0
-**Last Updated**: 2025-11-28
+**Version**: 1.1.0
+**Last Updated**: 2025-11-30
 
 ## Table of Contents
 
@@ -63,7 +63,7 @@ Users can access the Person Details page by:
 |------|---------|
 | **Role & Org** | Primary role badge + Organization unit name |
 | **Team** | Direct reports count + "Manager" or "Individual Contributor" label |
-| **Assets & Devices** | Total count of Intune devices + reservations + kit checkouts |
+| **Assets & Devices** | Total count of Intune devices + license allocations + reservations + kit checkouts |
 | **Activity** | Governance items count (verification campaigns, items, attachments, disposals) |
 
 ### Tab Structure (6 Tabs)
@@ -80,15 +80,15 @@ Users can access the Person Details page by:
 
 - **Reporting Chain**: Visual hierarchy from CEO to this person
 - **Direct Reports**: Grid of direct reports with lazy loading
-- **Role Assignments**: Active role assignments with dates
+- **Role Assignments**: Active role assignments with dates, scope, and primary badge
 
 #### Tab 3: Assets & Licenses
 
 - **Intune Devices**: Mobile devices linked via Microsoft Intune
-- **License Allocations**: Software licenses assigned (placeholder)
-- **Asset Reservations**: Reserved assets
-- **Kit Checkouts**: Asset kit checkout history
-- **Maintenance Schedules**: Assigned maintenance tasks
+- **License Allocations**: Software licenses assigned (with qty, active/returned)
+- **Asset Reservations**: Reserved assets with dates/purpose
+- **Kit Checkouts**: Asset kit checkout history with due/returned dates
+- **Maintenance Schedules**: Assigned maintenance tasks with next due date
 - **Stock Movements**: Inventory movements initiated by this person
 
 #### Tab 4: Services & CMDB
@@ -106,8 +106,9 @@ Users can access the Person Details page by:
 
 #### Tab 6: Activity Log
 
-- Timeline view of audit log entries (placeholder for future implementation)
-- Will show maintenance records and other activities
+- Audit log entries performed by this person
+- Audit log entries affecting this person (target = PERSON)
+- Source system badge and field-level notes where available
 
 ## Data Fetching
 
@@ -124,8 +125,11 @@ const [personResult, countsResult, chainResult] = await Promise.all([
 
 ### Client-Side (Tab Loading)
 
-- **Organization Tab**: Direct reports loaded on tab mount via `getPersonDirectReportsAction`
-- Other tabs use counts from initial load; detailed data loading TBD
+- **Organization Tab**: Direct reports via `getPersonDirectReportsAction`; role assignments via `getPersonRoleAssignmentsAction`
+- **Assets Tab**: License allocations, reservations, kit checkouts, maintenance schedules, stock movements via respective `getPerson*` actions
+- **Services Tab**: Service ownerships, configuration items, data ownerships via `getPerson*` actions
+- **Governance Tab**: Verification campaigns/items, attachments, disposals via `getPerson*` actions
+- **Activity Tab**: Audit logs performed by and affecting the person via `getPersonAuditLogAction`
 
 ### Relation Counts Fetched
 
@@ -134,6 +138,7 @@ interface PersonRelationCounts {
   directReports: number;
   roleAssignments: number;
   intuneDevices: number;
+  licenseAllocations: number;
   assetReservations: number;
   kitCheckouts: number;
   stockMovements: number;

@@ -5,12 +5,13 @@
  */
 
 import { notFound } from "next/navigation";
-import { requirePermission } from "@/lib/permissions/server";
+import { hasPermission, requirePermission } from "@/lib/permissions/server";
 import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import {
   getPersonDetailsAction,
   getPersonRelationCountsAction,
+  getPersonIntuneDevicesAction,
 } from "@/interface-adapters/controllers/person-details.controller";
 import { getReportingChainAction } from "@/interface-adapters/controllers/employee-directory.controller";
 import { PersonDetailPageClient } from "@/components/persons/person-detail-page-client";
@@ -34,12 +35,16 @@ export default async function PersonDetailPage({
     throw error;
   }
 
+  const canViewIntune = await hasPermission(PERMISSIONS.INTUNE_DEVICES_VIEW);
+
   // Fetch data in parallel
-  const [personResult, countsResult, chainResult] = await Promise.all([
-    getPersonDetailsAction(id),
-    getPersonRelationCountsAction(id),
-    getReportingChainAction(id),
-  ]);
+  const [personResult, countsResult, chainResult, intuneDevicesResult] =
+    await Promise.all([
+      getPersonDetailsAction(id),
+      getPersonRelationCountsAction(id),
+      getReportingChainAction(id),
+      canViewIntune ? getPersonIntuneDevicesAction(id) : null,
+    ]);
 
   if (!personResult.success || !personResult.data) {
     notFound();
@@ -50,6 +55,11 @@ export default async function PersonDetailPage({
       person={personResult.data}
       counts={countsResult.success ? countsResult.data : null}
       reportingChain={chainResult.success ? chainResult.data.chain : []}
+      intuneDevices={
+        intuneDevicesResult && intuneDevicesResult.success
+          ? intuneDevicesResult.data
+          : []
+      }
     />
   );
 }

@@ -13,6 +13,8 @@ import type {
   IntuneComplianceHistoryDTO,
 } from "@/interface-adapters/dtos/generated/intune-device.dto";
 
+export type { IntuneDeviceDTO } from "@/interface-adapters/dtos/generated/intune-device.dto";
+
 /**
  * Present a single IntuneDevice entity as a DTO
  */

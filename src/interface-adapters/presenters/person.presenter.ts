@@ -22,6 +22,8 @@ export interface PersonDTO {
   hireDate: string | null;
   terminationDate: string | null;
   isActive: boolean;
+  isExcluded: boolean;
+  orgUnitName: string | null;
   metadata: Record<string, unknown> | null;
   createdAt: string;
   updatedAt: string;
@@ -47,6 +49,9 @@ export function presentPerson(person: Person): PersonDTO {
       ? person.terminationDate.toISOString()
       : null,
     isActive: person.isActive,
+    isExcluded: person.isExcluded,
+    orgUnitName:
+      (person.metadata?.orgUnitName as string | undefined | null) ?? null,
     metadata: person.metadata,
     createdAt: person.createdAt.toISOString(),
     updatedAt: person.updatedAt.toISOString(),

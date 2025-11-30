@@ -14,19 +14,18 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, Building2 } from "lucide-react";
-import { listAssetsAction } from "@/interface-adapters/controllers/asset.controller";
-import { listAssetAssignmentsAction } from "@/interface-adapters/controllers/asset-assignment.controller";
+import { getAssetsByDepartmentReportAction } from "@/interface-adapters/controllers/asset.controller";
 import { toast } from "sonner";
-import { format } from "date-fns";
 import { arrayToCSV, downloadCSV } from "@/lib/csv-export";
+import { formatDateISO } from "@/lib/utils/date-format";
 
 interface DepartmentAssets {
   [key: string]: string | number | boolean | null | undefined;
   departmentId: string;
   departmentName: string;
   assetCount: number;
-  totalValue: number;
-  currency: string;
+  totalValueSar: number;
+  avgPurchaseCostSar: number;
 }
 
 export function AssetsByDepartmentReport() {
@@ -38,67 +37,20 @@ export function AssetsByDepartmentReport() {
       try {
         setLoading(true);
 
-        const [assetsResult, assignmentsResult] = await Promise.all([
-          listAssetsAction(),
-          listAssetAssignmentsAction(),
-        ]);
+        const result = await getAssetsByDepartmentReportAction();
 
-        if (assetsResult.success && assignmentsResult.success) {
-          const now = new Date();
-          const assets = assetsResult.data || [];
-          const assignments = assignmentsResult.data || [];
-
-          // Get active assignments
-          const activeAssignments = assignments.filter(
-            (a) =>
-              !a.endDate || new Date(a.endDate) > now || a.endDate === null,
-          );
-
-          // Build asset map
-          const assetMap = new Map(assets.map((a) => [a.id, a]));
-
-          // Group by assignee (using assigneeId as department proxy)
-          const departmentMap = new Map<
-            string,
-            { count: number; value: number; currency: string }
-          >();
-
-          for (const assignment of activeAssignments) {
-            const asset = assetMap.get(assignment.assetId);
-            if (!asset) continue;
-
-            // Use assigneeId as department identifier
-            const deptId = assignment.assigneeId;
-            const existing = departmentMap.get(deptId) || {
-              count: 0,
-              value: 0,
-              currency: asset.currency || "USD",
-            };
-
-            departmentMap.set(deptId, {
-              count: existing.count + 1,
-              value: existing.value + (asset.purchaseCost || 0),
-              currency: existing.currency,
-            });
-          }
-
-          // Convert to array
-          const deptData: DepartmentAssets[] = Array.from(
-            departmentMap.entries(),
-          )
-            .map(([deptId, data]) => ({
-              departmentId: deptId,
-              departmentName: deptId, // In real scenario, fetch org unit name
-              assetCount: data.count,
-              totalValue: data.value,
-              currency: data.currency,
-            }))
-            .sort((a, b) => b.assetCount - a.assetCount);
+        if (result.success && result.data) {
+          const deptData: DepartmentAssets[] = result.data.map((item) => ({
+            departmentId: item.departmentId,
+            departmentName: item.departmentName,
+            assetCount: item.assetCount,
+            totalValueSar: item.totalValueSar,
+            avgPurchaseCostSar: item.avgPurchaseCostSar,
+          }));
 
           setDepartments(deptData);
         }
-      } catch (error) {
-        console.error("Failed to fetch department assets:", error);
+      } catch (_error) {
         toast.error("Failed to load department report");
       } finally {
         setLoading(false);
@@ -112,14 +64,11 @@ export function AssetsByDepartmentReport() {
     const csv = arrayToCSV(departments, [
       { key: "departmentName", label: "Department" },
       { key: "assetCount", label: "Asset Count" },
-      { key: "totalValue", label: "Total Value" },
-      { key: "currency", label: "Currency" },
+      { key: "totalValueSar", label: "Total Value (SAR)" },
+      { key: "avgPurchaseCostSar", label: "Avg. Purchase Cost (SAR)" },
     ]);
 
-    downloadCSV(
-      csv,
-      `assets-by-department-${format(new Date(), "yyyy-MM-dd")}.csv`,
-    );
+    downloadCSV(csv, `assets-by-department-${formatDateISO(new Date())}.csv`);
     toast.success("Report exported successfully");
   };
 
@@ -171,21 +120,16 @@ export function AssetsByDepartmentReport() {
                     <td className="p-2">{dept.departmentName}</td>
                     <td className="p-2 text-right">{dept.assetCount}</td>
                     <td className="p-2 text-right">
-                      {dept.currency}{" "}
-                      {dept.totalValue.toLocaleString(undefined, {
+                      {dept.totalValueSar.toLocaleString(undefined, {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}
                     </td>
                     <td className="p-2 text-right">
-                      {dept.currency}{" "}
-                      {(dept.totalValue / dept.assetCount).toLocaleString(
-                        undefined,
-                        {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        },
-                      )}
+                      {dept.avgPurchaseCostSar.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
                     </td>
                   </tr>
                 ))}
@@ -197,9 +141,8 @@ export function AssetsByDepartmentReport() {
                     {departments.reduce((sum, d) => sum + d.assetCount, 0)}
                   </td>
                   <td className="p-2 text-right">
-                    {departments.length > 0 && departments[0].currency}{" "}
                     {departments
-                      .reduce((sum, d) => sum + d.totalValue, 0)
+                      .reduce((sum, d) => sum + d.totalValueSar, 0)
                       .toLocaleString(undefined, {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,

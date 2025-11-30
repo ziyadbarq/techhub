@@ -104,8 +104,9 @@ export const MODULE_METADATA: Record<SeedModule, SeedModuleMetadata> = {
 
   [SeedModule.SERVICES]: {
     key: SeedModule.SERVICES,
-    name: "Services",
-    description: "74 real Barq services with infrastructure (no owners)",
+    name: "Demo Services",
+    description:
+      "Demo services for development (production: use import-services.ts script)",
     estimatedTime: 2,
     dependencies: [
       SeedModule.RBAC,
@@ -400,15 +401,15 @@ export const BUILTIN_PRESETS: SeedPreset[] = [
   {
     name: "production",
     description:
-      "Production-ready config only (no demo data). Run Graph sync after for persons.",
+      "Production-ready config only (no demo data). Use import scripts for real data.",
     modules: [
       SeedModule.RBAC,
       SeedModule.FOUNDATION,
       SeedModule.BUSINESS_PROCESSES,
       SeedModule.ASSET_CONFIG,
       SeedModule.CMDB,
-      SeedModule.SERVICES,
       SeedModule.ATTACHMENTS_GOVERNANCE,
+      // Note: SERVICES removed - use scripts/import-services.ts for real services
     ],
   },
   {

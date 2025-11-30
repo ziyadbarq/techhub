@@ -20,8 +20,56 @@ export type ServiceModel = runtime.Types.Result.DefaultSelection<Prisma.$Service
 
 export type AggregateService = {
   _count: ServiceCountAggregateOutputType | null
+  _avg: ServiceAvgAggregateOutputType | null
+  _sum: ServiceSumAggregateOutputType | null
   _min: ServiceMinAggregateOutputType | null
   _max: ServiceMaxAggregateOutputType | null
+}
+
+export type ServiceAvgAggregateOutputType = {
+  slaResponseTimeP50: number | null
+  slaResponseTimeP95: number | null
+  slaResponseTimeP99: number | null
+  slaResolutionTimeCritical: number | null
+  slaResolutionTimeHigh: number | null
+  slaResolutionTimeMedium: number | null
+  slaUptimePercentage: runtime.Decimal | null
+  slaErrorRateThreshold: runtime.Decimal | null
+  slaViolationCount: number | null
+  uptimePercentage24h: runtime.Decimal | null
+  uptimePercentage7d: runtime.Decimal | null
+  uptimePercentage30d: runtime.Decimal | null
+  healthCheckInterval: number | null
+  healthCheckTimeout: number | null
+  currentResponseTimeP50: number | null
+  currentResponseTimeP95: number | null
+  currentErrorRate: runtime.Decimal | null
+  lastDowntimeDuration: number | null
+  mttrMinutes: number | null
+  mtbfHours: number | null
+}
+
+export type ServiceSumAggregateOutputType = {
+  slaResponseTimeP50: number | null
+  slaResponseTimeP95: number | null
+  slaResponseTimeP99: number | null
+  slaResolutionTimeCritical: number | null
+  slaResolutionTimeHigh: number | null
+  slaResolutionTimeMedium: number | null
+  slaUptimePercentage: runtime.Decimal | null
+  slaErrorRateThreshold: runtime.Decimal | null
+  slaViolationCount: number | null
+  uptimePercentage24h: runtime.Decimal | null
+  uptimePercentage7d: runtime.Decimal | null
+  uptimePercentage30d: runtime.Decimal | null
+  healthCheckInterval: number | null
+  healthCheckTimeout: number | null
+  currentResponseTimeP50: number | null
+  currentResponseTimeP95: number | null
+  currentErrorRate: runtime.Decimal | null
+  lastDowntimeDuration: number | null
+  mttrMinutes: number | null
+  mtbfHours: number | null
 }
 
 export type ServiceMinAggregateOutputType = {
@@ -47,6 +95,38 @@ export type ServiceMinAggregateOutputType = {
   updatedAt: Date | null
   createdBy: string | null
   updatedBy: string | null
+  slaResponseTimeP50: number | null
+  slaResponseTimeP95: number | null
+  slaResponseTimeP99: number | null
+  slaResolutionTimeCritical: number | null
+  slaResolutionTimeHigh: number | null
+  slaResolutionTimeMedium: number | null
+  slaUptimePercentage: runtime.Decimal | null
+  slaErrorRateThreshold: runtime.Decimal | null
+  slaComplianceStatus: $Enums.SlaComplianceStatus | null
+  lastSlaReviewDate: Date | null
+  slaViolationCount: number | null
+  slaSupportTier: string | null
+  slaContactEmail: string | null
+  slaEscalationPath: string | null
+  healthStatus: $Enums.ServiceHealthStatus | null
+  lastHealthCheck: Date | null
+  nextScheduledHealthCheck: Date | null
+  uptimePercentage24h: runtime.Decimal | null
+  uptimePercentage7d: runtime.Decimal | null
+  uptimePercentage30d: runtime.Decimal | null
+  healthCheckUrl: string | null
+  healthCheckInterval: number | null
+  healthCheckTimeout: number | null
+  healthCheckEnabled: boolean | null
+  currentResponseTimeP50: number | null
+  currentResponseTimeP95: number | null
+  currentErrorRate: runtime.Decimal | null
+  lastIncidentDate: Date | null
+  lastDowntimeDate: Date | null
+  lastDowntimeDuration: number | null
+  mttrMinutes: number | null
+  mtbfHours: number | null
   deletedAt: Date | null
   deletedById: string | null
 }
@@ -74,6 +154,38 @@ export type ServiceMaxAggregateOutputType = {
   updatedAt: Date | null
   createdBy: string | null
   updatedBy: string | null
+  slaResponseTimeP50: number | null
+  slaResponseTimeP95: number | null
+  slaResponseTimeP99: number | null
+  slaResolutionTimeCritical: number | null
+  slaResolutionTimeHigh: number | null
+  slaResolutionTimeMedium: number | null
+  slaUptimePercentage: runtime.Decimal | null
+  slaErrorRateThreshold: runtime.Decimal | null
+  slaComplianceStatus: $Enums.SlaComplianceStatus | null
+  lastSlaReviewDate: Date | null
+  slaViolationCount: number | null
+  slaSupportTier: string | null
+  slaContactEmail: string | null
+  slaEscalationPath: string | null
+  healthStatus: $Enums.ServiceHealthStatus | null
+  lastHealthCheck: Date | null
+  nextScheduledHealthCheck: Date | null
+  uptimePercentage24h: runtime.Decimal | null
+  uptimePercentage7d: runtime.Decimal | null
+  uptimePercentage30d: runtime.Decimal | null
+  healthCheckUrl: string | null
+  healthCheckInterval: number | null
+  healthCheckTimeout: number | null
+  healthCheckEnabled: boolean | null
+  currentResponseTimeP50: number | null
+  currentResponseTimeP95: number | null
+  currentErrorRate: runtime.Decimal | null
+  lastIncidentDate: Date | null
+  lastDowntimeDate: Date | null
+  lastDowntimeDuration: number | null
+  mttrMinutes: number | null
+  mtbfHours: number | null
   deletedAt: Date | null
   deletedById: string | null
 }
@@ -103,11 +215,89 @@ export type ServiceCountAggregateOutputType = {
   updatedAt: number
   createdBy: number
   updatedBy: number
+  slaResponseTimeP50: number
+  slaResponseTimeP95: number
+  slaResponseTimeP99: number
+  slaResolutionTimeCritical: number
+  slaResolutionTimeHigh: number
+  slaResolutionTimeMedium: number
+  slaUptimePercentage: number
+  slaErrorRateThreshold: number
+  slaComplianceStatus: number
+  lastSlaReviewDate: number
+  slaViolationCount: number
+  slaSupportTier: number
+  slaContactEmail: number
+  slaEscalationPath: number
+  healthStatus: number
+  lastHealthCheck: number
+  nextScheduledHealthCheck: number
+  uptimePercentage24h: number
+  uptimePercentage7d: number
+  uptimePercentage30d: number
+  healthCheckUrl: number
+  healthCheckInterval: number
+  healthCheckTimeout: number
+  healthCheckEnabled: number
+  currentResponseTimeP50: number
+  currentResponseTimeP95: number
+  currentErrorRate: number
+  lastIncidentDate: number
+  lastDowntimeDate: number
+  lastDowntimeDuration: number
+  mttrMinutes: number
+  mtbfHours: number
   deletedAt: number
   deletedById: number
   _all: number
 }
 
+
+export type ServiceAvgAggregateInputType = {
+  slaResponseTimeP50?: true
+  slaResponseTimeP95?: true
+  slaResponseTimeP99?: true
+  slaResolutionTimeCritical?: true
+  slaResolutionTimeHigh?: true
+  slaResolutionTimeMedium?: true
+  slaUptimePercentage?: true
+  slaErrorRateThreshold?: true
+  slaViolationCount?: true
+  uptimePercentage24h?: true
+  uptimePercentage7d?: true
+  uptimePercentage30d?: true
+  healthCheckInterval?: true
+  healthCheckTimeout?: true
+  currentResponseTimeP50?: true
+  currentResponseTimeP95?: true
+  currentErrorRate?: true
+  lastDowntimeDuration?: true
+  mttrMinutes?: true
+  mtbfHours?: true
+}
+
+export type ServiceSumAggregateInputType = {
+  slaResponseTimeP50?: true
+  slaResponseTimeP95?: true
+  slaResponseTimeP99?: true
+  slaResolutionTimeCritical?: true
+  slaResolutionTimeHigh?: true
+  slaResolutionTimeMedium?: true
+  slaUptimePercentage?: true
+  slaErrorRateThreshold?: true
+  slaViolationCount?: true
+  uptimePercentage24h?: true
+  uptimePercentage7d?: true
+  uptimePercentage30d?: true
+  healthCheckInterval?: true
+  healthCheckTimeout?: true
+  currentResponseTimeP50?: true
+  currentResponseTimeP95?: true
+  currentErrorRate?: true
+  lastDowntimeDuration?: true
+  mttrMinutes?: true
+  mtbfHours?: true
+}
 
 export type ServiceMinAggregateInputType = {
   id?: true
@@ -132,6 +322,38 @@ export type ServiceMinAggregateInputType = {
   updatedAt?: true
   createdBy?: true
   updatedBy?: true
+  slaResponseTimeP50?: true
+  slaResponseTimeP95?: true
+  slaResponseTimeP99?: true
+  slaResolutionTimeCritical?: true
+  slaResolutionTimeHigh?: true
+  slaResolutionTimeMedium?: true
+  slaUptimePercentage?: true
+  slaErrorRateThreshold?: true
+  slaComplianceStatus?: true
+  lastSlaReviewDate?: true
+  slaViolationCount?: true
+  slaSupportTier?: true
+  slaContactEmail?: true
+  slaEscalationPath?: true
+  healthStatus?: true
+  lastHealthCheck?: true
+  nextScheduledHealthCheck?: true
+  uptimePercentage24h?: true
+  uptimePercentage7d?: true
+  uptimePercentage30d?: true
+  healthCheckUrl?: true
+  healthCheckInterval?: true
+  healthCheckTimeout?: true
+  healthCheckEnabled?: true
+  currentResponseTimeP50?: true
+  currentResponseTimeP95?: true
+  currentErrorRate?: true
+  lastIncidentDate?: true
+  lastDowntimeDate?: true
+  lastDowntimeDuration?: true
+  mttrMinutes?: true
+  mtbfHours?: true
   deletedAt?: true
   deletedById?: true
 }
@@ -159,6 +381,38 @@ export type ServiceMaxAggregateInputType = {
   updatedAt?: true
   createdBy?: true
   updatedBy?: true
+  slaResponseTimeP50?: true
+  slaResponseTimeP95?: true
+  slaResponseTimeP99?: true
+  slaResolutionTimeCritical?: true
+  slaResolutionTimeHigh?: true
+  slaResolutionTimeMedium?: true
+  slaUptimePercentage?: true
+  slaErrorRateThreshold?: true
+  slaComplianceStatus?: true
+  lastSlaReviewDate?: true
+  slaViolationCount?: true
+  slaSupportTier?: true
+  slaContactEmail?: true
+  slaEscalationPath?: true
+  healthStatus?: true
+  lastHealthCheck?: true
+  nextScheduledHealthCheck?: true
+  uptimePercentage24h?: true
+  uptimePercentage7d?: true
+  uptimePercentage30d?: true
+  healthCheckUrl?: true
+  healthCheckInterval?: true
+  healthCheckTimeout?: true
+  healthCheckEnabled?: true
+  currentResponseTimeP50?: true
+  currentResponseTimeP95?: true
+  currentErrorRate?: true
+  lastIncidentDate?: true
+  lastDowntimeDate?: true
+  lastDowntimeDuration?: true
+  mttrMinutes?: true
+  mtbfHours?: true
   deletedAt?: true
   deletedById?: true
 }
@@ -188,6 +442,38 @@ export type ServiceCountAggregateInputType = {
   updatedAt?: true
   createdBy?: true
   updatedBy?: true
+  slaResponseTimeP50?: true
+  slaResponseTimeP95?: true
+  slaResponseTimeP99?: true
+  slaResolutionTimeCritical?: true
+  slaResolutionTimeHigh?: true
+  slaResolutionTimeMedium?: true
+  slaUptimePercentage?: true
+  slaErrorRateThreshold?: true
+  slaComplianceStatus?: true
+  lastSlaReviewDate?: true
+  slaViolationCount?: true
+  slaSupportTier?: true
+  slaContactEmail?: true
+  slaEscalationPath?: true
+  healthStatus?: true
+  lastHealthCheck?: true
+  nextScheduledHealthCheck?: true
+  uptimePercentage24h?: true
+  uptimePercentage7d?: true
+  uptimePercentage30d?: true
+  healthCheckUrl?: true
+  healthCheckInterval?: true
+  healthCheckTimeout?: true
+  healthCheckEnabled?: true
+  currentResponseTimeP50?: true
+  currentResponseTimeP95?: true
+  currentErrorRate?: true
+  lastIncidentDate?: true
+  lastDowntimeDate?: true
+  lastDowntimeDuration?: true
+  mttrMinutes?: true
+  mtbfHours?: true
   deletedAt?: true
   deletedById?: true
   _all?: true
@@ -231,6 +517,18 @@ export type ServiceAggregateArgs<ExtArgs extends runtime.Types.Extensions.Intern
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: ServiceAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: ServiceSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: ServiceMinAggregateInputType
@@ -261,6 +559,8 @@ export type ServiceGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   _count?: ServiceCountAggregateInputType | true
+  _avg?: ServiceAvgAggregateInputType
+  _sum?: ServiceSumAggregateInputType
   _min?: ServiceMinAggregateInputType
   _max?: ServiceMaxAggregateInputType
 }
@@ -290,9 +590,43 @@ export type ServiceGroupByOutputType = {
   updatedAt: Date
   createdBy: string | null
   updatedBy: string | null
+  slaResponseTimeP50: number | null
+  slaResponseTimeP95: number | null
+  slaResponseTimeP99: number | null
+  slaResolutionTimeCritical: number | null
+  slaResolutionTimeHigh: number | null
+  slaResolutionTimeMedium: number | null
+  slaUptimePercentage: runtime.Decimal | null
+  slaErrorRateThreshold: runtime.Decimal | null
+  slaComplianceStatus: $Enums.SlaComplianceStatus
+  lastSlaReviewDate: Date | null
+  slaViolationCount: number
+  slaSupportTier: string | null
+  slaContactEmail: string | null
+  slaEscalationPath: string | null
+  healthStatus: $Enums.ServiceHealthStatus
+  lastHealthCheck: Date | null
+  nextScheduledHealthCheck: Date | null
+  uptimePercentage24h: runtime.Decimal | null
+  uptimePercentage7d: runtime.Decimal | null
+  uptimePercentage30d: runtime.Decimal | null
+  healthCheckUrl: string | null
+  healthCheckInterval: number | null
+  healthCheckTimeout: number | null
+  healthCheckEnabled: boolean
+  currentResponseTimeP50: number | null
+  currentResponseTimeP95: number | null
+  currentErrorRate: runtime.Decimal | null
+  lastIncidentDate: Date | null
+  lastDowntimeDate: Date | null
+  lastDowntimeDuration: number | null
+  mttrMinutes: number | null
+  mtbfHours: number | null
   deletedAt: Date | null
   deletedById: string | null
   _count: ServiceCountAggregateOutputType | null
+  _avg: ServiceAvgAggregateOutputType | null
+  _sum: ServiceSumAggregateOutputType | null
   _min: ServiceMinAggregateOutputType | null
   _max: ServiceMaxAggregateOutputType | null
 }
@@ -340,6 +674,38 @@ export type ServiceWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Service"> | Date | string
   createdBy?: Prisma.StringNullableFilter<"Service"> | string | null
   updatedBy?: Prisma.StringNullableFilter<"Service"> | string | null
+  slaResponseTimeP50?: Prisma.IntNullableFilter<"Service"> | number | null
+  slaResponseTimeP95?: Prisma.IntNullableFilter<"Service"> | number | null
+  slaResponseTimeP99?: Prisma.IntNullableFilter<"Service"> | number | null
+  slaResolutionTimeCritical?: Prisma.IntNullableFilter<"Service"> | number | null
+  slaResolutionTimeHigh?: Prisma.IntNullableFilter<"Service"> | number | null
+  slaResolutionTimeMedium?: Prisma.IntNullableFilter<"Service"> | number | null
+  slaUptimePercentage?: Prisma.DecimalNullableFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.DecimalNullableFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFilter<"Service"> | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  slaViolationCount?: Prisma.IntFilter<"Service"> | number
+  slaSupportTier?: Prisma.StringNullableFilter<"Service"> | string | null
+  slaContactEmail?: Prisma.StringNullableFilter<"Service"> | string | null
+  slaEscalationPath?: Prisma.StringNullableFilter<"Service"> | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFilter<"Service"> | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  nextScheduledHealthCheck?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  uptimePercentage24h?: Prisma.DecimalNullableFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.DecimalNullableFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.DecimalNullableFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.StringNullableFilter<"Service"> | string | null
+  healthCheckInterval?: Prisma.IntNullableFilter<"Service"> | number | null
+  healthCheckTimeout?: Prisma.IntNullableFilter<"Service"> | number | null
+  healthCheckEnabled?: Prisma.BoolFilter<"Service"> | boolean
+  currentResponseTimeP50?: Prisma.IntNullableFilter<"Service"> | number | null
+  currentResponseTimeP95?: Prisma.IntNullableFilter<"Service"> | number | null
+  currentErrorRate?: Prisma.DecimalNullableFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  lastDowntimeDate?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  lastDowntimeDuration?: Prisma.IntNullableFilter<"Service"> | number | null
+  mttrMinutes?: Prisma.IntNullableFilter<"Service"> | number | null
+  mtbfHours?: Prisma.IntNullableFilter<"Service"> | number | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
   deletedById?: Prisma.StringNullableFilter<"Service"> | string | null
   vendor?: Prisma.XOR<Prisma.VendorNullableScalarRelationFilter, Prisma.VendorWhereInput> | null
@@ -349,6 +715,8 @@ export type ServiceWhereInput = {
   assets?: Prisma.ServiceAssetListRelationFilter
   outgoingRelationships?: Prisma.ServiceRelationshipListRelationFilter
   incomingRelationships?: Prisma.ServiceRelationshipListRelationFilter
+  healthHistory?: Prisma.ServiceHealthHistoryListRelationFilter
+  slaMetrics?: Prisma.ServiceSlaMetricListRelationFilter
   deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }
 
@@ -377,6 +745,38 @@ export type ServiceOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaResponseTimeP50?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaResponseTimeP95?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaResponseTimeP99?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaResolutionTimeCritical?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaResolutionTimeHigh?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaResolutionTimeMedium?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaUptimePercentage?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaErrorRateThreshold?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaComplianceStatus?: Prisma.SortOrder
+  lastSlaReviewDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaViolationCount?: Prisma.SortOrder
+  slaSupportTier?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaContactEmail?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaEscalationPath?: Prisma.SortOrderInput | Prisma.SortOrder
+  healthStatus?: Prisma.SortOrder
+  lastHealthCheck?: Prisma.SortOrderInput | Prisma.SortOrder
+  nextScheduledHealthCheck?: Prisma.SortOrderInput | Prisma.SortOrder
+  uptimePercentage24h?: Prisma.SortOrderInput | Prisma.SortOrder
+  uptimePercentage7d?: Prisma.SortOrderInput | Prisma.SortOrder
+  uptimePercentage30d?: Prisma.SortOrderInput | Prisma.SortOrder
+  healthCheckUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  healthCheckInterval?: Prisma.SortOrderInput | Prisma.SortOrder
+  healthCheckTimeout?: Prisma.SortOrderInput | Prisma.SortOrder
+  healthCheckEnabled?: Prisma.SortOrder
+  currentResponseTimeP50?: Prisma.SortOrderInput | Prisma.SortOrder
+  currentResponseTimeP95?: Prisma.SortOrderInput | Prisma.SortOrder
+  currentErrorRate?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastIncidentDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastDowntimeDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastDowntimeDuration?: Prisma.SortOrderInput | Prisma.SortOrder
+  mttrMinutes?: Prisma.SortOrderInput | Prisma.SortOrder
+  mtbfHours?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   vendor?: Prisma.VendorOrderByWithRelationInput
@@ -386,6 +786,8 @@ export type ServiceOrderByWithRelationInput = {
   assets?: Prisma.ServiceAssetOrderByRelationAggregateInput
   outgoingRelationships?: Prisma.ServiceRelationshipOrderByRelationAggregateInput
   incomingRelationships?: Prisma.ServiceRelationshipOrderByRelationAggregateInput
+  healthHistory?: Prisma.ServiceHealthHistoryOrderByRelationAggregateInput
+  slaMetrics?: Prisma.ServiceSlaMetricOrderByRelationAggregateInput
   deletedBy?: Prisma.PersonOrderByWithRelationInput
 }
 
@@ -417,6 +819,38 @@ export type ServiceWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Service"> | Date | string
   createdBy?: Prisma.StringNullableFilter<"Service"> | string | null
   updatedBy?: Prisma.StringNullableFilter<"Service"> | string | null
+  slaResponseTimeP50?: Prisma.IntNullableFilter<"Service"> | number | null
+  slaResponseTimeP95?: Prisma.IntNullableFilter<"Service"> | number | null
+  slaResponseTimeP99?: Prisma.IntNullableFilter<"Service"> | number | null
+  slaResolutionTimeCritical?: Prisma.IntNullableFilter<"Service"> | number | null
+  slaResolutionTimeHigh?: Prisma.IntNullableFilter<"Service"> | number | null
+  slaResolutionTimeMedium?: Prisma.IntNullableFilter<"Service"> | number | null
+  slaUptimePercentage?: Prisma.DecimalNullableFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.DecimalNullableFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFilter<"Service"> | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  slaViolationCount?: Prisma.IntFilter<"Service"> | number
+  slaSupportTier?: Prisma.StringNullableFilter<"Service"> | string | null
+  slaContactEmail?: Prisma.StringNullableFilter<"Service"> | string | null
+  slaEscalationPath?: Prisma.StringNullableFilter<"Service"> | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFilter<"Service"> | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  nextScheduledHealthCheck?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  uptimePercentage24h?: Prisma.DecimalNullableFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.DecimalNullableFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.DecimalNullableFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.StringNullableFilter<"Service"> | string | null
+  healthCheckInterval?: Prisma.IntNullableFilter<"Service"> | number | null
+  healthCheckTimeout?: Prisma.IntNullableFilter<"Service"> | number | null
+  healthCheckEnabled?: Prisma.BoolFilter<"Service"> | boolean
+  currentResponseTimeP50?: Prisma.IntNullableFilter<"Service"> | number | null
+  currentResponseTimeP95?: Prisma.IntNullableFilter<"Service"> | number | null
+  currentErrorRate?: Prisma.DecimalNullableFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  lastDowntimeDate?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  lastDowntimeDuration?: Prisma.IntNullableFilter<"Service"> | number | null
+  mttrMinutes?: Prisma.IntNullableFilter<"Service"> | number | null
+  mtbfHours?: Prisma.IntNullableFilter<"Service"> | number | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
   deletedById?: Prisma.StringNullableFilter<"Service"> | string | null
   vendor?: Prisma.XOR<Prisma.VendorNullableScalarRelationFilter, Prisma.VendorWhereInput> | null
@@ -426,6 +860,8 @@ export type ServiceWhereUniqueInput = Prisma.AtLeast<{
   assets?: Prisma.ServiceAssetListRelationFilter
   outgoingRelationships?: Prisma.ServiceRelationshipListRelationFilter
   incomingRelationships?: Prisma.ServiceRelationshipListRelationFilter
+  healthHistory?: Prisma.ServiceHealthHistoryListRelationFilter
+  slaMetrics?: Prisma.ServiceSlaMetricListRelationFilter
   deletedBy?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
 }, "id" | "name">
 
@@ -454,11 +890,45 @@ export type ServiceOrderByWithAggregationInput = {
   updatedAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedBy?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaResponseTimeP50?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaResponseTimeP95?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaResponseTimeP99?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaResolutionTimeCritical?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaResolutionTimeHigh?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaResolutionTimeMedium?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaUptimePercentage?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaErrorRateThreshold?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaComplianceStatus?: Prisma.SortOrder
+  lastSlaReviewDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaViolationCount?: Prisma.SortOrder
+  slaSupportTier?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaContactEmail?: Prisma.SortOrderInput | Prisma.SortOrder
+  slaEscalationPath?: Prisma.SortOrderInput | Prisma.SortOrder
+  healthStatus?: Prisma.SortOrder
+  lastHealthCheck?: Prisma.SortOrderInput | Prisma.SortOrder
+  nextScheduledHealthCheck?: Prisma.SortOrderInput | Prisma.SortOrder
+  uptimePercentage24h?: Prisma.SortOrderInput | Prisma.SortOrder
+  uptimePercentage7d?: Prisma.SortOrderInput | Prisma.SortOrder
+  uptimePercentage30d?: Prisma.SortOrderInput | Prisma.SortOrder
+  healthCheckUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  healthCheckInterval?: Prisma.SortOrderInput | Prisma.SortOrder
+  healthCheckTimeout?: Prisma.SortOrderInput | Prisma.SortOrder
+  healthCheckEnabled?: Prisma.SortOrder
+  currentResponseTimeP50?: Prisma.SortOrderInput | Prisma.SortOrder
+  currentResponseTimeP95?: Prisma.SortOrderInput | Prisma.SortOrder
+  currentErrorRate?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastIncidentDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastDowntimeDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastDowntimeDuration?: Prisma.SortOrderInput | Prisma.SortOrder
+  mttrMinutes?: Prisma.SortOrderInput | Prisma.SortOrder
+  mtbfHours?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedById?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ServiceCountOrderByAggregateInput
+  _avg?: Prisma.ServiceAvgOrderByAggregateInput
   _max?: Prisma.ServiceMaxOrderByAggregateInput
   _min?: Prisma.ServiceMinOrderByAggregateInput
+  _sum?: Prisma.ServiceSumOrderByAggregateInput
 }
 
 export type ServiceScalarWhereWithAggregatesInput = {
@@ -489,6 +959,38 @@ export type ServiceScalarWhereWithAggregatesInput = {
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Service"> | Date | string
   createdBy?: Prisma.StringNullableWithAggregatesFilter<"Service"> | string | null
   updatedBy?: Prisma.StringNullableWithAggregatesFilter<"Service"> | string | null
+  slaResponseTimeP50?: Prisma.IntNullableWithAggregatesFilter<"Service"> | number | null
+  slaResponseTimeP95?: Prisma.IntNullableWithAggregatesFilter<"Service"> | number | null
+  slaResponseTimeP99?: Prisma.IntNullableWithAggregatesFilter<"Service"> | number | null
+  slaResolutionTimeCritical?: Prisma.IntNullableWithAggregatesFilter<"Service"> | number | null
+  slaResolutionTimeHigh?: Prisma.IntNullableWithAggregatesFilter<"Service"> | number | null
+  slaResolutionTimeMedium?: Prisma.IntNullableWithAggregatesFilter<"Service"> | number | null
+  slaUptimePercentage?: Prisma.DecimalNullableWithAggregatesFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.DecimalNullableWithAggregatesFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusWithAggregatesFilter<"Service"> | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Service"> | Date | string | null
+  slaViolationCount?: Prisma.IntWithAggregatesFilter<"Service"> | number
+  slaSupportTier?: Prisma.StringNullableWithAggregatesFilter<"Service"> | string | null
+  slaContactEmail?: Prisma.StringNullableWithAggregatesFilter<"Service"> | string | null
+  slaEscalationPath?: Prisma.StringNullableWithAggregatesFilter<"Service"> | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusWithAggregatesFilter<"Service"> | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.DateTimeNullableWithAggregatesFilter<"Service"> | Date | string | null
+  nextScheduledHealthCheck?: Prisma.DateTimeNullableWithAggregatesFilter<"Service"> | Date | string | null
+  uptimePercentage24h?: Prisma.DecimalNullableWithAggregatesFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.DecimalNullableWithAggregatesFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.DecimalNullableWithAggregatesFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.StringNullableWithAggregatesFilter<"Service"> | string | null
+  healthCheckInterval?: Prisma.IntNullableWithAggregatesFilter<"Service"> | number | null
+  healthCheckTimeout?: Prisma.IntNullableWithAggregatesFilter<"Service"> | number | null
+  healthCheckEnabled?: Prisma.BoolWithAggregatesFilter<"Service"> | boolean
+  currentResponseTimeP50?: Prisma.IntNullableWithAggregatesFilter<"Service"> | number | null
+  currentResponseTimeP95?: Prisma.IntNullableWithAggregatesFilter<"Service"> | number | null
+  currentErrorRate?: Prisma.DecimalNullableWithAggregatesFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Service"> | Date | string | null
+  lastDowntimeDate?: Prisma.DateTimeNullableWithAggregatesFilter<"Service"> | Date | string | null
+  lastDowntimeDuration?: Prisma.IntNullableWithAggregatesFilter<"Service"> | number | null
+  mttrMinutes?: Prisma.IntNullableWithAggregatesFilter<"Service"> | number | null
+  mtbfHours?: Prisma.IntNullableWithAggregatesFilter<"Service"> | number | null
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Service"> | Date | string | null
   deletedById?: Prisma.StringNullableWithAggregatesFilter<"Service"> | string | null
 }
@@ -516,6 +1018,38 @@ export type ServiceCreateInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   vendor?: Prisma.VendorCreateNestedOneWithoutServicesInput
   businessProcess?: Prisma.BusinessProcessCreateNestedOneWithoutServicesInput
@@ -524,6 +1058,8 @@ export type ServiceCreateInput = {
   assets?: Prisma.ServiceAssetCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutToServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryCreateNestedManyWithoutServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricCreateNestedManyWithoutServiceInput
   deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedServicesInput
 }
 
@@ -552,6 +1088,38 @@ export type ServiceUncheckedCreateInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   deletedById?: string | null
   owners?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutServiceInput
@@ -559,6 +1127,8 @@ export type ServiceUncheckedCreateInput = {
   assets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutToServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedCreateNestedManyWithoutServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedCreateNestedManyWithoutServiceInput
 }
 
 export type ServiceUpdateInput = {
@@ -584,6 +1154,38 @@ export type ServiceUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   vendor?: Prisma.VendorUpdateOneWithoutServicesNestedInput
   businessProcess?: Prisma.BusinessProcessUpdateOneWithoutServicesNestedInput
@@ -592,6 +1194,8 @@ export type ServiceUpdateInput = {
   assets?: Prisma.ServiceAssetUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutToServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUpdateManyWithoutServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUpdateManyWithoutServiceNestedInput
   deletedBy?: Prisma.PersonUpdateOneWithoutDeletedServicesNestedInput
 }
 
@@ -620,6 +1224,38 @@ export type ServiceUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   owners?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutServiceNestedInput
@@ -627,6 +1263,8 @@ export type ServiceUncheckedUpdateInput = {
   assets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutToServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedUpdateManyWithoutServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedUpdateManyWithoutServiceNestedInput
 }
 
 export type ServiceCreateManyInput = {
@@ -654,6 +1292,38 @@ export type ServiceCreateManyInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   deletedById?: string | null
 }
@@ -681,6 +1351,38 @@ export type ServiceUpdateManyMutationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
@@ -709,6 +1411,38 @@ export type ServiceUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -748,8 +1482,63 @@ export type ServiceCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrder
+  slaResponseTimeP50?: Prisma.SortOrder
+  slaResponseTimeP95?: Prisma.SortOrder
+  slaResponseTimeP99?: Prisma.SortOrder
+  slaResolutionTimeCritical?: Prisma.SortOrder
+  slaResolutionTimeHigh?: Prisma.SortOrder
+  slaResolutionTimeMedium?: Prisma.SortOrder
+  slaUptimePercentage?: Prisma.SortOrder
+  slaErrorRateThreshold?: Prisma.SortOrder
+  slaComplianceStatus?: Prisma.SortOrder
+  lastSlaReviewDate?: Prisma.SortOrder
+  slaViolationCount?: Prisma.SortOrder
+  slaSupportTier?: Prisma.SortOrder
+  slaContactEmail?: Prisma.SortOrder
+  slaEscalationPath?: Prisma.SortOrder
+  healthStatus?: Prisma.SortOrder
+  lastHealthCheck?: Prisma.SortOrder
+  nextScheduledHealthCheck?: Prisma.SortOrder
+  uptimePercentage24h?: Prisma.SortOrder
+  uptimePercentage7d?: Prisma.SortOrder
+  uptimePercentage30d?: Prisma.SortOrder
+  healthCheckUrl?: Prisma.SortOrder
+  healthCheckInterval?: Prisma.SortOrder
+  healthCheckTimeout?: Prisma.SortOrder
+  healthCheckEnabled?: Prisma.SortOrder
+  currentResponseTimeP50?: Prisma.SortOrder
+  currentResponseTimeP95?: Prisma.SortOrder
+  currentErrorRate?: Prisma.SortOrder
+  lastIncidentDate?: Prisma.SortOrder
+  lastDowntimeDate?: Prisma.SortOrder
+  lastDowntimeDuration?: Prisma.SortOrder
+  mttrMinutes?: Prisma.SortOrder
+  mtbfHours?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   deletedById?: Prisma.SortOrder
+}
+
+export type ServiceAvgOrderByAggregateInput = {
+  slaResponseTimeP50?: Prisma.SortOrder
+  slaResponseTimeP95?: Prisma.SortOrder
+  slaResponseTimeP99?: Prisma.SortOrder
+  slaResolutionTimeCritical?: Prisma.SortOrder
+  slaResolutionTimeHigh?: Prisma.SortOrder
+  slaResolutionTimeMedium?: Prisma.SortOrder
+  slaUptimePercentage?: Prisma.SortOrder
+  slaErrorRateThreshold?: Prisma.SortOrder
+  slaViolationCount?: Prisma.SortOrder
+  uptimePercentage24h?: Prisma.SortOrder
+  uptimePercentage7d?: Prisma.SortOrder
+  uptimePercentage30d?: Prisma.SortOrder
+  healthCheckInterval?: Prisma.SortOrder
+  healthCheckTimeout?: Prisma.SortOrder
+  currentResponseTimeP50?: Prisma.SortOrder
+  currentResponseTimeP95?: Prisma.SortOrder
+  currentErrorRate?: Prisma.SortOrder
+  lastDowntimeDuration?: Prisma.SortOrder
+  mttrMinutes?: Prisma.SortOrder
+  mtbfHours?: Prisma.SortOrder
 }
 
 export type ServiceMaxOrderByAggregateInput = {
@@ -775,6 +1564,38 @@ export type ServiceMaxOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrder
+  slaResponseTimeP50?: Prisma.SortOrder
+  slaResponseTimeP95?: Prisma.SortOrder
+  slaResponseTimeP99?: Prisma.SortOrder
+  slaResolutionTimeCritical?: Prisma.SortOrder
+  slaResolutionTimeHigh?: Prisma.SortOrder
+  slaResolutionTimeMedium?: Prisma.SortOrder
+  slaUptimePercentage?: Prisma.SortOrder
+  slaErrorRateThreshold?: Prisma.SortOrder
+  slaComplianceStatus?: Prisma.SortOrder
+  lastSlaReviewDate?: Prisma.SortOrder
+  slaViolationCount?: Prisma.SortOrder
+  slaSupportTier?: Prisma.SortOrder
+  slaContactEmail?: Prisma.SortOrder
+  slaEscalationPath?: Prisma.SortOrder
+  healthStatus?: Prisma.SortOrder
+  lastHealthCheck?: Prisma.SortOrder
+  nextScheduledHealthCheck?: Prisma.SortOrder
+  uptimePercentage24h?: Prisma.SortOrder
+  uptimePercentage7d?: Prisma.SortOrder
+  uptimePercentage30d?: Prisma.SortOrder
+  healthCheckUrl?: Prisma.SortOrder
+  healthCheckInterval?: Prisma.SortOrder
+  healthCheckTimeout?: Prisma.SortOrder
+  healthCheckEnabled?: Prisma.SortOrder
+  currentResponseTimeP50?: Prisma.SortOrder
+  currentResponseTimeP95?: Prisma.SortOrder
+  currentErrorRate?: Prisma.SortOrder
+  lastIncidentDate?: Prisma.SortOrder
+  lastDowntimeDate?: Prisma.SortOrder
+  lastDowntimeDuration?: Prisma.SortOrder
+  mttrMinutes?: Prisma.SortOrder
+  mtbfHours?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   deletedById?: Prisma.SortOrder
 }
@@ -802,8 +1623,63 @@ export type ServiceMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   createdBy?: Prisma.SortOrder
   updatedBy?: Prisma.SortOrder
+  slaResponseTimeP50?: Prisma.SortOrder
+  slaResponseTimeP95?: Prisma.SortOrder
+  slaResponseTimeP99?: Prisma.SortOrder
+  slaResolutionTimeCritical?: Prisma.SortOrder
+  slaResolutionTimeHigh?: Prisma.SortOrder
+  slaResolutionTimeMedium?: Prisma.SortOrder
+  slaUptimePercentage?: Prisma.SortOrder
+  slaErrorRateThreshold?: Prisma.SortOrder
+  slaComplianceStatus?: Prisma.SortOrder
+  lastSlaReviewDate?: Prisma.SortOrder
+  slaViolationCount?: Prisma.SortOrder
+  slaSupportTier?: Prisma.SortOrder
+  slaContactEmail?: Prisma.SortOrder
+  slaEscalationPath?: Prisma.SortOrder
+  healthStatus?: Prisma.SortOrder
+  lastHealthCheck?: Prisma.SortOrder
+  nextScheduledHealthCheck?: Prisma.SortOrder
+  uptimePercentage24h?: Prisma.SortOrder
+  uptimePercentage7d?: Prisma.SortOrder
+  uptimePercentage30d?: Prisma.SortOrder
+  healthCheckUrl?: Prisma.SortOrder
+  healthCheckInterval?: Prisma.SortOrder
+  healthCheckTimeout?: Prisma.SortOrder
+  healthCheckEnabled?: Prisma.SortOrder
+  currentResponseTimeP50?: Prisma.SortOrder
+  currentResponseTimeP95?: Prisma.SortOrder
+  currentErrorRate?: Prisma.SortOrder
+  lastIncidentDate?: Prisma.SortOrder
+  lastDowntimeDate?: Prisma.SortOrder
+  lastDowntimeDuration?: Prisma.SortOrder
+  mttrMinutes?: Prisma.SortOrder
+  mtbfHours?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   deletedById?: Prisma.SortOrder
+}
+
+export type ServiceSumOrderByAggregateInput = {
+  slaResponseTimeP50?: Prisma.SortOrder
+  slaResponseTimeP95?: Prisma.SortOrder
+  slaResponseTimeP99?: Prisma.SortOrder
+  slaResolutionTimeCritical?: Prisma.SortOrder
+  slaResolutionTimeHigh?: Prisma.SortOrder
+  slaResolutionTimeMedium?: Prisma.SortOrder
+  slaUptimePercentage?: Prisma.SortOrder
+  slaErrorRateThreshold?: Prisma.SortOrder
+  slaViolationCount?: Prisma.SortOrder
+  uptimePercentage24h?: Prisma.SortOrder
+  uptimePercentage7d?: Prisma.SortOrder
+  uptimePercentage30d?: Prisma.SortOrder
+  healthCheckInterval?: Prisma.SortOrder
+  healthCheckTimeout?: Prisma.SortOrder
+  currentResponseTimeP50?: Prisma.SortOrder
+  currentResponseTimeP95?: Prisma.SortOrder
+  currentErrorRate?: Prisma.SortOrder
+  lastDowntimeDuration?: Prisma.SortOrder
+  mttrMinutes?: Prisma.SortOrder
+  mtbfHours?: Prisma.SortOrder
 }
 
 export type ServiceScalarRelationFilter = {
@@ -957,6 +1833,14 @@ export type EnumServiceStatusFieldUpdateOperationsInput = {
   set?: $Enums.ServiceStatus
 }
 
+export type EnumSlaComplianceStatusFieldUpdateOperationsInput = {
+  set?: $Enums.SlaComplianceStatus
+}
+
+export type EnumServiceHealthStatusFieldUpdateOperationsInput = {
+  set?: $Enums.ServiceHealthStatus
+}
+
 export type ServiceCreateNestedOneWithoutOwnersInput = {
   create?: Prisma.XOR<Prisma.ServiceCreateWithoutOwnersInput, Prisma.ServiceUncheckedCreateWithoutOwnersInput>
   connectOrCreate?: Prisma.ServiceCreateOrConnectWithoutOwnersInput
@@ -1027,6 +1911,34 @@ export type ServiceUpdateOneRequiredWithoutIncomingRelationshipsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ServiceUpdateToOneWithWhereWithoutIncomingRelationshipsInput, Prisma.ServiceUpdateWithoutIncomingRelationshipsInput>, Prisma.ServiceUncheckedUpdateWithoutIncomingRelationshipsInput>
 }
 
+export type ServiceCreateNestedOneWithoutHealthHistoryInput = {
+  create?: Prisma.XOR<Prisma.ServiceCreateWithoutHealthHistoryInput, Prisma.ServiceUncheckedCreateWithoutHealthHistoryInput>
+  connectOrCreate?: Prisma.ServiceCreateOrConnectWithoutHealthHistoryInput
+  connect?: Prisma.ServiceWhereUniqueInput
+}
+
+export type ServiceUpdateOneRequiredWithoutHealthHistoryNestedInput = {
+  create?: Prisma.XOR<Prisma.ServiceCreateWithoutHealthHistoryInput, Prisma.ServiceUncheckedCreateWithoutHealthHistoryInput>
+  connectOrCreate?: Prisma.ServiceCreateOrConnectWithoutHealthHistoryInput
+  upsert?: Prisma.ServiceUpsertWithoutHealthHistoryInput
+  connect?: Prisma.ServiceWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ServiceUpdateToOneWithWhereWithoutHealthHistoryInput, Prisma.ServiceUpdateWithoutHealthHistoryInput>, Prisma.ServiceUncheckedUpdateWithoutHealthHistoryInput>
+}
+
+export type ServiceCreateNestedOneWithoutSlaMetricsInput = {
+  create?: Prisma.XOR<Prisma.ServiceCreateWithoutSlaMetricsInput, Prisma.ServiceUncheckedCreateWithoutSlaMetricsInput>
+  connectOrCreate?: Prisma.ServiceCreateOrConnectWithoutSlaMetricsInput
+  connect?: Prisma.ServiceWhereUniqueInput
+}
+
+export type ServiceUpdateOneRequiredWithoutSlaMetricsNestedInput = {
+  create?: Prisma.XOR<Prisma.ServiceCreateWithoutSlaMetricsInput, Prisma.ServiceUncheckedCreateWithoutSlaMetricsInput>
+  connectOrCreate?: Prisma.ServiceCreateOrConnectWithoutSlaMetricsInput
+  upsert?: Prisma.ServiceUpsertWithoutSlaMetricsInput
+  connect?: Prisma.ServiceWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ServiceUpdateToOneWithWhereWithoutSlaMetricsInput, Prisma.ServiceUpdateWithoutSlaMetricsInput>, Prisma.ServiceUncheckedUpdateWithoutSlaMetricsInput>
+}
+
 export type ServiceCreateWithoutDeletedByInput = {
   id?: string
   name: string
@@ -1050,6 +1962,38 @@ export type ServiceCreateWithoutDeletedByInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   vendor?: Prisma.VendorCreateNestedOneWithoutServicesInput
   businessProcess?: Prisma.BusinessProcessCreateNestedOneWithoutServicesInput
@@ -1058,6 +2002,8 @@ export type ServiceCreateWithoutDeletedByInput = {
   assets?: Prisma.ServiceAssetCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutToServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryCreateNestedManyWithoutServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricCreateNestedManyWithoutServiceInput
 }
 
 export type ServiceUncheckedCreateWithoutDeletedByInput = {
@@ -1085,12 +2031,46 @@ export type ServiceUncheckedCreateWithoutDeletedByInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   owners?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutServiceInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutToServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedCreateNestedManyWithoutServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedCreateNestedManyWithoutServiceInput
 }
 
 export type ServiceCreateOrConnectWithoutDeletedByInput = {
@@ -1147,6 +2127,38 @@ export type ServiceScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Service"> | Date | string
   createdBy?: Prisma.StringNullableFilter<"Service"> | string | null
   updatedBy?: Prisma.StringNullableFilter<"Service"> | string | null
+  slaResponseTimeP50?: Prisma.IntNullableFilter<"Service"> | number | null
+  slaResponseTimeP95?: Prisma.IntNullableFilter<"Service"> | number | null
+  slaResponseTimeP99?: Prisma.IntNullableFilter<"Service"> | number | null
+  slaResolutionTimeCritical?: Prisma.IntNullableFilter<"Service"> | number | null
+  slaResolutionTimeHigh?: Prisma.IntNullableFilter<"Service"> | number | null
+  slaResolutionTimeMedium?: Prisma.IntNullableFilter<"Service"> | number | null
+  slaUptimePercentage?: Prisma.DecimalNullableFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.DecimalNullableFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFilter<"Service"> | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  slaViolationCount?: Prisma.IntFilter<"Service"> | number
+  slaSupportTier?: Prisma.StringNullableFilter<"Service"> | string | null
+  slaContactEmail?: Prisma.StringNullableFilter<"Service"> | string | null
+  slaEscalationPath?: Prisma.StringNullableFilter<"Service"> | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFilter<"Service"> | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  nextScheduledHealthCheck?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  uptimePercentage24h?: Prisma.DecimalNullableFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.DecimalNullableFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.DecimalNullableFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.StringNullableFilter<"Service"> | string | null
+  healthCheckInterval?: Prisma.IntNullableFilter<"Service"> | number | null
+  healthCheckTimeout?: Prisma.IntNullableFilter<"Service"> | number | null
+  healthCheckEnabled?: Prisma.BoolFilter<"Service"> | boolean
+  currentResponseTimeP50?: Prisma.IntNullableFilter<"Service"> | number | null
+  currentResponseTimeP95?: Prisma.IntNullableFilter<"Service"> | number | null
+  currentErrorRate?: Prisma.DecimalNullableFilter<"Service"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  lastDowntimeDate?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
+  lastDowntimeDuration?: Prisma.IntNullableFilter<"Service"> | number | null
+  mttrMinutes?: Prisma.IntNullableFilter<"Service"> | number | null
+  mtbfHours?: Prisma.IntNullableFilter<"Service"> | number | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Service"> | Date | string | null
   deletedById?: Prisma.StringNullableFilter<"Service"> | string | null
 }
@@ -1174,6 +2186,38 @@ export type ServiceCreateWithoutVendorInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   businessProcess?: Prisma.BusinessProcessCreateNestedOneWithoutServicesInput
   owners?: Prisma.ServiceOwnershipCreateNestedManyWithoutServiceInput
@@ -1181,6 +2225,8 @@ export type ServiceCreateWithoutVendorInput = {
   assets?: Prisma.ServiceAssetCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutToServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryCreateNestedManyWithoutServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricCreateNestedManyWithoutServiceInput
   deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedServicesInput
 }
 
@@ -1208,6 +2254,38 @@ export type ServiceUncheckedCreateWithoutVendorInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   deletedById?: string | null
   owners?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutServiceInput
@@ -1215,6 +2293,8 @@ export type ServiceUncheckedCreateWithoutVendorInput = {
   assets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutToServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedCreateNestedManyWithoutServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedCreateNestedManyWithoutServiceInput
 }
 
 export type ServiceCreateOrConnectWithoutVendorInput = {
@@ -1266,6 +2346,38 @@ export type ServiceCreateWithoutBusinessProcessInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   vendor?: Prisma.VendorCreateNestedOneWithoutServicesInput
   owners?: Prisma.ServiceOwnershipCreateNestedManyWithoutServiceInput
@@ -1273,6 +2385,8 @@ export type ServiceCreateWithoutBusinessProcessInput = {
   assets?: Prisma.ServiceAssetCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutToServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryCreateNestedManyWithoutServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricCreateNestedManyWithoutServiceInput
   deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedServicesInput
 }
 
@@ -1300,6 +2414,38 @@ export type ServiceUncheckedCreateWithoutBusinessProcessInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   deletedById?: string | null
   owners?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutServiceInput
@@ -1307,6 +2453,8 @@ export type ServiceUncheckedCreateWithoutBusinessProcessInput = {
   assets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutToServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedCreateNestedManyWithoutServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedCreateNestedManyWithoutServiceInput
 }
 
 export type ServiceCreateOrConnectWithoutBusinessProcessInput = {
@@ -1358,6 +2506,38 @@ export type ServiceCreateWithoutOwnersInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   vendor?: Prisma.VendorCreateNestedOneWithoutServicesInput
   businessProcess?: Prisma.BusinessProcessCreateNestedOneWithoutServicesInput
@@ -1365,6 +2545,8 @@ export type ServiceCreateWithoutOwnersInput = {
   assets?: Prisma.ServiceAssetCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutToServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryCreateNestedManyWithoutServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricCreateNestedManyWithoutServiceInput
   deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedServicesInput
 }
 
@@ -1393,12 +2575,46 @@ export type ServiceUncheckedCreateWithoutOwnersInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   deletedById?: string | null
   infrastructure?: Prisma.ServiceInfrastructureUncheckedCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutToServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedCreateNestedManyWithoutServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedCreateNestedManyWithoutServiceInput
 }
 
 export type ServiceCreateOrConnectWithoutOwnersInput = {
@@ -1440,6 +2656,38 @@ export type ServiceUpdateWithoutOwnersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   vendor?: Prisma.VendorUpdateOneWithoutServicesNestedInput
   businessProcess?: Prisma.BusinessProcessUpdateOneWithoutServicesNestedInput
@@ -1447,6 +2695,8 @@ export type ServiceUpdateWithoutOwnersInput = {
   assets?: Prisma.ServiceAssetUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutToServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUpdateManyWithoutServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUpdateManyWithoutServiceNestedInput
   deletedBy?: Prisma.PersonUpdateOneWithoutDeletedServicesNestedInput
 }
 
@@ -1475,12 +2725,46 @@ export type ServiceUncheckedUpdateWithoutOwnersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   infrastructure?: Prisma.ServiceInfrastructureUncheckedUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutToServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedUpdateManyWithoutServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedUpdateManyWithoutServiceNestedInput
 }
 
 export type ServiceCreateWithoutInfrastructureInput = {
@@ -1506,6 +2790,38 @@ export type ServiceCreateWithoutInfrastructureInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   vendor?: Prisma.VendorCreateNestedOneWithoutServicesInput
   businessProcess?: Prisma.BusinessProcessCreateNestedOneWithoutServicesInput
@@ -1513,6 +2829,8 @@ export type ServiceCreateWithoutInfrastructureInput = {
   assets?: Prisma.ServiceAssetCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutToServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryCreateNestedManyWithoutServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricCreateNestedManyWithoutServiceInput
   deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedServicesInput
 }
 
@@ -1541,12 +2859,46 @@ export type ServiceUncheckedCreateWithoutInfrastructureInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   deletedById?: string | null
   owners?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutToServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedCreateNestedManyWithoutServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedCreateNestedManyWithoutServiceInput
 }
 
 export type ServiceCreateOrConnectWithoutInfrastructureInput = {
@@ -1588,6 +2940,38 @@ export type ServiceUpdateWithoutInfrastructureInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   vendor?: Prisma.VendorUpdateOneWithoutServicesNestedInput
   businessProcess?: Prisma.BusinessProcessUpdateOneWithoutServicesNestedInput
@@ -1595,6 +2979,8 @@ export type ServiceUpdateWithoutInfrastructureInput = {
   assets?: Prisma.ServiceAssetUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutToServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUpdateManyWithoutServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUpdateManyWithoutServiceNestedInput
   deletedBy?: Prisma.PersonUpdateOneWithoutDeletedServicesNestedInput
 }
 
@@ -1623,12 +3009,46 @@ export type ServiceUncheckedUpdateWithoutInfrastructureInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   owners?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutToServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedUpdateManyWithoutServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedUpdateManyWithoutServiceNestedInput
 }
 
 export type ServiceCreateWithoutAssetsInput = {
@@ -1654,6 +3074,38 @@ export type ServiceCreateWithoutAssetsInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   vendor?: Prisma.VendorCreateNestedOneWithoutServicesInput
   businessProcess?: Prisma.BusinessProcessCreateNestedOneWithoutServicesInput
@@ -1661,6 +3113,8 @@ export type ServiceCreateWithoutAssetsInput = {
   infrastructure?: Prisma.ServiceInfrastructureCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutToServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryCreateNestedManyWithoutServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricCreateNestedManyWithoutServiceInput
   deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedServicesInput
 }
 
@@ -1689,12 +3143,46 @@ export type ServiceUncheckedCreateWithoutAssetsInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   deletedById?: string | null
   owners?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutServiceInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutFromServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutToServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedCreateNestedManyWithoutServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedCreateNestedManyWithoutServiceInput
 }
 
 export type ServiceCreateOrConnectWithoutAssetsInput = {
@@ -1736,6 +3224,38 @@ export type ServiceUpdateWithoutAssetsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   vendor?: Prisma.VendorUpdateOneWithoutServicesNestedInput
   businessProcess?: Prisma.BusinessProcessUpdateOneWithoutServicesNestedInput
@@ -1743,6 +3263,8 @@ export type ServiceUpdateWithoutAssetsInput = {
   infrastructure?: Prisma.ServiceInfrastructureUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutToServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUpdateManyWithoutServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUpdateManyWithoutServiceNestedInput
   deletedBy?: Prisma.PersonUpdateOneWithoutDeletedServicesNestedInput
 }
 
@@ -1771,12 +3293,46 @@ export type ServiceUncheckedUpdateWithoutAssetsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   owners?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutServiceNestedInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutToServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedUpdateManyWithoutServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedUpdateManyWithoutServiceNestedInput
 }
 
 export type ServiceCreateWithoutOutgoingRelationshipsInput = {
@@ -1802,6 +3358,38 @@ export type ServiceCreateWithoutOutgoingRelationshipsInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   vendor?: Prisma.VendorCreateNestedOneWithoutServicesInput
   businessProcess?: Prisma.BusinessProcessCreateNestedOneWithoutServicesInput
@@ -1809,6 +3397,8 @@ export type ServiceCreateWithoutOutgoingRelationshipsInput = {
   infrastructure?: Prisma.ServiceInfrastructureCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetCreateNestedManyWithoutServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutToServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryCreateNestedManyWithoutServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricCreateNestedManyWithoutServiceInput
   deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedServicesInput
 }
 
@@ -1837,12 +3427,46 @@ export type ServiceUncheckedCreateWithoutOutgoingRelationshipsInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   deletedById?: string | null
   owners?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutServiceInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutServiceInput
   incomingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutToServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedCreateNestedManyWithoutServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedCreateNestedManyWithoutServiceInput
 }
 
 export type ServiceCreateOrConnectWithoutOutgoingRelationshipsInput = {
@@ -1873,6 +3497,38 @@ export type ServiceCreateWithoutIncomingRelationshipsInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   vendor?: Prisma.VendorCreateNestedOneWithoutServicesInput
   businessProcess?: Prisma.BusinessProcessCreateNestedOneWithoutServicesInput
@@ -1880,6 +3536,8 @@ export type ServiceCreateWithoutIncomingRelationshipsInput = {
   infrastructure?: Prisma.ServiceInfrastructureCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutFromServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryCreateNestedManyWithoutServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricCreateNestedManyWithoutServiceInput
   deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedServicesInput
 }
 
@@ -1908,12 +3566,46 @@ export type ServiceUncheckedCreateWithoutIncomingRelationshipsInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   deletedById?: string | null
   owners?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutServiceInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedCreateNestedManyWithoutServiceInput
   assets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutServiceInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutFromServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedCreateNestedManyWithoutServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedCreateNestedManyWithoutServiceInput
 }
 
 export type ServiceCreateOrConnectWithoutIncomingRelationshipsInput = {
@@ -1955,6 +3647,38 @@ export type ServiceUpdateWithoutOutgoingRelationshipsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   vendor?: Prisma.VendorUpdateOneWithoutServicesNestedInput
   businessProcess?: Prisma.BusinessProcessUpdateOneWithoutServicesNestedInput
@@ -1962,6 +3686,8 @@ export type ServiceUpdateWithoutOutgoingRelationshipsInput = {
   infrastructure?: Prisma.ServiceInfrastructureUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUpdateManyWithoutServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutToServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUpdateManyWithoutServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUpdateManyWithoutServiceNestedInput
   deletedBy?: Prisma.PersonUpdateOneWithoutDeletedServicesNestedInput
 }
 
@@ -1990,12 +3716,46 @@ export type ServiceUncheckedUpdateWithoutOutgoingRelationshipsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   owners?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutServiceNestedInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutToServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedUpdateManyWithoutServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedUpdateManyWithoutServiceNestedInput
 }
 
 export type ServiceUpsertWithoutIncomingRelationshipsInput = {
@@ -2032,6 +3792,38 @@ export type ServiceUpdateWithoutIncomingRelationshipsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   vendor?: Prisma.VendorUpdateOneWithoutServicesNestedInput
   businessProcess?: Prisma.BusinessProcessUpdateOneWithoutServicesNestedInput
@@ -2039,6 +3831,8 @@ export type ServiceUpdateWithoutIncomingRelationshipsInput = {
   infrastructure?: Prisma.ServiceInfrastructureUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutFromServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUpdateManyWithoutServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUpdateManyWithoutServiceNestedInput
   deletedBy?: Prisma.PersonUpdateOneWithoutDeletedServicesNestedInput
 }
 
@@ -2067,12 +3861,614 @@ export type ServiceUncheckedUpdateWithoutIncomingRelationshipsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   owners?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutServiceNestedInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutFromServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedUpdateManyWithoutServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedUpdateManyWithoutServiceNestedInput
+}
+
+export type ServiceCreateWithoutHealthHistoryInput = {
+  id?: string
+  name: string
+  serviceType: $Enums.ServiceType
+  description?: string | null
+  businessPurpose?: string | null
+  gitlabRepoUrl?: string | null
+  dataConfidentiality?: $Enums.DataConfidentiality
+  businessImpactLevel?: $Enums.BusinessImpactLevel
+  criticality?: $Enums.CriticalityLevel
+  isEssentialService?: boolean
+  deploymentDate?: Date | string | null
+  currentStatus?: $Enums.ServiceStatus
+  lastPatchDate?: Date | string | null
+  plannedDecommissionDate?: Date | string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isInCentralRegister?: boolean
+  complianceNotes?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdBy?: string | null
+  updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
+  deletedAt?: Date | string | null
+  vendor?: Prisma.VendorCreateNestedOneWithoutServicesInput
+  businessProcess?: Prisma.BusinessProcessCreateNestedOneWithoutServicesInput
+  owners?: Prisma.ServiceOwnershipCreateNestedManyWithoutServiceInput
+  infrastructure?: Prisma.ServiceInfrastructureCreateNestedManyWithoutServiceInput
+  assets?: Prisma.ServiceAssetCreateNestedManyWithoutServiceInput
+  outgoingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutFromServiceInput
+  incomingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutToServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricCreateNestedManyWithoutServiceInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedServicesInput
+}
+
+export type ServiceUncheckedCreateWithoutHealthHistoryInput = {
+  id?: string
+  name: string
+  serviceType: $Enums.ServiceType
+  description?: string | null
+  businessPurpose?: string | null
+  gitlabRepoUrl?: string | null
+  dataConfidentiality?: $Enums.DataConfidentiality
+  businessImpactLevel?: $Enums.BusinessImpactLevel
+  criticality?: $Enums.CriticalityLevel
+  isEssentialService?: boolean
+  deploymentDate?: Date | string | null
+  currentStatus?: $Enums.ServiceStatus
+  lastPatchDate?: Date | string | null
+  plannedDecommissionDate?: Date | string | null
+  vendorId?: string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  businessProcessId?: string | null
+  isInCentralRegister?: boolean
+  complianceNotes?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdBy?: string | null
+  updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  owners?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutServiceInput
+  infrastructure?: Prisma.ServiceInfrastructureUncheckedCreateNestedManyWithoutServiceInput
+  assets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutServiceInput
+  outgoingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutFromServiceInput
+  incomingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutToServiceInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedCreateNestedManyWithoutServiceInput
+}
+
+export type ServiceCreateOrConnectWithoutHealthHistoryInput = {
+  where: Prisma.ServiceWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServiceCreateWithoutHealthHistoryInput, Prisma.ServiceUncheckedCreateWithoutHealthHistoryInput>
+}
+
+export type ServiceUpsertWithoutHealthHistoryInput = {
+  update: Prisma.XOR<Prisma.ServiceUpdateWithoutHealthHistoryInput, Prisma.ServiceUncheckedUpdateWithoutHealthHistoryInput>
+  create: Prisma.XOR<Prisma.ServiceCreateWithoutHealthHistoryInput, Prisma.ServiceUncheckedCreateWithoutHealthHistoryInput>
+  where?: Prisma.ServiceWhereInput
+}
+
+export type ServiceUpdateToOneWithWhereWithoutHealthHistoryInput = {
+  where?: Prisma.ServiceWhereInput
+  data: Prisma.XOR<Prisma.ServiceUpdateWithoutHealthHistoryInput, Prisma.ServiceUncheckedUpdateWithoutHealthHistoryInput>
+}
+
+export type ServiceUpdateWithoutHealthHistoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceType?: Prisma.EnumServiceTypeFieldUpdateOperationsInput | $Enums.ServiceType
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
+  businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
+  criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
+  isEssentialService?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deploymentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentStatus?: Prisma.EnumServiceStatusFieldUpdateOperationsInput | $Enums.ServiceStatus
+  lastPatchDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plannedDecommissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isInCentralRegister?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  complianceNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vendor?: Prisma.VendorUpdateOneWithoutServicesNestedInput
+  businessProcess?: Prisma.BusinessProcessUpdateOneWithoutServicesNestedInput
+  owners?: Prisma.ServiceOwnershipUpdateManyWithoutServiceNestedInput
+  infrastructure?: Prisma.ServiceInfrastructureUpdateManyWithoutServiceNestedInput
+  assets?: Prisma.ServiceAssetUpdateManyWithoutServiceNestedInput
+  outgoingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutFromServiceNestedInput
+  incomingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutToServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUpdateManyWithoutServiceNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedServicesNestedInput
+}
+
+export type ServiceUncheckedUpdateWithoutHealthHistoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceType?: Prisma.EnumServiceTypeFieldUpdateOperationsInput | $Enums.ServiceType
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
+  businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
+  criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
+  isEssentialService?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deploymentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentStatus?: Prisma.EnumServiceStatusFieldUpdateOperationsInput | $Enums.ServiceStatus
+  lastPatchDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plannedDecommissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  businessProcessId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isInCentralRegister?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  complianceNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  owners?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutServiceNestedInput
+  infrastructure?: Prisma.ServiceInfrastructureUncheckedUpdateManyWithoutServiceNestedInput
+  assets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutServiceNestedInput
+  outgoingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutFromServiceNestedInput
+  incomingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutToServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedUpdateManyWithoutServiceNestedInput
+}
+
+export type ServiceCreateWithoutSlaMetricsInput = {
+  id?: string
+  name: string
+  serviceType: $Enums.ServiceType
+  description?: string | null
+  businessPurpose?: string | null
+  gitlabRepoUrl?: string | null
+  dataConfidentiality?: $Enums.DataConfidentiality
+  businessImpactLevel?: $Enums.BusinessImpactLevel
+  criticality?: $Enums.CriticalityLevel
+  isEssentialService?: boolean
+  deploymentDate?: Date | string | null
+  currentStatus?: $Enums.ServiceStatus
+  lastPatchDate?: Date | string | null
+  plannedDecommissionDate?: Date | string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isInCentralRegister?: boolean
+  complianceNotes?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdBy?: string | null
+  updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
+  deletedAt?: Date | string | null
+  vendor?: Prisma.VendorCreateNestedOneWithoutServicesInput
+  businessProcess?: Prisma.BusinessProcessCreateNestedOneWithoutServicesInput
+  owners?: Prisma.ServiceOwnershipCreateNestedManyWithoutServiceInput
+  infrastructure?: Prisma.ServiceInfrastructureCreateNestedManyWithoutServiceInput
+  assets?: Prisma.ServiceAssetCreateNestedManyWithoutServiceInput
+  outgoingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutFromServiceInput
+  incomingRelationships?: Prisma.ServiceRelationshipCreateNestedManyWithoutToServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryCreateNestedManyWithoutServiceInput
+  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedServicesInput
+}
+
+export type ServiceUncheckedCreateWithoutSlaMetricsInput = {
+  id?: string
+  name: string
+  serviceType: $Enums.ServiceType
+  description?: string | null
+  businessPurpose?: string | null
+  gitlabRepoUrl?: string | null
+  dataConfidentiality?: $Enums.DataConfidentiality
+  businessImpactLevel?: $Enums.BusinessImpactLevel
+  criticality?: $Enums.CriticalityLevel
+  isEssentialService?: boolean
+  deploymentDate?: Date | string | null
+  currentStatus?: $Enums.ServiceStatus
+  lastPatchDate?: Date | string | null
+  plannedDecommissionDate?: Date | string | null
+  vendorId?: string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  businessProcessId?: string | null
+  isInCentralRegister?: boolean
+  complianceNotes?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  createdBy?: string | null
+  updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
+  deletedAt?: Date | string | null
+  deletedById?: string | null
+  owners?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutServiceInput
+  infrastructure?: Prisma.ServiceInfrastructureUncheckedCreateNestedManyWithoutServiceInput
+  assets?: Prisma.ServiceAssetUncheckedCreateNestedManyWithoutServiceInput
+  outgoingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutFromServiceInput
+  incomingRelationships?: Prisma.ServiceRelationshipUncheckedCreateNestedManyWithoutToServiceInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedCreateNestedManyWithoutServiceInput
+}
+
+export type ServiceCreateOrConnectWithoutSlaMetricsInput = {
+  where: Prisma.ServiceWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServiceCreateWithoutSlaMetricsInput, Prisma.ServiceUncheckedCreateWithoutSlaMetricsInput>
+}
+
+export type ServiceUpsertWithoutSlaMetricsInput = {
+  update: Prisma.XOR<Prisma.ServiceUpdateWithoutSlaMetricsInput, Prisma.ServiceUncheckedUpdateWithoutSlaMetricsInput>
+  create: Prisma.XOR<Prisma.ServiceCreateWithoutSlaMetricsInput, Prisma.ServiceUncheckedCreateWithoutSlaMetricsInput>
+  where?: Prisma.ServiceWhereInput
+}
+
+export type ServiceUpdateToOneWithWhereWithoutSlaMetricsInput = {
+  where?: Prisma.ServiceWhereInput
+  data: Prisma.XOR<Prisma.ServiceUpdateWithoutSlaMetricsInput, Prisma.ServiceUncheckedUpdateWithoutSlaMetricsInput>
+}
+
+export type ServiceUpdateWithoutSlaMetricsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceType?: Prisma.EnumServiceTypeFieldUpdateOperationsInput | $Enums.ServiceType
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
+  businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
+  criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
+  isEssentialService?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deploymentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentStatus?: Prisma.EnumServiceStatusFieldUpdateOperationsInput | $Enums.ServiceStatus
+  lastPatchDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plannedDecommissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  isInCentralRegister?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  complianceNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vendor?: Prisma.VendorUpdateOneWithoutServicesNestedInput
+  businessProcess?: Prisma.BusinessProcessUpdateOneWithoutServicesNestedInput
+  owners?: Prisma.ServiceOwnershipUpdateManyWithoutServiceNestedInput
+  infrastructure?: Prisma.ServiceInfrastructureUpdateManyWithoutServiceNestedInput
+  assets?: Prisma.ServiceAssetUpdateManyWithoutServiceNestedInput
+  outgoingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutFromServiceNestedInput
+  incomingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutToServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUpdateManyWithoutServiceNestedInput
+  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedServicesNestedInput
+}
+
+export type ServiceUncheckedUpdateWithoutSlaMetricsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceType?: Prisma.EnumServiceTypeFieldUpdateOperationsInput | $Enums.ServiceType
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
+  businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
+  criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
+  isEssentialService?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deploymentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  currentStatus?: Prisma.EnumServiceStatusFieldUpdateOperationsInput | $Enums.ServiceStatus
+  lastPatchDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  plannedDecommissionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  vendorId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaDetails?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  businessProcessId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isInCentralRegister?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  complianceNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  owners?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutServiceNestedInput
+  infrastructure?: Prisma.ServiceInfrastructureUncheckedUpdateManyWithoutServiceNestedInput
+  assets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutServiceNestedInput
+  outgoingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutFromServiceNestedInput
+  incomingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutToServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedUpdateManyWithoutServiceNestedInput
 }
 
 export type ServiceCreateManyDeletedByInput = {
@@ -2100,6 +4496,38 @@ export type ServiceCreateManyDeletedByInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
 }
 
@@ -2126,6 +4554,38 @@ export type ServiceUpdateWithoutDeletedByInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   vendor?: Prisma.VendorUpdateOneWithoutServicesNestedInput
   businessProcess?: Prisma.BusinessProcessUpdateOneWithoutServicesNestedInput
@@ -2134,6 +4594,8 @@ export type ServiceUpdateWithoutDeletedByInput = {
   assets?: Prisma.ServiceAssetUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutToServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUpdateManyWithoutServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUpdateManyWithoutServiceNestedInput
 }
 
 export type ServiceUncheckedUpdateWithoutDeletedByInput = {
@@ -2161,12 +4623,46 @@ export type ServiceUncheckedUpdateWithoutDeletedByInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   owners?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutServiceNestedInput
   infrastructure?: Prisma.ServiceInfrastructureUncheckedUpdateManyWithoutServiceNestedInput
   assets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutToServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedUpdateManyWithoutServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedUpdateManyWithoutServiceNestedInput
 }
 
 export type ServiceUncheckedUpdateManyWithoutDeletedByInput = {
@@ -2194,6 +4690,38 @@ export type ServiceUncheckedUpdateManyWithoutDeletedByInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
@@ -2221,6 +4749,38 @@ export type ServiceCreateManyVendorInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   deletedById?: string | null
 }
@@ -2248,6 +4808,38 @@ export type ServiceUpdateWithoutVendorInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   businessProcess?: Prisma.BusinessProcessUpdateOneWithoutServicesNestedInput
   owners?: Prisma.ServiceOwnershipUpdateManyWithoutServiceNestedInput
@@ -2255,6 +4847,8 @@ export type ServiceUpdateWithoutVendorInput = {
   assets?: Prisma.ServiceAssetUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutToServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUpdateManyWithoutServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUpdateManyWithoutServiceNestedInput
   deletedBy?: Prisma.PersonUpdateOneWithoutDeletedServicesNestedInput
 }
 
@@ -2282,6 +4876,38 @@ export type ServiceUncheckedUpdateWithoutVendorInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   owners?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutServiceNestedInput
@@ -2289,6 +4915,8 @@ export type ServiceUncheckedUpdateWithoutVendorInput = {
   assets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutToServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedUpdateManyWithoutServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedUpdateManyWithoutServiceNestedInput
 }
 
 export type ServiceUncheckedUpdateManyWithoutVendorInput = {
@@ -2315,6 +4943,38 @@ export type ServiceUncheckedUpdateManyWithoutVendorInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -2343,6 +5003,38 @@ export type ServiceCreateManyBusinessProcessInput = {
   updatedAt?: Date | string
   createdBy?: string | null
   updatedBy?: string | null
+  slaResponseTimeP50?: number | null
+  slaResponseTimeP95?: number | null
+  slaResponseTimeP99?: number | null
+  slaResolutionTimeCritical?: number | null
+  slaResolutionTimeHigh?: number | null
+  slaResolutionTimeMedium?: number | null
+  slaUptimePercentage?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Date | string | null
+  slaViolationCount?: number
+  slaSupportTier?: string | null
+  slaContactEmail?: string | null
+  slaEscalationPath?: string | null
+  healthStatus?: $Enums.ServiceHealthStatus
+  lastHealthCheck?: Date | string | null
+  nextScheduledHealthCheck?: Date | string | null
+  uptimePercentage24h?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: string | null
+  healthCheckInterval?: number | null
+  healthCheckTimeout?: number | null
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: number | null
+  currentResponseTimeP95?: number | null
+  currentErrorRate?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Date | string | null
+  lastDowntimeDate?: Date | string | null
+  lastDowntimeDuration?: number | null
+  mttrMinutes?: number | null
+  mtbfHours?: number | null
   deletedAt?: Date | string | null
   deletedById?: string | null
 }
@@ -2370,6 +5062,38 @@ export type ServiceUpdateWithoutBusinessProcessInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   vendor?: Prisma.VendorUpdateOneWithoutServicesNestedInput
   owners?: Prisma.ServiceOwnershipUpdateManyWithoutServiceNestedInput
@@ -2377,6 +5101,8 @@ export type ServiceUpdateWithoutBusinessProcessInput = {
   assets?: Prisma.ServiceAssetUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUpdateManyWithoutToServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUpdateManyWithoutServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUpdateManyWithoutServiceNestedInput
   deletedBy?: Prisma.PersonUpdateOneWithoutDeletedServicesNestedInput
 }
 
@@ -2404,6 +5130,38 @@ export type ServiceUncheckedUpdateWithoutBusinessProcessInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   owners?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutServiceNestedInput
@@ -2411,6 +5169,8 @@ export type ServiceUncheckedUpdateWithoutBusinessProcessInput = {
   assets?: Prisma.ServiceAssetUncheckedUpdateManyWithoutServiceNestedInput
   outgoingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutFromServiceNestedInput
   incomingRelationships?: Prisma.ServiceRelationshipUncheckedUpdateManyWithoutToServiceNestedInput
+  healthHistory?: Prisma.ServiceHealthHistoryUncheckedUpdateManyWithoutServiceNestedInput
+  slaMetrics?: Prisma.ServiceSlaMetricUncheckedUpdateManyWithoutServiceNestedInput
 }
 
 export type ServiceUncheckedUpdateManyWithoutBusinessProcessInput = {
@@ -2437,6 +5197,38 @@ export type ServiceUncheckedUpdateManyWithoutBusinessProcessInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedBy?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResponseTimeP99?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeCritical?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeHigh?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaResolutionTimeMedium?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  slaUptimePercentage?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaErrorRateThreshold?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  slaComplianceStatus?: Prisma.EnumSlaComplianceStatusFieldUpdateOperationsInput | $Enums.SlaComplianceStatus
+  lastSlaReviewDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  slaViolationCount?: Prisma.IntFieldUpdateOperationsInput | number
+  slaSupportTier?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaContactEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slaEscalationPath?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthStatus?: Prisma.EnumServiceHealthStatusFieldUpdateOperationsInput | $Enums.ServiceHealthStatus
+  lastHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextScheduledHealthCheck?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  uptimePercentage24h?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage7d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  uptimePercentage30d?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  healthCheckUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  healthCheckInterval?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckTimeout?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  healthCheckEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  currentResponseTimeP50?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentResponseTimeP95?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  currentErrorRate?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  lastIncidentDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastDowntimeDuration?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mttrMinutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  mtbfHours?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -2452,6 +5244,8 @@ export type ServiceCountOutputType = {
   assets: number
   outgoingRelationships: number
   incomingRelationships: number
+  healthHistory: number
+  slaMetrics: number
 }
 
 export type ServiceCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2460,6 +5254,8 @@ export type ServiceCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   assets?: boolean | ServiceCountOutputTypeCountAssetsArgs
   outgoingRelationships?: boolean | ServiceCountOutputTypeCountOutgoingRelationshipsArgs
   incomingRelationships?: boolean | ServiceCountOutputTypeCountIncomingRelationshipsArgs
+  healthHistory?: boolean | ServiceCountOutputTypeCountHealthHistoryArgs
+  slaMetrics?: boolean | ServiceCountOutputTypeCountSlaMetricsArgs
 }
 
 /**
@@ -2507,6 +5303,20 @@ export type ServiceCountOutputTypeCountIncomingRelationshipsArgs<ExtArgs extends
   where?: Prisma.ServiceRelationshipWhereInput
 }
 
+/**
+ * ServiceCountOutputType without action
+ */
+export type ServiceCountOutputTypeCountHealthHistoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ServiceHealthHistoryWhereInput
+}
+
+/**
+ * ServiceCountOutputType without action
+ */
+export type ServiceCountOutputTypeCountSlaMetricsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ServiceSlaMetricWhereInput
+}
+
 
 export type ServiceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2533,6 +5343,38 @@ export type ServiceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   updatedAt?: boolean
   createdBy?: boolean
   updatedBy?: boolean
+  slaResponseTimeP50?: boolean
+  slaResponseTimeP95?: boolean
+  slaResponseTimeP99?: boolean
+  slaResolutionTimeCritical?: boolean
+  slaResolutionTimeHigh?: boolean
+  slaResolutionTimeMedium?: boolean
+  slaUptimePercentage?: boolean
+  slaErrorRateThreshold?: boolean
+  slaComplianceStatus?: boolean
+  lastSlaReviewDate?: boolean
+  slaViolationCount?: boolean
+  slaSupportTier?: boolean
+  slaContactEmail?: boolean
+  slaEscalationPath?: boolean
+  healthStatus?: boolean
+  lastHealthCheck?: boolean
+  nextScheduledHealthCheck?: boolean
+  uptimePercentage24h?: boolean
+  uptimePercentage7d?: boolean
+  uptimePercentage30d?: boolean
+  healthCheckUrl?: boolean
+  healthCheckInterval?: boolean
+  healthCheckTimeout?: boolean
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: boolean
+  currentResponseTimeP95?: boolean
+  currentErrorRate?: boolean
+  lastIncidentDate?: boolean
+  lastDowntimeDate?: boolean
+  lastDowntimeDuration?: boolean
+  mttrMinutes?: boolean
+  mtbfHours?: boolean
   deletedAt?: boolean
   deletedById?: boolean
   vendor?: boolean | Prisma.Service$vendorArgs<ExtArgs>
@@ -2542,6 +5384,8 @@ export type ServiceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   assets?: boolean | Prisma.Service$assetsArgs<ExtArgs>
   outgoingRelationships?: boolean | Prisma.Service$outgoingRelationshipsArgs<ExtArgs>
   incomingRelationships?: boolean | Prisma.Service$incomingRelationshipsArgs<ExtArgs>
+  healthHistory?: boolean | Prisma.Service$healthHistoryArgs<ExtArgs>
+  slaMetrics?: boolean | Prisma.Service$slaMetricsArgs<ExtArgs>
   deletedBy?: boolean | Prisma.Service$deletedByArgs<ExtArgs>
   _count?: boolean | Prisma.ServiceCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["service"]>
@@ -2571,6 +5415,38 @@ export type ServiceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   updatedAt?: boolean
   createdBy?: boolean
   updatedBy?: boolean
+  slaResponseTimeP50?: boolean
+  slaResponseTimeP95?: boolean
+  slaResponseTimeP99?: boolean
+  slaResolutionTimeCritical?: boolean
+  slaResolutionTimeHigh?: boolean
+  slaResolutionTimeMedium?: boolean
+  slaUptimePercentage?: boolean
+  slaErrorRateThreshold?: boolean
+  slaComplianceStatus?: boolean
+  lastSlaReviewDate?: boolean
+  slaViolationCount?: boolean
+  slaSupportTier?: boolean
+  slaContactEmail?: boolean
+  slaEscalationPath?: boolean
+  healthStatus?: boolean
+  lastHealthCheck?: boolean
+  nextScheduledHealthCheck?: boolean
+  uptimePercentage24h?: boolean
+  uptimePercentage7d?: boolean
+  uptimePercentage30d?: boolean
+  healthCheckUrl?: boolean
+  healthCheckInterval?: boolean
+  healthCheckTimeout?: boolean
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: boolean
+  currentResponseTimeP95?: boolean
+  currentErrorRate?: boolean
+  lastIncidentDate?: boolean
+  lastDowntimeDate?: boolean
+  lastDowntimeDuration?: boolean
+  mttrMinutes?: boolean
+  mtbfHours?: boolean
   deletedAt?: boolean
   deletedById?: boolean
   vendor?: boolean | Prisma.Service$vendorArgs<ExtArgs>
@@ -2603,6 +5479,38 @@ export type ServiceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   updatedAt?: boolean
   createdBy?: boolean
   updatedBy?: boolean
+  slaResponseTimeP50?: boolean
+  slaResponseTimeP95?: boolean
+  slaResponseTimeP99?: boolean
+  slaResolutionTimeCritical?: boolean
+  slaResolutionTimeHigh?: boolean
+  slaResolutionTimeMedium?: boolean
+  slaUptimePercentage?: boolean
+  slaErrorRateThreshold?: boolean
+  slaComplianceStatus?: boolean
+  lastSlaReviewDate?: boolean
+  slaViolationCount?: boolean
+  slaSupportTier?: boolean
+  slaContactEmail?: boolean
+  slaEscalationPath?: boolean
+  healthStatus?: boolean
+  lastHealthCheck?: boolean
+  nextScheduledHealthCheck?: boolean
+  uptimePercentage24h?: boolean
+  uptimePercentage7d?: boolean
+  uptimePercentage30d?: boolean
+  healthCheckUrl?: boolean
+  healthCheckInterval?: boolean
+  healthCheckTimeout?: boolean
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: boolean
+  currentResponseTimeP95?: boolean
+  currentErrorRate?: boolean
+  lastIncidentDate?: boolean
+  lastDowntimeDate?: boolean
+  lastDowntimeDuration?: boolean
+  mttrMinutes?: boolean
+  mtbfHours?: boolean
   deletedAt?: boolean
   deletedById?: boolean
   vendor?: boolean | Prisma.Service$vendorArgs<ExtArgs>
@@ -2635,11 +5543,43 @@ export type ServiceSelectScalar = {
   updatedAt?: boolean
   createdBy?: boolean
   updatedBy?: boolean
+  slaResponseTimeP50?: boolean
+  slaResponseTimeP95?: boolean
+  slaResponseTimeP99?: boolean
+  slaResolutionTimeCritical?: boolean
+  slaResolutionTimeHigh?: boolean
+  slaResolutionTimeMedium?: boolean
+  slaUptimePercentage?: boolean
+  slaErrorRateThreshold?: boolean
+  slaComplianceStatus?: boolean
+  lastSlaReviewDate?: boolean
+  slaViolationCount?: boolean
+  slaSupportTier?: boolean
+  slaContactEmail?: boolean
+  slaEscalationPath?: boolean
+  healthStatus?: boolean
+  lastHealthCheck?: boolean
+  nextScheduledHealthCheck?: boolean
+  uptimePercentage24h?: boolean
+  uptimePercentage7d?: boolean
+  uptimePercentage30d?: boolean
+  healthCheckUrl?: boolean
+  healthCheckInterval?: boolean
+  healthCheckTimeout?: boolean
+  healthCheckEnabled?: boolean
+  currentResponseTimeP50?: boolean
+  currentResponseTimeP95?: boolean
+  currentErrorRate?: boolean
+  lastIncidentDate?: boolean
+  lastDowntimeDate?: boolean
+  lastDowntimeDuration?: boolean
+  mttrMinutes?: boolean
+  mtbfHours?: boolean
   deletedAt?: boolean
   deletedById?: boolean
 }
 
-export type ServiceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "serviceType" | "description" | "businessPurpose" | "gitlabRepoUrl" | "dataConfidentiality" | "businessImpactLevel" | "criticality" | "isEssentialService" | "deploymentDate" | "currentStatus" | "lastPatchDate" | "plannedDecommissionDate" | "vendorId" | "slaDetails" | "businessProcessId" | "isInCentralRegister" | "complianceNotes" | "metadata" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy" | "deletedAt" | "deletedById", ExtArgs["result"]["service"]>
+export type ServiceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "serviceType" | "description" | "businessPurpose" | "gitlabRepoUrl" | "dataConfidentiality" | "businessImpactLevel" | "criticality" | "isEssentialService" | "deploymentDate" | "currentStatus" | "lastPatchDate" | "plannedDecommissionDate" | "vendorId" | "slaDetails" | "businessProcessId" | "isInCentralRegister" | "complianceNotes" | "metadata" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy" | "slaResponseTimeP50" | "slaResponseTimeP95" | "slaResponseTimeP99" | "slaResolutionTimeCritical" | "slaResolutionTimeHigh" | "slaResolutionTimeMedium" | "slaUptimePercentage" | "slaErrorRateThreshold" | "slaComplianceStatus" | "lastSlaReviewDate" | "slaViolationCount" | "slaSupportTier" | "slaContactEmail" | "slaEscalationPath" | "healthStatus" | "lastHealthCheck" | "nextScheduledHealthCheck" | "uptimePercentage24h" | "uptimePercentage7d" | "uptimePercentage30d" | "healthCheckUrl" | "healthCheckInterval" | "healthCheckTimeout" | "healthCheckEnabled" | "currentResponseTimeP50" | "currentResponseTimeP95" | "currentErrorRate" | "lastIncidentDate" | "lastDowntimeDate" | "lastDowntimeDuration" | "mttrMinutes" | "mtbfHours" | "deletedAt" | "deletedById", ExtArgs["result"]["service"]>
 export type ServiceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vendor?: boolean | Prisma.Service$vendorArgs<ExtArgs>
   businessProcess?: boolean | Prisma.Service$businessProcessArgs<ExtArgs>
@@ -2648,6 +5588,8 @@ export type ServiceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   assets?: boolean | Prisma.Service$assetsArgs<ExtArgs>
   outgoingRelationships?: boolean | Prisma.Service$outgoingRelationshipsArgs<ExtArgs>
   incomingRelationships?: boolean | Prisma.Service$incomingRelationshipsArgs<ExtArgs>
+  healthHistory?: boolean | Prisma.Service$healthHistoryArgs<ExtArgs>
+  slaMetrics?: boolean | Prisma.Service$slaMetricsArgs<ExtArgs>
   deletedBy?: boolean | Prisma.Service$deletedByArgs<ExtArgs>
   _count?: boolean | Prisma.ServiceCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -2672,6 +5614,8 @@ export type $ServicePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     assets: Prisma.$ServiceAssetPayload<ExtArgs>[]
     outgoingRelationships: Prisma.$ServiceRelationshipPayload<ExtArgs>[]
     incomingRelationships: Prisma.$ServiceRelationshipPayload<ExtArgs>[]
+    healthHistory: Prisma.$ServiceHealthHistoryPayload<ExtArgs>[]
+    slaMetrics: Prisma.$ServiceSlaMetricPayload<ExtArgs>[]
     deletedBy: Prisma.$PersonPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -2699,6 +5643,38 @@ export type $ServicePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     updatedAt: Date
     createdBy: string | null
     updatedBy: string | null
+    slaResponseTimeP50: number | null
+    slaResponseTimeP95: number | null
+    slaResponseTimeP99: number | null
+    slaResolutionTimeCritical: number | null
+    slaResolutionTimeHigh: number | null
+    slaResolutionTimeMedium: number | null
+    slaUptimePercentage: runtime.Decimal | null
+    slaErrorRateThreshold: runtime.Decimal | null
+    slaComplianceStatus: $Enums.SlaComplianceStatus
+    lastSlaReviewDate: Date | null
+    slaViolationCount: number
+    slaSupportTier: string | null
+    slaContactEmail: string | null
+    slaEscalationPath: string | null
+    healthStatus: $Enums.ServiceHealthStatus
+    lastHealthCheck: Date | null
+    nextScheduledHealthCheck: Date | null
+    uptimePercentage24h: runtime.Decimal | null
+    uptimePercentage7d: runtime.Decimal | null
+    uptimePercentage30d: runtime.Decimal | null
+    healthCheckUrl: string | null
+    healthCheckInterval: number | null
+    healthCheckTimeout: number | null
+    healthCheckEnabled: boolean
+    currentResponseTimeP50: number | null
+    currentResponseTimeP95: number | null
+    currentErrorRate: runtime.Decimal | null
+    lastIncidentDate: Date | null
+    lastDowntimeDate: Date | null
+    lastDowntimeDuration: number | null
+    mttrMinutes: number | null
+    mtbfHours: number | null
     deletedAt: Date | null
     deletedById: string | null
   }, ExtArgs["result"]["service"]>
@@ -3102,6 +6078,8 @@ export interface Prisma__ServiceClient<T, Null = never, ExtArgs extends runtime.
   assets<T extends Prisma.Service$assetsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Service$assetsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServiceAssetPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   outgoingRelationships<T extends Prisma.Service$outgoingRelationshipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Service$outgoingRelationshipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServiceRelationshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   incomingRelationships<T extends Prisma.Service$incomingRelationshipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Service$incomingRelationshipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServiceRelationshipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  healthHistory<T extends Prisma.Service$healthHistoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Service$healthHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServiceHealthHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  slaMetrics<T extends Prisma.Service$slaMetricsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Service$slaMetricsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ServiceSlaMetricPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   deletedBy<T extends Prisma.Service$deletedByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Service$deletedByArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -3156,6 +6134,38 @@ export interface ServiceFieldRefs {
   readonly updatedAt: Prisma.FieldRef<"Service", 'DateTime'>
   readonly createdBy: Prisma.FieldRef<"Service", 'String'>
   readonly updatedBy: Prisma.FieldRef<"Service", 'String'>
+  readonly slaResponseTimeP50: Prisma.FieldRef<"Service", 'Int'>
+  readonly slaResponseTimeP95: Prisma.FieldRef<"Service", 'Int'>
+  readonly slaResponseTimeP99: Prisma.FieldRef<"Service", 'Int'>
+  readonly slaResolutionTimeCritical: Prisma.FieldRef<"Service", 'Int'>
+  readonly slaResolutionTimeHigh: Prisma.FieldRef<"Service", 'Int'>
+  readonly slaResolutionTimeMedium: Prisma.FieldRef<"Service", 'Int'>
+  readonly slaUptimePercentage: Prisma.FieldRef<"Service", 'Decimal'>
+  readonly slaErrorRateThreshold: Prisma.FieldRef<"Service", 'Decimal'>
+  readonly slaComplianceStatus: Prisma.FieldRef<"Service", 'SlaComplianceStatus'>
+  readonly lastSlaReviewDate: Prisma.FieldRef<"Service", 'DateTime'>
+  readonly slaViolationCount: Prisma.FieldRef<"Service", 'Int'>
+  readonly slaSupportTier: Prisma.FieldRef<"Service", 'String'>
+  readonly slaContactEmail: Prisma.FieldRef<"Service", 'String'>
+  readonly slaEscalationPath: Prisma.FieldRef<"Service", 'String'>
+  readonly healthStatus: Prisma.FieldRef<"Service", 'ServiceHealthStatus'>
+  readonly lastHealthCheck: Prisma.FieldRef<"Service", 'DateTime'>
+  readonly nextScheduledHealthCheck: Prisma.FieldRef<"Service", 'DateTime'>
+  readonly uptimePercentage24h: Prisma.FieldRef<"Service", 'Decimal'>
+  readonly uptimePercentage7d: Prisma.FieldRef<"Service", 'Decimal'>
+  readonly uptimePercentage30d: Prisma.FieldRef<"Service", 'Decimal'>
+  readonly healthCheckUrl: Prisma.FieldRef<"Service", 'String'>
+  readonly healthCheckInterval: Prisma.FieldRef<"Service", 'Int'>
+  readonly healthCheckTimeout: Prisma.FieldRef<"Service", 'Int'>
+  readonly healthCheckEnabled: Prisma.FieldRef<"Service", 'Boolean'>
+  readonly currentResponseTimeP50: Prisma.FieldRef<"Service", 'Int'>
+  readonly currentResponseTimeP95: Prisma.FieldRef<"Service", 'Int'>
+  readonly currentErrorRate: Prisma.FieldRef<"Service", 'Decimal'>
+  readonly lastIncidentDate: Prisma.FieldRef<"Service", 'DateTime'>
+  readonly lastDowntimeDate: Prisma.FieldRef<"Service", 'DateTime'>
+  readonly lastDowntimeDuration: Prisma.FieldRef<"Service", 'Int'>
+  readonly mttrMinutes: Prisma.FieldRef<"Service", 'Int'>
+  readonly mtbfHours: Prisma.FieldRef<"Service", 'Int'>
   readonly deletedAt: Prisma.FieldRef<"Service", 'DateTime'>
   readonly deletedById: Prisma.FieldRef<"Service", 'String'>
 }
@@ -3709,6 +6719,54 @@ export type Service$incomingRelationshipsArgs<ExtArgs extends runtime.Types.Exte
   take?: number
   skip?: number
   distinct?: Prisma.ServiceRelationshipScalarFieldEnum | Prisma.ServiceRelationshipScalarFieldEnum[]
+}
+
+/**
+ * Service.healthHistory
+ */
+export type Service$healthHistoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ServiceHealthHistory
+   */
+  select?: Prisma.ServiceHealthHistorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ServiceHealthHistory
+   */
+  omit?: Prisma.ServiceHealthHistoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceHealthHistoryInclude<ExtArgs> | null
+  where?: Prisma.ServiceHealthHistoryWhereInput
+  orderBy?: Prisma.ServiceHealthHistoryOrderByWithRelationInput | Prisma.ServiceHealthHistoryOrderByWithRelationInput[]
+  cursor?: Prisma.ServiceHealthHistoryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ServiceHealthHistoryScalarFieldEnum | Prisma.ServiceHealthHistoryScalarFieldEnum[]
+}
+
+/**
+ * Service.slaMetrics
+ */
+export type Service$slaMetricsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ServiceSlaMetric
+   */
+  select?: Prisma.ServiceSlaMetricSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ServiceSlaMetric
+   */
+  omit?: Prisma.ServiceSlaMetricOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ServiceSlaMetricInclude<ExtArgs> | null
+  where?: Prisma.ServiceSlaMetricWhereInput
+  orderBy?: Prisma.ServiceSlaMetricOrderByWithRelationInput | Prisma.ServiceSlaMetricOrderByWithRelationInput[]
+  cursor?: Prisma.ServiceSlaMetricWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ServiceSlaMetricScalarFieldEnum | Prisma.ServiceSlaMetricScalarFieldEnum[]
 }
 
 /**

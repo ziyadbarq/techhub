@@ -41,6 +41,25 @@ export const CreateServiceSchema = z.object({
   isInCentralRegister: z.boolean().default(true),
   complianceNotes: z.string().nullish(),
   metadata: z.record(z.string(), z.unknown()).nullish(),
+
+  // SLA Fields (optional for create/update)
+  slaResponseTimeP50: z.number().int().positive().nullish(),
+  slaResponseTimeP95: z.number().int().positive().nullish(),
+  slaResponseTimeP99: z.number().int().positive().nullish(),
+  slaResolutionTimeCritical: z.number().int().positive().nullish(),
+  slaResolutionTimeHigh: z.number().int().positive().nullish(),
+  slaResolutionTimeMedium: z.number().int().positive().nullish(),
+  slaUptimePercentage: z.number().min(0).max(100).nullish(),
+  slaErrorRateThreshold: z.number().min(0).max(100).nullish(),
+  slaSupportTier: z.string().max(100).nullish(),
+  slaContactEmail: z.string().email("Invalid email").nullish(),
+  slaEscalationPath: z.string().nullish(),
+
+  // Health Monitoring Fields (optional for create/update)
+  healthCheckUrl: z.string().url("Invalid URL").nullish(),
+  healthCheckInterval: z.number().int().positive().max(1440).nullish(), // Max 24 hours
+  healthCheckTimeout: z.number().int().positive().max(300).nullish(), // Max 5 minutes
+  healthCheckEnabled: z.boolean().default(false),
 });
 
 export const UpdateServiceSchema = CreateServiceSchema.partial();

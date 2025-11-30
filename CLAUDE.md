@@ -52,7 +52,7 @@ This file provides high-level guidance when working with this repository.
   - **License Management**: LicenseProduct, LicenseProductField, LicenseEntitlement, LicenseAllocation, LicenseAddon, LicenseEntitlementAddon (6 entities, 33 use cases) - includes cost tracking with multi-currency support
   - **Governance**: DataDomain, DataOwnership, VerificationCampaign, VerificationItem (4 entities, 24 use cases)
   - **Attachments**: AttachmentType, Attachment (2 entities, 11 use cases)
-  - **Service Management**: Service, ServiceOwnership, BusinessProcess, ServiceInfrastructure, ServiceAsset (5 entities, 25 use cases)
+  - **Service Management**: Service, ServiceOwnership, BusinessProcess, ServiceInfrastructure, ServiceAsset, ServiceHealthHistory, ServiceSlaMetric (7 entities, 37 use cases) - includes SLA management, health monitoring, and compliance tracking
   - **Intune Integration**: IntuneDevice, IntuneComplianceHistory (2 entities, 9 use cases) - MS Graph device sync with compliance tracking
 - **Reference**: Task entity (complete implementation, hidden from UI)
 - **Marketing**: Public landing page showcasing system capabilities
@@ -87,7 +87,7 @@ npm run roles:manage -- --help     # Show role manager help
 
 ## Database Development Quick Reference
 
-- **Running Prisma queries**: `npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastructure/database/prisma/client.ts'; (async()=>{ console.log(await prisma.asset.count()); await prisma.$disconnect();})();"` (use Prisma singleton; see docs/guides/PRISMA_GUIDE.md)
+- **Running Prisma queries / DB connectivity check**: `npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastructure/database/prisma/client.ts'; (async()=>{ const persons = await prisma.person.findMany({ select: { firstName: true, lastName: true } }); console.log('Persons (' + persons.length + '):'); persons.slice(0, 15).forEach(p => console.log('  - ' + p.firstName + ' ' + p.lastName)); await prisma.$disconnect(); })();"` (loads `.env.local`, uses Prisma singleton; see docs/guides/PRISMA_GUIDE.md)
 - **Schema location**: Multi-file schema in `prisma/schema/` (`schema.prisma`, `assets.prisma`, `licenses.prisma`, `cmdb.prisma`, etc.)
 - **Schema changes**: Edit `.prisma` files → `npx prisma migrate dev --name descriptive_name` → `npm run db:generate`
 - **Common commands**: `npm run db:seed`, `npm run db:seed:dev`, `npm run db:reset`, `npx prisma studio`

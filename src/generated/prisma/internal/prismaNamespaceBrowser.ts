@@ -124,6 +124,8 @@ export const ModelName = {
   ServiceInfrastructure: 'ServiceInfrastructure',
   ServiceAsset: 'ServiceAsset',
   ServiceRelationship: 'ServiceRelationship',
+  ServiceHealthHistory: 'ServiceHealthHistory',
+  ServiceSlaMetric: 'ServiceSlaMetric',
   Task: 'Task',
   PromptBlock: 'PromptBlock',
   PromptComposition: 'PromptComposition',
@@ -1428,6 +1430,38 @@ export const ServiceScalarFieldEnum = {
   updatedAt: 'updatedAt',
   createdBy: 'createdBy',
   updatedBy: 'updatedBy',
+  slaResponseTimeP50: 'slaResponseTimeP50',
+  slaResponseTimeP95: 'slaResponseTimeP95',
+  slaResponseTimeP99: 'slaResponseTimeP99',
+  slaResolutionTimeCritical: 'slaResolutionTimeCritical',
+  slaResolutionTimeHigh: 'slaResolutionTimeHigh',
+  slaResolutionTimeMedium: 'slaResolutionTimeMedium',
+  slaUptimePercentage: 'slaUptimePercentage',
+  slaErrorRateThreshold: 'slaErrorRateThreshold',
+  slaComplianceStatus: 'slaComplianceStatus',
+  lastSlaReviewDate: 'lastSlaReviewDate',
+  slaViolationCount: 'slaViolationCount',
+  slaSupportTier: 'slaSupportTier',
+  slaContactEmail: 'slaContactEmail',
+  slaEscalationPath: 'slaEscalationPath',
+  healthStatus: 'healthStatus',
+  lastHealthCheck: 'lastHealthCheck',
+  nextScheduledHealthCheck: 'nextScheduledHealthCheck',
+  uptimePercentage24h: 'uptimePercentage24h',
+  uptimePercentage7d: 'uptimePercentage7d',
+  uptimePercentage30d: 'uptimePercentage30d',
+  healthCheckUrl: 'healthCheckUrl',
+  healthCheckInterval: 'healthCheckInterval',
+  healthCheckTimeout: 'healthCheckTimeout',
+  healthCheckEnabled: 'healthCheckEnabled',
+  currentResponseTimeP50: 'currentResponseTimeP50',
+  currentResponseTimeP95: 'currentResponseTimeP95',
+  currentErrorRate: 'currentErrorRate',
+  lastIncidentDate: 'lastIncidentDate',
+  lastDowntimeDate: 'lastDowntimeDate',
+  lastDowntimeDuration: 'lastDowntimeDuration',
+  mttrMinutes: 'mttrMinutes',
+  mtbfHours: 'mtbfHours',
   deletedAt: 'deletedAt',
   deletedById: 'deletedById'
 } as const
@@ -1498,6 +1532,43 @@ export const ServiceRelationshipScalarFieldEnum = {
 } as const
 
 export type ServiceRelationshipScalarFieldEnum = (typeof ServiceRelationshipScalarFieldEnum)[keyof typeof ServiceRelationshipScalarFieldEnum]
+
+
+export const ServiceHealthHistoryScalarFieldEnum = {
+  id: 'id',
+  serviceId: 'serviceId',
+  previousStatus: 'previousStatus',
+  newStatus: 'newStatus',
+  checkTimestamp: 'checkTimestamp',
+  responseTime: 'responseTime',
+  errorMessage: 'errorMessage',
+  statusCode: 'statusCode',
+  checkDuration: 'checkDuration',
+  triggeredBy: 'triggeredBy',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type ServiceHealthHistoryScalarFieldEnum = (typeof ServiceHealthHistoryScalarFieldEnum)[keyof typeof ServiceHealthHistoryScalarFieldEnum]
+
+
+export const ServiceSlaMetricScalarFieldEnum = {
+  id: 'id',
+  serviceId: 'serviceId',
+  metricType: 'metricType',
+  periodStart: 'periodStart',
+  periodEnd: 'periodEnd',
+  targetValue: 'targetValue',
+  actualValue: 'actualValue',
+  complianceStatus: 'complianceStatus',
+  breachDuration: 'breachDuration',
+  incidentCount: 'incidentCount',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ServiceSlaMetricScalarFieldEnum = (typeof ServiceSlaMetricScalarFieldEnum)[keyof typeof ServiceSlaMetricScalarFieldEnum]
 
 
 export const TaskScalarFieldEnum = {

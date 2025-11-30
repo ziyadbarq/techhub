@@ -11,6 +11,8 @@ import type {
   DataConfidentiality,
   BusinessImpactLevel,
   CriticalityLevel,
+  ServiceHealthStatus,
+  SlaComplianceStatus,
 } from "@/generated/prisma";
 
 export interface ServiceProps {
@@ -38,6 +40,42 @@ export interface ServiceProps {
   updatedAt: Date;
   createdBy: string | null;
   updatedBy: string | null;
+
+  // SLA Fields
+  slaResponseTimeP50: number | null;
+  slaResponseTimeP95: number | null;
+  slaResponseTimeP99: number | null;
+  slaResolutionTimeCritical: number | null;
+  slaResolutionTimeHigh: number | null;
+  slaResolutionTimeMedium: number | null;
+  slaUptimePercentage: number | null;
+  slaErrorRateThreshold: number | null;
+  slaComplianceStatus: SlaComplianceStatus;
+  lastSlaReviewDate: Date | null;
+  slaViolationCount: number;
+  slaSupportTier: string | null;
+  slaContactEmail: string | null;
+  slaEscalationPath: string | null;
+
+  // Health Monitoring Fields
+  healthStatus: ServiceHealthStatus;
+  lastHealthCheck: Date | null;
+  nextScheduledHealthCheck: Date | null;
+  uptimePercentage24h: number | null;
+  uptimePercentage7d: number | null;
+  uptimePercentage30d: number | null;
+  healthCheckUrl: string | null;
+  healthCheckInterval: number | null;
+  healthCheckTimeout: number | null;
+  healthCheckEnabled: boolean;
+  currentResponseTimeP50: number | null;
+  currentResponseTimeP95: number | null;
+  currentErrorRate: number | null;
+  lastIncidentDate: Date | null;
+  lastDowntimeDate: Date | null;
+  lastDowntimeDuration: number | null;
+  mttrMinutes: number | null;
+  mtbfHours: number | null;
 }
 
 export interface CreateServiceProps {
@@ -117,6 +155,42 @@ export class Service {
       updatedAt: now,
       createdBy: props.createdBy || null,
       updatedBy: null,
+
+      // Initialize SLA fields
+      slaResponseTimeP50: null,
+      slaResponseTimeP95: null,
+      slaResponseTimeP99: null,
+      slaResolutionTimeCritical: null,
+      slaResolutionTimeHigh: null,
+      slaResolutionTimeMedium: null,
+      slaUptimePercentage: null,
+      slaErrorRateThreshold: null,
+      slaComplianceStatus: "NOT_APPLICABLE",
+      lastSlaReviewDate: null,
+      slaViolationCount: 0,
+      slaSupportTier: null,
+      slaContactEmail: null,
+      slaEscalationPath: null,
+
+      // Initialize Health Monitoring fields
+      healthStatus: "UNKNOWN",
+      lastHealthCheck: null,
+      nextScheduledHealthCheck: null,
+      uptimePercentage24h: null,
+      uptimePercentage7d: null,
+      uptimePercentage30d: null,
+      healthCheckUrl: null,
+      healthCheckInterval: null,
+      healthCheckTimeout: null,
+      healthCheckEnabled: false,
+      currentResponseTimeP50: null,
+      currentResponseTimeP95: null,
+      currentErrorRate: null,
+      lastIncidentDate: null,
+      lastDowntimeDate: null,
+      lastDowntimeDuration: null,
+      mttrMinutes: null,
+      mtbfHours: null,
     });
   }
 
@@ -223,6 +297,156 @@ export class Service {
       return false;
     }
     return daysUntilDecommission > 0 && daysUntilDecommission <= daysThreshold;
+  }
+
+  // ============ SLA Business Logic ============
+
+  isSlaCompliant(): boolean {
+    return this.props.slaComplianceStatus === "COMPLIANT";
+  }
+
+  hasSlaTargets(): boolean {
+    return (
+      this.props.slaResponseTimeP50 !== null ||
+      this.props.slaResponseTimeP95 !== null ||
+      this.props.slaResponseTimeP99 !== null ||
+      this.props.slaUptimePercentage !== null ||
+      this.props.slaErrorRateThreshold !== null
+    );
+  }
+
+  calculateSlaCompliance(): SlaComplianceStatus {
+    if (!this.hasSlaTargets()) {
+      return "NOT_APPLICABLE";
+    }
+
+    // Check response time compliance
+    if (this.props.slaResponseTimeP95 && this.props.currentResponseTimeP95) {
+      if (this.props.currentResponseTimeP95 > this.props.slaResponseTimeP95) {
+        return "BREACHED";
+      }
+      // At risk if within 10% of threshold
+      const threshold = this.props.slaResponseTimeP95 * 0.9;
+      if (this.props.currentResponseTimeP95 > threshold) {
+        return "AT_RISK";
+      }
+    }
+
+    // Check error rate compliance
+    if (this.props.slaErrorRateThreshold && this.props.currentErrorRate) {
+      if (this.props.currentErrorRate > this.props.slaErrorRateThreshold) {
+        return "BREACHED";
+      }
+      // At risk if within 80% of threshold
+      const threshold = this.props.slaErrorRateThreshold * 0.8;
+      if (this.props.currentErrorRate > threshold) {
+        return "AT_RISK";
+      }
+    }
+
+    // Check uptime compliance
+    if (this.props.slaUptimePercentage && this.props.uptimePercentage30d) {
+      if (this.props.uptimePercentage30d < this.props.slaUptimePercentage) {
+        return "BREACHED";
+      }
+      // At risk if within 1% of threshold
+      const threshold = this.props.slaUptimePercentage - 1.0;
+      if (this.props.uptimePercentage30d < threshold) {
+        return "AT_RISK";
+      }
+    }
+
+    return "COMPLIANT";
+  }
+
+  updateSlaCompliance(): void {
+    this.props.slaComplianceStatus = this.calculateSlaCompliance();
+    this.props.lastSlaReviewDate = new Date();
+  }
+
+  recordSlaViolation(): void {
+    this.props.slaViolationCount += 1;
+    this.props.slaComplianceStatus = "BREACHED";
+    this.props.lastSlaReviewDate = new Date();
+  }
+
+  // ============ Health Monitoring Business Logic ============
+
+  isHealthy(): boolean {
+    return (
+      this.props.healthStatus === "HEALTHY" ||
+      this.props.healthStatus === "MAINTENANCE"
+    );
+  }
+
+  isUnhealthy(): boolean {
+    return (
+      this.props.healthStatus === "UNHEALTHY" ||
+      this.props.healthStatus === "DOWN"
+    );
+  }
+
+  needsHealthCheck(): boolean {
+    if (!this.props.healthCheckEnabled) {
+      return false;
+    }
+    if (!this.props.nextScheduledHealthCheck) {
+      return true;
+    }
+    return new Date() >= this.props.nextScheduledHealthCheck;
+  }
+
+  updateHealthStatus(
+    newStatus: ServiceHealthStatus,
+    responseTime?: number,
+  ): void {
+    this.props.healthStatus = newStatus;
+    this.props.lastHealthCheck = new Date();
+
+    // Calculate next scheduled check
+    if (this.props.healthCheckEnabled && this.props.healthCheckInterval) {
+      const nextCheck = new Date();
+      nextCheck.setMinutes(
+        nextCheck.getMinutes() + this.props.healthCheckInterval,
+      );
+      this.props.nextScheduledHealthCheck = nextCheck;
+    }
+
+    // Update current response time if provided
+    if (responseTime !== undefined) {
+      this.props.currentResponseTimeP50 = responseTime;
+      this.props.currentResponseTimeP95 = responseTime; // Simplified for now
+    }
+
+    // Track incidents
+    if (newStatus === "DOWN" || newStatus === "UNHEALTHY") {
+      this.props.lastIncidentDate = new Date();
+      if (!this.props.lastDowntimeDate) {
+        this.props.lastDowntimeDate = new Date();
+      }
+    }
+
+    this.props.updatedAt = new Date();
+  }
+
+  calculateUptimePercentage(_periodHours: number): number {
+    // This is a simplified calculation
+    // In practice, this would be calculated from ServiceHealthHistory records
+    if (this.isHealthy()) {
+      return 99.9; // Default high uptime for healthy services
+    } else if (this.props.healthStatus === "DEGRADED") {
+      return 95.0;
+    } else if (this.isUnhealthy()) {
+      return 50.0;
+    }
+    return 0.0;
+  }
+
+  updateUptimeMetrics(): void {
+    this.props.uptimePercentage24h = this.calculateUptimePercentage(24);
+    this.props.uptimePercentage7d = this.calculateUptimePercentage(24 * 7);
+    this.props.uptimePercentage30d = this.calculateUptimePercentage(24 * 30);
+    this.props.updatedAt = new Date();
   }
 
   static validateName(name: string): void {
@@ -346,6 +570,136 @@ export class Service {
 
   get updatedBy(): string | null {
     return this.props.updatedBy;
+  }
+
+  // SLA Fields Getters
+  get slaResponseTimeP50(): number | null {
+    return this.props.slaResponseTimeP50;
+  }
+
+  get slaResponseTimeP95(): number | null {
+    return this.props.slaResponseTimeP95;
+  }
+
+  get slaResponseTimeP99(): number | null {
+    return this.props.slaResponseTimeP99;
+  }
+
+  get slaResolutionTimeCritical(): number | null {
+    return this.props.slaResolutionTimeCritical;
+  }
+
+  get slaResolutionTimeHigh(): number | null {
+    return this.props.slaResolutionTimeHigh;
+  }
+
+  get slaResolutionTimeMedium(): number | null {
+    return this.props.slaResolutionTimeMedium;
+  }
+
+  get slaUptimePercentage(): number | null {
+    return this.props.slaUptimePercentage;
+  }
+
+  get slaErrorRateThreshold(): number | null {
+    return this.props.slaErrorRateThreshold;
+  }
+
+  get slaComplianceStatus(): SlaComplianceStatus {
+    return this.props.slaComplianceStatus;
+  }
+
+  get lastSlaReviewDate(): Date | null {
+    return this.props.lastSlaReviewDate;
+  }
+
+  get slaViolationCount(): number {
+    return this.props.slaViolationCount;
+  }
+
+  get slaSupportTier(): string | null {
+    return this.props.slaSupportTier;
+  }
+
+  get slaContactEmail(): string | null {
+    return this.props.slaContactEmail;
+  }
+
+  get slaEscalationPath(): string | null {
+    return this.props.slaEscalationPath;
+  }
+
+  // Health Monitoring Fields Getters
+  get healthStatus(): ServiceHealthStatus {
+    return this.props.healthStatus;
+  }
+
+  get lastHealthCheck(): Date | null {
+    return this.props.lastHealthCheck;
+  }
+
+  get nextScheduledHealthCheck(): Date | null {
+    return this.props.nextScheduledHealthCheck;
+  }
+
+  get uptimePercentage24h(): number | null {
+    return this.props.uptimePercentage24h;
+  }
+
+  get uptimePercentage7d(): number | null {
+    return this.props.uptimePercentage7d;
+  }
+
+  get uptimePercentage30d(): number | null {
+    return this.props.uptimePercentage30d;
+  }
+
+  get healthCheckUrl(): string | null {
+    return this.props.healthCheckUrl;
+  }
+
+  get healthCheckInterval(): number | null {
+    return this.props.healthCheckInterval;
+  }
+
+  get healthCheckTimeout(): number | null {
+    return this.props.healthCheckTimeout;
+  }
+
+  get healthCheckEnabled(): boolean {
+    return this.props.healthCheckEnabled;
+  }
+
+  get currentResponseTimeP50(): number | null {
+    return this.props.currentResponseTimeP50;
+  }
+
+  get currentResponseTimeP95(): number | null {
+    return this.props.currentResponseTimeP95;
+  }
+
+  get currentErrorRate(): number | null {
+    return this.props.currentErrorRate;
+  }
+
+  get lastIncidentDate(): Date | null {
+    return this.props.lastIncidentDate;
+  }
+
+  get lastDowntimeDate(): Date | null {
+    return this.props.lastDowntimeDate;
+  }
+
+  get lastDowntimeDuration(): number | null {
+    return this.props.lastDowntimeDuration;
+  }
+
+  get mttrMinutes(): number | null {
+    return this.props.mttrMinutes;
+  }
+
+  get mtbfHours(): number | null {
+    return this.props.mtbfHours;
   }
 
   toObject(): ServiceProps {

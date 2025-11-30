@@ -122,6 +122,10 @@ export const DI_TOKENS = {
     "IServiceInfrastructureRepository",
   ),
   IServiceRelationshipRepository: Symbol.for("IServiceRelationshipRepository"),
+  IServiceHealthHistoryRepository: Symbol.for(
+    "IServiceHealthHistoryRepository",
+  ),
+  IServiceSlaMetricRepository: Symbol.for("IServiceSlaMetricRepository"),
   ISearchRepository: Symbol.for("ISearchRepository"),
 
   // ==========================================
@@ -734,6 +738,18 @@ export const DI_TOKENS = {
   CreateAssetUseCase: Symbol.for("CreateAssetUseCase"),
   GetAssetUseCase: Symbol.for("GetAssetUseCase"),
   ListAssetsUseCase: Symbol.for("ListAssetsUseCase"),
+  GetAssetsNearingEolReportUseCase: Symbol.for(
+    "GetAssetsNearingEolReportUseCase",
+  ),
+  GetAssetValueByCategoryReportUseCase: Symbol.for(
+    "GetAssetValueByCategoryReportUseCase",
+  ),
+  GetAssetsByDepartmentReportUseCase: Symbol.for(
+    "GetAssetsByDepartmentReportUseCase",
+  ),
+  GetUnassignedAssetsReportUseCase: Symbol.for(
+    "GetUnassignedAssetsReportUseCase",
+  ),
   UpdateAssetUseCase: Symbol.for("UpdateAssetUseCase"),
   DeleteAssetUseCase: Symbol.for("DeleteAssetUseCase"),
   DeleteAssetWithConfirmationUseCase: Symbol.for(
@@ -831,6 +847,10 @@ export const DI_TOKENS = {
   GetEssentialServicesUseCase: Symbol.for("GetEssentialServicesUseCase"),
   GetRetiringServicesUseCase: Symbol.for("GetRetiringServicesUseCase"),
   RetireServiceUseCase: Symbol.for("RetireServiceUseCase"),
+  UpdateServiceHealthUseCase: Symbol.for("UpdateServiceHealthUseCase"),
+  CalculateSlaComplianceUseCase: Symbol.for("CalculateSlaComplianceUseCase"),
+  RecordSlaMetricUseCase: Symbol.for("RecordSlaMetricUseCase"),
+  GetServiceHealthHistoryUseCase: Symbol.for("GetServiceHealthHistoryUseCase"),
 
   // Service Management: Service Ownership Use Cases
   AddServiceOwnerUseCase: Symbol.for("AddServiceOwnerUseCase"),

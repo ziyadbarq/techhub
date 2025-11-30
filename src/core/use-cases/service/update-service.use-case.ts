@@ -36,6 +36,25 @@ export interface UpdateServiceRequest {
   complianceNotes?: string;
   metadata?: Record<string, unknown>;
   updatedBy?: string;
+
+  // SLA Fields
+  slaResponseTimeP50?: number;
+  slaResponseTimeP95?: number;
+  slaResponseTimeP99?: number;
+  slaResolutionTimeCritical?: number;
+  slaResolutionTimeHigh?: number;
+  slaResolutionTimeMedium?: number;
+  slaUptimePercentage?: number;
+  slaErrorRateThreshold?: number;
+  slaSupportTier?: string;
+  slaContactEmail?: string;
+  slaEscalationPath?: string;
+
+  // Health Monitoring Fields
+  healthCheckUrl?: string;
+  healthCheckInterval?: number;
+  healthCheckTimeout?: number;
+  healthCheckEnabled?: boolean;
 }
 
 @injectable()
@@ -83,6 +102,25 @@ export class UpdateServiceUseCase {
         isInCentralRegister: request.isInCentralRegister,
         complianceNotes: request.complianceNotes,
         metadata: request.metadata,
+
+        // SLA Fields
+        slaResponseTimeP50: request.slaResponseTimeP50,
+        slaResponseTimeP95: request.slaResponseTimeP95,
+        slaResponseTimeP99: request.slaResponseTimeP99,
+        slaResolutionTimeCritical: request.slaResolutionTimeCritical,
+        slaResolutionTimeHigh: request.slaResolutionTimeHigh,
+        slaResolutionTimeMedium: request.slaResolutionTimeMedium,
+        slaUptimePercentage: request.slaUptimePercentage,
+        slaErrorRateThreshold: request.slaErrorRateThreshold,
+        slaSupportTier: request.slaSupportTier,
+        slaContactEmail: request.slaContactEmail,
+        slaEscalationPath: request.slaEscalationPath,
+
+        // Health Monitoring Fields
+        healthCheckUrl: request.healthCheckUrl,
+        healthCheckInterval: request.healthCheckInterval,
+        healthCheckTimeout: request.healthCheckTimeout,
+        healthCheckEnabled: request.healthCheckEnabled,
       },
       request.updatedBy,
     );

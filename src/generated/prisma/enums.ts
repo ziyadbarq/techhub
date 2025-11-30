@@ -411,6 +411,39 @@ export const ServiceRelationshipType = {
 export type ServiceRelationshipType = (typeof ServiceRelationshipType)[keyof typeof ServiceRelationshipType]
 
 
+export const ServiceHealthStatus = {
+  HEALTHY: 'HEALTHY',
+  DEGRADED: 'DEGRADED',
+  UNHEALTHY: 'UNHEALTHY',
+  DOWN: 'DOWN',
+  UNKNOWN: 'UNKNOWN',
+  MAINTENANCE: 'MAINTENANCE'
+} as const
+
+export type ServiceHealthStatus = (typeof ServiceHealthStatus)[keyof typeof ServiceHealthStatus]
+
+
+export const SlaComplianceStatus = {
+  COMPLIANT: 'COMPLIANT',
+  AT_RISK: 'AT_RISK',
+  BREACHED: 'BREACHED',
+  NOT_APPLICABLE: 'NOT_APPLICABLE'
+} as const
+
+export type SlaComplianceStatus = (typeof SlaComplianceStatus)[keyof typeof SlaComplianceStatus]
+
+
+export const SlaMetricType = {
+  RESPONSE_TIME: 'RESPONSE_TIME',
+  RESOLUTION_TIME: 'RESOLUTION_TIME',
+  UPTIME: 'UPTIME',
+  ERROR_RATE: 'ERROR_RATE',
+  THROUGHPUT: 'THROUGHPUT'
+} as const
+
+export type SlaMetricType = (typeof SlaMetricType)[keyof typeof SlaMetricType]
+
+
 export const TargetObjectTypeEnum = {
   ORGANIZATION_UNIT: 'ORGANIZATION_UNIT',
   PERSON: 'PERSON',

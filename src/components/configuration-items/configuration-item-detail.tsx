@@ -14,11 +14,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { ConfigurationItemDTO } from "@/interface-adapters/dtos/generated/configuration-item.dto";
-import { Pencil, X } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { format } from "date-fns";
 import { CICustomFieldsDisplay } from "@/components/custom-fields";
+import type { CIRelationshipDTO } from "@/interface-adapters/dtos/generated/ci-relationship.dto";
+import { listCIRelationshipsAction } from "@/interface-adapters/controllers/ci-relationship.controller";
+import { useEffect, useState } from "react";
 
 interface ConfigurationItemDetailProps {
   item: ConfigurationItemDTO;
@@ -48,6 +51,34 @@ export function ConfigurationItemDetail({
   onClose,
   onEdit,
 }: ConfigurationItemDetailProps) {
+  const [relationships, setRelationships] = useState<CIRelationshipDTO[]>([]);
+  const [isLoadingRels, setIsLoadingRels] = useState(false);
+
+  useEffect(() => {
+    const loadRelationships = async () => {
+      setIsLoadingRels(true);
+      try {
+        const result = await listCIRelationshipsAction(
+          item.id,
+          undefined,
+          true,
+        );
+        if (result.success && result.data) {
+          setRelationships(result.data);
+        }
+      } catch {
+        // Best-effort; keep UI resilient
+      } finally {
+        setIsLoadingRels(false);
+      }
+    };
+
+    loadRelationships();
+  }, [item.id]);
+
+  const dependsOn = relationships.filter((rel) => rel.fromCiId === item.id);
+  const impactedBy = relationships.filter((rel) => rel.toCiId === item.id);
+
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
@@ -67,9 +98,6 @@ export function ConfigurationItemDetail({
                   Edit
                 </Button>
               </PermissionGuard>
-              <Button variant="ghost" size="sm" onClick={onClose}>
-                <X className="h-4 w-4" />
-              </Button>
             </div>
           </DialogTitle>
         </DialogHeader>
@@ -214,6 +242,88 @@ export function ConfigurationItemDetail({
                 <p className="font-mono text-xs break-all">{item.id}</p>
               </div>
             </div>
+          </div>
+
+          {/* Relationships */}
+          <Separator />
+          <div>
+            <h3 className="mb-3 text-lg font-semibold">
+              Relationships
+              {isLoadingRels && (
+                <span className="text-muted-foreground ml-2 text-xs">
+                  Loading…
+                </span>
+              )}
+            </h3>
+            {dependsOn.length === 0 &&
+            impactedBy.length === 0 &&
+            !isLoadingRels ? (
+              <p className="text-muted-foreground text-sm">
+                No relationships found for this configuration item.
+              </p>
+            ) : (
+              <div className="space-y-4">
+                {dependsOn.length > 0 && (
+                  <div>
+                    <p className="text-muted-foreground mb-2 text-sm">
+                      This CI depends on:
+                    </p>
+                    <div className="space-y-1">
+                      {dependsOn.map((rel) => (
+                        <div
+                          key={rel.id}
+                          className="border-border flex items-center justify-between rounded-md border px-3 py-2 text-sm"
+                        >
+                          <div>
+                            <p className="font-medium">
+                              {rel.toCiName || rel.toCiId}
+                            </p>
+                            <p className="text-muted-foreground text-xs">
+                              {rel.relationshipTypeName ||
+                                rel.relationshipTypeCode ||
+                                rel.relationshipTypeId}
+                            </p>
+                          </div>
+                          <Badge variant="outline">
+                            {rel.isActive ? "Active" : "Inactive"}
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {impactedBy.length > 0 && (
+                  <div>
+                    <p className="text-muted-foreground mb-2 text-sm">
+                      This CI is depended on by:
+                    </p>
+                    <div className="space-y-1">
+                      {impactedBy.map((rel) => (
+                        <div
+                          key={rel.id}
+                          className="border-border flex items-center justify-between rounded-md border px-3 py-2 text-sm"
+                        >
+                          <div>
+                            <p className="font-medium">
+                              {rel.fromCiName || rel.fromCiId}
+                            </p>
+                            <p className="text-muted-foreground text-xs">
+                              {rel.relationshipTypeName ||
+                                rel.relationshipTypeCode ||
+                                rel.relationshipTypeId}
+                            </p>
+                          </div>
+                          <Badge variant="outline">
+                            {rel.isActive ? "Active" : "Inactive"}
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>

@@ -157,9 +157,22 @@ export async function getServiceOwnersAction(
 
     const owners = await useCase.execute({ serviceId });
 
+    // Build enrichment map from included person data
+    const enrichmentMap = new Map<
+      string,
+      { personName?: string; personEmail?: string }
+    >();
+
+    for (const owner of owners) {
+      enrichmentMap.set(owner.personId, {
+        personName: `${owner.person.firstName} ${owner.person.lastName}`,
+        personEmail: owner.person.email ?? undefined,
+      });
+    }
+
     return {
       success: true,
-      data: presentServiceOwnerList(owners),
+      data: presentServiceOwnerList(owners, enrichmentMap),
     };
   } catch (error) {
     return handleControllerError(

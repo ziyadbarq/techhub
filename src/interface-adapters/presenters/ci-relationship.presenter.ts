@@ -8,6 +8,7 @@ export class CIRelationshipPresenter {
       fromCiName?: string;
       toCiName?: string;
       relationshipTypeName?: string;
+      relationshipTypeCode?: string;
     },
   ): CIRelationshipDTO {
     return {
@@ -24,6 +25,7 @@ export class CIRelationshipPresenter {
       fromCiName: enrichment?.fromCiName,
       toCiName: enrichment?.toCiName,
       relationshipTypeName: enrichment?.relationshipTypeName,
+      relationshipTypeCode: enrichment?.relationshipTypeCode,
     };
   }
 

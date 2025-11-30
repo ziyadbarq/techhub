@@ -14,19 +14,18 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, PieChart } from "lucide-react";
-import { listAssetsAction } from "@/interface-adapters/controllers/asset.controller";
+import { getAssetValueByCategoryReportAction } from "@/interface-adapters/controllers/asset.controller";
 import { toast } from "sonner";
-import { format } from "date-fns";
 import { arrayToCSV, downloadCSV } from "@/lib/csv-export";
+import { formatDateISO } from "@/lib/utils/date-format";
 
 interface CategoryValue {
   [key: string]: string | number | boolean | null | undefined;
   categoryId: string;
   categoryName: string;
   assetCount: number;
-  totalValue: number;
-  avgValue: number;
-  currency: string;
+  totalValueSar: number;
+  avgValueSar: number;
   percentage: number;
 }
 
@@ -38,64 +37,21 @@ export function AssetValueByCategoryReport() {
     async function fetchData() {
       try {
         setLoading(true);
-        const result = await listAssetsAction();
+        const result = await getAssetValueByCategoryReportAction();
 
         if (result.success && result.data) {
-          const assets = result.data;
-
-          // Group by category
-          const categoryMap = new Map<
-            string,
-            {
-              name: string;
-              count: number;
-              value: number;
-              currency: string;
-            }
-          >();
-
-          for (const asset of assets) {
-            const catId = asset.assetCategoryId;
-            const existing = categoryMap.get(catId) || {
-              name: asset.categoryName || "Unknown",
-              count: 0,
-              value: 0,
-              currency: asset.currency || "USD",
-            };
-
-            categoryMap.set(catId, {
-              name: existing.name,
-              count: existing.count + 1,
-              value: existing.value + (asset.purchaseCost || 0),
-              currency: existing.currency,
-            });
-          }
-
-          // Calculate total value for percentages
-          const totalValue = Array.from(categoryMap.values()).reduce(
-            (sum, cat) => sum + cat.value,
-            0,
+          setCategories(
+            result.data.map((item) => ({
+              categoryId: item.categoryId,
+              categoryName: item.categoryName,
+              assetCount: item.assetCount,
+              totalValueSar: item.totalValueSar,
+              avgValueSar: item.avgValueSar,
+              percentage: item.percentage,
+            })),
           );
-
-          // Convert to array
-          const categoryData: CategoryValue[] = Array.from(
-            categoryMap.entries(),
-          )
-            .map(([catId, data]) => ({
-              categoryId: catId,
-              categoryName: data.name,
-              assetCount: data.count,
-              totalValue: data.value,
-              avgValue: data.count > 0 ? data.value / data.count : 0,
-              currency: data.currency,
-              percentage: totalValue > 0 ? (data.value / totalValue) * 100 : 0,
-            }))
-            .sort((a, b) => b.totalValue - a.totalValue);
-
-          setCategories(categoryData);
         }
-      } catch (error) {
-        console.error("Failed to fetch category values:", error);
+      } catch (_error) {
         toast.error("Failed to load category value report");
       } finally {
         setLoading(false);
@@ -109,15 +65,14 @@ export function AssetValueByCategoryReport() {
     const csv = arrayToCSV(categories, [
       { key: "categoryName", label: "Category" },
       { key: "assetCount", label: "Asset Count" },
-      { key: "totalValue", label: "Total Value" },
-      { key: "avgValue", label: "Average Value" },
+      { key: "totalValueSar", label: "Total Value (SAR)" },
+      { key: "avgValueSar", label: "Average Value (SAR)" },
       { key: "percentage", label: "Percentage of Total" },
-      { key: "currency", label: "Currency" },
     ]);
 
     downloadCSV(
       csv,
-      `asset-value-by-category-${format(new Date(), "yyyy-MM-dd")}.csv`,
+      `asset-value-by-category-${formatDateISO(new Date())}.csv`,
     );
     toast.success("Report exported successfully");
   };
@@ -160,8 +115,12 @@ export function AssetValueByCategoryReport() {
                 <tr className="border-b">
                   <th className="p-2 text-left font-medium">Category</th>
                   <th className="p-2 text-right font-medium">Count</th>
-                  <th className="p-2 text-right font-medium">Total Value</th>
-                  <th className="p-2 text-right font-medium">Avg Value</th>
+                  <th className="p-2 text-right font-medium">
+                    Total Value (SAR)
+                  </th>
+                  <th className="p-2 text-right font-medium">
+                    Avg Value (SAR)
+                  </th>
                   <th className="p-2 text-right font-medium">% of Total</th>
                 </tr>
               </thead>
@@ -171,15 +130,13 @@ export function AssetValueByCategoryReport() {
                     <td className="p-2">{cat.categoryName}</td>
                     <td className="p-2 text-right">{cat.assetCount}</td>
                     <td className="p-2 text-right">
-                      {cat.currency}{" "}
-                      {cat.totalValue.toLocaleString(undefined, {
+                      {cat.totalValueSar.toLocaleString(undefined, {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}
                     </td>
                     <td className="p-2 text-right">
-                      {cat.currency}{" "}
-                      {cat.avgValue.toLocaleString(undefined, {
+                      {cat.avgValueSar.toLocaleString(undefined, {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}
@@ -197,9 +154,8 @@ export function AssetValueByCategoryReport() {
                     {categories.reduce((sum, c) => sum + c.assetCount, 0)}
                   </td>
                   <td className="p-2 text-right">
-                    {categories.length > 0 && categories[0].currency}{" "}
                     {categories
-                      .reduce((sum, c) => sum + c.totalValue, 0)
+                      .reduce((sum, c) => sum + c.totalValueSar, 0)
                       .toLocaleString(undefined, {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,

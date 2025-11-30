@@ -100,17 +100,20 @@ import { PersonServicesTab } from "@/components/persons/tabs/person-services-tab
 import { PersonGovernanceTab } from "@/components/persons/tabs/person-governance-tab";
 import { PersonActivityTab } from "@/components/persons/tabs/person-activity-tab";
 import { formatDate } from "@/lib/utils/date-format";
+import type { IntuneDeviceDTO } from "@/interface-adapters/dtos/generated/intune-device.dto";
 
 interface PersonDetailPageClientProps {
   person: EmployeeDirectoryDTO;
   counts: PersonRelationCounts | null;
   reportingChain: EmployeeDirectoryDTO[];
+  intuneDevices: IntuneDeviceDTO[];
 }
 
 export function PersonDetailPageClient({
   person: initialPerson,
   counts,
   reportingChain,
+  intuneDevices,
 }: PersonDetailPageClientProps) {
   const router = useRouter();
   const [person, setPerson] = useState(initialPerson);
@@ -151,7 +154,8 @@ export function PersonDetailPageClient({
 
   // Calculate stats for quick stats cards
   const totalAssets =
-    (counts?.intuneDevices ?? 0) +
+    (intuneDevices.length || counts?.intuneDevices || 0) +
+    (counts?.licenseAllocations ?? 0) +
     (counts?.assetReservations ?? 0) +
     (counts?.kitCheckouts ?? 0);
 
@@ -724,11 +728,17 @@ Please change your password after first login.`;
           <TabsTrigger value="governance">
             Governance
             {(counts?.verificationCampaigns ?? 0) +
-              (counts?.verificationItems ?? 0) >
+              (counts?.verificationItems ?? 0) +
+              (counts?.attachments ?? 0) +
+              (counts?.initiatedDisposals ?? 0) +
+              (counts?.approvedDisposals ?? 0) >
               0 && (
               <Badge variant="secondary" className="ml-2">
                 {(counts?.verificationCampaigns ?? 0) +
-                  (counts?.verificationItems ?? 0)}
+                  (counts?.verificationItems ?? 0) +
+                  (counts?.attachments ?? 0) +
+                  (counts?.initiatedDisposals ?? 0) +
+                  (counts?.approvedDisposals ?? 0)}
               </Badge>
             )}
           </TabsTrigger>
@@ -751,8 +761,10 @@ Please change your password after first login.`;
         <TabsContent value="assets">
           <PersonAssetsTab
             personId={person.id}
+            intuneDevices={intuneDevices}
             counts={{
-              intuneDevices: counts?.intuneDevices ?? 0,
+              intuneDevices: intuneDevices.length || counts?.intuneDevices || 0,
+              licenseAllocations: counts?.licenseAllocations ?? 0,
               assetReservations: counts?.assetReservations ?? 0,
               kitCheckouts: counts?.kitCheckouts ?? 0,
               stockMovements: counts?.stockMovements ?? 0,
@@ -812,6 +824,8 @@ Please change your password after first login.`;
           hireDate: person.hireDate,
           terminationDate: null,
           isActive: person.isActive,
+          isExcluded: person.isExcluded,
+          orgUnitName: person.orgUnitName ?? null,
           metadata: null,
           createdAt: "",
           updatedAt: "",

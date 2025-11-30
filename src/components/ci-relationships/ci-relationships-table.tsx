@@ -223,6 +223,20 @@ export function CIRelationshipsTable({
             className="max-w-sm"
           />
           <Input
+            placeholder="Filter by Relationship..."
+            value={
+              (table
+                .getColumn("relationshipTypeName")
+                ?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) =>
+              table
+                .getColumn("relationshipTypeName")
+                ?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+          <Input
             placeholder="Search by To CI..."
             value={
               (table.getColumn("toCiName")?.getFilterValue() as string) ?? ""

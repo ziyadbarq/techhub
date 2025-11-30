@@ -5,17 +5,20 @@ import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { LicenseProductsTable } from "@/components/license-products/license-products-table";
+import { LicenseProductForm } from "@/components/license-products/license-product-form";
 import type { LicenseProductDTO } from "@/interface-adapters/presenters/license-product.presenter";
 import { listLicenseProducts } from "@/interface-adapters/controllers/license-product.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { usePermissions } from "@/hooks/use-permissions";
-import { toast } from "sonner";
 
 export function LicenseProductsPageClient() {
   const [licenseProducts, setLicenseProducts] = React.useState<
     LicenseProductDTO[]
   >([]);
   const [loading, setLoading] = React.useState(true);
+  const [formOpen, setFormOpen] = React.useState(false);
+  const [editingProduct, setEditingProduct] =
+    React.useState<LicenseProductDTO | null>(null);
 
   const { hasPermission } = usePermissions();
   const canCreate = hasPermission(PERMISSIONS.LICENSE_PRODUCTS_CREATE);
@@ -36,9 +39,9 @@ export function LicenseProductsPageClient() {
     void loadLicenseProducts();
   }, [loadLicenseProducts]);
 
-  const handleEdit = (_licenseProduct: LicenseProductDTO) => {
-    // TODO: Implement edit dialog
-    toast.info("Edit not yet implemented for license products");
+  const handleEdit = (licenseProduct: LicenseProductDTO) => {
+    setEditingProduct(licenseProduct);
+    setFormOpen(true);
   };
 
   return (
@@ -53,7 +56,7 @@ export function LicenseProductsPageClient() {
           </p>
         </div>
         {canCreate && (
-          <Button disabled>
+          <Button onClick={() => setFormOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
             New License Product
           </Button>
@@ -65,6 +68,18 @@ export function LicenseProductsPageClient() {
         loading={loading}
         onEdit={handleEdit}
         onRefresh={loadLicenseProducts}
+      />
+
+      <LicenseProductForm
+        open={formOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEditingProduct(null);
+          }
+          setFormOpen(open);
+        }}
+        onSuccess={loadLicenseProducts}
+        licenseProduct={editingProduct}
       />
     </div>
   );

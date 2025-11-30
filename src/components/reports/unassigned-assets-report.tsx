@@ -14,11 +14,10 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, Archive } from "lucide-react";
-import { listAssetsAction } from "@/interface-adapters/controllers/asset.controller";
-import { listAssetAssignmentsAction } from "@/interface-adapters/controllers/asset-assignment.controller";
+import { getUnassignedAssetsReportAction } from "@/interface-adapters/controllers/asset.controller";
 import { toast } from "sonner";
-import { format, differenceInDays } from "date-fns";
 import { arrayToCSV, downloadCSV } from "@/lib/csv-export";
+import { formatDate, formatDateISO } from "@/lib/utils/date-format";
 
 interface UnassignedAsset {
   [key: string]: string | number | boolean | null | undefined;
@@ -38,49 +37,20 @@ export function UnassignedAssetsReport() {
       try {
         setLoading(true);
 
-        const [assetsResult, assignmentsResult] = await Promise.all([
-          listAssetsAction(),
-          listAssetAssignmentsAction(),
-        ]);
+        const result = await getUnassignedAssetsReportAction();
 
-        if (assetsResult.success && assignmentsResult.success) {
-          const now = new Date();
-
-          // Get IDs of currently assigned assets
-          const assignedAssetIds = new Set(
-            assignmentsResult.data
-              ?.filter(
-                (a) =>
-                  !a.endDate || new Date(a.endDate) > now || a.endDate === null,
-              )
-              .map((a) => a.assetId) || [],
+        if (result.success && result.data) {
+          setAssets(
+            result.data.map((asset) => ({
+              assetTag: asset.assetTag,
+              categoryName: asset.categoryName,
+              stockLocationName: asset.stockLocationName,
+              purchaseDate: asset.purchaseDate,
+              daysInStock: asset.daysInStock,
+            })),
           );
-
-          // Filter unassigned assets
-          const unassignedAssets: UnassignedAsset[] = (assetsResult.data || [])
-            .filter((asset) => !assignedAssetIds.has(asset.id))
-            .map((asset) => {
-              const purchaseDate = asset.purchaseDate
-                ? new Date(asset.purchaseDate)
-                : null;
-              const daysInStock = purchaseDate
-                ? differenceInDays(now, purchaseDate)
-                : 0;
-
-              return {
-                assetTag: asset.assetTag,
-                categoryName: asset.categoryName || "Unknown",
-                stockLocationName: asset.stockLocationName || "Unknown",
-                purchaseDate: asset.purchaseDate,
-                daysInStock,
-              };
-            })
-            .sort((a, b) => b.daysInStock - a.daysInStock);
-
-          setAssets(unassignedAssets);
         }
-      } catch (error) {
-        console.error("Failed to fetch unassigned assets:", error);
+      } catch (_error) {
         toast.error("Failed to load unassigned assets report");
       } finally {
         setLoading(false);
@@ -99,10 +69,7 @@ export function UnassignedAssetsReport() {
       { key: "daysInStock", label: "Days in Stock" },
     ]);
 
-    downloadCSV(
-      csv,
-      `unassigned-assets-${format(new Date(), "yyyy-MM-dd")}.csv`,
-    );
+    downloadCSV(csv, `unassigned-assets-${formatDateISO(new Date())}.csv`);
     toast.success("Report exported successfully");
   };
 
@@ -157,7 +124,7 @@ export function UnassignedAssetsReport() {
                     <td className="p-2">{asset.stockLocationName}</td>
                     <td className="p-2">
                       {asset.purchaseDate
-                        ? format(new Date(asset.purchaseDate), "MMM d, yyyy")
+                        ? formatDate(asset.purchaseDate)
                         : "-"}
                     </td>
                     <td className="p-2 text-right">{asset.daysInStock}</td>

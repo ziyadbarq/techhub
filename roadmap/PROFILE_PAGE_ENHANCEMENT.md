@@ -24,13 +24,12 @@ Enhance the `/profile` page to provide a unified view of the authenticated user'
 - Settings form structure (but submission is placeholder - TODO comment)
 - Dashboard widget showing Person data separately
 - CurrentPersonContext for fetching linked Person
+- Profile page now links to Person record and shows My Assets summary (assets, licenses, reservations)
+- Settings form updates Better Auth user name/image (email remains managed by SSO)
 
 ### Not Implemented ❌
-- Profile update functionality (form doesn't save)
-- Missing permission check on profile page
-- No Person (employee) data on profile page
-- User preferences table doesn't exist
-- My assets summary not shown
+- User preferences persistence in database (currently Redis-backed)
+- Notification delivery wires (UI toggles only)
 - Role & permissions display missing
 - Notification preferences (personal)
 - Display preferences (theme, timezone, etc.)

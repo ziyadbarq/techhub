@@ -558,6 +558,8 @@ export function PersonsPageClient({
                 hireDate: null,
                 terminationDate: null,
                 isActive: editingPerson.isActive,
+                isExcluded: editingPerson.isExcluded,
+                orgUnitName: editingPerson.orgUnitName ?? null,
                 metadata: null,
                 createdAt: "",
                 updatedAt: "",

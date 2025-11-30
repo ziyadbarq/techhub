@@ -40,6 +40,27 @@ export interface AssetStatistics {
   available: number;
 }
 
+export interface AssetDepreciationSnapshot {
+  assetTag: string;
+  assetCategoryName: string | null;
+  purchaseDate: Date | null;
+  depreciationEnd: Date | null;
+}
+
+export interface AssetCategoryValueSummary {
+  categoryId: string;
+  categoryName: string | null;
+  assetCount: number;
+  totalPurchaseCostSar: number;
+}
+
+export interface UnassignedAssetSnapshot {
+  assetTag: string;
+  assetCategoryName: string | null;
+  stockLocationName: string | null;
+  purchaseDate: Date | null;
+}
+
 export interface IAssetRepository {
   /**
    * Create a new asset
@@ -135,6 +156,21 @@ export interface IAssetRepository {
    * Count assets by search criteria
    */
   countBySearch(options: AssetSearchOptions): Promise<number>;
+
+  /**
+   * Minimal projection for depreciation/EOL reporting
+   */
+  findDepreciationSnapshot(): Promise<AssetDepreciationSnapshot[]>;
+
+  /**
+   * Aggregated totals by category (SAR normalized)
+   */
+  findCategoryValueSummary(): Promise<AssetCategoryValueSummary[]>;
+
+  /**
+   * Assets without an active assignment
+   */
+  findUnassignedAssetsSnapshot(now?: Date): Promise<UnassignedAssetSnapshot[]>;
 
   /**
    * Update an existing asset

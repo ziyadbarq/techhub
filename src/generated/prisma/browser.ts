@@ -383,6 +383,16 @@ export type ServiceAsset = Prisma.ServiceAssetModel
  */
 export type ServiceRelationship = Prisma.ServiceRelationshipModel
 /**
+ * Model ServiceHealthHistory
+ * 
+ */
+export type ServiceHealthHistory = Prisma.ServiceHealthHistoryModel
+/**
+ * Model ServiceSlaMetric
+ * 
+ */
+export type ServiceSlaMetric = Prisma.ServiceSlaMetricModel
+/**
  * Model Task
  * 
  */

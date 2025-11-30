@@ -10,13 +10,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { CIRelationshipDTO } from "@/interface-adapters/dtos/generated/ci-relationship.dto";
-import { Pencil, X, Link, ArrowRight } from "lucide-react";
-import { PermissionGuard } from "@/components/auth/PermissionGuard";
-import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { Link, ArrowRight } from "lucide-react";
 import { format } from "date-fns";
 
 interface CIRelationshipDetailProps {
@@ -29,30 +26,13 @@ interface CIRelationshipDetailProps {
 export function CIRelationshipDetail({
   relationship,
   onClose,
-  onEdit,
+  onEdit: _onEdit,
 }: CIRelationshipDetailProps) {
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <span>Relationship Details</span>
-            <div className="flex gap-2">
-              <PermissionGuard permission={PERMISSIONS.CI_RELATIONSHIPS_UPDATE}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => onEdit(relationship)}
-                >
-                  <Pencil className="mr-2 h-4 w-4" />
-                  Edit
-                </Button>
-              </PermissionGuard>
-              <Button variant="ghost" size="sm" onClick={onClose}>
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-          </DialogTitle>
+          <DialogTitle>Relationship Details</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">

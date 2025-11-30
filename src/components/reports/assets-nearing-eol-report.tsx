@@ -14,10 +14,10 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, AlertTriangle } from "lucide-react";
-import { listAssetsAction } from "@/interface-adapters/controllers/asset.controller";
+import { getAssetsNearingEolReportAction } from "@/interface-adapters/controllers/asset.controller";
 import { toast } from "sonner";
-import { format, differenceInDays } from "date-fns";
 import { arrayToCSV, downloadCSV } from "@/lib/csv-export";
+import { formatDate, formatDateISO } from "@/lib/utils/date-format";
 
 interface EOLAsset {
   [key: string]: string | number | boolean | null | undefined;
@@ -37,48 +37,20 @@ export function AssetsNearingEOLReport() {
     async function fetchAssets() {
       try {
         setLoading(true);
-        const result = await listAssetsAction();
+        const result = await getAssetsNearingEolReportAction();
 
         if (result.success && result.data) {
-          const now = new Date();
-
-          // Filter assets with depreciation end dates and calculate days until EOL
-          const eolAssets: EOLAsset[] = result.data
-            .filter((asset) => asset.depreciationEnd)
-            .map((asset) => {
-              const depreciationEnd = new Date(asset.depreciationEnd!);
-              const daysUntilEOL = differenceInDays(depreciationEnd, now);
-
-              let status: "expired" | "critical" | "warning" = "warning";
-              if (daysUntilEOL < 0) {
-                status = "expired";
-              } else if (daysUntilEOL <= 90) {
-                status = "critical";
-              } else if (daysUntilEOL <= 180) {
-                status = "warning";
-              }
-
-              return {
-                assetTag: asset.assetTag,
-                categoryName: asset.categoryName || "Unknown",
-                purchaseDate: asset.purchaseDate,
-                depreciationEnd: asset.depreciationEnd,
-                daysUntilEOL,
-                status,
-              };
-            })
-            .filter(
-              (asset) =>
-                asset.status === "expired" ||
-                asset.status === "critical" ||
-                (asset.status === "warning" && asset.daysUntilEOL <= 365),
-            )
-            .sort((a, b) => a.daysUntilEOL - b.daysUntilEOL);
-
-          setAssets(eolAssets);
+          setAssets(
+            result.data.map((asset) => ({
+              ...asset,
+              categoryName: asset.categoryName ?? "Uncategorized",
+              purchaseDate: asset.purchaseDate,
+              depreciationEnd: asset.depreciationEnd,
+              daysUntilEOL: asset.daysUntilEOL,
+            })),
+          );
         }
-      } catch (error) {
-        console.error("Failed to fetch EOL assets:", error);
+      } catch (_error) {
         toast.error("Failed to load EOL report");
       } finally {
         setLoading(false);
@@ -98,10 +70,7 @@ export function AssetsNearingEOLReport() {
       { key: "status", label: "Status" },
     ]);
 
-    downloadCSV(
-      csv,
-      `assets-nearing-eol-${format(new Date(), "yyyy-MM-dd")}.csv`,
-    );
+    downloadCSV(csv, `assets-nearing-eol-${formatDateISO(new Date())}.csv`);
     toast.success("Report exported successfully");
   };
 
@@ -177,12 +146,12 @@ export function AssetsNearingEOLReport() {
                     <td className="p-2">{asset.categoryName}</td>
                     <td className="p-2">
                       {asset.purchaseDate
-                        ? format(new Date(asset.purchaseDate), "MMM d, yyyy")
+                        ? formatDate(asset.purchaseDate)
                         : "-"}
                     </td>
                     <td className="p-2">
                       {asset.depreciationEnd
-                        ? format(new Date(asset.depreciationEnd), "MMM d, yyyy")
+                        ? formatDate(asset.depreciationEnd)
                         : "-"}
                     </td>
                     <td className="p-2 text-right">

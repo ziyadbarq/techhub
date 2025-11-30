@@ -59,6 +59,10 @@ import { DeleteAssetWithConfirmationUseCase } from "@/core/use-cases/asset/asset
 import { GetAssetStatisticsUseCase } from "@/core/use-cases/asset/asset/get-asset-statistics.use-case";
 import { BulkDeleteAssetsUseCase } from "@/core/use-cases/asset/asset/bulk-delete-assets.use-case";
 import { BulkUpdateAssetStatusUseCase } from "@/core/use-cases/asset/asset/bulk-update-asset-status.use-case";
+import { GetAssetsNearingEolReportUseCase } from "@/core/use-cases/asset/asset/get-assets-nearing-eol-report.use-case";
+import { GetAssetValueByCategoryReportUseCase } from "@/core/use-cases/asset/asset/get-asset-value-by-category-report.use-case";
+import { GetAssetsByDepartmentReportUseCase } from "@/core/use-cases/asset/asset/get-assets-by-department-report.use-case";
+import { GetUnassignedAssetsReportUseCase } from "@/core/use-cases/asset/asset/get-unassigned-assets-report.use-case";
 
 // Asset Assignment Repository
 import type { IAssetAssignmentRepository } from "@/core/repositories/asset-assignment.repository.interface";
@@ -315,6 +319,34 @@ export function bindAssetDependencies(container: Container): void {
   container
     .bind<GetAssetStatisticsUseCase>(DI_TOKENS.GetAssetStatisticsUseCase)
     .to(GetAssetStatisticsUseCase)
+    .inTransientScope();
+
+  container
+    .bind<GetAssetsNearingEolReportUseCase>(
+      DI_TOKENS.GetAssetsNearingEolReportUseCase,
+    )
+    .to(GetAssetsNearingEolReportUseCase)
+    .inTransientScope();
+
+  container
+    .bind<GetAssetValueByCategoryReportUseCase>(
+      DI_TOKENS.GetAssetValueByCategoryReportUseCase,
+    )
+    .to(GetAssetValueByCategoryReportUseCase)
+    .inTransientScope();
+
+  container
+    .bind<GetAssetsByDepartmentReportUseCase>(
+      DI_TOKENS.GetAssetsByDepartmentReportUseCase,
+    )
+    .to(GetAssetsByDepartmentReportUseCase)
+    .inTransientScope();
+
+  container
+    .bind<GetUnassignedAssetsReportUseCase>(
+      DI_TOKENS.GetUnassignedAssetsReportUseCase,
+    )
+    .to(GetUnassignedAssetsReportUseCase)
     .inTransientScope();
 
   container

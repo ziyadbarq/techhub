@@ -38,4 +38,5 @@ export interface CIRelationshipDTO {
   fromCiName?: string;
   toCiName?: string;
   relationshipTypeName?: string;
+  relationshipTypeCode?: string;
 }

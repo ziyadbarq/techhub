@@ -17,6 +17,14 @@ import { Mail, Calendar, Clock, Shield, Settings } from "lucide-react";
 import Link from "next/link";
 import { EmailVerificationBadge } from "@/components/auth/EmailVerificationBadge";
 import { VerifyEmailButton } from "@/components/auth/VerifyEmailButton";
+import {
+  getCurrentPersonAction,
+  getMyAssetsAction,
+  getMyLicensesAction,
+  getMyReservationsAction,
+} from "@/interface-adapters/controllers/my-dashboard.controller";
+import type { ActionResponse } from "@/interface-adapters/controllers/types";
+import { formatDate, formatDateTime } from "@/lib/utils/date-format";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +38,19 @@ export default async function ProfilePage() {
     redirect("/login");
   }
 
+  const [personResult, assetsResult, licensesResult, reservationsResult] =
+    await Promise.all([
+      getCurrentPersonAction(),
+      safeAction(() => getMyAssetsAction()),
+      safeAction(() => getMyLicensesAction()),
+      safeAction(() => getMyReservationsAction()),
+    ]);
+
+  const person = personResult.success ? personResult.data : null;
+  const assets = assetsResult ?? [];
+  const licenses = licensesResult ?? [];
+  const reservations = reservationsResult ?? [];
+
   // Generate initials for avatar fallback
   const initials = user.name
     ? user.name
@@ -42,26 +63,6 @@ export default async function ProfilePage() {
   const isEmailVerified = Boolean(user.emailVerified);
 
   // Format dates
-  const formatDate = (date: Date | string | undefined) => {
-    if (!date) return "N/A";
-    return new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
-  const formatDateTime = (date: Date | string | undefined) => {
-    if (!date) return "N/A";
-    return new Date(date).toLocaleString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   const emailVerificationStatus = isEmailVerified
     ? isDateLike(user.emailVerified)
       ? `Verified on ${formatDate(user.emailVerified)}`
@@ -167,6 +168,101 @@ export default async function ProfilePage() {
         </CardContent>
       </Card>
 
+      {/* Linked Employee Record */}
+      {person && (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>Linked Employee Record</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-1">
+              <p className="text-sm font-medium">
+                {person.firstName} {person.lastName}
+              </p>
+              <p className="text-muted-foreground text-sm">
+                {person.title ?? "No title"} •{" "}
+                {person.orgUnitName ?? person.organizationUnitId ?? "Org unit"}
+              </p>
+              {person.department && (
+                <p className="text-muted-foreground text-sm">
+                  Department: {person.department}
+                </p>
+              )}
+              {person.hireDate && (
+                <p className="text-muted-foreground text-sm">
+                  Hired: {formatDate(person.hireDate)}
+                </p>
+              )}
+            </div>
+            <div className="flex items-start justify-end gap-2">
+              <Badge variant={person.isActive ? "default" : "secondary"}>
+                {person.isActive ? "Active" : "Inactive"}
+              </Badge>
+              {person.isExcluded && <Badge variant="outline">Excluded</Badge>}
+              <Button asChild variant="outline" size="sm">
+                <Link href={`/persons/${person.id}`}>Open Person Record</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* My Assets Summary */}
+      {person && (
+        <Card className="mb-6">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>My Assets</CardTitle>
+              <Button variant="outline" size="sm" asChild>
+                <Link href={`/persons/${person.id}`}>View all my assets</Link>
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-3">
+              <SummaryBadge
+                label="Assigned Assets"
+                value={assets.length}
+                description="Active assignments"
+              />
+              <SummaryBadge
+                label="Active Licenses"
+                value={licenses.length}
+                description="Allocated to you"
+              />
+              <SummaryBadge
+                label="Reservations"
+                value={reservations.length}
+                description="Upcoming/active"
+              />
+            </div>
+
+            {assets.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Recent Assets</p>
+                <div className="divide-border rounded-md border">
+                  {assets.slice(0, 3).map((asset) => (
+                    <div
+                      key={asset.id}
+                      className="flex items-center justify-between border-b px-4 py-3 last:border-b-0"
+                    >
+                      <div>
+                        <p className="font-medium">
+                          {asset.assetTag ?? "Asset"}
+                        </p>
+                        <p className="text-muted-foreground text-xs">
+                          Assigned {formatDate(asset.assignedAt)}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Security Information */}
       <Card>
         <CardHeader>
@@ -203,6 +299,38 @@ export default async function ProfilePage() {
           </div>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+async function safeAction<T>(
+  fn: () => Promise<ActionResponse<T>>,
+): Promise<T | null> {
+  try {
+    const result = await fn();
+    if (result.success) {
+      return result.data;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+interface SummaryBadgeProps {
+  label: string;
+  value: number;
+  description?: string;
+}
+
+function SummaryBadge({ label, value, description }: SummaryBadgeProps) {
+  return (
+    <div className="rounded-lg border p-4">
+      <p className="text-muted-foreground text-sm">{label}</p>
+      <p className="text-2xl font-semibold">{value}</p>
+      {description && (
+        <p className="text-muted-foreground text-xs">{description}</p>
+      )}
     </div>
   );
 }

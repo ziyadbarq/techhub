@@ -283,7 +283,7 @@ export async function seedServiceOwners(prisma: PrismaClient) {
 
     // Get owners from config
     const owners = "owners" in serviceData ? serviceData.owners : undefined;
-    if (!owners) {
+    if (!owners || !Array.isArray(owners) || owners.length === 0) {
       continue;
     }
 

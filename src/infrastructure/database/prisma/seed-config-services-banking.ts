@@ -3,6 +3,10 @@
  *
  * Defines core banking services for Barq's payment and wallet platform.
  * Includes wallet management, payments processing, accounting, and merchant services.
+ *
+ * NOTE: Service ownership is NOT defined here.
+ * - Production: Use scripts/import-service-ownership.ts with service_owners.json
+ * - Dev: seedServiceOwners() links services to DEMO_PERSONS (dev preset only)
  */
 
 export const BANKING_SERVICES = [
@@ -20,18 +24,6 @@ export const BANKING_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "WALLET_SERVICES",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Fatima Al-Zahrani",
-        isPrimary: true,
-      },
-      {
-        type: "PRODUCT" as const,
-        personName: "Ahmed Al-Mansour",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -53,18 +45,6 @@ export const BANKING_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "DIGITAL_PAYMENTS",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Khalid Al-Ghamdi",
-        isPrimary: true,
-      },
-      {
-        type: "PRODUCT" as const,
-        personName: "Ahmed Al-Mansour",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -86,18 +66,6 @@ export const BANKING_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "CORE_BANKING",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Abdullah Al-Harthi",
-        isPrimary: true,
-      },
-      {
-        type: "BUSINESS" as const,
-        personName: "Ahmed Al-Mansour",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -119,18 +87,6 @@ export const BANKING_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "MERCHANT_SERVICES",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Maha Al-Otaibi",
-        isPrimary: true,
-      },
-      {
-        type: "PRODUCT" as const,
-        personName: "Ahmed Al-Mansour",
-        isPrimary: false,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",

@@ -532,6 +532,101 @@ export class PrismaAssetRepository implements IAssetRepository {
     return await this.prisma.asset.count({ where });
   }
 
+  async findDepreciationSnapshot(): Promise<
+    {
+      assetTag: string;
+      assetCategoryName: string | null;
+      purchaseDate: Date | null;
+      depreciationEnd: Date | null;
+    }[]
+  > {
+    const assets = await this.prisma.asset.findMany({
+      where: {
+        depreciationEnd: {
+          not: null,
+        },
+        deletedAt: null,
+      },
+      select: {
+        assetTag: true,
+        purchaseDate: true,
+        depreciationEnd: true,
+        assetCategory: {
+          select: { name: true },
+        },
+      },
+      orderBy: {
+        depreciationEnd: "asc",
+      },
+    });
+
+    return assets.map((asset) => ({
+      assetTag: asset.assetTag,
+      assetCategoryName: asset.assetCategory?.name ?? null,
+      purchaseDate: asset.purchaseDate,
+      depreciationEnd: asset.depreciationEnd,
+    }));
+  }
+
+  async findCategoryValueSummary() {
+    const grouped = await this.prisma.asset.groupBy({
+      by: ["assetCategoryId"],
+      where: { deletedAt: null },
+      _count: { _all: true },
+      _sum: {
+        purchaseCostSar: true,
+      },
+    });
+
+    const categoryIds = grouped.map((g) => g.assetCategoryId);
+    const categories =
+      categoryIds.length === 0
+        ? []
+        : await this.prisma.assetCategory.findMany({
+            where: { id: { in: categoryIds } },
+            select: { id: true, name: true },
+          });
+    const categoryNameMap = new Map(
+      categories.map((cat) => [cat.id, cat.name]),
+    );
+
+    return grouped.map((g) => ({
+      categoryId: g.assetCategoryId,
+      categoryName: categoryNameMap.get(g.assetCategoryId) ?? null,
+      assetCount: g._count._all,
+      totalPurchaseCostSar: Number(g._sum.purchaseCostSar ?? 0),
+    }));
+  }
+
+  async findUnassignedAssetsSnapshot(now = new Date()) {
+    const assets = await this.prisma.asset.findMany({
+      where: {
+        deletedAt: null,
+        assetAssignments: {
+          none: {
+            OR: [{ endDate: null }, { endDate: { gte: now } }],
+          },
+        },
+      },
+      select: {
+        assetTag: true,
+        purchaseDate: true,
+        assetCategory: { select: { name: true } },
+        currentStockLocation: { select: { name: true } },
+      },
+      orderBy: {
+        purchaseDate: "asc",
+      },
+    });
+
+    return assets.map((asset) => ({
+      assetTag: asset.assetTag,
+      assetCategoryName: asset.assetCategory?.name ?? null,
+      stockLocationName: asset.currentStockLocation?.name ?? null,
+      purchaseDate: asset.purchaseDate,
+    }));
+  }
+
   async update(asset: Asset): Promise<Asset> {
     const timer = this.logger.startTimer();
 

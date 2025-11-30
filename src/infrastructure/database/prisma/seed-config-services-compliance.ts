@@ -3,6 +3,10 @@
  *
  * Defines compliance, fraud detection, KYC, and regulatory reporting services.
  * Critical for SAMA (Saudi Central Bank) compliance and financial regulations.
+ *
+ * NOTE: Service ownership is NOT defined here.
+ * - Production: Use scripts/import-service-ownership.ts with service_owners.json
+ * - Dev: seedServiceOwners() links services to DEMO_PERSONS (dev preset only)
  */
 
 export const COMPLIANCE_SERVICES = [
@@ -19,18 +23,6 @@ export const COMPLIANCE_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "DIGITAL_PAYMENTS",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Noura Al-Rashid",
-        isPrimary: true,
-      },
-      {
-        type: "BUSINESS" as const,
-        personName: "Aisha Al-Malki",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -51,18 +43,6 @@ export const COMPLIANCE_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "COMPLIANCE_AUDIT",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Aisha Al-Malki",
-        isPrimary: true,
-      },
-      {
-        type: "BUSINESS" as const,
-        personName: "Ahmed Al-Mansour",
-        isPrimary: false,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -84,18 +64,6 @@ export const COMPLIANCE_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "IDENTITY_MGMT",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Noura Al-Rashid",
-        isPrimary: true,
-      },
-      {
-        type: "BUSINESS" as const,
-        personName: "Aisha Al-Malki",
-        isPrimary: false,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -116,13 +84,6 @@ export const COMPLIANCE_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "GOVT_INTEGRATION",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Omar Al-Shehri",
-        isPrimary: true,
-      },
-    ],
   },
 
   // Regulatory Reporting
@@ -139,18 +100,6 @@ export const COMPLIANCE_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "COMPLIANCE_AUDIT",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Aisha Al-Malki",
-        isPrimary: true,
-      },
-      {
-        type: "BUSINESS" as const,
-        personName: "Ahmed Al-Mansour",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",

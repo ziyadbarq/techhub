@@ -237,8 +237,12 @@ async function main() {
     if (presetName === "production") {
       console.log("\n📝 Next steps for production:");
       console.log("  1. Run Microsoft Graph sync to populate persons");
-      console.log("  2. Create first admin via /register");
-      console.log("  3. Assign system-administrator role via Prisma Studio");
+      console.log("  2. Import services: npx tsx scripts/import-services.ts");
+      console.log(
+        "  3. Import service ownership: npx tsx scripts/import-service-ownership.ts",
+      );
+      console.log("  4. Create first admin via /register");
+      console.log("  5. Assign system-administrator role via Prisma Studio");
     }
 
     console.log("\n" + "─".repeat(60));

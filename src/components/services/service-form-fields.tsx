@@ -328,6 +328,85 @@ export function TextField<TFieldValues extends FieldValues>({
 }
 
 /**
+ * Number field props
+ */
+interface NumberFieldProps<TFieldValues extends FieldValues>
+  extends BaseFieldProps<TFieldValues> {
+  placeholder?: string;
+  min?: number;
+  max?: number;
+  step?: number;
+  unit?: string;
+}
+
+/**
+ * Reusable number input field component
+ *
+ * Renders a number input with proper value handling for react-hook-form.
+ *
+ * @example
+ * ```tsx
+ * <NumberField
+ *   control={form.control}
+ *   name="slaResponseTimeP50"
+ *   label="P50 Response Time"
+ *   unit="ms"
+ *   min={0}
+ * />
+ * ```
+ */
+export function NumberField<TFieldValues extends FieldValues>({
+  control,
+  name,
+  label,
+  description,
+  required,
+  placeholder,
+  min,
+  max,
+  step,
+  unit,
+}: NumberFieldProps<TFieldValues>) {
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>
+            {label} {required && "*"}
+          </FormLabel>
+          <FormControl>
+            <div className="relative">
+              <Input
+                type="number"
+                placeholder={placeholder}
+                min={min}
+                max={max}
+                step={step}
+                {...field}
+                value={field.value ?? ""}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  field.onChange(value === "" ? undefined : Number(value));
+                }}
+              />
+              {unit && (
+                <span className="text-muted-foreground absolute top-2.5 right-3 text-sm">
+                  {unit}
+                </span>
+              )}
+            </div>
+          </FormControl>
+          {description && <FormDescription>{description}</FormDescription>}
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+
+/**
  * Nullable select field props
  */
 interface NullableSelectFieldProps<TFieldValues extends FieldValues>

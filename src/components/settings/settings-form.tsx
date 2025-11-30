@@ -6,7 +6,7 @@
  * Allows users to update their profile information
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -32,6 +32,23 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Loader2, CheckCircle2, AlertCircle, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { updateMyProfileAction } from "@/interface-adapters/controllers/my-dashboard.controller";
+import { toast } from "sonner";
+import {
+  getMyPreferencesAction,
+  updateMyPreferencesAction,
+  type UserPreferencesDTO,
+} from "@/interface-adapters/controllers/my-dashboard.controller";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Validation schema
 const profileSchema = z.object({
@@ -54,10 +71,14 @@ interface SettingsFormProps {
 export function SettingsForm({ user }: SettingsFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [prefsLoading, setPrefsLoading] = useState(true);
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const [preferences, setPreferences] = useState<UserPreferencesDTO | null>(
+    null,
+  );
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -81,10 +102,20 @@ export function SettingsForm({ user }: SettingsFormProps) {
       setIsLoading(true);
       setMessage(null);
 
-      // TODO: Implement Better Auth update user endpoint
-      // For now, show a placeholder message
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const result = await updateMyProfileAction({
+        name: _data.name?.trim() || undefined,
+        image: _data.image?.trim() || "",
+      });
 
+      if (!result.success) {
+        setMessage({
+          type: "error",
+          text: result.error || "Failed to update profile.",
+        });
+        return;
+      }
+
+      toast.success("Profile updated successfully");
       setMessage({
         type: "success",
         text: "Profile updated successfully!",
@@ -102,6 +133,42 @@ export function SettingsForm({ user }: SettingsFormProps) {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    async function loadPreferences() {
+      setPrefsLoading(true);
+      const result = await getMyPreferencesAction();
+      if (result.success) {
+        setPreferences(result.data);
+      } else {
+        toast.error(result.error ?? "Failed to load preferences");
+      }
+      setPrefsLoading(false);
+    }
+    void loadPreferences();
+  }, []);
+
+  const handleUpdatePreferences = async (
+    updates: Partial<UserPreferencesDTO>,
+  ) => {
+    if (!preferences) return;
+    const next = {
+      ...preferences,
+      ...updates,
+      notifications: {
+        ...preferences.notifications,
+        ...(updates.notifications ?? {}),
+      },
+    };
+    setPreferences(next);
+    const result = await updateMyPreferencesAction(next);
+    if (!result.success) {
+      toast.error(result.error ?? "Failed to save preferences");
+    } else {
+      toast.success("Preferences saved");
+      setPreferences(result.data);
     }
   };
 
@@ -216,12 +283,14 @@ export function SettingsForm({ user }: SettingsFormProps) {
                       <Input
                         type="email"
                         placeholder="you@example.com"
-                        disabled={isLoading}
+                        disabled
+                        readOnly
                         {...field}
                       />
                     </FormControl>
                     <FormDescription>
-                      Your email address for login and notifications
+                      Your email address for login and notifications (managed
+                      via SSO)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -243,6 +312,173 @@ export function SettingsForm({ user }: SettingsFormProps) {
               </div>
             </form>
           </Form>
+        </CardContent>
+      </Card>
+
+      {/* Preferences */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Preferences</CardTitle>
+          <CardDescription>
+            Timezone, date format, currency display, and notifications
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {prefsLoading || !preferences ? (
+            <div className="space-y-3">
+              <Skeleton className="h-5 w-40" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-5 w-32" />
+              <Skeleton className="h-5 w-48" />
+            </div>
+          ) : (
+            <>
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="space-y-2">
+                  <Label>Timezone</Label>
+                  <Select
+                    value={preferences.timezone}
+                    onValueChange={(value) =>
+                      handleUpdatePreferences({ timezone: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select timezone" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Asia/Riyadh">Asia/Riyadh</SelectItem>
+                      <SelectItem value="UTC">UTC</SelectItem>
+                      <SelectItem value="Europe/London">
+                        Europe/London
+                      </SelectItem>
+                      <SelectItem value="America/New_York">
+                        America/New_York
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Date Format</Label>
+                  <Select
+                    value={preferences.dateFormat}
+                    onValueChange={(value) =>
+                      handleUpdatePreferences({
+                        dateFormat: value as UserPreferencesDTO["dateFormat"],
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select format" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="dd/MM/yyyy">dd/MM/yyyy</SelectItem>
+                      <SelectItem value="MM/dd/yyyy">MM/dd/yyyy</SelectItem>
+                      <SelectItem value="yyyy-MM-dd">yyyy-MM-dd</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Currency Display</Label>
+                  <Select
+                    value={preferences.currencyDisplay}
+                    onValueChange={(value) =>
+                      handleUpdatePreferences({
+                        currencyDisplay:
+                          value as UserPreferencesDTO["currencyDisplay"],
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select display" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="sar">SAR only</SelectItem>
+                      <SelectItem value="original">
+                        Original currency
+                      </SelectItem>
+                      <SelectItem value="dual">Dual display</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-sm font-medium">Notifications</p>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <ToggleRow
+                    label="Email notifications"
+                    checked={
+                      preferences.notifications?.emailNotifications ?? false
+                    }
+                    onCheckedChange={(checked) =>
+                      handleUpdatePreferences({
+                        notifications: { emailNotifications: checked },
+                      })
+                    }
+                  />
+                  <ToggleRow
+                    label="Teams notifications"
+                    checked={
+                      preferences.notifications?.teamsNotifications ?? false
+                    }
+                    onCheckedChange={(checked) =>
+                      handleUpdatePreferences({
+                        notifications: { teamsNotifications: checked },
+                      })
+                    }
+                  />
+                  <ToggleRow
+                    label="WhatsApp notifications"
+                    checked={
+                      preferences.notifications?.whatsappNotifications ?? false
+                    }
+                    onCheckedChange={(checked) =>
+                      handleUpdatePreferences({
+                        notifications: { whatsappNotifications: checked },
+                      })
+                    }
+                  />
+                  <ToggleRow
+                    label="Weekly digest"
+                    checked={preferences.notifications?.weeklyDigest ?? false}
+                    onCheckedChange={(checked) =>
+                      handleUpdatePreferences({
+                        notifications: { weeklyDigest: checked },
+                      })
+                    }
+                  />
+                  <ToggleRow
+                    label="Asset alerts"
+                    checked={preferences.notifications?.assetAlerts ?? false}
+                    onCheckedChange={(checked) =>
+                      handleUpdatePreferences({
+                        notifications: { assetAlerts: checked },
+                      })
+                    }
+                  />
+                  <ToggleRow
+                    label="Approval alerts"
+                    checked={preferences.notifications?.approvalAlerts ?? false}
+                    onCheckedChange={(checked) =>
+                      handleUpdatePreferences({
+                        notifications: { approvalAlerts: checked },
+                      })
+                    }
+                  />
+                  <ToggleRow
+                    label="Warranty alerts"
+                    checked={preferences.notifications?.warrantyAlerts ?? false}
+                    onCheckedChange={(checked) =>
+                      handleUpdatePreferences({
+                        notifications: { warrantyAlerts: checked },
+                      })
+                    }
+                  />
+                </div>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
 
@@ -280,6 +516,21 @@ export function SettingsForm({ user }: SettingsFormProps) {
           </div>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+interface ToggleRowProps {
+  label: string;
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
+}
+
+function ToggleRow({ label, checked, onCheckedChange }: ToggleRowProps) {
+  return (
+    <div className="flex items-center justify-between rounded-lg border p-3">
+      <p className="text-sm font-medium">{label}</p>
+      <Switch checked={checked} onCheckedChange={onCheckedChange} />
     </div>
   );
 }

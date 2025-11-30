@@ -12,6 +12,10 @@
  * - Communication platforms
  * - Data & analytics
  * - Notification services
+ *
+ * NOTE: Service ownership is NOT defined here.
+ * - Production: Use scripts/import-service-ownership.ts with service_owners.json
+ * - Dev: seedServiceOwners() links services to DEMO_PERSONS (dev preset only)
  */
 
 export const INFRASTRUCTURE_SERVICES = [
@@ -28,18 +32,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "MOBILE_BANKING",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Khalid Al-Ghamdi",
-        isPrimary: true,
-      },
-      {
-        type: "PRODUCT" as const,
-        personName: "Ahmed Al-Mansour",
-        isPrimary: false,
-      },
-    ],
   },
   {
     name: "Mobile Android App",
@@ -53,18 +45,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "MOBILE_BANKING",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Maha Al-Otaibi",
-        isPrimary: true,
-      },
-      {
-        type: "PRODUCT" as const,
-        personName: "Ahmed Al-Mansour",
-        isPrimary: false,
-      },
-    ],
   },
   {
     name: "Business Portal",
@@ -79,18 +59,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "WEB_BANKING",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Hanan Al-Subai",
-        isPrimary: true,
-      },
-      {
-        type: "PRODUCT" as const,
-        personName: "Ahmed Al-Mansour",
-        isPrimary: false,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -110,13 +78,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "WEB_BANKING",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Layla Al-Dosari",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -140,13 +101,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "WORKFLOW_AUTOMATION",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Tariq Al-Shamrani",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -166,13 +120,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "DATA_PLATFORM",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Abdullah Al-Harthi",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -193,13 +140,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "DATA_PLATFORM",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Abdullah Al-Harthi",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -223,13 +163,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "MESSAGE_QUEUE",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Tariq Al-Shamrani",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -249,13 +182,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "MESSAGE_QUEUE",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Saud Al-Ajmi",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -276,13 +202,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "PAYMENT_INTEGRATION",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Khalid Al-Ghamdi",
-        isPrimary: true,
-      },
-    ],
   },
   {
     name: "HyperPay Integration",
@@ -295,13 +214,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "PAYMENT_INTEGRATION",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Fatima Al-Zahrani",
-        isPrimary: true,
-      },
-    ],
   },
   {
     name: "Oracle CRM",
@@ -316,18 +228,6 @@ export const INFRASTRUCTURE_SERVICES = [
     currentStatus: "PRODUCTION" as const,
     vendorCode: "ORACLE",
     businessProcessCode: "CRM_SERVICES",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Mohammed Al-Qarni",
-        isPrimary: true,
-      },
-      {
-        type: "BUSINESS" as const,
-        personName: "Ahmed Al-Mansour",
-        isPrimary: false,
-      },
-    ],
     infrastructure: {
       location: "ON_PREM" as const,
       region: "Riyadh",
@@ -345,18 +245,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "ERP_SERVICES",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Layla Al-Dosari",
-        isPrimary: true,
-      },
-      {
-        type: "BUSINESS" as const,
-        personName: "Ahmed Al-Mansour",
-        isPrimary: false,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -378,13 +266,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "API_GATEWAY",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Hanan Al-Subai",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -404,13 +285,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "DEPLOYMENT_CICD",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Khalid Al-Ghamdi",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -429,13 +303,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "REPORTING_ANALYTICS",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Faisal Al-Harbi",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -455,13 +322,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "REPORTING_ANALYTICS",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Hanan Al-Subai",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -480,13 +340,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "DEPLOYMENT_CICD",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Khalid Al-Ghamdi",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -509,13 +362,6 @@ export const INFRASTRUCTURE_SERVICES = [
     currentStatus: "PRODUCTION" as const,
     vendorCode: "ORACLE",
     businessProcessCode: "CORE_BANKING",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Abdullah Al-Harthi",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "ON_PREM" as const,
       region: "Riyadh",
@@ -537,13 +383,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "DATA_PLATFORM",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Tariq Al-Shamrani",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -565,13 +404,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "MONITORING_OBSERVABILITY",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Saud Al-Ajmi",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -594,13 +426,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "DATA_PLATFORM",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Tariq Al-Shamrani",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -620,13 +445,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "DATA_PLATFORM",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Tariq Al-Shamrani",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "GCP_CLOUD" as const,
       cloudProvider: "GCP",
@@ -646,13 +464,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "API_GATEWAY",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Mohammed Al-Qarni",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -674,18 +485,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "API_BANKING",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Hanan Al-Subai",
-        isPrimary: true,
-      },
-      {
-        type: "PRODUCT" as const,
-        personName: "Ahmed Al-Mansour",
-        isPrimary: false,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -705,13 +504,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "API_BANKING",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Maha Al-Otaibi",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -732,13 +524,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "API_GATEWAY",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Khalid Al-Ghamdi",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -759,13 +544,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "API_BANKING",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Fatima Al-Zahrani",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -787,13 +565,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "MESSAGE_QUEUE",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Tariq Al-Shamrani",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -813,13 +584,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "MESSAGE_QUEUE",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Hanan Al-Subai",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -840,13 +604,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "API_GATEWAY",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Saud Al-Ajmi",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -868,13 +625,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "MONITORING_OBSERVABILITY",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Mohammed Al-Qarni",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -894,13 +644,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "MONITORING_OBSERVABILITY",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Saud Al-Ajmi",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -920,13 +663,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "MONITORING_OBSERVABILITY",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Omar Al-Shehri",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -947,13 +683,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "MONITORING_OBSERVABILITY",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Layla Al-Dosari",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -972,13 +701,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "INCIDENT_MGMT",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Ahmed Al-Mansour",
-        isPrimary: true,
-      },
-    ],
   },
 
   // Backup & DR
@@ -993,13 +715,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "DATA_PLATFORM",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Tariq Al-Shamrani",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "ON_PREM" as const,
       region: "Riyadh",
@@ -1021,13 +736,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "UAT" as const,
     businessProcessCode: "DEPLOYMENT_CICD",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Faisal Al-Harbi",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -1046,13 +754,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "DR" as const,
     businessProcessCode: "DATA_PLATFORM",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Tariq Al-Shamrani",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "GCP_CLOUD" as const,
       cloudProvider: "GCP",
@@ -1073,13 +774,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "API_GATEWAY",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Mohammed Al-Qarni",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "ON_PREM" as const,
       region: "Riyadh",
@@ -1101,13 +795,6 @@ export const INFRASTRUCTURE_SERVICES = [
     currentStatus: "PRODUCTION" as const,
     vendorCode: "MSFT",
     businessProcessCode: "CRM_SERVICES",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Mohammed Al-Qarni",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "ON_PREM" as const,
       region: "Riyadh",
@@ -1127,13 +814,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "CRM_SERVICES",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Sara Al-Mutairi",
-        isPrimary: true,
-      },
-    ],
   },
   {
     name: "Jira",
@@ -1146,13 +826,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "INCIDENT_MGMT",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Ahmed Al-Mansour",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -1171,13 +844,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "REPORTING_ANALYTICS",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Sara Al-Mutairi",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -1198,13 +864,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "REPORTING_ANALYTICS",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Hanan Al-Subai",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -1226,13 +885,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "DATA_PLATFORM",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Tariq Al-Shamrani",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -1253,13 +905,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "MOBILE_BANKING",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Fatima Al-Zahrani",
-        isPrimary: true,
-      },
-    ],
   },
   {
     name: "Email Gateway",
@@ -1273,13 +918,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "CRM_SERVICES",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Layla Al-Dosari",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -1299,13 +937,6 @@ export const INFRASTRUCTURE_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "MOBILE_BANKING",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Khalid Al-Ghamdi",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",

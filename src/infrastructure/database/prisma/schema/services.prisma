@@ -2,8 +2,8 @@
 // SERVICE MANAGEMENT
 // ============================================
 //
-// Models: BusinessProcess, Service, ServiceOwnership, ServiceInfrastructure, ServiceAsset, ServiceRelationship
-// Enums: ServiceType, ServiceStatus, DataConfidentiality, BusinessImpactLevel, CriticalityLevel, OwnershipType, ServiceLocation, AssetRelationship, ServiceRelationshipType
+// Models: BusinessProcess, Service, ServiceOwnership, ServiceInfrastructure, ServiceAsset, ServiceRelationship, ServiceHealthHistory, ServiceSlaMetric
+// Enums: ServiceType, ServiceStatus, DataConfidentiality, BusinessImpactLevel, CriticalityLevel, OwnershipType, ServiceLocation, AssetRelationship, ServiceRelationshipType, ServiceHealthStatus, SlaComplianceStatus, SlaMetricType
 // Layer: Layer 3 (Advanced ITAM)
 // Related DI Module: service.module.ts
 // ============================================
@@ -68,6 +68,51 @@ model Service {
   createdBy               String?
   updatedBy               String?
 
+  // ============ SLA FIELDS (Structured) ============
+  // Response time SLAs (in milliseconds)
+  slaResponseTimeP50         Int? // P50 response time target (ms)
+  slaResponseTimeP95         Int? // P95 response time target (ms)
+  slaResponseTimeP99         Int? // P99 response time target (ms)
+  // Resolution time SLAs (in minutes)
+  slaResolutionTimeCritical  Int? // Critical incident resolution (minutes)
+  slaResolutionTimeHigh      Int? // High priority resolution (minutes)
+  slaResolutionTimeMedium    Int? // Medium priority resolution (minutes)
+  // Uptime SLA (percentage, stored as decimal: 99.9 = 99.9%)
+  slaUptimePercentage        Decimal?                @db.Decimal(5, 3) // e.g., 99.900
+  // Error rate threshold (percentage)
+  slaErrorRateThreshold      Decimal?                @db.Decimal(5, 3) // e.g., 1.000 for 1%
+  // SLA compliance tracking
+  slaComplianceStatus        SlaComplianceStatus     @default(NOT_APPLICABLE)
+  lastSlaReviewDate          DateTime?
+  slaViolationCount          Int                     @default(0)
+  // Support tiers (from old slaDetails JSON)
+  slaSupportTier             String? // "24/7", "Business Hours", "Best Effort"
+  slaContactEmail            String?
+  slaEscalationPath          String?                 @db.Text
+  // ============ HEALTH MONITORING FIELDS ============
+  healthStatus               ServiceHealthStatus     @default(UNKNOWN)
+  lastHealthCheck            DateTime?
+  nextScheduledHealthCheck   DateTime?
+  // Uptime tracking (calculated fields)
+  uptimePercentage24h        Decimal?                @db.Decimal(5, 3) // Last 24 hours
+  uptimePercentage7d         Decimal?                @db.Decimal(5, 3) // Last 7 days
+  uptimePercentage30d        Decimal?                @db.Decimal(5, 3) // Last 30 days
+  // Monitoring configuration
+  healthCheckUrl             String? // HTTP endpoint for health checks
+  healthCheckInterval        Int? // Check interval in minutes
+  healthCheckTimeout         Int? // Timeout in seconds
+  healthCheckEnabled         Boolean                 @default(false)
+  // Performance metrics (recent)
+  currentResponseTimeP50     Int? // Current P50 (ms)
+  currentResponseTimeP95     Int? // Current P95 (ms)
+  currentErrorRate           Decimal?                @db.Decimal(5, 3) // Current error rate %
+  // Incident tracking
+  lastIncidentDate           DateTime?
+  lastDowntimeDate           DateTime?
+  lastDowntimeDuration       Int? // Minutes
+  mttrMinutes                Int? // Mean Time To Recover
+  mtbfHours                  Int? // Mean Time Between Failures
+
   // Soft delete fields
   deletedAt   DateTime?
   deletedById String?
@@ -78,6 +123,8 @@ model Service {
   assets                  ServiceAsset[]
   outgoingRelationships   ServiceRelationship[]    @relation("ServiceRelationshipFrom")
   incomingRelationships   ServiceRelationship[]    @relation("ServiceRelationshipTo")
+  healthHistory           ServiceHealthHistory[]
+  slaMetrics              ServiceSlaMetric[]
   deletedBy               Person?                  @relation("ServiceDeletedBy", fields: [deletedById], references: [id], onDelete: SetNull)
 
   // Indexes
@@ -90,6 +137,10 @@ model Service {
   @@index([isEssentialService])
   @@index([plannedDecommissionDate])
   @@index([deletedAt])
+  @@index([healthStatus])
+  @@index([slaComplianceStatus])
+  @@index([lastHealthCheck])
+  @@index([healthCheckEnabled])
   @@map("services")
 }
 
@@ -204,6 +255,59 @@ model ServiceRelationship {
   @@map("service_relationships")
 }
 
+// ServiceHealthHistory model
+// Track historical health status changes for services
+model ServiceHealthHistory {
+  id             String              @id @default(cuid())
+  serviceId      String
+  service        Service             @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  previousStatus ServiceHealthStatus
+  newStatus      ServiceHealthStatus
+  checkTimestamp DateTime            @default(now())
+  // Health check details
+  responseTime   Int? // ms
+  errorMessage   String?             @db.Text
+  statusCode     Int? // HTTP status code
+  checkDuration  Int? // ms
+  // Metadata
+  triggeredBy    String? // "automated", "manual", "alert"
+  metadata       Json?
+  createdAt      DateTime            @default(now())
+
+  // Indexes
+  @@index([serviceId, checkTimestamp])
+  @@index([newStatus])
+  @@map("service_health_history")
+}
+
+// ServiceSlaMetric model
+// Track SLA performance metrics over time
+model ServiceSlaMetric {
+  id               String              @id @default(cuid())
+  serviceId        String
+  service          Service             @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  metricType       SlaMetricType
+  periodStart      DateTime
+  periodEnd        DateTime
+  // Metric values
+  targetValue      Decimal             @db.Decimal(12, 3)
+  actualValue      Decimal             @db.Decimal(12, 3)
+  complianceStatus SlaComplianceStatus
+  // Additional context
+  breachDuration   Int? // Minutes of breach
+  incidentCount    Int                 @default(0)
+  notes            String?             @db.Text
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  // Constraints and indexes
+  @@unique([serviceId, metricType, periodStart])
+  @@index([serviceId, periodStart])
+  @@index([complianceStatus])
+  @@index([metricType])
+  @@map("service_sla_metrics")
+}
+
 // ============================================
 // SERVICE MANAGEMENT ENUMS
 // ============================================
@@ -287,4 +391,31 @@ enum ServiceRelationshipType {
   PUBLISHES_EVENTS_TO // Service A publishes events to Service B
   CONSUMES_EVENTS_FROM // Service A consumes events from Service B
   BACKUP_FOR // Service A is backup for Service B
+}
+
+// Service health status
+enum ServiceHealthStatus {
+  HEALTHY // All checks passing
+  DEGRADED // Some issues, partial functionality
+  UNHEALTHY // Critical issues, service impaired
+  DOWN // Service unavailable
+  UNKNOWN // Health check not configured or failed
+  MAINTENANCE // Planned maintenance mode
+}
+
+// SLA compliance status
+enum SlaComplianceStatus {
+  COMPLIANT // Meeting all SLA targets
+  AT_RISK // Approaching SLA thresholds
+  BREACHED // SLA violated
+  NOT_APPLICABLE // No SLA defined
+}
+
+// SLA metric types
+enum SlaMetricType {
+  RESPONSE_TIME // P50/P95/P99 response time
+  RESOLUTION_TIME // Time to resolve incidents
+  UPTIME // Availability percentage
+  ERROR_RATE // Error rate threshold
+  THROUGHPUT // Request/transaction volume
 }

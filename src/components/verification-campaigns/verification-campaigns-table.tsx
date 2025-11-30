@@ -5,7 +5,7 @@
 "use client";
 "use no memo";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   flexRender,
   getCoreRowModel,
@@ -87,7 +87,7 @@ export function VerificationCampaignsTable({
     useState<VerificationCampaignDTO | null>(null);
 
   // Load progress data for campaigns
-  const loadProgressData = async () => {
+  const loadProgressData = useCallback(async () => {
     const campaignsWithProgressData = await Promise.all(
       data.map(async (campaign) => {
         try {
@@ -111,13 +111,21 @@ export function VerificationCampaignsTable({
         return { ...campaign, totalItems: 0, verifiedItems: 0 };
       }),
     );
-    setCampaignsWithProgress(campaignsWithProgressData);
-  };
+    return campaignsWithProgressData;
+  }, [data]);
 
   // Load progress on mount and when data changes
-  useState(() => {
-    void loadProgressData();
-  });
+  useEffect(() => {
+    let isMounted = true;
+    void (async () => {
+      const campaignsWithProgressData = await loadProgressData();
+      if (!isMounted) return;
+      setCampaignsWithProgress(campaignsWithProgressData);
+    })();
+    return () => {
+      isMounted = false;
+    };
+  }, [loadProgressData]);
 
   const handleDelete = async (campaign: VerificationCampaignDTO) => {
     const result = await deleteVerificationCampaign(campaign.id);

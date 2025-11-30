@@ -27,8 +27,15 @@ import type {
   GetAssetStatisticsUseCase,
   BulkDeleteAssetsUseCase,
   BulkUpdateAssetStatusUseCase,
+  GetAssetsNearingEolReportUseCase,
+  GetAssetValueByCategoryReportUseCase,
+  GetAssetsByDepartmentReportUseCase,
+  GetUnassignedAssetsReportUseCase,
 } from "@/core/use-cases/asset/asset";
 import type { AssetStatistics } from "@/core/repositories/asset.repository.interface";
+import type { AssetEolStatus } from "@/core/use-cases/asset/asset/get-assets-nearing-eol-report.use-case";
+import type { AssetCategoryValueReportItem } from "@/core/use-cases/asset/asset/get-asset-value-by-category-report.use-case";
+import type { AssetsByDepartmentReportItem } from "@/core/use-cases/asset/asset/get-assets-by-department-report.use-case";
 import type { ILoggerService } from "@/core/services";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
@@ -290,6 +297,135 @@ export async function listAssetsAction(
       error,
       { function: "listAssetsAction" },
       "Failed to list assets",
+    );
+  }
+}
+
+export interface AssetEolReportItemDTO {
+  assetTag: string;
+  categoryName: string | null;
+  purchaseDate: string | null;
+  depreciationEnd: string | null;
+  daysUntilEOL: number;
+  status: AssetEolStatus;
+}
+
+export async function getAssetsNearingEolReportAction(): Promise<
+  ActionResponse<AssetEolReportItemDTO[]>
+> {
+  try {
+    await requirePermission(PERMISSIONS.ASSETS_VIEW);
+
+    const container = getContainer();
+    const useCase = container.get<GetAssetsNearingEolReportUseCase>(
+      DI_TOKENS.GetAssetsNearingEolReportUseCase,
+    );
+
+    const items = await useCase.execute();
+
+    return {
+      success: true,
+      data: items.map((item) => ({
+        ...item,
+        categoryName: item.categoryName ?? "Unknown",
+        purchaseDate: item.purchaseDate?.toISOString() ?? null,
+        depreciationEnd: item.depreciationEnd?.toISOString() ?? null,
+      })),
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getAssetsNearingEolReportAction" },
+      "Failed to load assets nearing end of life",
+    );
+  }
+}
+
+export async function getAssetValueByCategoryReportAction(): Promise<
+  ActionResponse<AssetCategoryValueReportItem[]>
+> {
+  try {
+    await requirePermission(PERMISSIONS.ASSETS_VIEW);
+
+    const container = getContainer();
+    const useCase = container.get<GetAssetValueByCategoryReportUseCase>(
+      DI_TOKENS.GetAssetValueByCategoryReportUseCase,
+    );
+
+    const items = await useCase.execute();
+
+    return {
+      success: true,
+      data: items,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getAssetValueByCategoryReportAction" },
+      "Failed to load asset value by category",
+    );
+  }
+}
+
+export async function getAssetsByDepartmentReportAction(): Promise<
+  ActionResponse<AssetsByDepartmentReportItem[]>
+> {
+  try {
+    await requirePermission(PERMISSIONS.ASSETS_VIEW);
+
+    const container = getContainer();
+    const useCase = container.get<GetAssetsByDepartmentReportUseCase>(
+      DI_TOKENS.GetAssetsByDepartmentReportUseCase,
+    );
+
+    const items = await useCase.execute();
+
+    return {
+      success: true,
+      data: items,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getAssetsByDepartmentReportAction" },
+      "Failed to load assets by department",
+    );
+  }
+}
+
+export interface UnassignedAssetReportItemDTO {
+  assetTag: string;
+  categoryName: string;
+  stockLocationName: string;
+  purchaseDate: string | null;
+  daysInStock: number;
+}
+
+export async function getUnassignedAssetsReportAction(): Promise<
+  ActionResponse<UnassignedAssetReportItemDTO[]>
+> {
+  try {
+    await requirePermission(PERMISSIONS.ASSETS_VIEW);
+
+    const container = getContainer();
+    const useCase = container.get<GetUnassignedAssetsReportUseCase>(
+      DI_TOKENS.GetUnassignedAssetsReportUseCase,
+    );
+
+    const items = await useCase.execute();
+
+    return {
+      success: true,
+      data: items.map((item) => ({
+        ...item,
+        purchaseDate: item.purchaseDate?.toISOString() ?? null,
+      })),
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getUnassignedAssetsReportAction" },
+      "Failed to load unassigned assets",
     );
   }
 }

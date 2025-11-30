@@ -3,6 +3,10 @@
  *
  * Defines authentication, identity management, and security services.
  * Includes Active Directory, Keycloak, Auth Service, Vault, PAM, and SIEM.
+ *
+ * NOTE: Service ownership is NOT defined here.
+ * - Production: Use scripts/import-service-ownership.ts with service_owners.json
+ * - Dev: seedServiceOwners() links services to DEMO_PERSONS (dev preset only)
  */
 
 export const SECURITY_SERVICES = [
@@ -20,13 +24,6 @@ export const SECURITY_SERVICES = [
     currentStatus: "PRODUCTION" as const,
     vendorCode: "MSFT",
     businessProcessCode: "IDENTITY_MGMT",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Omar Al-Shehri",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "ON_PREM" as const,
       region: "Riyadh",
@@ -50,13 +47,6 @@ export const SECURITY_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "IDENTITY_MGMT",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Noura Al-Rashid",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -77,18 +67,6 @@ export const SECURITY_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "ACCESS_CONTROL",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Omar Al-Shehri",
-        isPrimary: true,
-      },
-      {
-        type: "PRODUCT" as const,
-        personName: "Noura Al-Rashid",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -110,13 +88,6 @@ export const SECURITY_SERVICES = [
     isEssentialService: true,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "ACCESS_CONTROL",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Noura Al-Rashid",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "OCI_CLOUD" as const,
       cloudProvider: "OCI",
@@ -135,13 +106,6 @@ export const SECURITY_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "COMPLIANCE_AUDIT",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Aisha Al-Malki",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "ON_PREM" as const,
       region: "Riyadh",
@@ -159,13 +123,6 @@ export const SECURITY_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "ACCESS_CONTROL",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Omar Al-Shehri",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "ON_PREM" as const,
       region: "Riyadh",
@@ -186,13 +143,6 @@ export const SECURITY_SERVICES = [
     currentStatus: "PRODUCTION" as const,
     vendorCode: "CISCO",
     businessProcessCode: "ACCESS_CONTROL",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Mohammed Al-Qarni",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "ON_PREM" as const,
       region: "Riyadh",
@@ -211,13 +161,6 @@ export const SECURITY_SERVICES = [
     isEssentialService: false,
     currentStatus: "PRODUCTION" as const,
     businessProcessCode: "ACCESS_CONTROL",
-    owners: [
-      {
-        type: "TECHNICAL" as const,
-        personName: "Saud Al-Ajmi",
-        isPrimary: true,
-      },
-    ],
     infrastructure: {
       location: "ON_PREM" as const,
       region: "Riyadh",

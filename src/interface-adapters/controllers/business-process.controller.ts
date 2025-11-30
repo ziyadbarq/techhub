@@ -37,7 +37,7 @@ export async function createBusinessProcessAction(
   data: z.infer<typeof CreateBusinessProcessSchema>,
 ): Promise<ActionResponse<BusinessProcessDTO>> {
   try {
-    await requirePermission(PERMISSIONS.BUSINESS_PROCESSES_MANAGE);
+    await requirePermission(PERMISSIONS.BUSINESS_PROCESSES_CREATE);
 
     const validated = CreateBusinessProcessSchema.parse(data);
 
@@ -126,7 +126,7 @@ export async function updateBusinessProcessAction(
   data: z.infer<typeof UpdateBusinessProcessSchema>,
 ): Promise<ActionResponse<BusinessProcessDTO>> {
   try {
-    await requirePermission(PERMISSIONS.BUSINESS_PROCESSES_MANAGE);
+    await requirePermission(PERMISSIONS.BUSINESS_PROCESSES_UPDATE);
 
     const validated = UpdateBusinessProcessSchema.parse(data);
 
@@ -164,7 +164,7 @@ export async function deleteBusinessProcessAction(
   id: string,
 ): Promise<ActionResponse<void>> {
   try {
-    await requirePermission(PERMISSIONS.BUSINESS_PROCESSES_MANAGE);
+    await requirePermission(PERMISSIONS.BUSINESS_PROCESSES_DELETE);
 
     const container = getContainer();
     const useCase = container.get<DeleteBusinessProcessUseCase>(

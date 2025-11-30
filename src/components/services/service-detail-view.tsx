@@ -29,6 +29,7 @@ import type {
   ServiceInfrastructureDTO,
   ServiceAssetDTO,
 } from "@/interface-adapters/presenters/service.presenter";
+import type { PersonDTO } from "@/interface-adapters/presenters/person.presenter";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { usePermissions } from "@/hooks/use-permissions";
 import { ServiceStatus } from "@/generated/prisma/enums";
@@ -38,7 +39,6 @@ import { useServiceActions } from "@/hooks/use-service-actions";
 import {
   getStatusBadgeVariant,
   getCriticalityBadgeVariant,
-  groupOwnersByType,
   formatEnumValue,
   formatServiceDateTime,
 } from "@/lib/services/service-display-utils";
@@ -52,12 +52,14 @@ import {
   ConditionalDetailLinkField,
 } from "./service-detail-fields";
 import { ServiceDependenciesTab } from "./dependencies/service-dependencies-tab";
+import { ServiceOwnersManager } from "./service-owners-manager";
 
 interface ServiceDetailViewProps {
   service: ServiceDTO;
   owners: ServiceOwnerDTO[];
   infrastructure: ServiceInfrastructureDTO | null;
   linkedAssets: ServiceAssetDTO[];
+  persons: PersonDTO[];
 }
 
 export function ServiceDetailView({
@@ -65,6 +67,7 @@ export function ServiceDetailView({
   owners,
   infrastructure,
   linkedAssets,
+  persons,
 }: ServiceDetailViewProps) {
   const router = useRouter();
   const { hasPermission } = usePermissions();
@@ -78,9 +81,6 @@ export function ServiceDetailView({
     handleDelete,
     handleRetire,
   } = useServiceActions(service);
-
-  // Use extracted utility function
-  const groupedOwners = groupOwnersByType(owners);
 
   return (
     <div className="space-y-6">
@@ -217,43 +217,11 @@ export function ServiceDetailView({
 
         {/* Owners Tab */}
         <TabsContent value="owners" className="space-y-4">
-          {Object.entries(groupedOwners).map(([type, typeOwners]) => (
-            <Card key={type}>
-              <CardHeader>
-                <CardTitle>{type} Owners</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {typeOwners.length === 0 ? (
-                  <p className="text-muted-foreground text-sm">
-                    No {type.toLowerCase()} owners assigned
-                  </p>
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Primary</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {typeOwners.map((owner) => (
-                        <TableRow key={owner.id}>
-                          <TableCell>{owner.personName || "Unknown"}</TableCell>
-                          <TableCell>{owner.personEmail || "—"}</TableCell>
-                          <TableCell>
-                            {owner.isPrimary && (
-                              <Badge variant="outline">Primary</Badge>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
-              </CardContent>
-            </Card>
-          ))}
+          <ServiceOwnersManager
+            serviceId={service.id}
+            owners={owners}
+            persons={persons}
+          />
         </TabsContent>
 
         {/* Infrastructure Tab */}
