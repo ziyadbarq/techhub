@@ -250,13 +250,9 @@ export default [
         {
           patterns: [
             {
-              group: [
-                "@/core/**",
-                "@/interface-adapters/**",
-                "@/infrastructure/**",
-                "@/app/**",
-              ],
-              message: "Shared lib utilities must stay free of layer coupling.",
+              group: ["@/interface-adapters/**", "@/infrastructure/**", "@/app/**"],
+              message:
+                "Shared lib utilities must stay free of presentation or adapter coupling.",
             },
           ],
         },
@@ -271,7 +267,14 @@ export default [
         {
           patterns: [
             {
-              group: ["@/core/**", "@/infrastructure/**"],
+              group: [
+                "@/core/use-cases/**",
+                "@/core/repositories/**",
+                "@/core/services/**",
+                "@/core/domain/entities/**",
+                "@/core/domain/events/**",
+                "@/infrastructure/**",
+              ],
               message:
                 "Presentation should depend on controllers/queries, not core or infrastructure directly.",
             },

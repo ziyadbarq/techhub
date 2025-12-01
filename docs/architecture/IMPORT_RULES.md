@@ -83,6 +83,11 @@ Cross-cutting: config/, lib/, generated/
 
 ## Enforcement Strategy
 
+**Current staged enforcement (ESLint warn)**:
+- App layer blocks direct imports from core use cases/entities/services and infrastructure (value objects remain allowed temporarily).
+- Lib blocks imports from interface-adapters, infrastructure, and app (core imports are tolerated temporarily until refactors land).
+- Core use cases and domain still block lib/infrastructure/app.
+
 ### 1. ESLint Rules
 
 Use `@typescript-eslint/no-restricted-imports` or `eslint-plugin-boundaries`:
