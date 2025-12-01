@@ -20,6 +20,10 @@ import type { IServiceHealthHistoryRepository } from "@/core/repositories/servic
 import { PrismaServiceHealthHistoryRepository } from "@/infrastructure/repositories/prisma-service-health-history.repository";
 import type { IServiceSlaMetricRepository } from "@/core/repositories/service-sla-metric.repository.interface";
 import { PrismaServiceSlaMetricRepository } from "@/infrastructure/repositories/prisma-service-sla-metric.repository";
+import type { IServiceAssetRepository } from "@/core/repositories/service-asset.repository.interface";
+import { PrismaServiceAssetRepository } from "@/infrastructure/repositories/prisma-service-asset.repository";
+import type { IServiceOwnershipRepository } from "@/core/repositories/service-ownership.repository.interface";
+import { PrismaServiceOwnershipRepository } from "@/infrastructure/repositories/prisma-service-ownership.repository";
 
 // Business Process Repository
 import type { IBusinessProcessRepository } from "@/core/repositories/business-process.repository.interface";
@@ -125,6 +129,16 @@ export function bindServiceDependencies(container: Container): void {
   container
     .bind<IServiceSlaMetricRepository>(DI_TOKENS.IServiceSlaMetricRepository)
     .to(PrismaServiceSlaMetricRepository)
+    .inSingletonScope();
+
+  container
+    .bind<IServiceAssetRepository>(DI_TOKENS.IServiceAssetRepository)
+    .to(PrismaServiceAssetRepository)
+    .inSingletonScope();
+
+  container
+    .bind<IServiceOwnershipRepository>(DI_TOKENS.IServiceOwnershipRepository)
+    .to(PrismaServiceOwnershipRepository)
     .inSingletonScope();
 
   container

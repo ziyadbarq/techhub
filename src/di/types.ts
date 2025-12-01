@@ -868,6 +868,9 @@ export const DI_TOKENS = {
   RecordSlaMetricUseCase: Symbol.for("RecordSlaMetricUseCase"),
   GetServiceHealthHistoryUseCase: Symbol.for("GetServiceHealthHistoryUseCase"),
   GetServiceSlaMetricsUseCase: Symbol.for("GetServiceSlaMetricsUseCase"),
+  ICookieService: Symbol.for("ICookieService"),
+  IServiceAssetRepository: Symbol.for("IServiceAssetRepository"),
+  IServiceOwnershipRepository: Symbol.for("IServiceOwnershipRepository"),
 
   // Service Management: Service Ownership Use Cases
   AddServiceOwnerUseCase: Symbol.for("AddServiceOwnerUseCase"),
