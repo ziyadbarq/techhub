@@ -11,7 +11,13 @@ import { requireFeature } from "@/lib/features/server";
 
 export const dynamic = "force-dynamic";
 
-export default async function ConfigurationItemsPage() {
+interface ConfigurationItemsPageProps {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+export default async function ConfigurationItemsPage({
+  searchParams,
+}: ConfigurationItemsPageProps) {
   await requireFeature("CMDB");
 
   try {
@@ -24,5 +30,26 @@ export default async function ConfigurationItemsPage() {
   const result = await listConfigurationItemsAction();
   const initialItems = result.success ? result.data : [];
 
-  return <ConfigurationItemsPageClient initialItems={initialItems} />;
+  const params = await searchParams;
+  const getParam = (key: string) => {
+    const value = params[key];
+    return Array.isArray(value) ? value[0] : value;
+  };
+
+  const initialViewState = {
+    search: getParam("q") ?? "",
+    criticality: getParam("criticality") ?? "all",
+    environment: getParam("environment") ?? "all",
+    owner: getParam("owner") ?? "all",
+    assetLink: getParam("assetLink") ?? "all",
+    density:
+      (getParam("density") as "compact" | "comfortable" | null) ?? "compact",
+  };
+
+  return (
+    <ConfigurationItemsPageClient
+      initialItems={initialItems}
+      initialViewState={initialViewState}
+    />
+  );
 }

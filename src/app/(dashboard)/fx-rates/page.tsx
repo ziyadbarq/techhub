@@ -5,19 +5,17 @@
 
 import { FxRatesPageClient } from "@/components/fx-rates/fx-rates-page-client";
 import { listExchangeRatesAction } from "@/interface-adapters/controllers/exchange-rate.controller";
-import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
 
 export const dynamic = "force-dynamic";
 
 export default async function FxRatesPage() {
-  try {
-    await requirePermission(PERMISSIONS.FX_RATES_VIEW);
-  } catch (error) {
-    handlePermissionRedirect(error, "/fx-rates");
-    throw error;
-  }
+  await requireFeatureAndPermission(
+    "FX_RATES",
+    PERMISSIONS.FX_RATES_VIEW,
+    "/fx-rates",
+  );
 
   const result = await listExchangeRatesAction();
   const initialRates = result.success ? result.data : [];

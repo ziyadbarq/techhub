@@ -8,6 +8,7 @@ import type { IPermissionRepository } from "../../repositories/permission-reposi
 import type { IAuditLogRepository } from "../../repositories/audit-log-repository.interface";
 import { Permission } from "../../domain/entities/permission.entity";
 import { DuplicatePermissionError } from "../../domain/errors/rbac-errors";
+import { invalidatePermissionCache } from "@/lib/permissions/cache";
 
 export interface CreatePermissionRequest {
   resource: string;
@@ -68,6 +69,9 @@ export class CreatePermissionUseCase {
       ipAddress: request.ipAddress,
       userAgent: request.userAgent,
     });
+
+    // New permissions can be assigned immediately
+    invalidatePermissionCache("all");
 
     return createdPermission;
   }

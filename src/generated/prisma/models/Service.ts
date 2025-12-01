@@ -79,6 +79,9 @@ export type ServiceMinAggregateOutputType = {
   description: string | null
   businessPurpose: string | null
   gitlabRepoUrl: string | null
+  url: string | null
+  supportContact: string | null
+  supportHours: string | null
   dataConfidentiality: $Enums.DataConfidentiality | null
   businessImpactLevel: $Enums.BusinessImpactLevel | null
   criticality: $Enums.CriticalityLevel | null
@@ -138,6 +141,9 @@ export type ServiceMaxAggregateOutputType = {
   description: string | null
   businessPurpose: string | null
   gitlabRepoUrl: string | null
+  url: string | null
+  supportContact: string | null
+  supportHours: string | null
   dataConfidentiality: $Enums.DataConfidentiality | null
   businessImpactLevel: $Enums.BusinessImpactLevel | null
   criticality: $Enums.CriticalityLevel | null
@@ -197,6 +203,9 @@ export type ServiceCountAggregateOutputType = {
   description: number
   businessPurpose: number
   gitlabRepoUrl: number
+  url: number
+  supportContact: number
+  supportHours: number
   dataConfidentiality: number
   businessImpactLevel: number
   criticality: number
@@ -306,6 +315,9 @@ export type ServiceMinAggregateInputType = {
   description?: true
   businessPurpose?: true
   gitlabRepoUrl?: true
+  url?: true
+  supportContact?: true
+  supportHours?: true
   dataConfidentiality?: true
   businessImpactLevel?: true
   criticality?: true
@@ -365,6 +377,9 @@ export type ServiceMaxAggregateInputType = {
   description?: true
   businessPurpose?: true
   gitlabRepoUrl?: true
+  url?: true
+  supportContact?: true
+  supportHours?: true
   dataConfidentiality?: true
   businessImpactLevel?: true
   criticality?: true
@@ -424,6 +439,9 @@ export type ServiceCountAggregateInputType = {
   description?: true
   businessPurpose?: true
   gitlabRepoUrl?: true
+  url?: true
+  supportContact?: true
+  supportHours?: true
   dataConfidentiality?: true
   businessImpactLevel?: true
   criticality?: true
@@ -572,6 +590,9 @@ export type ServiceGroupByOutputType = {
   description: string | null
   businessPurpose: string | null
   gitlabRepoUrl: string | null
+  url: string | null
+  supportContact: string | null
+  supportHours: string | null
   dataConfidentiality: $Enums.DataConfidentiality
   businessImpactLevel: $Enums.BusinessImpactLevel
   criticality: $Enums.CriticalityLevel
@@ -656,6 +677,9 @@ export type ServiceWhereInput = {
   description?: Prisma.StringNullableFilter<"Service"> | string | null
   businessPurpose?: Prisma.StringNullableFilter<"Service"> | string | null
   gitlabRepoUrl?: Prisma.StringNullableFilter<"Service"> | string | null
+  url?: Prisma.StringNullableFilter<"Service"> | string | null
+  supportContact?: Prisma.StringNullableFilter<"Service"> | string | null
+  supportHours?: Prisma.StringNullableFilter<"Service"> | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFilter<"Service"> | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFilter<"Service"> | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFilter<"Service"> | $Enums.CriticalityLevel
@@ -727,6 +751,9 @@ export type ServiceOrderByWithRelationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   businessPurpose?: Prisma.SortOrderInput | Prisma.SortOrder
   gitlabRepoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  url?: Prisma.SortOrderInput | Prisma.SortOrder
+  supportContact?: Prisma.SortOrderInput | Prisma.SortOrder
+  supportHours?: Prisma.SortOrderInput | Prisma.SortOrder
   dataConfidentiality?: Prisma.SortOrder
   businessImpactLevel?: Prisma.SortOrder
   criticality?: Prisma.SortOrder
@@ -801,6 +828,9 @@ export type ServiceWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringNullableFilter<"Service"> | string | null
   businessPurpose?: Prisma.StringNullableFilter<"Service"> | string | null
   gitlabRepoUrl?: Prisma.StringNullableFilter<"Service"> | string | null
+  url?: Prisma.StringNullableFilter<"Service"> | string | null
+  supportContact?: Prisma.StringNullableFilter<"Service"> | string | null
+  supportHours?: Prisma.StringNullableFilter<"Service"> | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFilter<"Service"> | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFilter<"Service"> | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFilter<"Service"> | $Enums.CriticalityLevel
@@ -872,6 +902,9 @@ export type ServiceOrderByWithAggregationInput = {
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   businessPurpose?: Prisma.SortOrderInput | Prisma.SortOrder
   gitlabRepoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  url?: Prisma.SortOrderInput | Prisma.SortOrder
+  supportContact?: Prisma.SortOrderInput | Prisma.SortOrder
+  supportHours?: Prisma.SortOrderInput | Prisma.SortOrder
   dataConfidentiality?: Prisma.SortOrder
   businessImpactLevel?: Prisma.SortOrder
   criticality?: Prisma.SortOrder
@@ -941,6 +974,9 @@ export type ServiceScalarWhereWithAggregatesInput = {
   description?: Prisma.StringNullableWithAggregatesFilter<"Service"> | string | null
   businessPurpose?: Prisma.StringNullableWithAggregatesFilter<"Service"> | string | null
   gitlabRepoUrl?: Prisma.StringNullableWithAggregatesFilter<"Service"> | string | null
+  url?: Prisma.StringNullableWithAggregatesFilter<"Service"> | string | null
+  supportContact?: Prisma.StringNullableWithAggregatesFilter<"Service"> | string | null
+  supportHours?: Prisma.StringNullableWithAggregatesFilter<"Service"> | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityWithAggregatesFilter<"Service"> | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelWithAggregatesFilter<"Service"> | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelWithAggregatesFilter<"Service"> | $Enums.CriticalityLevel
@@ -1002,6 +1038,9 @@ export type ServiceCreateInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -1070,6 +1109,9 @@ export type ServiceUncheckedCreateInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -1138,6 +1180,9 @@ export type ServiceUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -1206,6 +1251,9 @@ export type ServiceUncheckedUpdateInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -1274,6 +1322,9 @@ export type ServiceCreateManyInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -1335,6 +1386,9 @@ export type ServiceUpdateManyMutationInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -1393,6 +1447,9 @@ export type ServiceUncheckedUpdateManyInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -1464,6 +1521,9 @@ export type ServiceCountOrderByAggregateInput = {
   description?: Prisma.SortOrder
   businessPurpose?: Prisma.SortOrder
   gitlabRepoUrl?: Prisma.SortOrder
+  url?: Prisma.SortOrder
+  supportContact?: Prisma.SortOrder
+  supportHours?: Prisma.SortOrder
   dataConfidentiality?: Prisma.SortOrder
   businessImpactLevel?: Prisma.SortOrder
   criticality?: Prisma.SortOrder
@@ -1548,6 +1608,9 @@ export type ServiceMaxOrderByAggregateInput = {
   description?: Prisma.SortOrder
   businessPurpose?: Prisma.SortOrder
   gitlabRepoUrl?: Prisma.SortOrder
+  url?: Prisma.SortOrder
+  supportContact?: Prisma.SortOrder
+  supportHours?: Prisma.SortOrder
   dataConfidentiality?: Prisma.SortOrder
   businessImpactLevel?: Prisma.SortOrder
   criticality?: Prisma.SortOrder
@@ -1607,6 +1670,9 @@ export type ServiceMinOrderByAggregateInput = {
   description?: Prisma.SortOrder
   businessPurpose?: Prisma.SortOrder
   gitlabRepoUrl?: Prisma.SortOrder
+  url?: Prisma.SortOrder
+  supportContact?: Prisma.SortOrder
+  supportHours?: Prisma.SortOrder
   dataConfidentiality?: Prisma.SortOrder
   businessImpactLevel?: Prisma.SortOrder
   criticality?: Prisma.SortOrder
@@ -1946,6 +2012,9 @@ export type ServiceCreateWithoutDeletedByInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -2013,6 +2082,9 @@ export type ServiceUncheckedCreateWithoutDeletedByInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -2109,6 +2181,9 @@ export type ServiceScalarWhereInput = {
   description?: Prisma.StringNullableFilter<"Service"> | string | null
   businessPurpose?: Prisma.StringNullableFilter<"Service"> | string | null
   gitlabRepoUrl?: Prisma.StringNullableFilter<"Service"> | string | null
+  url?: Prisma.StringNullableFilter<"Service"> | string | null
+  supportContact?: Prisma.StringNullableFilter<"Service"> | string | null
+  supportHours?: Prisma.StringNullableFilter<"Service"> | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFilter<"Service"> | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFilter<"Service"> | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFilter<"Service"> | $Enums.CriticalityLevel
@@ -2170,6 +2245,9 @@ export type ServiceCreateWithoutVendorInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -2237,6 +2315,9 @@ export type ServiceUncheckedCreateWithoutVendorInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -2330,6 +2411,9 @@ export type ServiceCreateWithoutBusinessProcessInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -2397,6 +2481,9 @@ export type ServiceUncheckedCreateWithoutBusinessProcessInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -2490,6 +2577,9 @@ export type ServiceCreateWithoutOwnersInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -2557,6 +2647,9 @@ export type ServiceUncheckedCreateWithoutOwnersInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -2640,6 +2733,9 @@ export type ServiceUpdateWithoutOwnersInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -2707,6 +2803,9 @@ export type ServiceUncheckedUpdateWithoutOwnersInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -2774,6 +2873,9 @@ export type ServiceCreateWithoutInfrastructureInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -2841,6 +2943,9 @@ export type ServiceUncheckedCreateWithoutInfrastructureInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -2924,6 +3029,9 @@ export type ServiceUpdateWithoutInfrastructureInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -2991,6 +3099,9 @@ export type ServiceUncheckedUpdateWithoutInfrastructureInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -3058,6 +3169,9 @@ export type ServiceCreateWithoutAssetsInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -3125,6 +3239,9 @@ export type ServiceUncheckedCreateWithoutAssetsInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -3208,6 +3325,9 @@ export type ServiceUpdateWithoutAssetsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -3275,6 +3395,9 @@ export type ServiceUncheckedUpdateWithoutAssetsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -3342,6 +3465,9 @@ export type ServiceCreateWithoutOutgoingRelationshipsInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -3409,6 +3535,9 @@ export type ServiceUncheckedCreateWithoutOutgoingRelationshipsInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -3481,6 +3610,9 @@ export type ServiceCreateWithoutIncomingRelationshipsInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -3548,6 +3680,9 @@ export type ServiceUncheckedCreateWithoutIncomingRelationshipsInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -3631,6 +3766,9 @@ export type ServiceUpdateWithoutOutgoingRelationshipsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -3698,6 +3836,9 @@ export type ServiceUncheckedUpdateWithoutOutgoingRelationshipsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -3776,6 +3917,9 @@ export type ServiceUpdateWithoutIncomingRelationshipsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -3843,6 +3987,9 @@ export type ServiceUncheckedUpdateWithoutIncomingRelationshipsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -3910,6 +4057,9 @@ export type ServiceCreateWithoutHealthHistoryInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -3977,6 +4127,9 @@ export type ServiceUncheckedCreateWithoutHealthHistoryInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -4060,6 +4213,9 @@ export type ServiceUpdateWithoutHealthHistoryInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -4127,6 +4283,9 @@ export type ServiceUncheckedUpdateWithoutHealthHistoryInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -4194,6 +4353,9 @@ export type ServiceCreateWithoutSlaMetricsInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -4261,6 +4423,9 @@ export type ServiceUncheckedCreateWithoutSlaMetricsInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -4344,6 +4509,9 @@ export type ServiceUpdateWithoutSlaMetricsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -4411,6 +4579,9 @@ export type ServiceUncheckedUpdateWithoutSlaMetricsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -4478,6 +4649,9 @@ export type ServiceCreateManyDeletedByInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -4538,6 +4712,9 @@ export type ServiceUpdateWithoutDeletedByInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -4605,6 +4782,9 @@ export type ServiceUncheckedUpdateWithoutDeletedByInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -4672,6 +4852,9 @@ export type ServiceUncheckedUpdateManyWithoutDeletedByInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -4732,6 +4915,9 @@ export type ServiceCreateManyVendorInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -4792,6 +4978,9 @@ export type ServiceUpdateWithoutVendorInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -4859,6 +5048,9 @@ export type ServiceUncheckedUpdateWithoutVendorInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -4926,6 +5118,9 @@ export type ServiceUncheckedUpdateManyWithoutVendorInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -4986,6 +5181,9 @@ export type ServiceCreateManyBusinessProcessInput = {
   description?: string | null
   businessPurpose?: string | null
   gitlabRepoUrl?: string | null
+  url?: string | null
+  supportContact?: string | null
+  supportHours?: string | null
   dataConfidentiality?: $Enums.DataConfidentiality
   businessImpactLevel?: $Enums.BusinessImpactLevel
   criticality?: $Enums.CriticalityLevel
@@ -5046,6 +5244,9 @@ export type ServiceUpdateWithoutBusinessProcessInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -5113,6 +5314,9 @@ export type ServiceUncheckedUpdateWithoutBusinessProcessInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -5180,6 +5384,9 @@ export type ServiceUncheckedUpdateManyWithoutBusinessProcessInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   businessPurpose?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gitlabRepoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportContact?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  supportHours?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   dataConfidentiality?: Prisma.EnumDataConfidentialityFieldUpdateOperationsInput | $Enums.DataConfidentiality
   businessImpactLevel?: Prisma.EnumBusinessImpactLevelFieldUpdateOperationsInput | $Enums.BusinessImpactLevel
   criticality?: Prisma.EnumCriticalityLevelFieldUpdateOperationsInput | $Enums.CriticalityLevel
@@ -5325,6 +5532,9 @@ export type ServiceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   description?: boolean
   businessPurpose?: boolean
   gitlabRepoUrl?: boolean
+  url?: boolean
+  supportContact?: boolean
+  supportHours?: boolean
   dataConfidentiality?: boolean
   businessImpactLevel?: boolean
   criticality?: boolean
@@ -5397,6 +5607,9 @@ export type ServiceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   description?: boolean
   businessPurpose?: boolean
   gitlabRepoUrl?: boolean
+  url?: boolean
+  supportContact?: boolean
+  supportHours?: boolean
   dataConfidentiality?: boolean
   businessImpactLevel?: boolean
   criticality?: boolean
@@ -5461,6 +5674,9 @@ export type ServiceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   description?: boolean
   businessPurpose?: boolean
   gitlabRepoUrl?: boolean
+  url?: boolean
+  supportContact?: boolean
+  supportHours?: boolean
   dataConfidentiality?: boolean
   businessImpactLevel?: boolean
   criticality?: boolean
@@ -5525,6 +5741,9 @@ export type ServiceSelectScalar = {
   description?: boolean
   businessPurpose?: boolean
   gitlabRepoUrl?: boolean
+  url?: boolean
+  supportContact?: boolean
+  supportHours?: boolean
   dataConfidentiality?: boolean
   businessImpactLevel?: boolean
   criticality?: boolean
@@ -5579,7 +5798,7 @@ export type ServiceSelectScalar = {
   deletedById?: boolean
 }
 
-export type ServiceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "serviceType" | "description" | "businessPurpose" | "gitlabRepoUrl" | "dataConfidentiality" | "businessImpactLevel" | "criticality" | "isEssentialService" | "deploymentDate" | "currentStatus" | "lastPatchDate" | "plannedDecommissionDate" | "vendorId" | "slaDetails" | "businessProcessId" | "isInCentralRegister" | "complianceNotes" | "metadata" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy" | "slaResponseTimeP50" | "slaResponseTimeP95" | "slaResponseTimeP99" | "slaResolutionTimeCritical" | "slaResolutionTimeHigh" | "slaResolutionTimeMedium" | "slaUptimePercentage" | "slaErrorRateThreshold" | "slaComplianceStatus" | "lastSlaReviewDate" | "slaViolationCount" | "slaSupportTier" | "slaContactEmail" | "slaEscalationPath" | "healthStatus" | "lastHealthCheck" | "nextScheduledHealthCheck" | "uptimePercentage24h" | "uptimePercentage7d" | "uptimePercentage30d" | "healthCheckUrl" | "healthCheckInterval" | "healthCheckTimeout" | "healthCheckEnabled" | "currentResponseTimeP50" | "currentResponseTimeP95" | "currentErrorRate" | "lastIncidentDate" | "lastDowntimeDate" | "lastDowntimeDuration" | "mttrMinutes" | "mtbfHours" | "deletedAt" | "deletedById", ExtArgs["result"]["service"]>
+export type ServiceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "serviceType" | "description" | "businessPurpose" | "gitlabRepoUrl" | "url" | "supportContact" | "supportHours" | "dataConfidentiality" | "businessImpactLevel" | "criticality" | "isEssentialService" | "deploymentDate" | "currentStatus" | "lastPatchDate" | "plannedDecommissionDate" | "vendorId" | "slaDetails" | "businessProcessId" | "isInCentralRegister" | "complianceNotes" | "metadata" | "createdAt" | "updatedAt" | "createdBy" | "updatedBy" | "slaResponseTimeP50" | "slaResponseTimeP95" | "slaResponseTimeP99" | "slaResolutionTimeCritical" | "slaResolutionTimeHigh" | "slaResolutionTimeMedium" | "slaUptimePercentage" | "slaErrorRateThreshold" | "slaComplianceStatus" | "lastSlaReviewDate" | "slaViolationCount" | "slaSupportTier" | "slaContactEmail" | "slaEscalationPath" | "healthStatus" | "lastHealthCheck" | "nextScheduledHealthCheck" | "uptimePercentage24h" | "uptimePercentage7d" | "uptimePercentage30d" | "healthCheckUrl" | "healthCheckInterval" | "healthCheckTimeout" | "healthCheckEnabled" | "currentResponseTimeP50" | "currentResponseTimeP95" | "currentErrorRate" | "lastIncidentDate" | "lastDowntimeDate" | "lastDowntimeDuration" | "mttrMinutes" | "mtbfHours" | "deletedAt" | "deletedById", ExtArgs["result"]["service"]>
 export type ServiceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vendor?: boolean | Prisma.Service$vendorArgs<ExtArgs>
   businessProcess?: boolean | Prisma.Service$businessProcessArgs<ExtArgs>
@@ -5625,6 +5844,9 @@ export type $ServicePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     description: string | null
     businessPurpose: string | null
     gitlabRepoUrl: string | null
+    url: string | null
+    supportContact: string | null
+    supportHours: string | null
     dataConfidentiality: $Enums.DataConfidentiality
     businessImpactLevel: $Enums.BusinessImpactLevel
     criticality: $Enums.CriticalityLevel
@@ -6116,6 +6338,9 @@ export interface ServiceFieldRefs {
   readonly description: Prisma.FieldRef<"Service", 'String'>
   readonly businessPurpose: Prisma.FieldRef<"Service", 'String'>
   readonly gitlabRepoUrl: Prisma.FieldRef<"Service", 'String'>
+  readonly url: Prisma.FieldRef<"Service", 'String'>
+  readonly supportContact: Prisma.FieldRef<"Service", 'String'>
+  readonly supportHours: Prisma.FieldRef<"Service", 'String'>
   readonly dataConfidentiality: Prisma.FieldRef<"Service", 'DataConfidentiality'>
   readonly businessImpactLevel: Prisma.FieldRef<"Service", 'BusinessImpactLevel'>
   readonly criticality: Prisma.FieldRef<"Service", 'CriticalityLevel'>

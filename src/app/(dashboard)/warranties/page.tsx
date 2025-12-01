@@ -5,19 +5,17 @@
 
 import { WarrantiesPageClient } from "@/components/warranties/warranties-page-client";
 import { listWarrantiesAction } from "@/interface-adapters/controllers/warranty.controller";
-import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
 
 export const dynamic = "force-dynamic";
 
 export default async function WarrantiesPage() {
-  try {
-    await requirePermission(PERMISSIONS.WARRANTIES_VIEW);
-  } catch (error) {
-    handlePermissionRedirect(error, "/warranties");
-    throw error;
-  }
+  await requireFeatureAndPermission(
+    "WARRANTIES",
+    PERMISSIONS.WARRANTIES_VIEW,
+    "/warranties",
+  );
 
   const result = await listWarrantiesAction();
   const initialWarranties = result.success ? result.data.warranties : [];

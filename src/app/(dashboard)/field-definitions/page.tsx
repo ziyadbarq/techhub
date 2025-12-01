@@ -4,19 +4,17 @@
 
 import { FieldDefinitionsPageClient } from "@/components/field-definitions/field-definitions-page-client";
 import { listFieldDefinitionsAction } from "@/interface-adapters/controllers/field-definition.controller";
-import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
 
 export const dynamic = "force-dynamic";
 
 export default async function FieldDefinitionsPage() {
-  try {
-    await requirePermission(PERMISSIONS.FIELD_DEFINITIONS_VIEW);
-  } catch (error) {
-    handlePermissionRedirect(error, "/field-definitions");
-    throw error;
-  }
+  await requireFeatureAndPermission(
+    "FOUNDATION",
+    PERMISSIONS.FIELD_DEFINITIONS_VIEW,
+    "/field-definitions",
+  );
 
   const result = await listFieldDefinitionsAction();
   const initialFields = result.success ? result.data : [];

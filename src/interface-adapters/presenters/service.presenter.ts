@@ -32,6 +32,9 @@ export interface ServiceDTO {
   description: string | null;
   businessPurpose: string | null;
   gitlabRepoUrl: string | null;
+  url: string | null;
+  supportContact: string | null;
+  supportHours: string | null;
   dataConfidentiality: DataConfidentiality;
   businessImpactLevel: BusinessImpactLevel;
   criticality: CriticalityLevel;
@@ -180,6 +183,9 @@ export function presentService(
     description: service.description,
     businessPurpose: service.businessPurpose,
     gitlabRepoUrl: service.gitlabRepoUrl,
+    url: service.url,
+    supportContact: service.supportContact,
+    supportHours: service.supportHours,
     dataConfidentiality: service.dataConfidentiality,
     businessImpactLevel: service.businessImpactLevel,
     criticality: service.criticality,

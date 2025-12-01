@@ -11,6 +11,7 @@ import {
   RoleNotFoundError,
   SystemRoleModificationError,
 } from "../../domain/errors/rbac-errors";
+import { invalidatePermissionCache } from "@/lib/permissions/cache";
 
 export interface UpdateRoleRequest {
   roleId: string;
@@ -69,6 +70,9 @@ export class UpdateRoleUseCase {
       ipAddress: request.ipAddress,
       userAgent: request.userAgent,
     });
+
+    // Role activation changes affect permissions
+    invalidatePermissionCache("all");
 
     return savedRole;
   }

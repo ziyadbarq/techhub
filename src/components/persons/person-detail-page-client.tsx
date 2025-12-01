@@ -35,7 +35,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -101,6 +100,10 @@ import { PersonGovernanceTab } from "@/components/persons/tabs/person-governance
 import { PersonActivityTab } from "@/components/persons/tabs/person-activity-tab";
 import { formatDate } from "@/lib/utils/date-format";
 import type { IntuneDeviceDTO } from "@/interface-adapters/dtos/generated/intune-device.dto";
+import {
+  CountedTabs,
+  type CountedTabConfig,
+} from "@/components/ui/counted-tabs";
 
 interface PersonDetailPageClientProps {
   person: EmployeeDirectoryDTO;
@@ -151,13 +154,106 @@ export function PersonDetailPageClient({
   const canManage = hasPermission(PERMISSIONS.PERSONS_MANAGE);
   const canManageUsers = hasPermission(PERMISSIONS.USERS_MANAGE);
   const canSync = hasPermission(PERMISSIONS.PERSONS_SYNC);
-
-  // Calculate stats for quick stats cards
+  const isCountsLoading = !counts;
   const totalAssets =
     (intuneDevices.length || counts?.intuneDevices || 0) +
     (counts?.licenseAllocations ?? 0) +
     (counts?.assetReservations ?? 0) +
     (counts?.kitCheckouts ?? 0);
+  const tabCount = (value: number | undefined) =>
+    isCountsLoading ? undefined : (value ?? 0);
+  const servicesAndCmdbCount =
+    (counts?.serviceOwnerships ?? 0) + (counts?.configurationItems ?? 0);
+  const governanceCount =
+    (counts?.verificationCampaigns ?? 0) +
+    (counts?.verificationItems ?? 0) +
+    (counts?.attachments ?? 0) +
+    (counts?.initiatedDisposals ?? 0) +
+    (counts?.approvedDisposals ?? 0);
+  const activityCount =
+    (counts?.stockMovements ?? 0) +
+    (counts?.verificationItems ?? 0) +
+    (counts?.attachments ?? 0);
+  const tabs: CountedTabConfig[] = [
+    {
+      value: "overview",
+      label: "Overview",
+      content: (
+        <PersonOverviewTab person={person} reportingChain={reportingChain} />
+      ),
+      showWhenZero: true,
+    },
+    {
+      value: "organization",
+      label: "Organization",
+      count: tabCount(counts?.directReports),
+      content: (
+        <PersonOrganizationTab
+          personId={person.id}
+          reportingChain={reportingChain}
+          directReportsCount={counts?.directReports ?? 0}
+          roleAssignmentsCount={counts?.roleAssignments ?? 0}
+        />
+      ),
+    },
+    {
+      value: "assets",
+      label: "Assets & Licenses",
+      count: tabCount(totalAssets),
+      content: (
+        <PersonAssetsTab
+          personId={person.id}
+          intuneDevices={intuneDevices}
+          counts={{
+            intuneDevices: intuneDevices.length || counts?.intuneDevices || 0,
+            licenseAllocations: counts?.licenseAllocations ?? 0,
+            assetReservations: counts?.assetReservations ?? 0,
+            kitCheckouts: counts?.kitCheckouts ?? 0,
+            stockMovements: counts?.stockMovements ?? 0,
+            maintenanceSchedules: counts?.maintenanceSchedules ?? 0,
+          }}
+        />
+      ),
+    },
+    {
+      value: "services",
+      label: "Services & CMDB",
+      count: tabCount(servicesAndCmdbCount),
+      content: (
+        <PersonServicesTab
+          personId={person.id}
+          counts={{
+            serviceOwnerships: counts?.serviceOwnerships ?? 0,
+            configurationItems: counts?.configurationItems ?? 0,
+            dataOwnerships: counts?.dataOwnerships ?? 0,
+          }}
+        />
+      ),
+    },
+    {
+      value: "governance",
+      label: "Governance",
+      count: tabCount(governanceCount),
+      content: (
+        <PersonGovernanceTab
+          personId={person.id}
+          counts={{
+            verificationCampaigns: counts?.verificationCampaigns ?? 0,
+            verificationItems: counts?.verificationItems ?? 0,
+            attachments: counts?.attachments ?? 0,
+            initiatedDisposals: counts?.initiatedDisposals ?? 0,
+            approvedDisposals: counts?.approvedDisposals ?? 0,
+          }}
+        />
+      ),
+    },
+    {
+      value: "activity",
+      label: "Activity Log",
+      count: tabCount(activityCount),
+      content: <PersonActivityTab personId={person.id} />,
+    },
+  ];
 
   // Fetch linked user on mount
   useEffect(() => {
@@ -694,113 +790,12 @@ Please change your password after first login.`;
         </Card>
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="flex-wrap">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="organization">
-            Organization
-            {(counts?.directReports ?? 0) > 0 && (
-              <Badge variant="secondary" className="ml-2">
-                {counts?.directReports}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="assets">
-            Assets & Licenses
-            {totalAssets > 0 && (
-              <Badge variant="secondary" className="ml-2">
-                {totalAssets}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="services">
-            Services & CMDB
-            {(counts?.serviceOwnerships ?? 0) +
-              (counts?.configurationItems ?? 0) >
-              0 && (
-              <Badge variant="secondary" className="ml-2">
-                {(counts?.serviceOwnerships ?? 0) +
-                  (counts?.configurationItems ?? 0)}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="governance">
-            Governance
-            {(counts?.verificationCampaigns ?? 0) +
-              (counts?.verificationItems ?? 0) +
-              (counts?.attachments ?? 0) +
-              (counts?.initiatedDisposals ?? 0) +
-              (counts?.approvedDisposals ?? 0) >
-              0 && (
-              <Badge variant="secondary" className="ml-2">
-                {(counts?.verificationCampaigns ?? 0) +
-                  (counts?.verificationItems ?? 0) +
-                  (counts?.attachments ?? 0) +
-                  (counts?.initiatedDisposals ?? 0) +
-                  (counts?.approvedDisposals ?? 0)}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="activity">Activity Log</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview">
-          <PersonOverviewTab person={person} reportingChain={reportingChain} />
-        </TabsContent>
-
-        <TabsContent value="organization">
-          <PersonOrganizationTab
-            personId={person.id}
-            reportingChain={reportingChain}
-            directReportsCount={counts?.directReports ?? 0}
-            roleAssignmentsCount={counts?.roleAssignments ?? 0}
-          />
-        </TabsContent>
-
-        <TabsContent value="assets">
-          <PersonAssetsTab
-            personId={person.id}
-            intuneDevices={intuneDevices}
-            counts={{
-              intuneDevices: intuneDevices.length || counts?.intuneDevices || 0,
-              licenseAllocations: counts?.licenseAllocations ?? 0,
-              assetReservations: counts?.assetReservations ?? 0,
-              kitCheckouts: counts?.kitCheckouts ?? 0,
-              stockMovements: counts?.stockMovements ?? 0,
-              maintenanceSchedules: counts?.maintenanceSchedules ?? 0,
-            }}
-          />
-        </TabsContent>
-
-        <TabsContent value="services">
-          <PersonServicesTab
-            personId={person.id}
-            counts={{
-              serviceOwnerships: counts?.serviceOwnerships ?? 0,
-              configurationItems: counts?.configurationItems ?? 0,
-              dataOwnerships: counts?.dataOwnerships ?? 0,
-            }}
-          />
-        </TabsContent>
-
-        <TabsContent value="governance">
-          <PersonGovernanceTab
-            personId={person.id}
-            counts={{
-              verificationCampaigns: counts?.verificationCampaigns ?? 0,
-              verificationItems: counts?.verificationItems ?? 0,
-              attachments: counts?.attachments ?? 0,
-              initiatedDisposals: counts?.initiatedDisposals ?? 0,
-              approvedDisposals: counts?.approvedDisposals ?? 0,
-            }}
-          />
-        </TabsContent>
-
-        <TabsContent value="activity">
-          <PersonActivityTab personId={person.id} />
-        </TabsContent>
-      </Tabs>
+      <CountedTabs
+        defaultValue="overview"
+        tabs={tabs}
+        loading={isCountsLoading}
+        tabsClassName="space-y-4"
+      />
 
       {/* Edit Form Dialog */}
       <PersonForm

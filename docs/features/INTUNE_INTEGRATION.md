@@ -1,8 +1,8 @@
 # Microsoft Intune/MDM Integration
 
 **Status**: ✅ Production Ready
-**Version**: 1.1.0
-**Last Updated**: November 28, 2024
+**Version**: 1.2.0
+**Last Updated**: December 1, 2024
 **Feature Flag**: `INTUNE`
 
 ## Overview
@@ -48,10 +48,11 @@ Intune Integration Module
 │   ├── /intune/devices                   # Device list page
 │   ├── /intune/devices/[id]              # Device detail page
 │   ├── IntuneDevicesTable                # Data table with row selection
-│   ├── IntuneDeviceDetailClient          # Detail view with tabs & stats
+│   ├── IntuneDeviceDetailClient          # Detail view with tabs, stats & ITAM Links Management
 │   ├── CreateAssetFromDeviceWizard       # Single asset creation wizard
 │   ├── BulkCreateAssetsWizard            # Bulk asset creation wizard
-│   └── RelatedItemsTab                   # Linked asset/person details
+│   ├── ComplianceHistoryTab              # Timeline of compliance changes
+│   └── RelatedItemsTab                   # Linked asset/person enriched details
 └── Background Jobs
     └── handleIntuneDeviceSync            # BullMQ scheduled job (daily 3 AM UTC)
 ```
@@ -123,13 +124,24 @@ MS_GRAPH_CLIENT_SECRET=your-client-secret
 
 ### Linking Devices to Assets
 
-Automatic linking occurs during sync when:
+**Automatic Linking** occurs during sync when:
 - Device serial number matches an Asset serial number
+- Link method is recorded as `auto_serial`
 
-Manual linking (planned):
-- Navigate to device detail page
-- Click "Link to Asset" in ITAM Links tab
-- Search and select target asset
+**Manual Linking** (✅ Implemented):
+1. Navigate to device detail page
+2. Scroll to **ITAM Links Management** card in Overview tab
+3. Click **"Link Existing"** button under Asset Link
+4. Search and select target asset from the dialog
+5. Confirm linking
+6. Link method is recorded as `manual`
+
+**Unlinking Assets**:
+1. Navigate to device detail page
+2. Scroll to **ITAM Links Management** card
+3. Click **"Unlink"** button under Asset Link
+4. Confirm the action
+5. Device is immediately unlinked from the asset
 
 ### Creating Assets from Devices
 
@@ -150,19 +162,48 @@ Manual linking (planned):
 6. Click **"Create Assets"** to process all eligible devices
 7. Review results: success count, failed devices with error details
 
+### Linking Devices to Persons
+
+**Automatic Linking** occurs during sync when:
+- Device's assigned Intune user ID matches a Person's Azure AD user ID
+- Link method is recorded as `auto_azuread`
+
+**Manual Linking** (✅ Implemented):
+1. Navigate to device detail page
+2. Scroll to **ITAM Links Management** card in Overview tab
+3. Click **"Link Person"** button under Person Link
+4. Search and select target person from the dialog (active persons only)
+5. Confirm linking
+6. Link method is recorded as `manual`
+
+**Unlinking Persons**:
+1. Navigate to device detail page
+2. Scroll to **ITAM Links Management** card
+3. Click **"Unlink"** button under Person Link
+4. Confirm the action
+5. Device is immediately unlinked from the person
+
 ### Viewing Device Details
 
 1. Click on a device name in the list
 2. View **Quick Stats** cards at the top:
-   - Compliance status (Compliant/Non-Compliant)
+   - Compliance status (Compliant/Non-Compliant with color indicators)
    - Days since enrollment
    - Days since last sync
-   - ITAM link status (Asset/Person linked indicators)
-3. View four tabs:
-   - **Overview**: Device info, user assignment, timestamps, identifiers
-   - **Security**: Compliance state, encryption, supervision, jailbreak status
-   - **ITAM Links**: Link/unlink devices to assets and persons
-   - **Related Items**: Full details of linked asset and person (category, vendor, model, location, job title, department, etc.)
+   - ITAM link status (Fully Linked/Asset Linked/Person Linked/Not Linked)
+3. View **ITAM Links Management** card in Overview tab:
+   - **Asset Link Section**: Shows linked asset tag and method, or "No asset linked"
+     - When linked: **Unlink** button (requires `intune-devices:link` permission)
+     - When not linked: **Link Existing** and **Create New Asset** buttons
+   - **Person Link Section**: Shows linked person name and method, or "No person linked"
+     - When linked: **Unlink** button
+     - When not linked: **Link Person** button
+   - Permission notice displayed if user lacks linking permissions
+4. View four tabs:
+   - **Overview**: Device info, user assignment, timestamps, identifiers, ITAM Links Management
+   - **Security**: Compliance state, ownership, management state, encryption, supervision, jailbreak status
+   - **Compliance History**: Timeline of compliance state changes with policy details (filterable by time period)
+   - **Related Items**: Full details of linked asset and person with enriched information
 
 ### Asset Detail Integration
 
@@ -321,19 +362,44 @@ npm run worker:dev
 # Look for log entries with scope "IntuneSync" or "MSGraphService"
 ```
 
+## Recent Updates (v1.2.0 - December 1, 2024)
+
+### ✅ Completed Features
+
+- **ITAM Links Management Card**: Comprehensive UI for managing device-asset-person links
+  - Unlink Asset/Person buttons with loading states
+  - Link Existing Asset/Person buttons with search dialogs
+  - Create New Asset button (conditional on permissions and serial number presence)
+  - Permission-aware button states
+  - Clear status indicators for link methods (auto vs manual)
+
+- **Enhanced Device Detail Page**:
+  - ITAM Links Management card integrated in Overview tab
+  - All link/unlink operations functional with proper error handling
+  - Real-time device refresh after link/unlink operations
+  - Loading states for all async operations
+
+- **Compliance History Tab**: Fully implemented timeline view
+  - Filterable by time period (7, 14, 30, 60, 90 days)
+  - Visual timeline with color-coded state changes
+  - Policy information display
+  - Critical/recovery state highlighting
+
+- **Related Items Tab**: Enhanced enriched data display
+  - Linked asset details with category, vendor, model, location
+  - Linked person details with job title, department, email
+  - Intune user assignment comparison
+  - Empty state guidance
+
 ## Future Enhancements
 
 - [ ] Compliance dashboard with charts and trends
-- [x] ~~Manual device-to-asset linking dialog~~ (Implemented via ITAM Links tab)
-- [x] ~~Manual device-to-person linking dialog~~ (Implemented via ITAM Links tab)
-- [x] ~~Create asset from Intune device~~ (Single & Bulk creation wizards)
-- [x] ~~Related Items tab with linked asset/person details~~
-- [x] ~~Device detail quick stats cards~~
 - [ ] Compliance policy configuration
-- [ ] Device actions (wipe, retire, sync)
-- [ ] Compliance history timeline view
+- [ ] Device actions (wipe, retire, sync individual devices)
 - [ ] Export to CSV/Excel
 - [ ] Email alerts for compliance changes
+- [ ] Bulk link/unlink operations
+- [ ] Device assignment history tracking
 
 ## Related Documentation
 

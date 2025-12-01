@@ -30,7 +30,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -61,6 +60,10 @@ import { VendorWarrantiesTab } from "@/components/vendors/tabs/vendor-warranties
 import { VendorContractsTab } from "@/components/vendors/tabs/vendor-contracts-tab";
 import { VendorServicesTab } from "@/components/vendors/tabs/vendor-services-tab";
 import { formatSAR } from "@/lib/utils";
+import {
+  CountedTabs,
+  type CountedTabConfig,
+} from "@/components/ui/counted-tabs";
 
 interface VendorDetailPageClientProps {
   vendor: VendorDTO;
@@ -94,6 +97,85 @@ export function VendorDetailPageClient({
   // Permission checks
   const canUpdate = hasPermission(PERMISSIONS.VENDORS_UPDATE);
   const canDelete = hasPermission(PERMISSIONS.VENDORS_DELETE);
+  const isCountsLoading = !counts;
+  const tabCount = (value: number | undefined) =>
+    isCountsLoading ? undefined : (value ?? 0);
+  const productCount =
+    (counts?.assetModels ?? 0) + (counts?.licenseProducts ?? 0);
+  const servicesCount = (counts?.services ?? 0) + (counts?.disposals ?? 0);
+  const tabs: CountedTabConfig[] = [
+    {
+      value: "overview",
+      label: "Overview",
+      content: <VendorOverviewTab vendor={vendor} />,
+      showWhenZero: true,
+    },
+    {
+      value: "contacts",
+      label: "Contacts",
+      count: tabCount(counts?.contacts),
+      content: <VendorContactsTab vendorId={vendor.id} />,
+    },
+    {
+      value: "products",
+      label: "Products",
+      count: tabCount(productCount),
+      content: (
+        <VendorProductsTab
+          vendorId={vendor.id}
+          assetModelsCount={counts?.assetModels ?? 0}
+          licenseProductsCount={counts?.licenseProducts ?? 0}
+        />
+      ),
+    },
+    {
+      value: "assets",
+      label: "Assets",
+      count: tabCount(counts?.assets),
+      content: (
+        <VendorAssetsTab
+          vendorId={vendor.id}
+          totalValue={statistics?.totalAssetValue ?? 0}
+          assetCount={counts?.assets ?? 0}
+        />
+      ),
+    },
+    {
+      value: "warranties",
+      label: "Warranties",
+      count: tabCount(counts?.warranties),
+      content: (
+        <VendorWarrantiesTab
+          vendorId={vendor.id}
+          activeCount={counts?.activeWarranties ?? 0}
+          expiringSoonCount={statistics?.warrantiesExpiringSoon ?? 0}
+        />
+      ),
+    },
+    {
+      value: "contracts",
+      label: "Contracts",
+      count: tabCount(counts?.contracts),
+      content: (
+        <VendorContractsTab
+          vendorId={vendor.id}
+          activeCount={counts?.activeContracts ?? 0}
+        />
+      ),
+    },
+    {
+      value: "services",
+      label: "Services",
+      count: tabCount(servicesCount),
+      content: (
+        <VendorServicesTab
+          vendorId={vendor.id}
+          servicesCount={counts?.services ?? 0}
+          disposalsCount={counts?.disposals ?? 0}
+        />
+      ),
+    },
+  ];
 
   const handleFormClose = useCallback(async () => {
     setIsFormOpen(false);
@@ -357,108 +439,12 @@ export function VendorDetailPageClient({
         </Card>
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="flex-wrap">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="contacts">
-            Contacts
-            {(counts?.contacts ?? 0) > 0 && (
-              <Badge variant="secondary" className="ml-2">
-                {counts?.contacts}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="products">
-            Products
-            {(counts?.assetModels ?? 0) + (counts?.licenseProducts ?? 0) >
-              0 && (
-              <Badge variant="secondary" className="ml-2">
-                {(counts?.assetModels ?? 0) + (counts?.licenseProducts ?? 0)}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="assets">
-            Assets
-            {(counts?.assets ?? 0) > 0 && (
-              <Badge variant="secondary" className="ml-2">
-                {counts?.assets}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="warranties">
-            Warranties
-            {(counts?.warranties ?? 0) > 0 && (
-              <Badge variant="secondary" className="ml-2">
-                {counts?.warranties}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="contracts">
-            Contracts
-            {(counts?.contracts ?? 0) > 0 && (
-              <Badge variant="secondary" className="ml-2">
-                {counts?.contracts}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="services">
-            Services
-            {(counts?.services ?? 0) + (counts?.disposals ?? 0) > 0 && (
-              <Badge variant="secondary" className="ml-2">
-                {(counts?.services ?? 0) + (counts?.disposals ?? 0)}
-              </Badge>
-            )}
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview">
-          <VendorOverviewTab vendor={vendor} />
-        </TabsContent>
-
-        <TabsContent value="contacts">
-          <VendorContactsTab vendorId={vendor.id} />
-        </TabsContent>
-
-        <TabsContent value="products">
-          <VendorProductsTab
-            vendorId={vendor.id}
-            assetModelsCount={counts?.assetModels ?? 0}
-            licenseProductsCount={counts?.licenseProducts ?? 0}
-          />
-        </TabsContent>
-
-        <TabsContent value="assets">
-          <VendorAssetsTab
-            vendorId={vendor.id}
-            totalValue={statistics?.totalAssetValue ?? 0}
-            assetCount={counts?.assets ?? 0}
-          />
-        </TabsContent>
-
-        <TabsContent value="warranties">
-          <VendorWarrantiesTab
-            vendorId={vendor.id}
-            activeCount={counts?.activeWarranties ?? 0}
-            expiringSoonCount={statistics?.warrantiesExpiringSoon ?? 0}
-          />
-        </TabsContent>
-
-        <TabsContent value="contracts">
-          <VendorContractsTab
-            vendorId={vendor.id}
-            activeCount={counts?.activeContracts ?? 0}
-          />
-        </TabsContent>
-
-        <TabsContent value="services">
-          <VendorServicesTab
-            vendorId={vendor.id}
-            servicesCount={counts?.services ?? 0}
-            disposalsCount={counts?.disposals ?? 0}
-          />
-        </TabsContent>
-      </Tabs>
+      <CountedTabs
+        defaultValue="overview"
+        tabs={tabs}
+        loading={isCountsLoading}
+        tabsClassName="space-y-4"
+      />
 
       {/* Edit Form Dialog */}
       <VendorForm

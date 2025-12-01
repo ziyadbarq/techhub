@@ -5,19 +5,23 @@
 "use client";
 "use no memo";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
+  getPaginationRowModel,
   useReactTable,
   type ColumnDef,
   type SortingState,
   type ColumnFiltersState,
+  type VisibilityState,
+  type PaginationState,
 } from "@tanstack/react-table";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -40,6 +44,13 @@ import { Badge } from "@/components/ui/badge";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { deleteConfigurationItemAction } from "@/interface-adapters/controllers/configuration-item.controller";
+import { useDebounce } from "@/hooks/use-debounce";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -50,6 +61,28 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { cn } from "@/lib/utils";
+import { formatRelativeTime } from "@/lib/utils/date-format";
+import { getStatusBadgeClasses } from "@/lib/utils/status-colors";
+import {
+  CRITICALITY_STATUS_MAP,
+  ENVIRONMENT_STATUS_MAP,
+  isCIStale,
+} from "./configuration-items-helpers";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import type { ConfigurationItemsViewState } from "./configuration-items-page-client";
+
+const DEFAULT_HIDDEN_COLUMNS: VisibilityState = {
+  ciKey: false,
+  primaryOwnerName: false,
+  updatedAt: false,
+  actions: false,
+};
 
 interface ConfigurationItemsTableProps {
   data: ConfigurationItemDTO[];
@@ -57,23 +90,8 @@ interface ConfigurationItemsTableProps {
   onView: (item: ConfigurationItemDTO) => void;
   onEdit: (item: ConfigurationItemDTO) => void;
   onRefresh: () => void;
+  initialViewState?: ConfigurationItemsViewState;
 }
-
-const criticalityColors: Record<string, string> = {
-  LOW: "bg-blue-500/10 text-blue-500 hover:bg-blue-500/20",
-  MEDIUM: "bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20",
-  HIGH: "bg-orange-500/10 text-orange-500 hover:bg-orange-500/20",
-  CRITICAL: "bg-red-500/10 text-red-500 hover:bg-red-500/20",
-};
-
-const environmentColors: Record<string, string> = {
-  PROD: "bg-red-500/10 text-red-500 hover:bg-red-500/20",
-  UAT: "bg-orange-500/10 text-orange-500 hover:bg-orange-500/20",
-  DEV: "bg-blue-500/10 text-blue-500 hover:bg-blue-500/20",
-  TEST: "bg-purple-500/10 text-purple-500 hover:bg-purple-500/20",
-  DR: "bg-pink-500/10 text-pink-500 hover:bg-pink-500/20",
-  OTHER: "bg-gray-500/10 text-gray-500 hover:bg-gray-500/20",
-};
 
 export function ConfigurationItemsTable({
   data,
@@ -81,14 +99,49 @@ export function ConfigurationItemsTable({
   onView,
   onEdit,
   onRefresh,
+  initialViewState,
 }: ConfigurationItemsTableProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 25,
+  });
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<ConfigurationItemDTO | null>(
     null,
   );
   const [isDeleting, setIsDeleting] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(initialViewState?.search ?? "");
+  const [filters, setFilters] = useState({
+    criticality: initialViewState?.criticality ?? "all",
+    environment: initialViewState?.environment ?? "all",
+    owner: initialViewState?.owner ?? "all",
+    assetLink: initialViewState?.assetLink ?? "all",
+  });
+  const [density, setDensity] = useState<"comfortable" | "compact">(
+    initialViewState?.density ?? "compact",
+  );
+  const initialColumnVisibility = useMemo<VisibilityState>(() => {
+    const param = searchParams.get("hide");
+    const base: VisibilityState = { ...DEFAULT_HIDDEN_COLUMNS };
+    if (!param) return base;
+    param
+      .split(",")
+      .filter(Boolean)
+      .forEach((id) => {
+        base[id] = false;
+      });
+    return base;
+  }, [searchParams]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    initialColumnVisibility,
+  );
+
+  const debouncedSearch = useDebounce(searchTerm, 250);
 
   const handleDelete = async () => {
     if (!itemToDelete) return;
@@ -115,13 +168,29 @@ export function ConfigurationItemsTable({
     {
       accessorKey: "name",
       header: "Name",
+      meta: { label: "Name" },
       cell: ({ row }) => (
-        <div className="font-medium">{row.getValue<string>("name")}</div>
+        <button
+          type="button"
+          onClick={() => onView(row.original)}
+          className="text-left font-medium hover:underline"
+        >
+          {row.getValue<string>("name")}
+        </button>
       ),
+      filterFn: (row, _id, value) => {
+        if (!value || typeof value !== "string") return true;
+        const term = value.toLowerCase();
+        return (
+          row.original.name.toLowerCase().includes(term) ||
+          (row.original.ciKey?.toLowerCase().includes(term) ?? false)
+        );
+      },
     },
     {
       accessorKey: "ciClassName",
       header: "CI Class",
+      meta: { label: "CI Class" },
       cell: ({ row }) => (
         <div className="text-sm">{row.original.ciClassName || "—"}</div>
       ),
@@ -129,19 +198,53 @@ export function ConfigurationItemsTable({
     {
       accessorKey: "ciKey",
       header: "CI Key",
+      meta: { label: "CI Key" },
       cell: ({ row }) => (
         <div className="font-mono text-xs">{row.original.ciKey || "—"}</div>
       ),
+      enableHiding: true,
+    },
+    {
+      accessorKey: "linkedAssetTag",
+      header: "Asset",
+      meta: { label: "Linked Asset" },
+      cell: ({ row }) => {
+        const assetTag = row.original.linkedAssetTag;
+        if (!assetTag) {
+          return (
+            <Badge variant="outline" className="text-muted-foreground">
+              Unlinked
+            </Badge>
+          );
+        }
+        return (
+          <Badge variant="outline" className="font-mono text-xs">
+            {assetTag}
+          </Badge>
+        );
+      },
+      filterFn: (row, _id, value) => {
+        if (value === "unlinked") {
+          return !row.original.linkedAssetTag;
+        }
+        return true;
+      },
     },
     {
       accessorKey: "criticality",
       header: "Criticality",
+      meta: { label: "Criticality" },
       cell: ({ row }) => {
         const criticality = row.original.criticality;
         if (!criticality)
           return <span className="text-muted-foreground">—</span>;
         return (
-          <Badge variant="outline" className={criticalityColors[criticality]}>
+          <Badge
+            variant="outline"
+            className={getStatusBadgeClasses(
+              CRITICALITY_STATUS_MAP[criticality] ?? "info",
+            )}
+          >
             {criticality}
           </Badge>
         );
@@ -153,12 +256,18 @@ export function ConfigurationItemsTable({
     {
       accessorKey: "environment",
       header: "Environment",
+      meta: { label: "Environment" },
       cell: ({ row }) => {
         const environment = row.original.environment;
         if (!environment)
           return <span className="text-muted-foreground">—</span>;
         return (
-          <Badge variant="outline" className={environmentColors[environment]}>
+          <Badge
+            variant="outline"
+            className={getStatusBadgeClasses(
+              ENVIRONMENT_STATUS_MAP[environment] ?? "info",
+            )}
+          >
             {environment}
           </Badge>
         );
@@ -170,13 +279,41 @@ export function ConfigurationItemsTable({
     {
       accessorKey: "primaryOwnerName",
       header: "Owner",
+      meta: { label: "Owner" },
       cell: ({ row }) => (
         <div className="text-sm">{row.original.primaryOwnerName || "—"}</div>
       ),
+      filterFn: (row, _id, value) => {
+        if (value === "none") {
+          return !row.original.primaryOwnerName;
+        }
+        return true;
+      },
+      enableHiding: true,
+    },
+    {
+      accessorKey: "updatedAt",
+      header: "Updated",
+      meta: { label: "Last Updated" },
+      cell: ({ row }) => {
+        const stale = isCIStale(row.original.updatedAt);
+        return (
+          <div className="text-muted-foreground flex items-center gap-2 text-xs">
+            <span>{formatRelativeTime(row.original.updatedAt)}</span>
+            {stale && (
+              <Badge variant="outline" className="border-amber-200 bg-amber-50">
+                Stale
+              </Badge>
+            )}
+          </div>
+        );
+      },
+      enableHiding: true,
     },
     {
       id: "actions",
       header: "Actions",
+      meta: { label: "Actions" },
       cell: ({ row }) => (
         <div className="flex gap-2">
           <Button
@@ -212,6 +349,7 @@ export function ConfigurationItemsTable({
           </PermissionGuard>
         </div>
       ),
+      enableHiding: true,
     },
   ];
 
@@ -223,67 +361,272 @@ export function ConfigurationItemsTable({
     getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,
       columnFilters,
+      columnVisibility,
+      pagination,
     },
+    onPaginationChange: setPagination,
   });
 
+  useEffect(() => {
+    table.getColumn("name")?.setFilterValue(debouncedSearch);
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, [debouncedSearch, table]);
+
+  useEffect(() => {
+    table.getColumn("criticality")?.setFilterValue(filters.criticality);
+    table.getColumn("environment")?.setFilterValue(filters.environment);
+    table.getColumn("primaryOwnerName")?.setFilterValue(filters.owner);
+    table.getColumn("linkedAssetTag")?.setFilterValue(filters.assetLink);
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, [filters, table]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    const setParam = (key: string, value: string, defaultValue: string) => {
+      if (!value || value === defaultValue) {
+        params.delete(key);
+      } else {
+        params.set(key, value);
+      }
+    };
+
+    setParam("q", debouncedSearch, "");
+    setParam("criticality", filters.criticality, "all");
+    setParam("environment", filters.environment, "all");
+    setParam("owner", filters.owner, "all");
+    setParam("assetLink", filters.assetLink, "all");
+    setParam("density", density, "compact");
+    const hiddenColumns = Object.entries(columnVisibility)
+      .filter(([, isVisible]) => isVisible === false)
+      .map(([id]) => id);
+    setParam("hide", hiddenColumns.join(","), "");
+    setParam("pageSize", String(pagination.pageSize), "25");
+    setParam("page", String(pagination.pageIndex + 1), "1");
+
+    const next = params.toString();
+    const current = searchParams.toString();
+
+    if (next === current) return;
+
+    const query = next ? `?${next}` : "";
+    router.replace(`${pathname}${query}`, { scroll: false });
+  }, [
+    debouncedSearch,
+    filters,
+    density,
+    pagination.pageIndex,
+    pagination.pageSize,
+    columnVisibility,
+    router,
+    searchParams,
+    pathname,
+  ]);
+
+  const presetFilters = useMemo(
+    () => [
+      {
+        key: "prod-critical",
+        label: "Prod Critical",
+        description: "Critical items in production",
+        apply: () => {
+          table.getColumn("criticality")?.setFilterValue("CRITICAL");
+          table.getColumn("environment")?.setFilterValue("PROD");
+          setFilters((prev) => ({
+            ...prev,
+            criticality: "CRITICAL",
+            environment: "PROD",
+          }));
+        },
+      },
+      {
+        key: "unlinked-assets",
+        label: "Unlinked to Assets",
+        description: "CIs without a linked asset",
+        apply: () => {
+          table.getColumn("linkedAssetTag")?.setFilterValue("unlinked");
+          setFilters((prev) => ({
+            ...prev,
+            assetLink: "unlinked",
+          }));
+        },
+      },
+      {
+        key: "orphaned",
+        label: "Orphaned Owners",
+        description: "Missing primary owner",
+        apply: () => {
+          table.getColumn("primaryOwnerName")?.setFilterValue("none");
+          setFilters((prev) => ({
+            ...prev,
+            owner: "none",
+          }));
+        },
+      },
+    ],
+    [table],
+  );
+
+  const rowPaddingClass = density === "compact" ? "py-2" : "py-3";
+
   return (
-    <>
+    <TooltipProvider delayDuration={150}>
       <div className="space-y-4">
-        {/* Filters */}
-        <div className="flex flex-col gap-4 sm:flex-row">
-          <Input
-            placeholder="Search by name..."
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-            onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-          <Select
-            value={
-              (table.getColumn("criticality")?.getFilterValue() as string) ??
-              "all"
-            }
-            onValueChange={(value) =>
-              table.getColumn("criticality")?.setFilterValue(value)
-            }
+        {/* Filters + Controls */}
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-1 flex-wrap items-center gap-3">
+            <Input
+              placeholder="Search by name or CI key..."
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              className="max-w-sm"
+            />
+
+            <Select
+              value={filters.criticality}
+              onValueChange={(value) => {
+                table.getColumn("criticality")?.setFilterValue(value);
+                setFilters((prev) => ({ ...prev, criticality: value }));
+              }}
+            >
+              <SelectTrigger className="w-[170px]">
+                <SelectValue placeholder="Criticality" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Criticality</SelectItem>
+                <SelectItem value="LOW">Low</SelectItem>
+                <SelectItem value="MEDIUM">Medium</SelectItem>
+                <SelectItem value="HIGH">High</SelectItem>
+                <SelectItem value="CRITICAL">Critical</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={filters.environment}
+              onValueChange={(value) => {
+                table.getColumn("environment")?.setFilterValue(value);
+                setFilters((prev) => ({ ...prev, environment: value }));
+              }}
+            >
+              <SelectTrigger className="w-[170px]">
+                <SelectValue placeholder="Environment" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Environments</SelectItem>
+                <SelectItem value="PROD">Production</SelectItem>
+                <SelectItem value="UAT">UAT</SelectItem>
+                <SelectItem value="DEV">Development</SelectItem>
+                <SelectItem value="TEST">Test</SelectItem>
+                <SelectItem value="DR">Disaster Recovery</SelectItem>
+                <SelectItem value="OTHER">Other</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={filters.owner}
+              onValueChange={(value) => {
+                table.getColumn("primaryOwnerName")?.setFilterValue(value);
+                setFilters((prev) => ({ ...prev, owner: value }));
+              }}
+            >
+              <SelectTrigger className="w-[170px]">
+                <SelectValue placeholder="Ownership" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Owners</SelectItem>
+                <SelectItem value="none">Missing owner</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={filters.assetLink}
+              onValueChange={(value) => {
+                table.getColumn("linkedAssetTag")?.setFilterValue(value);
+                setFilters((prev) => ({ ...prev, assetLink: value }));
+              }}
+            >
+              <SelectTrigger className="w-[170px]">
+                <SelectValue placeholder="Asset Link" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="unlinked">Unlinked only</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  Columns
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => {
+                    const label =
+                      (column.columnDef.meta as { label?: string })?.label ||
+                      column.id;
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }
+                      >
+                        {label}
+                      </DropdownMenuCheckboxItem>
+                    );
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+
+        {/* Presets */}
+        <div className="flex flex-wrap gap-2">
+          {presetFilters.map((preset) => (
+            <Tooltip key={preset.key}>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={preset.apply}
+                  className="text-xs"
+                >
+                  {preset.label}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>{preset.description}</TooltipContent>
+            </Tooltip>
+          ))}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              table.resetColumnFilters();
+              setSearchTerm("");
+              setFilters({
+                criticality: "all",
+                environment: "all",
+                owner: "all",
+                assetLink: "all",
+              });
+              setDensity("compact");
+              setPagination({ pageIndex: 0, pageSize: 25 });
+            }}
           >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Criticality" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Criticality</SelectItem>
-              <SelectItem value="LOW">Low</SelectItem>
-              <SelectItem value="MEDIUM">Medium</SelectItem>
-              <SelectItem value="HIGH">High</SelectItem>
-              <SelectItem value="CRITICAL">Critical</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select
-            value={
-              (table.getColumn("environment")?.getFilterValue() as string) ??
-              "all"
-            }
-            onValueChange={(value) =>
-              table.getColumn("environment")?.setFilterValue(value)
-            }
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Environment" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Environments</SelectItem>
-              <SelectItem value="PROD">Production</SelectItem>
-              <SelectItem value="UAT">UAT</SelectItem>
-              <SelectItem value="DEV">Development</SelectItem>
-              <SelectItem value="TEST">Test</SelectItem>
-              <SelectItem value="DR">Disaster Recovery</SelectItem>
-              <SelectItem value="OTHER">Other</SelectItem>
-            </SelectContent>
-          </Select>
+            Clear filters
+          </Button>
         </div>
 
         {/* Table */}
@@ -316,18 +659,27 @@ export function ConfigurationItemsTable({
                   </TableCell>
                 </TableRow>
               ) : table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
+                table.getRowModel().rows.map((row) => {
+                  const stale = isCIStale(row.original.updatedAt);
+                  return (
+                    <TableRow
+                      key={row.id}
+                      className={cn(
+                        stale && "bg-amber-50",
+                        density === "compact" ? "text-sm" : "text-base",
+                      )}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell key={cell.id} className={rowPaddingClass}>
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  );
+                })
               ) : (
                 <TableRow>
                   <TableCell
@@ -340,6 +692,47 @@ export function ConfigurationItemsTable({
               )}
             </TableBody>
           </Table>
+        </div>
+
+        {/* Pagination */}
+        <div className="flex items-center justify-between px-2">
+          <div className="text-muted-foreground text-sm">
+            Page {pagination.pageIndex + 1} of {table.getPageCount() || 1}
+          </div>
+          <div className="flex items-center gap-2">
+            <select
+              value={pagination.pageSize}
+              onChange={(e) => {
+                const size = Number(e.target.value);
+                setPagination({ pageIndex: 0, pageSize: size });
+              }}
+              className="h-8 rounded-md border bg-transparent px-2 text-sm"
+            >
+              {[10, 25, 50, 100].map((size) => (
+                <option key={size} value={size}>
+                  {size} / page
+                </option>
+              ))}
+            </select>
+            <div className="flex items-center gap-1">
+              <Button
+                variant="outline"
+                size="icon-sm"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              >
+                Prev
+              </Button>
+              <Button
+                variant="outline"
+                size="icon-sm"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -365,6 +758,6 @@ export function ConfigurationItemsTable({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
+    </TooltipProvider>
   );
 }

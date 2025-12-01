@@ -16,6 +16,10 @@ import { logger } from "@/lib/logger";
 // Service Repository
 import type { IServiceRepository } from "@/core/repositories/service.repository.interface";
 import { PrismaServiceRepository } from "@/infrastructure/repositories/prisma-service.repository";
+import type { IServiceHealthHistoryRepository } from "@/core/repositories/service-health-history.repository.interface";
+import { PrismaServiceHealthHistoryRepository } from "@/infrastructure/repositories/prisma-service-health-history.repository";
+import type { IServiceSlaMetricRepository } from "@/core/repositories/service-sla-metric.repository.interface";
+import { PrismaServiceSlaMetricRepository } from "@/infrastructure/repositories/prisma-service-sla-metric.repository";
 
 // Business Process Repository
 import type { IBusinessProcessRepository } from "@/core/repositories/business-process.repository.interface";
@@ -40,6 +44,11 @@ import {
   GetEssentialServicesUseCase,
   GetRetiringServicesUseCase,
   RetireServiceUseCase,
+  UpdateServiceHealthUseCase,
+  CalculateSlaComplianceUseCase,
+  RecordSlaMetricUseCase,
+  GetServiceHealthHistoryUseCase,
+  GetServiceSlaMetricsUseCase,
 } from "@/core/use-cases/service";
 
 // Service Ownership Use Cases
@@ -107,6 +116,18 @@ export function bindServiceDependencies(container: Container): void {
     .inSingletonScope();
 
   container
+    .bind<IServiceHealthHistoryRepository>(
+      DI_TOKENS.IServiceHealthHistoryRepository,
+    )
+    .to(PrismaServiceHealthHistoryRepository)
+    .inSingletonScope();
+
+  container
+    .bind<IServiceSlaMetricRepository>(DI_TOKENS.IServiceSlaMetricRepository)
+    .to(PrismaServiceSlaMetricRepository)
+    .inSingletonScope();
+
+  container
     .bind<IBusinessProcessRepository>(DI_TOKENS.IBusinessProcessRepository)
     .to(PrismaBusinessProcessRepository)
     .inSingletonScope();
@@ -165,6 +186,35 @@ export function bindServiceDependencies(container: Container): void {
   container
     .bind<RetireServiceUseCase>(DI_TOKENS.RetireServiceUseCase)
     .to(RetireServiceUseCase)
+    .inSingletonScope();
+
+  container
+    .bind<UpdateServiceHealthUseCase>(DI_TOKENS.UpdateServiceHealthUseCase)
+    .to(UpdateServiceHealthUseCase)
+    .inSingletonScope();
+
+  container
+    .bind<CalculateSlaComplianceUseCase>(
+      DI_TOKENS.CalculateSlaComplianceUseCase,
+    )
+    .to(CalculateSlaComplianceUseCase)
+    .inSingletonScope();
+
+  container
+    .bind<RecordSlaMetricUseCase>(DI_TOKENS.RecordSlaMetricUseCase)
+    .to(RecordSlaMetricUseCase)
+    .inSingletonScope();
+
+  container
+    .bind<GetServiceHealthHistoryUseCase>(
+      DI_TOKENS.GetServiceHealthHistoryUseCase,
+    )
+    .to(GetServiceHealthHistoryUseCase)
+    .inSingletonScope();
+
+  container
+    .bind<GetServiceSlaMetricsUseCase>(DI_TOKENS.GetServiceSlaMetricsUseCase)
+    .to(GetServiceSlaMetricsUseCase)
     .inSingletonScope();
 
   // ==========================================

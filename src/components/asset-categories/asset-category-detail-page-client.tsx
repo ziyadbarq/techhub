@@ -11,7 +11,6 @@ import { ArrowLeft, Edit, Trash2, Layers, Package, Box } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,6 +39,10 @@ import { CategoryOverviewTab } from "./category-overview-tab";
 import { CategoryFieldsTab } from "./category-fields-tab";
 import { CategoryModelsTab } from "./category-models-tab";
 import { CategoryAssetsTab } from "./category-assets-tab";
+import {
+  CountedTabs,
+  type CountedTabConfig,
+} from "@/components/ui/counted-tabs";
 
 interface AssetCategoryDetailPageClientProps {
   category: AssetCategoryDTO;
@@ -71,6 +74,51 @@ export function AssetCategoryDetailPageClient({
   const canManageFields = hasPermission(PERMISSIONS.ASSET_CATEGORY_FIELDS_VIEW);
   const canViewModels = hasPermission(PERMISSIONS.ASSET_MODELS_VIEW);
   const canViewAssets = hasPermission(PERMISSIONS.ASSETS_VIEW);
+  const handleFieldsChange = (fields: EnrichedAssetCategoryFieldDTO[]) => {
+    setAttachedFields(fields);
+  };
+  const tabs: CountedTabConfig[] = [
+    {
+      value: "overview",
+      label: "Overview",
+      content: <CategoryOverviewTab category={category} />,
+      showWhenZero: true,
+    },
+    {
+      value: "models",
+      label: "Models",
+      icon: Package,
+      count: models.length,
+      canView: canViewModels,
+      content: <CategoryModelsTab models={models} categoryId={category.id} />,
+      triggerClassName: "flex items-center gap-2",
+    },
+    {
+      value: "assets",
+      label: "Assets",
+      icon: Box,
+      count: assets.length,
+      canView: canViewAssets,
+      content: <CategoryAssetsTab assets={assets} categoryId={category.id} />,
+      triggerClassName: "flex items-center gap-2",
+    },
+    {
+      value: "fields",
+      label: "Custom Fields",
+      icon: Layers,
+      count: attachedFields.length,
+      canView: canManageFields,
+      content: (
+        <CategoryFieldsTab
+          category={category}
+          attachedFields={attachedFields}
+          fieldDefinitions={fieldDefinitions}
+          onFieldsChange={handleFieldsChange}
+        />
+      ),
+      triggerClassName: "flex items-center gap-2",
+    },
+  ];
 
   const handleFormSuccess = useCallback(async () => {
     // Fetch updated category data to refresh UI immediately
@@ -97,10 +145,6 @@ export function AssetCategoryDetailPageClient({
       setIsDeleting(false);
       setDeleteDialogOpen(false);
     }
-  };
-
-  const handleFieldsChange = (fields: EnrichedAssetCategoryFieldDTO[]) => {
-    setAttachedFields(fields);
   };
 
   return (
@@ -149,57 +193,7 @@ export function AssetCategoryDetailPageClient({
         </div>
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="overview" className="w-full">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          {canViewModels && (
-            <TabsTrigger value="models" className="flex items-center gap-2">
-              <Package className="h-4 w-4" />
-              Models ({models.length})
-            </TabsTrigger>
-          )}
-          {canViewAssets && (
-            <TabsTrigger value="assets" className="flex items-center gap-2">
-              <Box className="h-4 w-4" />
-              Assets ({assets.length})
-            </TabsTrigger>
-          )}
-          {canManageFields && (
-            <TabsTrigger value="fields" className="flex items-center gap-2">
-              <Layers className="h-4 w-4" />
-              Custom Fields ({attachedFields.length})
-            </TabsTrigger>
-          )}
-        </TabsList>
-
-        <TabsContent value="overview" className="mt-4">
-          <CategoryOverviewTab category={category} />
-        </TabsContent>
-
-        {canViewModels && (
-          <TabsContent value="models" className="mt-4">
-            <CategoryModelsTab models={models} categoryId={category.id} />
-          </TabsContent>
-        )}
-
-        {canViewAssets && (
-          <TabsContent value="assets" className="mt-4">
-            <CategoryAssetsTab assets={assets} categoryId={category.id} />
-          </TabsContent>
-        )}
-
-        {canManageFields && (
-          <TabsContent value="fields" className="mt-4">
-            <CategoryFieldsTab
-              category={category}
-              attachedFields={attachedFields}
-              fieldDefinitions={fieldDefinitions}
-              onFieldsChange={handleFieldsChange}
-            />
-          </TabsContent>
-        )}
-      </Tabs>
+      <CountedTabs defaultValue="overview" tabs={tabs} tabsClassName="w-full" />
 
       {/* Edit Dialog */}
       <AssetCategoryForm

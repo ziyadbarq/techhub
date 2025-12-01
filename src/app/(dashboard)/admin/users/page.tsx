@@ -11,6 +11,7 @@ import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { listUsersWithRolesAction } from "@/interface-adapters/controllers/user-role.controller";
 import { listRolesAction } from "@/interface-adapters/controllers/role.controller";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
 import {
   Card,
   CardContent,
@@ -66,7 +67,15 @@ function LoadingSkeleton() {
   );
 }
 
-export default function AdminUsersPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AdminUsersPage() {
+  await requireFeatureAndPermission(
+    "RBAC",
+    PERMISSIONS.USERS_MANAGE,
+    "/admin/users",
+  );
+
   return (
     <PermissionGuard
       permission={PERMISSIONS.USERS_MANAGE}

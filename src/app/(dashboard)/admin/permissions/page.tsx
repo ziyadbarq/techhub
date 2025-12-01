@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PermissionsPageClient } from "./permissions-page-client";
 import { listPermissionsAction } from "@/interface-adapters/controllers/permission.controller";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 export const metadata = {
   title: "Permissions | Admin",
@@ -45,7 +47,15 @@ function PermissionsListSkeleton() {
   );
 }
 
-export default function PermissionsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function PermissionsPage() {
+  await requireFeatureAndPermission(
+    "RBAC",
+    PERMISSIONS.PERMISSIONS_VIEW,
+    "/admin/permissions",
+  );
+
   return (
     <div className="container mx-auto space-y-6 py-8">
       {/* Header */}

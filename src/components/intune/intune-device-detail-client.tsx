@@ -7,7 +7,6 @@
  */
 
 import { useState, useCallback } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
@@ -28,15 +27,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -71,6 +62,10 @@ import { ComplianceHistoryTab } from "@/components/intune/tabs/compliance-histor
 import { RelatedItemsTab } from "@/components/intune/tabs/related-items-tab";
 import { CreateAssetFromDeviceWizard } from "@/components/intune/create-asset-from-device-wizard";
 import { formatDateTime } from "@/lib/utils/date-format";
+import {
+  CountedTabs,
+  type CountedTabConfig,
+} from "@/components/ui/counted-tabs";
 
 interface IntuneDeviceDetailClientProps {
   device: IntuneDeviceDTO;
@@ -81,7 +76,6 @@ export function IntuneDeviceDetailClient({
 }: IntuneDeviceDetailClientProps) {
   const router = useRouter();
   const [device, setDevice] = useState(initialDevice);
-  const [isUnlinking, setIsUnlinking] = useState(false);
   const { hasPermission } = usePermissions();
 
   const canLink = hasPermission(PERMISSIONS.INTUNE_DEVICES_LINK);
@@ -124,6 +118,7 @@ export function IntuneDeviceDetailClient({
   const isCompliant = device.complianceState === "COMPLIANT";
   const hasAssetLink = !!device.linkedAssetId;
   const hasPersonLink = !!device.linkedPersonId;
+  const linksCount = (hasAssetLink ? 1 : 0) + (hasPersonLink ? 1 : 0);
 
   const refreshDevice = useCallback(async () => {
     const result = await getIntuneDeviceAction(device.id);
@@ -131,6 +126,8 @@ export function IntuneDeviceDetailClient({
       setDevice(result.data);
     }
   }, [device.id]);
+
+  const [isUnlinking, setIsUnlinking] = useState(false);
 
   const handleUnlinkAsset = async () => {
     setIsUnlinking(true);
@@ -200,6 +197,334 @@ export function IntuneDeviceDetailClient({
     }
   }, []);
 
+  // Open asset linking dialog
+  const openLinkAssetDialog = () => {
+    setLinkAssetOpen(true);
+    loadAssets();
+  };
+
+  // Open person linking dialog
+  const openLinkPersonDialog = () => {
+    setLinkPersonOpen(true);
+    loadPersons();
+  };
+
+  const overviewContent = (
+    <div className="space-y-4">
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Device Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Laptop className="h-4 w-4" />
+              Device Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="text-muted-foreground">Serial Number</p>
+                <p className="font-mono">{device.serialNumber ?? "-"}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">IMEI</p>
+                <p className="font-mono">{device.imei ?? "-"}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Operating System</p>
+                <p>{device.operatingSystem ?? "-"}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">OS Version</p>
+                <p>{device.osVersion ?? "-"}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">WiFi MAC</p>
+                <p className="font-mono">{device.wiFiMacAddress ?? "-"}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Ethernet MAC</p>
+                <p className="font-mono">{device.ethernetMacAddress ?? "-"}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* User Assignment */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              Assigned User (Intune)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {device.userDisplayName ? (
+              <div className="space-y-2">
+                <p className="font-medium">{device.userDisplayName}</p>
+                <p className="text-muted-foreground text-sm">
+                  {device.userPrincipalName}
+                </p>
+              </div>
+            ) : (
+              <p className="text-muted-foreground">No user assigned</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Timestamps */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Timestamps</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="text-muted-foreground">Enrolled</p>
+                <p>{formatDateTime(device.enrolledDateTime)}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Last Intune Sync</p>
+                <p>{formatDateTime(device.lastSyncDateTime)}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Last ITAM Sync</p>
+                <p>{formatDateTime(device.lastSyncedFromIntune)}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Identifiers */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Identifiers</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-3 text-sm">
+              <div>
+                <p className="text-muted-foreground">Azure AD Device ID</p>
+                <p className="font-mono">{device.azureAdDeviceId ?? "-"}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Device ID</p>
+                <p className="font-mono">{device.intuneDeviceId ?? "-"}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Device Name</p>
+                <p>{device.deviceName ?? "-"}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Manufacturer</p>
+                <p>{device.manufacturer ?? "-"}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Model</p>
+                <p>{device.model ?? "-"}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground">Serial Number</p>
+                <p className="font-mono">{device.serialNumber ?? "-"}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* ITAM Links Management */}
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Link2 className="h-4 w-4" />
+              ITAM Links Management
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Asset Link */}
+            <div className="flex items-center justify-between rounded-lg border p-4">
+              <div className="flex items-center gap-3">
+                <Package className="text-muted-foreground h-5 w-5" />
+                <div>
+                  <p className="font-medium">Asset Link</p>
+                  {hasAssetLink ? (
+                    <p className="text-muted-foreground text-sm">
+                      Linked to {device.linkedAssetTag} via{" "}
+                      {device.assetLinkMethod === "auto_serial"
+                        ? "auto-match (serial)"
+                        : "manual link"}
+                    </p>
+                  ) : (
+                    <p className="text-muted-foreground text-sm">
+                      No asset linked
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="flex gap-2">
+                {hasAssetLink ? (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleUnlinkAsset}
+                      disabled={!canLink || isUnlinking}
+                    >
+                      <Unlink className="mr-2 h-4 w-4" />
+                      Unlink
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={openLinkAssetDialog}
+                      disabled={!canLink}
+                    >
+                      <LinkIcon className="mr-2 h-4 w-4" />
+                      Link Existing
+                    </Button>
+                    {canCreateAsset && device.serialNumber && (
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => setCreateAssetOpen(true)}
+                        className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
+                      >
+                        <Package className="mr-2 h-4 w-4" />
+                        Create New Asset
+                      </Button>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Person Link */}
+            <div className="flex items-center justify-between rounded-lg border p-4">
+              <div className="flex items-center gap-3">
+                <User className="text-muted-foreground h-5 w-5" />
+                <div>
+                  <p className="font-medium">Person Link</p>
+                  {hasPersonLink ? (
+                    <p className="text-muted-foreground text-sm">
+                      Linked to {device.linkedPersonName} via{" "}
+                      {device.personLinkMethod === "auto_azuread"
+                        ? "auto-match (Azure AD)"
+                        : "manual link"}
+                    </p>
+                  ) : (
+                    <p className="text-muted-foreground text-sm">
+                      No person linked
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="flex gap-2">
+                {hasPersonLink ? (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleUnlinkPerson}
+                      disabled={!canLink || isUnlinking}
+                    >
+                      <Unlink className="mr-2 h-4 w-4" />
+                      Unlink
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={openLinkPersonDialog}
+                    disabled={!canLink}
+                  >
+                    <LinkIcon className="mr-2 h-4 w-4" />
+                    Link Person
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            {!canLink && (
+              <p className="text-muted-foreground text-center text-sm">
+                You don't have permission to manage ITAM links
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+
+  const securityContent = (
+    <div className="space-y-4">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Shield className="h-4 w-4" />
+            Security & Compliance
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-muted-foreground text-sm">Compliance State</p>
+            <Badge
+              className={getComplianceStateColor(device.complianceState)}
+              variant="secondary"
+            >
+              {getComplianceStateLabel(device.complianceState)}
+            </Badge>
+          </div>
+          <div>
+            <p className="text-muted-foreground text-sm">Ownership</p>
+            <Badge
+              className={getOwnershipTypeColor(device.ownershipType)}
+              variant="outline"
+            >
+              {getOwnershipTypeLabel(device.ownershipType)}
+            </Badge>
+          </div>
+          <div>
+            <p className="text-muted-foreground text-sm">Management State</p>
+            <Badge variant="secondary">
+              {getManagementStateLabel(device.managementState)}
+            </Badge>
+          </div>
+          <div>
+            <p className="text-muted-foreground text-sm">Enrolled</p>
+            <p className="text-sm">
+              {daysSinceEnrollment !== null
+                ? `${daysSinceEnrollment} days ago`
+                : "—"}
+            </p>
+          </div>
+          <div>
+            <p className="text-muted-foreground text-sm">Last Sync</p>
+            <p className="text-sm">
+              {daysSinceLastSync !== null
+                ? `${daysSinceLastSync} days ago`
+                : "—"}
+            </p>
+          </div>
+          <div>
+            <p className="text-muted-foreground text-sm">Compliance</p>
+            <p
+              className={`flex items-center gap-2 text-sm ${isCompliant ? "text-emerald-600" : "text-amber-600"}`}
+            >
+              {isCompliant ? (
+                <CheckCircle2 className="h-4 w-4" />
+              ) : (
+                <AlertCircle className="h-4 w-4" />
+              )}
+              {isCompliant ? "Compliant" : "Requires attention"}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
   // Handle linking device to asset
   const handleLinkAsset = async () => {
     if (!selectedAssetId) return;
@@ -250,17 +575,39 @@ export function IntuneDeviceDetailClient({
     }
   };
 
-  // Open asset linking dialog
-  const openLinkAssetDialog = () => {
-    setLinkAssetOpen(true);
-    loadAssets();
-  };
-
-  // Open person linking dialog
-  const openLinkPersonDialog = () => {
-    setLinkPersonOpen(true);
-    loadPersons();
-  };
+  const tabs: CountedTabConfig[] = [
+    {
+      value: "overview",
+      label: "Overview",
+      icon: Laptop,
+      content: overviewContent,
+      showWhenZero: true,
+      triggerClassName: "gap-2",
+    },
+    {
+      value: "security",
+      label: "Security",
+      icon: Shield,
+      content: securityContent,
+      showWhenZero: true,
+      triggerClassName: "gap-2",
+    },
+    {
+      value: "compliance",
+      label: "Compliance History",
+      icon: Clock,
+      content: <ComplianceHistoryTab deviceId={device.id} />,
+      triggerClassName: "gap-2",
+    },
+    {
+      value: "related",
+      label: "Related Items",
+      icon: Link2,
+      count: linksCount,
+      content: <RelatedItemsTab device={device} />,
+      triggerClassName: "gap-2",
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -412,372 +759,11 @@ export function IntuneDeviceDetailClient({
         </Card>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="security">Security</TabsTrigger>
-          <TabsTrigger value="links">ITAM Links</TabsTrigger>
-          <TabsTrigger value="related">Related Items</TabsTrigger>
-          <TabsTrigger value="compliance-history">
-            Compliance History
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            {/* Device Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Laptop className="h-4 w-4" />
-                  Device Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <p className="text-muted-foreground">Serial Number</p>
-                    <p className="font-mono">{device.serialNumber ?? "-"}</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground">IMEI</p>
-                    <p className="font-mono">{device.imei ?? "-"}</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground">Operating System</p>
-                    <p>{device.operatingSystem ?? "-"}</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground">OS Version</p>
-                    <p>{device.osVersion ?? "-"}</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground">WiFi MAC</p>
-                    <p className="font-mono">{device.wiFiMacAddress ?? "-"}</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground">Ethernet MAC</p>
-                    <p className="font-mono">
-                      {device.ethernetMacAddress ?? "-"}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* User Assignment */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Assigned User (Intune)
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {device.userDisplayName ? (
-                  <div className="space-y-2">
-                    <p className="font-medium">{device.userDisplayName}</p>
-                    <p className="text-muted-foreground text-sm">
-                      {device.userPrincipalName}
-                    </p>
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground">No user assigned</p>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Timestamps */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Timestamps</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <p className="text-muted-foreground">Enrolled</p>
-                    <p>{formatDateTime(device.enrolledDateTime)}</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground">Last Intune Sync</p>
-                    <p>{formatDateTime(device.lastSyncDateTime)}</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground">Last ITAM Sync</p>
-                    <p>{formatDateTime(device.lastSyncedFromIntune)}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Identifiers */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Identifiers</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3 text-sm">
-                  <div>
-                    <p className="text-muted-foreground">Intune Device ID</p>
-                    <p className="font-mono text-xs break-all">
-                      {device.intuneDeviceId}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground">Azure AD Device ID</p>
-                    <p className="font-mono text-xs break-all">
-                      {device.azureAdDeviceId ?? "-"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground">ITAM ID</p>
-                    <p className="font-mono text-xs break-all">{device.id}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        {/* Security Tab */}
-        <TabsContent value="security" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="h-4 w-4" />
-                Security Status
-              </CardTitle>
-              <CardDescription>
-                Device security and compliance information from Intune
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-6 md:grid-cols-2">
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-muted-foreground text-sm">
-                      Compliance State
-                    </p>
-                    <Badge
-                      variant={getComplianceStateColor(device.complianceState)}
-                      className="mt-1"
-                    >
-                      {getComplianceStateLabel(device.complianceState)}
-                    </Badge>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground text-sm">
-                      Management State
-                    </p>
-                    <p className="font-medium">
-                      {getManagementStateLabel(device.managementState)}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Encrypted</span>
-                    <Badge
-                      variant={device.isEncrypted ? "default" : "destructive"}
-                      className={
-                        device.isEncrypted
-                          ? "bg-green-600 hover:bg-green-700"
-                          : undefined
-                      }
-                    >
-                      {device.isEncrypted ? "Yes" : "No"}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Supervised</span>
-                    <Badge
-                      variant={device.isSupervised ? "default" : "secondary"}
-                      className={
-                        device.isSupervised
-                          ? "bg-green-600 hover:bg-green-700"
-                          : undefined
-                      }
-                    >
-                      {device.isSupervised ? "Yes" : "No"}
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm">Jailbroken</span>
-                    <Badge
-                      variant={device.isJailBroken ? "destructive" : "default"}
-                      className={
-                        !device.isJailBroken
-                          ? "bg-green-600 hover:bg-green-700"
-                          : undefined
-                      }
-                    >
-                      {device.isJailBroken ? "Yes" : "No"}
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Links Tab */}
-        <TabsContent value="links" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            {/* Asset Link */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Package className="h-4 w-4" />
-                  Linked Asset
-                </CardTitle>
-                <CardDescription>
-                  Link this device to an ITAM Asset for cross-referencing
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {device.linkedAssetId ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">{device.linkedAssetTag}</p>
-                        <p className="text-muted-foreground text-sm">
-                          Linked via{" "}
-                          {device.assetLinkMethod === "auto_serial"
-                            ? "serial number (auto)"
-                            : "manual link"}
-                        </p>
-                      </div>
-                      <Link href={`/assets/${device.linkedAssetTag}`}>
-                        <Button variant="outline" size="sm">
-                          View Asset
-                        </Button>
-                      </Link>
-                    </div>
-                    <Separator />
-                    {canLink && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleUnlinkAsset}
-                        disabled={isUnlinking}
-                      >
-                        <Unlink className="mr-2 h-4 w-4" />
-                        Unlink Asset
-                      </Button>
-                    )}
-                  </div>
-                ) : (
-                  <div className="py-4 text-center">
-                    <p className="text-muted-foreground mb-4">
-                      No asset linked
-                    </p>
-                    <div className="flex flex-col items-center gap-2">
-                      {canLink && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={openLinkAssetDialog}
-                        >
-                          <Link2 className="mr-2 h-4 w-4" />
-                          Link to Asset
-                        </Button>
-                      )}
-                      {canCreateAsset &&
-                        device.serialNumber &&
-                        device.serialNumber !== "0" && (
-                          <Button
-                            variant="default"
-                            size="sm"
-                            onClick={() => setCreateAssetOpen(true)}
-                            className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
-                          >
-                            <Package className="mr-2 h-4 w-4" />
-                            Create Asset
-                          </Button>
-                        )}
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Person Link */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  Linked Person
-                </CardTitle>
-                <CardDescription>
-                  Link this device to a Person in ITAM
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {device.linkedPersonId ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">{device.linkedPersonName}</p>
-                        <p className="text-muted-foreground text-sm">
-                          Linked via{" "}
-                          {device.personLinkMethod === "auto_azuread"
-                            ? "Azure AD (auto)"
-                            : "manual link"}
-                        </p>
-                      </div>
-                      <Link href={`/people/${device.linkedPersonId}`}>
-                        <Button variant="outline" size="sm">
-                          View Person
-                        </Button>
-                      </Link>
-                    </div>
-                    <Separator />
-                    {canLink && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleUnlinkPerson}
-                        disabled={isUnlinking}
-                      >
-                        <Unlink className="mr-2 h-4 w-4" />
-                        Unlink Person
-                      </Button>
-                    )}
-                  </div>
-                ) : (
-                  <div className="py-4 text-center">
-                    <p className="text-muted-foreground mb-4">
-                      No person linked
-                    </p>
-                    {canLink && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={openLinkPersonDialog}
-                      >
-                        <Link2 className="mr-2 h-4 w-4" />
-                        Link to Person
-                      </Button>
-                    )}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        {/* Related Items Tab */}
-        <TabsContent value="related">
-          <RelatedItemsTab device={device} />
-        </TabsContent>
-
-        {/* Compliance History Tab */}
-        <TabsContent value="compliance-history">
-          <ComplianceHistoryTab deviceId={device.id} />
-        </TabsContent>
-      </Tabs>
+      <CountedTabs
+        defaultValue="overview"
+        tabs={tabs}
+        tabsClassName="space-y-4"
+      />
 
       {/* Link to Asset Dialog */}
       <Dialog open={linkAssetOpen} onOpenChange={setLinkAssetOpen}>

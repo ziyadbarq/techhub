@@ -4,11 +4,11 @@
  * Supports viewing active and disabled users via status tabs
  */
 
-import { requirePermission, hasPermission } from "@/lib/permissions/server";
-import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { hasPermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { listEmployeeDirectoryAction } from "@/interface-adapters/controllers/employee-directory.controller";
 import { PersonsPageClient } from "@/components/persons/persons-page-client";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
 
 export const dynamic = "force-dynamic";
 
@@ -18,13 +18,11 @@ export const metadata = {
 };
 
 export default async function PersonsPage() {
-  // Server-side permission check
-  try {
-    await requirePermission(PERMISSIONS.PERSONS_VIEW);
-  } catch (error) {
-    handlePermissionRedirect(error, "/persons");
-    throw error;
-  }
+  await requireFeatureAndPermission(
+    "FOUNDATION",
+    PERMISSIONS.PERSONS_VIEW,
+    "/persons",
+  );
 
   // Check if user can manage persons (for showing disable/enable actions)
   const canManage = await hasPermission(PERMISSIONS.PERSONS_MANAGE);

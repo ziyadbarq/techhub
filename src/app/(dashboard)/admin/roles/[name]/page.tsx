@@ -16,6 +16,7 @@ import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { RoleForm } from "@/components/roles/RoleForm";
 import { getRoleAction } from "@/interface-adapters/controllers/role.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
 
 interface EditRolePageProps {
   params: Promise<{
@@ -23,12 +24,20 @@ interface EditRolePageProps {
   }>;
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function EditRolePage(props: EditRolePageProps) {
   // Resolve params (Next.js 16 async request API)
   const params = await props.params;
 
   // Decode URL-encoded role name
   const roleName = decodeURIComponent(params.name);
+
+  await requireFeatureAndPermission(
+    "RBAC",
+    PERMISSIONS.ROLES_UPDATE,
+    `/admin/roles/${roleName}`,
+  );
 
   // Fetch role data on the server
   const result = await getRoleAction(roleName);

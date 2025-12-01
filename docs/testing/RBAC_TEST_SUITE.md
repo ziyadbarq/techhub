@@ -202,6 +202,7 @@ npm test -- --grep "CheckPermissionUseCase"
 **Tests Cover:**
 
 - ✅ Successful permission assignment
+- ✅ Replace semantics (removes deselected permissions)
 - ✅ Role validation (RoleNotFoundError)
 - ✅ System role protection (SystemRoleModificationError)
 - ✅ Permission validation (PermissionNotFoundError)
@@ -211,11 +212,12 @@ npm test -- --grep "CheckPermissionUseCase"
 **Key Test Cases:**
 
 - Assign multiple permissions to role
+- Replace permissions (remove missing, add new)
 - Prevent modification of system roles
 - Validate all permissions exist before assignment
 - Empty permission list handling
 - Large number of permissions (50+)
-- Audit log includes added permissions
+- Audit log includes added/removed permissions
 - Cache invalidation for all users
 
 ### 7. PrismaRoleRepository (`prisma-role.repository.test.ts`)

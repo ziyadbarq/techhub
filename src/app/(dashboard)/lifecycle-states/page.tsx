@@ -4,19 +4,17 @@
 
 import { LifecycleStatesPageClient } from "@/components/lifecycle-states/lifecycle-states-page-client";
 import { listLifecycleStatesAction } from "@/interface-adapters/controllers/lifecycle-state.controller";
-import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
 
 export const dynamic = "force-dynamic";
 
 export default async function LifecycleStatesPage() {
-  try {
-    await requirePermission(PERMISSIONS.LIFECYCLE_STATES_VIEW);
-  } catch (error) {
-    handlePermissionRedirect(error, "/lifecycle-states");
-    throw error;
-  }
+  await requireFeatureAndPermission(
+    "FOUNDATION",
+    PERMISSIONS.LIFECYCLE_STATES_VIEW,
+    "/lifecycle-states",
+  );
 
   const result = await listLifecycleStatesAction();
   const initialStates = result.success ? result.data : [];

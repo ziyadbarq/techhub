@@ -16,8 +16,17 @@ import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { RolesPageClient } from "@/components/roles/RolesPageClient";
 import { listRolesAction } from "@/interface-adapters/controllers/role.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
+
+export const dynamic = "force-dynamic";
 
 export default async function RolesPage() {
+  await requireFeatureAndPermission(
+    "RBAC",
+    PERMISSIONS.ROLES_VIEW,
+    "/admin/roles",
+  );
+
   // Fetch initial data on the server
   const result = await listRolesAction();
 

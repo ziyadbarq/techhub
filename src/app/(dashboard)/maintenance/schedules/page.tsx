@@ -6,9 +6,8 @@
 import Link from "next/link";
 import { Calendar, Clock, AlertCircle } from "lucide-react";
 import { listMaintenanceSchedulesAction } from "@/interface-adapters/controllers/maintenance-schedule.controller";
-import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
 import {
   Table,
   TableBody,
@@ -31,12 +30,11 @@ export const dynamic = "force-dynamic";
  * Displays schedules with asset, schedule type, priority, and assignment information
  */
 export default async function MaintenanceSchedulesPage() {
-  try {
-    await requirePermission(PERMISSIONS.MAINTENANCE_SCHEDULES_VIEW);
-  } catch (error) {
-    handlePermissionRedirect(error, "/maintenance/schedules");
-    throw error;
-  }
+  await requireFeatureAndPermission(
+    "MAINTENANCE",
+    PERMISSIONS.MAINTENANCE_SCHEDULES_VIEW,
+    "/maintenance/schedules",
+  );
 
   const result = await listMaintenanceSchedulesAction();
   const schedules = result.success ? result.data : [];

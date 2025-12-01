@@ -10,6 +10,7 @@ import {
   PermissionNotFoundError,
   SystemPermissionModificationError,
 } from "../../domain/errors/rbac-errors";
+import { invalidatePermissionCache } from "@/lib/permissions/cache";
 
 export interface DeletePermissionRequest {
   id: string;
@@ -63,5 +64,8 @@ export class DeletePermissionUseCase {
       ipAddress: request.ipAddress,
       userAgent: request.userAgent,
     });
+
+    // Remove any cached access to deleted permission
+    invalidatePermissionCache("all");
   }
 }

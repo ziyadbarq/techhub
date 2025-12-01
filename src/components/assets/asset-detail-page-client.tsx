@@ -19,12 +19,17 @@ import {
   Server,
   Globe,
   Laptop,
+  Activity,
+  MapPin,
+  ShieldCheck,
+  Building2,
+  CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -66,6 +71,11 @@ import { ReturnAssetWizard } from "./return-asset-wizard";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { formatDate } from "@/lib/utils/date-format";
+import {
+  CountedTabs,
+  type CountedTabConfig,
+} from "@/components/ui/counted-tabs";
 
 interface AssetDetailPageClientProps {
   asset: AssetDTO;
@@ -84,8 +94,9 @@ export function AssetDetailPageClient({
   const [isReturnWizardOpen, setIsReturnWizardOpen] = useState(false);
   const [activeAssignment, setActiveAssignment] =
     useState<AssetAssignmentDTO | null>(null);
+  const [isAssignmentLoading, setIsAssignmentLoading] = useState(true);
 
-  // Tab counts for hiding empty tabs
+  // Tab counts for badges and quick stats
   const [tabCounts, setTabCounts] = useState<{
     warranties: number;
     assignments: number;
@@ -100,6 +111,7 @@ export function AssetDetailPageClient({
   const canViewCmdb = hasPermission(PERMISSIONS.CONFIGURATION_ITEMS_VIEW);
   const canViewServices = hasPermission(PERMISSIONS.SERVICES_VIEW);
   const canViewIntune = hasPermission(PERMISSIONS.INTUNE_DEVICES_VIEW);
+  const isLoadingCounts = tabCounts === null;
 
   // Fetch updated asset data from server
   const refreshAsset = useCallback(async () => {
@@ -108,29 +120,41 @@ export function AssetDetailPageClient({
       setAsset(result.data);
     }
     // Also refresh active assignment
-    const assignmentResult = await getActiveAssignmentAction(asset.id);
-    if (assignmentResult.success) {
-      setActiveAssignment(assignmentResult.data);
-    } else {
-      setActiveAssignment(null);
+    setIsAssignmentLoading(true);
+    try {
+      const assignmentResult = await getActiveAssignmentAction(asset.id);
+      if (assignmentResult.success) {
+        setActiveAssignment(assignmentResult.data);
+      } else {
+        setActiveAssignment(null);
+      }
+    } finally {
+      setIsAssignmentLoading(false);
     }
   }, [asset.assetTag, asset.id]);
 
   // Fetch active assignment for Return Wizard
   useEffect(() => {
     const fetchActiveAssignment = async () => {
-      const result = await getActiveAssignmentAction(asset.id);
-      if (result.success) {
-        setActiveAssignment(result.data);
+      setIsAssignmentLoading(true);
+      try {
+        const result = await getActiveAssignmentAction(asset.id);
+        if (result.success) {
+          setActiveAssignment(result.data);
+        } else {
+          setActiveAssignment(null);
+        }
+      } finally {
+        setIsAssignmentLoading(false);
       }
     };
 
     fetchActiveAssignment();
   }, [asset.id]);
 
-  // Fetch tab counts to hide empty tabs
-  useEffect(() => {
-    const fetchTabCounts = async () => {
+  // Fetch tab counts for badges and quick stats
+  const fetchTabCounts = useCallback(async () => {
+    try {
       const [
         warrantiesResult,
         assignmentsResult,
@@ -168,10 +192,22 @@ export function AssetDetailPageClient({
         services: servicesResult.success ? servicesResult.data.length : 0,
         intune: intuneResult.success ? intuneResult.data.length : 0,
       });
-    };
+    } catch (_error) {
+      setTabCounts({
+        warranties: 0,
+        assignments: 0,
+        movements: 0,
+        reservations: 0,
+        cmdb: 0,
+        services: 0,
+        intune: 0,
+      });
+    }
+  }, [asset.id, canViewCmdb, canViewIntune, canViewServices]);
 
+  useEffect(() => {
     fetchTabCounts();
-  }, [asset.id, canViewCmdb, canViewServices, canViewIntune]);
+  }, [fetchTabCounts]);
 
   const handleEdit = () => {
     setIsFormOpen(true);
@@ -184,8 +220,9 @@ export function AssetDetailPageClient({
   const handleSuccess = useCallback(async () => {
     // Fetch updated asset data to refresh UI immediately
     await refreshAsset();
+    await fetchTabCounts();
     router.refresh();
-  }, [refreshAsset, router]);
+  }, [fetchTabCounts, refreshAsset, router]);
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -205,227 +242,345 @@ export function AssetDetailPageClient({
     }
   };
 
+  const cmdbCount = canViewCmdb && tabCounts ? tabCounts.cmdb : 0;
+  const servicesCount = canViewServices && tabCounts ? tabCounts.services : 0;
+  const intuneCount = canViewIntune && tabCounts ? tabCounts.intune : 0;
+  const linkedBreakdown = [
+    canViewCmdb ? `${cmdbCount} CMDB` : null,
+    canViewServices ? `${servicesCount} services` : null,
+    canViewIntune ? `${intuneCount} Intune` : null,
+  ]
+    .filter((entry) => entry !== null)
+    .join(" • ");
+  const linkedTotal = cmdbCount + servicesCount + intuneCount;
+  const tabCount = (value: number | undefined) =>
+    tabCounts === null ? undefined : (value ?? 0);
+  const tabs: CountedTabConfig[] = [
+    {
+      value: "overview",
+      label: "Overview",
+      icon: Package,
+      content: <AssetOverviewTab asset={asset} />,
+      showWhenZero: true,
+      triggerClassName: "gap-2",
+    },
+    {
+      value: "warranties",
+      label: "Warranties",
+      icon: FileText,
+      count: tabCount(tabCounts?.warranties),
+      content: <AssetWarrantiesTab assetId={asset.id} />,
+      triggerClassName: "gap-2",
+    },
+    {
+      value: "assignments",
+      label: "Assignments",
+      icon: Users,
+      count: tabCount(tabCounts?.assignments),
+      content: <AssetAssignmentsTab assetId={asset.id} />,
+      triggerClassName: "gap-2",
+    },
+    {
+      value: "movements",
+      label: "Movements",
+      icon: TrendingUp,
+      count: tabCount(tabCounts?.movements),
+      content: <AssetMovementsTab assetId={asset.id} />,
+      triggerClassName: "gap-2",
+    },
+    {
+      value: "reservations",
+      label: "Reservations",
+      icon: Calendar,
+      count: tabCount(tabCounts?.reservations),
+      content: <AssetReservationsTab assetId={asset.id} />,
+      triggerClassName: "gap-2",
+    },
+    {
+      value: "cmdb",
+      label: "CMDB",
+      icon: Server,
+      count: tabCount(tabCounts?.cmdb),
+      canView: canViewCmdb,
+      content: <AssetCmdbTab assetId={asset.id} />,
+      triggerClassName: "gap-2",
+    },
+    {
+      value: "services",
+      label: "Services",
+      icon: Globe,
+      count: tabCount(tabCounts?.services),
+      canView: canViewServices,
+      content: <AssetServicesTab assetId={asset.id} />,
+      triggerClassName: "gap-2",
+    },
+    {
+      value: "intune",
+      label: "Intune",
+      icon: Laptop,
+      count: tabCount(tabCounts?.intune),
+      canView: canViewIntune,
+      content: <AssetIntuneTab assetId={asset.id} />,
+      triggerClassName: "gap-2",
+    },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="space-y-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => router.push("/assets")}
-            className="mb-2 -ml-2"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Assets
-          </Button>
-
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold">{asset.assetTag}</h1>
+      <div className="bg-card rounded-xl border p-5 shadow-sm">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div className="space-y-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => router.push("/assets")}
+              className="w-fit"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Assets
+            </Button>
+            <div className="flex gap-4">
+              <div className="bg-primary/10 text-primary flex h-14 w-14 items-center justify-center rounded-xl">
+                <Package className="h-7 w-7" />
+              </div>
+              <div className="space-y-2">
+                <div className="flex flex-wrap items-center gap-3">
+                  <h1 className="text-3xl font-bold tracking-tight">
+                    {asset.assetTag}
+                  </h1>
+                  {asset.lifecycleStateName && (
+                    <Badge variant="secondary" className="gap-1">
+                      <Activity className="h-3 w-3" />
+                      {asset.lifecycleStateName}
+                    </Badge>
+                  )}
+                  {asset.condition && (
+                    <Badge variant="outline" className="gap-1">
+                      <CheckCircle2 className="h-3 w-3" />
+                      {asset.condition}
+                    </Badge>
+                  )}
+                </div>
+                <div className="text-muted-foreground flex flex-wrap items-center gap-2 text-sm">
+                  <span className="font-medium">
+                    {asset.modelName || "Model not set"}
+                  </span>
+                  {asset.categoryName && (
+                    <>
+                      <span className="text-muted-foreground/60">•</span>
+                      <span>{asset.categoryName}</span>
+                    </>
+                  )}
+                  {asset.serialNumber && (
+                    <Badge
+                      variant="outline"
+                      className="bg-background font-mono text-xs"
+                    >
+                      S/N {asset.serialNumber}
+                    </Badge>
+                  )}
+                </div>
+                <div className="text-muted-foreground flex flex-wrap gap-3 text-sm">
+                  {asset.vendorName && (
+                    <span className="flex items-center gap-1">
+                      <Building2 className="h-3.5 w-3.5" />
+                      {asset.vendorName}
+                    </span>
+                  )}
+                  {asset.stockLocationName && (
+                    <span className="flex items-center gap-1">
+                      <MapPin className="h-3.5 w-3.5" />
+                      {asset.stockLocationName}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="text-muted-foreground flex flex-wrap gap-2 text-sm">
-            {asset.categoryName && (
-              <span className="flex items-center gap-1">
-                <Package className="h-4 w-4" />
-                {asset.categoryName}
-              </span>
-            )}
-            {asset.serialNumber && <span>S/N: {asset.serialNumber}</span>}
+          <div className="flex flex-wrap justify-end gap-2">
+            {/* Workflow Actions */}
+            <PermissionGuard permission={PERMISSIONS.ASSET_ASSIGNMENTS_CREATE}>
+              <Button
+                size="sm"
+                onClick={() => setIsAssignWizardOpen(true)}
+                className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90 gap-2"
+              >
+                <UserPlus className="h-4 w-4" />
+                Assign to Employee
+              </Button>
+            </PermissionGuard>
+
+            <PermissionGuard permission={PERMISSIONS.ASSET_ASSIGNMENTS_UPDATE}>
+              <Button
+                size="sm"
+                onClick={() => setIsReturnWizardOpen(true)}
+                variant="outline"
+                className="gap-2"
+                disabled={isAssignmentLoading || !activeAssignment}
+                title={
+                  activeAssignment || isAssignmentLoading
+                    ? undefined
+                    : "No active assignment to return"
+                }
+              >
+                <RotateCcw className="h-4 w-4" />
+                Return to Inventory
+              </Button>
+            </PermissionGuard>
+
+            {/* Standard Actions */}
+            <PermissionGuard permission={PERMISSIONS.ASSETS_UPDATE}>
+              <Button
+                size="sm"
+                onClick={handleEdit}
+                variant="outline"
+                className="gap-2"
+              >
+                <Pencil className="h-4 w-4" />
+                Edit
+              </Button>
+            </PermissionGuard>
+
+            <PermissionGuard permission={PERMISSIONS.ASSETS_DELETE}>
+              <Button
+                size="sm"
+                onClick={() => setIsDeleteDialogOpen(true)}
+                variant="outline"
+                className="text-destructive hover:bg-destructive hover:text-destructive-foreground gap-2"
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete
+              </Button>
+            </PermissionGuard>
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          {/* Workflow Actions */}
-          <PermissionGuard permission={PERMISSIONS.ASSET_ASSIGNMENTS_CREATE}>
-            <Button
-              onClick={() => setIsAssignWizardOpen(true)}
-              className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90 gap-2"
-            >
-              <UserPlus className="h-4 w-4" />
-              Assign to Employee
-            </Button>
-          </PermissionGuard>
+        {/* Quick status cards */}
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <Card>
+            <CardContent className="flex items-start gap-3 p-4">
+              <div
+                className={`rounded-full p-2 ${
+                  activeAssignment
+                    ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-200"
+                    : "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200"
+                }`}
+              >
+                <Users className="h-4 w-4" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-muted-foreground text-xs uppercase">
+                  Assignment
+                </p>
+                <p className="leading-tight font-semibold">
+                  {isAssignmentLoading
+                    ? "Checking assignment..."
+                    : activeAssignment
+                      ? activeAssignment.assigneeName ||
+                        activeAssignment.assigneeId
+                      : "Unassigned"}
+                </p>
+                <p className="text-muted-foreground text-xs">
+                  {isAssignmentLoading
+                    ? "Fetching current assignment"
+                    : activeAssignment
+                      ? `Since ${formatDate(activeAssignment.startDate)}`
+                      : "Assign this asset to put it in use"}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
 
-          <PermissionGuard permission={PERMISSIONS.ASSET_ASSIGNMENTS_UPDATE}>
-            <Button
-              onClick={() => setIsReturnWizardOpen(true)}
-              variant="outline"
-              className="gap-2"
-            >
-              <RotateCcw className="h-4 w-4" />
-              Return to Inventory
-            </Button>
-          </PermissionGuard>
+          <Card>
+            <CardContent className="flex items-start gap-3 p-4">
+              <div className="rounded-full bg-blue-100 p-2 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200">
+                <MapPin className="h-4 w-4" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-muted-foreground text-xs uppercase">
+                  Inventory
+                </p>
+                <p className="leading-tight font-semibold">
+                  {asset.stockLocationName || "No stock location"}
+                </p>
+                <p className="text-muted-foreground text-xs">
+                  {isLoadingCounts
+                    ? "Loading movements..."
+                    : `${tabCounts?.movements ?? 0} movement${
+                        (tabCounts?.movements ?? 0) === 1 ? "" : "s"
+                      } logged`}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
 
-          {/* Standard Actions */}
-          <PermissionGuard permission={PERMISSIONS.ASSETS_UPDATE}>
-            <Button onClick={handleEdit} variant="outline" className="gap-2">
-              <Pencil className="h-4 w-4" />
-              Edit
-            </Button>
-          </PermissionGuard>
+          <Card>
+            <CardContent className="flex items-start gap-3 p-4">
+              <div className="rounded-full bg-amber-100 p-2 text-amber-700 dark:bg-amber-900/40 dark:text-amber-200">
+                <ShieldCheck className="h-4 w-4" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-muted-foreground text-xs uppercase">
+                  Coverage
+                </p>
+                <p className="leading-tight font-semibold">
+                  {isLoadingCounts
+                    ? "Loading warranties..."
+                    : `${tabCounts?.warranties ?? 0} warrant${
+                        (tabCounts?.warranties ?? 0) === 1 ? "y" : "ies"
+                      }`}
+                </p>
+                <p className="text-muted-foreground text-xs">
+                  {isLoadingCounts
+                    ? "Loading reservations..."
+                    : `${tabCounts?.reservations ?? 0} reservation${
+                        (tabCounts?.reservations ?? 0) === 1 ? "" : "s"
+                      } in history`}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
 
-          <PermissionGuard permission={PERMISSIONS.ASSETS_DELETE}>
-            <Button
-              onClick={() => setIsDeleteDialogOpen(true)}
-              variant="outline"
-              className="text-destructive hover:bg-destructive hover:text-destructive-foreground gap-2"
-            >
-              <Trash2 className="h-4 w-4" />
-              Delete
-            </Button>
-          </PermissionGuard>
+          <Card>
+            <CardContent className="flex items-start gap-3 p-4">
+              <div className="rounded-full bg-purple-100 p-2 text-purple-700 dark:bg-purple-900/40 dark:text-purple-200">
+                <Server className="h-4 w-4" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-muted-foreground text-xs uppercase">
+                  Linked Items
+                </p>
+                <p className="leading-tight font-semibold">
+                  {isLoadingCounts
+                    ? "Loading links..."
+                    : canViewCmdb || canViewServices || canViewIntune
+                      ? `${linkedTotal} linked item${
+                          linkedTotal === 1 ? "" : "s"
+                        }`
+                      : "Access limited"}
+                </p>
+                <p className="text-muted-foreground text-xs">
+                  {isLoadingCounts
+                    ? "Loading linked records..."
+                    : canViewCmdb || canViewServices || canViewIntune
+                      ? linkedBreakdown || "No linked records"
+                      : "Request access to view services or devices"}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="h-auto flex-wrap gap-1">
-          {/* Overview - always shown */}
-          <TabsTrigger value="overview" className="gap-2">
-            <Package className="h-4 w-4" />
-            Overview
-          </TabsTrigger>
-
-          {/* Warranties - hide if empty */}
-          {(!tabCounts || tabCounts.warranties > 0) && (
-            <TabsTrigger value="warranties" className="gap-2">
-              <FileText className="h-4 w-4" />
-              Warranties
-              {tabCounts && tabCounts.warranties > 0 && (
-                <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                  {tabCounts.warranties}
-                </Badge>
-              )}
-            </TabsTrigger>
-          )}
-
-          {/* Assignments - hide if empty */}
-          {(!tabCounts || tabCounts.assignments > 0) && (
-            <TabsTrigger value="assignments" className="gap-2">
-              <Users className="h-4 w-4" />
-              Assignments
-              {tabCounts && tabCounts.assignments > 0 && (
-                <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                  {tabCounts.assignments}
-                </Badge>
-              )}
-            </TabsTrigger>
-          )}
-
-          {/* Movements - hide if empty */}
-          {(!tabCounts || tabCounts.movements > 0) && (
-            <TabsTrigger value="movements" className="gap-2">
-              <TrendingUp className="h-4 w-4" />
-              Movements
-              {tabCounts && tabCounts.movements > 0 && (
-                <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                  {tabCounts.movements}
-                </Badge>
-              )}
-            </TabsTrigger>
-          )}
-
-          {/* Reservations - hide if empty */}
-          {(!tabCounts || tabCounts.reservations > 0) && (
-            <TabsTrigger value="reservations" className="gap-2">
-              <Calendar className="h-4 w-4" />
-              Reservations
-              {tabCounts && tabCounts.reservations > 0 && (
-                <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                  {tabCounts.reservations}
-                </Badge>
-              )}
-            </TabsTrigger>
-          )}
-
-          {/* CMDB - hide if empty or no permission */}
-          {canViewCmdb && (!tabCounts || tabCounts.cmdb > 0) && (
-            <TabsTrigger value="cmdb" className="gap-2">
-              <Server className="h-4 w-4" />
-              CMDB
-              {tabCounts && tabCounts.cmdb > 0 && (
-                <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                  {tabCounts.cmdb}
-                </Badge>
-              )}
-            </TabsTrigger>
-          )}
-
-          {/* Services - hide if empty or no permission */}
-          {canViewServices && (!tabCounts || tabCounts.services > 0) && (
-            <TabsTrigger value="services" className="gap-2">
-              <Globe className="h-4 w-4" />
-              Services
-              {tabCounts && tabCounts.services > 0 && (
-                <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                  {tabCounts.services}
-                </Badge>
-              )}
-            </TabsTrigger>
-          )}
-
-          {/* Intune - hide if empty or no permission */}
-          {canViewIntune && (!tabCounts || tabCounts.intune > 0) && (
-            <TabsTrigger value="intune" className="gap-2">
-              <Laptop className="h-4 w-4" />
-              Intune
-              {tabCounts && tabCounts.intune > 0 && (
-                <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                  {tabCounts.intune}
-                </Badge>
-              )}
-            </TabsTrigger>
-          )}
-        </TabsList>
-
-        <TabsContent value="overview">
-          <AssetOverviewTab asset={asset} />
-        </TabsContent>
-
-        {(!tabCounts || tabCounts.warranties > 0) && (
-          <TabsContent value="warranties">
-            <AssetWarrantiesTab assetId={asset.id} />
-          </TabsContent>
-        )}
-
-        {(!tabCounts || tabCounts.assignments > 0) && (
-          <TabsContent value="assignments">
-            <AssetAssignmentsTab assetId={asset.id} />
-          </TabsContent>
-        )}
-
-        {(!tabCounts || tabCounts.movements > 0) && (
-          <TabsContent value="movements">
-            <AssetMovementsTab assetId={asset.id} />
-          </TabsContent>
-        )}
-
-        {(!tabCounts || tabCounts.reservations > 0) && (
-          <TabsContent value="reservations">
-            <AssetReservationsTab assetId={asset.id} />
-          </TabsContent>
-        )}
-
-        {canViewCmdb && (!tabCounts || tabCounts.cmdb > 0) && (
-          <TabsContent value="cmdb">
-            <AssetCmdbTab assetId={asset.id} />
-          </TabsContent>
-        )}
-
-        {canViewServices && (!tabCounts || tabCounts.services > 0) && (
-          <TabsContent value="services">
-            <AssetServicesTab assetId={asset.id} />
-          </TabsContent>
-        )}
-
-        {canViewIntune && (!tabCounts || tabCounts.intune > 0) && (
-          <TabsContent value="intune">
-            <AssetIntuneTab assetId={asset.id} />
-          </TabsContent>
-        )}
-      </Tabs>
+      <CountedTabs
+        defaultValue="overview"
+        tabs={tabs}
+        loading={isLoadingCounts}
+        tabsClassName="space-y-6"
+        listClassName="h-auto gap-2"
+      />
 
       {/* Edit Form Dialog */}
       <AssetForm

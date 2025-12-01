@@ -17,12 +17,23 @@ import { ConfigurationItemDetail } from "./configuration-item-detail";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
+export interface ConfigurationItemsViewState {
+  search?: string;
+  criticality?: string;
+  environment?: string;
+  owner?: string;
+  assetLink?: string;
+  density?: "comfortable" | "compact";
+}
+
 interface ConfigurationItemsPageClientProps {
   initialItems: ConfigurationItemDTO[];
+  initialViewState?: ConfigurationItemsViewState;
 }
 
 export function ConfigurationItemsPageClient({
   initialItems,
+  initialViewState,
 }: ConfigurationItemsPageClientProps) {
   const [items, setItems] = useState<ConfigurationItemDTO[]>(initialItems);
   const [isLoading, setIsLoading] = useState(false);
@@ -101,6 +112,7 @@ export function ConfigurationItemsPageClient({
         onView={handleView}
         onEdit={handleEdit}
         onRefresh={handleSuccess}
+        initialViewState={initialViewState}
       />
 
       {/* Configuration Item Form Dialog */}
@@ -117,7 +129,6 @@ export function ConfigurationItemsPageClient({
           item={selectedItem}
           onClose={() => setSelectedItem(null)}
           onEdit={handleEdit}
-          onSuccess={handleSuccess}
         />
       )}
     </div>

@@ -5,19 +5,17 @@
 
 import { StockLocationsPageClient } from "@/components/stock-locations/stock-locations-page-client";
 import { listStockLocationsAction } from "@/interface-adapters/controllers/stock-location.controller";
-import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
 
 export const dynamic = "force-dynamic";
 
 export default async function StockLocationsPage() {
-  try {
-    await requirePermission(PERMISSIONS.STOCK_LOCATIONS_VIEW);
-  } catch (error) {
-    handlePermissionRedirect(error, "/stock-locations");
-    throw error;
-  }
+  await requireFeatureAndPermission(
+    "INVENTORY",
+    PERMISSIONS.STOCK_LOCATIONS_VIEW,
+    "/stock-locations",
+  );
 
   const result = await listStockLocationsAction();
   const initialStockLocations = result.success ? result.data : [];

@@ -159,9 +159,10 @@ class CIRelationshipEntity {
 
 **Features**:
 
-- Table view with filtering (name, criticality, environment)
-- Create/edit form with CI key validation
-- Detail view with all CI information
+- Table view with debounced search, saved filters (Prod Critical, Unlinked), column chooser, compact default density (no toggle), stale-highlighting, and asset/owner filters
+- Saved views via URL params (q, criticality, environment, owner, assetLink, density) so teams can share filtered views
+- Create/edit form with CI key validation, lifecycle state, owner (person/org unit), location, and linked asset selectors (searchable)
+- Detail view with tabbed layout (Overview, Relationships, Custom Fields, Activity) and copyable CI key
 - Delete confirmation dialog
 
 **UI Components**:

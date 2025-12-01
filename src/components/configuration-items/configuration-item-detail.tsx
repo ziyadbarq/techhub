@@ -4,6 +4,7 @@
 
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,39 +13,52 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import type { ConfigurationItemDTO } from "@/interface-adapters/dtos/generated/configuration-item.dto";
-import { Pencil } from "lucide-react";
+import { Pencil, X } from "lucide-react";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { format } from "date-fns";
 import { CICustomFieldsDisplay } from "@/components/custom-fields";
 import type { CIRelationshipDTO } from "@/interface-adapters/dtos/generated/ci-relationship.dto";
 import { listCIRelationshipsAction } from "@/interface-adapters/controllers/ci-relationship.controller";
-import { useEffect, useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  CRITICALITY_STATUS_MAP,
+  ENVIRONMENT_STATUS_MAP,
+  isCIStale,
+} from "./configuration-items-helpers";
+import { getStatusBadgeClasses } from "@/lib/utils/status-colors";
+import { formatDateTime, formatRelativeTime } from "@/lib/utils/date-format";
+import { cn } from "@/lib/utils";
 
 interface ConfigurationItemDetailProps {
   item: ConfigurationItemDTO;
   onClose: () => void;
   onEdit: (item: ConfigurationItemDTO) => void;
-  onSuccess: () => void;
 }
 
-const criticalityColors: Record<string, string> = {
-  LOW: "bg-blue-500/10 text-blue-500 hover:bg-blue-500/20",
-  MEDIUM: "bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20",
-  HIGH: "bg-orange-500/10 text-orange-500 hover:bg-orange-500/20",
-  CRITICAL: "bg-red-500/10 text-red-500 hover:bg-red-500/20",
-};
-
-const environmentColors: Record<string, string> = {
-  PROD: "bg-red-500/10 text-red-500 hover:bg-red-500/20",
-  UAT: "bg-orange-500/10 text-orange-500 hover:bg-orange-500/20",
-  DEV: "bg-blue-500/10 text-blue-500 hover:bg-blue-500/20",
-  TEST: "bg-purple-500/10 text-purple-500 hover:bg-purple-500/20",
-  DR: "bg-pink-500/10 text-pink-500 hover:bg-pink-500/20",
-  OTHER: "bg-gray-500/10 text-gray-500 hover:bg-gray-500/20",
-};
+function DetailField({
+  label,
+  value,
+  mono,
+}: {
+  label: string;
+  value: React.ReactNode;
+  mono?: boolean;
+}) {
+  return (
+    <div className="space-y-1">
+      <p className="text-muted-foreground text-sm">{label}</p>
+      <p
+        className={cn(
+          "font-medium",
+          mono && "font-mono text-xs leading-relaxed break-all",
+        )}
+      >
+        {value ?? "—"}
+      </p>
+    </div>
+  );
+}
 
 export function ConfigurationItemDetail({
   item,
@@ -66,8 +80,6 @@ export function ConfigurationItemDetail({
         if (result.success && result.data) {
           setRelationships(result.data);
         }
-      } catch {
-        // Best-effort; keep UI resilient
       } finally {
         setIsLoadingRels(false);
       }
@@ -76,16 +88,80 @@ export function ConfigurationItemDetail({
     loadRelationships();
   }, [item.id]);
 
-  const dependsOn = relationships.filter((rel) => rel.fromCiId === item.id);
-  const impactedBy = relationships.filter((rel) => rel.toCiId === item.id);
+  const dependsOn = useMemo(
+    () => relationships.filter((rel) => rel.fromCiId === item.id),
+    [relationships, item.id],
+  );
+  const impactedBy = useMemo(
+    () => relationships.filter((rel) => rel.toCiId === item.id),
+    [relationships, item.id],
+  );
+
+  const isStale = useMemo(() => isCIStale(item.updatedAt), [item.updatedAt]);
+  const hasCustomFields = useMemo(
+    () =>
+      Boolean(
+        item.ciClassId &&
+          item.attributes &&
+          Object.keys(item.attributes).length > 0,
+      ),
+    [item.attributes, item.ciClassId],
+  );
+
+  const relationshipCount = dependsOn.length + impactedBy.length;
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto [&>button.absolute]:hidden">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
-            <span>Configuration Item Details</span>
-            <div className="flex gap-2">
+          <DialogTitle className="flex items-start justify-between gap-4">
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-lg font-semibold">
+                  Configuration Item
+                </span>
+                {isStale && (
+                  <Badge
+                    variant="outline"
+                    className="border-amber-200 bg-amber-50"
+                  >
+                    Stale
+                  </Badge>
+                )}
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xl leading-tight font-bold">
+                  {item.name}
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                {item.ciClassName && (
+                  <Badge variant="secondary">{item.ciClassName}</Badge>
+                )}
+                {item.criticality && (
+                  <Badge
+                    variant="outline"
+                    className={getStatusBadgeClasses(
+                      CRITICALITY_STATUS_MAP[item.criticality] ?? "info",
+                    )}
+                  >
+                    Criticality: {item.criticality}
+                  </Badge>
+                )}
+                {item.environment && (
+                  <Badge
+                    variant="outline"
+                    className={getStatusBadgeClasses(
+                      ENVIRONMENT_STATUS_MAP[item.environment] ?? "info",
+                    )}
+                  >
+                    Environment: {item.environment}
+                  </Badge>
+                )}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
               <PermissionGuard
                 permission={PERMISSIONS.CONFIGURATION_ITEMS_UPDATE}
               >
@@ -98,183 +174,90 @@ export function ConfigurationItemDetail({
                   Edit
                 </Button>
               </PermissionGuard>
+              <Button variant="ghost" size="icon" onClick={onClose}>
+                <X className="h-4 w-4" />
+              </Button>
             </div>
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
-          {/* Basic Information */}
-          <div>
-            <h3 className="mb-3 text-lg font-semibold">Basic Information</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-muted-foreground text-sm">Name</p>
-                <p className="font-medium">{item.name}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-sm">CI Class</p>
-                <p className="font-medium">{item.ciClassName || "—"}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-sm">CI Key</p>
-                <p className="font-mono text-sm">{item.ciKey || "—"}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-sm">Lifecycle State</p>
-                <p className="font-medium">{item.lifecycleStateName || "—"}</p>
-              </div>
+        <Tabs defaultValue="overview" className="mt-4 space-y-4">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="relationships">
+              Relationships
+              {relationshipCount > 0 && (
+                <Badge variant="secondary" className="ml-2">
+                  {relationshipCount}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="custom-fields" disabled={!hasCustomFields}>
+              Custom Fields
+            </TabsTrigger>
+            <TabsTrigger value="activity">Activity</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <DetailField label="CI Class" value={item.ciClassName || "—"} />
+              <DetailField
+                label="Lifecycle State"
+                value={item.lifecycleStateName || "—"}
+              />
+              <DetailField label="CI Key" value={item.ciKey || "—"} mono />
+              <DetailField
+                label="Linked Asset"
+                value={
+                  item.linkedAssetTag ? (
+                    <Badge variant="outline" className="font-mono text-xs">
+                      {item.linkedAssetTag}
+                    </Badge>
+                  ) : (
+                    "Unlinked"
+                  )
+                }
+              />
+              <DetailField
+                label="Primary Owner"
+                value={item.primaryOwnerName || "—"}
+              />
+              <DetailField label="Location" value={item.locationName || "—"} />
             </div>
-          </div>
 
-          <Separator />
-
-          {/* Classification */}
-          <div>
-            <h3 className="mb-3 text-lg font-semibold">Classification</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-muted-foreground mb-2 text-sm">
-                  Criticality
-                </p>
-                {item.criticality ? (
-                  <Badge
-                    variant="outline"
-                    className={criticalityColors[item.criticality]}
-                  >
-                    {item.criticality}
-                  </Badge>
-                ) : (
-                  <span className="text-muted-foreground">—</span>
-                )}
-              </div>
-              <div>
-                <p className="text-muted-foreground mb-2 text-sm">
-                  Environment
-                </p>
-                {item.environment ? (
-                  <Badge
-                    variant="outline"
-                    className={environmentColors[item.environment]}
-                  >
-                    {item.environment}
-                  </Badge>
-                ) : (
-                  <span className="text-muted-foreground">—</span>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <Separator />
-
-          {/* Ownership & Location */}
-          <div>
-            <h3 className="mb-3 text-lg font-semibold">Ownership & Location</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-muted-foreground text-sm">Primary Owner</p>
-                <p className="font-medium">{item.primaryOwnerName || "—"}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground text-sm">Location</p>
-                <p className="font-medium">{item.locationName || "—"}</p>
-              </div>
-            </div>
-          </div>
-
-          {item.linkedAssetTag && (
-            <>
-              <Separator />
-              <div>
-                <h3 className="mb-3 text-lg font-semibold">Linked Asset</h3>
-                <div>
-                  <p className="text-muted-foreground text-sm">Asset Tag</p>
-                  <p className="font-mono text-sm">{item.linkedAssetTag}</p>
-                </div>
-              </div>
-            </>
-          )}
-
-          {item.description && (
-            <>
-              <Separator />
-              <div>
-                <h3 className="mb-3 text-lg font-semibold">Description</h3>
+            {item.description && (
+              <div className="space-y-2">
+                <p className="text-muted-foreground text-sm">Description</p>
                 <p className="text-sm whitespace-pre-wrap">
                   {item.description}
                 </p>
               </div>
-            </>
-          )}
-
-          {/* Custom Fields */}
-          {item.ciClassId &&
-            item.attributes &&
-            Object.keys(item.attributes).length > 0 && (
-              <>
-                <Separator />
-                <div>
-                  <h3 className="mb-3 text-lg font-semibold">Custom Fields</h3>
-                  <CICustomFieldsDisplay
-                    ciClassId={item.ciClassId}
-                    attributes={item.attributes as Record<string, unknown>}
-                  />
-                </div>
-              </>
             )}
+          </TabsContent>
 
-          <Separator />
-
-          {/* Metadata */}
-          <div>
-            <h3 className="mb-3 text-lg font-semibold">Metadata</h3>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <p className="text-muted-foreground">Created</p>
-                <p>{format(new Date(item.createdAt), "PPp")}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Last Updated</p>
-                <p>{format(new Date(item.updatedAt), "PPp")}</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">ID</p>
-                <p className="font-mono text-xs break-all">{item.id}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Relationships */}
-          <Separator />
-          <div>
-            <h3 className="mb-3 text-lg font-semibold">
-              Relationships
-              {isLoadingRels && (
-                <span className="text-muted-foreground ml-2 text-xs">
-                  Loading…
-                </span>
-              )}
-            </h3>
-            {dependsOn.length === 0 &&
-            impactedBy.length === 0 &&
-            !isLoadingRels ? (
+          <TabsContent value="relationships" className="space-y-4">
+            {isLoadingRels ? (
+              <p className="text-muted-foreground text-sm">
+                Loading relationships…
+              </p>
+            ) : relationshipCount === 0 ? (
               <p className="text-muted-foreground text-sm">
                 No relationships found for this configuration item.
               </p>
             ) : (
-              <div className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-2">
                 {dependsOn.length > 0 && (
-                  <div>
-                    <p className="text-muted-foreground mb-2 text-sm">
-                      This CI depends on:
+                  <div className="space-y-2 rounded-md border p-3">
+                    <p className="text-muted-foreground text-sm">
+                      This CI depends on
                     </p>
-                    <div className="space-y-1">
+                    <div className="space-y-2">
                       {dependsOn.map((rel) => (
                         <div
                           key={rel.id}
                           className="border-border flex items-center justify-between rounded-md border px-3 py-2 text-sm"
                         >
-                          <div>
+                          <div className="space-y-1">
                             <p className="font-medium">
                               {rel.toCiName || rel.toCiId}
                             </p>
@@ -294,17 +277,17 @@ export function ConfigurationItemDetail({
                 )}
 
                 {impactedBy.length > 0 && (
-                  <div>
-                    <p className="text-muted-foreground mb-2 text-sm">
-                      This CI is depended on by:
+                  <div className="space-y-2 rounded-md border p-3">
+                    <p className="text-muted-foreground text-sm">
+                      This CI is depended on by
                     </p>
-                    <div className="space-y-1">
+                    <div className="space-y-2">
                       {impactedBy.map((rel) => (
                         <div
                           key={rel.id}
                           className="border-border flex items-center justify-between rounded-md border px-3 py-2 text-sm"
                         >
-                          <div>
+                          <div className="space-y-1">
                             <p className="font-medium">
                               {rel.fromCiName || rel.fromCiId}
                             </p>
@@ -324,8 +307,39 @@ export function ConfigurationItemDetail({
                 )}
               </div>
             )}
-          </div>
-        </div>
+          </TabsContent>
+
+          <TabsContent value="custom-fields" className="space-y-3">
+            {hasCustomFields && item.ciClassId && item.attributes ? (
+              <CICustomFieldsDisplay
+                ciClassId={item.ciClassId}
+                attributes={item.attributes as Record<string, unknown>}
+              />
+            ) : (
+              <p className="text-muted-foreground text-sm">
+                No custom fields captured for this configuration item.
+              </p>
+            )}
+          </TabsContent>
+
+          <TabsContent value="activity" className="space-y-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <DetailField
+                label="Created"
+                value={formatDateTime(item.createdAt)}
+              />
+              <DetailField
+                label="Last Updated"
+                value={formatDateTime(item.updatedAt)}
+              />
+              <DetailField label="CI ID" value={item.id} mono />
+              <DetailField
+                label="Updated"
+                value={formatRelativeTime(item.updatedAt)}
+              />
+            </div>
+          </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );

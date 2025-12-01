@@ -15,10 +15,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EditPermissionClient } from "./edit-permission-client";
 import { getPermissionAction } from "@/interface-adapters/controllers/permission.controller";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 interface EditPermissionPageProps {
   params: Promise<{ name: string }>;
 }
+
+export const dynamic = "force-dynamic";
 
 async function PermissionDetails({ name }: { name: string }) {
   const result = await getPermissionAction(name);
@@ -47,6 +51,12 @@ export default async function EditPermissionPage({
   const { name } = await params;
   // Decode URL-encoded permission name
   const permissionName = decodeURIComponent(name);
+
+  await requireFeatureAndPermission(
+    "RBAC",
+    PERMISSIONS.PERMISSIONS_UPDATE,
+    `/admin/permissions/${permissionName}`,
+  );
 
   return (
     <div className="container mx-auto max-w-3xl space-y-6 py-8">

@@ -20,3 +20,4 @@ export {
 } from "./use-badge-updates";
 export { useSidebarNavigation } from "./use-sidebar-navigation";
 export { useEntityTypeOptions } from "./use-entity-type-options";
+export { useConfigurationItemReferenceData } from "./use-configuration-item-reference-data";

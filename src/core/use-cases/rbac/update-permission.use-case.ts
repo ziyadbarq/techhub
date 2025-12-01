@@ -11,6 +11,7 @@ import {
   PermissionNotFoundError,
   SystemPermissionModificationError,
 } from "../../domain/errors/rbac-errors";
+import { invalidatePermissionCache } from "@/lib/permissions/cache";
 
 export interface UpdatePermissionRequest {
   id: string;
@@ -79,6 +80,9 @@ export class UpdatePermissionUseCase {
       ipAddress: request.ipAddress,
       userAgent: request.userAgent,
     });
+
+    // Permission activation/deactivation affects access immediately
+    invalidatePermissionCache("all");
 
     return savedPermission;
   }

@@ -3,11 +3,10 @@
  */
 
 import { notFound } from "next/navigation";
-import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { getAssetAction } from "@/interface-adapters/controllers/asset.controller";
 import { AssetDetailPageClient } from "@/components/assets/asset-detail-page-client";
-import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
 
 export const dynamic = "force-dynamic";
 
@@ -22,12 +21,11 @@ export default async function AssetDetailPage({
 }: AssetDetailPageProps) {
   const { assetTag } = await params;
 
-  try {
-    await requirePermission(PERMISSIONS.ASSETS_VIEW);
-  } catch (error) {
-    handlePermissionRedirect(error, `/assets/${assetTag}`);
-    throw error;
-  }
+  await requireFeatureAndPermission(
+    "ASSETS",
+    PERMISSIONS.ASSETS_VIEW,
+    `/assets/${assetTag}`,
+  );
 
   const result = await getAssetAction(assetTag);
 

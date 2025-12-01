@@ -17,3 +17,4 @@ export { UpdateServiceHealthUseCase } from "./update-service-health.use-case";
 export { CalculateSlaComplianceUseCase } from "./calculate-sla-compliance.use-case";
 export { RecordSlaMetricUseCase } from "./record-sla-metric.use-case";
 export { GetServiceHealthHistoryUseCase } from "./get-service-health-history.use-case";
+export { GetServiceSlaMetricsUseCase } from "../service-sla-metric";

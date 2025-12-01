@@ -8,7 +8,6 @@
 import { Suspense } from "react";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { requirePermission } from "@/lib/permissions/server";
 import { DataImportWizard } from "@/components/data-import/DataImportWizard";
 import { HowItWorksSection } from "@/components/data-import/HowItWorksSection";
 import {
@@ -19,7 +18,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Database, FileUp, CheckCircle2, AlertCircle } from "lucide-react";
-import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
 
 export const dynamic = "force-dynamic";
 
@@ -27,13 +26,11 @@ export const dynamic = "force-dynamic";
  * Server component - handles permission checks and layout
  */
 export default async function DataImportPage() {
-  // Server-side permission check (security)
-  try {
-    await requirePermission(PERMISSIONS.DATA_IMPORT_MANAGE);
-  } catch (error) {
-    handlePermissionRedirect(error, "/data-import");
-    throw error;
-  }
+  await requireFeatureAndPermission(
+    "DATA_IMPORT",
+    PERMISSIONS.DATA_IMPORT_MANAGE,
+    "/data-import",
+  );
 
   return (
     <PermissionGuard permission={PERMISSIONS.DATA_IMPORT_MANAGE}>

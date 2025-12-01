@@ -5,7 +5,7 @@
 "use client";
 
 import { useEffect, useState, useMemo, useCallback } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm, useWatch, type UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -54,8 +54,7 @@ import {
   UpdateConfigurationItemSchema,
   type ConfigurationItemDTO,
 } from "@/interface-adapters/dtos/generated/configuration-item.dto";
-import { listCIClassesAction } from "@/interface-adapters/controllers/ci-class.controller";
-import type { CIClassDTO } from "@/interface-adapters/presenters/ci-class.presenter";
+import { useConfigurationItemReferenceData } from "@/hooks/use-configuration-item-reference-data";
 
 interface ConfigurationItemFormProps {
   open: boolean;
@@ -64,10 +63,15 @@ interface ConfigurationItemFormProps {
   editingItem?: ConfigurationItemDTO | null;
 }
 
+const NONE_OPTION_VALUE = "__none__";
+
 type CreateFormValues = z.input<typeof CreateConfigurationItemSchema>;
 type CreateFormOutput = z.output<typeof CreateConfigurationItemSchema>;
 type UpdateFormValues = z.input<typeof UpdateConfigurationItemSchema>;
 type UpdateFormOutput = z.output<typeof UpdateConfigurationItemSchema>;
+type SharedFormInstance =
+  | UseFormReturn<CreateFormValues, undefined, CreateFormOutput>
+  | UseFormReturn<UpdateFormValues, undefined, UpdateFormOutput>;
 
 export function ConfigurationItemForm({
   open,
@@ -77,9 +81,11 @@ export function ConfigurationItemForm({
 }: ConfigurationItemFormProps) {
   const isEditing = !!editingItem;
 
-  // CI Classes for dropdown
-  const [ciClasses, setCIClasses] = useState<CIClassDTO[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    data: referenceData,
+    loading: referenceLoading,
+    error: referenceError,
+  } = useConfigurationItemReferenceData(open);
 
   // Custom field values (managed separately from form)
   const [customFieldValues, setCustomFieldValues] = useState<CustomFieldValues>(
@@ -89,33 +95,68 @@ export function ConfigurationItemForm({
   // Memoized options for searchable dropdown
   const ciClassOptions: SearchableSelectOption[] = useMemo(
     () =>
-      ciClasses.map((cls) => ({
+      referenceData.ciClasses.map((cls) => ({
         value: cls.id,
         label: `${cls.name} (${cls.code})`,
       })),
-    [ciClasses],
+    [referenceData.ciClasses],
+  );
+
+  const lifecycleStateOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      referenceData.lifecycleStates.map((state) => ({
+        value: state.id,
+        label: `${state.name} (${state.code})`,
+      })),
+    [referenceData.lifecycleStates],
+  );
+
+  const personOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      referenceData.persons.map((person) => ({
+        value: person.id,
+        label: `${person.firstName} ${person.lastName}${
+          person.orgUnitName ? ` • ${person.orgUnitName}` : ""
+        }`,
+      })),
+    [referenceData.persons],
+  );
+
+  const orgUnitOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      referenceData.organizationUnits.map((unit) => ({
+        value: unit.id,
+        label: `${unit.name} (${unit.code})`,
+      })),
+    [referenceData.organizationUnits],
+  );
+
+  const locationOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      referenceData.locations.map((location) => ({
+        value: location.id,
+        label: `${location.name} (${location.code})`,
+      })),
+    [referenceData.locations],
+  );
+
+  const assetOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      referenceData.assets.map((asset) => ({
+        value: asset.id,
+        label: `${asset.assetTag}${
+          asset.categoryName ? ` • ${asset.categoryName}` : ""
+        }`,
+      })),
+    [referenceData.assets],
   );
 
   // Load CI classes when dialog opens
   useEffect(() => {
-    if (open) {
-      loadData();
+    if (open && referenceError) {
+      toast.error(referenceError);
     }
-  }, [open]);
-
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      const result = await listCIClassesAction();
-      if (result.success) {
-        setCIClasses(result.data);
-      }
-    } catch (_error) {
-      toast.error("Failed to load CI classes");
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [open, referenceError]);
 
   const createForm = useForm<CreateFormValues, undefined, CreateFormOutput>({
     resolver: zodResolver(CreateConfigurationItemSchema),
@@ -157,15 +198,6 @@ export function ConfigurationItemForm({
     control: createForm.control,
     name: "ciClassId",
   });
-
-  // Reset custom fields when CI class changes (create form only)
-  useEffect(() => {
-    if (!isEditing && watchedCIClassId) {
-      // Reset custom field values when CI class changes
-      setCustomFieldValues({});
-    }
-  }, [watchedCIClassId, isEditing]);
-
   // Handle custom field value changes
   const handleCustomFieldsChange = useCallback((values: CustomFieldValues) => {
     setCustomFieldValues(values);
@@ -201,9 +233,11 @@ export function ConfigurationItemForm({
         attributes: editingItem.attributes,
       });
       // Initialize custom field values from existing attributes
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCustomFieldValues((editingItem.attributes as CustomFieldValues) || {});
     } else if (open && !editingItem) {
       createForm.reset();
+
       setCustomFieldValues({});
     }
   }, [open, editingItem, createForm, updateForm]);
@@ -253,6 +287,164 @@ export function ConfigurationItemForm({
     }
   };
 
+  const renderOwnershipAndLocationFields = (
+    formInstance: SharedFormInstance,
+  ) => (
+    <>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <FormField
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          control={formInstance.control as any}
+          name="lifecycleStateId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Lifecycle State</FormLabel>
+              <Select
+                onValueChange={(value) =>
+                  field.onChange(value === NONE_OPTION_VALUE ? null : value)
+                }
+                value={field.value ?? NONE_OPTION_VALUE}
+                disabled={referenceLoading}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select lifecycle state" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value={NONE_OPTION_VALUE}>None</SelectItem>
+                  {lifecycleStateOptions.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          control={formInstance.control as any}
+          name="primaryOwnerPersonId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Primary Owner</FormLabel>
+              <FormControl>
+                <SearchableSelect
+                  options={[
+                    { value: NONE_OPTION_VALUE, label: "None" },
+                    ...personOptions,
+                  ]}
+                  value={field.value ?? NONE_OPTION_VALUE}
+                  onValueChange={(value) =>
+                    field.onChange(value === NONE_OPTION_VALUE ? null : value)
+                  }
+                  placeholder="Select owner..."
+                  searchPlaceholder="Search people..."
+                  disabled={referenceLoading}
+                />
+              </FormControl>
+              <FormDescription>Person accountable for this CI</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <FormField
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          control={formInstance.control as any}
+          name="primaryOwnerOrgUnitId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Owner Org Unit</FormLabel>
+              <FormControl>
+                <SearchableSelect
+                  options={[
+                    { value: NONE_OPTION_VALUE, label: "None" },
+                    ...orgUnitOptions,
+                  ]}
+                  value={field.value ?? NONE_OPTION_VALUE}
+                  onValueChange={(value) =>
+                    field.onChange(value === NONE_OPTION_VALUE ? null : value)
+                  }
+                  placeholder="Select org unit..."
+                  searchPlaceholder="Search org units..."
+                  disabled={referenceLoading}
+                />
+              </FormControl>
+              <FormDescription>
+                Department or squad responsible for this CI
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          control={formInstance.control as any}
+          name="locationId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Location</FormLabel>
+              <FormControl>
+                <SearchableSelect
+                  options={[
+                    { value: NONE_OPTION_VALUE, label: "None" },
+                    ...locationOptions,
+                  ]}
+                  value={field.value ?? NONE_OPTION_VALUE}
+                  onValueChange={(value) =>
+                    field.onChange(value === NONE_OPTION_VALUE ? null : value)
+                  }
+                  placeholder="Select location..."
+                  searchPlaceholder="Search locations..."
+                  disabled={referenceLoading}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
+      <FormField
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        control={formInstance.control as any}
+        name="linkedAssetId"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Linked Asset</FormLabel>
+            <FormControl>
+              <SearchableSelect
+                options={[
+                  { value: NONE_OPTION_VALUE, label: "None" },
+                  ...assetOptions,
+                ]}
+                value={field.value ?? NONE_OPTION_VALUE}
+                onValueChange={(value) =>
+                  field.onChange(value === NONE_OPTION_VALUE ? null : value)
+                }
+                placeholder="Link to asset (optional)"
+                searchPlaceholder="Search assets..."
+                disabled={referenceLoading}
+              />
+            </FormControl>
+            <FormDescription>
+              Link this CI to a physical or virtual asset
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </>
+  );
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
@@ -300,10 +492,13 @@ export function ConfigurationItemForm({
                       <SearchableSelect
                         options={ciClassOptions}
                         value={field.value || undefined}
-                        onValueChange={field.onChange}
+                        onValueChange={(value) => {
+                          field.onChange(value);
+                          setCustomFieldValues({});
+                        }}
                         placeholder="Select a CI class..."
                         searchPlaceholder="Search CI classes..."
-                        disabled={loading}
+                        disabled={referenceLoading}
                       />
                     </FormControl>
                     <FormDescription>
@@ -393,6 +588,8 @@ export function ConfigurationItemForm({
                   )}
                 />
               </div>
+
+              {renderOwnershipAndLocationFields(createForm)}
 
               <FormField
                 control={createForm.control}
@@ -546,6 +743,8 @@ export function ConfigurationItemForm({
                   )}
                 />
               </div>
+
+              {renderOwnershipAndLocationFields(updateForm)}
 
               <FormField
                 control={updateForm.control}

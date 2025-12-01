@@ -5,8 +5,7 @@
  */
 
 import { notFound } from "next/navigation";
-import { hasPermission, requirePermission } from "@/lib/permissions/server";
-import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { hasPermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import {
   getPersonDetailsAction,
@@ -15,6 +14,8 @@ import {
 } from "@/interface-adapters/controllers/person-details.controller";
 import { getReportingChainAction } from "@/interface-adapters/controllers/employee-directory.controller";
 import { PersonDetailPageClient } from "@/components/persons/person-detail-page-client";
+import { isFeatureEnabled } from "@/lib/features/server";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
 
 export const dynamic = "force-dynamic";
 
@@ -27,15 +28,16 @@ export default async function PersonDetailPage({
 }: PersonDetailPageProps) {
   const { id } = await params;
 
-  // Check permissions
-  try {
-    await requirePermission(PERMISSIONS.PERSONS_VIEW);
-  } catch (error) {
-    handlePermissionRedirect(error, `/persons/${id}`);
-    throw error;
-  }
+  await requireFeatureAndPermission(
+    "FOUNDATION",
+    PERMISSIONS.PERSONS_VIEW,
+    `/persons/${id}`,
+  );
 
-  const canViewIntune = await hasPermission(PERMISSIONS.INTUNE_DEVICES_VIEW);
+  const [intuneEnabled, canViewIntune] = await Promise.all([
+    isFeatureEnabled("INTUNE"),
+    hasPermission(PERMISSIONS.INTUNE_DEVICES_VIEW),
+  ]);
 
   // Fetch data in parallel
   const [personResult, countsResult, chainResult, intuneDevicesResult] =
@@ -43,7 +45,7 @@ export default async function PersonDetailPage({
       getPersonDetailsAction(id),
       getPersonRelationCountsAction(id),
       getReportingChainAction(id),
-      canViewIntune ? getPersonIntuneDevicesAction(id) : null,
+      intuneEnabled && canViewIntune ? getPersonIntuneDevicesAction(id) : null,
     ]);
 
   if (!personResult.success || !personResult.data) {

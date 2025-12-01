@@ -5,8 +5,6 @@
  */
 
 import { notFound } from "next/navigation";
-import { requirePermission } from "@/lib/permissions/server";
-import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { getVendorAction } from "@/interface-adapters/controllers/vendor.controller";
 import {
@@ -14,6 +12,7 @@ import {
   getVendorStatisticsAction,
 } from "@/interface-adapters/controllers/vendor-details.controller";
 import { VendorDetailPageClient } from "@/components/vendors/vendor-detail-page-client";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
 
 export const dynamic = "force-dynamic";
 
@@ -26,13 +25,11 @@ export default async function VendorDetailPage({
 }: VendorDetailPageProps) {
   const { id } = await params;
 
-  // Check permissions
-  try {
-    await requirePermission(PERMISSIONS.VENDORS_VIEW);
-  } catch (error) {
-    handlePermissionRedirect(error, `/vendors/${id}`);
-    throw error;
-  }
+  await requireFeatureAndPermission(
+    "FOUNDATION",
+    PERMISSIONS.VENDORS_VIEW,
+    `/vendors/${id}`,
+  );
 
   // Fetch data in parallel
   const [vendorResult, countsResult, statsResult] = await Promise.all([

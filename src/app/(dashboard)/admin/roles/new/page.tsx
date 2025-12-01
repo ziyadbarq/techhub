@@ -16,6 +16,7 @@ import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { RoleForm } from "@/components/roles/RoleForm";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { getRoleAction } from "@/interface-adapters/controllers/role.controller";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
 
 interface CreateRolePageProps {
   searchParams: Promise<{
@@ -23,12 +24,20 @@ interface CreateRolePageProps {
   }>;
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function CreateRolePage(props: CreateRolePageProps) {
   // Resolve searchParams (Next.js 16 async request API)
   const searchParams = await props.searchParams;
   const cloneRoleName = searchParams.clone
     ? decodeURIComponent(searchParams.clone)
     : undefined;
+
+  await requireFeatureAndPermission(
+    "RBAC",
+    PERMISSIONS.ROLES_CREATE,
+    "/admin/roles/new",
+  );
 
   // If cloning, fetch the source role
   let sourceRole = null;

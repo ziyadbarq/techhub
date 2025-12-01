@@ -179,6 +179,7 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 - Pattern: Server component checks permissions → returns client component
 - Add `export const dynamic = "force-dynamic"` to protected pages
 - Defense in depth: (1) Server component, (2) Server actions, (3) Client hooks (UX only)
+- Cross-module data: when aggregating counts/relations across modules (e.g., person detail tabs), gate each fetch by feature flag + permission to avoid leaking presence or triggering unauthorized queries
 
 **Permission Checking**:
 - Check permissions at server action layer: `await requirePermission(PERMISSIONS.ENTITY_VIEW);`

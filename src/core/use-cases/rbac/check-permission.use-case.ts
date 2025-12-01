@@ -60,27 +60,38 @@ export class CheckPermissionUseCase {
       hasPermission: userPermissions.includes(permission),
     });
 
+    // Fast path: exact permission present
+    if (userPermissions.includes(permission)) {
+      return true;
+    }
+
     const isOwnershipPermission = permission.endsWith(":own");
 
     if (isOwnershipPermission) {
-      if (!context?.resourceOwnerId) {
-        return false;
-      }
-
       const basePermission = permission.replace(":own", "") as PermissionKey;
       const hasBasePermission = userPermissions.includes(basePermission);
       const hasOwnPermission = userPermissions.includes(permission);
 
-      if (!hasBasePermission && !hasOwnPermission) {
+      // Full permission grants bypass ownership constraint
+      if (hasBasePermission) {
+        return true;
+      }
+
+      if (!hasOwnPermission || !context?.resourceOwnerId) {
         return false;
       }
 
       return context.resourceOwnerId === userId;
     }
 
-    // Check for exact permission match (non-ownership)
-    if (userPermissions.includes(permission)) {
-      return true;
+    // Fallback: allow ownership-scoped permission to satisfy base permission
+    if (context?.resourceOwnerId) {
+      const ownershipPermission = `${permission}:own` as PermissionKey;
+      const hasOwnershipOnly = userPermissions.includes(ownershipPermission);
+
+      if (hasOwnershipOnly) {
+        return context.resourceOwnerId === userId;
+      }
     }
 
     return false;

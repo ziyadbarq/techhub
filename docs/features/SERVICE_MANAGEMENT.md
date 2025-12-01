@@ -1,8 +1,8 @@
 # Service Management System
 
 **Status**: ✅ Implemented (Layer 2 Entity)
-**Version**: 1.1.0
-**Last Updated**: 2025-11-27
+**Version**: 1.2.0
+**Last Updated**: 2024-12-01
 
 ## Table of Contents
 
@@ -704,9 +704,17 @@ export async function getImpactedServicesAction(serviceId: string, maxDepth?: nu
 **Architecture**: Refactored using DRY/SOLID principles (see [REFACTORING_PATTERNS.md](../guides/REFACTORING_PATTERNS.md#pattern-7-reusable-component-library))
 
 **Features**:
-- Tabs: Overview, Owners, Infrastructure, Assets, Dependencies, History
-- Overview: All classification fields, lifecycle dates, vendor SLA
-- Owners: Grouped by type (Technical, Product, Business) with primary indicator
+- Tabs: Overview, Owners, Infrastructure, Assets, Dependencies, Health & SLA (conditional), History
+- **Overview Tab**:
+  - Basic Information: Service type, classification (data confidentiality, business impact, criticality), deployment date
+  - **Service Ownership Card** (✅ v1.2.0): Visual display of service owners
+    - Primary Business Owner with blue badge and contact info
+    - Primary Technical Owner with purple badge and contact info
+    - Additional Owners list with role badges
+    - Empty state when no owners assigned
+  - Technical Details: GitLab repository, health check URL, SLA contacts
+  - Lifecycle Information: Current status, planned decommission, vendor, business process
+- Owners: Full ownership management with add/remove/primary designation
 - Infrastructure: Location, cloud details, IP/hostname, backup status
 - Assets: Linked assets with relationship type
 - Dependencies: Service-to-service relationships with impact analysis
@@ -1062,13 +1070,51 @@ const result = await searchServicesAction({
 - Bulk operations (CSV import, bulk update)
 - API integration (GitLab, Jira, ServiceNow)
 
+## Recent Updates
+
+### Version 1.2.0 (December 1, 2024)
+
+**✅ Service Ownership Display Enhancement**
+
+- Added dedicated **Service Ownership Card** in the Overview tab
+- Visual distinction between ownership types:
+  - Primary Business Owner: Blue badge with user icon
+  - Primary Technical Owner: Purple badge with user icon
+  - Additional Owners: Listed with role badges
+- Displays contact information (name and email) for each owner
+- Empty state with icon when no owners are assigned
+- Complements the existing Owners tab (which provides full CRUD management)
+
+**Purpose**: Improve service ownership visibility without navigating to the Owners tab. This helps stakeholders quickly identify who to contact for service-related questions.
+
+**Impact**: Better governance and faster incident response by making ownership information immediately visible.
+
+**✅ Enhanced Service Domain Model**
+
+- Added three new fields to the Service entity:
+  - `url`: Primary service URL (web interface, API endpoint, etc.)
+  - `supportContact`: General support contact information (email or phone)
+  - `supportHours`: Support availability (e.g., "24/7", "Mon-Fri 9AM-5PM SAT", "Business Hours")
+- Full stack implementation across all layers:
+  - Database schema and migration
+  - Domain entity with validation and getters
+  - DTOs with Zod validation
+  - Presenter mapping
+  - UI display in service detail Overview tab
+- Fields are optional and displayed using `ConditionalDetailField` component
+
+**Purpose**: Provide more complete service information for operations teams to quickly access support details and service URLs without needing external documentation.
+
+**Impact**: Improved operational efficiency by consolidating essential service contact and access information in the central service catalog.
+
 ## Related Documentation
 
 - [DEVELOPER_GUIDE.md](../guides/DEVELOPER_GUIDE.md) - Feature implementation guide
 - [ARCHITECTURE.md](../architecture/ARCHITECTURE.md) - Clean Architecture patterns
-- [ENTITY_REFERENCE.md](../guides/ENTITY_REFERENCE.md) - Entity design patterns
+- [ENTITY_REGISTRY.md](./ENTITY_REGISTRY.md) - Business entity registry
 - [DATABASE_SCHEMA.md](../architecture/DATABASE_SCHEMA.md) - Schema conventions
 - [RBAC_DEVELOPER_GUIDE.md](../guides/RBAC_DEVELOPER_GUIDE.md) - Permission implementation
+- [SERVICE_SLA_HEALTH_MONITORING.md](./SERVICE_SLA_HEALTH_MONITORING.md) - Health & SLA features
 
 ## Support
 

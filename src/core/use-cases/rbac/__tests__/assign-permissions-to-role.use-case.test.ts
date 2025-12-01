@@ -20,6 +20,7 @@ import { permissionCache } from "@/lib/permissions/cache";
 class MockRoleRepository implements Partial<IRoleRepository> {
   private roles = new Map<string, Role>();
   private rolePermissions = new Map<string, string[]>();
+  private permissionLookup?: (id: string) => Permission | undefined;
 
   async findById(id: string): Promise<Role | null> {
     return this.roles.get(id) || null;
@@ -27,30 +28,42 @@ class MockRoleRepository implements Partial<IRoleRepository> {
 
   async getRolePermissions(roleId: string): Promise<PermissionKey[]> {
     const permIds = this.rolePermissions.get(roleId) || [];
-    return permIds.map((id) => `perm:${id}` as PermissionKey);
+    return permIds
+      .map((id) => this.permissionLookup?.(id)?.name as PermissionKey | null)
+      .filter((p): p is PermissionKey => Boolean(p));
   }
 
   async assignPermissions(
     roleId: string,
     permissionIds: string[],
   ): Promise<void> {
-    this.rolePermissions.set(roleId, permissionIds);
+    const existing = this.rolePermissions.get(roleId) ?? [];
+    const updated = Array.from(new Set([...existing, ...permissionIds]));
+    this.rolePermissions.set(roleId, updated);
+  }
+
+  async removePermissions(
+    roleId: string,
+    permissionIds: string[],
+  ): Promise<void> {
+    const existing = this.rolePermissions.get(roleId) ?? [];
+    this.rolePermissions.set(
+      roleId,
+      existing.filter((id) => !permissionIds.includes(id)),
+    );
   }
 
   setRole(role: Role): void {
     this.roles.set(role.id, role);
   }
 
-  setRolePermissions(roleId: string, permissions: PermissionKey[]): void {
-    this.rolePermissions.set(
-      roleId,
-      permissions.map((p) => p.split(":")[1]),
-    );
-  }
-
   clear(): void {
     this.roles.clear();
     this.rolePermissions.clear();
+  }
+
+  setPermissionLookup(lookup: (id: string) => Permission | undefined): void {
+    this.permissionLookup = lookup;
   }
 }
 
@@ -63,8 +76,25 @@ class MockPermissionRepository implements Partial<IPermissionRepository> {
       .filter(Boolean) as Permission[];
   }
 
+  async findByNames(names: string[]): Promise<Permission[]> {
+    const byName = Array.from(this.permissions.values()).filter((perm) =>
+      names.includes(perm.name),
+    );
+    return byName;
+  }
+
+  async findAll(_params?: {
+    includeInactive?: boolean;
+  }): Promise<Permission[]> {
+    return Array.from(this.permissions.values());
+  }
+
   setPermission(permission: Permission): void {
     this.permissions.set(permission.id, permission);
+  }
+
+  getById(id: string): Permission | undefined {
+    return this.permissions.get(id);
   }
 
   clear(): void {
@@ -91,6 +121,9 @@ describe("AssignPermissionsToRoleUseCase", () => {
     mockPermissionRepository = new MockPermissionRepository();
     mockAuditLogRepository = new MockAuditLogRepository();
     permissionCache.invalidateAll();
+    mockRoleRepository.setPermissionLookup((id: string) =>
+      mockPermissionRepository.getById(id),
+    );
 
     useCase = new AssignPermissionsToRoleUseCase(
       mockRoleRepository as unknown as IRoleRepository,
@@ -131,6 +164,48 @@ describe("AssignPermissionsToRoleUseCase", () => {
       // Assert
       const rolePerms = await mockRoleRepository.getRolePermissions(role.id);
       expect(rolePerms).toHaveLength(2);
+    });
+
+    it("should replace permissions (remove deselected ones)", async () => {
+      // Arrange
+      const role = Role.create({
+        name: "editor",
+        displayName: "Editor",
+      });
+      mockRoleRepository.setRole(role);
+
+      const perm1 = Permission.create({
+        resource: "tasks",
+        action: "read",
+        displayName: "Read Tasks",
+      });
+      const perm2 = Permission.create({
+        resource: "tasks",
+        action: "create",
+        displayName: "Create Tasks",
+      });
+      const perm3 = Permission.create({
+        resource: "tasks",
+        action: "delete",
+        displayName: "Delete Tasks",
+      });
+      [perm1, perm2, perm3].forEach((p) =>
+        mockPermissionRepository.setPermission(p),
+      );
+
+      // Pre-seed role with perm1 + perm3
+      await mockRoleRepository.assignPermissions(role.id, [perm1.id, perm3.id]);
+
+      // Act - replace with only perm2
+      await useCase.execute({
+        roleId: role.id,
+        permissionIds: [perm2.id],
+        assignedBy: "admin-1",
+      });
+
+      // Assert
+      const rolePerms = await mockRoleRepository.getRolePermissions(role.id);
+      expect(rolePerms).toEqual([perm2.name as PermissionKey]);
     });
 
     it("should create audit log entry", async () => {

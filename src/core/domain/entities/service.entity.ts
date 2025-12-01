@@ -22,6 +22,9 @@ export interface ServiceProps {
   description: string | null;
   businessPurpose: string | null;
   gitlabRepoUrl: string | null;
+  url: string | null;
+  supportContact: string | null;
+  supportHours: string | null;
   dataConfidentiality: DataConfidentiality;
   businessImpactLevel: BusinessImpactLevel;
   criticality: CriticalityLevel;
@@ -84,6 +87,9 @@ export interface CreateServiceProps {
   description?: string | null;
   businessPurpose?: string | null;
   gitlabRepoUrl?: string | null;
+  url?: string | null;
+  supportContact?: string | null;
+  supportHours?: string | null;
   dataConfidentiality?: DataConfidentiality;
   businessImpactLevel?: BusinessImpactLevel;
   criticality?: CriticalityLevel;
@@ -137,6 +143,9 @@ export class Service {
       description: props.description?.trim() || null,
       businessPurpose: props.businessPurpose?.trim() || null,
       gitlabRepoUrl: props.gitlabRepoUrl?.trim() || null,
+      url: props.url?.trim() || null,
+      supportContact: props.supportContact?.trim() || null,
+      supportHours: props.supportHours?.trim() || null,
       dataConfidentiality: props.dataConfidentiality || "INTERNAL",
       businessImpactLevel: props.businessImpactLevel || "MEDIUM",
       criticality: props.criticality || "MEDIUM",
@@ -498,6 +507,18 @@ export class Service {
 
   get gitlabRepoUrl(): string | null {
     return this.props.gitlabRepoUrl;
+  }
+
+  get url(): string | null {
+    return this.props.url;
+  }
+
+  get supportContact(): string | null {
+    return this.props.supportContact;
+  }
+
+  get supportHours(): string | null {
+    return this.props.supportHours;
   }
 
   get dataConfidentiality(): DataConfidentiality {

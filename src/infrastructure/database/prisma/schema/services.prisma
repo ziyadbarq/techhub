@@ -40,6 +40,9 @@ model Service {
   businessPurpose         String?                  @db.Text // Business value/need
   // Technical Details
   gitlabRepoUrl           String?
+  url                     String? // Primary service URL (web interface, API endpoint, etc.)
+  supportContact          String? // General support contact (email or phone)
+  supportHours            String? // e.g., "24/7", "Mon-Fri 9AM-5PM SAT", "Business Hours"
   // Classification (NDMO Framework)
   dataConfidentiality     DataConfidentiality      @default(INTERNAL)
   businessImpactLevel     BusinessImpactLevel      @default(MEDIUM)

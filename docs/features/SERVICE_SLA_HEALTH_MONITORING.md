@@ -29,6 +29,8 @@ Service SLA & Health Monitoring
 │   ├── Service.entity.ts (enhanced)         # 34 new fields + 12 business methods
 │   ├── ServiceHealthHistory.entity.ts       # Health status change tracking
 │   └── ServiceSlaMetric.entity.ts           # SLA metric records
+├── DI
+│   └── `service.module.ts` binds ServiceHealthHistory/SlaMetric repositories + health/SLA use cases
 ├── Infrastructure
 │   ├── PrismaServiceRepository (updated)    # Persistence for enhanced service
 │   ├── IServiceHealthHistoryRepository      # Health history interface

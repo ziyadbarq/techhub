@@ -6,9 +6,8 @@
 import Link from "next/link";
 import { ClipboardList, Calendar, DollarSign } from "lucide-react";
 import { listMaintenanceRecordsAction } from "@/interface-adapters/controllers/maintenance-record.controller";
-import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
 import {
   Table,
   TableBody,
@@ -41,12 +40,11 @@ function formatCurrency(amount: number | null): string {
  * Displays records with asset, status, dates, and cost information
  */
 export default async function MaintenanceRecordsPage() {
-  try {
-    await requirePermission(PERMISSIONS.MAINTENANCE_RECORDS_VIEW);
-  } catch (error) {
-    handlePermissionRedirect(error, "/maintenance/records");
-    throw error;
-  }
+  await requireFeatureAndPermission(
+    "MAINTENANCE",
+    PERMISSIONS.MAINTENANCE_RECORDS_VIEW,
+    "/maintenance/records",
+  );
 
   const result = await listMaintenanceRecordsAction();
   const records = result.success ? result.data : [];

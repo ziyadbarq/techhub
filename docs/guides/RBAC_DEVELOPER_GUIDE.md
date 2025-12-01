@@ -1253,6 +1253,9 @@ export async function updateRolePermissionsAction(
 | Permission updated           | `all`  | Permission definition changed   |
 | Role created                 | `none` | No users have it yet            |
 | Role deleted                 | `all`  | Users may have lost permissions |
+| Role/permission mutations    | `all`  | Already handled in use cases    |
+
+> Note: Core RBAC use cases already call `invalidatePermissionCache` on permission/role create/update/delete and role-permission assignments. Only add manual invalidation when introducing new mutation paths that affect effective permissions.
 
 ### Automatic Invalidation
 
@@ -1511,6 +1514,17 @@ export function canAccessFeature(
 }
 ```
 
+### Pattern 5: Replace Role Permissions in One Call
+
+Role permission updates are **replace operations**. Always send the complete desired permission list; the backend will remove anything missing, add new selections, and invalidate caches.
+
+```typescript
+await assignPermissionsToRoleAction({
+  roleId,
+  permissionIds: selectedPermissionIds, // full set, not just deltas
+});
+```
+
 ### Pattern 5: Permission-Based Rendering
 
 ```typescript
@@ -1625,6 +1639,7 @@ export function DataTable({ data }: { data: Project[] }) {
      resourceOwnerId: project.createdBy,
    });
    ```
+   Passing `resourceOwnerId` lets either `PROJECTS_UPDATE` (full) **or** `PROJECTS_UPDATE_OWN` satisfy the check; without context, `:own` permissions will be ignored.
 
 2. **Verify createdBy field exists**:
 

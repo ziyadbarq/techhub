@@ -231,7 +231,7 @@ export function RelatedItemsTab({ device }: RelatedItemsTabProps) {
                 <User className="text-muted-foreground h-5 w-5" />
                 <CardTitle>Linked Person</CardTitle>
               </div>
-              <Link href={`/people/${device.linkedPersonId}`}>
+              <Link href={`/persons/${device.linkedPersonId}`}>
                 <Button variant="outline" size="sm">
                   <ExternalLink className="mr-2 h-4 w-4" />
                   View Person

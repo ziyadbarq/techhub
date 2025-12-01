@@ -19,8 +19,8 @@ import {
   presentIntuneDevices,
   type IntuneDeviceDTO,
 } from "@/interface-adapters/presenters/intune-device.presenter";
-import { requirePermission } from "@/lib/permissions/server";
-import { requireFeature } from "@/lib/features/server";
+import { hasPermission, requirePermission } from "@/lib/permissions/server";
+import { isFeatureEnabled, requireFeature } from "@/lib/features/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { PrismaClient } from "@/generated/prisma/server";
 
@@ -260,6 +260,66 @@ export async function getPersonRelationCountsAction(
     const container = getContainer();
     const prisma = container.get<PrismaClient>(DI_TOKENS.PrismaClient);
 
+    // Feature flags for related modules
+    const [
+      intuneEnabled,
+      licensesEnabled,
+      assetReservationsEnabled,
+      assetKitsEnabled,
+      inventoryEnabled,
+      maintenanceEnabled,
+      servicesEnabled,
+      cmdbEnabled,
+      governanceEnabled,
+      attachmentsEnabled,
+      assetDisposalsEnabled,
+    ] = await Promise.all([
+      isFeatureEnabled("INTUNE"),
+      isFeatureEnabled("LICENSES"),
+      isFeatureEnabled("ASSET_RESERVATIONS"),
+      isFeatureEnabled("ASSET_KITS"),
+      isFeatureEnabled("INVENTORY"),
+      isFeatureEnabled("MAINTENANCE"),
+      isFeatureEnabled("SERVICES"),
+      isFeatureEnabled("CMDB"),
+      isFeatureEnabled("GOVERNANCE"),
+      isFeatureEnabled("ATTACHMENTS"),
+      isFeatureEnabled("ASSET_DISPOSALS"),
+    ]);
+
+    // Permission checks for related modules
+    const [
+      canViewRoleAssignments,
+      canViewIntune,
+      canViewLicenseAllocations,
+      canViewAssetReservations,
+      canViewAssetKits,
+      canViewStockMovements,
+      canViewMaintenanceSchedules,
+      canViewServices,
+      canViewConfigurationItems,
+      canViewDataOwnerships,
+      canViewVerificationCampaigns,
+      canViewVerificationItems,
+      canViewAttachments,
+      canViewAssetDisposals,
+    ] = await Promise.all([
+      hasPermission(PERMISSIONS.PERSON_ROLE_ASSIGNMENTS_VIEW),
+      hasPermission(PERMISSIONS.INTUNE_DEVICES_VIEW),
+      hasPermission(PERMISSIONS.LICENSE_ALLOCATIONS_VIEW),
+      hasPermission(PERMISSIONS.ASSET_RESERVATIONS_VIEW),
+      hasPermission(PERMISSIONS.ASSET_KITS_VIEW),
+      hasPermission(PERMISSIONS.STOCK_MOVEMENTS_VIEW),
+      hasPermission(PERMISSIONS.MAINTENANCE_SCHEDULES_VIEW),
+      hasPermission(PERMISSIONS.SERVICES_VIEW),
+      hasPermission(PERMISSIONS.CONFIGURATION_ITEMS_VIEW),
+      hasPermission(PERMISSIONS.DATA_OWNERSHIPS_VIEW),
+      hasPermission(PERMISSIONS.VERIFICATION_CAMPAIGNS_VIEW),
+      hasPermission(PERMISSIONS.VERIFICATION_ITEMS_VIEW),
+      hasPermission(PERMISSIONS.ATTACHMENTS_VIEW),
+      hasPermission(PERMISSIONS.ASSET_DISPOSALS_VIEW),
+    ]);
+
     // Fetch all counts in parallel using Prisma directly for efficiency
     const [
       directReports,
@@ -280,29 +340,65 @@ export async function getPersonRelationCountsAction(
       approvedDisposals,
     ] = await Promise.all([
       prisma.person.count({ where: { managerId: personId, isActive: true } }),
-      prisma.personRoleAssignment.count({
-        where: { personId, isActive: true },
-      }),
-      prisma.intuneDevice.count({ where: { linkedPersonId: personId } }),
-      prisma.licenseAllocation.count({
-        where: { targetType: "PERSON", targetId: personId },
-      }),
-      prisma.assetReservation.count({
-        where: { reservedForPersonId: personId },
-      }),
-      prisma.assetKitCheckout.count({ where: { checkedOutById: personId } }),
-      prisma.stockMovement.count({ where: { performedById: personId } }),
-      prisma.maintenanceSchedule.count({ where: { assignedToId: personId } }),
-      prisma.serviceOwnership.count({ where: { personId } }),
-      prisma.configurationItem.count({
-        where: { primaryOwnerPersonId: personId },
-      }),
-      prisma.dataOwnership.count({ where: { ownerPersonId: personId } }),
-      prisma.verificationCampaign.count({ where: { createdById: personId } }),
-      prisma.verificationItem.count({ where: { verifierPersonId: personId } }),
-      prisma.attachment.count({ where: { uploadedById: personId } }),
-      prisma.assetDisposal.count({ where: { initiatedById: personId } }),
-      prisma.assetDisposal.count({ where: { approvedById: personId } }),
+      canViewRoleAssignments
+        ? prisma.personRoleAssignment.count({
+            where: { personId, isActive: true },
+          })
+        : Promise.resolve(0),
+      intuneEnabled && canViewIntune
+        ? prisma.intuneDevice.count({ where: { linkedPersonId: personId } })
+        : Promise.resolve(0),
+      licensesEnabled && canViewLicenseAllocations
+        ? prisma.licenseAllocation.count({
+            where: { targetType: "PERSON", targetId: personId },
+          })
+        : Promise.resolve(0),
+      assetReservationsEnabled && canViewAssetReservations
+        ? prisma.assetReservation.count({
+            where: { reservedForPersonId: personId },
+          })
+        : Promise.resolve(0),
+      assetKitsEnabled && canViewAssetKits
+        ? prisma.assetKitCheckout.count({ where: { checkedOutById: personId } })
+        : Promise.resolve(0),
+      inventoryEnabled && canViewStockMovements
+        ? prisma.stockMovement.count({ where: { performedById: personId } })
+        : Promise.resolve(0),
+      maintenanceEnabled && canViewMaintenanceSchedules
+        ? prisma.maintenanceSchedule.count({
+            where: { assignedToId: personId },
+          })
+        : Promise.resolve(0),
+      servicesEnabled && canViewServices
+        ? prisma.serviceOwnership.count({ where: { personId } })
+        : Promise.resolve(0),
+      cmdbEnabled && canViewConfigurationItems
+        ? prisma.configurationItem.count({
+            where: { primaryOwnerPersonId: personId },
+          })
+        : Promise.resolve(0),
+      governanceEnabled && canViewDataOwnerships
+        ? prisma.dataOwnership.count({ where: { ownerPersonId: personId } })
+        : Promise.resolve(0),
+      governanceEnabled && canViewVerificationCampaigns
+        ? prisma.verificationCampaign.count({
+            where: { createdById: personId },
+          })
+        : Promise.resolve(0),
+      governanceEnabled && canViewVerificationItems
+        ? prisma.verificationItem.count({
+            where: { verifierPersonId: personId },
+          })
+        : Promise.resolve(0),
+      attachmentsEnabled && canViewAttachments
+        ? prisma.attachment.count({ where: { uploadedById: personId } })
+        : Promise.resolve(0),
+      assetDisposalsEnabled && canViewAssetDisposals
+        ? prisma.assetDisposal.count({ where: { initiatedById: personId } })
+        : Promise.resolve(0),
+      assetDisposalsEnabled && canViewAssetDisposals
+        ? prisma.assetDisposal.count({ where: { approvedById: personId } })
+        : Promise.resolve(0),
     ]);
 
     return {

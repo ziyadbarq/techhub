@@ -367,6 +367,18 @@ await requireFeature("CONTRACTS");
 - If feature disabled → Redirect to `/feature-disabled?feature=CONTRACTS`
 - If feature enabled → Continue
 
+#### `requireFeatureAndPermission(feature, permission, redirectPath): Promise<void>`
+
+Convenience helper to enforce feature → permission in order.
+
+```typescript
+await requireFeatureAndPermission("ASSETS", PERMISSIONS.ASSETS_VIEW, "/assets");
+```
+
+**Behavior**:
+- Runs `requireFeature()` first (blocks on maintenance/disabled feature)
+- Runs `requirePermission()` next and handles redirects with `redirectPath`
+
 #### `isFeatureEnabled(featureName: string): Promise<boolean>`
 
 Check if a feature is enabled.

@@ -11,7 +11,6 @@ import { ArrowLeft, Edit, Trash2, Package, BarChart3 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,6 +37,10 @@ import { AssetModelForm } from "./asset-model-form";
 import { ModelOverviewTab } from "./model-overview-tab";
 import { ModelAssetsTab } from "./model-assets-tab";
 import { ModelStatisticsTab } from "./model-statistics-tab";
+import {
+  CountedTabs,
+  type CountedTabConfig,
+} from "@/components/ui/counted-tabs";
 
 interface AssetModelDetailPageClientProps {
   model: AssetModelDTO;
@@ -63,6 +66,33 @@ export function AssetModelDetailPageClient({
   const canUpdate = hasPermission(PERMISSIONS.ASSET_MODELS_UPDATE);
   const canDelete = hasPermission(PERMISSIONS.ASSET_MODELS_DELETE);
   const canViewAssets = hasPermission(PERMISSIONS.ASSETS_VIEW);
+  const tabs: CountedTabConfig[] = [
+    {
+      value: "overview",
+      label: "Overview",
+      content: (
+        <ModelOverviewTab model={model} category={category} vendor={vendor} />
+      ),
+      showWhenZero: true,
+    },
+    {
+      value: "assets",
+      label: "Assets",
+      icon: Package,
+      count: canViewAssets ? assets.length : 0,
+      canView: canViewAssets,
+      content: <ModelAssetsTab assets={assets} modelId={model.id} />,
+      triggerClassName: "flex items-center gap-2",
+    },
+    {
+      value: "statistics",
+      label: "Statistics",
+      icon: BarChart3,
+      content: <ModelStatisticsTab assets={assets} model={model} />,
+      showWhenZero: true,
+      triggerClassName: "flex items-center gap-2",
+    },
+  ];
 
   const handleFormSuccess = useCallback(async () => {
     // Fetch updated model data to refresh UI immediately
@@ -156,36 +186,7 @@ export function AssetModelDetailPageClient({
         </div>
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="overview" className="w-full">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          {canViewAssets && (
-            <TabsTrigger value="assets" className="flex items-center gap-2">
-              <Package className="h-4 w-4" />
-              Assets ({assets.length})
-            </TabsTrigger>
-          )}
-          <TabsTrigger value="statistics" className="flex items-center gap-2">
-            <BarChart3 className="h-4 w-4" />
-            Statistics
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="mt-4">
-          <ModelOverviewTab model={model} category={category} vendor={vendor} />
-        </TabsContent>
-
-        {canViewAssets && (
-          <TabsContent value="assets" className="mt-4">
-            <ModelAssetsTab assets={assets} modelId={model.id} />
-          </TabsContent>
-        )}
-
-        <TabsContent value="statistics" className="mt-4">
-          <ModelStatisticsTab assets={assets} model={model} />
-        </TabsContent>
-      </Tabs>
+      <CountedTabs defaultValue="overview" tabs={tabs} tabsClassName="w-full" />
 
       {/* Edit Dialog */}
       <AssetModelForm

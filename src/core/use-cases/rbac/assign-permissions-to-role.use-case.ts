@@ -52,6 +52,9 @@ export class AssignPermissionsToRoleUseCase {
   ) {}
 
   async execute(request: AssignPermissionsToRoleRequest): Promise<void> {
+    // Normalize input to avoid duplicate DB writes
+    request.permissionIds = Array.from(new Set(request.permissionIds));
+
     // Validate role exists
     const role = await this.roleRepository.findById(request.roleId);
     if (!role) {
@@ -85,7 +88,9 @@ export class AssignPermissionsToRoleUseCase {
     if (!dependencyValidation.valid) {
       if (request.autoAddDependencies) {
         // Auto-add missing dependencies
-        const allPermissions = await this.permissionRepository.findAll();
+        const allPermissions = await this.permissionRepository.findAll({
+          includeInactive: true,
+        });
         const missingDeps = new Set<PermissionKey>();
         dependencyValidation.missing.forEach((item) => {
           item.requiredDependencies.forEach((dep) => missingDeps.add(dep));
@@ -127,16 +132,42 @@ export class AssignPermissionsToRoleUseCase {
       }
     }
 
-    // Get current permissions for audit trail
+    // Ensure final permission list is deduplicated after dependency injection
+    request.permissionIds = Array.from(new Set(request.permissionIds));
+
+    // Get current permissions for audit trail and diffing
     const beforePermissions = await this.roleRepository.getRolePermissions(
       request.roleId,
     );
+    const currentPermissionEntities =
+      await this.permissionRepository.findByNames(beforePermissions);
 
-    // Assign permissions to role
-    await this.roleRepository.assignPermissions(
-      request.roleId,
-      request.permissionIds,
+    const currentPermissionIds = new Set(
+      currentPermissionEntities.map((p) => p.id),
     );
+    const desiredPermissionIds = new Set(request.permissionIds);
+
+    const permissionsToRemove = Array.from(currentPermissionIds).filter(
+      (id) => !desiredPermissionIds.has(id),
+    );
+    const permissionsToAdd = Array.from(desiredPermissionIds).filter(
+      (id) => !currentPermissionIds.has(id),
+    );
+
+    // Apply removals first to enforce replace semantics
+    if (permissionsToRemove.length > 0) {
+      await this.roleRepository.removePermissions(
+        request.roleId,
+        permissionsToRemove,
+      );
+    }
+
+    if (permissionsToAdd.length > 0) {
+      await this.roleRepository.assignPermissions(
+        request.roleId,
+        permissionsToAdd,
+      );
+    }
 
     // Get updated permissions for audit trail
     const afterPermissions = await this.roleRepository.getRolePermissions(
@@ -155,6 +186,10 @@ export class AssignPermissionsToRoleUseCase {
       },
       metadata: {
         addedPermissions: request.permissionIds,
+        permissionDiff: {
+          added: permissionsToAdd,
+          removed: permissionsToRemove,
+        },
         ...(request.autoAddDependencies &&
           !dependencyValidation.valid && {
             autoAddedDependencies: dependencyValidation.missing.flatMap(

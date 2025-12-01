@@ -10,6 +10,7 @@ import {
   RoleNotFoundError,
   SystemRoleModificationError,
 } from "../../domain/errors/rbac-errors";
+import { invalidatePermissionCache } from "@/lib/permissions/cache";
 
 export interface DeleteRoleRequest {
   roleId: string;
@@ -57,5 +58,8 @@ export class DeleteRoleUseCase {
       ipAddress: request.ipAddress,
       userAgent: request.userAgent,
     });
+
+    // Removing a role changes effective permissions
+    invalidatePermissionCache("all");
   }
 }

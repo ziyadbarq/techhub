@@ -13,19 +13,17 @@ import {
   getAssetStatisticsAction,
   getAssetFilterOptionsAction,
 } from "@/interface-adapters/controllers/asset.controller";
-import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
 
 export const dynamic = "force-dynamic";
 
 export default async function AssetsPage() {
-  try {
-    await requirePermission(PERMISSIONS.ASSETS_VIEW);
-  } catch (error) {
-    handlePermissionRedirect(error, "/assets");
-    throw error;
-  }
+  await requireFeatureAndPermission(
+    "ASSETS",
+    PERMISSIONS.ASSETS_VIEW,
+    "/assets",
+  );
 
   // Fetch initial data in parallel for better performance
   const [assetsResult, statisticsResult, filterOptionsResult] =

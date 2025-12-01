@@ -12,8 +12,7 @@
 
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { requirePermission } from "@/lib/permissions/server";
-import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { requireFeatureAndPermission } from "@/lib/features/feature-permission-guard";
 import {
   getRoleUsageStatsAction,
   getPermissionUsageStatsAction,
@@ -24,13 +23,11 @@ import { AnalyticsDashboardClient } from "@/components/analytics/analytics-dashb
 export const dynamic = "force-dynamic";
 
 export default async function AnalyticsPage() {
-  // Server-side permission check (security)
-  try {
-    await requirePermission(PERMISSIONS.ROLES_VIEW);
-  } catch (error) {
-    handlePermissionRedirect(error, "/rbac-analytics");
-    throw error;
-  }
+  await requireFeatureAndPermission(
+    "RBAC",
+    PERMISSIONS.ROLES_VIEW,
+    "/rbac-analytics",
+  );
 
   // Fetch data on the server
   const [roleUsageResult, permissionUsageResult, userRoleStatsResult] =
