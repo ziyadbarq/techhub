@@ -120,7 +120,7 @@ npm run db:reset
 npx prisma migrate reset
 
 # Clear everything including caches
-npm run cache:clear:all
+npm run reset:dev:full
 ```
 
 ### Creating Your First Migration
@@ -337,7 +337,7 @@ npm run db:studio
 npm run reset
 
 # Clear all caches + reset database
-npm run cache:clear:all
+npm run reset:dev:full
 
 # Create admin account
 # Visit /register then promote to system-administrator via Prisma Studio/SQL

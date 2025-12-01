@@ -83,6 +83,13 @@ npm run db:reset # Reset database + seed (drops all data!)
 npm run roles:manage            # Interactive user role manager
 npm run roles:manage -- --dry-run  # Preview role changes without applying
 npm run roles:manage -- --help     # Show role manager help
+
+# Production Deployment (Auto-Deploy on Server)
+tail -f local/logs/auto-deploy-$(date +%Y%m).log  # Monitor auto-deployment logs
+tail -f local/logs/cron.log                        # Monitor cron execution
+bash scripts/production-deploy.sh                  # Manual deployment (testing)
+bash scripts/db-backup.sh backup --force           # Manual database backup
+bash scripts/db-backup.sh restore                  # Interactive rollback (select backup)
 ```
 
 ## Database Development Quick Reference

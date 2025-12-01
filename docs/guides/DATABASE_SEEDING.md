@@ -1196,7 +1196,7 @@ export interface WarrantyFactoryOptions {
 pkill -f tsx
 
 # Clear cache and reset
-npm run cache:clear:all
+npm run reset:dev:full
 
 # Or just reset database
 npm run reset
