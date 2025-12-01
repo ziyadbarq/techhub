@@ -137,6 +137,11 @@ export interface IPersonRepository {
   delete(id: string): Promise<void>;
 
   /**
+   * Soft delete person (mark inactive + deletedAt)
+   */
+  updateSoftDelete(id: string): Promise<void>;
+
+  /**
    * Check if email exists (for uniqueness validation)
    */
   existsByEmail(email: string, excludeId?: string): Promise<boolean>;

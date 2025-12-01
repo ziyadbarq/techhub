@@ -14,7 +14,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
-import type { PrismaClient } from "@/generated/prisma/server";
+import type { IAssetDependencyRepository } from "@/core/repositories/asset-dependency.repository.interface";
 
 export interface DeleteAssetConfirmationRequest {
   id: string;
@@ -48,8 +48,8 @@ export class DeleteAssetWithConfirmationUseCase {
   constructor(
     @inject(DI_TOKENS.IAssetRepository)
     private readonly assetRepository: IAssetRepository,
-    @inject(DI_TOKENS.PrismaClient)
-    private readonly prisma: PrismaClient,
+    @inject(DI_TOKENS.IAssetDependencyRepository)
+    private readonly dependencyRepository: IAssetDependencyRepository,
   ) {}
 
   async execute(
@@ -62,7 +62,9 @@ export class DeleteAssetWithConfirmationUseCase {
     }
 
     // Check all dependencies
-    const dependencies = await this.checkDependencies(request.id);
+    const dependencies = await this.dependencyRepository.getDependencies(
+      request.id,
+    );
     const totalDependencies = Object.values(dependencies).reduce(
       (sum, count) => sum + count,
       0,
@@ -74,12 +76,8 @@ export class DeleteAssetWithConfirmationUseCase {
 
     // Critical blocker: Active reservations
     if (dependencies.reservations > 0) {
-      const activeReservations = await this.prisma.assetReservation.count({
-        where: {
-          assetId: request.id,
-          status: { in: ["PENDING", "CONFIRMED"] },
-        },
-      });
+      const activeReservations =
+        await this.dependencyRepository.countActiveReservations(request.id);
       if (activeReservations > 0) {
         blockers.push(
           `${activeReservations} active reservation(s). Cancel or complete them first.`,
@@ -93,14 +91,8 @@ export class DeleteAssetWithConfirmationUseCase {
 
     // Critical blocker: Active disposals
     if (dependencies.disposals > 0) {
-      const activeDisposals = await this.prisma.assetDisposal.count({
-        where: {
-          assetId: request.id,
-          status: {
-            notIn: ["COMPLETED", "CANCELLED", "REJECTED"],
-          },
-        },
-      });
+      const activeDisposals =
+        await this.dependencyRepository.countActiveDisposals(request.id);
       if (activeDisposals > 0) {
         blockers.push(
           `${activeDisposals} active disposal(s) in progress. Complete or cancel them first.`,
@@ -114,12 +106,8 @@ export class DeleteAssetWithConfirmationUseCase {
 
     // Critical blocker: Checked out in kits
     if (dependencies.kitCheckoutItems > 0) {
-      const checkedOut = await this.prisma.assetKitCheckoutItem.count({
-        where: {
-          assetId: request.id,
-          status: "CHECKED_OUT",
-        },
-      });
+      const checkedOut =
+        await this.dependencyRepository.countActiveKitCheckouts(request.id);
       if (checkedOut > 0) {
         blockers.push(
           `${checkedOut} active kit checkout(s). Return the asset first.`,
@@ -133,12 +121,8 @@ export class DeleteAssetWithConfirmationUseCase {
 
     // Critical blocker: Active assignments
     if (dependencies.assignments > 0) {
-      const activeAssignments = await this.prisma.assetAssignment.count({
-        where: {
-          assetId: request.id,
-          OR: [{ endDate: null }, { endDate: { gt: new Date() } }],
-        },
-      });
+      const activeAssignments =
+        await this.dependencyRepository.countActiveAssignments(request.id);
       if (activeAssignments > 0) {
         blockers.push(
           `${activeAssignments} active assignment(s). Unassign the asset first.`,
@@ -203,47 +187,6 @@ export class DeleteAssetWithConfirmationUseCase {
   }
 
   /**
-   * Check all asset dependencies using Prisma counts
-   */
-  private async checkDependencies(assetId: string): Promise<AssetDependencies> {
-    const [
-      warranties,
-      maintenanceSchedules,
-      maintenanceRecords,
-      assignments,
-      stockMovements,
-      disposals,
-      reservations,
-      kitCheckoutItems,
-      configurationItems,
-    ] = await Promise.all([
-      this.prisma.warranty.count({ where: { assetId } }),
-      this.prisma.maintenanceSchedule.count({ where: { assetId } }),
-      this.prisma.maintenanceRecord.count({ where: { assetId } }),
-      this.prisma.assetAssignment.count({ where: { assetId } }),
-      this.prisma.stockMovement.count({ where: { assetId } }),
-      this.prisma.assetDisposal.count({ where: { assetId } }),
-      this.prisma.assetReservation.count({ where: { assetId } }),
-      this.prisma.assetKitCheckoutItem.count({ where: { assetId } }),
-      this.prisma.configurationItem.count({
-        where: { linkedAssetId: assetId },
-      }),
-    ]);
-
-    return {
-      warranties,
-      maintenanceSchedules,
-      maintenanceRecords,
-      assignments,
-      stockMovements,
-      disposals,
-      reservations,
-      kitCheckoutItems,
-      configurationItems,
-    };
-  }
-
-  /**
    * Execute the soft delete after confirmation
    * Only call this after receiving user confirmation
    */
@@ -254,9 +197,6 @@ export class DeleteAssetWithConfirmationUseCase {
     }
 
     // Perform soft delete by setting deletedAt timestamp
-    await this.prisma.asset.update({
-      where: { id },
-      data: { deletedAt: new Date() },
-    });
+    await this.assetRepository.updateSoftDelete(id);
   }
 }

@@ -63,6 +63,8 @@ import { GetAssetsNearingEolReportUseCase } from "@/core/use-cases/asset/asset/g
 import { GetAssetValueByCategoryReportUseCase } from "@/core/use-cases/asset/asset/get-asset-value-by-category-report.use-case";
 import { GetAssetsByDepartmentReportUseCase } from "@/core/use-cases/asset/asset/get-assets-by-department-report.use-case";
 import { GetUnassignedAssetsReportUseCase } from "@/core/use-cases/asset/asset/get-unassigned-assets-report.use-case";
+import type { IAssetDependencyRepository } from "@/core/repositories/asset-dependency.repository.interface";
+import { PrismaAssetDependencyRepository } from "@/infrastructure/repositories/prisma-asset-dependency.repository";
 
 // Asset Assignment Repository
 import type { IAssetAssignmentRepository } from "@/core/repositories/asset-assignment.repository.interface";
@@ -273,6 +275,11 @@ export function bindAssetDependencies(container: Container): void {
   container
     .bind<IAssetRepository>(DI_TOKENS.IAssetRepository)
     .to(PrismaAssetRepository)
+    .inSingletonScope();
+
+  container
+    .bind<IAssetDependencyRepository>(DI_TOKENS.IAssetDependencyRepository)
+    .to(PrismaAssetDependencyRepository)
     .inSingletonScope();
 
   // ==========================================

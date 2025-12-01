@@ -283,6 +283,7 @@ export const DI_TOKENS = {
   GetFeatureFlagUseCase: Symbol.for("GetFeatureFlagUseCase"),
   ToggleFeatureFlagUseCase: Symbol.for("ToggleFeatureFlagUseCase"),
   CheckFeatureEnabledUseCase: Symbol.for("CheckFeatureEnabledUseCase"),
+  IFeatureFlagAuditService: Symbol.for("IFeatureFlagAuditService"),
 
   // RBAC Analytics Use Cases
   GetRoleUsageStatsUseCase: Symbol.for("GetRoleUsageStatsUseCase"),
@@ -362,6 +363,7 @@ export const DI_TOKENS = {
   SyncUsersFromGraphUseCase: Symbol.for("SyncUsersFromGraphUseCase"),
   TogglePersonExclusionUseCase: Symbol.for("TogglePersonExclusionUseCase"),
   TogglePersonStatusUseCase: Symbol.for("TogglePersonStatusUseCase"),
+  IPersonDependencyRepository: Symbol.for("IPersonDependencyRepository"),
 
   // Foundation: Employee Directory Use Cases
   ListEmployeeDirectoryUseCase: Symbol.for("ListEmployeeDirectoryUseCase"),
@@ -749,6 +751,7 @@ export const DI_TOKENS = {
 
   // Assets: Asset Repository
   IAssetRepository: Symbol.for("IAssetRepository"),
+  IAssetDependencyRepository: Symbol.for("IAssetDependencyRepository"),
 
   // Assets: Asset Use Cases
   CreateAssetUseCase: Symbol.for("CreateAssetUseCase"),

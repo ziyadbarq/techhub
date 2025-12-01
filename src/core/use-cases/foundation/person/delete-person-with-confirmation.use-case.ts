@@ -15,7 +15,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
-import type { PrismaClient } from "@/generated/prisma/server";
+import type { IPersonDependencyRepository } from "@/core/repositories/person-dependency.repository.interface";
 
 export interface DeletePersonConfirmationRequest {
   id: string;
@@ -63,8 +63,8 @@ export class DeletePersonWithConfirmationUseCase {
   constructor(
     @inject(DI_TOKENS.IPersonRepository)
     private readonly personRepository: IPersonRepository,
-    @inject(DI_TOKENS.PrismaClient)
-    private readonly prisma: PrismaClient,
+    @inject(DI_TOKENS.IPersonDependencyRepository)
+    private readonly dependencyRepository: IPersonDependencyRepository,
   ) {}
 
   async execute(
@@ -77,7 +77,9 @@ export class DeletePersonWithConfirmationUseCase {
     }
 
     // Check all dependencies
-    const dependencies = await this.checkDependencies(request.id);
+    const dependencies = await this.dependencyRepository.getDependencies(
+      request.id,
+    );
     const totalDependencies =
       Object.values(dependencies).reduce((sum, val) => {
         return sum + (typeof val === "boolean" ? (val ? 1 : 0) : val);
@@ -124,12 +126,10 @@ export class DeletePersonWithConfirmationUseCase {
 
     // Critical blocker: Has assigned maintenance schedules
     if (dependencies.maintenanceSchedules > 0) {
-      const activeSchedules = await this.prisma.maintenanceSchedule.count({
-        where: {
-          assignedToId: request.id,
-          isActive: true,
-        },
-      });
+      const activeSchedules =
+        await this.dependencyRepository.countActiveMaintenanceSchedules(
+          request.id,
+        );
       if (activeSchedules > 0) {
         blockers.push(
           `Has ${activeSchedules} active maintenance schedule(s). Reassign first.`,
@@ -143,12 +143,8 @@ export class DeletePersonWithConfirmationUseCase {
 
     // Critical blocker: Has active reservations
     if (dependencies.reservationsFor > 0) {
-      const activeReservations = await this.prisma.assetReservation.count({
-        where: {
-          reservedForPersonId: request.id,
-          status: { in: ["PENDING", "CONFIRMED"] },
-        },
-      });
+      const activeReservations =
+        await this.dependencyRepository.countActiveReservations(request.id);
       if (activeReservations > 0) {
         blockers.push(
           `Has ${activeReservations} active asset reservation(s). Cancel or complete first.`,
@@ -240,109 +236,6 @@ export class DeletePersonWithConfirmationUseCase {
   }
 
   /**
-   * Check all person dependencies using Prisma counts
-   */
-  private async checkDependencies(
-    personId: string,
-  ): Promise<PersonDependencies> {
-    const [
-      person,
-      managedOrgUnits,
-      managedPeople,
-      configurationItems,
-      stockMovements,
-      verificationCampaigns,
-      verificationItems,
-      auditLogs,
-      attachments,
-      dataOwnerships,
-      maintenanceSchedules,
-      maintenanceRecords,
-      disposalsInitiated,
-      disposalsApproved,
-      disposalApprovals,
-      disposalDocuments,
-      kitCheckouts,
-      reservationsFor,
-      reservationsCreated,
-      reservationsConfirmed,
-      reservationsCancelled,
-      roleAssignments,
-    ] = await Promise.all([
-      this.prisma.person.findUnique({
-        where: { id: personId },
-        select: { userId: true },
-      }),
-      this.prisma.organizationUnit.count({ where: { managerId: personId } }),
-      this.prisma.person.count({ where: { managerId: personId } }),
-      this.prisma.configurationItem.count({
-        where: {
-          primaryOwnerPersonId: personId,
-        },
-      }),
-      this.prisma.stockMovement.count({ where: { performedById: personId } }),
-      this.prisma.verificationCampaign.count({
-        where: { createdById: personId },
-      }),
-      this.prisma.verificationItem.count({
-        where: { verifierPersonId: personId },
-      }),
-      this.prisma.auditLogEntry.count({ where: { changedById: personId } }),
-      this.prisma.attachment.count({ where: { uploadedById: personId } }),
-      this.prisma.dataOwnership.count({ where: { ownerPersonId: personId } }),
-      this.prisma.maintenanceSchedule.count({
-        where: { assignedToId: personId },
-      }),
-      this.prisma.maintenanceRecord.count({
-        where: { performedById: personId },
-      }),
-      this.prisma.assetDisposal.count({ where: { initiatedById: personId } }),
-      this.prisma.assetDisposal.count({ where: { approvedById: personId } }),
-      this.prisma.disposalApproval.count({ where: { approverId: personId } }),
-      this.prisma.disposalDocument.count({ where: { uploadedById: personId } }),
-      this.prisma.assetKitCheckout.count({
-        where: { checkedOutById: personId },
-      }),
-      this.prisma.assetReservation.count({
-        where: { reservedForPersonId: personId },
-      }),
-      this.prisma.assetReservation.count({ where: { reservedById: personId } }),
-      this.prisma.assetReservation.count({
-        where: { confirmedById: personId },
-      }),
-      this.prisma.assetReservation.count({
-        where: { cancelledById: personId },
-      }),
-      this.prisma.personRoleAssignment.count({ where: { personId } }),
-    ]);
-
-    return {
-      userAccount: !!person?.userId,
-      managedOrgUnits,
-      managedPeople,
-      configurationItems,
-      stockMovements,
-      verificationCampaigns,
-      verificationItems,
-      auditLogs,
-      attachments,
-      dataOwnerships,
-      maintenanceSchedules,
-      maintenanceRecords,
-      disposalsInitiated,
-      disposalsApproved,
-      disposalApprovals,
-      disposalDocuments,
-      kitCheckouts,
-      reservationsFor,
-      reservationsCreated,
-      reservationsConfirmed,
-      reservationsCancelled,
-      roleAssignments,
-    };
-  }
-
-  /**
    * Execute the soft delete after confirmation
    * Only call this after receiving user confirmation
    */
@@ -353,12 +246,6 @@ export class DeletePersonWithConfirmationUseCase {
     }
 
     // Perform soft delete by setting deletedAt timestamp
-    await this.prisma.person.update({
-      where: { id },
-      data: {
-        deletedAt: new Date(),
-        isActive: false, // Also mark as inactive
-      },
-    });
+    await this.personRepository.updateSoftDelete(id);
   }
 }

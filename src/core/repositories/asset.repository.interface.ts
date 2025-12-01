@@ -234,4 +234,9 @@ export interface IAssetRepository {
     ids: string[],
     lifecycleStateId: string,
   ): Promise<number>;
+
+  /**
+   * Soft delete an asset (set deletedAt)
+   */
+  updateSoftDelete(id: string): Promise<void>;
 }

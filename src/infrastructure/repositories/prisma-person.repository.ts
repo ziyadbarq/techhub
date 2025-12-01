@@ -328,6 +328,16 @@ export class PrismaPersonRepository implements IPersonRepository {
     }
   }
 
+  async updateSoftDelete(id: string): Promise<void> {
+    await this.prisma.person.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+        isActive: false,
+      },
+    });
+  }
+
   async existsByEmail(email: string, excludeId?: string): Promise<boolean> {
     const person = await this.prisma.person.findUnique({
       where: { email },
