@@ -8,7 +8,7 @@ ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 ACTION=""
 ENV_FILE="${ROOT_DIR}/.env.local"
 BACKUP_FILE=""
-BACKUP_DIR="${ROOT_DIR}/local/backups"
+BACKUP_DIR="${ROOT_DIR}/local/backups/db-script"
 FORCE=0
 RESTORE_VERBOSE=0
 DROP_SCHEMA=0
@@ -21,7 +21,7 @@ Usage:
   ./scripts/db-backup.sh restore [--file path] [--env-file path] [--force] [--verbose] [--drop-schema] [--no-auto-latest]
 
 Options:
-  --file, -f       Override backup file path (default: timestamped under local/backups)
+  --file, -f       Override backup file path (default: timestamped under local/backups/db-script)
   --env-file, -e   Env file to load DATABASE_URL from (default: .env.local)
   --force, -y      Skip confirmation prompts and allow overwrite
   --verbose, -v    Show full psql output during restore (default is quiet)

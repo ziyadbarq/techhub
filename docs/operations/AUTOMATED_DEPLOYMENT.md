@@ -169,7 +169,7 @@ ssh opc@your-server
 cd /home/opc/node-projects/barq-assets
 
 # 2. Find the failed deployment's backup
-ls -lt local/backups/ | head -5
+ls -lt local/backups/db-script/ | head -5
 
 # 3. Restore database (latest backup auto-selected)
 bash scripts/db-backup.sh restore --force --drop-schema
@@ -299,11 +299,11 @@ crontab -e  # Uncomment the cron job
    chmod +x scripts/db-backup.sh
    ```
 
-2. `local/backups/` writable?
+2. `local/backups/db-script/` writable?
    ```bash
-   ls -ld local/backups
-   mkdir -p local/backups
-   chmod 700 local/backups
+   ls -ld local/backups/db-script
+   mkdir -p local/backups/db-script
+   chmod 700 local/backups/db-script
    ```
 
 3. Database connectivity?
@@ -424,9 +424,10 @@ Create `/etc/logrotate.d/barq-assets`:
 ### **Automatic Backups**
 
 - **Created:** Before every deployment (Stage 2)
-- **Location:** `/home/opc/node-projects/barq-assets/local/backups/`
+- **Location:** `/home/opc/node-projects/barq-assets/local/backups/db-script/`
 - **Format:** `barq-assets-YYYYMMDD_HHMMSS.sql`
 - **Latest backup path:** Stored in `/home/opc/node-projects/barq-assets/local/tmp/barq-last-backup.txt`
+- **Retention:** Last 10 backups are kept; older backups are pruned automatically during deployment
 
 ### **Manual Backup**
 
@@ -435,7 +436,7 @@ Create `/etc/logrotate.d/barq-assets`:
 bash scripts/db-backup.sh backup --force
 
 # Create backup with custom filename
-bash scripts/db-backup.sh backup --file local/backups/pre-maintenance-backup.sql --force
+bash scripts/db-backup.sh backup --file local/backups/db-script/pre-maintenance-backup.sql --force
 ```
 
 ### **Restore from Backup**
@@ -445,7 +446,7 @@ bash scripts/db-backup.sh backup --file local/backups/pre-maintenance-backup.sql
 bash scripts/db-backup.sh restore
 
 # Restore specific backup
-bash scripts/db-backup.sh restore --file local/backups/barq-assets-20250101_120000.sql --force
+bash scripts/db-backup.sh restore --file local/backups/db-script/barq-assets-20250101_120000.sql --force
 
 # Restore with schema wipe (fixes drifted DB)
 bash scripts/db-backup.sh restore --drop-schema --force
@@ -455,13 +456,13 @@ bash scripts/db-backup.sh restore --drop-schema --force
 
 ```bash
 # List backups by size and date
-ls -lhS local/backups/*.sql
+ls -lhS local/backups/db-script/*.sql
 
 # Remove backups older than 30 days
-find local/backups/ -name "*.sql" -type f -mtime +30 -delete
+find local/backups/db-script/ -name "*.sql" -type f -mtime +30 -delete
 
 # Keep only last 10 backups
-ls -t local/backups/*.sql | tail -n +11 | xargs rm -f
+ls -t local/backups/db-script/*.sql | tail -n +11 | xargs rm -f
 ```
 
 ---
@@ -507,8 +508,8 @@ chmod 750 local/logs/
 chmod 640 local/logs/*.log
 
 # Backups: readable by opc only (contains data)
-chmod 700 local/backups/
-chmod 600 local/backups/*.sql
+chmod 700 local/backups/db-script/
+chmod 600 local/backups/db-script/*.sql
 ```
 
 ### **Secrets Management**
@@ -559,7 +560,7 @@ cd /home/opc/node-projects/barq-assets/local/logs
 grep "DEPLOYMENT FAILED" auto-deploy-*.log
 
 # Check backup sizes
-du -sh local/backups/*.sql | tail -10
+du -sh local/backups/db-script/*.sql | tail -10
 
 # Verify PM2 processes
 pm2 status
@@ -574,7 +575,7 @@ tar -czf archive-$(date +%Y%m).tar.gz auto-deploy-*.log deploy-*.log
 rm auto-deploy-*.log deploy-*.log
 
 # Clean old backups (keep 30 days)
-find local/backups/ -name "*.sql" -type f -mtime +30 -delete
+find local/backups/db-script/ -name "*.sql" -type f -mtime +30 -delete
 
 # Review PM2 memory usage
 pm2 status  # Check memory restart count

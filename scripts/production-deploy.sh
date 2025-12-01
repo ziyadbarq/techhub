@@ -191,12 +191,40 @@ stage_backup() {
     log_stage 2 "Database Backup"
 
     # Create backup directory if missing
-    local backup_dir="$ROOT_DIR/local/backups"
+    local backup_dir="$ROOT_DIR/local/backups/db-script"
     mkdir -p "$backup_dir"
 
     # Ensure local temp directory exists for tracking last backup
     local tmp_dir="$ROOT_DIR/local/tmp"
     mkdir -p "$tmp_dir"
+
+    # Retention policy: keep last 10 backups, remove older ones
+    local retention_count=10
+    local backup_glob="$backup_dir/barq-assets-"*".sql"
+    # shellcheck disable=SC2206
+    local backups=( $backup_glob )
+    # If glob doesn't match, it returns the pattern itself; filter that out
+    local valid_backups=()
+    for f in "${backups[@]}"; do
+        if [ -f "$f" ]; then
+            valid_backups+=("$f")
+        fi
+    done
+    if [ ${#valid_backups[@]} -gt "$retention_count" ]; then
+        # Sort by modification time descending, keep newest N, delete the rest
+        IFS=$'\n' read -r -d '' -a sorted_backups < <(ls -1t "${valid_backups[@]}" && printf '\0')
+        local to_delete=("${sorted_backups[@]:$retention_count}")
+        if [ ${#to_delete[@]} -gt 0 ]; then
+            log "Pruning old backups (keeping last $retention_count)..."
+            for old_backup in "${to_delete[@]}"; do
+                if rm -f "$old_backup"; then
+                    log "Deleted old backup: $(basename "$old_backup")"
+                else
+                    log_warning "Failed to delete old backup: $(basename "$old_backup")"
+                fi
+            done
+        fi
+    fi
 
     # Generate backup filename
     local backup_file="$backup_dir/barq-assets-$(date +%Y%m%d_%H%M%S).sql"
@@ -434,6 +462,21 @@ stage_health_check() {
     local interval=10
     local attempt=1
 
+    # Helper to evaluate health JSON (supports top-level overall or success+data.overall)
+    is_health_ok() {
+        local response="$1"
+        local compact
+        compact=$(echo "$response" | tr -d '\n\r\t ')
+
+        echo "$compact" | grep -q '"overall":true' && return 0
+
+        if echo "$compact" | grep -q '"success":true' && echo "$compact" | grep -q '"data":{.*"overall":true'; then
+            return 0
+        fi
+
+        return 1
+    }
+
     log "Health check URL: $HEALTH_URL"
     log "Retry policy: $max_attempts attempts, ${interval}s interval"
 
@@ -443,8 +486,8 @@ stage_health_check() {
         # Attempt health check
         local response
         if response=$(curl -fsS --max-time 5 "$HEALTH_URL" 2>/dev/null); then
-            # Check if response contains "overall":true
-            if echo "$response" | grep -q '"overall":true'; then
+            # Check if response contains "overall":true (top-level or nested under data)
+            if is_health_ok "$response"; then
                 log_success "Health check passed ✓"
                 log "Response: $response"
                 return 0

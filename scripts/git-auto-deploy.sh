@@ -162,7 +162,7 @@ parse_health_response() {
 
     # Normalize: remove newlines and extra spaces for consistent matching
     local normalized
-    normalized=$(echo "$response" | tr -d '\n' | sed 's/  */ /g')
+    normalized=$(echo "$response" | tr -d '\n\r\t' | sed 's/  */ /g')
 
     # Database - look for "database" section with "connected":true (flexible whitespace)
     if echo "$normalized" | grep -qE '"database"[^}]*"connected"\s*:\s*true'; then
@@ -210,6 +210,24 @@ parse_health_response() {
     fi
 
     echo "$msg"
+}
+
+# Determine if health response indicates overall success
+is_health_ok() {
+    local response="$1"
+    local compact
+    compact=$(echo "$response" | tr -d '\n\r\t ')
+
+    # Match either top-level overall or nested under data
+    if echo "$compact" | grep -q '"overall":true'; then
+        return 0
+    fi
+
+    if echo "$compact" | grep -q '"success":true' && echo "$compact" | grep -q '"data":{.*"overall":true'; then
+        return 0
+    fi
+
+    return 1
 }
 
 # Handle health check failure with throttling
@@ -272,7 +290,7 @@ check_health() {
     fi
 
     # Check for overall=true
-    if echo "$response" | grep -q '"overall":true'; then
+    if is_health_ok "$response"; then
         handle_health_success
         return 0
     else
