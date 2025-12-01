@@ -8,7 +8,7 @@
  */
 
 import { useState, useMemo } from "react";
-import { getAllEntityConfigs } from "@/lib/data-import/entity-configs";
+import { getAllEntityConfigs } from "@/interface-adapters/data-import/entity-configs";
 import type {
   EntityConfig,
   LookupMap,

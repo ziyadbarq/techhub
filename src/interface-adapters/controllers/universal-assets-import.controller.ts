@@ -24,14 +24,14 @@ import {
   getTemplateColumns,
   detectDuplicatesInFile,
   groupRowByPrefix,
-} from "@/lib/data-import/universal-assets";
+} from "@/interface-adapters/data-import/universal-assets";
 import type {
   UniversalImportSettings,
   UniversalImportResult,
   UniversalImportProgress,
   PrefixedColumn,
-} from "@/lib/data-import/universal-assets";
-import { DEFAULT_UNIVERSAL_IMPORT_SETTINGS } from "@/lib/data-import/universal-assets/types";
+} from "@/interface-adapters/data-import/universal-assets";
+import { DEFAULT_UNIVERSAL_IMPORT_SETTINGS } from "@/interface-adapters/data-import/universal-assets/types";
 
 /**
  * Resolve current user's linked person ID for movement tracking

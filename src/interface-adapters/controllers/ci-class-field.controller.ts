@@ -29,7 +29,7 @@ import type {
   UpdateCIClassFieldUseCase,
   DeleteCIClassFieldUseCase,
 } from "@/core/use-cases/ci-class-field";
-import { PrismaCIClassFieldRepository } from "@/infrastructure/repositories/prisma-ci-class-field.repository";
+import type { ICIClassFieldRepository } from "@/core/repositories/ci-class-field.repository.interface";
 
 /**
  * Create a new CI class field
@@ -267,8 +267,10 @@ export async function listEnrichedCIClassFieldsAction(
   try {
     await requirePermission(PERMISSIONS.CI_CLASS_FIELDS_VIEW);
 
-    // Use repository directly for enriched query
-    const repository = new PrismaCIClassFieldRepository();
+    const container = getContainer();
+    const repository = container.get<ICIClassFieldRepository>(
+      DI_TOKENS.ICIClassFieldRepository,
+    );
     const fieldsWithDefinition =
       await repository.findByCIClassIdWithDefinition(ciClassId);
 

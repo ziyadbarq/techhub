@@ -63,6 +63,34 @@ export type {
   ConnectionState,
 } from "./realtime.service.interface";
 
+// RBAC Policy & Permission Cache
+export type {
+  IRbacPolicyService,
+  RoleConflict,
+  PermissionDependencyValidation,
+} from "./rbac-policy.service.interface";
+export type {
+  IPermissionCacheService,
+  PermissionCacheScope,
+} from "./permission-cache.service.interface";
+export type {
+  ISystemSeederService,
+  ResetDatabaseOptions,
+  ResetDatabaseResult,
+  SeedMinimalDataResult,
+} from "./system-seeder.service.interface";
+export type {
+  IGraphUserMapperService,
+  GraphUser,
+  TransformGraphUserOptions,
+  SyncResult as GraphSyncResult,
+} from "./graph-user-mapper.service.interface";
+export type {
+  IIntuneDeviceMapperService,
+  GraphIntuneDevice,
+  FetchDevicesOptions as IntuneFetchDevicesOptions,
+} from "./intune-device-mapper.service.interface";
+
 // Email Service
 export type {
   IEmailService,
@@ -89,7 +117,6 @@ export type {
 export type { IMicrosoftGraphService } from "./microsoft-graph.service.interface";
 export type {
   FetchUsersOptions,
-  GraphUser,
   GraphManagerResponse,
 } from "@/lib/schemas/graph-user.schema";
 

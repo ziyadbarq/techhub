@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth/better-auth";
+import { auth } from "@/interface-adapters/auth/better-auth";
 import { createId } from "@paralleldrive/cuid2";
 import { logger } from "@/lib/logger";
 

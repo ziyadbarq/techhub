@@ -8,7 +8,7 @@
 
 import { createContext, useContext, type ReactNode } from "react";
 import { useSession } from "@/lib/auth/client";
-import type { Session } from "@/lib/auth/better-auth";
+import type { Session } from "@/interface-adapters/auth/better-auth";
 
 // Extract the inner types from Better Auth's Session type
 type SessionData = Session["session"];

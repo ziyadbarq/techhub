@@ -7,7 +7,13 @@
 
 import { format } from "date-fns";
 import type { ServiceStatus, CriticalityLevel } from "@/generated/prisma/enums";
-import type { ServiceOwnerDTO } from "@/interface-adapters/presenters/service.presenter";
+
+export interface ServiceOwnerLike {
+  id: string;
+  name: string;
+  role: string;
+  ownershipType: string;
+}
 
 /**
  * Badge variant types from shadcn/ui
@@ -70,9 +76,9 @@ export function getCriticalityBadgeVariant(
  * @returns Record of ownership types to owner arrays
  */
 export function groupOwnersByType(
-  owners: ServiceOwnerDTO[],
-): Record<string, ServiceOwnerDTO[]> {
-  const grouped: Record<string, ServiceOwnerDTO[]> = {
+  owners: ServiceOwnerLike[],
+): Record<string, ServiceOwnerLike[]> {
+  const grouped: Record<string, ServiceOwnerLike[]> = {
     TECHNICAL: [],
     PRODUCT: [],
     BUSINESS: [],

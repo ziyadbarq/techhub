@@ -72,6 +72,33 @@ export class PrismaUserRepository implements IUserRepository {
     return user;
   }
 
+  async findByIdWithPerson(
+    id: string,
+  ): Promise<{ id: string; personId: string | null } | null> {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: { id: true, person: { select: { id: true } } },
+    });
+    return user ? { id: user.id, personId: user.person?.id ?? null } : null;
+  }
+
+  async findWithoutPerson(): Promise<User[]> {
+    return this.prisma.user.findMany({
+      where: { person: null },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
+  async findWithoutPersonByEmail(email: string): Promise<User[]> {
+    return this.prisma.user.findMany({
+      where: {
+        person: null,
+        email: { equals: email, mode: "insensitive" },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
   async createDirectly(data: {
     email: string;
     name: string;

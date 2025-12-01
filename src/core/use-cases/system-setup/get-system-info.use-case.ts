@@ -6,7 +6,7 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ISystemSetupRepository } from "@/core/repositories/system-setup-repository.interface";
-import type { SystemInfoDto } from "@/interface-adapters/dtos/system-setup.dto";
+import type { SystemInfoDto } from "@/core/dtos/system-setup.dto";
 
 @injectable()
 export class GetSystemInfoUseCase {

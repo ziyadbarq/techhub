@@ -12,8 +12,6 @@
  * - Only syncs users with @barq.com or @barraq.com.sa domains
  */
 
-import { ORG_UNIT_DATA } from "@/infrastructure/database/prisma/seed-config-org-units";
-
 // ==============================================
 // Valid Email Domains for Sync
 // ==============================================
@@ -943,39 +941,9 @@ export const DEPARTMENT_ROLE_MAP: Record<string, string> = {
 } as const;
 
 // ==============================================
-// Validation Helpers (detect drift vs ORG_UNIT_DATA)
 // ==============================================
-
-const VALID_ORG_UNIT_CODES: Set<string> = new Set(
-  ORG_UNIT_DATA.map((unit) => unit.code),
-);
-
-function validateCodes(label: string, codes: Iterable<string>) {
-  const missing = new Set<string>();
-  for (const code of codes) {
-    if (!VALID_ORG_UNIT_CODES.has(code)) {
-      missing.add(code);
-    }
-  }
-  if (missing.size > 0) {
-    console.warn(
-      `[graph-normalization] ${label} references unknown org codes: ${[
-        ...missing,
-      ].join(", ")}`,
-    );
-  }
-}
-
-validateCodes(
-  "DEPARTMENT_NORMALIZATION_MAP",
-  Object.values(DEPARTMENT_NORMALIZATION_MAP),
-);
-validateCodes("DEPARTMENT_ROLE_MAP", Object.keys(DEPARTMENT_ROLE_MAP));
-
-/**
- * Title-based role overrides (higher priority than department).
- * Checked first before department mapping.
- */
+// Title-based overrides
+// ==============================================
 export const TITLE_ROLE_OVERRIDES: ReadonlyArray<{
   pattern: RegExp;
   role: string;
@@ -1035,20 +1003,6 @@ export function normalizeDepartment(dept: string | null): string | null {
   const trimmed = normalized.trimEnd();
   if (DEPARTMENT_NORMALIZATION_MAP[trimmed]) {
     return DEPARTMENT_NORMALIZATION_MAP[trimmed];
-  }
-
-  // Try direct name match from org unit data (keeps map aligned with seeds)
-  const normalizedNameKey = normalized.replace(/&/g, "and");
-  const fromNames = ORG_UNIT_DATA.find(
-    (unit) =>
-      unit.name
-        .toLowerCase()
-        .trim()
-        .replace(/\s+/g, " ")
-        .replace(/&/g, "and") === normalizedNameKey,
-  );
-  if (fromNames) {
-    return fromNames.code;
   }
 
   // No match found - return null (will use default)

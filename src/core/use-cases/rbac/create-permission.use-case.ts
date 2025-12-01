@@ -8,7 +8,7 @@ import type { IPermissionRepository } from "../../repositories/permission-reposi
 import type { IAuditLogRepository } from "../../repositories/audit-log-repository.interface";
 import { Permission } from "../../domain/entities/permission.entity";
 import { DuplicatePermissionError } from "../../domain/errors/rbac-errors";
-import { invalidatePermissionCache } from "@/lib/permissions/cache";
+import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
 
 export interface CreatePermissionRequest {
   resource: string;
@@ -29,6 +29,8 @@ export class CreatePermissionUseCase {
     private readonly permissionRepository: IPermissionRepository,
     @inject(DI_TOKENS.IAuditLogRepository)
     private readonly auditLogRepository: IAuditLogRepository,
+    @inject(DI_TOKENS.IPermissionCacheService)
+    private readonly permissionCacheService: IPermissionCacheService,
   ) {}
 
   async execute(request: CreatePermissionRequest): Promise<Permission> {
@@ -71,7 +73,7 @@ export class CreatePermissionUseCase {
     });
 
     // New permissions can be assigned immediately
-    invalidatePermissionCache("all");
+    this.permissionCacheService.invalidate("all");
 
     return createdPermission;
   }

@@ -5,9 +5,12 @@
  * This is a composite importer that handles multiple entity types in a single file.
  */
 
-import type { EntityConfig, EntityFieldConfig } from "../entity-config.types";
+import type {
+  EntityConfig,
+  EntityFieldConfig,
+} from "@/lib/data-import/entity-config.types";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { STANDARD_SANITIZATION } from "../field-builders";
+import { STANDARD_SANITIZATION } from "@/lib/data-import/field-builders";
 
 /**
  * Field definitions for Universal Assets Import

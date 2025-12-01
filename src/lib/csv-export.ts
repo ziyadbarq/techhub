@@ -3,8 +3,21 @@
  * Exports asset data to CSV format and triggers browser download
  */
 
-import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
 import { format } from "date-fns";
+
+export interface AssetExportInput {
+  assetTag: string;
+  serialNumber?: string | null;
+  categoryName?: string | null;
+  modelName?: string | null;
+  vendorName?: string | null;
+  stockLocationName?: string | null;
+  lifecycleStateName?: string | null;
+  condition?: string | null;
+  note?: string | null;
+  createdAt: string | Date;
+  attributes?: Record<string, unknown> | null;
+}
 
 /**
  * Format a custom field value for export
@@ -43,7 +56,7 @@ function escapeCSVField(field: string): string {
 /**
  * Convert assets to CSV string
  */
-function assetsToCSV(assets: AssetDTO[]): string {
+function assetsToCSV<T extends AssetExportInput>(assets: T[]): string {
   // Collect all unique custom field keys from all assets
   const customFieldKeys = new Set<string>();
   for (const asset of assets) {
@@ -105,7 +118,9 @@ function assetsToCSV(assets: AssetDTO[]): string {
 /**
  * Export assets to CSV file and trigger download
  */
-export function exportAssetsToCSV(assets: AssetDTO[]): void {
+export function exportAssetsToCSV<T extends AssetExportInput>(
+  assets: T[],
+): void {
   const csv = assetsToCSV(assets);
 
   // Add UTF-8 BOM for Excel compatibility

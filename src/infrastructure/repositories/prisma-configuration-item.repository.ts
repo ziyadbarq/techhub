@@ -8,7 +8,11 @@ import type {
   ConfigurationItem as PrismaConfigurationItem,
 } from "@/generated/prisma/server";
 import { DI_TOKENS } from "@/di/types";
-import type { IConfigurationItemRepository } from "@/core/repositories/configuration-item.repository.interface";
+import type {
+  CIDeletionContext,
+  CIDeletionDependencies,
+  IConfigurationItemRepository,
+} from "@/core/repositories/configuration-item.repository.interface";
 import {
   ConfigurationItem,
   type CriticalityEnum,
@@ -263,6 +267,94 @@ export class PrismaConfigurationItemRepository
     });
 
     return count > 0;
+  }
+
+  async getDeletionContext(ciId: string): Promise<CIDeletionContext | null> {
+    const ci = await this.prisma.configurationItem.findUnique({
+      where: { id: ciId },
+      include: {
+        ciClass: true,
+      },
+    });
+
+    if (!ci) {
+      return null;
+    }
+
+    const [
+      relationshipsFrom,
+      relationshipsTo,
+      impactingRelationshipsTo,
+      activeRelationshipsTo,
+      activeRelationshipsFrom,
+      relationships,
+    ] = await Promise.all([
+      this.prisma.cIRelationship.count({ where: { fromCiId: ciId } }),
+      this.prisma.cIRelationship.count({ where: { toCiId: ciId } }),
+      this.prisma.cIRelationship.count({
+        where: {
+          toCiId: ciId,
+          isActive: true,
+          relationshipType: { isImpacting: true },
+        },
+      }),
+      this.prisma.cIRelationship.count({
+        where: { toCiId: ciId, isActive: true },
+      }),
+      this.prisma.cIRelationship.count({
+        where: { fromCiId: ciId, isActive: true },
+      }),
+      this.prisma.cIRelationship.findMany({
+        where: { toCiId: ciId },
+        include: {
+          fromCi: true,
+          relationshipType: true,
+        },
+      }),
+    ]);
+
+    const dependencies: CIDeletionDependencies = {
+      relationshipsFrom,
+      relationshipsTo,
+      impactingRelationshipsTo,
+      activeRelationshipsTo,
+      activeRelationshipsFrom,
+    };
+
+    const impactingRelationships = relationships.map((rel) => ({
+      relationshipType: rel.relationshipType.name,
+      relatedCIKey: rel.fromCi.ciKey || "",
+      relatedCIName: rel.fromCi.name,
+      isImpacting: rel.relationshipType.isImpacting,
+      isActive: rel.isActive,
+    }));
+
+    return {
+      ci: {
+        id: ci.id,
+        ciKey: ci.ciKey,
+        name: ci.name,
+        ciClassName: ci.ciClass?.name ?? null,
+        criticality: ci.criticality,
+        environment: ci.environment,
+      },
+      dependencies,
+      impactingRelationships,
+    };
+  }
+
+  async deleteWithRelationships(ciId: string): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
+      await tx.cIRelationship.deleteMany({
+        where: {
+          OR: [{ fromCiId: ciId }, { toCiId: ciId }],
+        },
+      });
+
+      await tx.configurationItem.delete({
+        where: { id: ciId },
+      });
+    });
   }
 
   /**

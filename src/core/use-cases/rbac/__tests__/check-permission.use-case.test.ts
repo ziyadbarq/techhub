@@ -13,6 +13,7 @@ import { CheckPermissionUseCase } from "../check-permission.use-case";
 import type { IUserRoleRepository } from "@/core/repositories/user-role-repository.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
+import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
 import { permissionCache } from "@/lib/permissions/cache";
 
 /**
@@ -57,11 +58,17 @@ describe("CheckPermissionUseCase", () => {
   let checkPermissionUseCase: CheckPermissionUseCase;
   let mockUserRoleRepository: MockUserRoleRepository;
   let mockLogger: MockLoggerService;
+  let mockPermissionCacheService: IPermissionCacheService;
 
   beforeEach(() => {
     // Create fresh instances
     mockUserRoleRepository = new MockUserRoleRepository();
     mockLogger = new MockLoggerService();
+    mockPermissionCacheService = {
+      get: vi.fn(),
+      set: vi.fn(),
+      invalidate: vi.fn(),
+    };
 
     // Clear permission cache
     permissionCache.invalidateAll();
@@ -70,6 +77,7 @@ describe("CheckPermissionUseCase", () => {
     checkPermissionUseCase = new CheckPermissionUseCase(
       mockUserRoleRepository as unknown as IUserRoleRepository,
       mockLogger as unknown as ILoggerService,
+      mockPermissionCacheService,
     );
   });
 

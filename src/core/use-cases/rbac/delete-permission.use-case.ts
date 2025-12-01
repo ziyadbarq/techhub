@@ -10,7 +10,7 @@ import {
   PermissionNotFoundError,
   SystemPermissionModificationError,
 } from "../../domain/errors/rbac-errors";
-import { invalidatePermissionCache } from "@/lib/permissions/cache";
+import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
 
 export interface DeletePermissionRequest {
   id: string;
@@ -26,6 +26,8 @@ export class DeletePermissionUseCase {
     private readonly permissionRepository: IPermissionRepository,
     @inject(DI_TOKENS.IAuditLogRepository)
     private readonly auditLogRepository: IAuditLogRepository,
+    @inject(DI_TOKENS.IPermissionCacheService)
+    private readonly permissionCacheService: IPermissionCacheService,
   ) {}
 
   async execute(request: DeletePermissionRequest): Promise<void> {
@@ -66,6 +68,6 @@ export class DeletePermissionUseCase {
     });
 
     // Remove any cached access to deleted permission
-    invalidatePermissionCache("all");
+    this.permissionCacheService.invalidate("all");
   }
 }

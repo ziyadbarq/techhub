@@ -7,7 +7,10 @@
 import { toast } from "sonner";
 import { ZodError } from "zod";
 import type { FieldErrors } from "react-hook-form";
-import type { ActionResponse } from "@/interface-adapters/controllers/types";
+
+export type ActionResponse<T> =
+  | { success: true; data: T }
+  | { success: false; error: string; [key: string]: unknown };
 
 /**
  * Extract error message from field errors

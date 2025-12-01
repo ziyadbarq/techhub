@@ -6,6 +6,7 @@
  * Creates stock movements for imported assets with source tracking.
  */
 
+/* eslint-disable @typescript-eslint/no-restricted-imports */
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
@@ -33,7 +34,7 @@ import {
   extractUniquePersonEmails,
   detectDuplicatesInFile,
 } from "./prefix-parser";
-import { csvSanitizer } from "../csv-sanitizer";
+import { csvSanitizer } from "@/lib/data-import/csv-sanitizer";
 import { AutoCreateResolver } from "./auto-create-resolver";
 import { CustomFieldInferrer } from "./custom-field-inferrer";
 import { AssignmentHandler } from "./assignment-handler";

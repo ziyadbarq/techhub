@@ -283,4 +283,11 @@ export default [
       ],
     },
   },
+  // Relax boundary checks inside tests to allow direct imports for setup/mocking
+  {
+    files: ["**/__tests__/**/*.{ts,tsx}", "**/*.test.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": "off",
+    },
+  },
 ];

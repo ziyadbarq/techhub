@@ -11,7 +11,7 @@ import {
   RoleNotFoundError,
   SystemRoleModificationError,
 } from "../../domain/errors/rbac-errors";
-import { invalidatePermissionCache } from "@/lib/permissions/cache";
+import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
 
 export interface UpdateRoleRequest {
   roleId: string;
@@ -30,6 +30,8 @@ export class UpdateRoleUseCase {
     private readonly roleRepository: IRoleRepository,
     @inject(DI_TOKENS.IAuditLogRepository)
     private readonly auditLogRepository: IAuditLogRepository,
+    @inject(DI_TOKENS.IPermissionCacheService)
+    private readonly permissionCacheService: IPermissionCacheService,
   ) {}
 
   async execute(request: UpdateRoleRequest): Promise<Role> {
@@ -72,7 +74,7 @@ export class UpdateRoleUseCase {
     });
 
     // Role activation changes affect permissions
-    invalidatePermissionCache("all");
+    this.permissionCacheService.invalidate("all");
 
     return savedRole;
   }

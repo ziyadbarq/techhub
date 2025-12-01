@@ -12,11 +12,17 @@ import type { IPermissionRepository } from "@/core/repositories/permission-repos
 import type { IUserRoleRepository } from "@/core/repositories/user-role-repository.interface";
 import type { IUserRepository } from "@/core/repositories/user-repository.interface";
 import type { IAuditLogRepository } from "@/core/repositories/audit-log-repository.interface";
+import type {
+  IPermissionCacheService,
+  IRbacPolicyService,
+} from "@/core/services";
 import { PrismaRoleRepository } from "@/infrastructure/repositories/prisma-role.repository";
 import { PrismaPermissionRepository } from "@/infrastructure/repositories/prisma-permission.repository";
 import { PrismaUserRoleRepository } from "@/infrastructure/repositories/prisma-user-role.repository";
 import { PrismaUserRepository } from "@/infrastructure/repositories/prisma-user.repository";
 import { PrismaAuditLogRepository } from "@/infrastructure/repositories/prisma-audit-log.repository";
+import { RbacPolicyService } from "@/infrastructure/services/rbac-policy.service";
+import { PermissionCacheService } from "@/infrastructure/services/permission-cache.service";
 
 // Use Cases
 import { CheckPermissionUseCase } from "@/core/use-cases/rbac/check-permission.use-case";
@@ -77,6 +83,16 @@ export function bindRBACDependencies(container: Container): void {
   container
     .bind<IAuditLogRepository>(DI_TOKENS.IAuditLogRepository)
     .to(PrismaAuditLogRepository)
+    .inSingletonScope();
+
+  container
+    .bind<IRbacPolicyService>(DI_TOKENS.IRbacPolicyService)
+    .to(RbacPolicyService)
+    .inSingletonScope();
+
+  container
+    .bind<IPermissionCacheService>(DI_TOKENS.IPermissionCacheService)
+    .to(PermissionCacheService)
     .inSingletonScope();
 
   // ==========================================

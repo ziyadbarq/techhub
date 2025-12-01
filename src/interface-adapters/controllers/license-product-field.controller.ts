@@ -29,9 +29,7 @@ import {
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { BulkCreateResult } from "./types";
-import { PrismaLicenseProductFieldRepository } from "@/infrastructure/repositories/prisma-license-product-field.repository";
-import type { PrismaClient } from "@/generated/prisma/server";
-import type { ILoggerService } from "@/core/services";
+import type { ILicenseProductFieldRepository } from "@/core/repositories/license-product-field.repository.interface";
 
 /**
  * Create a new license product field
@@ -297,9 +295,9 @@ export async function listEnrichedLicenseProductFieldsAction(
 
     // Use repository directly for enriched query
     const container = getContainer();
-    const prisma = container.get<PrismaClient>(DI_TOKENS.PrismaClient);
-    const logger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
-    const repository = new PrismaLicenseProductFieldRepository(prisma, logger);
+    const repository = container.get<ILicenseProductFieldRepository>(
+      DI_TOKENS.ILicenseProductFieldRepository,
+    );
     const fieldsWithDefinition =
       await repository.findByLicenseProductIdWithDefinition(licenseProductId);
 

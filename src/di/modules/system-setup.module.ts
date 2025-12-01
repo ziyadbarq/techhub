@@ -9,6 +9,8 @@ import { DI_TOKENS } from "../types";
 // Repositories
 import type { ISystemSetupRepository } from "@/core/repositories/system-setup-repository.interface";
 import { PrismaSystemSetupRepository } from "@/infrastructure/repositories/prisma-system-setup.repository";
+import type { ISystemSeederService } from "@/core/services";
+import { SystemSeederService } from "@/infrastructure/services/system-seeder.service";
 
 // Use Cases
 import { CheckSystemHealthUseCase } from "@/core/use-cases/system-setup/check-system-health.use-case";
@@ -28,6 +30,11 @@ export function bindSystemSetupDependencies(container: Container): void {
   container
     .bind<ISystemSetupRepository>(DI_TOKENS.ISystemSetupRepository)
     .to(PrismaSystemSetupRepository)
+    .inSingletonScope();
+
+  container
+    .bind<ISystemSeederService>(DI_TOKENS.ISystemSeederService)
+    .to(SystemSeederService)
     .inSingletonScope();
 
   // ==========================================

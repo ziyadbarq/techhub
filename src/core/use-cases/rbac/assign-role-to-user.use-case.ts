@@ -12,9 +12,11 @@ import {
   RoleNotFoundError,
   RoleAlreadyAssignedError,
 } from "../../domain/errors/rbac-errors";
-import { invalidatePermissionCache } from "@/lib/permissions/cache";
-import { validateRoleAddition } from "@/lib/rbac/role-conflicts";
-import type { RoleConflict } from "@/lib/rbac/role-conflicts";
+import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
+import type {
+  IRbacPolicyService,
+  RoleConflict,
+} from "@/core/services/rbac-policy.service.interface";
 
 export interface AssignRoleToUserRequest {
   userId: string;
@@ -45,6 +47,10 @@ export class AssignRoleToUserUseCase {
     private readonly roleRepository: IRoleRepository,
     @inject(DI_TOKENS.IAuditLogRepository)
     private readonly auditLogRepository: IAuditLogRepository,
+    @inject(DI_TOKENS.IRbacPolicyService)
+    private readonly rbacPolicyService: IRbacPolicyService,
+    @inject(DI_TOKENS.IPermissionCacheService)
+    private readonly permissionCacheService: IPermissionCacheService,
   ) {}
 
   async execute(request: AssignRoleToUserRequest): Promise<UserRole> {
@@ -88,7 +94,10 @@ export class AssignRoleToUserUseCase {
     }
 
     // Validate role conflicts
-    const conflictValidation = validateRoleAddition(activeRoleNames, role.name);
+    const conflictValidation = this.rbacPolicyService.validateRoleAddition(
+      activeRoleNames,
+      role.name,
+    );
 
     // Block assignment if critical conflicts exist
     const hasCriticalConflicts = conflictValidation.conflicts.some(
@@ -161,7 +170,7 @@ export class AssignRoleToUserUseCase {
     });
 
     // Invalidate permission cache for the user
-    invalidatePermissionCache("user", request.userId);
+    this.permissionCacheService.invalidate("user", request.userId);
 
     return createdUserRole;
   }

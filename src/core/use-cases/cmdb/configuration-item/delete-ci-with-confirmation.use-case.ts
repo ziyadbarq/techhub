@@ -15,8 +15,10 @@
 
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
-import type { IConfigurationItemRepository } from "@/core/repositories/configuration-item.repository.interface";
-import type { Prisma, PrismaClient } from "@/generated/prisma/server";
+import type {
+  CIDeletionContext,
+  IConfigurationItemRepository,
+} from "@/core/repositories/configuration-item.repository.interface";
 
 export interface DeleteCIConfirmationRequest {
   id: string;
@@ -26,6 +28,8 @@ export interface CIDependencies {
   relationshipsFrom: number; // Outgoing relationships (this CI depends on others)
   relationshipsTo: number; // Incoming relationships (others depend on this CI)
   impactingRelationshipsTo: number; // Critical: Relationships with impacting types
+  activeRelationshipsTo: number;
+  activeRelationshipsFrom: number;
 }
 
 export interface RelationshipImpact {
@@ -52,54 +56,30 @@ export interface DeleteCIConfirmationResponse {
   message: string;
 }
 
-type ConfigurationItemWithRelations = Prisma.ConfigurationItemGetPayload<{
-  include: {
-    ciClass: true;
-    lifecycleState: true;
-  };
-}>;
-
-type CIRelationshipWithRelations = Prisma.CIRelationshipGetPayload<{
-  include: {
-    fromCi: true;
-    relationshipType: true;
-  };
-}>;
+type ConfigurationItemWithRelations = CIDeletionContext["ci"];
 
 @injectable()
 export class DeleteCIWithConfirmationUseCase {
   constructor(
     @inject(DI_TOKENS.IConfigurationItemRepository)
     private readonly ciRepository: IConfigurationItemRepository,
-    @inject(DI_TOKENS.PrismaClient)
-    private readonly prisma: PrismaClient,
   ) {}
 
   async execute(
     request: DeleteCIConfirmationRequest,
   ): Promise<DeleteCIConfirmationResponse> {
     // Check if CI exists
-    const ci = await this.prisma.configurationItem.findUnique({
-      where: { id: request.id },
-      include: {
-        ciClass: true,
-        lifecycleState: true,
-      },
-    });
+    const context = await this.ciRepository.getDeletionContext(request.id);
 
-    if (!ci) {
+    if (!context) {
       throw new Error(`Configuration Item with ID "${request.id}" not found`);
     }
 
+    const { ci, dependencies, impactingRelationships } = context;
+
     // Check all dependencies
-    const dependencies = await this.checkDependencies(request.id);
     const totalDependencies =
       dependencies.relationshipsFrom + dependencies.relationshipsTo;
-
-    // Get detailed relationship impacts
-    const impactingRelationships = await this.getImpactingRelationships(
-      request.id,
-    );
 
     // Determine blockers and warnings
     const blockers: string[] = [];
@@ -129,30 +109,18 @@ export class DeleteCIWithConfirmationUseCase {
 
     // Critical blocker: Check for active relationships to critical infrastructure
     if (dependencies.relationshipsTo > 0) {
-      const activeRelationshipsTo = await this.prisma.cIRelationship.count({
-        where: {
-          toCiId: request.id,
-          isActive: true,
-        },
-      });
-      if (activeRelationshipsTo > 0) {
+      if (dependencies.activeRelationshipsTo > 0) {
         warnings.push(
-          `${activeRelationshipsTo} active relationship(s) from other CIs. Review topology impacts.`,
+          `${dependencies.activeRelationshipsTo} active relationship(s) from other CIs. Review topology impacts.`,
         );
       }
     }
 
     // Warning: Outgoing relationships (this CI depends on others)
     if (dependencies.relationshipsFrom > 0) {
-      const activeRelationshipsFrom = await this.prisma.cIRelationship.count({
-        where: {
-          fromCiId: request.id,
-          isActive: true,
-        },
-      });
-      if (activeRelationshipsFrom > 0) {
+      if (dependencies.activeRelationshipsFrom > 0) {
         warnings.push(
-          `${activeRelationshipsFrom} active relationship(s) to other CIs will be removed.`,
+          `${dependencies.activeRelationshipsFrom} active relationship(s) to other CIs will be removed.`,
         );
       }
     }
@@ -186,7 +154,7 @@ export class DeleteCIWithConfirmationUseCase {
       canDelete,
       ciKey: ci.ciKey || "",
       ciName: ci.name,
-      ciClass: ci.ciClass?.name || "Unknown",
+      ciClass: ci.ciClassName || "Unknown",
       criticality: ci.criticality || "MEDIUM",
       environment: ci.environment || "DEV",
       dependencies,
@@ -197,58 +165,6 @@ export class DeleteCIWithConfirmationUseCase {
       topologyImpact,
       message,
     };
-  }
-
-  /**
-   * Check all CI dependencies using Prisma counts
-   */
-  private async checkDependencies(ciId: string): Promise<CIDependencies> {
-    const [relationshipsFrom, relationshipsTo, impactingRelationshipsTo] =
-      await Promise.all([
-        // Outgoing: This CI depends on others
-        this.prisma.cIRelationship.count({ where: { fromCiId: ciId } }),
-        // Incoming: Others depend on this CI
-        this.prisma.cIRelationship.count({ where: { toCiId: ciId } }),
-        // Critical incoming: Count relationships with impacting types
-        this.prisma.cIRelationship.count({
-          where: {
-            toCiId: ciId,
-            isActive: true,
-            relationshipType: {
-              isImpacting: true,
-            },
-          },
-        }),
-      ]);
-
-    return {
-      relationshipsFrom,
-      relationshipsTo,
-      impactingRelationshipsTo,
-    };
-  }
-
-  /**
-   * Get detailed list of impacting relationships (where others depend on this CI)
-   */
-  private async getImpactingRelationships(
-    ciId: string,
-  ): Promise<RelationshipImpact[]> {
-    const relationships = await this.prisma.cIRelationship.findMany({
-      where: { toCiId: ciId },
-      include: {
-        fromCi: true,
-        relationshipType: true,
-      },
-    });
-
-    return relationships.map((rel: CIRelationshipWithRelations) => ({
-      relationshipType: rel.relationshipType.name,
-      relatedCIKey: rel.fromCi.ciKey || "",
-      relatedCIName: rel.fromCi.name,
-      isImpacting: rel.relationshipType.isImpacting,
-      isActive: rel.isActive,
-    }));
   }
 
   /**
@@ -297,20 +213,6 @@ export class DeleteCIWithConfirmationUseCase {
       throw new Error(`Configuration Item with ID "${id}" not found`);
     }
 
-    // Perform hard delete
-    // Due to onDelete: Restrict constraints, relationships must be deleted first
-    await this.prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-      // Delete all relationships (both from and to)
-      await tx.cIRelationship.deleteMany({
-        where: {
-          OR: [{ fromCiId: id }, { toCiId: id }],
-        },
-      });
-
-      // Delete the CI
-      await tx.configurationItem.delete({
-        where: { id },
-      });
-    });
+    await this.ciRepository.deleteWithRelationships(id);
   }
 }

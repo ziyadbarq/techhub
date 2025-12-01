@@ -9,7 +9,7 @@ import type { ISystemSetupRepository } from "@/core/repositories/system-setup-re
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
 import type { IJobQueueService } from "@/core/services/job-queue.service.interface";
-import type { SystemHealthCheckDto } from "@/interface-adapters/dtos/system-setup.dto";
+import type { SystemHealthCheckDto } from "@/core/dtos/system-setup.dto";
 import { QUEUE_NAMES } from "@/core/domain/jobs/job-names";
 
 @injectable()

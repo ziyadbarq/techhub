@@ -1,10 +1,7 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
-import { injectable } from "inversify";
-import { prisma } from "@/infrastructure/database/prisma/client";
+import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
 import type { OwnershipType } from "@/generated/prisma";
+import type { IServiceOwnershipRepository } from "@/core/repositories/service-ownership.repository.interface";
 
 export interface SetPrimaryOwnerRequest {
   serviceId: string;
@@ -14,44 +11,27 @@ export interface SetPrimaryOwnerRequest {
 
 @injectable()
 export class SetPrimaryOwnerUseCase {
-  async execute(request: SetPrimaryOwnerRequest): Promise<void> {
-    // Check if ownership exists
-    const ownership = await prisma.serviceOwnership.findUnique({
-      where: {
-        serviceId_personId_ownershipType: {
-          serviceId: request.serviceId,
-          personId: request.personId,
-          ownershipType: request.ownershipType,
-        },
-      },
-    });
+  constructor(
+    @inject(DI_TOKENS.IServiceOwnershipRepository)
+    private readonly serviceOwnershipRepository: IServiceOwnershipRepository,
+  ) {}
 
+  async execute(request: SetPrimaryOwnerRequest): Promise<void> {
+    const ownership = await this.serviceOwnershipRepository.find(
+      request.serviceId,
+      request.personId,
+      request.ownershipType,
+    );
     if (!ownership) {
       throw new Error(
         `Ownership record not found for service ${request.serviceId}, person ${request.personId}, type ${request.ownershipType}`,
       );
     }
 
-    // Unset other primary owners of the same type for this service
-    await prisma.serviceOwnership.updateMany({
-      where: {
-        serviceId: request.serviceId,
-        ownershipType: request.ownershipType,
-        isPrimary: true,
-      },
-      data: {
-        isPrimary: false,
-      },
-    });
-
-    // Set this ownership as primary
-    await prisma.serviceOwnership.update({
-      where: {
-        id: ownership.id,
-      },
-      data: {
-        isPrimary: true,
-      },
-    });
+    await this.serviceOwnershipRepository.setPrimaryOwner(
+      request.serviceId,
+      request.ownershipType,
+      request.personId,
+    );
   }
 }

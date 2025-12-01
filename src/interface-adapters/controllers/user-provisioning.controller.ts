@@ -18,7 +18,8 @@ import type { ResetUserPasswordUseCase } from "@/core/use-cases/user-provisionin
 import type { LinkUserToPersonUseCase } from "@/core/use-cases/user-provisioning/link-user-to-person.use-case";
 import type { CheckPermissionUseCase } from "@/core/use-cases/rbac/check-permission.use-case";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { prisma } from "@/infrastructure/database/prisma/client";
+import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
+import type { IUserRepository } from "@/core/repositories/user-repository.interface";
 
 /**
  * Person without User account DTO
@@ -86,28 +87,10 @@ export async function listPersonsWithoutUsersAction(): Promise<
     }
 
     // Fetch Persons without userId
-    const persons = await prisma.person.findMany({
-      where: {
-        userId: null,
-        isActive: true, // Only show active employees
-      },
-      include: {
-        orgUnit: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        primaryRole: {
-          select: {
-            id: true,
-            name: true,
-            displayName: true,
-          },
-        },
-      },
-      orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
-    });
+    const personRepository = container.get<IPersonRepository>(
+      DI_TOKENS.IPersonRepository,
+    );
+    const persons = await personRepository.findNotLinkedToUsersWithDetails();
 
     const data: PersonWithoutUserDTO[] = persons.map((person) => ({
       id: person.id,
@@ -119,8 +102,14 @@ export async function listPersonsWithoutUsersAction(): Promise<
       title: person.title,
       department: person.department,
       isActive: person.isActive,
-      orgUnit: person.orgUnit,
-      primaryRole: person.primaryRole,
+      orgUnit: person.orgUnit ?? { id: "", name: "" },
+      primaryRole:
+        person.primaryRole ??
+        ({
+          id: "",
+          name: "",
+          displayName: "",
+        } as PersonWithoutUserDTO["primaryRole"]),
     }));
 
     return { success: true, data };
@@ -246,16 +235,16 @@ export async function resetUserPasswordAction(
     revalidatePath("/admin/users");
 
     // Return result with personId (need to fetch from user)
-    const updatedUser = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { person: { select: { id: true } } },
-    });
+    const userRepository = container.get<IUserRepository>(
+      DI_TOKENS.IUserRepository,
+    );
+    const updatedUser = await userRepository.findByIdWithPerson(userId);
 
     return {
       success: true,
       data: {
         ...result,
-        personId: updatedUser?.person?.id ?? "",
+        personId: updatedUser?.personId ?? "",
       },
     };
   } catch (error) {
@@ -359,19 +348,10 @@ export async function listUsersWithoutPersonsAction(): Promise<
     }
 
     // Fetch Users without linked Person
-    const users = await prisma.user.findMany({
-      where: {
-        person: null,
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        image: true,
-        createdAt: true,
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    const userRepository = container.get<IUserRepository>(
+      DI_TOKENS.IUserRepository,
+    );
+    const users = await userRepository.findWithoutPerson();
 
     return { success: true, data: users };
   } catch (error) {
@@ -418,42 +398,22 @@ export async function listUnlinkedPersonsForUserAction(
     }
 
     // Get the target user's email
-    const targetUser = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { email: true },
-    });
+    const userRepository = container.get<IUserRepository>(
+      DI_TOKENS.IUserRepository,
+    );
+    const targetUser = await userRepository.findById(userId);
 
     if (!targetUser) {
       return { success: false, error: "User not found" };
     }
 
     // Find unlinked Persons with matching email
-    const persons = await prisma.person.findMany({
-      where: {
-        userId: null,
-        isActive: true,
-        email: {
-          equals: targetUser.email,
-          mode: "insensitive",
-        },
-      },
-      include: {
-        orgUnit: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        primaryRole: {
-          select: {
-            id: true,
-            name: true,
-            displayName: true,
-          },
-        },
-      },
-      orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
-    });
+    const personRepository = container.get<IPersonRepository>(
+      DI_TOKENS.IPersonRepository,
+    );
+    const persons = await personRepository.findNotLinkedToUsersByEmail(
+      targetUser.email,
+    );
 
     const data: PersonForLinkingDTO[] = persons.map((person) => ({
       id: person.id,
@@ -462,8 +422,14 @@ export async function listUnlinkedPersonsForUserAction(
       email: person.email,
       employeeId: person.employeeId,
       title: person.title,
-      orgUnit: person.orgUnit,
-      primaryRole: person.primaryRole,
+      orgUnit: person.orgUnit ?? { id: "", name: "" },
+      primaryRole:
+        person.primaryRole ??
+        ({
+          id: "",
+          name: "",
+          displayName: "",
+        } as PersonForLinkingDTO["primaryRole"]),
     }));
 
     return { success: true, data };
@@ -512,32 +478,22 @@ export async function listUnlinkedUsersForPersonAction(
     }
 
     // Get the target person's email
-    const targetPerson = await prisma.person.findUnique({
-      where: { id: personId },
-      select: { email: true },
-    });
+    const personRepository = container.get<IPersonRepository>(
+      DI_TOKENS.IPersonRepository,
+    );
+    const targetPerson = await personRepository.findById(personId);
 
     if (!targetPerson) {
       return { success: false, error: "Person not found" };
     }
 
     // Find unlinked Users with matching email
-    const users = await prisma.user.findMany({
-      where: {
-        person: null,
-        email: {
-          equals: targetPerson.email,
-          mode: "insensitive",
-        },
-      },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        createdAt: true,
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    const userRepository = container.get<IUserRepository>(
+      DI_TOKENS.IUserRepository,
+    );
+    const users = await userRepository.findWithoutPersonByEmail(
+      targetPerson.email,
+    );
 
     return { success: true, data: users };
   } catch (error) {

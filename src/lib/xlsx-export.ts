@@ -7,7 +7,20 @@
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { format } from "date-fns";
-import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
+
+export interface AssetExportInput {
+  assetTag: string;
+  serialNumber?: string | null;
+  categoryName?: string | null;
+  modelName?: string | null;
+  vendorName?: string | null;
+  stockLocationName?: string | null;
+  lifecycleStateName?: string | null;
+  condition?: string | null;
+  note?: string | null;
+  createdAt: string | Date;
+  attributes?: Record<string, unknown> | null;
+}
 
 /**
  * Format a custom field value for export
@@ -31,8 +44,8 @@ function formatCustomFieldValue(value: unknown): string {
 /**
  * Export assets to XLSX format
  */
-export function exportAssetsToXLSX(
-  assets: AssetDTO[],
+export function exportAssetsToXLSX<T extends AssetExportInput>(
+  assets: T[],
   options?: {
     filename?: string;
   },

@@ -11,7 +11,7 @@ import {
   PermissionNotFoundError,
   SystemPermissionModificationError,
 } from "../../domain/errors/rbac-errors";
-import { invalidatePermissionCache } from "@/lib/permissions/cache";
+import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
 
 export interface UpdatePermissionRequest {
   id: string;
@@ -30,6 +30,8 @@ export class UpdatePermissionUseCase {
     private readonly permissionRepository: IPermissionRepository,
     @inject(DI_TOKENS.IAuditLogRepository)
     private readonly auditLogRepository: IAuditLogRepository,
+    @inject(DI_TOKENS.IPermissionCacheService)
+    private readonly permissionCacheService: IPermissionCacheService,
   ) {}
 
   async execute(request: UpdatePermissionRequest): Promise<Permission> {
@@ -82,7 +84,7 @@ export class UpdatePermissionUseCase {
     });
 
     // Permission activation/deactivation affects access immediately
-    invalidatePermissionCache("all");
+    this.permissionCacheService.invalidate("all");
 
     return savedPermission;
   }

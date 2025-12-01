@@ -3,6 +3,32 @@
  */
 
 import type { CIClassField } from "@/core/domain/entities/ci-class-field.entity";
+import type { FieldDataTypeEnum } from "@/core/domain/value-objects/foundation-enums";
+
+export interface CIClassFieldWithDefinition {
+  id: string;
+  ciClassId: string;
+  fieldDefinitionId: string;
+  isRequired: boolean;
+  isUnique: boolean;
+  isVisible: boolean;
+  defaultValue: unknown;
+  uiOrder: number;
+  note: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  fieldDefinition: {
+    id: string;
+    name: string;
+    label: string;
+    description: string | null;
+    dataType: FieldDataTypeEnum | string;
+    enumOptions: unknown;
+    validationRules: unknown;
+    defaultValue: unknown;
+    uiGroup: string | null;
+  };
+}
 
 export interface ICIClassFieldRepository {
   /**
@@ -19,6 +45,13 @@ export interface ICIClassFieldRepository {
    * Find all CI class fields for a specific CI class
    */
   findByCIClassId(ciClassId: string): Promise<CIClassField[]>;
+
+  /**
+   * Find all class fields with FieldDefinition included
+   */
+  findByCIClassIdWithDefinition(
+    ciClassId: string,
+  ): Promise<CIClassFieldWithDefinition[]>;
 
   /**
    * Find a specific field definition for a CI class

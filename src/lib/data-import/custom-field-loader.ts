@@ -6,40 +6,43 @@
  */
 
 import type { EntityFieldConfig } from "./entity-config.types";
-import type { EnrichedAssetCategoryFieldDTO } from "@/interface-adapters/presenters/asset-category-field.presenter";
-import { listEnrichedAssetCategoryFieldsAction } from "@/interface-adapters/controllers/asset-category-field.controller";
+
+export interface CustomFieldDefinition {
+  fieldName: string;
+  fieldLabel: string;
+  fieldDescription: string | null;
+  dataType: string;
+  enumOptions: string[] | null;
+  isRequired: boolean;
+  isUnique: boolean;
+  isVisible?: boolean;
+  uiOrder: number;
+  validationRules?: unknown;
+}
 
 /**
- * Fetches custom fields for an asset category and converts them to EntityFieldConfig format
+ * Converts an array of custom field definitions to EntityFieldConfig entries.
+ * Callers fetch field definitions at the adapter layer and pass them here to avoid cross-layer imports.
  */
-export async function loadCustomFieldsForCategory(
-  categoryId: string,
-): Promise<EntityFieldConfig[]> {
-  try {
-    const result = await listEnrichedAssetCategoryFieldsAction(categoryId);
-
-    if (!result.success) {
-      return [];
-    }
-
-    // Filter to only visible fields and convert to EntityFieldConfig
-    const customFields = result.data
-      .filter((field) => field.isVisible)
-      .sort((a, b) => a.uiOrder - b.uiOrder)
-      .map((field) => convertToEntityFieldConfig(field));
-
-    return customFields;
-  } catch {
-    return [];
-  }
+export function toEntityFieldConfigs(
+  fields: CustomFieldDefinition[],
+): EntityFieldConfig[] {
+  return fields
+    .filter((field) => field.isVisible ?? true)
+    .sort((a, b) => a.uiOrder - b.uiOrder)
+    .map((field) => convertToEntityFieldConfig(field));
 }
 
 /**
  * Converts an EnrichedAssetCategoryFieldDTO to an EntityFieldConfig
  */
 function convertToEntityFieldConfig(
-  field: EnrichedAssetCategoryFieldDTO,
+  field: CustomFieldDefinition,
 ): EntityFieldConfig {
+  const rules = (field.validationRules ?? null) as Record<
+    string,
+    unknown
+  > | null;
   // Base config without type - type is added in switch cases
   const baseConfig = {
     name: `attributes.${field.fieldName}`,
@@ -58,7 +61,7 @@ function convertToEntityFieldConfig(
       return {
         ...baseConfig,
         type: "string",
-        maxLength: getMaxLength(field.validationRules),
+        maxLength: getMaxLength(rules),
         sanitization: [{ operation: "trim" }],
       };
 
@@ -66,7 +69,7 @@ function convertToEntityFieldConfig(
       return {
         ...baseConfig,
         type: "string",
-        maxLength: getMaxLength(field.validationRules) || 5000,
+        maxLength: getMaxLength(rules) || 5000,
         sanitization: [{ operation: "trim" }],
       };
 
@@ -74,8 +77,8 @@ function convertToEntityFieldConfig(
       return {
         ...baseConfig,
         type: "number",
-        min: getMin(field.validationRules),
-        max: getMax(field.validationRules),
+        min: getMin(rules),
+        max: getMax(rules),
         validations: [
           {
             type: "integer",
@@ -88,8 +91,8 @@ function convertToEntityFieldConfig(
       return {
         ...baseConfig,
         type: "number",
-        min: getMin(field.validationRules),
-        max: getMax(field.validationRules),
+        min: getMin(rules),
+        max: getMax(rules),
       };
 
     case "BOOLEAN":

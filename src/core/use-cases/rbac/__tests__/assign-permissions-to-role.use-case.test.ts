@@ -15,6 +15,8 @@ import {
   PermissionNotFoundError,
   SystemRoleModificationError,
 } from "@/core/domain/errors/rbac-errors";
+import type { IRbacPolicyService } from "@/core/services/rbac-policy.service.interface";
+import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
 import { permissionCache } from "@/lib/permissions/cache";
 
 class MockRoleRepository implements Partial<IRoleRepository> {
@@ -115,11 +117,26 @@ describe("AssignPermissionsToRoleUseCase", () => {
   let mockRoleRepository: MockRoleRepository;
   let mockPermissionRepository: MockPermissionRepository;
   let mockAuditLogRepository: MockAuditLogRepository;
+  let mockRbacPolicyService: IRbacPolicyService;
+  let mockPermissionCacheService: IPermissionCacheService;
 
   beforeEach(() => {
     mockRoleRepository = new MockRoleRepository();
     mockPermissionRepository = new MockPermissionRepository();
     mockAuditLogRepository = new MockAuditLogRepository();
+    mockRbacPolicyService = {
+      validatePermissionDependencies: vi.fn().mockReturnValue({
+        valid: true,
+        missing: [],
+      }),
+      validateRoleAddition: vi.fn(),
+      detectRoleConflicts: vi.fn(),
+    };
+    mockPermissionCacheService = {
+      get: vi.fn(),
+      set: vi.fn(),
+      invalidate: vi.fn(),
+    };
     permissionCache.invalidateAll();
     mockRoleRepository.setPermissionLookup((id: string) =>
       mockPermissionRepository.getById(id),
@@ -129,6 +146,8 @@ describe("AssignPermissionsToRoleUseCase", () => {
       mockRoleRepository as unknown as IRoleRepository,
       mockPermissionRepository as unknown as IPermissionRepository,
       mockAuditLogRepository as unknown as IAuditLogRepository,
+      mockRbacPolicyService,
+      mockPermissionCacheService,
     );
   });
 

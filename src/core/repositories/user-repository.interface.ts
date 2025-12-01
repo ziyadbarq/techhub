@@ -37,6 +37,23 @@ export interface IUserRepository {
   findById(id: string): Promise<User | null>;
 
   /**
+   * Find user by ID including linked person ID
+   */
+  findByIdWithPerson(
+    id: string,
+  ): Promise<{ id: string; personId: string | null } | null>;
+
+  /**
+   * Find users without linked person records
+   */
+  findWithoutPerson(): Promise<User[]>;
+
+  /**
+   * Find unlinked users by email (case-insensitive)
+   */
+  findWithoutPersonByEmail(email: string): Promise<User[]>;
+
+  /**
    * Create user directly (for system setup)
    * This bypasses Better Auth and creates user directly in database
    */

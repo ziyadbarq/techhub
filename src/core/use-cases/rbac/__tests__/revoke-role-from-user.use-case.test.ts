@@ -17,6 +17,7 @@ import type { IAuditLogRepository } from "@/core/repositories/audit-log-reposito
 import { Role } from "@/core/domain/entities/role.entity";
 import { UserRole } from "@/core/domain/entities/user-role.entity";
 import { RoleNotFoundError } from "@/core/domain/errors/rbac-errors";
+import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
 import { permissionCache } from "@/lib/permissions/cache";
 
 /**
@@ -81,12 +82,18 @@ describe("RevokeRoleFromUserUseCase", () => {
   let mockUserRoleRepository: MockUserRoleRepository;
   let mockRoleRepository: MockRoleRepository;
   let mockAuditLogRepository: MockAuditLogRepository;
+  let mockPermissionCacheService: IPermissionCacheService;
 
   beforeEach(() => {
     // Create fresh instances
     mockUserRoleRepository = new MockUserRoleRepository();
     mockRoleRepository = new MockRoleRepository();
     mockAuditLogRepository = new MockAuditLogRepository();
+    mockPermissionCacheService = {
+      get: vi.fn(),
+      set: vi.fn(),
+      invalidate: vi.fn(),
+    };
 
     // Clear permission cache
     permissionCache.invalidateAll();
@@ -96,6 +103,7 @@ describe("RevokeRoleFromUserUseCase", () => {
       mockUserRoleRepository as unknown as IUserRoleRepository,
       mockRoleRepository as unknown as IRoleRepository,
       mockAuditLogRepository as unknown as IAuditLogRepository,
+      mockPermissionCacheService,
     );
   });
 

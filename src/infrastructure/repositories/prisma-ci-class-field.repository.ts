@@ -3,7 +3,10 @@
  */
 
 import { injectable } from "inversify";
-import type { ICIClassFieldRepository } from "@/core/repositories/ci-class-field.repository.interface";
+import type {
+  CIClassFieldWithDefinition,
+  ICIClassFieldRepository,
+} from "@/core/repositories/ci-class-field.repository.interface";
 import { CIClassField } from "@/core/domain/entities/ci-class-field.entity";
 import { prisma } from "@/infrastructure/database/prisma/client";
 import type { CIClassField as PrismaCIClassField } from "@/generated/prisma";
@@ -128,7 +131,9 @@ export class PrismaCIClassFieldRepository implements ICIClassFieldRepository {
    * 1. Class-specific fields linked via CIClassField
    * 2. Global CONFIGURATION_ITEM fields (isGlobal=true, entityType="CONFIGURATION_ITEM")
    */
-  async findByCIClassIdWithDefinition(ciClassId: string) {
+  async findByCIClassIdWithDefinition(
+    ciClassId: string,
+  ): Promise<CIClassFieldWithDefinition[]> {
     // 1. Get class-specific fields from CIClassField
     const classFields = await prisma.cIClassField.findMany({
       where: { ciClassId },

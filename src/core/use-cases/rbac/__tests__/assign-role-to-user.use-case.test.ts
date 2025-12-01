@@ -21,6 +21,8 @@ import {
   RoleNotFoundError,
   RoleAlreadyAssignedError,
 } from "@/core/domain/errors/rbac-errors";
+import type { IRbacPolicyService } from "@/core/services/rbac-policy.service.interface";
+import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
 import { permissionCache } from "@/lib/permissions/cache";
 
 /**
@@ -89,12 +91,27 @@ describe("AssignRoleToUserUseCase", () => {
   let mockUserRoleRepository: MockUserRoleRepository;
   let mockRoleRepository: MockRoleRepository;
   let mockAuditLogRepository: MockAuditLogRepository;
+  let mockRbacPolicyService: IRbacPolicyService;
+  let mockPermissionCacheService: IPermissionCacheService;
 
   beforeEach(() => {
     // Create fresh instances
     mockUserRoleRepository = new MockUserRoleRepository();
     mockRoleRepository = new MockRoleRepository();
     mockAuditLogRepository = new MockAuditLogRepository();
+    mockRbacPolicyService = {
+      validateRoleAddition: vi.fn().mockReturnValue({
+        canAdd: true,
+        conflicts: [],
+      }),
+      detectRoleConflicts: vi.fn(),
+      validatePermissionDependencies: vi.fn(),
+    };
+    mockPermissionCacheService = {
+      get: vi.fn(),
+      set: vi.fn(),
+      invalidate: vi.fn(),
+    };
 
     // Clear permission cache
     permissionCache.invalidateAll();
@@ -104,6 +121,8 @@ describe("AssignRoleToUserUseCase", () => {
       mockUserRoleRepository as unknown as IUserRoleRepository,
       mockRoleRepository as unknown as IRoleRepository,
       mockAuditLogRepository as unknown as IAuditLogRepository,
+      mockRbacPolicyService,
+      mockPermissionCacheService,
     );
   });
 

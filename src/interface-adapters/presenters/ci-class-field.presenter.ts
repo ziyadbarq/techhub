@@ -6,6 +6,7 @@
 import type { CIClassField } from "@/core/domain/entities/ci-class-field.entity";
 import type { FieldDataTypeEnum } from "@/core/domain/value-objects/foundation-enums";
 import type { ValidationRules } from "@/core/domain/entities/field-definition.entity";
+import type { CIClassFieldWithDefinition } from "@/core/repositories/ci-class-field.repository.interface";
 
 export interface CIClassFieldDTO {
   id: string;
@@ -35,34 +36,6 @@ export interface EnrichedCIClassFieldDTO extends CIClassFieldDTO {
   validationRules: ValidationRules | null;
   fieldDefaultValue: unknown;
   uiGroup: string | null;
-}
-
-/**
- * Input for creating enriched DTOs from repository with included FieldDefinition
- */
-export interface CIClassFieldWithDefinition {
-  id: string;
-  ciClassId: string;
-  fieldDefinitionId: string;
-  isRequired: boolean;
-  isUnique: boolean;
-  isVisible: boolean;
-  defaultValue: unknown;
-  uiOrder: number;
-  note: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-  fieldDefinition: {
-    id: string;
-    name: string;
-    label: string;
-    description: string | null;
-    dataType: FieldDataTypeEnum | string;
-    enumOptions: unknown;
-    validationRules: unknown;
-    defaultValue: unknown;
-    uiGroup: string | null;
-  };
 }
 
 export class CIClassFieldPresenter {

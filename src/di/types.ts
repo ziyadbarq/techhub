@@ -217,6 +217,36 @@ export const DI_TOKENS = {
    */
   IAssetMovementService: Symbol.for("IAssetMovementService"),
 
+  /**
+   * Token for IRbacPolicyService
+   * Handles role conflict detection and permission dependency validation
+   */
+  IRbacPolicyService: Symbol.for("IRbacPolicyService"),
+
+  /**
+   * Token for IPermissionCacheService
+   * Wraps permission cache get/set/invalidate operations
+   */
+  IPermissionCacheService: Symbol.for("IPermissionCacheService"),
+
+  /**
+   * Token for ISystemSeederService
+   * Handles database cleanup and minimal seeding workflows
+   */
+  ISystemSeederService: Symbol.for("ISystemSeederService"),
+
+  /**
+   * Token for IGraphUserMapperService
+   * Wraps Graph user normalization/mapping helpers
+   */
+  IGraphUserMapperService: Symbol.for("IGraphUserMapperService"),
+
+  /**
+   * Token for IIntuneDeviceMapperService
+   * Wraps Intune device transformation helpers
+   */
+  IIntuneDeviceMapperService: Symbol.for("IIntuneDeviceMapperService"),
+
   // ==========================================
   // Use Case Tokens (Example)
   // ==========================================

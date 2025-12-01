@@ -10,7 +10,7 @@ import {
   RoleNotFoundError,
   SystemRoleModificationError,
 } from "../../domain/errors/rbac-errors";
-import { invalidatePermissionCache } from "@/lib/permissions/cache";
+import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
 
 export interface DeleteRoleRequest {
   roleId: string;
@@ -26,6 +26,8 @@ export class DeleteRoleUseCase {
     private readonly roleRepository: IRoleRepository,
     @inject(DI_TOKENS.IAuditLogRepository)
     private readonly auditLogRepository: IAuditLogRepository,
+    @inject(DI_TOKENS.IPermissionCacheService)
+    private readonly permissionCacheService: IPermissionCacheService,
   ) {}
 
   async execute(request: DeleteRoleRequest): Promise<void> {
@@ -60,6 +62,6 @@ export class DeleteRoleUseCase {
     });
 
     // Removing a role changes effective permissions
-    invalidatePermissionCache("all");
+    this.permissionCacheService.invalidate("all");
   }
 }

@@ -1,4 +1,4 @@
-import type { Session, User } from "./better-auth";
+import type { Session, User } from "@/interface-adapters/auth/better-auth";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
