@@ -194,6 +194,10 @@ stage_backup() {
     local backup_dir="$ROOT_DIR/local/backups"
     mkdir -p "$backup_dir"
 
+    # Ensure local temp directory exists for tracking last backup
+    local tmp_dir="$ROOT_DIR/local/tmp"
+    mkdir -p "$tmp_dir"
+
     # Generate backup filename
     local backup_file="$backup_dir/barq-assets-$(date +%Y%m%d_%H%M%S).sql"
 
@@ -216,8 +220,9 @@ stage_backup() {
     log_success "Database backup created: $(basename "$backup_file") (${backup_size})"
 
     # Store backup path for potential rollback
-    echo "$backup_file" > "/tmp/barq-last-backup.txt"
-    log "Backup path saved for rollback: /tmp/barq-last-backup.txt"
+    local last_backup_file="$tmp_dir/barq-last-backup.txt"
+    echo "$backup_file" > "$last_backup_file"
+    log "Backup path saved for rollback: $last_backup_file"
 }
 
 # ========================================

@@ -426,7 +426,7 @@ Create `/etc/logrotate.d/barq-assets`:
 - **Created:** Before every deployment (Stage 2)
 - **Location:** `/home/opc/node-projects/barq-assets/local/backups/`
 - **Format:** `barq-assets-YYYYMMDD_HHMMSS.sql`
-- **Latest backup path:** Stored in `/tmp/barq-last-backup.txt`
+- **Latest backup path:** Stored in `/home/opc/node-projects/barq-assets/local/tmp/barq-last-backup.txt`
 
 ### **Manual Backup**
 

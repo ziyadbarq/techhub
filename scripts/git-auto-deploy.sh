@@ -376,6 +376,21 @@ main() {
 
     log "Changes detected: ${LOCAL_HEAD:0:7} -> ${REMOTE_HEAD:0:7}"
 
+    # Sync local branch to remote before deployment to avoid repeated triggers
+    log "Syncing local main to origin/main..."
+    if ! git checkout -f main >/dev/null 2>&1; then
+        log_error "Failed to checkout main"
+        notify "Barq Deploy Error" "Failed to checkout main" 1
+        exit 1
+    fi
+
+    if ! git reset --hard "$REMOTE_HEAD" >/dev/null 2>&1; then
+        log_error "Failed to reset to origin/main"
+        notify "Barq Deploy Error" "Failed to reset to origin/main" 1
+        exit 1
+    fi
+    log "Local repository updated to ${REMOTE_HEAD:0:7}"
+
     # Pre-deployment validation (quick DB/Redis check)
     log "Pre-deployment validation..."
 
