@@ -6,7 +6,7 @@
 import {
   CURRENCY_CODES,
   isSupportedCurrency,
-} from "@/lib/currencies.config";
+} from "@/core/shared/currencies.config";
 
 export interface ExchangeRateProps {
   id: string;
