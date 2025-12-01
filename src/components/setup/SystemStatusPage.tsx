@@ -86,10 +86,12 @@ interface SystemStatus {
   redis: HealthStatus;
   migrations: HealthStatus;
   rbac: HealthStatus;
+  worker: HealthStatus;
   databaseMessage?: string;
   redisMessage?: string;
   migrationsMessage?: string;
   rbacMessage?: string;
+  workerMessage?: string;
 }
 
 export function SystemStatusPage() {
@@ -98,6 +100,7 @@ export function SystemStatusPage() {
     redis: "checking",
     migrations: "checking",
     rbac: "checking",
+    worker: "checking",
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -113,7 +116,9 @@ export function SystemStatusPage() {
             redis: "error",
             migrations: "error",
             rbac: "error",
+            worker: "error",
             databaseMessage: "Failed to check system health",
+            workerMessage: "Worker status unavailable",
           });
           return;
         }
@@ -125,6 +130,7 @@ export function SystemStatusPage() {
           redis: health.redis.connected ? "healthy" : "unhealthy",
           migrations: health.migrations.applied ? "healthy" : "unhealthy",
           rbac: health.rbac.roles > 0 ? "healthy" : "unhealthy",
+          worker: health.worker.active ? "healthy" : "unhealthy",
           databaseMessage: health.database.message,
           redisMessage: health.redis.message,
           migrationsMessage: health.migrations.message,
@@ -132,6 +138,11 @@ export function SystemStatusPage() {
             health.rbac.roles === 0
               ? "No roles found - run database seeding"
               : `${health.rbac.roles} roles, ${health.rbac.permissions} permissions`,
+          workerMessage:
+            health.worker.message ??
+            (health.worker.error
+              ? `Worker check failed: ${health.worker.error}`
+              : undefined),
         });
       } catch (error) {
         console.error("Health check failed:", error);
@@ -140,7 +151,9 @@ export function SystemStatusPage() {
           redis: "error",
           migrations: "error",
           rbac: "error",
+          worker: "error",
           databaseMessage: "Unexpected error during health check",
+          workerMessage: "Worker status unavailable",
         });
       } finally {
         setIsLoading(false);
@@ -150,14 +163,15 @@ export function SystemStatusPage() {
     checkHealth();
   }, []);
 
-  const allHealthy =
+  const coreHealthy =
     !isLoading &&
     status.database === "healthy" &&
     status.redis === "healthy" &&
     status.migrations === "healthy" &&
     status.rbac === "healthy";
-
+  const workerHealthy = !isLoading && status.worker === "healthy";
   const needsSeeding = !isLoading && status.rbac === "unhealthy";
+  const workerWarning = coreHealthy && !workerHealthy;
 
   return (
     <div className="from-background to-muted/20 flex min-h-screen items-center justify-center bg-gradient-to-b p-4">
@@ -196,6 +210,11 @@ export function SystemStatusPage() {
                 message={status.migrationsMessage}
               />
               <StatusItem
+                label="Maintenance Worker"
+                status={status.worker}
+                message={status.workerMessage}
+              />
+              <StatusItem
                 label="RBAC Configuration"
                 status={status.rbac}
                 message={status.rbacMessage}
@@ -223,14 +242,21 @@ export function SystemStatusPage() {
               </Alert>
             )}
 
-            {allHealthy && (
+            {coreHealthy && (
               <Alert>
-                <CheckCircle2 className="h-4 w-4 text-green-600" />
-                <AlertTitle>System Ready</AlertTitle>
+                {workerHealthy ? (
+                  <CheckCircle2 className="h-4 w-4 text-green-600" />
+                ) : (
+                  <AlertCircle className="h-4 w-4 text-amber-500" />
+                )}
+                <AlertTitle>
+                  {workerHealthy ? "System Ready" : "Core Services Ready"}
+                </AlertTitle>
                 <AlertDescription className="mt-2 space-y-3">
                   <p>
-                    All system components are healthy. Create your administrator
-                    account via the UI.
+                    {workerHealthy
+                      ? "All system components are healthy. Create your administrator account via the UI."
+                      : "Core services are healthy. You can create your administrator account while you start the background worker."}
                   </p>
 
                   <div className="space-y-2">
@@ -283,11 +309,21 @@ export function SystemStatusPage() {
                       . New users will be assigned the viewer role by default.
                     </p>
                   </div>
+
+                  {workerWarning && (
+                    <div className="mt-2 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+                      Background worker is offline. Run{" "}
+                      <code className="font-mono text-xs">
+                        npm run worker:start
+                      </code>{" "}
+                      to enable backups, scheduled jobs, and maintenance tasks.
+                    </div>
+                  )}
                 </AlertDescription>
               </Alert>
             )}
 
-            {!allHealthy && !needsSeeding && (
+            {!coreHealthy && !needsSeeding && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>System Issues Detected</AlertTitle>

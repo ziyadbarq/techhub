@@ -11,7 +11,7 @@ The System Setup feature provides a streamlined solution for first-time installa
 
 **Key Features:**
 - System health status page at `/setup`
-- System health monitoring (database, Redis, migrations, RBAC)
+- System health monitoring (database, Redis, migrations, RBAC, background worker)
 - CLI-based database seeding (269 permissions + 10 roles)
 - UI-based administrator account creation (Better Auth) with manual promotion to system-administrator role
 - Admin dashboard for post-installation operations
@@ -57,6 +57,7 @@ Navigate to `/setup` to view system health status:
 - ✅ **Redis Connection**: Redis connectivity and ping test
 - ✅ **Database Migrations**: All migrations applied, no pending changes
 - ✅ **RBAC Configuration**: Roles and permissions seeded
+- ✅ **Background Worker**: Maintenance queue worker running (`npm run worker:start`)
 
 **Visual Indicators:**
 - 🟢 Green checkmark: Healthy
@@ -152,6 +153,7 @@ Tabbed interface with 4 panels:
 - Redis Connection (with ping test)
 - Environment Variables (required vars present)
 - Database Migrations (all applied, none pending)
+- Background Worker (maintenance queue running for backups/scheduled jobs)
 
 **Visual Indicators:**
 - ✅ Green checkmark: Healthy

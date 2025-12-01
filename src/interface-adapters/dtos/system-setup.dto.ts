@@ -50,6 +50,12 @@ export interface SystemHealthCheckDto {
     roles: number;
     permissions: number;
   };
+  worker: {
+    active: boolean;
+    queue: string;
+    error?: string;
+    message?: string;
+  };
   overall: boolean;
 }
 

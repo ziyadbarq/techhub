@@ -174,6 +174,33 @@ export function SystemHealthPanel() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Background Worker */}
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center justify-between text-sm font-medium">
+              Background Worker
+              {getStatusIcon(healthCheck?.worker.active)}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1">
+              <p
+                className={`text-sm font-medium ${getStatusColor(healthCheck?.worker.active)}`}
+              >
+                {getStatusText(healthCheck?.worker.active)}
+              </p>
+              {(healthCheck?.worker.message || healthCheck?.worker.error) && (
+                <p
+                  className={`text-xs ${healthCheck?.worker.active ? "text-muted-foreground" : "text-red-600"}`}
+                >
+                  {healthCheck?.worker.message ??
+                    `Worker error: ${healthCheck?.worker.error ?? "Unknown"}`}
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Refresh Button */}

@@ -363,6 +363,24 @@ export class SyncDevicesFromIntuneUseCase {
     try {
       const asset = await this.assetRepository.findBySerialNumber(serialNumber);
       if (asset) {
+        const existingDeviceForAsset =
+          await this.deviceRepository.findByLinkedAsset(asset.id);
+
+        if (existingDeviceForAsset && existingDeviceForAsset.id !== device.id) {
+          this.logger.warn(
+            "Skipping auto-link: asset already linked to another Intune device",
+            {
+              intuneDeviceId: device.intuneDeviceId,
+              assetId: asset.id,
+              assetTag: asset.assetTag,
+              serialNumber,
+              linkedIntuneDeviceId: existingDeviceForAsset.intuneDeviceId,
+              linkedDeviceId: existingDeviceForAsset.id,
+            },
+          );
+          return false;
+        }
+
         if (!dryRun) {
           device.linkToAsset(asset.id, "auto_serial");
           await this.deviceRepository.update(device);

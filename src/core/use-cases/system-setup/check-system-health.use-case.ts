@@ -8,7 +8,9 @@ import { DI_TOKENS } from "@/di/types";
 import type { ISystemSetupRepository } from "@/core/repositories/system-setup-repository.interface";
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
+import type { IJobQueueService } from "@/core/services/job-queue.service.interface";
 import type { SystemHealthCheckDto } from "@/interface-adapters/dtos/system-setup.dto";
+import { QUEUE_NAMES } from "@/core/domain/jobs/job-names";
 
 @injectable()
 export class CheckSystemHealthUseCase {
@@ -19,6 +21,8 @@ export class CheckSystemHealthUseCase {
     private readonly roleRepository: IRoleRepository,
     @inject(DI_TOKENS.IPermissionRepository)
     private readonly permissionRepository: IPermissionRepository,
+    @inject(DI_TOKENS.IJobQueueService)
+    private readonly jobQueueService: IJobQueueService,
   ) {}
 
   async execute(): Promise<SystemHealthCheckDto> {
@@ -92,12 +96,25 @@ export class CheckSystemHealthUseCase {
       permissionsCount = 0;
     }
 
+    // Check worker status (maintenance queue)
+    let maintenanceWorkerActive = false;
+    let workerError: string | undefined;
+    try {
+      maintenanceWorkerActive = await this.jobQueueService.hasActiveWorkers(
+        QUEUE_NAMES.MAINTENANCE,
+      );
+    } catch (_error) {
+      workerError =
+        _error instanceof Error ? _error.message : "Unknown worker error";
+    }
+
     // Overall health
     const overall =
       databaseConnected &&
       redisConnected &&
       environmentValid &&
-      migrationsApplied;
+      migrationsApplied &&
+      maintenanceWorkerActive;
 
     return {
       database: {
@@ -125,6 +142,16 @@ export class CheckSystemHealthUseCase {
       rbac: {
         roles: rolesCount,
         permissions: permissionsCount,
+      },
+      worker: {
+        active: maintenanceWorkerActive,
+        queue: QUEUE_NAMES.MAINTENANCE,
+        error: workerError,
+        message: maintenanceWorkerActive
+          ? "Maintenance worker connected"
+          : workerError
+            ? `Worker check failed: ${workerError}`
+            : "No active maintenance worker detected. Start with: npm run worker:start",
       },
       overall,
     };

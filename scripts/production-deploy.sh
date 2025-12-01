@@ -24,6 +24,14 @@ ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 LOG_DIR="$ROOT_DIR/local/logs"
 DEPLOY_LOG="$LOG_DIR/deploy-$(date +%Y%m%d_%H%M%S).log"
 
+# Flags
+FORCE_INSTALL=false
+for arg in "$@"; do
+    if [ "$arg" = "--install" ]; then
+        FORCE_INSTALL=true
+    fi
+done
+
 # Load environment variables
 if [ -f "$ROOT_DIR/.env.local" ]; then
     set -a
@@ -219,14 +227,19 @@ stage_backup() {
 stage_dependencies() {
     log_stage 3 "Dependencies, Type-Check & Prisma Generation"
 
-    # Check if node_modules exists
-    if ! file_exists "$ROOT_DIR/node_modules"; then
-        log "node_modules not found, running npm install..."
-        if ! run_command "npm install" npm install; then
+    # Install dependencies (include dev deps for type-checking)
+    if [ "$FORCE_INSTALL" = true ]; then
+        log "Force reinstall requested (--install): running npm ci --include=dev..."
+        if ! run_command "npm ci --include=dev" npm ci --include=dev; then
+            exit 30
+        fi
+    elif ! file_exists "$ROOT_DIR/node_modules"; then
+        log "node_modules not found, running npm ci --include=dev for reproducible install (includes dev deps)..."
+        if ! run_command "npm ci --include=dev" npm ci --include=dev; then
             exit 30
         fi
     else
-        log_skip "node_modules exists (run with --install flag to force reinstall)"
+        log_skip "node_modules exists (add --install to reinstall with dev deps)"
     fi
 
     # Run TypeScript type-check (safety net even though pre-commit hooks should catch this)
@@ -341,71 +354,12 @@ EOF
 
     rm -f "$ROOT_DIR/.cache-clear-temp.mjs"
 
-    # Smart seed - check if database needs seeding
-    log "Checking if database needs seeding..."
-
-    # Use Node.js script to check Role table (run from project directory)
-    cat > "$ROOT_DIR/.seed-check-temp.mjs" << 'EOF'
-import pg from 'pg';
-const { Pool } = pg;
-
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    connectionTimeoutMillis: 5000,
-});
-
-try {
-    const client = await pool.connect();
-
-    // Check if Role table exists
-    const tableCheck = await client.query(`
-        SELECT EXISTS (
-            SELECT FROM information_schema.tables
-            WHERE table_schema = 'public' AND table_name = 'Role'
-        ) as table_exists
-    `);
-
-    if (!tableCheck.rows[0].table_exists) {
-        console.log('SEED_REQUIRED');
-        client.release();
-        await pool.end();
-        process.exit(0);
-    }
-
-    // Check if Role table has data
-    const countResult = await client.query('SELECT COUNT(*) as count FROM "Role"');
-    const isEmpty = parseInt(countResult.rows[0].count, 10) === 0;
-
-    client.release();
-    await pool.end();
-
-    if (isEmpty) {
-        console.log('SEED_REQUIRED');
-        process.exit(0);
-    } else {
-        console.log('SEED_NOT_NEEDED');
-        process.exit(0);
-    }
-} catch (error) {
-    console.error('ERROR:', error.message);
-    await pool.end().catch(() => {});
-    process.exit(1);
-}
-EOF
-
-    local seed_check_result
-    seed_check_result=$(cd "$ROOT_DIR" && npx dotenv -e .env.local -- node .seed-check-temp.mjs 2>&1)
-    rm -f "$ROOT_DIR/.seed-check-temp.mjs"
-
-    if echo "$seed_check_result" | grep -q "SEED_REQUIRED"; then
-        log "Database is empty, seeding required"
-        if ! run_command "Database seeding" npx dotenv -e .env.local -- npx tsx src/infrastructure/database/prisma/seed.ts production; then
-            log_warning "Database seeding failed (non-critical, continuing)"
-        else
-            log_success "Database seeded successfully"
-        fi
+    # Always run production seeder (idempotent)
+    log "Running database seeding (production preset)..."
+    if ! run_command "Database seeding" npx dotenv -e .env.local -- npx tsx src/infrastructure/database/prisma/seed.ts production; then
+        log_warning "Database seeding failed (non-critical, continuing)"
     else
-        log_skip "Database already seeded"
+        log_success "Database seeded successfully"
     fi
 
     log_success "Cache and seed stage complete"
