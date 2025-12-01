@@ -51,6 +51,8 @@ interface NavigationContentProps {
     getBadgeValue: (item: NavItem) => string | undefined;
     onItemClick: () => void;
   }>;
+  /** Optional content rendered above navigation groups */
+  topContent?: React.ReactNode;
 }
 
 export const NavigationContent = React.memo(function NavigationContent({
@@ -67,6 +69,7 @@ export const NavigationContent = React.memo(function NavigationContent({
   getBadgeValue,
   onItemClick,
   NavigationGroupComponent,
+  topContent,
 }: NavigationContentProps) {
   return (
     <ScrollArea
@@ -95,6 +98,7 @@ export const NavigationContent = React.memo(function NavigationContent({
           </div>
         ) : (
           <TooltipProvider delayDuration={100}>
+            {topContent}
             {navGroups.map((group) => (
               <NavigationGroupComponent
                 key={group.id}

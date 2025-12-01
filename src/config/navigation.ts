@@ -6,7 +6,7 @@
  *
  * Architecture:
  * - Types: ./navigation.types.ts
- * - Groups: ./navigation-groups/*.ts (6 files, 14 groups total)
+ * - Groups: ./navigation-groups/*.ts (7 files, 8 groups total)
  * - Utils: ./navigation.utils.ts (filtering, permission checking, state management)
  *
  * Advanced features:
@@ -42,14 +42,17 @@ export type {
 // Main navigation
 import { mainNavGroup } from "./navigation-groups/main";
 
-// Setup group (consolidated for initial deployment)
-import { itamGroup } from "./navigation-groups/setup";
+// Foundation and setup data
+import { foundationGroup } from "./navigation-groups/foundation";
+
+// Asset catalog setup
+import { assetCatalogGroup } from "./navigation-groups/asset-catalog";
 
 // Asset-related groups
 import { assetsInventoryGroup } from "./navigation-groups/assets";
 
 // Services, CMDB, and maintenance
-import { servicesCmdbGroup } from "./navigation-groups/itam";
+import { servicesCmdbGroup } from "./navigation-groups/services-cmdb";
 
 // Compliance & extensions
 import {
@@ -70,19 +73,23 @@ import { adminSettingsGroup } from "./navigation-groups/system";
  *
  * Groups are arranged to keep data entry and key workflows near the top:
  * 1. Main (Dashboard, Intune devices, Data Import)
- * 2. ITAM (foundation data entry)
- * 3. Assets & Inventory
- * 4. Services & CMDB
- * 5. Licenses & Contracts
- * 6. Governance & Attachments
- * 7. Admin & Settings
+ * 2. Foundation (org data, lifecycle, configuration)
+ * 3. Asset Catalog (categories, models, stock locations)
+ * 4. Assets & Inventory
+ * 5. Services & CMDB
+ * 6. Licenses & Contracts
+ * 7. Governance & Attachments
+ * 8. Admin & Settings
  */
 export const navGroups = [
   // Core navigation (always visible)
   mainNavGroup,
 
-  // ITAM data entry
-  itamGroup,
+  // Foundation data entry
+  foundationGroup,
+
+  // Asset catalog setup
+  assetCatalogGroup,
 
   // Assets & inventory workflows
   assetsInventoryGroup,

@@ -2,7 +2,7 @@
  * Assets & Inventory Navigation Group
  *
  * Consolidates operational asset workflows into a single group while keeping
- * data-entry items (locations, categories, models) in the ITAM group.
+ * setup data (categories, models, stock locations) in the Asset Catalog group.
  */
 
 import {

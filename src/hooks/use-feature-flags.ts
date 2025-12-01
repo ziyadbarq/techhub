@@ -21,7 +21,7 @@ interface FeatureFlagsState {
 
 /**
  * Hook to fetch and access enabled features
- * Admins get all features, regular users get only enabled ones
+ * Feature flags apply uniformly to all roles
  * Polling interval configurable via NEXT_PUBLIC_FEATURE_FLAGS_POLL_INTERVAL (default: 30 seconds)
  * Set to 0 to disable polling
  */

@@ -116,7 +116,7 @@ export function FeatureFlagToggle({
 
     if (featureFlag.name === "MAINTENANCE_MODE") {
       if (isEnabling) {
-        return "This will lock out ALL non-administrator users from the system. Only system administrators will be able to access the application.";
+        return "This will lock out ALL users from the system. Everyone will be redirected to the maintenance page until you disable it.";
       }
       return "This will restore normal access to the system. All users will be able to access enabled features based on their permissions.";
     }
@@ -188,8 +188,8 @@ export function FeatureFlagToggle({
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
                   <strong>Critical Warning:</strong> This will immediately lock
-                  out ALL non-administrator users. They will see a maintenance
-                  mode message and will not be able to access any features.
+                  out ALL users. They will see a maintenance mode message and
+                  will not be able to access any features.
                 </AlertDescription>
               </Alert>
             )}

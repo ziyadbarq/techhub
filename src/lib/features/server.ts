@@ -9,8 +9,6 @@ import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { IFeatureFlagRepository } from "@/core/repositories/feature-flag.repository.interface";
 import { getRedis } from "@/lib/redis";
-import { getSession } from "@/lib/auth";
-import { isUserSystemAdministrator } from "./auth-utils";
 
 // Cache TTL: 5 minutes (300 seconds)
 const CACHE_TTL = 300;
@@ -76,46 +74,16 @@ export async function invalidateFeatureCache(
 }
 
 /**
- * Check if current user is a system administrator (bypasses all feature flags)
- */
-async function isSystemAdmin(): Promise<boolean> {
-  try {
-    const session = await getSession();
-    if (!session?.user?.id) {
-      return false;
-    }
-    return await isUserSystemAdministrator(session.user.id);
-  } catch {
-    return false;
-  }
-}
-
-/**
  * Check if a feature is enabled
- * Admins always have access (bypass feature flags)
  */
 export async function isFeatureEnabled(featureName: string): Promise<boolean> {
-  // Admin bypass
-  const isAdmin = await isSystemAdmin();
-  if (isAdmin) {
-    return true;
-  }
-
-  // Check feature flag
   return await getCachedFeatureState(featureName);
 }
 
 /**
  * Check if maintenance mode is enabled
- * System admins are never blocked by maintenance mode
  */
 export async function isMaintenanceModeEnabled(): Promise<boolean> {
-  // Admin bypass
-  const isAdmin = await isSystemAdmin();
-  if (isAdmin) {
-    return false;
-  }
-
   // Check maintenance mode flag
   return await getCachedFeatureState("MAINTENANCE_MODE");
 }
@@ -123,7 +91,6 @@ export async function isMaintenanceModeEnabled(): Promise<boolean> {
 /**
  * Require a feature to be enabled
  * Redirects to /feature-disabled if not enabled
- * Admins always pass (bypass)
  *
  * Use this in server components and API routes to enforce feature flags
  *
@@ -136,7 +103,7 @@ export async function isMaintenanceModeEnabled(): Promise<boolean> {
  * ```
  */
 export async function requireFeature(featureName: string): Promise<void> {
-  // Check maintenance mode first (blocks everyone except admins)
+  // Check maintenance mode first (blocks everyone)
   if (await isMaintenanceModeEnabled()) {
     redirect("/maintenance");
   }
@@ -150,36 +117,8 @@ export async function requireFeature(featureName: string): Promise<void> {
 
 /**
  * Get all enabled features (for navigation filtering)
- * Admins see all features
  */
 export async function getEnabledFeatures(): Promise<Set<string>> {
-  // Admin bypass - show all features
-  const isAdmin = await isSystemAdmin();
-  if (isAdmin) {
-    // Return all possible features
-    return new Set([
-      "FOUNDATION",
-      "RBAC",
-      "FX_RATES",
-      "DATA_IMPORT",
-      "ASSETS",
-      "MAINTENANCE",
-      "INVENTORY",
-      "WARRANTIES",
-      "CMDB",
-      "CONTRACTS",
-      "LICENSES",
-      "SERVICES",
-      "SERVICE_HEALTH_SLA",
-      "GOVERNANCE",
-      "ATTACHMENTS",
-      "ASSET_DISPOSALS",
-      "ASSET_KITS",
-      "ASSET_RESERVATIONS",
-      "INTUNE",
-    ]);
-  }
-
   // Get enabled features from database
   const container = getContainer();
   const repo = container.get<IFeatureFlagRepository>(

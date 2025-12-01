@@ -12,11 +12,11 @@ src/config/
 ├── navigation.utils.ts      # Navigation utilities and helpers
 ├── navigation-groups/       # Domain-separated navigation groups
 │   ├── main.ts              # Main navigation (Dashboard, Data Import)
-│   ├── setup.ts             # Setup group (consolidated for initial deployment)
-│   ├── assets.ts            # Asset management groups (hidden)
-│   ├── itam.ts              # CMDB, services, maintenance (hidden)
-│   ├── compliance.ts        # Contracts, licenses, governance, attachments (hidden)
-│   ├── foundation.ts        # Lifecycle, organization, configuration (hidden)
+│   ├── foundation.ts        # Org data, lifecycle, configuration
+│   ├── asset-catalog.ts     # Asset categories, models, stock locations
+│   ├── assets.ts            # Assets & inventory workflows
+│   ├── services-cmdb.ts     # CMDB, services, maintenance
+│   ├── compliance.ts        # Contracts, licenses, governance, attachments
 │   └── system.ts            # System settings, admin, documentation
 ├── index.ts                 # Barrel export file
 └── README.md                # This file

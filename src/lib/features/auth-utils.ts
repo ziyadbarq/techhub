@@ -10,7 +10,6 @@ import type { IRoleRepository } from "@/core/repositories/role-repository.interf
 
 /**
  * Check if a user is a system administrator
- * System administrators bypass all feature flags
  */
 export async function isUserSystemAdministrator(
   userId: string,

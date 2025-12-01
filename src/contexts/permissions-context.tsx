@@ -16,12 +16,17 @@ import {
 } from "react";
 import { useSessionContext } from "@/contexts/session-context";
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
+import { useOptionalRolePreviewContext } from "./role-preview-context";
 
 interface PermissionsContextValue {
   permissions: PermissionKey[];
+  actualPermissions: PermissionKey[];
   isLoading: boolean;
   isError: boolean;
   hasNoPermissions: boolean;
+  isPreviewing: boolean;
+  previewRoleId: string | null;
+  previewRoleName: string | null;
   hasPermission: (permission: PermissionKey) => boolean;
   hasAnyPermission: (permissions: PermissionKey[]) => boolean;
   hasAllPermissions: (permissions: PermissionKey[]) => boolean;
@@ -48,17 +53,16 @@ interface PermissionsProviderProps {
  */
 export function PermissionsProvider({ children }: PermissionsProviderProps) {
   const { user, isPending } = useSessionContext();
+  const rolePreview = useOptionalRolePreviewContext();
   const [permissions, setPermissions] = useState<PermissionKey[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
-  const [hasNoPermissions, setHasNoPermissions] = useState(false);
 
   const fetchPermissions = useCallback(async () => {
     if (!user) {
       setPermissions([]);
       setIsLoading(false);
       setIsError(false);
-      setHasNoPermissions(false);
       return;
     }
 
@@ -70,19 +74,16 @@ export function PermissionsProvider({ children }: PermissionsProviderProps) {
         const data = await response.json();
         const userPermissions = data.permissions || [];
         setPermissions(userPermissions);
-        setHasNoPermissions(userPermissions.length === 0);
       } else {
         // Server returned error - mark as error state, keep empty permissions
         setIsError(true);
         setPermissions([]);
-        setHasNoPermissions(false);
       }
     } catch (error) {
       console.error("Failed to fetch permissions:", error);
       // Network/fetch error - mark as error state, keep empty permissions
       setIsError(true);
       setPermissions([]);
-      setHasNoPermissions(false);
     } finally {
       setIsLoading(false);
     }
@@ -94,34 +95,41 @@ export function PermissionsProvider({ children }: PermissionsProviderProps) {
     }
   }, [fetchPermissions, isPending, user?.id]);
 
+  const effectivePermissions = rolePreview?.previewPermissions ?? permissions;
+  const hasNoEffectivePermissions = effectivePermissions.length === 0;
+
   const hasPermission = useCallback(
     (permission: PermissionKey): boolean => {
-      return permissions.includes(permission);
+      return effectivePermissions.includes(permission);
     },
-    [permissions],
+    [effectivePermissions],
   );
 
   const hasAnyPermission = useCallback(
     (perms: PermissionKey[]): boolean => {
-      return perms.some((p) => permissions.includes(p));
+      return perms.some((p) => effectivePermissions.includes(p));
     },
-    [permissions],
+    [effectivePermissions],
   );
 
   const hasAllPermissions = useCallback(
     (perms: PermissionKey[]): boolean => {
-      return perms.every((p) => permissions.includes(p));
+      return perms.every((p) => effectivePermissions.includes(p));
     },
-    [permissions],
+    [effectivePermissions],
   );
 
   return (
     <PermissionsContext.Provider
       value={{
-        permissions,
+        permissions: effectivePermissions,
+        actualPermissions: permissions,
         isLoading: isPending || isLoading,
         isError,
-        hasNoPermissions,
+        hasNoPermissions: hasNoEffectivePermissions,
+        isPreviewing: rolePreview?.isPreviewing ?? false,
+        previewRoleId: rolePreview?.previewRoleId ?? null,
+        previewRoleName: rolePreview?.previewRoleName ?? null,
         hasPermission,
         hasAnyPermission,
         hasAllPermissions,

@@ -14,12 +14,11 @@ export const dynamic = "force-dynamic";
 /**
  * GET /api/features
  * Returns list of enabled feature names
- * Admins get all features, regular users get only enabled ones
  * Returns maintenanceMode: true if maintenance mode is active for current user
  */
 export async function GET() {
   try {
-    // Check maintenance mode (returns true for non-admins, false for admins)
+    // Check maintenance mode
     const maintenanceMode = await isMaintenanceModeEnabled();
 
     const enabledFeatures = await getEnabledFeatures();

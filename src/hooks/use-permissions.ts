@@ -16,6 +16,10 @@ export interface UsePermissionsReturn {
   hasAnyPermission: (permissions: PermissionKey[]) => boolean;
   hasAllPermissions: (permissions: PermissionKey[]) => boolean;
   permissions: PermissionKey[];
+  actualPermissions: PermissionKey[];
+  isPreviewing: boolean;
+  previewRoleId: string | null;
+  previewRoleName: string | null;
   isLoading: boolean;
   isError: boolean;
   /** True when permissions are loaded and user has no permissions */

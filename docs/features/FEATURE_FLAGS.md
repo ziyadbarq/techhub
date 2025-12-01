@@ -11,9 +11,9 @@ The Feature Flag System provides **master toggle control** for the entire applic
 ### Key Characteristics
 
 - **Coarse-Grained**: Module-level toggles (e.g., "CONTRACTS", "LICENSES", "CMDB"), not per-route
-- **Admin Bypass**: System administrators always see all features regardless of flag state
+- **Admin Enforcement**: System administrators are subject to the same feature flags as other roles
 - **Dependency Enforcement**: Features can depend on other features (e.g., SERVICES requires CMDB + FOUNDATION)
-- **Maintenance Mode**: Global killswitch that disables all features except for admins
+- **Maintenance Mode**: Global killswitch that disables all features for all users
 - **Default State**: All features are **disabled by default** - admin must manually enable
 - **Security**: Server-side enforcement with Redis caching for performance
 - **Dual-Layer Security**: Feature flags (system-level) + RBAC permissions (user-level)
@@ -122,7 +122,6 @@ User Request
      ↓
 [Server-Side Check]
      ├── Is maintenance mode enabled? → Redirect to /maintenance
-     ├── Is user system-administrator? → ALLOW (bypass)
      └── Is feature enabled? → Check Redis cache → Database
            ├── YES → Continue to permission check
            └── NO → Redirect to /feature-disabled?feature=CONTRACTS
@@ -141,8 +140,7 @@ User Request
 #### SYSTEM (1 feature)
 
 1. **MAINTENANCE_MODE** - Global maintenance mode killswitch
-   - When enabled, only system administrators can access the application
-   - All other users are redirected to `/maintenance` page
+   - When enabled, all users are redirected to `/maintenance` page
 
 #### LAYER_1 (Foundation - 4 features)
 
@@ -366,13 +364,12 @@ await requireFeature("CONTRACTS");
 
 **Behavior**:
 - If maintenance mode enabled → Redirect to `/maintenance`
-- If user is system-administrator → Allow (bypass)
 - If feature disabled → Redirect to `/feature-disabled?feature=CONTRACTS`
 - If feature enabled → Continue
 
 #### `isFeatureEnabled(featureName: string): Promise<boolean>`
 
-Check if a feature is enabled. Admins always get `true`.
+Check if a feature is enabled.
 
 ```typescript
 const isEnabled = await isFeatureEnabled("LICENSES");
@@ -380,7 +377,7 @@ const isEnabled = await isFeatureEnabled("LICENSES");
 
 #### `getEnabledFeatures(): Promise<Set<string>>`
 
-Get all enabled feature names. Admins get all features.
+Get all enabled feature names.
 
 ```typescript
 const features = await getEnabledFeatures();
@@ -474,34 +471,18 @@ Feature flag state is cached in Redis with a 5-minute TTL for performance:
    └── Redis: DEL feature:CONTRACTS
 ```
 
-## Admin Bypass Logic
+## Admin Enforcement
 
-System administrators bypass ALL feature flags:
+System administrators configure feature flags but runtime enforcement applies to every role:
 
-```typescript
-// src/lib/features/auth-utils.ts
-export async function isUserSystemAdministrator(userId: string): Promise<boolean> {
-  const userRoles = await userRoleRepo.findByUserId(userId);
-  const adminRole = await roleRepo.findByName("system-administrator");
-  return userRoles.some((userRole) => userRole.roleId === adminRole.id);
-}
-
-// src/lib/features/server.ts
-export async function isFeatureEnabled(featureName: string): Promise<boolean> {
-  const isAdmin = await isSystemAdmin();
-  if (isAdmin) {
-    return true; // Bypass feature flags for admins
-  }
-  return await getCachedFeatureState(featureName);
-}
-```
+- `isUserSystemAdministrator()` gates management access (e.g., `/admin/features`), not runtime bypass.
+- `isFeatureEnabled()` reads cached state for all users with no role-based overrides.
 
 **Admin Behavior**:
 - ✅ Can access `/admin/features` to manage feature flags
 - ✅ Can toggle features on/off
-- ✅ Can see and access ALL features regardless of flag state
-- ✅ Can access application during maintenance mode
-- ✅ Navigation shows all items (no filtering by feature flags)
+- ✅ Navigation and routes are filtered by enabled features
+- ✅ Redirected to `/feature-disabled` or `/maintenance` when flags are disabled
 
 **Non-Admin Behavior**:
 - ❌ Cannot access `/admin/features` (permission denied)
@@ -515,9 +496,8 @@ export async function isFeatureEnabled(featureName: string): Promise<boolean> {
 Special system flag that acts as a global killswitch:
 
 **When MAINTENANCE_MODE is enabled**:
-- ✅ System administrators can access all routes normally
-- ❌ All other users are redirected to `/maintenance` page
-- ❌ All other feature flags are effectively ignored for non-admins
+- ❌ All users are redirected to `/maintenance` page
+- Feature states remain unchanged; maintenance redirect happens before other feature checks
 
 **Use Cases**:
 - System upgrades or database migrations
@@ -528,7 +508,7 @@ Special system flag that acts as a global killswitch:
 **Activation**:
 1. Navigate to `/admin/features`
 2. Toggle "Maintenance Mode" ON
-3. All users (except admins) will be redirected to `/maintenance` on next request
+3. All users will be redirected to `/maintenance` on next request
 4. Toggle OFF to restore normal access
 
 ## Error Pages
@@ -673,9 +653,12 @@ npm run db:seed
 
 ### Issue: Feature disabled but admin can still access
 
-**Expected behavior**: Admins bypass all feature flags.
+**Expected behavior**: Admins should also be blocked by disabled features.
 
-**Solution**: This is correct. Admins should always have access to manage and test features.
+**Solution**:
+1. Invalidate Redis cache for the feature (`invalidateFeatureCache`).
+2. Confirm the flag is disabled in the database.
+3. Ensure the client has refreshed feature flags (wait for poll or hard refresh).
 
 ### Issue: Enabled feature but users still redirected
 
@@ -752,7 +735,7 @@ Layer 3: Business Rules (entity-level) → Can this action be performed?
 ### Admin Privilege
 
 - ✅ Only system-administrator role can manage flags
-- ✅ Only system-administrator role bypasses flags
+- ✅ Feature flags apply to all roles, including system-administrator
 - ✅ All toggles are logged with user ID and reason
 - ✅ Cannot escalate privileges via feature flags
 

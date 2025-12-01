@@ -70,6 +70,7 @@ import { SidebarFooter } from "./sidebar/SidebarFooter";
 import { MobileControls } from "./sidebar/MobileControls";
 import { NavigationContent } from "./sidebar/NavigationContent";
 import { SidebarSpacer } from "./sidebar/SidebarSpacer";
+import { RolePreviewSwitcher } from "./sidebar/RolePreviewSwitcher";
 
 interface SidebarProps {
   className?: string;
@@ -163,6 +164,7 @@ function SidebarComponent({ className }: SidebarProps) {
           getBadgeValue={getBadgeValue}
           onItemClick={() => setIsMobileOpen(false)}
           NavigationGroupComponent={NavigationGroup}
+          topContent={<RolePreviewSwitcher isCollapsed={isCollapsed} />}
         />
 
         {/* Footer: AI Branding */}

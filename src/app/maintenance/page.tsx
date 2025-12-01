@@ -9,8 +9,7 @@ export const metadata: Metadata = {
 
 /**
  * Maintenance Mode page - shown when MAINTENANCE_MODE feature flag is enabled
- * System administrators bypass this page automatically
- * Automatically redirects back when maintenance mode is disabled
+ * Applies to all roles and redirects back when maintenance mode is disabled
  */
 export default async function MaintenancePage() {
   return <MaintenancePageClient />;

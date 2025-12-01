@@ -35,7 +35,7 @@ export const FEATURE_FLAGS: FeatureFlagDefinition[] = [
     name: "MAINTENANCE_MODE",
     displayName: "Maintenance Mode",
     description:
-      "Global maintenance mode - disables all features for non-administrators. Use this during system upgrades or critical maintenance windows.",
+      "Global maintenance mode - disables all features for all users. Use this during system upgrades or critical maintenance windows.",
     category: "SYSTEM",
     isSystem: true,
     dependsOn: [],
