@@ -10,7 +10,7 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IUserRepository } from "@/core/repositories/user-repository.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
-import { generateSecurePassword, hashPassword } from "@/lib/utils/password";
+import type { IPasswordService } from "@/core/services/password.service.interface";
 
 export interface ResetUserPasswordRequest {
   userId: string;
@@ -36,6 +36,8 @@ export class ResetUserPasswordUseCase {
     private userRepository: IUserRepository,
     @inject(DI_TOKENS.ILoggerService)
     private logger: ILoggerService,
+    @inject(DI_TOKENS.IPasswordService)
+    private passwordService: IPasswordService,
   ) {}
 
   async execute(
@@ -54,11 +56,12 @@ export class ResetUserPasswordUseCase {
     }
 
     // 2. Generate or use provided password
-    const plainPassword = request.newPassword ?? generateSecurePassword();
+    const plainPassword =
+      request.newPassword ?? this.passwordService.generate();
     const passwordGenerated = !request.newPassword;
 
     // 3. Hash password
-    const passwordHash = await hashPassword(plainPassword);
+    const passwordHash = await this.passwordService.hash(plainPassword);
 
     // 4. Update user's password (also invalidates sessions)
     await this.userRepository.updatePassword(user.id, passwordHash);

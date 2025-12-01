@@ -14,7 +14,7 @@ import type { IRoleRepository } from "@/core/repositories/role-repository.interf
 import type { IUserRoleRepository } from "@/core/repositories/user-role-repository.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { UserRole } from "@/core/domain/entities/user-role.entity";
-import { generateSecurePassword, hashPassword } from "@/lib/utils/password";
+import type { IPasswordService } from "@/core/services/password.service.interface";
 
 export interface CreateUserForPersonRequest {
   personId: string;
@@ -47,6 +47,8 @@ export class CreateUserForPersonUseCase {
     private userRoleRepository: IUserRoleRepository,
     @inject(DI_TOKENS.ILoggerService)
     private logger: ILoggerService,
+    @inject(DI_TOKENS.IPasswordService)
+    private passwordService: IPasswordService,
   ) {}
 
   async execute(
@@ -78,11 +80,11 @@ export class CreateUserForPersonUseCase {
     }
 
     // 3. Generate or use provided password
-    const plainPassword = request.password ?? generateSecurePassword();
+    const plainPassword = request.password ?? this.passwordService.generate();
     const passwordGenerated = !request.password;
 
     // 4. Hash password
-    const passwordHash = await hashPassword(plainPassword);
+    const passwordHash = await this.passwordService.hash(plainPassword);
 
     // 5. Create User record
     const user = await this.userRepository.createDirectly({

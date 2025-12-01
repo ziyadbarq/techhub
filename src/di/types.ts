@@ -261,6 +261,7 @@ export const DI_TOKENS = {
   CreateUserForPersonUseCase: Symbol.for("CreateUserForPersonUseCase"),
   ResetUserPasswordUseCase: Symbol.for("ResetUserPasswordUseCase"),
   LinkUserToPersonUseCase: Symbol.for("LinkUserToPersonUseCase"),
+  IPasswordService: Symbol.for("IPasswordService"),
 
   // System Setup Use Cases
   CheckSystemHealthUseCase: Symbol.for("CheckSystemHealthUseCase"),

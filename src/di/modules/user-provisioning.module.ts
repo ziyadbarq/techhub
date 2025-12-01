@@ -12,6 +12,8 @@ import { logger } from "@/lib/logger";
 import { CreateUserForPersonUseCase } from "@/core/use-cases/user-provisioning/create-user-for-person.use-case";
 import { ResetUserPasswordUseCase } from "@/core/use-cases/user-provisioning/reset-user-password.use-case";
 import { LinkUserToPersonUseCase } from "@/core/use-cases/user-provisioning/link-user-to-person.use-case";
+import type { IPasswordService } from "@/core/services/password.service.interface";
+import { PasswordService } from "@/infrastructure/services/security/password.service";
 
 const diLogger = logger.scope("DI:UserProvisioningModule");
 
@@ -31,6 +33,12 @@ export function bindUserProvisioningDependencies(container: Container): void {
     .to(ResetUserPasswordUseCase);
 
   container.bind(DI_TOKENS.LinkUserToPersonUseCase).to(LinkUserToPersonUseCase);
+
+  // Services
+  container
+    .bind<IPasswordService>(DI_TOKENS.IPasswordService)
+    .to(PasswordService)
+    .inSingletonScope();
 
   diLogger.debug(
     "bindUserProvisioningDependencies",
