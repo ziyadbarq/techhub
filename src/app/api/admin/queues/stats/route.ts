@@ -8,7 +8,7 @@
 import { NextResponse } from "next/server";
 import { Queue } from "bullmq";
 import IORedis from "ioredis";
-import { env } from "@/infrastructure/config/env";
+import { env } from "@/config/env";
 import { logger } from "@/lib/logger";
 import { QUEUE_NAMES } from "@/core/domain/jobs/job-names";
 

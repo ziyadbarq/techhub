@@ -4,7 +4,7 @@
  */
 
 import Redis from "ioredis";
-import { env } from "@/infrastructure/config/env";
+import { env } from "@/config/env";
 
 let redis: Redis | null = null;
 
