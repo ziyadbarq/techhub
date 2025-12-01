@@ -19,9 +19,13 @@ import { handleControllerError } from "./error-handler";
 import type {
   CheckPermissionUseCase,
   GetUserPermissionsUseCase,
+  GetUserRolesUseCase,
 } from "@/core/use-cases/rbac";
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
 import { getSession } from "@/lib/auth/session";
+import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
+import { requirePermission } from "@/lib/permissions/server";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 /**
  * Helper to get current user session
@@ -52,6 +56,18 @@ export interface UserPermissionsResultDTO {
   userId: string;
   permissions: string[];
   activeRoleCount: number;
+}
+
+export interface UserRolesResultDTO {
+  userId: string;
+  roles: {
+    id: string;
+    name: string;
+    displayName: string;
+    description: string | null;
+    isSystem: boolean;
+    isActive: boolean;
+  }[];
 }
 
 /**
@@ -128,6 +144,96 @@ export async function getMyPermissionsAction(): Promise<
       error,
       { function: "getMyPermissionsAction" },
       "Failed to get user permissions",
+    );
+  }
+}
+
+/**
+ * Get all roles for the current user
+ * Useful for UI gating and debug endpoints
+ */
+export async function getMyRolesAction(): Promise<
+  ActionResponse<UserRolesResultDTO>
+> {
+  try {
+    const session = await requireAuth();
+
+    const container = getContainer();
+    const getUserRoles = container.get<GetUserRolesUseCase>(
+      DI_TOKENS.GetUserRolesUseCase,
+    );
+
+    const result = await getUserRoles.execute({ userId: session.userId });
+
+    return {
+      success: true,
+      data: {
+        userId: session.userId,
+        roles: result.roles.map((userRole) => ({
+          id: userRole.role.id,
+          name: userRole.role.name,
+          displayName: userRole.role.displayName,
+          description: userRole.role.description ?? null,
+          isSystem: userRole.role.isSystem,
+          isActive: userRole.role.isActive,
+        })),
+      },
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getMyRolesAction" },
+      "Failed to fetch current user roles",
+    );
+  }
+}
+
+/**
+ * List all active roles with their permission keys (admin-only).
+ */
+export async function listRolesWithPermissionsAction(): Promise<
+  ActionResponse<
+    {
+      id: string;
+      name: string;
+      displayName: string;
+      description: string | null;
+      isSystem: boolean;
+      isActive: boolean;
+      permissions: PermissionKey[];
+    }[]
+  >
+> {
+  try {
+    await requirePermission(PERMISSIONS.ROLES_VIEW);
+
+    const container = getContainer();
+    const roleRepository = container.get<IRoleRepository>(
+      DI_TOKENS.IRoleRepository,
+    );
+
+    const roles = await roleRepository.findAll({ includeInactive: false });
+    const rolesWithPermissions = await Promise.all(
+      roles.map(async (role) => {
+        const permissions = await roleRepository.getRolePermissions(role.id);
+        return {
+          id: role.id,
+          name: role.name,
+          displayName: role.displayName,
+          description: role.description ?? null,
+          isSystem: role.isSystem,
+          isActive: role.isActive,
+          permissions,
+        };
+      }),
+    );
+
+    return { success: true, data: rolesWithPermissions };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "listRolesWithPermissionsAction" },
+      "Failed to fetch roles with permissions",
     );
   }
 }
