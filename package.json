@@ -40,6 +40,7 @@
     "redis:logs": "docker compose logs -f redis",
     "worker:dev": "dotenv -e .env.local -- tsx watch --import ./scripts/shim-server-only.js src/infrastructure/services/queue/worker.ts",
     "worker:start": "dotenv -e .env.local -- tsx --import ./scripts/shim-server-only.js src/infrastructure/services/queue/worker.ts",
+    "worker:health": "dotenv -e .env.local -- tsx --import ./scripts/shim-server-only.js scripts/worker-health.ts",
     "pm2:start": "pm2 start ecosystem.config.cjs --env production",
     "pm2:stop": "pm2 stop all",
     "pm2:restart": "pm2 restart ecosystem.config.cjs --env production",

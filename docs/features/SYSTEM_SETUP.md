@@ -67,8 +67,15 @@ Navigate to `/setup` to view system health status:
 **Health Status Fields** (API Response at `/api/system-health`):
 - `overall`: ALL services including worker (for monitoring/alerts)
 - `coreServicesHealthy`: Core services only - Database + Redis + Environment + Migrations (for deployment gates)
+  - Uses `IJobQueueService.hasActiveWorkers("maintenance")` internally to verify that a maintenance worker process is connected to Redis
 
 **Important**: The worker is **optional** for basic operation. The system can serve requests without an active worker, but scheduled jobs (maintenance, Intune sync, etc.) won't execute. Deployment health checks use `coreServicesHealthy` to determine if the system is ready to serve traffic, allowing deployments to succeed even when the worker is unavailable.
+
+**Worker Debugging Aids:**
+- When investigating a red worker status:
+  - Check PM2 logs: `pm2 logs barq-worker`
+  - Run CLI health probe: `NODE_ENV=production npm run worker:health`
+    - Prints queue service health and per-queue worker counts/metrics to the log
 
 ### Step 2: Seed Database
 

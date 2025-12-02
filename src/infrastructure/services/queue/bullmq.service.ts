@@ -394,13 +394,20 @@ export class BullMQService implements IJobQueueService {
         "delayed",
       );
 
-      return {
+      const metrics = {
         waiting: counts.waiting || 0,
         active: counts.active || 0,
         completed: counts.completed || 0,
         failed: counts.failed || 0,
         delayed: counts.delayed || 0,
       };
+
+      this.logger.debug("[JobQueue] Queue metrics", {
+        queueName,
+        metrics,
+      });
+
+      return metrics;
     } catch (error) {
       this.logger.error(
         `[JobQueue] Failed to get queue metrics for '${queueName}'`,
@@ -414,7 +421,15 @@ export class BullMQService implements IJobQueueService {
     try {
       const queue = await this.getQueue(queueName);
       const count = await queue.getWorkersCount();
-      return count > 0;
+      const hasWorkers = count > 0;
+
+      this.logger.debug("[JobQueue] Worker status", {
+        queueName,
+        workerCount: count,
+        hasWorkers,
+      });
+
+      return hasWorkers;
     } catch (error) {
       this.logger.warn(
         `[JobQueue] Failed to check worker status for '${queueName}'`,
@@ -538,6 +553,7 @@ export class BullMQService implements IJobQueueService {
   async isHealthy(): Promise<boolean> {
     try {
       if (this.isShuttingDown) {
+        this.logger.debug("[JobQueue] Health check requested during shutdown");
         return false;
       }
 
@@ -547,6 +563,10 @@ export class BullMQService implements IJobQueueService {
       await Promise.all(
         Array.from(this.queues.values()).map((queue) => queue.waitUntilReady()),
       );
+
+      this.logger.debug("[JobQueue] Health check passed", {
+        activeQueues: this.getActiveQueues(),
+      });
 
       return true;
     } catch (error) {

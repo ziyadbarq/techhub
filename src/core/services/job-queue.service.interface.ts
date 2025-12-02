@@ -299,4 +299,23 @@ export interface IJobQueueService {
    * ```
    */
   close(): Promise<void>;
+
+  // ========================================
+  // Health & Diagnostics
+  // ========================================
+
+  /**
+   * Performs a lightweight health check on the queue service.
+   *
+   * Verifies Redis connectivity and that all initialized queues are ready.
+   * Intended for use in system health checks and operational tooling.
+   */
+  isHealthy(): Promise<boolean>;
+
+  /**
+   * Returns the list of queue names that have been initialized in this process.
+   *
+   * Useful for diagnostics and verifying that expected queues are active.
+   */
+  getActiveQueues(): string[];
 }

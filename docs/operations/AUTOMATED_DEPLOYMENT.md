@@ -369,7 +369,17 @@ crontab -e  # Uncomment the cron job
    curl http://localhost:2212/api/system-health | jq .
    ```
 
-4. Timeout too short?
+4. Worker not connected?
+   ```bash
+   # Check worker process logs
+   pm2 logs barq-worker --lines 200
+
+   # Run worker/queue health probe (uses same checks as system health)
+   NODE_ENV=production npm run worker:health
+   # Look for queueServiceHealthy=true and hasWorkers=true for "maintenance"
+   ```
+
+5. Timeout too short?
    ```bash
    # Health check retries 5 times with 10s intervals (50s total)
    # If services are slow to start, this may not be enough

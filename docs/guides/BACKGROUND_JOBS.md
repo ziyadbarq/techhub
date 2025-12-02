@@ -40,7 +40,9 @@ The background job system provides robust, scalable job processing using:
 - Queue scheduler is auto-initialized per queue so delayed/repeatable jobs move out of `delayed` without manual wiring.
 - Shared Redis connection is reused by queues and schedulers and waits for readiness before queuing work.
 - Default job options: priority `5`, `3` attempts, exponential backoff (1s), keep last 100 completed jobs (24h) and last 1000 failures.
-- Health probe: `await jobQueue.isHealthy()` pings Redis and verifies queues/schedulers are ready (useful for readiness checks).
+- Health probes:
+  - `await jobQueue.isHealthy()` pings Redis and verifies queues/schedulers are ready (useful for readiness checks).
+  - `await jobQueue.hasActiveWorkers(queueName)` checks that at least one worker process is connected for a queue (used by `/api/system-health` for the maintenance worker).
 
 ### Queues at a Glance
 
@@ -582,6 +584,14 @@ REDIS_URL="redis://your-redis-host:6379"
 NODE_ENV="production"
 DATABASE_URL="postgresql://..."
 ```
+
+If `NODE_ENV` is omitted, the configuration layer treats it as `"production"` by default. For local debugging of worker issues, you can force production-style checks while still running locally:
+
+```bash
+NODE_ENV=production npm run worker:health
+```
+
+This uses the same health behavior as the production worker but runs from your shell.
 
 ### Integrated Deployment (Recommended)
 

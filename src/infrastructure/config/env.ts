@@ -62,11 +62,11 @@ export const env = createEnv({
 
     /**
      * Node environment
-     * Defaults to "development" if not set
+     * Defaults to "production" if not set
      */
     NODE_ENV: z
       .enum(["development", "test", "production"])
-      .default("development"),
+      .default("production"),
 
     /**
      * Log level for application logging

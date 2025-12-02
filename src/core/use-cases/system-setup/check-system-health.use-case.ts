@@ -31,6 +31,8 @@ export class CheckSystemHealthUseCase {
 
   @LogExecution("system.health.check")
   async execute(): Promise<SystemHealthCheckDto> {
+    this.logger.debug("System health check started");
+
     // Check database connection
     let databaseConnected = false;
     let databaseError: string | undefined;
@@ -63,6 +65,10 @@ export class CheckSystemHealthUseCase {
       (varName) => !process.env[varName],
     );
     const environmentValid = missingEnvVars.length === 0;
+    this.logger.debug("Environment validation completed", {
+      environmentValid,
+      missingEnvVarsCount: missingEnvVars.length,
+    });
 
     // Check migrations
     let migrationsApplied = false;
@@ -122,6 +128,19 @@ export class CheckSystemHealthUseCase {
 
     // Overall health (includes worker for monitoring/alerts)
     const overall = coreServicesHealthy && maintenanceWorkerActive;
+
+    this.logger.debug("System health check summary", {
+      databaseConnected,
+      redisConnected,
+      environmentValid,
+      migrationsApplied,
+      pendingMigrationsCount,
+      rolesCount,
+      permissionsCount,
+      maintenanceWorkerActive,
+      coreServicesHealthy,
+      overall,
+    });
 
     return {
       database: {

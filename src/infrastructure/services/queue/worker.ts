@@ -50,12 +50,12 @@ const log = logger.scope("Worker");
 /**
  * Initialize DI container
  */
-function initializeDependencies(): void {
+async function initializeDependencies(): Promise<void> {
   log.info(
     "initializeDependencies",
     "Initializing dependency injection container...",
   );
-  initContainer();
+  await initContainer();
   log.info("initializeDependencies", "Container initialized");
 }
 
@@ -224,7 +224,7 @@ async function main(): Promise<void> {
     log.info("main", "=".repeat(50));
 
     // Initialize dependencies
-    initializeDependencies();
+    await initializeDependencies();
 
     // Start workers
     await startWorkers();
@@ -235,7 +235,12 @@ async function main(): Promise<void> {
       DI_TOKENS.IJobQueueService,
     );
     await setupScheduledJobs(jobQueueService);
-    log.info("main", "Scheduled jobs initialized");
+    const isHealthy = await jobQueueService.isHealthy();
+    const activeQueues = jobQueueService.getActiveQueues();
+    log.info("main", "Scheduled jobs initialized", {
+      queueServiceHealthy: isHealthy,
+      activeQueues,
+    });
 
     // Setup graceful shutdown
     process.on("SIGTERM", () => shutdown("SIGTERM"));

@@ -805,7 +805,7 @@ grep '"userId":"123"' logs/app.log
 ```bash
 # .env.local
 LOG_LEVEL=debug              # debug | info | warn | error
-NODE_ENV=development         # development | production | test
+NODE_ENV=development         # development | production | test (defaults to production if omitted)
 PRISMA_VERBOSE_LOGS=true     # Sanitized Prisma query logging
 AUTH_DEBUG_LOGS=false        # Verbose Better Auth logging (enable only for debugging)
 ```
