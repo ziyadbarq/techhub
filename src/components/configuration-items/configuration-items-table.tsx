@@ -82,6 +82,14 @@ const DEFAULT_HIDDEN_COLUMNS: VisibilityState = {
   primaryOwnerName: false,
   updatedAt: false,
   actions: false,
+  // Custom fields - hidden by default
+  ipv4: false,
+  ipv6: false,
+  macAddress: false,
+  fqdn: false,
+  gateway: false,
+  primaryDns: false,
+  secondaryDns: false,
 };
 
 interface ConfigurationItemsTableProps {
@@ -306,6 +314,133 @@ export function ConfigurationItemsTable({
               </Badge>
             )}
           </div>
+        );
+      },
+      enableHiding: true,
+    },
+    // Custom field columns
+    {
+      id: "ipv4",
+      accessorFn: (row) =>
+        (row.attributes as Record<string, unknown> | null)?.PRIMARY_IPV4 as
+          | string
+          | undefined,
+      header: "IPv4 Address",
+      meta: { label: "IPv4 Address" },
+      cell: ({ row }) => {
+        const value =
+          (row.original.attributes as Record<string, unknown> | null)
+            ?.PRIMARY_IPV4 ?? null;
+        return (
+          <div className="font-mono text-xs">{value ? String(value) : "—"}</div>
+        );
+      },
+      enableHiding: true,
+    },
+    {
+      id: "ipv6",
+      accessorFn: (row) =>
+        (row.attributes as Record<string, unknown> | null)?.PRIMARY_IPV6 as
+          | string
+          | undefined,
+      header: "IPv6 Address",
+      meta: { label: "IPv6 Address" },
+      cell: ({ row }) => {
+        const value =
+          (row.original.attributes as Record<string, unknown> | null)
+            ?.PRIMARY_IPV6 ?? null;
+        return (
+          <div className="font-mono text-xs">{value ? String(value) : "—"}</div>
+        );
+      },
+      enableHiding: true,
+    },
+    {
+      id: "macAddress",
+      accessorFn: (row) =>
+        (row.attributes as Record<string, unknown> | null)?.MAC_ADDRESS_CI as
+          | string
+          | undefined,
+      header: "MAC Address",
+      meta: { label: "MAC Address" },
+      cell: ({ row }) => {
+        const value =
+          (row.original.attributes as Record<string, unknown> | null)
+            ?.MAC_ADDRESS_CI ?? null;
+        return (
+          <div className="font-mono text-xs">{value ? String(value) : "—"}</div>
+        );
+      },
+      enableHiding: true,
+    },
+    {
+      id: "fqdn",
+      accessorFn: (row) =>
+        (row.attributes as Record<string, unknown> | null)?.FQDN as
+          | string
+          | undefined,
+      header: "FQDN",
+      meta: { label: "FQDN" },
+      cell: ({ row }) => {
+        const value =
+          (row.original.attributes as Record<string, unknown> | null)?.FQDN ??
+          null;
+        return (
+          <div className="font-mono text-xs">{value ? String(value) : "—"}</div>
+        );
+      },
+      enableHiding: true,
+    },
+    {
+      id: "gateway",
+      accessorFn: (row) =>
+        (row.attributes as Record<string, unknown> | null)?.DEFAULT_GATEWAY as
+          | string
+          | undefined,
+      header: "Gateway",
+      meta: { label: "Default Gateway" },
+      cell: ({ row }) => {
+        const value =
+          (row.original.attributes as Record<string, unknown> | null)
+            ?.DEFAULT_GATEWAY ?? null;
+        return (
+          <div className="font-mono text-xs">{value ? String(value) : "—"}</div>
+        );
+      },
+      enableHiding: true,
+    },
+    {
+      id: "primaryDns",
+      accessorFn: (row) =>
+        (row.attributes as Record<string, unknown> | null)?.PRIMARY_DNS as
+          | string
+          | undefined,
+      header: "Primary DNS",
+      meta: { label: "Primary DNS" },
+      cell: ({ row }) => {
+        const value =
+          (row.original.attributes as Record<string, unknown> | null)
+            ?.PRIMARY_DNS ?? null;
+        return (
+          <div className="font-mono text-xs">{value ? String(value) : "—"}</div>
+        );
+      },
+      enableHiding: true,
+    },
+    {
+      id: "secondaryDns",
+      accessorFn: (row) =>
+        (row.attributes as Record<string, unknown> | null)?.SECONDARY_DNS as
+          | string
+          | undefined,
+      header: "Secondary DNS",
+      meta: { label: "Secondary DNS" },
+      cell: ({ row }) => {
+        const value =
+          (row.original.attributes as Record<string, unknown> | null)
+            ?.SECONDARY_DNS ?? null;
+        return (
+          <div className="font-mono text-xs">{value ? String(value) : "—"}</div>
         );
       },
       enableHiding: true,
