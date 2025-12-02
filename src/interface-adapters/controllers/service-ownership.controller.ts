@@ -8,7 +8,7 @@
 
 import { revalidatePath } from "next/cache";
 import type { z } from "zod";
-import { getContainer } from "@/di/container";
+import { getContainer, loadHeavyModule, isModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
@@ -30,6 +30,15 @@ import type {
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
+/**
+ * Ensures the Service module is loaded before accessing its use cases
+ */
+async function ensureServiceModuleLoaded(): Promise<void> {
+  if (!isModuleLoaded("service")) {
+    await loadHeavyModule("service");
+  }
+}
+
 // ==================== Service Ownership ====================
 
 export async function addServiceOwnerAction(
@@ -37,6 +46,9 @@ export async function addServiceOwnerAction(
 ): Promise<ActionResponse<void>> {
   try {
     await requirePermission(PERMISSIONS.SERVICES_MANAGE);
+
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
 
     const validated = AddServiceOwnerSchema.parse(data);
 
@@ -75,6 +87,9 @@ export async function removeServiceOwnerAction(
 ): Promise<ActionResponse<void>> {
   try {
     await requirePermission(PERMISSIONS.SERVICES_MANAGE);
+
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
 
     const validated = RemoveServiceOwnerSchema.parse({
       serviceId,
@@ -115,6 +130,9 @@ export async function setServicePrimaryOwnerAction(
   try {
     await requirePermission(PERMISSIONS.SERVICES_MANAGE);
 
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
+
     const validated = SetPrimaryOwnerSchema.parse(data);
 
     const container = getContainer();
@@ -149,6 +167,9 @@ export async function getServiceOwnersAction(
 ): Promise<ActionResponse<ServiceOwnerDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
+
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
 
     const container = getContainer();
     const useCase = container.get<GetServiceOwnersUseCase>(

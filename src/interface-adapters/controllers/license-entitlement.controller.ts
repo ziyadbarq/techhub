@@ -5,10 +5,19 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { resolve } from "@/di/container";
+import { resolve, loadHeavyModule, isModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+/**
+ * Ensures the Licenses module is loaded before accessing its use cases
+ */
+async function ensureLicensesModuleLoaded(): Promise<void> {
+  if (!isModuleLoaded("licenses")) {
+    await loadHeavyModule("licenses");
+  }
+}
 import type {
   CreateLicenseEntitlementDTO,
   UpdateLicenseEntitlementDTO,
@@ -37,6 +46,9 @@ export async function createLicenseEntitlement(
 > {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_CREATE);
+
+    // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
+    await ensureLicensesModuleLoaded();
 
     const validated = CreateLicenseEntitlementSchema.parse(data);
 
@@ -86,6 +98,9 @@ export async function getLicenseEntitlement(
   try {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_VIEW);
 
+    // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
+    await ensureLicensesModuleLoaded();
+
     const useCase = resolve<GetLicenseEntitlementUseCase>(
       DI_TOKENS.GetLicenseEntitlementUseCase,
     );
@@ -123,6 +138,9 @@ export async function listLicenseEntitlements(params?: {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_VIEW);
 
+    // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
+    await ensureLicensesModuleLoaded();
+
     const useCase = resolve<ListLicenseEntitlementsUseCase>(
       DI_TOKENS.ListLicenseEntitlementsUseCase,
     );
@@ -156,6 +174,9 @@ export async function updateLicenseEntitlement(
 > {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_UPDATE);
+
+    // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
+    await ensureLicensesModuleLoaded();
 
     const validated = UpdateLicenseEntitlementSchema.parse(data);
 
@@ -202,6 +223,9 @@ export async function deleteLicenseEntitlement(
   try {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_DELETE);
 
+    // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
+    await ensureLicensesModuleLoaded();
+
     const useCase = resolve<DeleteLicenseEntitlementUseCase>(
       DI_TOKENS.DeleteLicenseEntitlementUseCase,
     );
@@ -231,6 +255,9 @@ export async function bulkCreateLicenseEntitlementsAction(
 ): Promise<BulkCreateResult> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_ENTITLEMENTS_CREATE);
+
+    // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
+    await ensureLicensesModuleLoaded();
 
     const useCase = resolve<CreateLicenseEntitlementUseCase>(
       DI_TOKENS.CreateLicenseEntitlementUseCase,

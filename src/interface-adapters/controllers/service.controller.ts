@@ -8,7 +8,7 @@
 
 import { revalidatePath } from "next/cache";
 import type { z } from "zod";
-import { getContainer } from "@/di/container";
+import { getContainer, loadHeavyModule, isModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
@@ -42,6 +42,19 @@ import type { GetServiceSlaMetricsUseCase } from "@/core/use-cases/service-sla-m
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
+// ==========================================
+// Module Loading
+// ==========================================
+
+/**
+ * Ensures the Service module is loaded before accessing its use cases
+ */
+async function ensureServiceModuleLoaded(): Promise<void> {
+  if (!isModuleLoaded("service")) {
+    await loadHeavyModule("service");
+  }
+}
+
 // ==================== Service Management ====================
 
 export async function createServiceAction(
@@ -49,6 +62,9 @@ export async function createServiceAction(
 ): Promise<ActionResponse<ServiceDTO>> {
   try {
     await requirePermission(PERMISSIONS.SERVICES_CREATE);
+
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
 
     const validated = CreateServiceSchema.parse(data);
 
@@ -100,6 +116,9 @@ export async function getServiceAction(
   try {
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
 
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
+
     const container = getContainer();
     const useCase = container.get<GetServiceUseCase>(
       DI_TOKENS.GetServiceUseCase,
@@ -125,6 +144,9 @@ export async function listServicesAction(): Promise<
 > {
   try {
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
+
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
 
     const container = getContainer();
     const useCase = container.get<ListServicesUseCase>(
@@ -152,6 +174,9 @@ export async function updateServiceAction(
 ): Promise<ActionResponse<ServiceDTO>> {
   try {
     await requirePermission(PERMISSIONS.SERVICES_UPDATE);
+
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
 
     const validated = UpdateServiceSchema.parse(data);
 
@@ -205,6 +230,9 @@ export async function deleteServiceAction(
   try {
     await requirePermission(PERMISSIONS.SERVICES_DELETE);
 
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
+
     const container = getContainer();
     const useCase = container.get<DeleteServiceUseCase>(
       DI_TOKENS.DeleteServiceUseCase,
@@ -233,6 +261,9 @@ export async function searchServicesAction(
   try {
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
 
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
+
     const container = getContainer();
     const useCase = container.get<SearchServicesUseCase>(
       DI_TOKENS.SearchServicesUseCase,
@@ -258,6 +289,9 @@ export async function getEssentialServicesAction(): Promise<
 > {
   try {
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
+
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
 
     const container = getContainer();
     const useCase = container.get<GetEssentialServicesUseCase>(
@@ -285,6 +319,9 @@ export async function getRetiringServicesAction(
   try {
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
 
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
+
     const container = getContainer();
     const useCase = container.get<GetRetiringServicesUseCase>(
       DI_TOKENS.GetRetiringServicesUseCase,
@@ -311,6 +348,9 @@ export async function retireServiceAction(
 ): Promise<ActionResponse<ServiceDTO>> {
   try {
     await requirePermission(PERMISSIONS.SERVICES_RETIRE);
+
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
 
     const container = getContainer();
     const useCase = container.get<RetireServiceUseCase>(
@@ -346,6 +386,9 @@ export async function bulkCreateServicesAction(
 > {
   try {
     await requirePermission(PERMISSIONS.SERVICES_CREATE);
+
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
 
     const container = getContainer();
     const useCase = container.get<CreateServiceUseCase>(
@@ -422,6 +465,9 @@ export async function getServiceHealthHistoryAction(
   try {
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
 
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
+
     const container = getContainer();
     const useCase = container.get<GetServiceHealthHistoryUseCase>(
       DI_TOKENS.GetServiceHealthHistoryUseCase,
@@ -448,6 +494,9 @@ export async function getServiceSlaMetricsAction(
 ): Promise<ActionResponse<ServiceSlaMetricDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
+
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
 
     const container = getContainer();
     const useCase = container.get<GetServiceSlaMetricsUseCase>(
