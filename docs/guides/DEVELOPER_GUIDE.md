@@ -14,18 +14,19 @@
 8. [Interface Adapters Layer](#8-interface-adapters-layer)
 9. [Infrastructure Layer](#9-infrastructure-layer)
 10. [Presentation Layer](#10-presentation-layer)
-11. [Dependency Injection](#11-dependency-injection)
-12. [Database & Prisma](#12-database--prisma)
-13. [AI Integration](#13-ai-integration)
-14. [Theme System](#14-theme-system)
-15. [Error Handling](#15-error-handling)
-16. [Logging](#16-logging)
-17. [Testing Strategy](#17-testing-strategy)
-18. [Deployment](#18-deployment)
-19. [Troubleshooting](#19-troubleshooting)
-20. [Best Practices](#20-best-practices)
-21. [Code Examples](#21-code-examples)
-22. [FAQ](#22-faq)
+11. [Routes Manifest System](#11-routes-manifest-system)
+12. [Dependency Injection](#12-dependency-injection)
+13. [Database & Prisma](#13-database--prisma)
+14. [AI Integration](#14-ai-integration)
+15. [Theme System](#15-theme-system)
+16. [Error Handling](#16-error-handling)
+17. [Logging](#17-logging)
+18. [Testing Strategy](#18-testing-strategy)
+19. [Deployment](#19-deployment)
+20. [Troubleshooting](#20-troubleshooting)
+21. [Best Practices](#21-best-practices)
+22. [Code Examples](#22-code-examples)
+23. [FAQ](#23-faq)
 
 ---
 
@@ -1860,7 +1861,319 @@ export function PermissionsManager({ role, allPermissions, isSystemRole }) {
 
 ---
 
-## 11. Dependency Injection
+## 11. Routes Manifest System
+
+### Overview
+
+The routes manifest system provides a **single source of truth** for all application routes, navigation structure, and route-level permissions. It uses code generation to eliminate inconsistencies between navigation UI and route protection logic.
+
+**Location**: `src/config/routes-manifest.ts`
+
+### Why Routes Manifest?
+
+**Problems it solves**:
+- ❌ Navigation and protected routes defined separately → inconsistencies
+- ❌ Adding new routes requires updates in multiple files
+- ❌ Permission mismatches between UI visibility and route access
+- ❌ No single place to see all application routes
+
+**Benefits**:
+- ✅ Single source of truth - define route once, generate all configs
+- ✅ Type-safe route definitions with TypeScript
+- ✅ Automatic navigation group generation
+- ✅ Automatic route protection map generation
+- ✅ Icon mapping for code generation
+- ✅ Prevents drift between navigation and permissions
+
+### Architecture
+
+```
+routes-manifest.ts (Source of Truth)
+         ↓
+    [Generator Script]
+         ↓
+    ┌────────┴────────┐
+    ↓                 ↓
+navigation-groups/   protected-routes.ts
+(7 files)            (with helpers)
+```
+
+### Route Definition Structure
+
+**File**: `src/config/routes-manifest.ts`
+
+```typescript
+export const ROUTES_MANIFEST: RouteDefinition[] = [
+  {
+    path: "/dashboard",                    // Route path (Next.js pattern)
+    label: "Dashboard",                    // Display label
+    icon: Home,                            // Lucide icon component
+    description: "Overview and statistics", // Tooltip/docs
+    requiredPermissions: ["DASHBOARD_VIEW"], // Permission constant NAMES
+    visibleInNav: true,                    // Show in navigation
+    navGroup: "main",                      // Navigation group ID
+    navOrder: 1,                           // Sort order
+  },
+  {
+    path: "/admin/users/[id]",             // Dynamic route
+    label: "User Details",
+    icon: Users,
+    description: "View specific user details",
+    requiredPermissions: ["USERS_VIEW"],
+    visibleInNav: false,                   // Hidden from nav (detail page)
+    isChildRoute: true,                    // Mark as child route
+    parentRoute: "/admin/users",           // Parent route
+  },
+];
+```
+
+### Navigation Groups
+
+Define logical groupings of routes:
+
+```typescript
+export const NAV_GROUPS: Record<NavGroupId, NavGroupMetadata> = {
+  main: {
+    id: "main",
+    title: "Main",
+    collapsible: false,
+    order: 1,
+  },
+  system: {
+    id: "system",
+    title: "System & Admin",
+    collapsible: true,
+    defaultCollapsed: true,
+    permission: PERMISSIONS.USERS_VIEW, // Group-level permission
+    order: 7,
+  },
+};
+```
+
+### Icon Mapping
+
+Lucide icons don't have reliable `displayName` properties, so we maintain an explicit mapping:
+
+```typescript
+export const ICON_NAME_MAP = new Map<LucideIcon, string>([
+  [Home, "Home"],
+  [Users, "Users"],
+  [Package, "Package"],
+  // ... 33 icon mappings
+]);
+```
+
+### Code Generation
+
+**Command**: `npm run generate:routes`
+
+**Generates**:
+1. **Navigation Groups** (7 files in `navigation-groups/`)
+   - Type-safe NavGroup objects
+   - Filtered by `visibleInNav`
+   - Icon imports
+   - Permission references
+
+2. **Protected Routes Map** (`protected-routes.ts`)
+   - Route → permission mapping
+   - Dynamic route pattern matching
+   - Helper functions:
+     - `getRouteProtection(pathname)`
+     - `canAccessRoute(pathname, permissions)`
+     - `getRoutesByPermission(permission)`
+     - `isPublicRoute(pathname)`
+
+**Generated file headers**:
+```typescript
+/**
+ * AUTO-GENERATED FILE - DO NOT EDIT MANUALLY
+ *
+ * This file is automatically generated from: src/config/routes-manifest.ts
+ * Generator version: 1.0.0
+ * Generated at: 2025-12-02T06:21:34.441Z
+ *
+ * To modify these routes:
+ * 1. Edit src/config/routes-manifest.ts
+ * 2. Run: npm run generate:routes
+ *
+ * Manual edits will be lost on next generation.
+ */
+```
+
+### Adding a New Route
+
+**Step 1**: Add route definition to `routes-manifest.ts`
+
+```typescript
+{
+  path: "/new-feature",
+  label: "New Feature",
+  icon: Sparkles,
+  description: "New feature description",
+  requiredPermissions: ["NEW_FEATURE_VIEW"],
+  featureFlag: "NEW_FEATURE", // Optional
+  visibleInNav: true,
+  navGroup: "main",
+  navOrder: 10,
+}
+```
+
+**Step 2**: Add icon to `ICON_NAME_MAP` (if new icon)
+
+```typescript
+export const ICON_NAME_MAP = new Map<LucideIcon, string>([
+  // ... existing mappings
+  [Sparkles, "Sparkles"],
+]);
+```
+
+**Step 3**: Generate navigation and routes
+
+```bash
+npm run generate:routes
+```
+
+**Step 4**: Verify generated files
+
+```bash
+npm run validate  # Type-check + lint
+```
+
+That's it! The route is now:
+- ✅ Visible in navigation (if `visibleInNav: true`)
+- ✅ Protected by permissions on server
+- ✅ Integrated with permission checks
+- ✅ Documented with description
+
+### Permission Constant Names vs Values
+
+**CRITICAL**: The manifest uses permission **constant names** (strings), not values!
+
+```typescript
+// ✅ CORRECT
+requiredPermissions: ["DASHBOARD_VIEW"]
+
+// ❌ WRONG - these are values, not constant names
+requiredPermissions: [PERMISSIONS.DASHBOARD_VIEW]
+requiredPermissions: ["dashboard:view"]
+```
+
+**Why?**: The generator uses template literals like `PERMISSIONS.${name}` to output TypeScript code.
+
+### Dynamic Routes
+
+Routes with `[id]` segments are supported:
+
+```typescript
+{
+  path: "/assets/[assetTag]",
+  label: "Asset Details",
+  // ...
+  visibleInNav: false,  // Don't show in nav
+  isChildRoute: true,   // Mark as child
+  parentRoute: "/assets",
+}
+```
+
+The `getRouteProtection()` helper converts `[id]` patterns to regex for matching:
+```typescript
+getRouteProtection("/assets/LAP-123")
+// → Matches pattern "/assets/[assetTag]"
+// → Returns { requiredPermissions: [PERMISSIONS.ASSETS_VIEW] }
+```
+
+### Feature Flags
+
+Routes can be gated by feature flags:
+
+```typescript
+{
+  path: "/intune/devices",
+  label: "Intune Devices",
+  requiredPermissions: ["INTUNE_DEVICES_VIEW"],
+  featureFlag: "INTUNE",  // Gated by INTUNE flag
+  visibleInNav: true,
+}
+```
+
+Navigation automatically filters routes based on enabled features.
+
+### Public Routes
+
+Routes that don't require authentication:
+
+```typescript
+export const PUBLIC_ROUTES = [
+  "/",
+  "/login",
+  "/register",
+  "/unauthorized",
+  "/api/auth",
+  "/setup",
+] as const;
+```
+
+### Validation Tests
+
+**TODO**: Add integration tests to verify:
+- All routes in manifest have corresponding page files
+- All permission constants exist in `PERMISSIONS`
+- Generated files match manifest structure
+- No duplicate routes or conflicting paths
+
+### Troubleshooting
+
+**Issue**: Generated files have syntax errors like `PERMISSIONS.users:view`
+
+**Cause**: Permission values were used instead of constant names in manifest
+
+**Fix**: Ensure `requiredPermissions` uses constant names like `["USERS_VIEW"]`
+
+---
+
+**Issue**: Icon not found warning during generation
+
+**Cause**: Icon not in `ICON_NAME_MAP`
+
+**Fix**: Add icon to map:
+```typescript
+export const ICON_NAME_MAP = new Map<LucideIcon, string>([
+  // ...
+  [NewIcon, "NewIcon"],
+]);
+```
+
+---
+
+**Issue**: Route protection not working
+
+**Cause**: Generated files not regenerated after manifest changes
+
+**Fix**: Always run `npm run generate:routes` after editing manifest
+
+### Best Practices
+
+1. **Always edit manifest first** - Never manually edit generated files
+2. **Run generator after changes** - `npm run generate:routes`
+3. **Validate after generation** - `npm run validate`
+4. **Use consistent naming** - Route paths, labels, and descriptions
+5. **Group related routes** - Use `navGroup` to organize logically
+6. **Hide detail pages** - Use `visibleInNav: false` for child routes
+7. **Document descriptions** - Help users understand route purpose
+8. **Test permissions** - Verify access control works as expected
+
+### Migration from Old System
+
+The routes manifest replaces the old system where:
+- Navigation was defined in `navigation-groups/*.ts` (manually maintained)
+- Protected routes in `protected-routes.ts` (manually maintained)
+- Risk of drift between navigation and protection
+
+**Migration completed**: All 72 routes migrated to manifest system ✅
+
+---
+
+## 12. Dependency Injection
 
 ### Why Dependency Injection?
 

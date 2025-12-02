@@ -58,6 +58,7 @@
     "reset": "dotenv -e .env.local -- tsx scripts/reset-dev-environment.ts",
     "roles:manage": "dotenv -e .env.local -- tsx scripts/manage-user-roles.ts",
     "sync:users": "dotenv -e .env.local -- tsx --import ./scripts/shim-server-only.js scripts/sync-users-from-graph.ts",
+    "generate:routes": "tsx scripts/generate-routes.ts",
     "backfill:azure-ids": "dotenv -e .env.local -- tsx --import ./scripts/shim-server-only.js scripts/backfill-azure-ad-ids.ts",
     "prepare": "husky"
   },

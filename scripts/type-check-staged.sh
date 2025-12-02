@@ -3,11 +3,12 @@
 set -euo pipefail
 
 # Collect staged TS/TSX files (if grep finds none, prevent non-zero exit)
-# Skip generated Prisma output; we never type-check or format those
+# Skip generated Prisma output and scripts (scripts use tsx runtime, not compiled)
 STAGED_TS_FILES=$(
   git diff --cached --name-only --diff-filter=ACM \
     | grep -E '\.(ts|tsx)$' \
     | grep -v '^src/generated/prisma/' \
+    | grep -v '^scripts/' \
     || true
 )
 
