@@ -64,6 +64,12 @@ Navigate to `/setup` to view system health status:
 - 🔴 Red X: Unhealthy
 - ⏳ Spinner: Checking
 
+**Health Status Fields** (API Response at `/api/system-health`):
+- `overall`: ALL services including worker (for monitoring/alerts)
+- `coreServicesHealthy`: Core services only - Database + Redis + Environment + Migrations (for deployment gates)
+
+**Important**: The worker is **optional** for basic operation. The system can serve requests without an active worker, but scheduled jobs (maintenance, Intune sync, etc.) won't execute. Deployment health checks use `coreServicesHealthy` to determine if the system is ready to serve traffic, allowing deployments to succeed even when the worker is unavailable.
+
 ### Step 2: Seed Database
 
 If the RBAC Configuration check shows "unhealthy", run the database seed command:

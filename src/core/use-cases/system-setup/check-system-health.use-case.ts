@@ -113,13 +113,15 @@ export class CheckSystemHealthUseCase {
         _error instanceof Error ? _error.message : "Unknown worker error";
     }
 
-    // Overall health
-    const overall =
+    // Core services health (deployment gate - excludes worker)
+    const coreServicesHealthy =
       databaseConnected &&
       redisConnected &&
       environmentValid &&
-      migrationsApplied &&
-      maintenanceWorkerActive;
+      migrationsApplied;
+
+    // Overall health (includes worker for monitoring/alerts)
+    const overall = coreServicesHealthy && maintenanceWorkerActive;
 
     return {
       database: {
@@ -159,6 +161,7 @@ export class CheckSystemHealthUseCase {
             : "No active maintenance worker detected. Start with: npm run worker:start",
       },
       overall,
+      coreServicesHealthy,
     };
   }
 }

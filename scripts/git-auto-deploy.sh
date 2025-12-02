@@ -144,6 +144,42 @@ notify_deployment_failure() {
     notify "Barq Deployment Failed" "$msg" 1
 }
 
+notify_deployment_warning() {
+    local from_sha="$1"
+    local to_sha="$2"
+    local reason="$3"
+    local details="$4"
+    local from_short="${from_sha:0:7}"
+    local to_short="${to_sha:0:7}"
+
+    local msg="⚠️  Deployment succeeded with warnings"
+    msg+=$'\n'"📝 ${from_short} → ${to_short}"
+    msg+=$'\n'"🟡 ${reason}"
+    msg+=$'\n'"💬 ${details}"
+    msg+=$'\n'"📋 Check: pm2 list | grep worker"
+    msg+=$'\n'"🔗 ${GITHUB_REPO_URL}/compare/${from_short}...${to_short}"
+
+    # Priority 0 (normal), default sound (not siren)
+    notify "Barq Deployment Warning" "$msg" 0
+}
+
+notify_worker_unavailable() {
+    local msg="⚠️  Background worker is not running"
+    msg+=$'\n'"❌ Worker: Offline"
+    msg+=$'\n'""
+    msg+=$'\n'"Impact:"
+    msg+=$'\n'"  • Scheduled jobs won't execute"
+    msg+=$'\n'"  • Maintenance tasks paused"
+    msg+=$'\n'"  • Intune sync disabled"
+    msg+=$'\n'""
+    msg+=$'\n'"Action Required:"
+    msg+=$'\n'"  pm2 restart barq-worker"
+    msg+=$'\n'"  pm2 logs barq-worker"
+
+    # Priority 0 (normal - informational), default sound
+    notify "Barq Worker Unavailable" "$msg" 0
+}
+
 notify_health_critical() {
     local msg="$1"
     # Health-specific, very clear title, high priority, loud sound
@@ -448,32 +484,56 @@ main() {
     DEPLOY_EXIT_CODE=0
     if ! bash "$PROJECT_DIR/scripts/production-deploy.sh"; then
         DEPLOY_EXIT_CODE=$?
-        log_error "Deployment failed with exit code $DEPLOY_EXIT_CODE"
 
-        # Map exit code to stage name
-        case $DEPLOY_EXIT_CODE in
-            10) STAGE="Pre-flight checks" ;;
-            20) STAGE="Database backup" ;;
-            30) STAGE="Dependencies" ;;
-            40) STAGE="Build" ;;
-            50) STAGE="Migrations" ;;
-            60) STAGE="Cache/seed" ;;
-            70) STAGE="PM2 reload" ;;
-            80) STAGE="Health check" ;;
-            *) STAGE="Unknown stage" ;;
-        esac
+        # Categorize exit codes: critical (10-70) vs warning (80)
+        if [ $DEPLOY_EXIT_CODE -ge 10 ] && [ $DEPLOY_EXIT_CODE -le 70 ]; then
+            # CRITICAL FAILURE (stages 1-7)
+            log_error "Deployment failed with exit code $DEPLOY_EXIT_CODE"
 
-        # Send failure notification
-        notify_deployment_failure "$LOCAL_HEAD" "$REMOTE_HEAD" "$STAGE" "$DEPLOY_EXIT_CODE"
+            # Map exit code to stage name
+            case $DEPLOY_EXIT_CODE in
+                10) STAGE="Pre-flight checks" ;;
+                20) STAGE="Database backup" ;;
+                30) STAGE="Dependencies" ;;
+                40) STAGE="Build" ;;
+                50) STAGE="Migrations" ;;
+                60) STAGE="Cache/seed" ;;
+                70) STAGE="PM2 reload" ;;
+                *) STAGE="Unknown stage" ;;
+            esac
 
-        # Fix permissions back to www user
-        sudo chown -R "$WEB_USER:$WEB_GROUP" "$PROJECT_DIR" || true
-        sudo chmod -R g+w "$PROJECT_DIR" || true
+            # Send failure notification
+            notify_deployment_failure "$LOCAL_HEAD" "$REMOTE_HEAD" "$STAGE" "$DEPLOY_EXIT_CODE"
 
-        # Run health check
-        check_health || true
+            # Fix permissions back to www user
+            sudo chown -R "$WEB_USER:$WEB_GROUP" "$PROJECT_DIR" || true
+            sudo chmod -R g+w "$PROJECT_DIR" || true
 
-        exit 3
+            # Run health check
+            check_health || true
+
+            exit 3
+
+        elif [ $DEPLOY_EXIT_CODE -eq 80 ]; then
+            # WARNING: Health check - services degraded (treat as success)
+            log "Deployment succeeded with warnings (exit code 80)"
+            log "Note: Worker status will be checked separately after deployment"
+
+            # Continue to success path (deployment succeeded)
+            # Worker notification will be sent separately in post-deployment check
+            DEPLOY_EXIT_CODE=0
+
+        else
+            # Unknown exit code (treat as critical failure)
+            log_error "Deployment failed with unknown exit code $DEPLOY_EXIT_CODE"
+            notify_deployment_failure "$LOCAL_HEAD" "$REMOTE_HEAD" "Unknown stage" "$DEPLOY_EXIT_CODE"
+
+            # Fix permissions back to www user
+            sudo chown -R "$WEB_USER:$WEB_GROUP" "$PROJECT_DIR" || true
+            sudo chmod -R g+w "$PROJECT_DIR" || true
+
+            exit 3
+        fi
     fi
 
     # Calculate deployment duration
@@ -497,6 +557,31 @@ main() {
     notify_deployment_success "$LOCAL_HEAD" "$REMOTE_HEAD" "$DEPLOY_DURATION"
 
     echo "✓ Deployment complete! ${LOCAL_HEAD:0:7} → ${REMOTE_HEAD:0:7} (${DEPLOY_DURATION}s)" | tee -a "$LOG_FILE"
+
+    # ========================================
+    # Post-Deployment Worker Status Check
+    # ========================================
+
+    log "Checking worker status post-deployment..."
+
+    # Check if worker is online via PM2
+    if command -v pm2 >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
+        local worker_status
+        worker_status=$(pm2 jlist 2>/dev/null | jq -r '.[] | select(.name=="barq-worker") | .pm2_env.status' || echo "unknown")
+
+        if [ "$worker_status" = "online" ]; then
+            log "✓ Worker is online"
+        else
+            log_error "Worker is not online (status: $worker_status)"
+
+            # Send separate notification about worker unavailability
+            notify_worker_unavailable
+
+            log "Worker notification sent"
+        fi
+    else
+        log "Skipping worker check (pm2 or jq not available)"
+    fi
 
     # Final healthcheck after deployment
     check_health || true

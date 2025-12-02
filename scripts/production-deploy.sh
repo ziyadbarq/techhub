@@ -444,6 +444,55 @@ stage_pm2_reload() {
         log "PM2 process list saved"
     fi
 
+    # ========================================
+    # Verify both processes started (web + worker)
+    # ========================================
+
+    log "Verifying PM2 processes..."
+
+    # Check if jq is available for JSON parsing
+    if ! command -v jq >/dev/null 2>&1; then
+        log_warning "jq not installed, skipping detailed process verification"
+        log "Install jq for better process monitoring: brew install jq"
+    else
+        # Verify web process
+        local web_status
+        web_status=$(pm2 jlist 2>/dev/null | jq -r '.[] | select(.name=="barq-web") | .pm2_env.status' || echo "unknown")
+
+        if [ "$web_status" = "online" ]; then
+            log_success "barq-web is online ✓"
+        else
+            log_error "barq-web is not online (status: $web_status)"
+            log "PM2 process list:"
+            pm2 list | tee -a "$DEPLOY_LOG"
+            log "Check logs: pm2 logs barq-web --lines 50"
+            exit 70
+        fi
+
+        # Verify worker process (non-blocking)
+        local worker_status
+        worker_status=$(pm2 jlist 2>/dev/null | jq -r '.[] | select(.name=="barq-worker") | .pm2_env.status' || echo "unknown")
+
+        if [ "$worker_status" = "online" ]; then
+            log_success "barq-worker is online ✓"
+        else
+            log_warning "barq-worker is not online (status: $worker_status)"
+
+            # Get worker restart count for debugging
+            local worker_restarts
+            worker_restarts=$(pm2 jlist 2>/dev/null | jq -r '.[] | select(.name=="barq-worker") | .pm2_env.restart_time' || echo "0")
+            log "Worker restart count: $worker_restarts"
+
+            # Show recent worker errors
+            log "Recent worker errors:"
+            pm2 logs barq-worker --lines 20 --nostream --err 2>&1 | tail -n 20 | tee -a "$DEPLOY_LOG" || true
+
+            log_warning "Worker failed to start, but deployment continues"
+            log "Background jobs will not execute until worker is started"
+            log "Manual fix: pm2 restart barq-worker && pm2 logs barq-worker"
+        fi
+    fi
+
     # Get PM2 status
     log "PM2 process status:"
     pm2 list | tee -a "$DEPLOY_LOG"
@@ -462,13 +511,22 @@ stage_health_check() {
     local interval=10
     local attempt=1
 
-    # Helper to evaluate health JSON (supports top-level overall or success+data.overall)
+    # Helper to evaluate health JSON (checks core services for deployment gate)
     is_health_ok() {
         local response="$1"
         local compact
         compact=$(echo "$response" | tr -d '\n\r\t ')
 
+        # NEW: Check coreServicesHealthy first (deployment gate - core services only)
+        echo "$compact" | grep -q '"coreServicesHealthy":true' && return 0
+
+        # FALLBACK: Check overall if coreServicesHealthy field missing (backward compatibility)
         echo "$compact" | grep -q '"overall":true' && return 0
+
+        # Support nested data structure (success + data.coreServicesHealthy or data.overall)
+        if echo "$compact" | grep -q '"success":true' && echo "$compact" | grep -q '"data":{.*"coreServicesHealthy":true'; then
+            return 0
+        fi
 
         if echo "$compact" | grep -q '"success":true' && echo "$compact" | grep -q '"data":{.*"overall":true'; then
             return 0

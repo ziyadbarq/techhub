@@ -34,7 +34,8 @@ export interface SystemHealthCheckDto {
     error?: string;
     message?: string;
   };
-  overall: boolean;
+  overall: boolean; // ALL services including worker (for monitoring/alerts)
+  coreServicesHealthy: boolean; // Core services only: DB + Redis + Env + Migrations (for deployment gates)
 }
 
 export interface MigrationStatusDto {
