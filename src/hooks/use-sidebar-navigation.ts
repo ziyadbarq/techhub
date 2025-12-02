@@ -1,11 +1,13 @@
 "use client";
 
 import * as React from "react";
+import { usePathname } from "next/navigation";
 import {
   getGroupDefaultState,
   getItemDefaultState,
   getVisibleNavGroups,
   hasChildren,
+  isNavItemActive,
   type NavGroup,
   type NavItem,
 } from "@/config/navigation";
@@ -70,7 +72,31 @@ function buildItemStates(
   return next;
 }
 
+/**
+ * Helper to find which group contains an active item
+ */
+function findGroupWithActiveItem(
+  groups: NavGroup[],
+  pathname: string,
+): string | null {
+  for (const group of groups) {
+    const hasActiveItem = (items: NavItem[]): boolean => {
+      return items.some((item) => {
+        if (isNavItemActive(item.href, pathname)) return true;
+        if (item.children) return hasActiveItem(item.children);
+        return false;
+      });
+    };
+
+    if (hasActiveItem(group.items)) {
+      return group.id;
+    }
+  }
+  return null;
+}
+
 export function useSidebarNavigation() {
+  const pathname = usePathname();
   const {
     permissions,
     isLoading: permissionsLoading,
@@ -80,6 +106,9 @@ export function useSidebarNavigation() {
 
   const { enabledFeatures, isLoading: featuresLoading } =
     useFeatureFlagsContext();
+
+  // Track if user is manually toggling (to disable auto-scroll)
+  const [isManualToggling, setIsManualToggling] = React.useState(false);
 
   // Determine navigation visibility
   const navGroups = React.useMemo(() => {
@@ -122,22 +151,41 @@ export function useSidebarNavigation() {
     setExpandedItems((prev) => buildItemStates(navGroups, prev));
   }, [navGroups, setCollapsedGroups, setExpandedItems]);
 
+  // Auto-expand group containing active page
+  React.useEffect(() => {
+    if (!pathname || navGroups.length === 0) return;
+
+    const activeGroupId = findGroupWithActiveItem(navGroups, pathname);
+    if (activeGroupId && collapsedGroups[activeGroupId]) {
+      setCollapsedGroups((prev) => ({
+        ...prev,
+        [activeGroupId]: false,
+      }));
+    }
+  }, [pathname, navGroups, collapsedGroups, setCollapsedGroups]);
+
   const toggleGroup = React.useCallback(
     (groupId: string) => {
+      setIsManualToggling(true);
       setCollapsedGroups((prev) => ({
         ...prev,
         [groupId]: !prev[groupId],
       }));
+      // Reset manual toggling flag after animation completes (500ms to be safe)
+      setTimeout(() => setIsManualToggling(false), 500);
     },
     [setCollapsedGroups],
   );
 
   const toggleItem = React.useCallback(
     (itemHref: string) => {
+      setIsManualToggling(true);
       setExpandedItems((prev) => ({
         ...buildItemStates(navGroups, prev),
         [itemHref]: !prev[itemHref],
       }));
+      // Reset manual toggling flag after animation completes (500ms to be safe)
+      setTimeout(() => setIsManualToggling(false), 500);
     },
     [navGroups],
   );
@@ -163,5 +211,6 @@ export function useSidebarNavigation() {
     toggleGroup,
     toggleItem,
     getBadgeValue,
+    isManualToggling,
   };
 }

@@ -68,7 +68,7 @@ import {
 import { SidebarHeader } from "./sidebar/SidebarHeader";
 import { SidebarFooter } from "./sidebar/SidebarFooter";
 import { MobileControls } from "./sidebar/MobileControls";
-import { NavigationContent } from "./sidebar/NavigationContent";
+import { NavigationContent, useScrollArea } from "./sidebar/NavigationContent";
 import { SidebarSpacer } from "./sidebar/SidebarSpacer";
 import { RolePreviewSwitcher } from "./sidebar/RolePreviewSwitcher";
 
@@ -100,6 +100,7 @@ function SidebarComponent({ className }: SidebarProps) {
     toggleGroup,
     toggleItem,
     getBadgeValue,
+    isManualToggling,
   } = useSidebarNavigation();
 
   // Detect client-side hydration for theme-dependent rendering
@@ -165,6 +166,7 @@ function SidebarComponent({ className }: SidebarProps) {
           onItemClick={() => setIsMobileOpen(false)}
           NavigationGroupComponent={NavigationGroup}
           topContent={<RolePreviewSwitcher isCollapsed={isCollapsed} />}
+          isManualToggling={isManualToggling}
         />
 
         {/* Footer: AI Branding */}
@@ -325,8 +327,46 @@ const NestedNavItem = React.memo(function NestedNavItem({
   const itemHasChildren = hasChildren(item);
   const badgeValue = getBadgeValue(item);
   const Icon = item.icon;
+  const linkRef = React.useRef<HTMLAnchorElement>(null);
+  const scrollArea = useScrollArea();
+  const hasScrolledForPathnameRef = React.useRef<string | null>(null);
 
   const paddingLeft = depth > 0 ? `${depth * 1}rem` : undefined;
+
+  // Check if this is an exact match or the most specific match
+  const isExactOrBestMatch = isActive && !isSection;
+
+  // Auto-scroll active link into view on pathname change (only if not manually toggling)
+  React.useEffect(() => {
+    // Skip if already scrolled for this pathname
+    if (hasScrolledForPathnameRef.current === pathname) {
+      return;
+    }
+
+    // Only scroll for exact matches or best matches (not parent sections)
+    if (!isExactOrBestMatch || isCollapsed || !scrollArea) {
+      return;
+    }
+
+    // Mark as scrolled for this pathname
+    hasScrolledForPathnameRef.current = pathname;
+
+    // Wait for group auto-expand animations and DOM updates to complete
+    const timer = setTimeout(() => {
+      // Double-check all conditions at execution time
+      if (
+        linkRef.current &&
+        scrollArea &&
+        !scrollArea.isManualToggling &&
+        hasScrolledForPathnameRef.current === pathname &&
+        isExactOrBestMatch
+      ) {
+        scrollArea.scrollToActiveItem(linkRef.current);
+      }
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [isExactOrBestMatch, isCollapsed, scrollArea, pathname]);
 
   const handleClick = (e: React.MouseEvent) => {
     if (itemHasChildren && !isCollapsed) {
@@ -339,6 +379,7 @@ const NestedNavItem = React.memo(function NestedNavItem({
 
   const navLink = (
     <Link
+      ref={linkRef}
       href={item.href}
       onClick={handleClick}
       aria-current={isActive ? "page" : undefined}

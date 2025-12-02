@@ -14,6 +14,23 @@ import type { NavGroup, NavItem } from "@/config/navigation";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
+/**
+ * Context for providing scroll functionality to nested nav items
+ */
+interface ScrollAreaContextValue {
+  scrollToActiveItem: (element: HTMLElement) => void;
+  isManualToggling: boolean;
+}
+
+const ScrollAreaContext = React.createContext<ScrollAreaContextValue | null>(
+  null,
+);
+
+export const useScrollArea = () => {
+  const context = React.useContext(ScrollAreaContext);
+  return context;
+};
+
 interface NavigationContentProps {
   /** Navigation groups to render */
   navGroups: NavGroup[];
@@ -53,6 +70,8 @@ interface NavigationContentProps {
   }>;
   /** Optional content rendered above navigation groups */
   topContent?: React.ReactNode;
+  /** Flag indicating if user is manually toggling groups/items */
+  isManualToggling?: boolean;
 }
 
 export const NavigationContent = React.memo(function NavigationContent({
@@ -70,53 +89,103 @@ export const NavigationContent = React.memo(function NavigationContent({
   onItemClick,
   NavigationGroupComponent,
   topContent,
+  isManualToggling = false,
 }: NavigationContentProps) {
+  const scrollAreaRef = React.useRef<HTMLDivElement>(null);
+  const isManualTogglingRef = React.useRef(isManualToggling);
+
+  // Keep ref in sync with prop
+  React.useEffect(() => {
+    isManualTogglingRef.current = isManualToggling;
+  }, [isManualToggling]);
+
+  // Expose scroll area ref to child components via context
+  const scrollToActiveItem = React.useCallback((element: HTMLElement) => {
+    // Check the ref to get current value
+    if (isManualTogglingRef.current) {
+      return;
+    }
+
+    if (!scrollAreaRef.current) return;
+
+    // Find the viewport element (Radix ScrollArea structure)
+    const viewport = scrollAreaRef.current.querySelector(
+      "[data-radix-scroll-area-viewport]",
+    );
+    if (!viewport) return;
+
+    // Calculate positions
+    const viewportRect = viewport.getBoundingClientRect();
+    const elementRect = element.getBoundingClientRect();
+    const scrollTop = viewport.scrollTop;
+
+    // Calculate the center position
+    const elementCenter = elementRect.top - viewportRect.top + scrollTop;
+    const viewportCenter = viewport.clientHeight / 2;
+    const scrollPosition =
+      elementCenter - viewportCenter + elementRect.height / 2;
+
+    // Smooth scroll to position
+    viewport.scrollTo({
+      top: Math.max(0, scrollPosition),
+      behavior: "smooth",
+    });
+  }, []);
+
+  const contextValue = React.useMemo(
+    () => ({ scrollToActiveItem, isManualToggling }),
+    [scrollToActiveItem, isManualToggling],
+  );
+
   return (
-    <ScrollArea
-      className="flex-1 px-3 py-4"
-      role="region"
-      aria-label="Navigation menu"
-    >
-      <nav className="flex flex-col gap-6">
-        {permissionsLoading ? (
-          <div className="flex items-center justify-center py-8">
-            <div className="text-muted-foreground text-sm">
-              Loading navigation...
+    <ScrollAreaContext.Provider value={contextValue}>
+      <ScrollArea
+        ref={scrollAreaRef}
+        className="flex-1 px-3 py-4"
+        role="region"
+        aria-label="Navigation menu"
+      >
+        <nav className="flex flex-col gap-6">
+          {permissionsLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="text-muted-foreground text-sm">
+                Loading navigation...
+              </div>
             </div>
-          </div>
-        ) : permissionsError ? (
-          <div className="flex items-center justify-center py-8">
-            <div className="text-muted-foreground text-sm">
-              Navigation unavailable. Please refresh or contact an admin.
+          ) : permissionsError ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="text-muted-foreground text-sm">
+                Navigation unavailable. Please refresh or contact an admin.
+              </div>
             </div>
-          </div>
-        ) : hasNoPermissions ? (
-          <div className="flex items-center justify-center py-8">
-            <div className="text-muted-foreground text-sm">
-              No permissions assigned to your account yet.
+          ) : hasNoPermissions ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="text-muted-foreground text-sm">
+                No permissions assigned to your account yet.
+              </div>
             </div>
-          </div>
-        ) : (
-          <TooltipProvider delayDuration={100}>
-            {topContent}
-            {navGroups.map((group) => (
-              <NavigationGroupComponent
-                key={group.id}
-                group={group}
-                isCollapsed={isCollapsed}
-                isGroupCollapsed={collapsedGroups[group.id] ?? false}
-                expandedItems={expandedItems}
-                pathname={pathname}
-                onToggleGroup={onToggleGroup}
-                onToggleItem={onToggleItem}
-                getBadgeValue={getBadgeValue}
-                onItemClick={onItemClick}
-              />
-            ))}
-          </TooltipProvider>
-        )}
-      </nav>
-    </ScrollArea>
+          ) : (
+            <TooltipProvider delayDuration={100}>
+              {topContent}
+              {navGroups.map((group) => (
+                <NavigationGroupComponent
+                  key={group.id}
+                  group={group}
+                  isCollapsed={isCollapsed}
+                  isGroupCollapsed={collapsedGroups[group.id] ?? false}
+                  expandedItems={expandedItems}
+                  pathname={pathname}
+                  onToggleGroup={onToggleGroup}
+                  onToggleItem={onToggleItem}
+                  getBadgeValue={getBadgeValue}
+                  onItemClick={onItemClick}
+                />
+              ))}
+            </TooltipProvider>
+          )}
+        </nav>
+      </ScrollArea>
+    </ScrollAreaContext.Provider>
   );
 });
 

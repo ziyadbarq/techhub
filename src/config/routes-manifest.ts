@@ -769,6 +769,16 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     navOrder: 1,
   },
   {
+    path: "/admin/system-setup",
+    label: "System Setup",
+    icon: Settings,
+    description: "System setup and database operations",
+    requiredPermissions: ["USERS_MANAGE"],
+    visibleInNav: true,
+    navGroup: "system",
+    navOrder: 2,
+  },
+  {
     path: "/admin/roles",
     label: "System Roles",
     icon: Shield,
@@ -776,7 +786,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     requiredPermissions: ["ROLES_VIEW"],
     visibleInNav: true,
     navGroup: "system",
-    navOrder: 2,
+    navOrder: 3,
   },
   {
     path: "/admin/roles/new",
@@ -817,7 +827,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     requiredPermissions: ["PERMISSIONS_VIEW"],
     visibleInNav: true,
     navGroup: "system",
-    navOrder: 3,
+    navOrder: 4,
   },
   {
     path: "/admin/permissions/new",
@@ -847,7 +857,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     requiredPermissions: ["USERS_VIEW"],
     visibleInNav: true,
     navGroup: "system",
-    navOrder: 4,
+    navOrder: 5,
   },
   {
     path: "/admin/users/[id]",
@@ -877,7 +887,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     requiredPermissions: ["AUDIT_LOGS_VIEW"],
     visibleInNav: true,
     navGroup: "system",
-    navOrder: 5,
+    navOrder: 6,
   },
   {
     path: "/admin/features",
@@ -887,7 +897,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     requiredPermissions: ["FEATURE_FLAGS_MANAGE"],
     visibleInNav: true,
     navGroup: "system",
-    navOrder: 6,
+    navOrder: 7,
   },
   {
     path: "/rbac-analytics",
@@ -895,9 +905,9 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     icon: BarChart3,
     description: "RBAC analytics dashboard",
     requiredPermissions: ["ROLES_VIEW"],
-    visibleInNav: true,
+    visibleInNav: false,
     navGroup: "system",
-    navOrder: 7,
+    navOrder: 8,
   },
   {
     path: "/settings",
@@ -905,9 +915,8 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     icon: Settings,
     description: "Application settings",
     requiredPermissions: ["SETTINGS_VIEW"],
-    visibleInNav: true,
-    navGroup: "system",
-    navOrder: 8,
+    visibleInNav: false,
+    navGroup: "main",
   },
   {
     path: "/settings/account",
