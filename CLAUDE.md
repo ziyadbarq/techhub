@@ -114,7 +114,7 @@ bash scripts/db-backup.sh restore                  # Interactive rollback (selec
 ### Complete Documentation Index
 
 For organized documentation by category, see **[docs/README.md](docs/README.md)**:
-- Architecture & Design (4 docs)
+- Architecture & Design (6 docs - includes [IMPORT_RULES.md](docs/architecture/IMPORT_RULES.md), [LOGGING_IMPROVEMENTS.md](docs/architecture/LOGGING_IMPROVEMENTS.md))
 - Development Guides (15+ docs)
 - Layer 2 & 3 Features (15+ docs)
 - Infrastructure & Systems (12+ docs)

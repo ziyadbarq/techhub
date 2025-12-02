@@ -17,7 +17,6 @@ import {
 } from "@/core/domain/errors/rbac-errors";
 import type { IRbacPolicyService } from "@/core/services/rbac-policy.service.interface";
 import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
-import { permissionCache } from "@/lib/permissions/cache";
 
 class MockRoleRepository implements Partial<IRoleRepository> {
   private roles = new Map<string, Role>();
@@ -137,7 +136,6 @@ describe("AssignPermissionsToRoleUseCase", () => {
       set: vi.fn(),
       invalidate: vi.fn(),
     };
-    permissionCache.invalidateAll();
     mockRoleRepository.setPermissionLookup((id: string) =>
       mockPermissionRepository.getById(id),
     );
@@ -279,8 +277,6 @@ describe("AssignPermissionsToRoleUseCase", () => {
       });
       mockPermissionRepository.setPermission(perm1);
 
-      const invalidateAllSpy = vi.spyOn(permissionCache, "invalidateAll");
-
       // Act
       await useCase.execute({
         roleId: role.id,
@@ -289,7 +285,7 @@ describe("AssignPermissionsToRoleUseCase", () => {
       });
 
       // Assert
-      expect(invalidateAllSpy).toHaveBeenCalled();
+      expect(mockPermissionCacheService.invalidate).toHaveBeenCalledWith("all");
     });
   });
 

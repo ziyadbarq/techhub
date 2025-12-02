@@ -18,7 +18,6 @@ import { Role } from "@/core/domain/entities/role.entity";
 import { UserRole } from "@/core/domain/entities/user-role.entity";
 import { RoleNotFoundError } from "@/core/domain/errors/rbac-errors";
 import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
-import { permissionCache } from "@/lib/permissions/cache";
 
 /**
  * Mock Repositories
@@ -94,9 +93,6 @@ describe("RevokeRoleFromUserUseCase", () => {
       set: vi.fn(),
       invalidate: vi.fn(),
     };
-
-    // Clear permission cache
-    permissionCache.invalidateAll();
 
     // Create use case
     useCase = new RevokeRoleFromUserUseCase(
@@ -189,8 +185,6 @@ describe("RevokeRoleFromUserUseCase", () => {
       });
       mockUserRoleRepository.setUserRole(userRole);
 
-      const invalidateSpy = vi.spyOn(permissionCache, "invalidate");
-
       // Act
       await useCase.execute({
         userId: "user-1",
@@ -199,7 +193,10 @@ describe("RevokeRoleFromUserUseCase", () => {
       });
 
       // Assert
-      expect(invalidateSpy).toHaveBeenCalledWith("user-1");
+      expect(mockPermissionCacheService.invalidate).toHaveBeenCalledWith(
+        "user",
+        "user-1",
+      );
     });
   });
 

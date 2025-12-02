@@ -23,7 +23,6 @@ import {
 } from "@/core/domain/errors/rbac-errors";
 import type { IRbacPolicyService } from "@/core/services/rbac-policy.service.interface";
 import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
-import { permissionCache } from "@/lib/permissions/cache";
 
 /**
  * Mock Repositories
@@ -112,9 +111,6 @@ describe("AssignRoleToUserUseCase", () => {
       set: vi.fn(),
       invalidate: vi.fn(),
     };
-
-    // Clear permission cache
-    permissionCache.invalidateAll();
 
     // Create use case
     useCase = new AssignRoleToUserUseCase(
@@ -228,9 +224,6 @@ describe("AssignRoleToUserUseCase", () => {
       });
       mockRoleRepository.setRole(role);
 
-      // Pre-populate cache
-      const invalidateSpy = vi.spyOn(permissionCache, "invalidate");
-
       // Act
       await useCase.execute({
         userId: "user-1",
@@ -239,7 +232,10 @@ describe("AssignRoleToUserUseCase", () => {
       });
 
       // Assert
-      expect(invalidateSpy).toHaveBeenCalledWith("user-1");
+      expect(mockPermissionCacheService.invalidate).toHaveBeenCalledWith(
+        "user",
+        "user-1",
+      );
     });
   });
 

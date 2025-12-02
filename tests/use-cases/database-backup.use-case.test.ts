@@ -293,7 +293,7 @@ describe("Database Backup Use Cases", () => {
     );
 
     await expect(useCase.execute({ userId: "user-123" })).rejects.toThrow(
-      "Another backup is already in progress",
+      "Another backup is already running or queued. Please wait.",
     );
   });
 
