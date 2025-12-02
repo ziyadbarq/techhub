@@ -217,6 +217,36 @@ export const DI_TOKENS = {
    */
   IAssetMovementService: Symbol.for("IAssetMovementService"),
 
+  /**
+   * Token for IRbacPolicyService
+   * Handles role conflict detection and permission dependency validation
+   */
+  IRbacPolicyService: Symbol.for("IRbacPolicyService"),
+
+  /**
+   * Token for IPermissionCacheService
+   * Wraps permission cache get/set/invalidate operations
+   */
+  IPermissionCacheService: Symbol.for("IPermissionCacheService"),
+
+  /**
+   * Token for ISystemSeederService
+   * Handles database cleanup and minimal seeding workflows
+   */
+  ISystemSeederService: Symbol.for("ISystemSeederService"),
+
+  /**
+   * Token for IGraphUserMapperService
+   * Wraps Graph user normalization/mapping helpers
+   */
+  IGraphUserMapperService: Symbol.for("IGraphUserMapperService"),
+
+  /**
+   * Token for IIntuneDeviceMapperService
+   * Wraps Intune device transformation helpers
+   */
+  IIntuneDeviceMapperService: Symbol.for("IIntuneDeviceMapperService"),
+
   // ==========================================
   // Use Case Tokens (Example)
   // ==========================================
@@ -261,6 +291,7 @@ export const DI_TOKENS = {
   CreateUserForPersonUseCase: Symbol.for("CreateUserForPersonUseCase"),
   ResetUserPasswordUseCase: Symbol.for("ResetUserPasswordUseCase"),
   LinkUserToPersonUseCase: Symbol.for("LinkUserToPersonUseCase"),
+  IPasswordService: Symbol.for("IPasswordService"),
 
   // System Setup Use Cases
   CheckSystemHealthUseCase: Symbol.for("CheckSystemHealthUseCase"),
@@ -282,6 +313,7 @@ export const DI_TOKENS = {
   GetFeatureFlagUseCase: Symbol.for("GetFeatureFlagUseCase"),
   ToggleFeatureFlagUseCase: Symbol.for("ToggleFeatureFlagUseCase"),
   CheckFeatureEnabledUseCase: Symbol.for("CheckFeatureEnabledUseCase"),
+  IFeatureFlagAuditService: Symbol.for("IFeatureFlagAuditService"),
 
   // RBAC Analytics Use Cases
   GetRoleUsageStatsUseCase: Symbol.for("GetRoleUsageStatsUseCase"),
@@ -361,6 +393,7 @@ export const DI_TOKENS = {
   SyncUsersFromGraphUseCase: Symbol.for("SyncUsersFromGraphUseCase"),
   TogglePersonExclusionUseCase: Symbol.for("TogglePersonExclusionUseCase"),
   TogglePersonStatusUseCase: Symbol.for("TogglePersonStatusUseCase"),
+  IPersonDependencyRepository: Symbol.for("IPersonDependencyRepository"),
 
   // Foundation: Employee Directory Use Cases
   ListEmployeeDirectoryUseCase: Symbol.for("ListEmployeeDirectoryUseCase"),
@@ -748,6 +781,7 @@ export const DI_TOKENS = {
 
   // Assets: Asset Repository
   IAssetRepository: Symbol.for("IAssetRepository"),
+  IAssetDependencyRepository: Symbol.for("IAssetDependencyRepository"),
 
   // Assets: Asset Use Cases
   CreateAssetUseCase: Symbol.for("CreateAssetUseCase"),
@@ -784,6 +818,10 @@ export const DI_TOKENS = {
   ListAssetAssignmentsUseCase: Symbol.for("ListAssetAssignmentsUseCase"),
   UpdateAssetAssignmentUseCase: Symbol.for("UpdateAssetAssignmentUseCase"),
   DeleteAssetAssignmentUseCase: Symbol.for("DeleteAssetAssignmentUseCase"),
+  ListAssignmentConflictsUseCase: Symbol.for("ListAssignmentConflictsUseCase"),
+  UpdateAssignmentConflictStatusUseCase: Symbol.for(
+    "UpdateAssignmentConflictStatusUseCase",
+  ),
 
   // Assets: Warranty Repository
   IWarrantyRepository: Symbol.for("IWarrantyRepository"),
@@ -867,6 +905,9 @@ export const DI_TOKENS = {
   RecordSlaMetricUseCase: Symbol.for("RecordSlaMetricUseCase"),
   GetServiceHealthHistoryUseCase: Symbol.for("GetServiceHealthHistoryUseCase"),
   GetServiceSlaMetricsUseCase: Symbol.for("GetServiceSlaMetricsUseCase"),
+  ICookieService: Symbol.for("ICookieService"),
+  IServiceAssetRepository: Symbol.for("IServiceAssetRepository"),
+  IServiceOwnershipRepository: Symbol.for("IServiceOwnershipRepository"),
 
   // Service Management: Service Ownership Use Cases
   AddServiceOwnerUseCase: Symbol.for("AddServiceOwnerUseCase"),
@@ -974,6 +1015,22 @@ export const DI_TOKENS = {
   BulkCreateAssetsFromIntuneDevicesUseCase: Symbol.for(
     "BulkCreateAssetsFromIntuneDevicesUseCase",
   ),
+
+  // ==========================================
+  // Query Layer Tokens
+  // ==========================================
+
+  /**
+   * Token for StockMovementsTableQuery
+   * Provides enriched stock movement data for table views with batching
+   */
+  StockMovementsTableQuery: Symbol.for("StockMovementsTableQuery"),
+
+  /**
+   * Token for AssetReservationsTableQuery
+   * Provides enriched asset reservation data for table views with batching
+   */
+  AssetReservationsTableQuery: Symbol.for("AssetReservationsTableQuery"),
 
   // ==========================================
   // Infrastructure Tokens

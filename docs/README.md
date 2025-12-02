@@ -14,6 +14,8 @@ Welcome to the comprehensive documentation for Barq Assets. This index provides 
 Technical documentation for system architecture and design decisions:
 
 - [Architecture Guide](./architecture/ARCHITECTURE.md) - Complete Clean Architecture implementation guide
+- [Import Rules & Layer Boundaries](./architecture/IMPORT_RULES.md) - Import matrix, ESLint enforcement, and architectural boundary patterns (Phase 1 complete)
+- [Logging Improvements](./architecture/LOGGING_IMPROVEMENTS.md) - DRY refactoring plan, request tracking, and observability enhancements (Phase 4 roadmap)
 - [Layer 1 Implementation](./architecture/LAYER_1_IMPLEMENTATION.md) - Foundation layer technical implementation details
 - [Database Schema Design](./architecture/DATABASE_SCHEMA.md) - Schema design conventions, ID strategies, naming patterns, and best practices
 - [TechHub Layer Dependencies](./architecture/TECHHUB_LAYER_DEPENDENCIES.md) - Complete layer dependency map for data migration and seeding (technical reference)
@@ -141,7 +143,7 @@ Documentation embedded within the codebase:
 - **[MISSING]** Controller Patterns - Comprehensive guide to server action patterns and Clean Architecture controllers
 - **[MISSING]** Repository Patterns - Complete repository implementation guide with Prisma best practices
 - **[MISSING]** DTO Validation System - Zod schema patterns and validation at API boundaries
-- **[MISSING]** DI Container Guide - InversifyJS container configuration and dependency injection patterns
+- [DI Container Modularization](./architecture/DI_MODULARIZATION.md) - Three-tier modular DI system with lazy loading, health checks, and performance optimization
 - **[MISSING]** Use Case Patterns - Use case implementation guide and business logic organization
 
 ## 🛠️ Development

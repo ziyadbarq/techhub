@@ -6,8 +6,10 @@ import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IRoleRepository } from "../../repositories/role-repository.interface";
 import type { IAuditLogRepository } from "../../repositories/audit-log-repository.interface";
+import type { ILoggerService } from "@/core/services";
 import { Role } from "../../domain/entities/role.entity";
 import { DuplicateRoleError } from "../../domain/errors/rbac-errors";
+import { LogExecution } from "@/lib/decorators";
 
 export interface CreateRoleRequest {
   name: string;
@@ -26,8 +28,11 @@ export class CreateRoleUseCase {
     private readonly roleRepository: IRoleRepository,
     @inject(DI_TOKENS.IAuditLogRepository)
     private readonly auditLogRepository: IAuditLogRepository,
+    @inject(DI_TOKENS.ILoggerService)
+    private readonly logger: ILoggerService,
   ) {}
 
+  @LogExecution("rbac.role.create")
   async execute(request: CreateRoleRequest): Promise<Role> {
     // Check if role already exists
     const exists = await this.roleRepository.existsByName(request.name);

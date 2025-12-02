@@ -7,6 +7,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+#### Intune-ITAM Assignment Synchronization
+- **Automatic Assignment Sync**: When Intune devices are manually linked to both an asset and a person, the system automatically creates/updates AssetAssignment records
+  - Assignment source tracking: `MANUAL`, `INTUNE_SYNC`, `INTUNE_MANUAL`, `IMPORT`, `SYSTEM`
+  - Source reference tracking (links back to IntuneDevice for audit trail)
+  - Automatic cleanup: ends assignments when devices are unlinked
+
+- **Dual Assignment Support**: Intune and manual assignments can coexist on the same asset
+  - No overriding behavior - assignments tracked separately by source
+  - Supports real-world scenario: IT provisions under their account, actual user is different
+
+- **Conflict Detection and Resolution**
+  - Automatic flagging when Intune person ≠ Manual person
+  - Conflict notes for documentation
+  - Admin conflict resolution page at `/admin/assignment-conflicts`
+  - List all conflicted assignments grouped by asset
+  - Clear/flag conflict actions with permission gates
+
+- **Enhanced Assignment UI**
+  - Redesigned AssetAssignmentsTab using CountedTabs component
+  - Separate tabs for Manual vs Intune assignments
+  - Conflict badges with AlertTriangle icon
+  - Icons: User (manual), Laptop (Intune)
+  - Conflict notes displayed in destructive background
+
+#### Documentation
+- **New User Guide**: "Assets vs Configuration Items" (`/docs/user-guides/assets-vs-configuration-items`)
+  - Comprehensive decision guide for when to create Assets, CIs, or both
+  - Interactive tabs for Physical/Cloud/Software scenarios
+  - Real-world examples (load balancers, databases, laptops)
+  - Quick reference table and best practices
+  - Step-by-step linking instructions
+
+### Changed
+- Updated AssetAssignment entity with new methods: `isIntuneManaged()`, `isManual()`, `flagConflict()`, `clearConflict()`
+- Added 5 new fields to AssetAssignment schema: `source`, `sourceReferenceType`, `sourceReferenceId`, `hasConflict`, `conflictNote`
+- Added 3 new indexes for performance optimization
+- Enhanced AssetAssignment repository with 4 new methods for conflict management
+- Integrated sync logic into all 4 Intune linking/unlinking use cases
+- Updated Intune Integration documentation with assignment sync workflows
+- Removed truncated Intune User ID badge from Related Items tab (cleaner UI)
+- Removed redundant "Serial Number" custom field from seed data (Asset.serialNumber built-in field is sufficient)
+
+### Technical
+- New use case: `SyncAssetAssignmentFromIntuneDeviceUseCase` with `@LogExecution` decorator
+- New use cases: `ListConflictsUseCase`, `UpdateConflictStatusUseCase` (using unique DI tokens to avoid collision with reservation conflicts)
+- New controller actions: `listConflictsAction()`, `updateConflictStatusAction()`
+- New DTOs: `ListConflictsSchema`, `UpdateConflictStatusSchema`
+- Updated presenter to include all new assignment fields
+- All TypeScript type-check passing with zero errors
+
 ## [1.2.0] - 2024-12-01
 
 ### Added

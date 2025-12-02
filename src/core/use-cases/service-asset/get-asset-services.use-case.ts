@@ -1,14 +1,8 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
-import { injectable } from "inversify";
-import { prisma } from "@/infrastructure/database/prisma/client";
+import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { IServiceAssetRepository } from "@/core/repositories/service-asset.repository.interface";
+import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import type { ServiceAsset } from "@/generated/prisma";
-
-export interface GetAssetServicesRequest {
-  assetId: string;
-}
 
 export interface ServiceAssetWithService extends ServiceAsset {
   service: {
@@ -20,38 +14,27 @@ export interface ServiceAssetWithService extends ServiceAsset {
   };
 }
 
+export interface GetAssetServicesRequest {
+  assetId: string;
+}
+
 @injectable()
 export class GetAssetServicesUseCase {
+  constructor(
+    @inject(DI_TOKENS.IServiceAssetRepository)
+    private readonly serviceAssetRepository: IServiceAssetRepository,
+    @inject(DI_TOKENS.IAssetRepository)
+    private readonly assetRepository: IAssetRepository,
+  ) {}
+
   async execute(
     request: GetAssetServicesRequest,
   ): Promise<ServiceAssetWithService[]> {
-    // Check if asset exists
-    const asset = await prisma.asset.findUnique({
-      where: { id: request.assetId },
-    });
+    const asset = await this.assetRepository.findById(request.assetId);
     if (!asset) {
       throw new Error(`Asset with ID ${request.assetId} not found`);
     }
 
-    // Get all services linked to this asset
-    const serviceAssets = await prisma.serviceAsset.findMany({
-      where: {
-        assetId: request.assetId,
-      },
-      include: {
-        service: {
-          select: {
-            id: true,
-            name: true,
-            serviceType: true,
-            currentStatus: true,
-            criticality: true,
-          },
-        },
-      },
-      orderBy: [{ relationship: "asc" }, { service: { name: "asc" } }],
-    });
-
-    return serviceAssets;
+    return this.serviceAssetRepository.listByAsset(request.assetId);
   }
 }

@@ -7,17 +7,15 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services";
-import { seedRBAC } from "@/infrastructure/database/prisma/seed-rbac";
-import { cleanupDatabase } from "@/infrastructure/database/prisma/seed-utils";
-import { prisma } from "@/infrastructure/database/prisma/client";
+import type {
+  ISystemSeederService,
+  ResetDatabaseResult,
+} from "@/core/services/system-seeder.service.interface";
+import { LogExecution } from "@/lib/decorators";
+export type { ResetDatabaseResult } from "@/core/services/system-seeder.service.interface";
 
 export interface ResetDatabaseRequest {
   reseed?: boolean; // Whether to reseed after reset
-}
-
-export interface ResetDatabaseResult {
-  success: boolean;
-  message: string;
 }
 
 @injectable()
@@ -25,8 +23,11 @@ export class ResetDatabaseUseCase {
   constructor(
     @inject(DI_TOKENS.ILoggerService)
     private readonly logger: ILoggerService,
+    @inject(DI_TOKENS.ISystemSeederService)
+    private readonly systemSeederService: ISystemSeederService,
   ) {}
 
+  @LogExecution("system.database.reset")
   async execute(
     request: ResetDatabaseRequest = {},
   ): Promise<ResetDatabaseResult> {
@@ -43,40 +44,12 @@ export class ResetDatabaseUseCase {
 
     this.logger.info("Starting database reset", { reseed });
 
-    try {
-      // Clean all data from all layers (Layer 3 → Layer 2 → Layer 1 → RBAC)
-      this.logger.info("Cleaning database (deleting all data)...");
-      await cleanupDatabase(prisma, ["layer3", "layer2", "layer1", "rbac"]);
-      this.logger.info("Database cleaned successfully");
+    const result = await this.systemSeederService.resetDatabase({ reseed });
 
-      // For system setup, we only provide minimal RBAC seeding
-      // Full database seeding should be done via npm scripts (npm run seed)
-      if (reseed) {
-        this.logger.info("Reseeding RBAC data...");
-        await seedRBAC();
-        this.logger.info("Database reseeded with RBAC data");
-      }
-
-      this.logger.info("Database reset completed", { reseed });
-
-      return {
-        success: true,
-        message: reseed
-          ? "Database reset and reseeded with RBAC data (269 permissions, 10 roles)"
-          : "Database reset successfully. Run 'npm run seed' for full test data.",
-      };
-    } catch (error) {
-      this.logger.error(
-        "Failed to reset database",
-        error instanceof Error ? error : undefined,
-        { reseed },
-      );
-
-      return {
-        success: false,
-        message:
-          error instanceof Error ? error.message : "Failed to reset database",
-      };
+    if (!result.success) {
+      this.logger.error("Failed to reset database", undefined, { reseed });
     }
+
+    return result;
   }
 }

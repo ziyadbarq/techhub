@@ -12,6 +12,7 @@ import { Person } from "@/core/domain/entities/person.entity";
 import type {
   IPersonRepository,
   PersonWithDirectoryRelations,
+  PersonWithoutUserView,
 } from "@/core/repositories/person.repository.interface";
 import { createRepositoryLogger } from "./repository-logger";
 
@@ -207,6 +208,85 @@ export class PrismaPersonRepository implements IPersonRepository {
     return persons.map((p: PrismaPerson) => this.toDomain(p));
   }
 
+  async findNotLinkedToUsersWithDetails(): Promise<PersonWithoutUserView[]> {
+    const persons = await this.prisma.person.findMany({
+      where: { userId: null, isActive: true },
+      orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
+      include: {
+        orgUnit: {
+          select: { id: true, name: true },
+        },
+        primaryRole: {
+          select: { id: true, name: true, displayName: true },
+        },
+      },
+    });
+
+    return persons.map((person) => ({
+      id: person.id,
+      firstName: person.firstName,
+      lastName: person.lastName,
+      middleName: person.middleName,
+      email: person.email,
+      employeeId: person.employeeId,
+      title: person.title,
+      department: person.department,
+      isActive: person.isActive,
+      orgUnit: person.orgUnit
+        ? {
+            id: person.orgUnit.id,
+            name: person.orgUnit.name,
+          }
+        : null,
+      primaryRole: person.primaryRole
+        ? {
+            id: person.primaryRole.id,
+            name: person.primaryRole.name,
+            displayName: person.primaryRole.displayName,
+          }
+        : null,
+    }));
+  }
+
+  async findNotLinkedToUsersByEmail(
+    email: string,
+  ): Promise<PersonWithoutUserView[]> {
+    const persons = await this.prisma.person.findMany({
+      where: {
+        userId: null,
+        isActive: true,
+        email: { equals: email, mode: "insensitive" },
+      },
+      orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
+      include: {
+        orgUnit: { select: { id: true, name: true } },
+        primaryRole: { select: { id: true, name: true, displayName: true } },
+      },
+    });
+
+    return persons.map((person) => ({
+      id: person.id,
+      firstName: person.firstName,
+      lastName: person.lastName,
+      middleName: person.middleName,
+      email: person.email,
+      employeeId: person.employeeId,
+      title: person.title,
+      department: person.department,
+      isActive: person.isActive,
+      orgUnit: person.orgUnit
+        ? { id: person.orgUnit.id, name: person.orgUnit.name }
+        : null,
+      primaryRole: person.primaryRole
+        ? {
+            id: person.primaryRole.id,
+            name: person.primaryRole.name,
+            displayName: person.primaryRole.displayName,
+          }
+        : null,
+    }));
+  }
+
   async findAll(options?: {
     skip?: number;
     take?: number;
@@ -326,6 +406,16 @@ export class PrismaPersonRepository implements IPersonRepository {
       this.logger.error("delete", "Failed to delete person", error);
       throw error;
     }
+  }
+
+  async updateSoftDelete(id: string): Promise<void> {
+    await this.prisma.person.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+        isActive: false,
+      },
+    });
   }
 
   async existsByEmail(email: string, excludeId?: string): Promise<boolean> {

@@ -1,9 +1,6 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
-import { injectable } from "inversify";
-import { prisma } from "@/infrastructure/database/prisma/client";
+import { injectable, inject } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { IServiceAssetRepository } from "@/core/repositories/service-asset.repository.interface";
 
 export interface UnlinkServiceFromAssetRequest {
   serviceAssetId: string;
@@ -11,20 +8,12 @@ export interface UnlinkServiceFromAssetRequest {
 
 @injectable()
 export class UnlinkServiceFromAssetUseCase {
-  async execute(request: UnlinkServiceFromAssetRequest): Promise<void> {
-    // Check if link exists
-    const link = await prisma.serviceAsset.findUnique({
-      where: { id: request.serviceAssetId },
-    });
-    if (!link) {
-      throw new Error(
-        `Service-Asset link with ID ${request.serviceAssetId} not found`,
-      );
-    }
+  constructor(
+    @inject(DI_TOKENS.IServiceAssetRepository)
+    private readonly serviceAssetRepository: IServiceAssetRepository,
+  ) {}
 
-    // Delete link
-    await prisma.serviceAsset.delete({
-      where: { id: request.serviceAssetId },
-    });
+  async execute(request: UnlinkServiceFromAssetRequest): Promise<void> {
+    await this.serviceAssetRepository.deleteById(request.serviceAssetId);
   }
 }

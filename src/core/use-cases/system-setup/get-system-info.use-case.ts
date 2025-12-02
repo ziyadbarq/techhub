@@ -6,15 +6,20 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ISystemSetupRepository } from "@/core/repositories/system-setup-repository.interface";
-import type { SystemInfoDto } from "@/interface-adapters/dtos/system-setup.dto";
+import type { SystemInfoDto } from "@/core/dtos/system-setup.dto";
+import type { ILoggerService } from "@/core/services";
+import { LogExecution } from "@/lib/decorators";
 
 @injectable()
 export class GetSystemInfoUseCase {
   constructor(
     @inject(DI_TOKENS.ISystemSetupRepository)
     private readonly systemSetupRepository: ISystemSetupRepository,
+    @inject(DI_TOKENS.ILoggerService)
+    private readonly logger: ILoggerService,
   ) {}
 
+  @LogExecution("system.info.get")
   async execute(): Promise<SystemInfoDto> {
     // Get database info
     const databaseSize = await this.systemSetupRepository.getDatabaseSize();

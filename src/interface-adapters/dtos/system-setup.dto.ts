@@ -25,48 +25,12 @@ export type CreateFirstUserDto = z.infer<typeof createFirstUserDtoSchema>;
 /**
  * System Health Check Result
  */
-export interface SystemHealthCheckDto {
-  database: {
-    connected: boolean;
-    error?: string;
-    message?: string;
-  };
-  redis: {
-    connected: boolean;
-    error?: string;
-    message?: string;
-  };
-  environment: {
-    valid: boolean;
-    missing: string[];
-  };
-  migrations: {
-    applied: boolean;
-    pending: number;
-    error?: string;
-    message?: string;
-  };
-  rbac: {
-    roles: number;
-    permissions: number;
-  };
-  worker: {
-    active: boolean;
-    queue: string;
-    error?: string;
-    message?: string;
-  };
-  overall: boolean;
-}
+export type { SystemHealthCheckDto } from "@/core/dtos/system-setup.dto";
 
 /**
  * Migration Status DTO
  */
-export interface MigrationStatusDto {
-  applied: string[];
-  pending: string[];
-  total: number;
-}
+export type { MigrationStatusDto } from "@/core/dtos/system-setup.dto";
 
 /**
  * Seed Options DTO Schema
@@ -82,19 +46,4 @@ export type SeedOptionsDto = z.infer<typeof seedOptionsDtoSchema>;
 /**
  * System Info DTO
  */
-export interface SystemInfoDto {
-  nodeVersion: string;
-  platform: string;
-  environment: string;
-  database: {
-    size?: string;
-    tableCount?: number;
-  };
-  lastMigration?: {
-    name: string;
-    appliedAt: Date;
-  };
-  userCount: number;
-  roleCount: number;
-  permissionCount: number;
-}
+export type { SystemInfoDto } from "@/core/dtos/system-setup.dto";

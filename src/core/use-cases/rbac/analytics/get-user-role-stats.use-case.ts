@@ -14,7 +14,8 @@ import type { IUserRoleRepository } from "@/core/repositories/user-role-reposito
 import type { IUserRepository } from "@/core/repositories/user-repository.interface";
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import { DI_TOKENS } from "@/di/types";
-import { detectRoleConflicts } from "@/lib/rbac/role-conflicts";
+import type { IRbacPolicyService } from "@/core/services";
+import { LogExecution } from "@/lib/decorators";
 
 export interface UserRoleStatsResult {
   totalUsers: number;
@@ -46,9 +47,12 @@ export class GetUserRoleStatsUseCase {
     private roleRepository: IRoleRepository,
     @inject(DI_TOKENS.IUserRoleRepository)
     private userRoleRepository: IUserRoleRepository,
+    @inject(DI_TOKENS.IRbacPolicyService)
+    private rbacPolicyService: IRbacPolicyService,
     @inject(DI_TOKENS.ILoggerService) private logger: ILoggerService,
   ) {}
 
+  @LogExecution("rbac.analytics.user_role_stats")
   async execute(): Promise<UserRoleStatsResult> {
     this.logger.info("Fetching user role statistics");
 
@@ -107,7 +111,8 @@ export class GetUserRoleStatsUseCase {
             .map((userRole) => roleMap.get(userRole.roleId)?.name)
             .filter((roleName): roleName is string => roleName !== undefined);
 
-          const { hasConflicts } = detectRoleConflicts(roleNames);
+          const { hasConflicts } =
+            this.rbacPolicyService.detectRoleConflicts(roleNames);
           if (hasConflicts) {
             usersWithConflicts++;
           }

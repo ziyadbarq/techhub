@@ -6,7 +6,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getContainer } from "@/di/container";
+import { getContainer, loadHeavyModule, isModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type {
   CreateLicenseProductFieldUseCase,
@@ -28,10 +28,17 @@ import {
 } from "@/interface-adapters/presenters/license-product-field.presenter";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+/**
+ * Ensures the Licenses module is loaded before accessing its use cases
+ */
+async function ensureLicensesModuleLoaded(): Promise<void> {
+  if (!isModuleLoaded("licenses")) {
+    await loadHeavyModule("licenses");
+  }
+}
 import type { BulkCreateResult } from "./types";
-import { PrismaLicenseProductFieldRepository } from "@/infrastructure/repositories/prisma-license-product-field.repository";
-import type { PrismaClient } from "@/generated/prisma/server";
-import type { ILoggerService } from "@/core/services";
+import type { ILicenseProductFieldRepository } from "@/core/repositories/license-product-field.repository.interface";
 
 /**
  * Create a new license product field
@@ -44,6 +51,9 @@ export async function createLicenseProductField(
 > {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_CREATE);
+
+    // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
+    await ensureLicensesModuleLoaded();
 
     // Validate input
     const validatedData = CreateLicenseProductFieldSchema.parse(data);
@@ -87,6 +97,9 @@ export async function getLicenseProductField(
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_VIEW);
 
+    // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
+    await ensureLicensesModuleLoaded();
+
     const container = getContainer();
     const useCase = container.get<GetLicenseProductFieldUseCase>(
       DI_TOKENS.GetLicenseProductFieldUseCase,
@@ -120,6 +133,9 @@ export async function listLicenseProductFields(
 > {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_VIEW);
+
+    // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
+    await ensureLicensesModuleLoaded();
 
     const container = getContainer();
     const useCase = container.get<ListLicenseProductFieldsUseCase>(
@@ -155,6 +171,9 @@ export async function updateLicenseProductField(
 > {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_UPDATE);
+
+    // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
+    await ensureLicensesModuleLoaded();
 
     // Validate input
     const validatedData = UpdateLicenseProductFieldSchema.parse(data);
@@ -196,6 +215,9 @@ export async function deleteLicenseProductField(
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_DELETE);
 
+    // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
+    await ensureLicensesModuleLoaded();
+
     const container = getContainer();
     const useCase = container.get<DeleteLicenseProductFieldUseCase>(
       DI_TOKENS.DeleteLicenseProductFieldUseCase,
@@ -229,6 +251,9 @@ export async function bulkCreateLicenseProductFieldsAction(
 ): Promise<BulkCreateResult> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_CREATE);
+
+    // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
+    await ensureLicensesModuleLoaded();
 
     const container = getContainer();
     const useCase = container.get<CreateLicenseProductFieldUseCase>(
@@ -295,11 +320,14 @@ export async function listEnrichedLicenseProductFieldsAction(
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCT_FIELDS_VIEW);
 
+    // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
+    await ensureLicensesModuleLoaded();
+
     // Use repository directly for enriched query
     const container = getContainer();
-    const prisma = container.get<PrismaClient>(DI_TOKENS.PrismaClient);
-    const logger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
-    const repository = new PrismaLicenseProductFieldRepository(prisma, logger);
+    const repository = container.get<ILicenseProductFieldRepository>(
+      DI_TOKENS.ILicenseProductFieldRepository,
+    );
     const fieldsWithDefinition =
       await repository.findByLicenseProductIdWithDefinition(licenseProductId);
 

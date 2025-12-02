@@ -21,11 +21,21 @@ export interface AssetAssignmentDTO {
   conditionOnAssignment: string | null;
   conditionOnReturn: string | null;
   note: string | null;
+  // Source tracking
+  source: string;
+  sourceReferenceType: string | null;
+  sourceReferenceId: string | null;
+  // Conflict tracking
+  hasConflict: boolean;
+  conflictNote: string | null;
+  // Timestamps
   createdAt: string;
   updatedAt: string;
   // Computed fields
   isActive: boolean;
   durationInDays: number;
+  isIntuneManaged: boolean;
+  isManual: boolean;
   // Display fields (enriched from relations)
   assetTag?: string;
   assigneeName?: string;
@@ -49,11 +59,21 @@ export function presentAssetAssignment(
     conditionOnAssignment: assignment.conditionOnAssignment,
     conditionOnReturn: assignment.conditionOnReturn,
     note: assignment.note,
+    // Source tracking
+    source: assignment.source,
+    sourceReferenceType: assignment.sourceReferenceType,
+    sourceReferenceId: assignment.sourceReferenceId,
+    // Conflict tracking
+    hasConflict: assignment.hasConflict,
+    conflictNote: assignment.conflictNote,
+    // Timestamps
     createdAt: assignment.createdAt.toISOString(),
     updatedAt: assignment.updatedAt.toISOString(),
     // Computed fields
     isActive: assignment.isActive(),
     durationInDays: assignment.getDurationInDays(),
+    isIntuneManaged: assignment.isIntuneManaged(),
+    isManual: assignment.isManual(),
     // Display fields
     assetTag: enrichment?.assetTag,
     assigneeName: enrichment?.assigneeName,

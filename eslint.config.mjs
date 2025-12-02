@@ -145,4 +145,152 @@ export default [
       ],
     },
   },
+  // Layer boundary rules (warn-only while violations are being fixed)
+  {
+    files: ["src/core/domain/**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": [
+        "warn",
+        {
+          patterns: [
+            {
+              group: [
+                "@/app/**",
+                "@/components/**",
+                "@/contexts/**",
+                "@/hooks/**",
+                "@/interface-adapters/**",
+                "@/infrastructure/**",
+                "@/lib/**",
+                "@/config/**",
+                "@/core/use-cases/**",
+                "@/core/services/**",
+              ],
+              message:
+                "Domain layer must stay pure; do not depend on outer layers or lib helpers.",
+            },
+            {
+              group: ["@/generated/prisma/server", "@/generated/prisma/client"],
+              message: "Domain cannot import PrismaClient; use enums/types only.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/core/use-cases/**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": [
+        "warn",
+        {
+          patterns: [
+            {
+              group: [
+                "@/app/**",
+                "@/components/**",
+                "@/contexts/**",
+                "@/hooks/**",
+                "@/interface-adapters/**",
+                "@/infrastructure/**",
+                "@/lib/**",
+                // Exception: Allow logging decorator (cross-cutting concern for observability)
+                "!@/lib/decorators/log-execution.decorator",
+                "!@/lib/decorators",
+              ],
+              message:
+                "Use cases depend only on domain/services/contracts; route through adapters for everything else.",
+            },
+            {
+              group: ["@/generated/prisma/server", "@/generated/prisma/client"],
+              message:
+                "Use cases should not import PrismaClient; rely on repositories.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/interface-adapters/**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": [
+        "warn",
+        {
+          patterns: [
+            {
+              group: ["@/infrastructure/**", "@/app/**"],
+              message:
+                "Interface adapters should not depend on infrastructure or presentation layers.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/infrastructure/**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": [
+        "warn",
+        {
+          patterns: [
+            {
+              group: ["@/interface-adapters/**", "@/app/**"],
+              message:
+                "Infrastructure implementations should not import adapters or presentation code.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/lib/**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": [
+        "warn",
+        {
+          patterns: [
+            {
+              group: ["@/interface-adapters/**", "@/infrastructure/**", "@/app/**"],
+              message:
+                "Shared lib utilities must stay free of presentation or adapter coupling.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/app/**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": [
+        "warn",
+        {
+          patterns: [
+            {
+              group: [
+                "@/core/use-cases/**",
+                "@/core/repositories/**",
+                "@/core/services/**",
+                "@/core/domain/entities/**",
+                "@/core/domain/events/**",
+                "@/infrastructure/**",
+              ],
+              message:
+                "Presentation should depend on controllers/queries, not core or infrastructure directly.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  // Relax boundary checks inside tests to allow direct imports for setup/mocking
+  {
+    files: ["**/__tests__/**/*.{ts,tsx}", "**/*.test.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-restricted-imports": "off",
+    },
+  },
 ];

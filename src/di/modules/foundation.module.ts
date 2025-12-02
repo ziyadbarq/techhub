@@ -102,6 +102,8 @@ import { DeletePersonUseCase } from "@/core/use-cases/foundation/person/delete-p
 import { DeletePersonWithConfirmationUseCase } from "@/core/use-cases/foundation/person/delete-person-with-confirmation.use-case";
 import { TogglePersonExclusionUseCase } from "@/core/use-cases/foundation/person/toggle-person-exclusion.use-case";
 import { TogglePersonStatusUseCase } from "@/core/use-cases/foundation/person/toggle-person-status.use-case";
+import type { IPersonDependencyRepository } from "@/core/repositories/person-dependency.repository.interface";
+import { PrismaPersonDependencyRepository } from "@/infrastructure/repositories/prisma-person-dependency.repository";
 
 // Employee Directory Use Cases
 import {
@@ -195,6 +197,11 @@ export function bindFoundationDependencies(container: Container): void {
   container
     .bind<IPersonRepository>(DI_TOKENS.IPersonRepository)
     .to(PrismaPersonRepository)
+    .inSingletonScope();
+
+  container
+    .bind<IPersonDependencyRepository>(DI_TOKENS.IPersonDependencyRepository)
+    .to(PrismaPersonDependencyRepository)
     .inSingletonScope();
 
   container

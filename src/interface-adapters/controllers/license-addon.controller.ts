@@ -5,10 +5,19 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { resolve } from "@/di/container";
+import { resolve, loadHeavyModule, isModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+/**
+ * Ensures the Licenses module is loaded before accessing its use cases
+ */
+async function ensureLicensesModuleLoaded(): Promise<void> {
+  if (!isModuleLoaded("licenses")) {
+    await loadHeavyModule("licenses");
+  }
+}
 import type {
   CreateLicenseAddonDTO,
   UpdateLicenseAddonDTO,
@@ -35,6 +44,9 @@ export async function createLicenseAddon(
 > {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_UPDATE);
+
+    // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
+    await ensureLicensesModuleLoaded();
 
     const validated = CreateLicenseAddonSchema.parse(data);
 
@@ -79,6 +91,9 @@ export async function getLicenseAddon(
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_VIEW);
 
+    // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
+    await ensureLicensesModuleLoaded();
+
     const useCase = resolve<GetLicenseAddonUseCase>(
       DI_TOKENS.GetLicenseAddonUseCase,
     );
@@ -118,6 +133,9 @@ export async function listLicenseAddons(params?: {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_VIEW);
 
+    // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
+    await ensureLicensesModuleLoaded();
+
     const useCase = resolve<ListLicenseAddonsUseCase>(
       DI_TOKENS.ListLicenseAddonsUseCase,
     );
@@ -150,6 +168,9 @@ export async function updateLicenseAddon(
 > {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_UPDATE);
+
+    // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
+    await ensureLicensesModuleLoaded();
 
     const validated = UpdateLicenseAddonSchema.parse(data);
 
@@ -190,6 +211,9 @@ export async function deleteLicenseAddon(
 ): Promise<{ success: true } | { success: false; error: string }> {
   try {
     await requirePermission(PERMISSIONS.LICENSE_PRODUCTS_UPDATE);
+
+    // Ensure Licenses module is loaded (HEAVY tier, lazy loaded)
+    await ensureLicensesModuleLoaded();
 
     const useCase = resolve<DeleteLicenseAddonUseCase>(
       DI_TOKENS.DeleteLicenseAddonUseCase,

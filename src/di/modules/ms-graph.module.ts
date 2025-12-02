@@ -14,9 +14,15 @@ import { logger } from "@/lib/logger";
 
 // Service Interface
 import { IMicrosoftGraphService } from "@/core/services/microsoft-graph.service.interface";
+import type {
+  IGraphUserMapperService,
+  IIntuneDeviceMapperService,
+} from "@/core/services";
 
 // Service Implementation
 import { MicrosoftGraphService } from "@/infrastructure/services/microsoft-graph.service";
+import { GraphUserMapperService } from "@/infrastructure/services/graph-user-mapper.service";
+import { IntuneDeviceMapperService } from "@/infrastructure/services/intune-device-mapper.service";
 
 // Use Case
 import { SyncUsersFromGraphUseCase } from "@/core/use-cases/foundation/person/sync-users-from-graph.use-case";
@@ -34,6 +40,16 @@ export function bindMicrosoftGraphDependencies(container: Container): void {
   container
     .bind<IMicrosoftGraphService>(IMicrosoftGraphService)
     .to(MicrosoftGraphService)
+    .inSingletonScope();
+
+  container
+    .bind<IGraphUserMapperService>(DI_TOKENS.IGraphUserMapperService)
+    .to(GraphUserMapperService)
+    .inSingletonScope();
+
+  container
+    .bind<IIntuneDeviceMapperService>(DI_TOKENS.IIntuneDeviceMapperService)
+    .to(IntuneDeviceMapperService)
     .inSingletonScope();
 
   // ==========================================

@@ -1,11 +1,8 @@
 import fs from "node:fs";
 import { NextResponse, type NextRequest } from "next/server";
-import { getContainer } from "@/di/container";
-import { DI_TOKENS } from "@/di/types";
-import type { IDatabaseBackupRepository } from "@/core/repositories/database-backup.repository.interface";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { BackupStatus } from "@/core/domain/entities/database-backup.entity";
+import { getDatabaseBackupByIdInternal } from "@/interface-adapters/controllers/database-backup.controller";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -19,18 +16,13 @@ export async function GET(
 
     const { id } = await context.params;
 
-    const container = getContainer();
-    const repository = container.get<IDatabaseBackupRepository>(
-      DI_TOKENS.IDatabaseBackupRepository,
-    );
-
-    const backup = await repository.findById(id);
+    const backup = await getDatabaseBackupByIdInternal(id);
     if (!backup || backup.toJSON().deletedAt) {
       return NextResponse.json({ error: "Backup not found" }, { status: 404 });
     }
 
     const backupData = backup.toJSON();
-    if (backupData.status !== BackupStatus.COMPLETED) {
+    if (backupData.status !== "COMPLETED") {
       return NextResponse.json(
         { error: "Backup is not completed yet" },
         { status: 409 },

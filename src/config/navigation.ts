@@ -36,32 +36,16 @@ export type {
 } from "./navigation.types";
 
 // ============================================================================
-// Import Navigation Groups
+// Import Navigation Groups (Auto-Generated)
 // ============================================================================
 
-// Main navigation
 import { mainNavGroup } from "./navigation-groups/main";
-
-// Foundation and setup data
-import { foundationGroup } from "./navigation-groups/foundation";
-
-// Asset catalog setup
-import { assetCatalogGroup } from "./navigation-groups/asset-catalog";
-
-// Asset-related groups
-import { assetsInventoryGroup } from "./navigation-groups/assets";
-
-// Services, CMDB, and maintenance
-import { servicesCmdbGroup } from "./navigation-groups/services-cmdb";
-
-// Compliance & extensions
-import {
-  licensesContractsGroup,
-  governanceAttachmentsGroup,
-} from "./navigation-groups/compliance";
-
-// System & administration groups
-import { adminSettingsGroup } from "./navigation-groups/system";
+import { foundationNavGroup } from "./navigation-groups/foundation";
+import { assetcatalogNavGroup } from "./navigation-groups/asset-catalog";
+import { assetsNavGroup } from "./navigation-groups/assets";
+import { servicescmdbNavGroup } from "./navigation-groups/services-cmdb";
+import { complianceNavGroup } from "./navigation-groups/compliance";
+import { systemNavGroup } from "./navigation-groups/system";
 
 // ============================================================================
 // Aggregate Navigation Groups
@@ -74,37 +58,33 @@ import { adminSettingsGroup } from "./navigation-groups/system";
  * Groups are arranged to keep data entry and key workflows near the top:
  * 1. Main (Dashboard, Intune devices, Data Import)
  * 2. Foundation (org data, lifecycle, configuration)
- * 3. Asset Catalog (categories, models, stock locations)
- * 4. Assets & Inventory
+ * 3. Assets & Inventory
+ * 4. Asset Catalog (categories, models, stock locations)
  * 5. Services & CMDB
- * 6. Licenses & Contracts
- * 7. Governance & Attachments
- * 8. Admin & Settings
+ * 6. Compliance & Governance (licenses, contracts, governance, attachments)
+ * 7. System & Admin
  */
 export const navGroups = [
   // Core navigation (always visible)
   mainNavGroup,
 
   // Foundation data entry
-  foundationGroup,
-
-  // Asset catalog setup
-  assetCatalogGroup,
+  foundationNavGroup,
 
   // Assets & inventory workflows
-  assetsInventoryGroup,
+  assetsNavGroup,
+
+  // Asset catalog setup
+  assetcatalogNavGroup,
 
   // Services, CMDB, and maintenance
-  servicesCmdbGroup,
+  servicescmdbNavGroup,
 
-  // Licensing and contracts
-  licensesContractsGroup,
-
-  // Governance and attachments
-  governanceAttachmentsGroup,
+  // Compliance, licensing, contracts, governance, and attachments
+  complianceNavGroup,
 
   // Administration and platform settings
-  adminSettingsGroup,
+  systemNavGroup,
 ];
 
 // ============================================================================

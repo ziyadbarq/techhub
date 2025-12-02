@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
-import { injectable } from "inversify";
-import { prisma } from "@/infrastructure/database/prisma/client";
+import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
 import type { OwnershipType } from "@/generated/prisma";
+import type { IServiceRepository } from "@/core/repositories/service.repository.interface";
+import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
+import type { IServiceOwnershipRepository } from "@/core/repositories/service-ownership.repository.interface";
 
 export interface AddServiceOwnerRequest {
   serviceId: string;
@@ -15,61 +14,51 @@ export interface AddServiceOwnerRequest {
 
 @injectable()
 export class AddServiceOwnerUseCase {
+  constructor(
+    @inject(DI_TOKENS.IServiceRepository)
+    private readonly serviceRepository: IServiceRepository,
+    @inject(DI_TOKENS.IPersonRepository)
+    private readonly personRepository: IPersonRepository,
+    @inject(DI_TOKENS.IServiceOwnershipRepository)
+    private readonly serviceOwnershipRepository: IServiceOwnershipRepository,
+  ) {}
+
   async execute(request: AddServiceOwnerRequest): Promise<void> {
-    // Check if service exists
-    const service = await prisma.service.findUnique({
-      where: { id: request.serviceId },
-    });
+    const service = await this.serviceRepository.findById(request.serviceId);
     if (!service) {
       throw new Error(`Service with ID ${request.serviceId} not found`);
     }
 
-    // Check if person exists
-    const person = await prisma.person.findUnique({
-      where: { id: request.personId },
-    });
+    const person = await this.personRepository.findById(request.personId);
     if (!person) {
       throw new Error(`Person with ID ${request.personId} not found`);
     }
 
-    // Check if ownership already exists
-    const existing = await prisma.serviceOwnership.findUnique({
-      where: {
-        serviceId_personId_ownershipType: {
-          serviceId: request.serviceId,
-          personId: request.personId,
-          ownershipType: request.ownershipType,
-        },
-      },
-    });
+    const existing = await this.serviceOwnershipRepository.find(
+      request.serviceId,
+      request.personId,
+      request.ownershipType,
+    );
     if (existing) {
       throw new Error(
         `Person is already a ${request.ownershipType} owner of this service`,
       );
     }
 
-    // If setting as primary, unset other primary owners of the same type
     if (request.isPrimary) {
-      await prisma.serviceOwnership.updateMany({
-        where: {
-          serviceId: request.serviceId,
-          ownershipType: request.ownershipType,
-          isPrimary: true,
-        },
-        data: {
-          isPrimary: false,
-        },
-      });
+      await this.serviceOwnershipRepository.setPrimaryOwner(
+        request.serviceId,
+        request.ownershipType,
+        request.personId,
+      );
+      return;
     }
 
-    // Create ownership
-    await prisma.serviceOwnership.create({
-      data: {
-        serviceId: request.serviceId,
-        personId: request.personId,
-        ownershipType: request.ownershipType,
-        isPrimary: request.isPrimary ?? false,
-      },
+    await this.serviceOwnershipRepository.addOwner({
+      serviceId: request.serviceId,
+      personId: request.personId,
+      ownershipType: request.ownershipType,
+      isPrimary: false,
     });
   }
 }

@@ -13,7 +13,7 @@ import { CheckPermissionUseCase } from "../check-permission.use-case";
 import type { IUserRoleRepository } from "@/core/repositories/user-role-repository.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
-import { permissionCache } from "@/lib/permissions/cache";
+import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
 
 /**
  * Mock UserRoleRepository
@@ -57,19 +57,35 @@ describe("CheckPermissionUseCase", () => {
   let checkPermissionUseCase: CheckPermissionUseCase;
   let mockUserRoleRepository: MockUserRoleRepository;
   let mockLogger: MockLoggerService;
+  let mockPermissionCacheService: IPermissionCacheService;
+  let permissionCacheStore: Record<string, PermissionKey[]>;
 
   beforeEach(() => {
     // Create fresh instances
     mockUserRoleRepository = new MockUserRoleRepository();
     mockLogger = new MockLoggerService();
-
-    // Clear permission cache
-    permissionCache.invalidateAll();
+    permissionCacheStore = {};
+    mockPermissionCacheService = {
+      get: vi.fn((userId: string) => permissionCacheStore[userId] ?? null),
+      set: vi.fn((userId: string, permissions: PermissionKey[]) => {
+        permissionCacheStore[userId] = permissions;
+      }),
+      invalidate: vi.fn((scope, userId?: string) => {
+        if (scope === "all") {
+          permissionCacheStore = {};
+          return;
+        }
+        if (scope === "user" && userId) {
+          delete permissionCacheStore[userId];
+        }
+      }),
+    };
 
     // Create use case
     checkPermissionUseCase = new CheckPermissionUseCase(
       mockUserRoleRepository as unknown as IUserRoleRepository,
       mockLogger as unknown as ILoggerService,
+      mockPermissionCacheService,
     );
   });
 

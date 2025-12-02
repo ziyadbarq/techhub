@@ -21,7 +21,8 @@ import type {
   LookupMap,
 } from "@/lib/data-import/entity-config.types";
 import { importProcessor } from "@/lib/data-import/import-processor";
-import { loadCustomFieldsForCategory } from "@/lib/data-import/custom-field-loader";
+import { toEntityFieldConfigs } from "@/lib/data-import/custom-field-loader";
+import { listEnrichedAssetCategoryFieldsAction } from "@/interface-adapters/controllers/asset-category-field.controller";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -178,7 +179,13 @@ export function Step4FieldMapper({
     const loadFields = async () => {
       setCustomFieldsLoading(true);
       try {
-        const fields = await loadCustomFieldsForCategory(detectedCategoryId);
+        const result =
+          await listEnrichedAssetCategoryFieldsAction(detectedCategoryId);
+        if (!result.success) {
+          setCustomFields([]);
+          return;
+        }
+        const fields = toEntityFieldConfigs(result.data);
         setCustomFields(fields);
 
         // Auto-map custom fields to CSV columns if possible

@@ -42,6 +42,9 @@ import {
   SendReminderNotificationsUseCase,
 } from "@/core/use-cases/reservations";
 
+// Query Layer
+import { AssetReservationsTableQuery } from "@/interface-adapters/queries";
+
 const diLogger = logger.scope("DI");
 
 /**
@@ -167,6 +170,15 @@ export function loadReservationsModule(container: Container): void {
     )
     .to(SendReminderNotificationsUseCase)
     .inSingletonScope();
+
+  // ==========================================
+  // Query Layer - Asset Reservations
+  // ==========================================
+
+  container
+    .bind<AssetReservationsTableQuery>(DI_TOKENS.AssetReservationsTableQuery)
+    .to(AssetReservationsTableQuery)
+    .inTransientScope();
 
   diLogger.debug(
     "loadReservationsModule",

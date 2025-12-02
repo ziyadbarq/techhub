@@ -1,4 +1,5 @@
-import type { Session, User } from "./better-auth";
+// eslint-disable-next-line @typescript-eslint/no-restricted-imports -- legacy compatibility shim; see docs/architecture/IMPORT_RULES.md
+import type { Session, User } from "@/interface-adapters/auth/better-auth";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 

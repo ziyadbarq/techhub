@@ -501,6 +501,57 @@ export class PrismaUserRoleRepository implements IUserRoleRepository {
     }
   }
 
+  async findUsersWithRoles(): Promise<
+    Array<{
+      id: string;
+      email: string;
+      name: string | null;
+      image: string | null;
+      emailVerified: Date | null;
+      createdAt: Date;
+      roles: Array<{
+        id: string;
+        roleId: string;
+        roleName: string;
+        roleDisplayName: string;
+        expiresAt: Date | null;
+        isActive: boolean;
+      }>;
+    }>
+  > {
+    const users = await this.prisma.user.findMany({
+      include: {
+        roles: {
+          include: {
+            role: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return users.map((u) => ({
+      id: u.id,
+      email: u.email,
+      name: u.name,
+      image: u.image,
+      emailVerified: u.emailVerified,
+      createdAt: u.createdAt,
+      roles: u.roles.map((ur) => {
+        const now = new Date();
+        const isExpired = ur.expiresAt ? ur.expiresAt < now : false;
+        return {
+          id: ur.id,
+          roleId: ur.roleId,
+          roleName: ur.role.name,
+          roleDisplayName: ur.role.displayName,
+          expiresAt: ur.expiresAt,
+          isActive: ur.role.isActive && !isExpired,
+        };
+      }),
+    }));
+  }
+
   /**
    * Convert Prisma model to domain entity
    *

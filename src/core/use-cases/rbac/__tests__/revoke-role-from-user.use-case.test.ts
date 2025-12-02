@@ -17,7 +17,7 @@ import type { IAuditLogRepository } from "@/core/repositories/audit-log-reposito
 import { Role } from "@/core/domain/entities/role.entity";
 import { UserRole } from "@/core/domain/entities/user-role.entity";
 import { RoleNotFoundError } from "@/core/domain/errors/rbac-errors";
-import { permissionCache } from "@/lib/permissions/cache";
+import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
 
 /**
  * Mock Repositories
@@ -81,21 +81,25 @@ describe("RevokeRoleFromUserUseCase", () => {
   let mockUserRoleRepository: MockUserRoleRepository;
   let mockRoleRepository: MockRoleRepository;
   let mockAuditLogRepository: MockAuditLogRepository;
+  let mockPermissionCacheService: IPermissionCacheService;
 
   beforeEach(() => {
     // Create fresh instances
     mockUserRoleRepository = new MockUserRoleRepository();
     mockRoleRepository = new MockRoleRepository();
     mockAuditLogRepository = new MockAuditLogRepository();
-
-    // Clear permission cache
-    permissionCache.invalidateAll();
+    mockPermissionCacheService = {
+      get: vi.fn(),
+      set: vi.fn(),
+      invalidate: vi.fn(),
+    };
 
     // Create use case
     useCase = new RevokeRoleFromUserUseCase(
       mockUserRoleRepository as unknown as IUserRoleRepository,
       mockRoleRepository as unknown as IRoleRepository,
       mockAuditLogRepository as unknown as IAuditLogRepository,
+      mockPermissionCacheService,
     );
   });
 
@@ -181,8 +185,6 @@ describe("RevokeRoleFromUserUseCase", () => {
       });
       mockUserRoleRepository.setUserRole(userRole);
 
-      const invalidateSpy = vi.spyOn(permissionCache, "invalidate");
-
       // Act
       await useCase.execute({
         userId: "user-1",
@@ -191,7 +193,10 @@ describe("RevokeRoleFromUserUseCase", () => {
       });
 
       // Assert
-      expect(invalidateSpy).toHaveBeenCalledWith("user-1");
+      expect(mockPermissionCacheService.invalidate).toHaveBeenCalledWith(
+        "user",
+        "user-1",
+      );
     });
   });
 

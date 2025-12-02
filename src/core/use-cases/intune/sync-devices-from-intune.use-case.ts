@@ -28,10 +28,12 @@ import {
   type IntuneComplianceState,
 } from "@/core/domain/entities/intune-device.entity";
 import { IntuneComplianceHistory } from "@/core/domain/entities/intune-compliance-history.entity";
-import {
-  transformGraphDeviceToSyncInput,
-  type FetchDevicesOptions,
-} from "@/lib/schemas/graph-intune-device.schema";
+import type {
+  IIntuneDeviceMapperService,
+  GraphIntuneDevice,
+  IntuneFetchDevicesOptions,
+} from "@/core/services/intune-device-mapper.service.interface";
+import { LogExecution } from "@/lib/decorators";
 
 /**
  * Result of a sync operation
@@ -62,7 +64,7 @@ export interface IntuneSyncResult {
 /**
  * Options for the sync operation
  */
-export interface SyncDevicesOptions extends FetchDevicesOptions {
+export interface SyncDevicesOptions extends IntuneFetchDevicesOptions {
   /**
    * Automatically link devices to Assets by serial number
    * @default true
@@ -110,6 +112,8 @@ export class SyncDevicesFromIntuneUseCase {
     private readonly personRepository: IPersonRepository,
     @inject(IMicrosoftGraphService)
     private readonly graphService: IMicrosoftGraphService,
+    @inject(DI_TOKENS.IIntuneDeviceMapperService)
+    private readonly intuneDeviceMapper: IIntuneDeviceMapperService,
   ) {
     this.logger = logger.child({ useCase: "SyncDevicesFromIntuneUseCase" });
   }
@@ -117,6 +121,7 @@ export class SyncDevicesFromIntuneUseCase {
   /**
    * Execute device sync from Microsoft Intune
    */
+  @LogExecution("intune.devices.sync")
   async execute(options?: SyncDevicesOptions): Promise<IntuneSyncResult> {
     const startTime = Date.now();
     const result: IntuneSyncResult = {
@@ -163,7 +168,10 @@ export class SyncDevicesFromIntuneUseCase {
       // Process each device
       for (const graphDevice of graphDevices) {
         try {
-          const syncInput = transformGraphDeviceToSyncInput(graphDevice);
+          const syncInput =
+            this.intuneDeviceMapper.transformGraphDeviceToSyncInput(
+              graphDevice as GraphIntuneDevice,
+            );
           currentIntuneIds.push(syncInput.intuneDeviceId);
 
           // Find existing device by Intune Device ID or Azure AD Device ID

@@ -37,6 +37,9 @@ import { PrismaPromptBlockRepository } from "../../infrastructure/repositories/p
 import { PrismaPromptCompositionRepository } from "../../infrastructure/repositories/prisma-prompt-composition.repository";
 import { PrismaTaskRepository } from "../../infrastructure/repositories/prisma-task.repository";
 
+// Auth service for Better Auth
+import { PrismaAuthService } from "../../infrastructure/services/auth/prisma-auth.service";
+
 /**
  * Binds all database-related dependencies to the container
  *
@@ -108,6 +111,17 @@ export function bindDatabaseDependencies(container: Container): void {
   container
     .bind<ITaskRepository>(DI_TOKENS.ITaskRepository)
     .to(PrismaTaskRepository)
+    .inSingletonScope();
+
+  // ==========================================
+  // Bind Auth Services
+  // ==========================================
+
+  // Bind PrismaAuthService for Better Auth
+  // Provides Prisma client with encryption and transformations for authentication
+  container
+    .bind<PrismaAuthService>(PrismaAuthService)
+    .toSelf()
     .inSingletonScope();
 
   scopedLogger.debug("bindDatabaseDependencies", "Database dependencies bound");

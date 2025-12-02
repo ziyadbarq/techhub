@@ -4,7 +4,6 @@
  */
 
 import * as Papa from "papaparse";
-import type { CreateAssetDTO } from "@/interface-adapters/dtos/generated/asset.dto";
 
 export interface CSVImportRow {
   assetTag: string;
@@ -34,6 +33,23 @@ export interface CSVParseResult {
   totalRows: number;
   validRows: number;
   invalidRows: number;
+}
+
+export interface AssetCreateLike {
+  assetTag: string;
+  assetCategoryId: string;
+  assetModelId?: string | null;
+  vendorId?: string | null;
+  serialNumber?: string | null;
+  purchaseDate?: Date | null;
+  purchaseCost?: number | null;
+  currency?: string | null;
+  currentStockLocationId?: string | null;
+  lifecycleStateId?: string | null;
+  depreciationModel?: string | null;
+  depreciationStart?: Date | null;
+  depreciationEnd?: Date | null;
+  note?: string | null;
 }
 
 /**
@@ -175,7 +191,7 @@ function isValidDate(dateString: string): boolean {
 }
 
 /**
- * Convert CSV row to CreateAssetDTO (for valid rows only)
+ * Convert CSV row to asset creation shape (for valid rows only)
  * Note: This creates partial DTOs that need ID mapping from codes
  */
 export function csvRowToDTO(
@@ -187,7 +203,7 @@ export function csvRowToDTO(
     locationMap: Map<string, string>; // code -> id
     stateMap: Map<string, string>; // code -> id
   },
-): { dto: Partial<CreateAssetDTO>; errors: string[] } {
+): { dto: Partial<AssetCreateLike>; errors: string[] } {
   const errors: string[] = [];
 
   // Map category code to ID
@@ -240,7 +256,7 @@ export function csvRowToDTO(
     }
   }
 
-  const dto: Partial<CreateAssetDTO> = {
+  const dto: Partial<AssetCreateLike> = {
     assetTag: row.assetTag.trim(),
     assetCategoryId: categoryId || "",
     assetModelId: modelId,

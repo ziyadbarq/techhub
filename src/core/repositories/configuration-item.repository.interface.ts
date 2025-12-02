@@ -4,6 +4,33 @@ import type {
   EnvironmentEnum,
 } from "../domain/entities/configuration-item.entity";
 
+export interface CIDeletionDependencies {
+  relationshipsFrom: number;
+  relationshipsTo: number;
+  impactingRelationshipsTo: number;
+  activeRelationshipsTo: number;
+  activeRelationshipsFrom: number;
+}
+
+export interface CIDeletionContext {
+  ci: {
+    id: string;
+    ciKey: string | null;
+    name: string;
+    ciClassName: string | null;
+    criticality: string | null;
+    environment: string | null;
+  };
+  dependencies: CIDeletionDependencies;
+  impactingRelationships: Array<{
+    relationshipType: string;
+    relatedCIKey: string;
+    relatedCIName: string;
+    isImpacting: boolean;
+    isActive: boolean;
+  }>;
+}
+
 /**
  * Configuration Item Repository Interface
  *
@@ -106,4 +133,14 @@ export interface IConfigurationItemRepository {
    * Check if a CI key already exists
    */
   existsByCiKey(ciKey: string): Promise<boolean>;
+
+  /**
+   * Retrieve deletion context (dependencies + relationship impacts)
+   */
+  getDeletionContext(ciId: string): Promise<CIDeletionContext | null>;
+
+  /**
+   * Delete a CI and its relationships in a single transaction
+   */
+  deleteWithRelationships(ciId: string): Promise<void>;
 }

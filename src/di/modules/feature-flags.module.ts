@@ -15,6 +15,8 @@ import { ListFeatureFlagsUseCase } from "@/core/use-cases/feature-flags/list-fea
 import { GetFeatureFlagUseCase } from "@/core/use-cases/feature-flags/get-feature-flag.use-case";
 import { ToggleFeatureFlagUseCase } from "@/core/use-cases/feature-flags/toggle-feature-flag.use-case";
 import { CheckFeatureEnabledUseCase } from "@/core/use-cases/feature-flags/check-feature-enabled.use-case";
+import type { IFeatureFlagAuditService } from "@/core/services/feature-flag-audit.service.interface";
+import { FeatureFlagAuditService } from "@/infrastructure/services/feature-flags/feature-flag-audit.service";
 
 /**
  * Bind all Feature Flag dependencies to the container
@@ -52,4 +54,9 @@ export function bindFeatureFlagsDependencies(container: Container): void {
     .bind(DI_TOKENS.CheckFeatureEnabledUseCase)
     .to(CheckFeatureEnabledUseCase)
     .inTransientScope();
+
+  container
+    .bind<IFeatureFlagAuditService>(DI_TOKENS.IFeatureFlagAuditService)
+    .to(FeatureFlagAuditService)
+    .inSingletonScope();
 }

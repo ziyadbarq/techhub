@@ -355,18 +355,11 @@ export function RelatedItemsTab({ device }: RelatedItemsTabProps) {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">{device.userDisplayName}</p>
-                <p className="text-muted-foreground text-sm">
-                  {device.userPrincipalName}
-                </p>
-              </div>
-              {device.intuneUserId && (
-                <Badge variant="outline" className="font-mono text-xs">
-                  ID: {device.intuneUserId.slice(0, 8)}...
-                </Badge>
-              )}
+            <div>
+              <p className="font-medium">{device.userDisplayName}</p>
+              <p className="text-muted-foreground text-sm">
+                {device.userPrincipalName}
+              </p>
             </div>
           </CardContent>
         </Card>

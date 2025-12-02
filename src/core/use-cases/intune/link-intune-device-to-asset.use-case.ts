@@ -12,6 +12,7 @@ import type { ILoggerService } from "@/core/services/logger.service.interface";
 import type { IIntuneDeviceRepository } from "@/core/repositories/intune-device.repository.interface";
 import type { IAssetRepository } from "@/core/repositories/asset.repository.interface";
 import type { IntuneDevice } from "@/core/domain/entities/intune-device.entity";
+import { SyncAssetAssignmentFromIntuneDeviceUseCase } from "./sync-asset-assignment-from-intune-device.use-case";
 
 export interface LinkDeviceToAssetInput {
   /** Intune device ID (our internal ID, not Intune's) */
@@ -35,6 +36,8 @@ export class LinkIntuneDeviceToAssetUseCase {
     private readonly deviceRepository: IIntuneDeviceRepository,
     @inject(DI_TOKENS.IAssetRepository)
     private readonly assetRepository: IAssetRepository,
+    @inject(SyncAssetAssignmentFromIntuneDeviceUseCase)
+    private readonly syncAssignmentUseCase: SyncAssetAssignmentFromIntuneDeviceUseCase,
   ) {
     this.logger = logger.child({ useCase: "LinkIntuneDeviceToAssetUseCase" });
   }
@@ -85,6 +88,26 @@ export class LinkIntuneDeviceToAssetUseCase {
       assetId: input.assetId,
       assetTag: asset.assetTag,
     });
+
+    // Sync asset assignment if device also has person link
+    if (updatedDevice.isLinkedToPerson()) {
+      try {
+        const syncResult = await this.syncAssignmentUseCase.execute({
+          deviceId: updatedDevice.id,
+          source: "INTUNE_MANUAL",
+        });
+
+        this.logger.info("Asset assignment synced after asset link", {
+          deviceId: updatedDevice.id,
+          syncAction: syncResult.action,
+          assignmentId: syncResult.assignmentId,
+        });
+      } catch (err) {
+        this.logger.error(
+          `Failed to sync asset assignment after asset link for device ${updatedDevice.id}: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    }
 
     return {
       device: updatedDevice,

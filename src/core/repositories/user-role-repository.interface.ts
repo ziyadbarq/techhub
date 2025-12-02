@@ -79,4 +79,26 @@ export interface IUserRoleRepository {
    * Update expiration for a user-role assignment
    */
   updateExpiration(id: string, expiresAt?: Date): Promise<UserRole>;
+
+  /**
+   * Get all users with their role assignments
+   */
+  findUsersWithRoles(): Promise<
+    Array<{
+      id: string;
+      email: string;
+      name: string | null;
+      image: string | null;
+      emailVerified: Date | null;
+      createdAt: Date;
+      roles: Array<{
+        id: string;
+        roleId: string;
+        roleName: string;
+        roleDisplayName: string;
+        expiresAt: Date | null;
+        isActive: boolean;
+      }>;
+    }>
+  >;
 }

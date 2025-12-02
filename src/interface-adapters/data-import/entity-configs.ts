@@ -8,7 +8,10 @@
  * **Refactored with DRY field builders** - 60-70% line reduction per entity
  */
 
-import type { EntityConfig } from "./entity-config.types";
+import type {
+  EntityConfig,
+  EntityFieldConfig,
+} from "@/lib/data-import/entity-config.types";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import {
   bulkCreateAssetsAction,
@@ -93,8 +96,8 @@ import {
   urlField,
   enumField,
   STANDARD_SANITIZATION,
-} from "./field-builders";
-import { UNIVERSAL_ASSETS_CONFIG } from "./universal-assets/config";
+} from "@/lib/data-import/field-builders";
+import { UNIVERSAL_ASSETS_CONFIG } from "@/interface-adapters/data-import/universal-assets/config";
 import {
   OrganizationUnitType,
   VendorType,
@@ -388,7 +391,7 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
       {
         name: "emailDomain",
         description: "Email must be from company domain",
-        validate: (row) => {
+        validate: (row: Record<string, unknown>) => {
           if (row.email) {
             // This is just a validation example - adjust for your organization
             return String(row.email).endsWith("@barq.com");
@@ -1152,9 +1155,11 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
       {
         name: "endDateAfterStart",
         description: "End date must be after start date",
-        validate: (row) => {
+        validate: (row: Record<string, unknown>) => {
           if (row.startDate && row.endDate) {
-            return new Date(row.endDate) > new Date(row.startDate);
+            const start = new Date(String(row.startDate));
+            const end = new Date(String(row.endDate));
+            return end > start;
           }
           return true;
         },
@@ -1756,9 +1761,11 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
       {
         name: "endDateAfterStart",
         description: "End date must be after start date if both provided",
-        validate: (row) => {
+        validate: (row: Record<string, unknown>) => {
           if (row.startDate && row.endDate) {
-            return new Date(row.endDate) > new Date(row.startDate);
+            const start = new Date(String(row.startDate));
+            const end = new Date(String(row.endDate));
+            return end > start;
           }
           return true;
         },
@@ -1876,9 +1883,11 @@ export const ENTITY_CONFIGS: Record<string, EntityConfig> = {
       {
         name: "endDateAfterStart",
         description: "End date must be after start date",
-        validate: (row) => {
+        validate: (row: Record<string, unknown>) => {
           if (row.startDate && row.endDate) {
-            return new Date(row.endDate) > new Date(row.startDate);
+            const start = new Date(String(row.startDate));
+            const end = new Date(String(row.endDate));
+            return end > start;
           }
           return true;
         },
@@ -2964,7 +2973,7 @@ export function getEntitiesByCategory(category: string): EntityConfig[] {
 /**
  * Get required fields for an entity
  */
-export function getRequiredFields(entityKey: string) {
+export function getRequiredFields(entityKey: string): EntityFieldConfig[] {
   const config = getEntityConfig(entityKey);
   return config ? config.fields.filter((f) => f.required) : [];
 }
@@ -2972,7 +2981,7 @@ export function getRequiredFields(entityKey: string) {
 /**
  * Get optional fields for an entity
  */
-export function getOptionalFields(entityKey: string) {
+export function getOptionalFields(entityKey: string): EntityFieldConfig[] {
   const config = getEntityConfig(entityKey);
   return config ? config.fields.filter((f) => !f.required) : [];
 }
@@ -2980,7 +2989,7 @@ export function getOptionalFields(entityKey: string) {
 /**
  * Get lookup fields for an entity
  */
-export function getLookupFields(entityKey: string) {
+export function getLookupFields(entityKey: string): EntityFieldConfig[] {
   const config = getEntityConfig(entityKey);
   return config ? config.fields.filter((f) => f.type === "lookup") : [];
 }

@@ -7,7 +7,10 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { PrismaClient, Prisma } from "@/generated/prisma/server";
-import type { ILicenseProductFieldRepository } from "@/core/repositories/license-product-field.repository.interface";
+import type {
+  ILicenseProductFieldRepository,
+  LicenseProductFieldWithDefinition,
+} from "@/core/repositories/license-product-field.repository.interface";
 import { LicenseProductField } from "@/core/domain/entities/license-product-field.entity";
 import type { ILoggerService } from "@/core/services";
 import { fromJsonValue, toJsonValue } from "./prisma-helpers";
@@ -134,7 +137,9 @@ export class PrismaLicenseProductFieldRepository
    * 1. Product-specific fields linked via LicenseProductField
    * 2. Global LICENSE_PRODUCT fields (isGlobal=true, entityType="LICENSE_PRODUCT")
    */
-  async findByLicenseProductIdWithDefinition(licenseProductId: string) {
+  async findByLicenseProductIdWithDefinition(
+    licenseProductId: string,
+  ): Promise<LicenseProductFieldWithDefinition[]> {
     // 1. Get product-specific fields from LicenseProductField
     const productFields = await this.prisma.licenseProductField.findMany({
       where: { licenseProductId },
@@ -155,6 +160,22 @@ export class PrismaLicenseProductFieldRepository
         },
       },
     });
+
+    const productFieldsWithDefinition: LicenseProductFieldWithDefinition[] =
+      productFields.map((pf) => ({
+        id: pf.id,
+        licenseProductId: pf.licenseProductId,
+        fieldDefinitionId: pf.fieldDefinitionId,
+        isRequired: pf.isRequired,
+        isUnique: (pf as { isUnique?: boolean }).isUnique ?? false,
+        isVisible: pf.isVisible,
+        defaultValue: pf.defaultValue,
+        uiOrder: pf.uiOrder,
+        note: (pf as { note?: string | null }).note ?? null,
+        createdAt: pf.createdAt,
+        updatedAt: pf.updatedAt,
+        fieldDefinition: pf.fieldDefinition,
+      }));
 
     // 2. Get global LICENSE_PRODUCT fields that aren't already linked to this product
     const linkedFieldIds = productFields.map((f) => f.fieldDefinitionId);
@@ -188,9 +209,11 @@ export class PrismaLicenseProductFieldRepository
       licenseProductId,
       fieldDefinitionId: gf.id,
       isRequired: gf.isRequired,
+      isUnique: false,
       isVisible: true,
       defaultValue: gf.defaultValue,
       uiOrder: 1000 + (gf.uiOrder || index), // Put global fields after product fields
+      note: null,
       createdAt: new Date(),
       updatedAt: new Date(),
       fieldDefinition: {
@@ -207,7 +230,7 @@ export class PrismaLicenseProductFieldRepository
     }));
 
     // 4. Combine and return all fields
-    return [...productFields, ...globalFieldsAsProductFields];
+    return [...productFieldsWithDefinition, ...globalFieldsAsProductFields];
   }
 
   /**

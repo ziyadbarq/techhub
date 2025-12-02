@@ -81,7 +81,32 @@ Cross-cutting: config/, lib/, generated/
 
 **Rule**: Never import contexts/hooks into `core/` or `infrastructure/`
 
+### Auth Layer Backward Compatibility (`lib/auth/`)
+
+**Known exception (3 ESLint warnings):**
+- `lib/auth/index.ts` and `lib/auth/session.ts` re-export from `interface-adapters/auth/better-auth`
+- Violation: `lib` layer importing from `interface-adapters` (backward compatibility shim)
+
+**Status**: Documented exception, acceptable in warn mode
+- **Purpose**: Legacy code uses `import { auth } from '@/lib/auth'` pattern
+- **Migration path**: Gradually migrate to direct imports from `interface-adapters/auth/`
+- **Resolution timeline**: Address in Phase 6 (Polish & Hardening) or document as permanent exception
+
+**Example:**
+```typescript
+// Current (legacy pattern - deprecated)
+import { auth } from '@/lib/auth';
+
+// Preferred (new pattern)
+import { auth } from '@/interface-adapters/auth/better-auth';
+```
+
 ## Enforcement Strategy
+
+**Current staged enforcement (ESLint warn)**:
+- App layer blocks direct imports from core use cases/entities/services and infrastructure (value objects remain allowed temporarily).
+- Lib blocks imports from interface-adapters, infrastructure, and app (core imports are tolerated temporarily until refactors land).
+- Core use cases and domain still block lib/infrastructure/app.
 
 ### 1. ESLint Rules
 

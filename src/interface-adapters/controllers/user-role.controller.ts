@@ -21,7 +21,8 @@ import type { RevokeRoleFromUserUseCase } from "@/core/use-cases/rbac/revoke-rol
 import type { ListRolesUseCase } from "@/core/use-cases/rbac/list-roles.use-case";
 import type { CheckPermissionUseCase } from "@/core/use-cases/rbac/check-permission.use-case";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { prisma } from "@/infrastructure/database/prisma/client";
+import type { IUserRoleRepository } from "@/core/repositories/user-role-repository.interface";
+import type { IUserRepository } from "@/core/repositories/user-repository.interface";
 
 /**
  * User with roles DTO
@@ -87,44 +88,28 @@ export async function listUsersWithRolesAction(): Promise<
       return { success: false, error: "Insufficient permissions" };
     }
 
-    // Fetch all users with their roles
-    const users = await prisma.user.findMany({
-      include: {
-        roles: {
-          include: {
-            role: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    const userRoleRepository = container.get<IUserRoleRepository>(
+      DI_TOKENS.IUserRoleRepository,
+    );
+    const users = await userRoleRepository.findUsersWithRoles();
 
     // Transform to DTO
-    const usersWithRoles: UserWithRolesDTO[] = users.map(
-      (u: (typeof users)[number]) => ({
-        id: u.id,
-        email: u.email,
-        name: u.name,
-        image: u.image,
-        emailVerified: u.emailVerified,
-        createdAt: u.createdAt,
-        roles: u.roles.map((ur: (typeof u.roles)[number]) => {
-          const now = new Date();
-          const isExpired = ur.expiresAt ? ur.expiresAt < now : false;
-
-          return {
-            id: ur.id,
-            roleId: ur.roleId,
-            roleName: ur.role.name,
-            roleDisplayName: ur.role.displayName,
-            expiresAt: ur.expiresAt,
-            isActive: !isExpired,
-          };
-        }),
-      }),
-    );
+    const usersWithRoles: UserWithRolesDTO[] = users.map((u) => ({
+      id: u.id,
+      email: u.email,
+      name: u.name,
+      image: u.image,
+      emailVerified: u.emailVerified,
+      createdAt: u.createdAt,
+      roles: u.roles.map((ur) => ({
+        id: ur.id,
+        roleId: ur.roleId,
+        roleName: ur.roleName,
+        roleDisplayName: ur.roleDisplayName,
+        expiresAt: ur.expiresAt,
+        isActive: ur.isActive,
+      })),
+    }));
 
     return {
       success: true,
@@ -166,24 +151,19 @@ export async function getUserWithRolesAction(
       return { success: false, error: "Insufficient permissions" };
     }
 
-    // Fetch user with roles
-    const userData = await prisma.user.findUnique({
-      where: { email: email },
-      include: {
-        roles: {
-          include: {
-            role: true,
-          },
-        },
-      },
-    });
+    const userRoleRepository = container.get<IUserRoleRepository>(
+      DI_TOKENS.IUserRoleRepository,
+    );
+    const users = await userRoleRepository.findUsersWithRoles();
+    const userData = users.find(
+      (u) => u.email.toLowerCase() === email.toLowerCase(),
+    );
 
     if (!userData) {
       return { success: false, error: "User not found" };
     }
 
     // Transform to DTO
-    const now = new Date();
     const userWithRoles: UserWithRolesDTO = {
       id: userData.id,
       email: userData.email,
@@ -191,18 +171,14 @@ export async function getUserWithRolesAction(
       image: userData.image,
       emailVerified: userData.emailVerified,
       createdAt: userData.createdAt,
-      roles: userData.roles.map((ur: (typeof userData.roles)[number]) => {
-        const isExpired = ur.expiresAt ? ur.expiresAt < now : false;
-
-        return {
-          id: ur.id,
-          roleId: ur.roleId,
-          roleName: ur.role.name,
-          roleDisplayName: ur.role.displayName,
-          expiresAt: ur.expiresAt,
-          isActive: !isExpired,
-        };
-      }),
+      roles: userData.roles.map((ur) => ({
+        id: ur.id,
+        roleId: ur.roleId,
+        roleName: ur.roleName,
+        roleDisplayName: ur.roleDisplayName,
+        expiresAt: ur.expiresAt,
+        isActive: ur.isActive,
+      })),
     };
 
     return {
@@ -266,14 +242,14 @@ export async function assignRoleToUserAction(
     });
 
     // Get user email for revalidation
-    const targetUser = await prisma.user.findUnique({
-      where: { id: data.userId },
-      select: { email: true },
-    });
+    const userRepository = container.get<IUserRepository>(
+      DI_TOKENS.IUserRepository,
+    );
+    const targetUser = await userRepository.findById(data.userId);
 
     // Revalidate users list and detail page
     revalidatePath("/admin/users");
-    if (targetUser) {
+    if (targetUser?.email) {
       revalidatePath(
         `/admin/users/${encodeURIComponent(targetUser.email)}/roles`,
       );
@@ -358,18 +334,28 @@ export async function bulkAssignRolesToUsersAction(data: {
     }> = [];
 
     // Fetch user and role details for better reporting
-    const users = await prisma.user.findMany({
-      where: { id: { in: data.userIds } },
-      select: { id: true, email: true },
-    });
+    const userRepository = container.get<IUserRepository>(
+      DI_TOKENS.IUserRepository,
+    );
+    const userRecords = await Promise.all(
+      data.userIds.map((id) => userRepository.findById(id)),
+    );
+    const userMap = new Map(
+      userRecords
+        .filter(Boolean)
+        .map((u) => [u!.id, { id: u!.id, email: u!.email }]),
+    );
 
-    const roles = await prisma.role.findMany({
-      where: { id: { in: data.roleIds } },
-      select: { id: true, name: true, displayName: true },
-    });
-
-    const userMap = new Map(users.map((u) => [u.id, u]));
-    const roleMap = new Map(roles.map((r) => [r.id, r]));
+    const listRoles = container.get<ListRolesUseCase>(
+      DI_TOKENS.ListRolesUseCase,
+    );
+    const roleList = await listRoles.execute();
+    const roleMap = new Map(
+      roleList.map((r) => [
+        r.id,
+        { id: r.id, name: r.name, displayName: r.displayName ?? r.name },
+      ]),
+    );
 
     // Assign each role to each user
     for (const userId of data.userIds) {
@@ -390,7 +376,12 @@ export async function bulkAssignRolesToUsersAction(data: {
             userId,
             userEmail: userInfo?.email ?? userId,
             roleId,
-            roleName: roleInfo?.displayName ?? roleId,
+            roleName:
+              roleInfo && typeof roleInfo === "object" && roleInfo !== null
+                ? ((roleInfo as { displayName?: string }).displayName ??
+                  (roleInfo as { name?: string }).name ??
+                  roleId)
+                : roleId,
             status: "success",
           });
         } catch (error) {
@@ -401,7 +392,12 @@ export async function bulkAssignRolesToUsersAction(data: {
               userId,
               userEmail: userInfo?.email ?? userId,
               roleId,
-              roleName: roleInfo?.displayName ?? roleId,
+              roleName:
+                roleInfo && typeof roleInfo === "object" && roleInfo !== null
+                  ? ((roleInfo as { displayName?: string }).displayName ??
+                    (roleInfo as { name?: string }).name ??
+                    roleId)
+                  : roleId,
               status: "conflict",
               error: `Critical role conflict: ${error.conflicts.map((c) => `${c.role1} ↔ ${c.role2}`).join(", ")}`,
             });
@@ -412,7 +408,12 @@ export async function bulkAssignRolesToUsersAction(data: {
               userId,
               userEmail: userInfo?.email ?? userId,
               roleId,
-              roleName: roleInfo?.displayName ?? roleId,
+              roleName:
+                roleInfo && typeof roleInfo === "object" && roleInfo !== null
+                  ? ((roleInfo as { displayName?: string }).displayName ??
+                    (roleInfo as { name?: string }).name ??
+                    roleId)
+                  : roleId,
               status: "failed",
               error: error instanceof Error ? error.message : "Unknown error",
             });
@@ -489,14 +490,14 @@ export async function revokeRoleFromUserAction(
     });
 
     // Get user email for revalidation
-    const targetUser = await prisma.user.findUnique({
-      where: { id: data.userId },
-      select: { email: true },
-    });
+    const userRepository = container.get<IUserRepository>(
+      DI_TOKENS.IUserRepository,
+    );
+    const targetUser = await userRepository.findById(data.userId);
 
     // Revalidate users list and detail page
     revalidatePath("/admin/users");
-    if (targetUser) {
+    if (targetUser?.email) {
       revalidatePath(
         `/admin/users/${encodeURIComponent(targetUser.email)}/roles`,
       );

@@ -6,6 +6,7 @@
 import type { PrismaClient } from "../../../generated/prisma/client.js";
 import {
   CI_CLASS_DATA,
+  CI_CLASS_FIELD_MAPPINGS,
   CONTRACT_TYPE_DATA,
   RELATIONSHIP_TYPE_SCOPE_DATA,
 } from "./seed-config-layer3.js";
@@ -116,6 +117,93 @@ export async function seedCMDB(prisma: PrismaClient) {
     });
   }
   console.log(`   ✓ Created ${CI_CLASS_DATA.length} CI classes`);
+
+  // Link field definitions to CI classes
+  console.log("   Linking field definitions to CI classes...");
+
+  // Build field definition lookup map (code -> id)
+  const fieldDefinitions = await prisma.fieldDefinition.findMany({
+    where: {
+      entityType: { in: ["CONFIGURATION_ITEM", "ASSET"] },
+      isActive: true,
+    },
+    select: { id: true, name: true },
+  });
+
+  const fieldDefMap = new Map<string, string>();
+  for (const fieldDef of fieldDefinitions) {
+    fieldDefMap.set(fieldDef.name, fieldDef.id);
+  }
+
+  console.log(`   ✓ Loaded ${fieldDefMap.size} field definitions`);
+
+  // Build CI class lookup map (code -> id)
+  const ciClasses = await prisma.cIClass.findMany({
+    select: { id: true, code: true },
+  });
+
+  const ciClassMap = new Map<string, string>();
+  for (const ciClass of ciClasses) {
+    ciClassMap.set(ciClass.code, ciClass.id);
+  }
+
+  console.log(`   ✓ Loaded ${ciClassMap.size} CI classes`);
+
+  // Link fields to CI classes based on mappings
+  let linkedFieldsCount = 0;
+  let skippedFieldsCount = 0;
+
+  for (const [ciClassCode, fieldCodes] of Object.entries(
+    CI_CLASS_FIELD_MAPPINGS,
+  )) {
+    const ciClassId = ciClassMap.get(ciClassCode);
+
+    if (!ciClassId) {
+      console.log(`   ⚠ CI class not found for code: ${ciClassCode}`);
+      continue;
+    }
+
+    for (let i = 0; i < fieldCodes.length; i++) {
+      const fieldCode = fieldCodes[i];
+      const fieldDefinitionId = fieldDefMap.get(fieldCode);
+
+      if (!fieldDefinitionId) {
+        console.log(`   ⚠ Field definition not found for code: ${fieldCode}`);
+        continue;
+      }
+
+      // Check if mapping already exists (idempotency)
+      const existing = await prisma.cIClassField.findFirst({
+        where: {
+          ciClassId,
+          fieldDefinitionId,
+        },
+      });
+
+      if (existing) {
+        skippedFieldsCount++;
+        continue;
+      }
+
+      // Create the junction record
+      await prisma.cIClassField.create({
+        data: {
+          ciClassId,
+          fieldDefinitionId,
+          isRequired: false,
+          isUnique: false,
+          isVisible: true,
+          uiOrder: i + 1, // Order based on array position
+        },
+      });
+
+      linkedFieldsCount++;
+    }
+  }
+
+  console.log(
+    `   ✓ Linked ${linkedFieldsCount} field definitions to CI classes (skipped ${skippedFieldsCount} existing)`,
+  );
 
   // Seed relationship types
   console.log("   Creating relationship types...");

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getContainer } from "@/di/container";
+import { getContainer, loadHeavyModule, isModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { handleControllerError } from "./error-handler";
 import type { ActionResponse } from "./types";
@@ -29,6 +29,15 @@ import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 /**
+ * Ensures the Service module is loaded before accessing its use cases
+ */
+async function ensureServiceModuleLoaded(): Promise<void> {
+  if (!isModuleLoaded("service")) {
+    await loadHeavyModule("service");
+  }
+}
+
+/**
  * Create a new service relationship
  */
 export async function createServiceRelationshipAction(
@@ -36,6 +45,9 @@ export async function createServiceRelationshipAction(
 ): Promise<ActionResponse<ServiceRelationshipDTO>> {
   try {
     await requirePermission(PERMISSIONS.SERVICES_MANAGE);
+
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
 
     const validated = CreateServiceRelationshipSchema.parse(data);
 
@@ -78,6 +90,9 @@ export async function getServiceRelationshipAction(
   try {
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
 
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
+
     const container = getContainer();
     const useCase = container.get<GetServiceRelationshipUseCase>(
       DI_TOKENS.GetServiceRelationshipUseCase,
@@ -113,6 +128,9 @@ export async function updateServiceRelationshipAction(
 ): Promise<ActionResponse<ServiceRelationshipDTO>> {
   try {
     await requirePermission(PERMISSIONS.SERVICES_MANAGE);
+
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
 
     const validated = UpdateServiceRelationshipSchema.parse(data);
 
@@ -153,6 +171,9 @@ export async function deleteServiceRelationshipAction(
   try {
     await requirePermission(PERMISSIONS.SERVICES_MANAGE);
 
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
+
     const container = getContainer();
     const useCase = container.get<DeleteServiceRelationshipUseCase>(
       DI_TOKENS.DeleteServiceRelationshipUseCase,
@@ -183,6 +204,9 @@ export async function listServiceRelationshipsAction(
 ): Promise<ActionResponse<ServiceRelationshipDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
+
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
 
     const container = getContainer();
     const useCase = container.get<ListServiceRelationshipsUseCase>(
@@ -217,6 +241,9 @@ export async function getServiceDependenciesAction(
   try {
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
 
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
+
     const container = getContainer();
     const useCase = container.get<GetServiceDependenciesUseCase>(
       DI_TOKENS.GetServiceDependenciesUseCase,
@@ -243,6 +270,9 @@ export async function getServiceDependentsAction(
 ): Promise<ActionResponse<ServiceRelationshipDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
+
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
 
     const container = getContainer();
     const useCase = container.get<GetServiceDependentsUseCase>(
@@ -271,6 +301,9 @@ export async function getImpactedServicesAction(
 ): Promise<ActionResponse<ImpactedServiceDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
+
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
 
     const container = getContainer();
     const useCase = container.get<GetImpactedServicesUseCase>(

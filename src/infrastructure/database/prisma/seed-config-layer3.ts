@@ -156,6 +156,169 @@ export const CI_CLASS_DATA = [
 ] as const;
 
 // ==============================================
+// CI Class Field Mappings
+// ==============================================
+
+/**
+ * CI Class to Field Definition Mappings
+ * Maps CI class codes to their applicable field definition codes
+ * Fields are automatically linked during CMDB seeding
+ */
+export const CI_CLASS_FIELD_MAPPINGS: Record<string, string[]> = {
+  // Category A: Full Network Stack (7 fields)
+  SERVER: [
+    "PRIMARY_IPV4",
+    "PRIMARY_IPV6",
+    "MAC_ADDRESS_CI",
+    "FQDN",
+    "DEFAULT_GATEWAY",
+    "PRIMARY_DNS",
+    "SECONDARY_DNS",
+  ],
+  VIRTUAL_MACHINE: [
+    "PRIMARY_IPV4",
+    "PRIMARY_IPV6",
+    "MAC_ADDRESS_CI",
+    "FQDN",
+    "DEFAULT_GATEWAY",
+    "PRIMARY_DNS",
+    "SECONDARY_DNS",
+  ],
+  HYPERVISOR: [
+    "PRIMARY_IPV4",
+    "PRIMARY_IPV6",
+    "MAC_ADDRESS_CI",
+    "FQDN",
+    "DEFAULT_GATEWAY",
+    "PRIMARY_DNS",
+    "SECONDARY_DNS",
+  ],
+  DATABASE: [
+    "PRIMARY_IPV4",
+    "PRIMARY_IPV6",
+    "MAC_ADDRESS_CI",
+    "FQDN",
+    "DEFAULT_GATEWAY",
+    "PRIMARY_DNS",
+    "SECONDARY_DNS",
+  ],
+  NETWORK_DEVICE: [
+    "PRIMARY_IPV4",
+    "PRIMARY_IPV6",
+    "MAC_ADDRESS_CI",
+    "FQDN",
+    "DEFAULT_GATEWAY",
+    "PRIMARY_DNS",
+    "SECONDARY_DNS",
+  ],
+  LOAD_BALANCER: [
+    "PRIMARY_IPV4",
+    "PRIMARY_IPV6",
+    "MAC_ADDRESS_CI",
+    "FQDN",
+    "DEFAULT_GATEWAY",
+    "PRIMARY_DNS",
+    "SECONDARY_DNS",
+  ],
+  FIREWALL: [
+    "PRIMARY_IPV4",
+    "PRIMARY_IPV6",
+    "MAC_ADDRESS_CI",
+    "FQDN",
+    "DEFAULT_GATEWAY",
+    "PRIMARY_DNS",
+    "SECONDARY_DNS",
+  ],
+  API_GATEWAY: [
+    "PRIMARY_IPV4",
+    "PRIMARY_IPV6",
+    "MAC_ADDRESS_CI",
+    "FQDN",
+    "DEFAULT_GATEWAY",
+    "PRIMARY_DNS",
+    "SECONDARY_DNS",
+  ],
+  DNS_SERVER: [
+    "PRIMARY_IPV4",
+    "PRIMARY_IPV6",
+    "MAC_ADDRESS_CI",
+    "FQDN",
+    "DEFAULT_GATEWAY",
+    "PRIMARY_DNS",
+    "SECONDARY_DNS",
+  ],
+  NAT_GATEWAY: [
+    "PRIMARY_IPV4",
+    "PRIMARY_IPV6",
+    "MAC_ADDRESS_CI",
+    "FQDN",
+    "DEFAULT_GATEWAY",
+    "PRIMARY_DNS",
+    "SECONDARY_DNS",
+  ],
+  VPN_GATEWAY: [
+    "PRIMARY_IPV4",
+    "PRIMARY_IPV6",
+    "MAC_ADDRESS_CI",
+    "FQDN",
+    "DEFAULT_GATEWAY",
+    "PRIMARY_DNS",
+    "SECONDARY_DNS",
+  ],
+  NETWORK_INTERFACE: [
+    "PRIMARY_IPV4",
+    "PRIMARY_IPV6",
+    "MAC_ADDRESS_CI",
+    "FQDN",
+    "DEFAULT_GATEWAY",
+    "PRIMARY_DNS",
+    "SECONDARY_DNS",
+  ],
+
+  // Category B: Network Services (5 fields - no MAC)
+  APPLICATION: [
+    "PRIMARY_IPV4",
+    "PRIMARY_IPV6",
+    "FQDN",
+    "DEFAULT_GATEWAY",
+    "PRIMARY_DNS",
+  ],
+  SERVICE: [
+    "PRIMARY_IPV4",
+    "PRIMARY_IPV6",
+    "FQDN",
+    "DEFAULT_GATEWAY",
+    "PRIMARY_DNS",
+  ],
+  MONITORING_SYSTEM: [
+    "PRIMARY_IPV4",
+    "PRIMARY_IPV6",
+    "FQDN",
+    "DEFAULT_GATEWAY",
+    "PRIMARY_DNS",
+  ],
+  WEB_SERVER: [
+    "PRIMARY_IPV4",
+    "PRIMARY_IPV6",
+    "FQDN",
+    "DEFAULT_GATEWAY",
+    "PRIMARY_DNS",
+  ],
+  MAIL_SERVER: [
+    "PRIMARY_IPV4",
+    "PRIMARY_IPV6",
+    "FQDN",
+    "DEFAULT_GATEWAY",
+    "PRIMARY_DNS",
+  ],
+
+  // Category C: Minimal Network (2 fields - IPv4 + FQDN only)
+  CONTAINER: ["PRIMARY_IPV4", "FQDN"],
+  SUBNET: ["PRIMARY_IPV4", "FQDN"],
+  IP_ADDRESS: ["PRIMARY_IPV4", "FQDN"],
+};
+
+// ==============================================
 // CMDB Relationship Types
 // ==============================================
 

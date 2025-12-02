@@ -12,9 +12,12 @@ import {
   PermissionNotFoundError,
   SystemRoleModificationError,
 } from "../../domain/errors/rbac-errors";
-import { invalidatePermissionCache } from "@/lib/permissions/cache";
-import { validatePermissionDependencies } from "@/lib/rbac/permission-dependencies";
 import type { PermissionKey } from "../../domain/value-objects/permission-key";
+import type {
+  IRbacPolicyService,
+  PermissionDependencyValidation,
+} from "@/core/services/rbac-policy.service.interface";
+import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
 
 export interface AssignPermissionsToRoleRequest {
   roleId: string;
@@ -49,6 +52,10 @@ export class AssignPermissionsToRoleUseCase {
     private readonly permissionRepository: IPermissionRepository,
     @inject(DI_TOKENS.IAuditLogRepository)
     private readonly auditLogRepository: IAuditLogRepository,
+    @inject(DI_TOKENS.IRbacPolicyService)
+    private readonly rbacPolicyService: IRbacPolicyService,
+    @inject(DI_TOKENS.IPermissionCacheService)
+    private readonly permissionCacheService: IPermissionCacheService,
   ) {}
 
   async execute(request: AssignPermissionsToRoleRequest): Promise<void> {
@@ -82,8 +89,8 @@ export class AssignPermissionsToRoleUseCase {
     const permissionNames = permissions.map((p) => p.name) as PermissionKey[];
 
     // Validate permission dependencies
-    const dependencyValidation =
-      validatePermissionDependencies(permissionNames);
+    const dependencyValidation: PermissionDependencyValidation =
+      this.rbacPolicyService.validatePermissionDependencies(permissionNames);
 
     if (!dependencyValidation.valid) {
       if (request.autoAddDependencies) {
@@ -204,6 +211,6 @@ export class AssignPermissionsToRoleUseCase {
     // Invalidate cache for all users with this role
     // Since we don't have a quick way to find all users with this role,
     // we invalidate the entire cache to be safe
-    invalidatePermissionCache("all");
+    this.permissionCacheService.invalidate("all");
   }
 }

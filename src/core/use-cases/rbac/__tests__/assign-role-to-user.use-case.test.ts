@@ -15,13 +15,15 @@ import { AssignRoleToUserUseCase } from "../assign-role-to-user.use-case";
 import type { IUserRoleRepository } from "@/core/repositories/user-role-repository.interface";
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import type { IAuditLogRepository } from "@/core/repositories/audit-log-repository.interface";
+import type { ILoggerService } from "@/core/services";
 import { Role } from "@/core/domain/entities/role.entity";
 import { UserRole } from "@/core/domain/entities/user-role.entity";
 import {
   RoleNotFoundError,
   RoleAlreadyAssignedError,
 } from "@/core/domain/errors/rbac-errors";
-import { permissionCache } from "@/lib/permissions/cache";
+import type { IRbacPolicyService } from "@/core/services/rbac-policy.service.interface";
+import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
 
 /**
  * Mock Repositories
@@ -84,26 +86,53 @@ class MockAuditLogRepository implements Partial<IAuditLogRepository> {
   });
 }
 
+class MockLoggerService implements Partial<ILoggerService> {
+  debug = vi.fn();
+  info = vi.fn();
+  warn = vi.fn();
+  error = vi.fn();
+  async withTiming<T>(_operation: string, fn: () => Promise<T>): Promise<T> {
+    return fn();
+  }
+}
+
 describe("AssignRoleToUserUseCase", () => {
   let useCase: AssignRoleToUserUseCase;
   let mockUserRoleRepository: MockUserRoleRepository;
   let mockRoleRepository: MockRoleRepository;
   let mockAuditLogRepository: MockAuditLogRepository;
+  let mockRbacPolicyService: IRbacPolicyService;
+  let mockPermissionCacheService: IPermissionCacheService;
+  let mockLogger: MockLoggerService;
 
   beforeEach(() => {
     // Create fresh instances
     mockUserRoleRepository = new MockUserRoleRepository();
     mockRoleRepository = new MockRoleRepository();
     mockAuditLogRepository = new MockAuditLogRepository();
-
-    // Clear permission cache
-    permissionCache.invalidateAll();
+    mockRbacPolicyService = {
+      validateRoleAddition: vi.fn().mockReturnValue({
+        canAdd: true,
+        conflicts: [],
+      }),
+      detectRoleConflicts: vi.fn(),
+      validatePermissionDependencies: vi.fn(),
+    };
+    mockPermissionCacheService = {
+      get: vi.fn(),
+      set: vi.fn(),
+      invalidate: vi.fn(),
+    };
+    mockLogger = new MockLoggerService();
 
     // Create use case
     useCase = new AssignRoleToUserUseCase(
       mockUserRoleRepository as unknown as IUserRoleRepository,
       mockRoleRepository as unknown as IRoleRepository,
       mockAuditLogRepository as unknown as IAuditLogRepository,
+      mockRbacPolicyService,
+      mockPermissionCacheService,
+      mockLogger as unknown as ILoggerService,
     );
   });
 
@@ -209,9 +238,6 @@ describe("AssignRoleToUserUseCase", () => {
       });
       mockRoleRepository.setRole(role);
 
-      // Pre-populate cache
-      const invalidateSpy = vi.spyOn(permissionCache, "invalidate");
-
       // Act
       await useCase.execute({
         userId: "user-1",
@@ -220,7 +246,10 @@ describe("AssignRoleToUserUseCase", () => {
       });
 
       // Assert
-      expect(invalidateSpy).toHaveBeenCalledWith("user-1");
+      expect(mockPermissionCacheService.invalidate).toHaveBeenCalledWith(
+        "user",
+        "user-1",
+      );
     });
   });
 

@@ -8,7 +8,7 @@
 
 import { revalidatePath } from "next/cache";
 import type { z } from "zod";
-import { getContainer } from "@/di/container";
+import { getContainer, loadHeavyModule, isModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
@@ -26,6 +26,15 @@ import type {
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
+/**
+ * Ensures the Service module is loaded before accessing its use cases
+ */
+async function ensureServiceModuleLoaded(): Promise<void> {
+  if (!isModuleLoaded("service")) {
+    await loadHeavyModule("service");
+  }
+}
+
 // ==================== Service Asset Linking ====================
 
 export async function linkServiceToAssetAction(
@@ -33,6 +42,9 @@ export async function linkServiceToAssetAction(
 ): Promise<ActionResponse<void>> {
   try {
     await requirePermission(PERMISSIONS.SERVICES_MANAGE);
+
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
 
     const validated = LinkServiceToAssetSchema.parse(data);
 
@@ -73,6 +85,9 @@ export async function unlinkServiceFromAssetAction(
   try {
     await requirePermission(PERMISSIONS.SERVICES_MANAGE);
 
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
+
     const container = getContainer();
     const useCase = container.get<UnlinkServiceFromAssetUseCase>(
       DI_TOKENS.UnlinkServiceFromAssetUseCase,
@@ -101,6 +116,9 @@ export async function getServiceAssetsAction(
   try {
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
 
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
+
     const container = getContainer();
     const useCase = container.get<GetServiceAssetsUseCase>(
       DI_TOKENS.GetServiceAssetsUseCase,
@@ -126,6 +144,9 @@ export async function getAssetServicesAction(
 ): Promise<ActionResponse<ServiceAssetDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
+
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
 
     const container = getContainer();
     const useCase = container.get<GetAssetServicesUseCase>(

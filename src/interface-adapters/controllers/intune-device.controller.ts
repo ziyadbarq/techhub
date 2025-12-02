@@ -7,7 +7,7 @@
  */
 
 import { revalidatePath } from "next/cache";
-import { getContainer } from "@/di/container";
+import { getContainer, loadHeavyModule, isModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { requirePermission } from "@/lib/permissions/server";
@@ -58,6 +58,19 @@ import {
   type BulkCreateAssetsFromDevicesDTO,
   type BulkCreateAssetsResultDTO,
 } from "@/interface-adapters/dtos/generated/intune-device.dto";
+
+// ==========================================
+// Module Loading
+// ==========================================
+
+/**
+ * Ensures the Intune module is loaded before accessing its use cases
+ */
+async function ensureIntuneModuleLoaded(): Promise<void> {
+  if (!isModuleLoaded("intune")) {
+    await loadHeavyModule("intune");
+  }
+}
 
 // ==========================================
 // Data Enrichment
@@ -167,6 +180,9 @@ export async function listIntuneDevicesAction(
   try {
     await requirePermission(PERMISSIONS.INTUNE_DEVICES_VIEW);
 
+    // Ensure Intune module is loaded (HEAVY tier, lazy loaded)
+    await ensureIntuneModuleLoaded();
+
     const validatedFilters = filters
       ? IntuneDeviceFiltersSchema.parse(filters)
       : undefined;
@@ -221,6 +237,9 @@ export async function getIntuneDeviceAction(
   try {
     await requirePermission(PERMISSIONS.INTUNE_DEVICES_VIEW);
 
+    // Ensure Intune module is loaded (HEAVY tier, lazy loaded)
+    await ensureIntuneModuleLoaded();
+
     const container = getContainer();
     const getDeviceUseCase = container.get<GetIntuneDeviceUseCase>(
       DI_TOKENS.GetIntuneDeviceUseCase,
@@ -259,6 +278,9 @@ export async function getIntuneDevicesByAssetAction(
 ): Promise<ActionResponse<IntuneDeviceDTO[]>> {
   try {
     await requirePermission(PERMISSIONS.INTUNE_DEVICES_VIEW);
+
+    // Ensure Intune module is loaded (HEAVY tier, lazy loaded)
+    await ensureIntuneModuleLoaded();
 
     const container = getContainer();
     const listDevicesUseCase = container.get<ListIntuneDevicesUseCase>(
@@ -300,6 +322,9 @@ export async function getIntuneComplianceStatsAction(): Promise<
   try {
     await requirePermission(PERMISSIONS.INTUNE_COMPLIANCE_VIEW);
 
+    // Ensure Intune module is loaded (HEAVY tier, lazy loaded)
+    await ensureIntuneModuleLoaded();
+
     const container = getContainer();
     const getStatsUseCase = container.get<GetIntuneComplianceStatsUseCase>(
       DI_TOKENS.GetIntuneComplianceStatsUseCase,
@@ -331,6 +356,9 @@ export async function getDeviceComplianceHistoryAction(
 > {
   try {
     await requirePermission(PERMISSIONS.INTUNE_COMPLIANCE_VIEW);
+
+    // Ensure Intune module is loaded (HEAVY tier, lazy loaded)
+    await ensureIntuneModuleLoaded();
 
     const container = getContainer();
     const getHistoryUseCase = container.get<GetDeviceComplianceHistoryUseCase>(
@@ -374,6 +402,9 @@ export async function triggerIntuneSyncAction(
   try {
     await requirePermission(PERMISSIONS.INTUNE_DEVICES_SYNC);
 
+    // Ensure Intune module is loaded (HEAVY tier, lazy loaded)
+    await ensureIntuneModuleLoaded();
+
     const validatedOptions = options
       ? TriggerIntuneSyncSchema.parse(options)
       : undefined;
@@ -414,6 +445,9 @@ export async function linkDeviceToAssetAction(
   try {
     await requirePermission(PERMISSIONS.INTUNE_DEVICES_LINK);
 
+    // Ensure Intune module is loaded (HEAVY tier, lazy loaded)
+    await ensureIntuneModuleLoaded();
+
     const validated = LinkDeviceToAssetSchema.parse(data);
 
     const container = getContainer();
@@ -452,6 +486,9 @@ export async function unlinkDeviceFromAssetAction(
   try {
     await requirePermission(PERMISSIONS.INTUNE_DEVICES_LINK);
 
+    // Ensure Intune module is loaded (HEAVY tier, lazy loaded)
+    await ensureIntuneModuleLoaded();
+
     const validated = UnlinkDeviceSchema.parse(data);
 
     const container = getContainer();
@@ -486,6 +523,9 @@ export async function linkDeviceToPersonAction(
 ): Promise<ActionResponse<IntuneDeviceDTO>> {
   try {
     await requirePermission(PERMISSIONS.INTUNE_DEVICES_LINK);
+
+    // Ensure Intune module is loaded (HEAVY tier, lazy loaded)
+    await ensureIntuneModuleLoaded();
 
     const validated = LinkDeviceToPersonSchema.parse(data);
 
@@ -524,6 +564,9 @@ export async function unlinkDeviceFromPersonAction(
 ): Promise<ActionResponse<IntuneDeviceDTO>> {
   try {
     await requirePermission(PERMISSIONS.INTUNE_DEVICES_LINK);
+
+    // Ensure Intune module is loaded (HEAVY tier, lazy loaded)
+    await ensureIntuneModuleLoaded();
 
     const validated = UnlinkDeviceSchema.parse(data);
 
@@ -565,6 +608,9 @@ export async function createAssetFromDeviceAction(
     // Requires both assets create and intune link permissions
     await requirePermission(PERMISSIONS.ASSETS_CREATE);
     await requirePermission(PERMISSIONS.INTUNE_DEVICES_LINK);
+
+    // Ensure Intune module is loaded (HEAVY tier, lazy loaded)
+    await ensureIntuneModuleLoaded();
 
     const validated = CreateAssetFromDeviceSchema.parse(data);
 
@@ -619,6 +665,9 @@ export async function bulkCreateAssetsFromDevicesAction(
     // Requires both assets create and intune link permissions
     await requirePermission(PERMISSIONS.ASSETS_CREATE);
     await requirePermission(PERMISSIONS.INTUNE_DEVICES_LINK);
+
+    // Ensure Intune module is loaded (HEAVY tier, lazy loaded)
+    await ensureIntuneModuleLoaded();
 
     const validated = BulkCreateAssetsFromDevicesSchema.parse(data);
 

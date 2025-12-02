@@ -22,29 +22,33 @@ import type { IOrganizationUnitRepository } from "@/core/repositories/organizati
 import type { ILocationRepository } from "@/core/repositories/location.repository.interface";
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import { Person } from "@/core/domain/entities/person.entity";
-import {
-  isInternalUser,
-  transformGraphUserToPerson,
-  type SyncResult,
-  type FetchUsersOptions,
-  type TransformGraphUserOptions,
-  type GraphUser,
-} from "@/lib/schemas/graph-user.schema";
 import type {
-  GraphSyncProgress,
-  GraphSyncProgressCallback,
-  GraphSyncPhase,
-} from "@/lib/schemas/graph-sync-progress.types";
+  IGraphUserMapperService,
+  SyncResult,
+  TransformGraphUserOptions,
+} from "@/core/services/graph-user-mapper.service.interface";
+import type { GraphUser } from "@/core/services/graph-user-mapper.service.interface";
+import { LogExecution } from "@/lib/decorators";
 
 /**
  * Options for the sync operation
  */
-export interface SyncUsersOptions extends FetchUsersOptions {
+export interface SyncUsersOptions {
   /**
    * Default organization unit ID for new users
    * If not provided, uses the first org unit
    */
   defaultOrgUnitId?: string;
+
+  /**
+   * Include disabled accounts from Graph
+   */
+  includeDisabled?: boolean;
+
+  /**
+   * Include guest accounts from Graph
+   */
+  includeGuests?: boolean;
 
   /**
    * Default primary role ID for new users
@@ -82,6 +86,31 @@ export interface SyncUsersOptions extends FetchUsersOptions {
   onProgress?: GraphSyncProgressCallback;
 }
 
+export type GraphSyncPhase =
+  | "initializing"
+  | "fetching-users"
+  | "syncing-users"
+  | "linking-managers"
+  | "deactivating-removed"
+  | "complete";
+
+export interface GraphSyncProgress {
+  phase: GraphSyncPhase;
+  phaseLabel: string;
+  currentIndex: number;
+  totalItems: number;
+  stats: {
+    created: number;
+    updated: number;
+    excluded: number;
+    deactivated: number;
+    errors: number;
+  };
+  elapsedMs: number;
+}
+
+export type GraphSyncProgressCallback = (progress: GraphSyncProgress) => void;
+
 @injectable()
 export class SyncUsersFromGraphUseCase {
   private readonly logger: ILoggerService;
@@ -98,6 +127,8 @@ export class SyncUsersFromGraphUseCase {
     private readonly roleRepository: IRoleRepository,
     @inject(IMicrosoftGraphService)
     private readonly graphService: IMicrosoftGraphService,
+    @inject(DI_TOKENS.IGraphUserMapperService)
+    private readonly graphUserMapper: IGraphUserMapperService,
   ) {
     this.logger = logger.child({ useCase: "SyncUsersFromGraphUseCase" });
   }
@@ -141,6 +172,7 @@ export class SyncUsersFromGraphUseCase {
   /**
    * Execute user sync from Microsoft Graph
    */
+  @LogExecution("graph.users.sync")
   async execute(options?: SyncUsersOptions): Promise<SyncResult> {
     const result: SyncResult = {
       created: 0,
@@ -246,7 +278,10 @@ export class SyncUsersFromGraphUseCase {
 
         graphUsers = fetchResults.filter(
           (user): user is GraphUser =>
-            !!user && (options?.includeGuests ? true : isInternalUser(user)),
+            !!user &&
+            (options?.includeGuests
+              ? true
+              : this.graphUserMapper.isInternalUser(user)),
         );
       } else {
         graphUsers = await this.graphService.fetchAllUsers({
@@ -299,8 +334,8 @@ export class SyncUsersFromGraphUseCase {
 
         try {
           // Transform Graph user to Person data with automatic org unit, location, and role assignment
-          const personData = transformGraphUserToPerson(
-            graphUser,
+          const personData = this.graphUserMapper.transformGraphUserToPerson(
+            graphUser as GraphUser,
             transformOptions,
           );
 

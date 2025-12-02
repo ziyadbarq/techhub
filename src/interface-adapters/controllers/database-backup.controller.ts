@@ -130,6 +130,18 @@ export async function restoreDatabaseFromBackupAction(
 }
 
 /**
+ * Internal helper: fetch a database backup by id (for server routes/downloads).
+ * Does not perform permission checks; callers must enforce auth/authorization.
+ */
+export async function getDatabaseBackupByIdInternal(backupId: string) {
+  const container = getContainer();
+  const getBackup = container.get<GetDatabaseBackupUseCase>(
+    DI_TOKENS.GetDatabaseBackupUseCase,
+  );
+  return getBackup.execute(backupId);
+}
+
+/**
  * Delete a backup (soft delete + file removal)
  */
 export async function deleteDatabaseBackupAction(

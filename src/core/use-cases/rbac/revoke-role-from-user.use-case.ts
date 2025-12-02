@@ -8,7 +8,7 @@ import type { IUserRoleRepository } from "../../repositories/user-role-repositor
 import type { IRoleRepository } from "../../repositories/role-repository.interface";
 import type { IAuditLogRepository } from "../../repositories/audit-log-repository.interface";
 import { RoleNotFoundError } from "../../domain/errors/rbac-errors";
-import { invalidatePermissionCache } from "@/lib/permissions/cache";
+import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
 
 export interface RevokeRoleFromUserRequest {
   userId: string;
@@ -27,6 +27,8 @@ export class RevokeRoleFromUserUseCase {
     private readonly roleRepository: IRoleRepository,
     @inject(DI_TOKENS.IAuditLogRepository)
     private readonly auditLogRepository: IAuditLogRepository,
+    @inject(DI_TOKENS.IPermissionCacheService)
+    private readonly permissionCacheService: IPermissionCacheService,
   ) {}
 
   async execute(request: RevokeRoleFromUserRequest): Promise<void> {
@@ -76,6 +78,6 @@ export class RevokeRoleFromUserUseCase {
     });
 
     // Invalidate permission cache for the user
-    invalidatePermissionCache("user", request.userId);
+    this.permissionCacheService.invalidate("user", request.userId);
   }
 }

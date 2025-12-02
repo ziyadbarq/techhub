@@ -22,6 +22,7 @@ import {
   listAvailableRolesAction,
 } from "../user-role.controller";
 import type { Role } from "@/core/domain/entities/role.entity";
+import { DI_TOKENS } from "@/di/types";
 
 // Mock logger service
 const mockLogger = {
@@ -50,23 +51,13 @@ const mockCheckPermissionUseCase = {
   execute: vi.fn(),
 };
 
-// Mock Prisma client
-const _mockPrismaUser = {
-  findMany: vi.fn(),
-  findUnique: vi.fn(),
+const mockUserRoleRepository = {
+  findUsersWithRoles: vi.fn(),
 };
 
-vi.mock("@/infrastructure/database/prisma/client", () => {
-  const mockUser = {
-    findMany: vi.fn(),
-    findUnique: vi.fn(),
-  };
-  return {
-    prisma: {
-      user: mockUser,
-    },
-  };
-});
+const mockUserRepository = {
+  findById: vi.fn(),
+};
 
 // Mock getSession
 vi.mock("@/lib/auth/session", () => ({
@@ -100,51 +91,43 @@ vi.mock("next/cache", () => ({
 vi.mock("@/di/container", () => ({
   getContainer: vi.fn(() => ({
     get: vi.fn((token) => {
-      const tokenKey = token.toString();
-      if (tokenKey === Symbol.for("AssignRoleToUserUseCase").toString()) {
-        return mockAssignRoleToUserUseCase;
+      switch (token) {
+        case DI_TOKENS.AssignRoleToUserUseCase:
+          return mockAssignRoleToUserUseCase;
+        case DI_TOKENS.RevokeRoleFromUserUseCase:
+          return mockRevokeRoleFromUserUseCase;
+        case DI_TOKENS.ListRolesUseCase:
+          return mockListRolesUseCase;
+        case DI_TOKENS.CheckPermissionUseCase:
+          return mockCheckPermissionUseCase;
+        case DI_TOKENS.IUserRoleRepository:
+          return mockUserRoleRepository;
+        case DI_TOKENS.IUserRepository:
+          return mockUserRepository;
+        case DI_TOKENS.ILoggerService:
+          return mockLogger;
+        default:
+          return null;
       }
-      if (tokenKey === Symbol.for("RevokeRoleFromUserUseCase").toString()) {
-        return mockRevokeRoleFromUserUseCase;
-      }
-      if (tokenKey === Symbol.for("ListRolesUseCase").toString()) {
-        return mockListRolesUseCase;
-      }
-      if (tokenKey === Symbol.for("CheckPermissionUseCase").toString()) {
-        return mockCheckPermissionUseCase;
-      }
-      if (tokenKey === Symbol.for("ILoggerService").toString()) {
-        return mockLogger;
-      }
-      return null;
     }),
   })),
 }));
 
-interface MockPrisma {
-  user: {
-    findMany: ReturnType<typeof vi.fn>;
-    findUnique: ReturnType<typeof vi.fn>;
-  };
-}
-
 describe("User Role Controller", () => {
-  let prisma: MockPrisma;
-
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.clearAllMocks();
     mockCheckPermissionUseCase.execute.mockResolvedValue(true);
-    // Get the mocked prisma instance
-    const prismaModule = await import(
-      "@/infrastructure/database/prisma/client"
-    );
-    prisma = prismaModule.prisma as unknown as MockPrisma;
+    mockUserRoleRepository.findUsersWithRoles.mockResolvedValue([]);
+    mockUserRepository.findById.mockResolvedValue({
+      id: "user-1",
+      email: "user-1@example.com",
+    });
   });
 
   // Sample user data
   const createMockUser = () => ({
     id: "user-1",
-    email: "user@test.com",
+    email: "user-1@example.com",
     name: "Test User",
     image: null,
     emailVerified: new Date("2024-01-01"),
@@ -153,11 +136,10 @@ describe("User Role Controller", () => {
       {
         id: "ur-1",
         roleId: "role-1",
+        roleName: "editor",
+        roleDisplayName: "Editor",
         expiresAt: null,
-        role: {
-          name: "editor",
-          displayName: "Editor",
-        },
+        isActive: true,
       },
     ],
   });
@@ -179,7 +161,7 @@ describe("User Role Controller", () => {
     it("should list all users with their roles", async () => {
       // Arrange
       const mockUsers = [createMockUser()];
-      prisma.user.findMany.mockResolvedValue(mockUsers);
+      mockUserRoleRepository.findUsersWithRoles.mockResolvedValue(mockUsers);
 
       // Act
       const result = await listUsersWithRolesAction();
@@ -195,7 +177,7 @@ describe("User Role Controller", () => {
 
     it("should check USERS_MANAGE permission", async () => {
       // Arrange
-      prisma.user.findMany.mockResolvedValue([]);
+      mockUserRoleRepository.findUsersWithRoles.mockResolvedValue([]);
 
       // Act
       await listUsersWithRolesAction();
@@ -249,15 +231,14 @@ describe("User Role Controller", () => {
               id: "ur-1",
               roleId: "role-1",
               expiresAt: new Date("2020-01-01"), // Expired
-              role: {
-                name: "editor",
-                displayName: "Editor",
-              },
+              roleName: "editor",
+              roleDisplayName: "Editor",
+              isActive: false,
             },
           ],
         },
       ];
-      prisma.user.findMany.mockResolvedValue(mockUsers);
+      mockUserRoleRepository.findUsersWithRoles.mockResolvedValue(mockUsers);
 
       // Act
       const result = await listUsersWithRolesAction();
@@ -271,7 +252,9 @@ describe("User Role Controller", () => {
 
     it("should return error response on database error", async () => {
       // Arrange
-      prisma.user.findMany.mockRejectedValue(new Error("Database error"));
+      mockUserRoleRepository.findUsersWithRoles.mockRejectedValue(
+        new Error("Database error"),
+      );
 
       // Act
       const result = await listUsersWithRolesAction();
@@ -288,10 +271,10 @@ describe("User Role Controller", () => {
     it("should get user with roles by id", async () => {
       // Arrange
       const mockUser = createMockUser();
-      prisma.user.findUnique.mockResolvedValue(mockUser);
+      mockUserRoleRepository.findUsersWithRoles.mockResolvedValue([mockUser]);
 
       // Act
-      const result = await getUserWithRolesAction("user-1");
+      const result = await getUserWithRolesAction("user-1@example.com");
 
       // Assert
       expect(result.success).toBe(true);
@@ -303,7 +286,9 @@ describe("User Role Controller", () => {
 
     it("should check USERS_MANAGE permission", async () => {
       // Arrange
-      prisma.user.findUnique.mockResolvedValue(createMockUser());
+      mockUserRoleRepository.findUsersWithRoles.mockResolvedValue([
+        createMockUser(),
+      ]);
 
       // Act
       await getUserWithRolesAction("user-1");
@@ -317,7 +302,7 @@ describe("User Role Controller", () => {
 
     it("should return error when user not found", async () => {
       // Arrange
-      prisma.user.findUnique.mockResolvedValue(null);
+      mockUserRoleRepository.findUsersWithRoles.mockResolvedValue([]);
 
       // Act
       const result = await getUserWithRolesAction("nonexistent");
@@ -343,24 +328,18 @@ describe("User Role Controller", () => {
       }
     });
 
-    it("should call Prisma with correct query", async () => {
+    it("should fetch user roles with case-insensitive email matching", async () => {
       // Arrange
-      prisma.user.findUnique.mockResolvedValue(createMockUser());
+      mockUserRoleRepository.findUsersWithRoles.mockResolvedValue([
+        createMockUser(),
+      ]);
 
       // Act
-      await getUserWithRolesAction("user-1@example.com");
+      const result = await getUserWithRolesAction("USER-1@EXAMPLE.COM");
 
       // Assert
-      expect(prisma.user.findUnique).toHaveBeenCalledWith({
-        where: { email: "user-1@example.com" },
-        include: {
-          roles: {
-            include: {
-              role: true,
-            },
-          },
-        },
-      });
+      expect(result.success).toBe(true);
+      expect(mockUserRoleRepository.findUsersWithRoles).toHaveBeenCalled();
     });
   });
 
@@ -764,7 +743,7 @@ describe("User Role Controller", () => {
   describe("response format", () => {
     it("should return discriminated union with success=true", async () => {
       // Arrange
-      prisma.user.findMany.mockResolvedValue([]);
+      mockUserRoleRepository.findUsersWithRoles.mockResolvedValue([]);
 
       // Act
       const result = await listUsersWithRolesAction();

@@ -8,7 +8,7 @@
 
 import { revalidatePath } from "next/cache";
 import type { z } from "zod";
-import { getContainer } from "@/di/container";
+import { getContainer, loadHeavyModule, isModuleLoaded } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { ActionResponse } from "./types";
 import { handleControllerError } from "./error-handler";
@@ -28,6 +28,15 @@ import type {
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
+/**
+ * Ensures the Service module is loaded before accessing its use cases
+ */
+async function ensureServiceModuleLoaded(): Promise<void> {
+  if (!isModuleLoaded("service")) {
+    await loadHeavyModule("service");
+  }
+}
+
 // ==================== Service Infrastructure ====================
 
 export async function createServiceInfrastructureAction(
@@ -35,6 +44,9 @@ export async function createServiceInfrastructureAction(
 ): Promise<ActionResponse<ServiceInfrastructureDTO>> {
   try {
     await requirePermission(PERMISSIONS.SERVICES_MANAGE);
+
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
 
     const validated = CreateServiceInfrastructureSchema.parse(data);
 
@@ -81,6 +93,9 @@ export async function updateServiceInfrastructureAction(
   try {
     await requirePermission(PERMISSIONS.SERVICES_MANAGE);
 
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
+
     const validated = UpdateServiceInfrastructureSchema.parse(data);
 
     const container = getContainer();
@@ -124,6 +139,9 @@ export async function getServiceInfrastructureAction(
 ): Promise<ActionResponse<ServiceInfrastructureDTO | null>> {
   try {
     await requirePermission(PERMISSIONS.SERVICES_VIEW);
+
+    // Ensure Service module is loaded (HEAVY tier, lazy loaded)
+    await ensureServiceModuleLoaded();
 
     const container = getContainer();
     const useCase = container.get<GetServiceInfrastructureUseCase>(

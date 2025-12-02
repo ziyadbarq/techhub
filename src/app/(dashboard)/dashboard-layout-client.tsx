@@ -30,6 +30,8 @@ function useHydrated(): boolean {
 export function DashboardLayoutClient({ children }: { children: ReactNode }) {
   const isHydrated = useHydrated();
   const pathname = usePathname();
+  const hideSidebar =
+    pathname?.startsWith("/settings") || pathname?.startsWith("/docs");
 
   if (!isHydrated) {
     return <GlobalLoading />;
@@ -56,9 +58,11 @@ export function DashboardLayoutClient({ children }: { children: ReactNode }) {
               <CommandPaletteProvider>
                 <div className="bg-background relative flex min-h-screen">
                   {/* Sidebar with Suspense for non-blocking load */}
-                  <Suspense fallback={<SidebarSkeleton />}>
-                    <Sidebar />
-                  </Suspense>
+                  {!hideSidebar ? (
+                    <Suspense fallback={<SidebarSkeleton />}>
+                      <Sidebar />
+                    </Suspense>
+                  ) : null}
 
                   {/* Main Content Area */}
                   <div className="flex min-h-screen flex-1 flex-col">

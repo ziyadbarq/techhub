@@ -7,3 +7,5 @@ export { GetAssetAssignmentUseCase } from "./get-asset-assignment.use-case";
 export { ListAssetAssignmentsUseCase } from "./list-asset-assignments.use-case";
 export { UpdateAssetAssignmentUseCase } from "./update-asset-assignment.use-case";
 export { DeleteAssetAssignmentUseCase } from "./delete-asset-assignment.use-case";
+export { ListConflictsUseCase } from "./list-conflicts.use-case";
+export { UpdateConflictStatusUseCase } from "./update-conflict-status.use-case";

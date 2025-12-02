@@ -1,10 +1,7 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
-import { injectable } from "inversify";
-import { prisma } from "@/infrastructure/database/prisma/client";
+import { inject, injectable } from "inversify";
+import { DI_TOKENS } from "@/di/types";
 import type { OwnershipType } from "@/generated/prisma";
+import type { IServiceOwnershipRepository } from "@/core/repositories/service-ownership.repository.interface";
 
 export interface RemoveServiceOwnerRequest {
   serviceId: string;
@@ -14,29 +11,27 @@ export interface RemoveServiceOwnerRequest {
 
 @injectable()
 export class RemoveServiceOwnerUseCase {
-  async execute(request: RemoveServiceOwnerRequest): Promise<void> {
-    // Check if ownership exists
-    const ownership = await prisma.serviceOwnership.findUnique({
-      where: {
-        serviceId_personId_ownershipType: {
-          serviceId: request.serviceId,
-          personId: request.personId,
-          ownershipType: request.ownershipType,
-        },
-      },
-    });
+  constructor(
+    @inject(DI_TOKENS.IServiceOwnershipRepository)
+    private readonly serviceOwnershipRepository: IServiceOwnershipRepository,
+  ) {}
 
+  async execute(request: RemoveServiceOwnerRequest): Promise<void> {
+    const ownership = await this.serviceOwnershipRepository.find(
+      request.serviceId,
+      request.personId,
+      request.ownershipType,
+    );
     if (!ownership) {
       throw new Error(
         `Ownership record not found for service ${request.serviceId}, person ${request.personId}, type ${request.ownershipType}`,
       );
     }
 
-    // Delete ownership
-    await prisma.serviceOwnership.delete({
-      where: {
-        id: ownership.id,
-      },
-    });
+    await this.serviceOwnershipRepository.removeOwner(
+      request.serviceId,
+      request.personId,
+      request.ownershipType,
+    );
   }
 }

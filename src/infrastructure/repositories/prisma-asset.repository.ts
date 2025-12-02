@@ -426,6 +426,13 @@ export class PrismaAssetRepository implements IAssetRepository {
     }
   }
 
+  async updateSoftDelete(id: string): Promise<void> {
+    await this.prisma.asset.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+  }
+
   /**
    * Build where clause from search options
    */

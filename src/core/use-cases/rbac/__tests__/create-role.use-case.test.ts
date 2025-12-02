@@ -6,6 +6,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { CreateRoleUseCase } from "../create-role.use-case";
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import type { IAuditLogRepository } from "@/core/repositories/audit-log-repository.interface";
+import type { ILoggerService } from "@/core/services";
 import { Role } from "@/core/domain/entities/role.entity";
 import { DuplicateRoleError } from "@/core/domain/errors/rbac-errors";
 
@@ -38,18 +39,31 @@ class MockAuditLogRepository implements Partial<IAuditLogRepository> {
   });
 }
 
+class MockLoggerService implements Partial<ILoggerService> {
+  debug = vi.fn();
+  info = vi.fn();
+  warn = vi.fn();
+  error = vi.fn();
+  async withTiming<T>(_operation: string, fn: () => Promise<T>): Promise<T> {
+    return fn();
+  }
+}
+
 describe("CreateRoleUseCase", () => {
   let useCase: CreateRoleUseCase;
   let mockRoleRepository: MockRoleRepository;
   let mockAuditLogRepository: MockAuditLogRepository;
+  let mockLogger: MockLoggerService;
 
   beforeEach(() => {
     mockRoleRepository = new MockRoleRepository();
     mockAuditLogRepository = new MockAuditLogRepository();
+    mockLogger = new MockLoggerService();
 
     useCase = new CreateRoleUseCase(
       mockRoleRepository as unknown as IRoleRepository,
       mockAuditLogRepository as unknown as IAuditLogRepository,
+      mockLogger as unknown as ILoggerService,
     );
   });
 

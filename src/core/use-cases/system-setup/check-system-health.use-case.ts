@@ -9,8 +9,10 @@ import type { ISystemSetupRepository } from "@/core/repositories/system-setup-re
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
 import type { IJobQueueService } from "@/core/services/job-queue.service.interface";
-import type { SystemHealthCheckDto } from "@/interface-adapters/dtos/system-setup.dto";
+import type { ILoggerService } from "@/core/services";
+import type { SystemHealthCheckDto } from "@/core/dtos/system-setup.dto";
 import { QUEUE_NAMES } from "@/core/domain/jobs/job-names";
+import { LogExecution } from "@/lib/decorators";
 
 @injectable()
 export class CheckSystemHealthUseCase {
@@ -23,8 +25,11 @@ export class CheckSystemHealthUseCase {
     private readonly permissionRepository: IPermissionRepository,
     @inject(DI_TOKENS.IJobQueueService)
     private readonly jobQueueService: IJobQueueService,
+    @inject(DI_TOKENS.ILoggerService)
+    private readonly logger: ILoggerService,
   ) {}
 
+  @LogExecution("system.health.check")
   async execute(): Promise<SystemHealthCheckDto> {
     // Check database connection
     let databaseConnected = false;

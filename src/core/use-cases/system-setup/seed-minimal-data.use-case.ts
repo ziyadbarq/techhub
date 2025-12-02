@@ -6,55 +6,31 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ILoggerService } from "@/core/services";
-import { seedRBAC } from "@/infrastructure/database/prisma/seed-rbac";
-
-export interface SeedMinimalDataResult {
-  success: boolean;
-  message: string;
-  details?: {
-    rolesCreated: number;
-    permissionsCreated: number;
-  };
-}
+import type {
+  ISystemSeederService,
+  SeedMinimalDataResult,
+} from "@/core/services/system-seeder.service.interface";
+import { LogExecution } from "@/lib/decorators";
 
 @injectable()
 export class SeedMinimalDataUseCase {
   constructor(
     @inject(DI_TOKENS.ILoggerService)
     private readonly logger: ILoggerService,
+    @inject(DI_TOKENS.ISystemSeederService)
+    private readonly systemSeederService: ISystemSeederService,
   ) {}
 
+  @LogExecution("system.seed.minimal")
   async execute(): Promise<SeedMinimalDataResult> {
     this.logger.info("Starting minimal data seeding (RBAC only)");
 
-    try {
-      // Seed RBAC data (roles and permissions)
-      await seedRBAC();
+    const result = await this.systemSeederService.seedMinimalData();
 
-      this.logger.info("Minimal data seeding completed successfully");
-
-      return {
-        success: true,
-        message:
-          "Minimal RBAC data seeded successfully (269 permissions, 10 roles)",
-        details: {
-          rolesCreated: 10, // 10 system roles as defined in seed-rbac-roles.ts
-          permissionsCreated: 269, // All permissions from permission-groups.ts
-        },
-      };
-    } catch (error) {
-      this.logger.error(
-        "Failed to seed minimal data",
-        error instanceof Error ? error : undefined,
-      );
-
-      return {
-        success: false,
-        message:
-          error instanceof Error
-            ? error.message
-            : "Failed to seed minimal data",
-      };
+    if (!result.success) {
+      this.logger.error("Failed to seed minimal data");
     }
+
+    return result;
   }
 }

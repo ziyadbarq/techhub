@@ -14,9 +14,13 @@ import {
   UpdateAssetAssignmentSchema,
   AssetAssignmentIdSchema,
   ListAssetAssignmentsSchema,
+  ListConflictsSchema,
+  UpdateConflictStatusSchema,
   type CreateAssetAssignmentDTO,
   type UpdateAssetAssignmentDTO,
   type ListAssetAssignmentsDTO,
+  type ListConflictsDTO,
+  type UpdateConflictStatusDTO,
 } from "../dtos/generated/asset-assignment.dto";
 import {
   presentAssetAssignment,
@@ -30,6 +34,8 @@ import type {
   GetAssetAssignmentUseCase,
   UpdateAssetAssignmentUseCase,
   DeleteAssetAssignmentUseCase,
+  ListConflictsUseCase,
+  UpdateConflictStatusUseCase,
 } from "@/core/use-cases/asset/asset-assignment";
 import type { ListAssetsUseCase } from "@/core/use-cases/asset/asset";
 import type { ListPeopleUseCase } from "@/core/use-cases/foundation/person";
@@ -472,5 +478,79 @@ export async function bulkCreateAssetAssignmentsAction(
       errorCount: 0,
       errors: [],
     };
+  }
+}
+
+/**
+ * List assignment conflicts
+ * Used by admins to review discrepancies between Intune and manual assignments
+ */
+export async function listConflictsAction(
+  options?: ListConflictsDTO,
+): Promise<ActionResponse<AssetAssignmentDTO[]>> {
+  try {
+    await requirePermission(PERMISSIONS.ASSET_ASSIGNMENTS_VIEW);
+
+    const validated = options ? ListConflictsSchema.parse(options) : undefined;
+
+    const container = getContainer();
+    const useCase = container.get<ListConflictsUseCase>(
+      DI_TOKENS.ListAssignmentConflictsUseCase,
+    );
+
+    const conflicts = await useCase.execute(validated || {});
+
+    // Enrich with asset tags and assignee names
+    const enrichmentMap = await enrichAssetAssignments(conflicts);
+
+    return {
+      success: true,
+      data: presentAssetAssignments(conflicts, enrichmentMap),
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "listConflictsAction" },
+      "Failed to list assignment conflicts",
+    );
+  }
+}
+
+/**
+ * Update conflict status
+ * Allows admins to flag or clear conflicts on assignments
+ */
+export async function updateConflictStatusAction(
+  data: UpdateConflictStatusDTO,
+): Promise<ActionResponse<void>> {
+  try {
+    await requirePermission(PERMISSIONS.ASSET_ASSIGNMENTS_UPDATE);
+
+    const validated = UpdateConflictStatusSchema.parse(data);
+
+    const container = getContainer();
+    const useCase = container.get<UpdateConflictStatusUseCase>(
+      DI_TOKENS.UpdateAssignmentConflictStatusUseCase,
+    );
+
+    await useCase.execute({
+      assignmentId: validated.assignmentId,
+      hasConflict: validated.hasConflict,
+      conflictNote: validated.conflictNote ?? undefined,
+    });
+
+    revalidatePath("/asset-assignments");
+    revalidatePath("/admin/assignment-conflicts");
+
+    return {
+      success: true,
+      data: undefined,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "updateConflictStatusAction" },
+      "Failed to update conflict status",
+    );
   }
 }

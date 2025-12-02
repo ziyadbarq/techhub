@@ -2,9 +2,17 @@
  * AssetAssignment Domain Entity
  * Represents assignment of assets to persons, organizations, locations, or CIs
  * Supports temporal tracking (start/end dates) and primary assignment designation
+ * Tracks assignment source for Intune integration and conflict detection
  */
 
 export type AssigneeType = "PERSON" | "ORG_UNIT" | "LOCATION" | "CI";
+
+export type AssignmentSource =
+  | "MANUAL"
+  | "INTUNE_SYNC"
+  | "INTUNE_MANUAL"
+  | "IMPORT"
+  | "SYSTEM";
 
 export interface AssetAssignmentProps {
   id: string;
@@ -17,6 +25,16 @@ export interface AssetAssignmentProps {
   conditionOnAssignment: string | null;
   conditionOnReturn: string | null;
   note: string | null;
+
+  // Source tracking (for Intune integration)
+  source: AssignmentSource;
+  sourceReferenceType: string | null;
+  sourceReferenceId: string | null;
+
+  // Conflict tracking
+  hasConflict: boolean;
+  conflictNote: string | null;
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -31,6 +49,15 @@ export interface CreateAssetAssignmentProps {
   conditionOnAssignment?: string | null;
   conditionOnReturn?: string | null;
   note?: string | null;
+
+  // Source tracking (optional, defaults to MANUAL)
+  source?: AssignmentSource;
+  sourceReferenceType?: string | null;
+  sourceReferenceId?: string | null;
+
+  // Conflict tracking (optional, defaults to false)
+  hasConflict?: boolean;
+  conflictNote?: string | null;
 }
 
 export class AssetAssignment {
@@ -62,6 +89,16 @@ export class AssetAssignment {
       conditionOnAssignment: props.conditionOnAssignment || null,
       conditionOnReturn: props.conditionOnReturn || null,
       note: props.note?.trim() || null,
+
+      // Source tracking
+      source: props.source || "MANUAL",
+      sourceReferenceType: props.sourceReferenceType || null,
+      sourceReferenceId: props.sourceReferenceId || null,
+
+      // Conflict tracking
+      hasConflict: props.hasConflict || false,
+      conflictNote: props.conflictNote?.trim() || null,
+
       createdAt: now,
       updatedAt: now,
     });
@@ -174,6 +211,41 @@ export class AssetAssignment {
   }
 
   /**
+   * Check if assignment is managed by Intune
+   */
+  isIntuneManaged(): boolean {
+    return (
+      this.props.source === "INTUNE_SYNC" ||
+      this.props.source === "INTUNE_MANUAL"
+    );
+  }
+
+  /**
+   * Check if assignment was created manually
+   */
+  isManual(): boolean {
+    return this.props.source === "MANUAL";
+  }
+
+  /**
+   * Flag this assignment as having a conflict
+   */
+  flagConflict(note: string): void {
+    this.props.hasConflict = true;
+    this.props.conflictNote = note?.trim() || null;
+    this.props.updatedAt = new Date();
+  }
+
+  /**
+   * Clear conflict flag from this assignment
+   */
+  clearConflict(): void {
+    this.props.hasConflict = false;
+    this.props.conflictNote = null;
+    this.props.updatedAt = new Date();
+  }
+
+  /**
    * Check if assignment was active on a specific date
    */
   wasActiveOn(date: Date): boolean {
@@ -268,6 +340,26 @@ export class AssetAssignment {
 
   get updatedAt(): Date {
     return this.props.updatedAt;
+  }
+
+  get source(): AssignmentSource {
+    return this.props.source;
+  }
+
+  get sourceReferenceType(): string | null {
+    return this.props.sourceReferenceType;
+  }
+
+  get sourceReferenceId(): string | null {
+    return this.props.sourceReferenceId;
+  }
+
+  get hasConflict(): boolean {
+    return this.props.hasConflict;
+  }
+
+  get conflictNote(): string | null {
+    return this.props.conflictNote;
   }
 
   // Internal setters (for repository use)

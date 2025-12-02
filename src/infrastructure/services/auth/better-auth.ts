@@ -5,7 +5,7 @@ import { lastLoginMethod } from "better-auth/plugins";
 import { createAuthMiddleware } from "better-auth/api";
 import { createId } from "@paralleldrive/cuid2";
 import type { PrismaClient } from "@/generated/prisma/client";
-import { encryptTokens, decryptTokens } from "./encryption";
+import { encryptTokens, decryptTokens } from "@/lib/auth/encryption";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { IEmailService } from "@/core/services/email.service.interface";
@@ -25,7 +25,8 @@ import type { IEmailService } from "@/core/services/email.service.interface";
  * Prisma v7: Extends singleton client from client.ts
  * IMPORTANT: Always use the singleton to avoid multiple connection pools
  */
-import { prisma as basePrisma } from "@/infrastructure/database/prisma/client";
+// Auth Prisma provider lives in infrastructure; we resolve via DI to avoid direct client imports.
+import { PrismaAuthService } from "@/infrastructure/services/auth/prisma-auth.service";
 
 const authDebugEnabled = process.env.AUTH_DEBUG_LOGS === "true";
 
@@ -307,250 +308,258 @@ const ensurePersonLinkedToUser = async (
 };
 
 // Extend singleton Prisma client with encryption and emailVerified transformation middleware
-const prismaWithEncryption = basePrisma.$extends({
-  query: {
-    // User model: Transform emailVerified boolean to DateTime
-    user: {
-      async create({ args, query }) {
-        authDebugLog("info", "User.create invoked", {
-          hasEmailVerified: args.data.emailVerified !== undefined,
-          emailVerifiedType: typeof args.data.emailVerified,
-        });
-
-        // Transform emailVerified from boolean to DateTime or null
-        if (typeof args.data.emailVerified === "boolean") {
-          args.data.emailVerified = args.data.emailVerified ? new Date() : null;
-        }
-
-        try {
-          const result = await query(args);
-          authDebugLog("info", "User.create succeeded", {
-            id: result.id,
+const prismaWithEncryption = getContainer()
+  .get<PrismaAuthService>(PrismaAuthService)
+  .prisma.$extends({
+    query: {
+      // User model: Transform emailVerified boolean to DateTime
+      user: {
+        async create({ args, query }) {
+          authDebugLog("info", "User.create invoked", {
+            hasEmailVerified: args.data.emailVerified !== undefined,
+            emailVerifiedType: typeof args.data.emailVerified,
           });
-          return result;
-        } catch (error) {
-          authDebugLog("error", "User.create failed", {
-            error: error instanceof Error ? error.message : String(error),
-          });
-          throw error;
-        }
-      },
 
-      async update({ args, query }) {
-        // Transform emailVerified from boolean to DateTime or null
-        if (args.data.emailVerified !== undefined) {
+          // Transform emailVerified from boolean to DateTime or null
           if (typeof args.data.emailVerified === "boolean") {
             args.data.emailVerified = args.data.emailVerified
               ? new Date()
               : null;
           }
-        }
-        return query(args);
+
+          try {
+            const result = await query(args);
+            authDebugLog("info", "User.create succeeded", {
+              id: result.id,
+            });
+            return result;
+          } catch (error) {
+            authDebugLog("error", "User.create failed", {
+              error: error instanceof Error ? error.message : String(error),
+            });
+            throw error;
+          }
+        },
+
+        async update({ args, query }) {
+          // Transform emailVerified from boolean to DateTime or null
+          if (args.data.emailVerified !== undefined) {
+            if (typeof args.data.emailVerified === "boolean") {
+              args.data.emailVerified = args.data.emailVerified
+                ? new Date()
+                : null;
+            }
+          }
+          return query(args);
+        },
+
+        async upsert({ args, query }) {
+          // Transform emailVerified in both create and update
+          if (typeof args.create.emailVerified === "boolean") {
+            args.create.emailVerified = args.create.emailVerified
+              ? new Date()
+              : null;
+          }
+          if (
+            args.update.emailVerified !== undefined &&
+            typeof args.update.emailVerified === "boolean"
+          ) {
+            args.update.emailVerified = args.update.emailVerified
+              ? new Date()
+              : null;
+          }
+          return query(args);
+        },
       },
 
-      async upsert({ args, query }) {
-        // Transform emailVerified in both create and update
-        if (typeof args.create.emailVerified === "boolean") {
-          args.create.emailVerified = args.create.emailVerified
-            ? new Date()
-            : null;
-        }
-        if (
-          args.update.emailVerified !== undefined &&
-          typeof args.update.emailVerified === "boolean"
-        ) {
-          args.update.emailVerified = args.update.emailVerified
-            ? new Date()
-            : null;
-        }
-        return query(args);
-      },
-    },
-
-    // Account model: Encrypt/decrypt tokens
-    account: {
-      // Encrypt tokens before creating
-      async create({ args, query }) {
-        const data = args.data as Record<string, unknown>; // Type assertion for password field compatibility
-        authDebugLog("info", "Account.create invoked", {
-          provider: data.provider,
-          hasPassword: Boolean(data.password),
-          type: data.type,
-        });
-
-        if (
-          args.data.accessToken ||
-          args.data.refreshToken ||
-          args.data.idToken
-        ) {
-          authDebugLog("info", "Account.create encrypting OAuth tokens");
-          const encrypted = encryptTokens({
-            accessToken: args.data.accessToken,
-            refreshToken: args.data.refreshToken,
-            idToken: args.data.idToken,
+      // Account model: Encrypt/decrypt tokens
+      account: {
+        // Encrypt tokens before creating
+        async create({ args, query }) {
+          const data = args.data as Record<string, unknown>; // Type assertion for password field compatibility
+          authDebugLog("info", "Account.create invoked", {
+            provider: data.provider,
+            hasPassword: Boolean(data.password),
+            type: data.type,
           });
 
-          args.data = {
-            ...args.data,
-            ...encrypted,
-          };
-        }
+          if (
+            args.data.accessToken ||
+            args.data.refreshToken ||
+            args.data.idToken
+          ) {
+            authDebugLog("info", "Account.create encrypting OAuth tokens");
+            const encrypted = encryptTokens({
+              accessToken: args.data.accessToken,
+              refreshToken: args.data.refreshToken,
+              idToken: args.data.idToken,
+            });
 
-        authDebugLog("info", "Account.create final payload keys", {
-          keys: Object.keys(args.data),
-        });
+            args.data = {
+              ...args.data,
+              ...encrypted,
+            };
+          }
 
-        try {
+          authDebugLog("info", "Account.create final payload keys", {
+            keys: Object.keys(args.data),
+          });
+
+          try {
+            const result = await query(args);
+            authDebugLog("info", "Account.create succeeded", {
+              id: result.id,
+              provider: result.provider,
+            });
+            return result;
+          } catch (error) {
+            authDebugLog("error", "Account.create failed", {
+              error: error instanceof Error ? error.message : String(error),
+              errorName:
+                error instanceof Error ? error.constructor.name : typeof error,
+            });
+            throw error;
+          }
+        },
+
+        // Encrypt tokens before updating
+        async update({ args, query }) {
+          if (
+            args.data.accessToken ||
+            args.data.refreshToken ||
+            args.data.idToken
+          ) {
+            const encrypted = encryptTokens({
+              accessToken: args.data.accessToken as string | null | undefined,
+              refreshToken: args.data.refreshToken as string | null | undefined,
+              idToken: args.data.idToken as string | null | undefined,
+            });
+
+            args.data = {
+              ...args.data,
+              ...encrypted,
+            };
+          }
+
           const result = await query(args);
-          authDebugLog("info", "Account.create succeeded", {
-            id: result.id,
-            provider: result.provider,
-          });
-          return result;
-        } catch (error) {
-          authDebugLog("error", "Account.create failed", {
-            error: error instanceof Error ? error.message : String(error),
-            errorName:
-              error instanceof Error ? error.constructor.name : typeof error,
-          });
-          throw error;
-        }
-      },
 
-      // Encrypt tokens before updating
-      async update({ args, query }) {
-        if (
-          args.data.accessToken ||
-          args.data.refreshToken ||
-          args.data.idToken
-        ) {
-          const encrypted = encryptTokens({
-            accessToken: args.data.accessToken as string | null | undefined,
-            refreshToken: args.data.refreshToken as string | null | undefined,
-            idToken: args.data.idToken as string | null | undefined,
-          });
-
-          args.data = {
-            ...args.data,
-            ...encrypted,
-          };
-        }
-
-        const result = await query(args);
-
-        // Decrypt tokens in result
-        if (
-          result &&
-          (result.accessToken || result.refreshToken || result.idToken)
-        ) {
-          const decrypted = decryptTokens({
-            accessToken: result.accessToken,
-            refreshToken: result.refreshToken,
-            idToken: result.idToken,
-          });
-
-          return {
-            ...result,
-            ...decrypted,
-          };
-        }
-
-        return result;
-      },
-
-      // Decrypt tokens after finding unique
-      async findUnique({ args, query }) {
-        const result = await query(args);
-
-        if (
-          result &&
-          (result.accessToken || result.refreshToken || result.idToken)
-        ) {
-          const decrypted = decryptTokens({
-            accessToken: result.accessToken,
-            refreshToken: result.refreshToken,
-            idToken: result.idToken,
-          });
-
-          return {
-            ...result,
-            ...decrypted,
-          };
-        }
-
-        return result;
-      },
-
-      // Decrypt tokens after finding first
-      async findFirst({ args, query }) {
-        const result = await query(args);
-
-        if (
-          result &&
-          (result.accessToken || result.refreshToken || result.idToken)
-        ) {
-          const decrypted = decryptTokens({
-            accessToken: result.accessToken,
-            refreshToken: result.refreshToken,
-            idToken: result.idToken,
-          });
-
-          return {
-            ...result,
-            ...decrypted,
-          };
-        }
-
-        return result;
-      },
-
-      // Decrypt tokens after finding many
-      async findMany({ args, query }) {
-        const results = await query(args);
-
-        return results.map((account) => {
-          if (account.accessToken || account.refreshToken || account.idToken) {
+          // Decrypt tokens in result
+          if (
+            result &&
+            (result.accessToken || result.refreshToken || result.idToken)
+          ) {
             const decrypted = decryptTokens({
-              accessToken: account.accessToken,
-              refreshToken: account.refreshToken,
-              idToken: account.idToken,
+              accessToken: result.accessToken,
+              refreshToken: result.refreshToken,
+              idToken: result.idToken,
             });
 
             return {
-              ...account,
+              ...result,
               ...decrypted,
             };
           }
 
-          return account;
-        });
-      },
-    },
-
-    // Session model: Add logging for session creation
-    session: {
-      async create({ args, query }) {
-        authDebugLog("info", "Session.create invoked", {
-          hasSessionToken: !!args.data.sessionToken,
-        });
-
-        try {
-          const result = await query(args);
-          authDebugLog("info", "Session.create succeeded", {
-            id: result.id,
-            expires: result.expires,
-          });
           return result;
-        } catch (error) {
-          authDebugLog("error", "Session.create failed", {
-            error: error instanceof Error ? error.message : String(error),
+        },
+
+        // Decrypt tokens after finding unique
+        async findUnique({ args, query }) {
+          const result = await query(args);
+
+          if (
+            result &&
+            (result.accessToken || result.refreshToken || result.idToken)
+          ) {
+            const decrypted = decryptTokens({
+              accessToken: result.accessToken,
+              refreshToken: result.refreshToken,
+              idToken: result.idToken,
+            });
+
+            return {
+              ...result,
+              ...decrypted,
+            };
+          }
+
+          return result;
+        },
+
+        // Decrypt tokens after finding first
+        async findFirst({ args, query }) {
+          const result = await query(args);
+
+          if (
+            result &&
+            (result.accessToken || result.refreshToken || result.idToken)
+          ) {
+            const decrypted = decryptTokens({
+              accessToken: result.accessToken,
+              refreshToken: result.refreshToken,
+              idToken: result.idToken,
+            });
+
+            return {
+              ...result,
+              ...decrypted,
+            };
+          }
+
+          return result;
+        },
+
+        // Decrypt tokens after finding many
+        async findMany({ args, query }) {
+          const results = await query(args);
+
+          return results.map((account) => {
+            if (
+              account.accessToken ||
+              account.refreshToken ||
+              account.idToken
+            ) {
+              const decrypted = decryptTokens({
+                accessToken: account.accessToken,
+                refreshToken: account.refreshToken,
+                idToken: account.idToken,
+              });
+
+              return {
+                ...account,
+                ...decrypted,
+              };
+            }
+
+            return account;
           });
-          throw error;
-        }
+        },
+      },
+
+      // Session model: Add logging for session creation
+      session: {
+        async create({ args, query }) {
+          authDebugLog("info", "Session.create invoked", {
+            hasSessionToken: !!args.data.sessionToken,
+          });
+
+          try {
+            const result = await query(args);
+            authDebugLog("info", "Session.create succeeded", {
+              id: result.id,
+              expires: result.expires,
+            });
+            return result;
+          } catch (error) {
+            authDebugLog("error", "Session.create failed", {
+              error: error instanceof Error ? error.message : String(error),
+            });
+            throw error;
+          }
+        },
       },
     },
-  },
-});
+  });
 
 // Export type-safe Prisma client
 const prisma = prismaWithEncryption as unknown as PrismaClient;

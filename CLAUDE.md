@@ -53,7 +53,7 @@ This file provides high-level guidance when working with this repository.
   - **Governance**: DataDomain, DataOwnership, VerificationCampaign, VerificationItem (4 entities, 24 use cases)
   - **Attachments**: AttachmentType, Attachment (2 entities, 11 use cases)
   - **Service Management**: Service, ServiceOwnership, BusinessProcess, ServiceInfrastructure, ServiceAsset, ServiceHealthHistory, ServiceSlaMetric (7 entities, 37 use cases) - includes SLA management, health monitoring, and compliance tracking (Health & SLA features can be toggled independently via `SERVICE_HEALTH_SLA` flag)
-  - **Intune Integration**: IntuneDevice, IntuneComplianceHistory (2 entities, 9 use cases) - MS Graph device sync with compliance tracking
+  - **Intune Integration**: IntuneDevice, IntuneComplianceHistory (2 entities, 12 use cases) - MS Graph device sync with compliance tracking and automatic assignment synchronization
 - **Reference**: Task entity (complete implementation, hidden from UI)
 - **Marketing**: Public landing page showcasing system capabilities
 
@@ -114,7 +114,7 @@ bash scripts/db-backup.sh restore                  # Interactive rollback (selec
 ### Complete Documentation Index
 
 For organized documentation by category, see **[docs/README.md](docs/README.md)**:
-- Architecture & Design (4 docs)
+- Architecture & Design (6 docs - includes [IMPORT_RULES.md](docs/architecture/IMPORT_RULES.md), [LOGGING_IMPROVEMENTS.md](docs/architecture/LOGGING_IMPROVEMENTS.md))
 - Development Guides (15+ docs)
 - Layer 2 & 3 Features (15+ docs)
 - Infrastructure & Systems (12+ docs)
@@ -195,9 +195,13 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 
 ### Architecture Patterns (ALWAYS Follow)
 
-**Logging**:
+**Logging** (CRITICAL - Production-Ready System):
 - NEVER use `console.log` - inject DI logger: `@inject(DI_TOKENS.ILoggerService)`
-- See [LOGGING.md](docs/guides/LOGGING.md)
+- **Request tracking**: All logs automatically include requestId, correlationId, userId, path, method (via AsyncLocalStorage)
+- **Automated boundary logging**: Use `@LogExecution('operation.name')` decorator on use case execute() methods
+- **DRY compliance**: Timing utilities in `timing-utils.ts`, no code duplication
+- **Sensitive data**: Automatically redacted (passwords, tokens, API keys)
+- See [LOGGING.md](docs/guides/LOGGING.md) and [LOGGING_IMPROVEMENTS.md](docs/architecture/LOGGING_IMPROVEMENTS.md)
 
 **Database Seeding**:
 - **Fully idempotent**: Never wipes data, never creates duplicates, safe to run repeatedly
@@ -218,8 +222,12 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 - See [SYSTEM_SETUP.md](docs/features/SYSTEM_SETUP.md#sso-login-restriction-microsoft-oauth)
 
 **Dependency Injection**:
-- Resolve via `getContainer()`/`resolve()`, never use `new`
-- Validate at boundaries (DTOs with Zod)
+- Three-tier modular system: CORE (14 modules), DASHBOARD (11 modules), HEAVY (4 modules, lazy loaded)
+- Use async `initContainer(tier?)` at startup for optimal performance, `getContainer()` for backward compatibility
+- Lazy load heavy modules: `await loadHeavyModule('intune')` when user accesses feature
+- Resolve dependencies: `getContainer().get(DI_TOKENS.ServiceName)`, never use `new`
+- Health checks available for modules with external dependencies
+- See [DI_MODULARIZATION.md](docs/architecture/DI_MODULARIZATION.md)
 
 ### Feature-Specific Patterns
 
@@ -266,7 +274,9 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 
 ## Architecture Overview
 
-5-layer Clean Architecture: **Presentation** → **Interface Adapters** (Controllers, DTOs, Presenters) → **Use Cases** → **Domain** (Entities, business rules) ← **Infrastructure** (Repositories, external services)
+5-layer Clean Architecture: **Presentation** → **Interface Adapters** (Controllers, DTOs, Presenters, Queries) → **Use Cases** → **Domain** (Entities, business rules) ← **Infrastructure** (Repositories, external services)
+
+**Query Layer**: View composers in `src/interface-adapters/queries/` aggregate data from use cases with DataLoader batching to prevent N+1 queries. Pilot implementations: stock movements (10x faster), asset reservations (30x faster).
 
 **See**: [ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md) for complete diagrams, data flow, and [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "Adding a New Feature" for step-by-step implementation guide.
 
@@ -308,7 +318,8 @@ Keep messages concise with relevant context (what was done, files affected, next
 - Register new routes in `protected-routes.ts` configuration
 - Test new protected routes with viewer account to verify access denial
 - Create barrel exports (`index.ts`) for new use case modules
-- Use DI logger (not `console.log`)
+- Use DI logger with `@LogExecution` decorator for use cases: `@LogExecution('operation.name') async execute() { ... }`
+- Request context automatically included in all logs (requestId, userId, path, method)
 - Validate at boundaries
 - Follow Clean Architecture layers
 - Use `formatDate()` from `@/lib/utils/date-format` (not `.toLocaleDateString()`)

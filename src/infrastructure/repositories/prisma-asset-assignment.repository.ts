@@ -9,10 +9,14 @@ import type {
   Prisma,
 } from "@/generated/prisma/server";
 import { DI_TOKENS } from "@/di/types";
-import type { IAssetAssignmentRepository } from "@/core/repositories/asset-assignment.repository.interface";
+import type {
+  IAssetAssignmentRepository,
+  ConflictFilters,
+} from "@/core/repositories/asset-assignment.repository.interface";
 import {
   AssetAssignment,
   type AssigneeType,
+  type AssignmentSource,
 } from "@/core/domain/entities/asset-assignment.entity";
 import { createRepositoryLogger } from "./repository-logger";
 
@@ -39,7 +43,16 @@ export class PrismaAssetAssignmentRepository
           startDate: assignment.startDate,
           endDate: assignment.endDate,
           isPrimary: assignment.isPrimary,
+          conditionOnAssignment: assignment.conditionOnAssignment,
+          conditionOnReturn: assignment.conditionOnReturn,
           note: assignment.note,
+          // Source tracking
+          source: assignment.source,
+          sourceReferenceType: assignment.sourceReferenceType,
+          sourceReferenceId: assignment.sourceReferenceId,
+          // Conflict tracking
+          hasConflict: assignment.hasConflict,
+          conflictNote: assignment.conflictNote,
         },
       });
 
@@ -194,7 +207,16 @@ export class PrismaAssetAssignmentRepository
           startDate: assignment.startDate,
           endDate: assignment.endDate,
           isPrimary: assignment.isPrimary,
+          conditionOnAssignment: assignment.conditionOnAssignment,
+          conditionOnReturn: assignment.conditionOnReturn,
           note: assignment.note,
+          // Source tracking
+          source: assignment.source,
+          sourceReferenceType: assignment.sourceReferenceType,
+          sourceReferenceId: assignment.sourceReferenceId,
+          // Conflict tracking
+          hasConflict: assignment.hasConflict,
+          conflictNote: assignment.conflictNote,
           updatedAt: assignment.updatedAt,
         },
       });
@@ -341,6 +363,117 @@ export class PrismaAssetAssignmentRepository
   }
 
   /**
+   * Find assignment by source reference
+   */
+  async findBySourceReference(
+    sourceReferenceType: string,
+    sourceReferenceId: string,
+  ): Promise<AssetAssignment | null> {
+    const assignment = await this.prisma.assetAssignment.findFirst({
+      where: {
+        sourceReferenceType,
+        sourceReferenceId,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return assignment ? this.toDomain(assignment) : null;
+  }
+
+  /**
+   * Find all active assignments for an asset grouped by source
+   */
+  async findAllActiveByAssetGrouped(assetId: string): Promise<{
+    manual: AssetAssignment[];
+    intune: AssetAssignment[];
+  }> {
+    const now = new Date();
+    const assignments = await this.prisma.assetAssignment.findMany({
+      where: {
+        assetId,
+        OR: [{ endDate: null }, { endDate: { gte: now } }],
+      },
+      orderBy: { startDate: "desc" },
+    });
+
+    const manual: AssetAssignment[] = [];
+    const intune: AssetAssignment[] = [];
+
+    for (const a of assignments) {
+      const domain = this.toDomain(a);
+      if (domain.isIntuneManaged()) {
+        intune.push(domain);
+      } else {
+        manual.push(domain);
+      }
+    }
+
+    return { manual, intune };
+  }
+
+  /**
+   * Find assignments with conflicts
+   */
+  async findConflicts(filters?: ConflictFilters): Promise<AssetAssignment[]> {
+    const where: Prisma.AssetAssignmentWhereInput = {
+      hasConflict: true,
+      ...(filters?.assetId && { assetId: filters.assetId }),
+      ...(filters?.source && { source: filters.source }),
+    };
+
+    // Filter by person (must be PERSON assignee type)
+    if (filters?.personId) {
+      where.assigneeType = "PERSON";
+      where.assigneeId = filters.personId;
+    }
+
+    const assignments = await this.prisma.assetAssignment.findMany({
+      where,
+      orderBy: { updatedAt: "desc" },
+      take: filters?.limit,
+      skip: filters?.offset,
+    });
+
+    return assignments.map((a) => this.toDomain(a));
+  }
+
+  /**
+   * Update conflict status for an assignment
+   */
+  async updateConflictStatus(
+    assignmentId: string,
+    hasConflict: boolean,
+    conflictNote?: string | null,
+  ): Promise<void> {
+    const timer = this.logger.startTimer();
+
+    try {
+      await this.prisma.assetAssignment.update({
+        where: { id: assignmentId },
+        data: {
+          hasConflict,
+          conflictNote: conflictNote ?? null,
+          updatedAt: new Date(),
+        },
+      });
+
+      this.logger.timed(
+        "updateConflictStatus",
+        "Conflict status updated",
+        timer(),
+        { assignmentId, hasConflict },
+      );
+    } catch (error) {
+      this.logger.error(
+        "updateConflictStatus",
+        "Failed to update conflict status",
+        error,
+      );
+      throw error;
+    }
+  }
+
+  /**
    * Convert Prisma model to domain entity
    */
   private toDomain(prismaAssignment: PrismaAssetAssignment): AssetAssignment {
@@ -355,6 +488,13 @@ export class PrismaAssetAssignmentRepository
       conditionOnAssignment: prismaAssignment.conditionOnAssignment,
       conditionOnReturn: prismaAssignment.conditionOnReturn,
       note: prismaAssignment.note,
+      // Source tracking
+      source: prismaAssignment.source as AssignmentSource,
+      sourceReferenceType: prismaAssignment.sourceReferenceType,
+      sourceReferenceId: prismaAssignment.sourceReferenceId,
+      // Conflict tracking
+      hasConflict: prismaAssignment.hasConflict,
+      conflictNote: prismaAssignment.conflictNote,
       createdAt: prismaAssignment.createdAt,
       updatedAt: prismaAssignment.updatedAt,
     });

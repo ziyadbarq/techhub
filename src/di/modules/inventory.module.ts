@@ -36,6 +36,9 @@ import { VoidStockMovementUseCase } from "@/core/use-cases/inventory/stock-movem
 import type { IAssetMovementService } from "@/core/services/asset-movement.service.interface";
 import { AssetMovementService } from "@/infrastructure/services/asset-movement.service";
 
+// Query Layer
+import { StockMovementsTableQuery } from "@/interface-adapters/queries";
+
 const diLogger = logger.scope("DI:InventoryModule");
 
 /**
@@ -131,6 +134,15 @@ export function bindInventoryDependencies(container: Container): void {
     .bind<IAssetMovementService>(DI_TOKENS.IAssetMovementService)
     .to(AssetMovementService)
     .inSingletonScope();
+
+  // ==========================================
+  // Query Layer - Stock Movements
+  // ==========================================
+
+  container
+    .bind<StockMovementsTableQuery>(DI_TOKENS.StockMovementsTableQuery)
+    .to(StockMovementsTableQuery)
+    .inTransientScope();
 
   diLogger.debug(
     "bindInventoryDependencies",

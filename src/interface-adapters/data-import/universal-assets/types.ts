@@ -6,7 +6,7 @@
  */
 
 import type { FieldDataTypeEnum } from "@/core/domain/value-objects/foundation-enums";
-import type { DuplicateStrategy } from "../entity-config.types";
+import type { DuplicateStrategy } from "@/lib/data-import/entity-config.types";
 
 /**
  * Prefix configuration for parsing CSV columns

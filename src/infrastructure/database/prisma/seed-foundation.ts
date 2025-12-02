@@ -241,13 +241,6 @@ export async function seedFoundation(prisma: PrismaClient) {
 
   await createFieldDefinitions(prisma, [
     {
-      name: "Serial Number",
-      code: "SERIAL_NUM",
-      dataType: "STRING",
-      description: "Asset serial number",
-      isRequired: true,
-    },
-    {
       name: "MAC Address",
       code: "MAC_ADDR",
       dataType: "STRING",
@@ -284,6 +277,111 @@ export async function seedFoundation(prisma: PrismaClient) {
       code: "IP_ADDR",
       dataType: "STRING",
       description: "Assigned IP address",
+    },
+    // CI Network Fields (7 fields for Configuration Items)
+    {
+      name: "Primary IPv4 Address",
+      code: "PRIMARY_IPV4",
+      dataType: "STRING",
+      label: "Primary IPv4 Address",
+      description: "Primary IPv4 address assigned to this CI",
+      entityType: "CONFIGURATION_ITEM",
+      isGlobal: true,
+      isRequired: false,
+      validationRules: {
+        pattern:
+          "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
+        description: "Valid IPv4 address format (e.g., 192.168.1.100)",
+      },
+    },
+    {
+      name: "Primary IPv6 Address",
+      code: "PRIMARY_IPV6",
+      dataType: "STRING",
+      label: "Primary IPv6 Address",
+      description: "Primary IPv6 address assigned to this CI",
+      entityType: "CONFIGURATION_ITEM",
+      isGlobal: true,
+      isRequired: false,
+      validationRules: {
+        pattern:
+          "^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$",
+        description: "Valid IPv6 address format (e.g., 2001:db8::1 or ::1)",
+      },
+    },
+    {
+      name: "MAC Address",
+      code: "MAC_ADDRESS_CI",
+      dataType: "STRING",
+      label: "MAC Address",
+      description: "Physical MAC address (hardware identifier)",
+      entityType: "CONFIGURATION_ITEM",
+      isGlobal: true,
+      isRequired: false,
+      validationRules: {
+        pattern: "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$",
+        description: "Valid MAC address format (e.g., 00:1A:2B:3C:4D:5E)",
+      },
+    },
+    {
+      name: "FQDN",
+      code: "FQDN",
+      dataType: "STRING",
+      label: "Fully Qualified Domain Name",
+      description: "DNS hostname (FQDN) for this CI",
+      entityType: "CONFIGURATION_ITEM",
+      isGlobal: true,
+      isRequired: false,
+      validationRules: {
+        pattern:
+          "^(?=.{1,253}$)((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)+[A-Za-z]{2,63}$",
+        description: "Valid FQDN format (e.g., server.example.com)",
+      },
+    },
+    {
+      name: "Default Gateway",
+      code: "DEFAULT_GATEWAY",
+      dataType: "STRING",
+      label: "Default Gateway",
+      description: "Default gateway IP address",
+      entityType: "CONFIGURATION_ITEM",
+      isGlobal: true,
+      isRequired: false,
+      validationRules: {
+        pattern:
+          "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
+        description: "Valid IPv4 address format",
+      },
+    },
+    {
+      name: "Primary DNS Server",
+      code: "PRIMARY_DNS",
+      dataType: "STRING",
+      label: "Primary DNS Server",
+      description: "Primary DNS server IP address",
+      entityType: "CONFIGURATION_ITEM",
+      isGlobal: true,
+      isRequired: false,
+      validationRules: {
+        pattern:
+          "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
+        description: "Valid IPv4 address format",
+      },
+    },
+    {
+      name: "Secondary DNS Server",
+      code: "SECONDARY_DNS",
+      dataType: "STRING",
+      label: "Secondary DNS Server",
+      description: "Secondary/backup DNS server IP address",
+      entityType: "CONFIGURATION_ITEM",
+      isGlobal: true,
+      isRequired: false,
+      validationRules: {
+        pattern:
+          "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
+        description: "Valid IPv4 address format",
+      },
     },
   ]);
 

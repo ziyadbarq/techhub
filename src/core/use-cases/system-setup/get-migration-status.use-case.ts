@@ -6,15 +6,20 @@
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ISystemSetupRepository } from "@/core/repositories/system-setup-repository.interface";
-import type { MigrationStatusDto } from "@/interface-adapters/dtos/system-setup.dto";
+import type { MigrationStatusDto } from "@/core/dtos/system-setup.dto";
+import type { ILoggerService } from "@/core/services";
+import { LogExecution } from "@/lib/decorators";
 
 @injectable()
 export class GetMigrationStatusUseCase {
   constructor(
     @inject(DI_TOKENS.ISystemSetupRepository)
     private readonly systemSetupRepository: ISystemSetupRepository,
+    @inject(DI_TOKENS.ILoggerService)
+    private readonly logger: ILoggerService,
   ) {}
 
+  @LogExecution("system.migrations.status")
   async execute(): Promise<MigrationStatusDto> {
     const applied = await this.systemSetupRepository.getAppliedMigrations();
     const pending = await this.systemSetupRepository.getPendingMigrations();

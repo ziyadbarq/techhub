@@ -8,15 +8,17 @@
 import { revalidatePath } from "next/cache";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
+import { $Enums } from "@/generated/prisma";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { getSession } from "@/lib/auth";
 import { invalidateFeatureCache } from "@/lib/features/server";
-import { prisma } from "@/infrastructure/database/prisma/client";
 
 import type { ListFeatureFlagsUseCase } from "@/core/use-cases/feature-flags/list-feature-flags.use-case";
 import type { GetFeatureFlagUseCase } from "@/core/use-cases/feature-flags/get-feature-flag.use-case";
 import type { ToggleFeatureFlagUseCase } from "@/core/use-cases/feature-flags/toggle-feature-flag.use-case";
+import type { IFeatureFlagRepository } from "@/core/repositories/feature-flag.repository.interface";
+import type { IFeatureFlagAuditService } from "@/core/services/feature-flag-audit.service.interface";
 
 import type {
   ListFeatureFlagsResponseDTO,
@@ -111,6 +113,9 @@ export async function toggleFeatureFlagAction(
     const useCase = container.get<ToggleFeatureFlagUseCase>(
       DI_TOKENS.ToggleFeatureFlagUseCase,
     );
+    const auditService = container.get<IFeatureFlagAuditService>(
+      DI_TOKENS.IFeatureFlagAuditService,
+    );
 
     // Execute the toggle
     const result = await useCase.execute({
@@ -119,16 +124,18 @@ export async function toggleFeatureFlagAction(
       userEmail: session.user.email ?? "unknown",
       reason: request.reason,
     });
+    const action: $Enums.FeatureFlagAction =
+      result.action === "ENABLED"
+        ? $Enums.FeatureFlagAction.ENABLED
+        : $Enums.FeatureFlagAction.DISABLED;
 
     // Create audit log entry
-    await prisma.featureFlagAuditLog.create({
-      data: {
-        featureName: request.name,
-        action: result.action,
-        userId: session.user.id,
-        userEmail: session.user.email ?? "unknown",
-        reason: request.reason,
-      },
+    await auditService.log({
+      featureName: request.name,
+      action,
+      userId: session.user.id,
+      userEmail: session.user.email ?? "unknown",
+      reason: request.reason,
     });
 
     // Invalidate cache
@@ -183,7 +190,19 @@ export async function bulkToggleFeatureFlagsAction(
     }
 
     // Get all feature flags
-    const allFlags = await prisma.featureFlag.findMany();
+    const container = getContainer();
+    const listUseCase = container.get<ListFeatureFlagsUseCase>(
+      DI_TOKENS.ListFeatureFlagsUseCase,
+    );
+    const repo = container.get<IFeatureFlagRepository>(
+      DI_TOKENS.IFeatureFlagRepository,
+    );
+    const auditService = container.get<IFeatureFlagAuditService>(
+      DI_TOKENS.IFeatureFlagAuditService,
+    );
+
+    const allFlagsResult = await listUseCase.execute({});
+    const allFlags = allFlagsResult.flags;
 
     // Exclude MAINTENANCE_MODE from bulk operations
     const flagsToToggle = allFlags.filter(
@@ -194,26 +213,21 @@ export async function bulkToggleFeatureFlagsAction(
       .map((f) => f.name);
 
     // Toggle each flag
-    const action = enable ? "ENABLED" : "DISABLED";
+    const action: $Enums.FeatureFlagAction = enable
+      ? $Enums.FeatureFlagAction.ENABLED
+      : $Enums.FeatureFlagAction.DISABLED;
     let toggledCount = 0;
 
     for (const flag of flagsToToggle) {
       // Only toggle if the current state differs from the target state
       if (flag.isEnabled !== enable) {
-        await prisma.featureFlag.update({
-          where: { id: flag.id },
-          data: { isEnabled: enable },
-        });
-
-        // Create audit log entry
-        await prisma.featureFlagAuditLog.create({
-          data: {
-            featureName: flag.name,
-            action,
-            userId: session.user.id,
-            userEmail: session.user.email ?? "unknown",
-            reason: reason ?? `Bulk ${action} all features`,
-          },
+        await repo.update(flag.toggle());
+        await auditService.log({
+          featureName: flag.name,
+          action,
+          userId: session.user.id,
+          userEmail: session.user.email ?? "unknown",
+          reason: reason ?? `Bulk ${action} all features`,
         });
 
         // Invalidate cache for this flag
@@ -266,11 +280,11 @@ export async function getFeatureFlagAuditLogAction(
   try {
     await requirePermission(PERMISSIONS.FEATURE_FLAGS_MANAGE);
 
-    const auditLogs = await prisma.featureFlagAuditLog.findMany({
-      where: { featureName: featureName.toUpperCase() },
-      orderBy: { createdAt: "desc" },
-      take: 50, // Last 50 entries
-    });
+    const container = getContainer();
+    const auditService = container.get<IFeatureFlagAuditService>(
+      DI_TOKENS.IFeatureFlagAuditService,
+    );
+    const auditLogs = await auditService.getRecentLogs(featureName, 50);
 
     return {
       success: true,

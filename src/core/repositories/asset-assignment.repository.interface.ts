@@ -6,7 +6,16 @@
 import type {
   AssetAssignment,
   AssigneeType,
+  AssignmentSource,
 } from "../domain/entities/asset-assignment.entity";
+
+export interface ConflictFilters {
+  assetId?: string;
+  personId?: string;
+  source?: AssignmentSource;
+  limit?: number;
+  offset?: number;
+}
 
 export interface IAssetAssignmentRepository {
   /**
@@ -108,4 +117,39 @@ export interface IAssetAssignmentRepository {
    * Automatically unsets other primary assignments for the same asset
    */
   setPrimaryAssignment(assignmentId: string): Promise<void>;
+
+  /**
+   * Find assignment by source reference
+   * Used to find Intune-managed assignments by device ID
+   */
+  findBySourceReference(
+    sourceReferenceType: string,
+    sourceReferenceId: string,
+  ): Promise<AssetAssignment | null>;
+
+  /**
+   * Find all active assignments for an asset (grouped by source)
+   * Returns both manual and Intune-managed active assignments
+   * Different from findActiveByAsset - this explicitly returns all sources
+   */
+  findAllActiveByAssetGrouped(assetId: string): Promise<{
+    manual: AssetAssignment[];
+    intune: AssetAssignment[];
+  }>;
+
+  /**
+   * Find assignments with conflicts
+   * Used for admin conflict resolution page
+   */
+  findConflicts(filters?: ConflictFilters): Promise<AssetAssignment[]>;
+
+  /**
+   * Update conflict status for an assignment
+   * Used to flag or clear conflicts
+   */
+  updateConflictStatus(
+    assignmentId: string,
+    hasConflict: boolean,
+    conflictNote?: string | null,
+  ): Promise<void>;
 }

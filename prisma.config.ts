@@ -6,6 +6,16 @@ import { defineConfig, env } from "prisma/config";
 const envFile = fs.existsSync(".env.local") ? ".env.local" : ".env";
 config({ path: envFile });
 
+const dbUrl = env("DATABASE_URL");
+const shadowDbUrl =
+  process.env.SHADOW_DATABASE_URL ||
+  (() => {
+    const url = new URL(dbUrl);
+    const dbName = url.pathname.replace(/^\//, "");
+    url.pathname = `/${dbName}_shadow`;
+    return url.toString();
+  })();
+
 export default defineConfig({
   schema: "src/infrastructure/database/prisma/schema",
   migrations: {
@@ -13,6 +23,7 @@ export default defineConfig({
     seed: "tsx src/infrastructure/database/prisma/seed.ts",
   },
   datasource: {
-    url: env("DATABASE_URL"),
+    url: dbUrl,
+    shadowDatabaseUrl: shadowDbUrl,
   },
 });

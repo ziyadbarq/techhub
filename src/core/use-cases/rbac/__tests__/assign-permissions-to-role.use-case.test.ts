@@ -15,7 +15,8 @@ import {
   PermissionNotFoundError,
   SystemRoleModificationError,
 } from "@/core/domain/errors/rbac-errors";
-import { permissionCache } from "@/lib/permissions/cache";
+import type { IRbacPolicyService } from "@/core/services/rbac-policy.service.interface";
+import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
 
 class MockRoleRepository implements Partial<IRoleRepository> {
   private roles = new Map<string, Role>();
@@ -115,12 +116,26 @@ describe("AssignPermissionsToRoleUseCase", () => {
   let mockRoleRepository: MockRoleRepository;
   let mockPermissionRepository: MockPermissionRepository;
   let mockAuditLogRepository: MockAuditLogRepository;
+  let mockRbacPolicyService: IRbacPolicyService;
+  let mockPermissionCacheService: IPermissionCacheService;
 
   beforeEach(() => {
     mockRoleRepository = new MockRoleRepository();
     mockPermissionRepository = new MockPermissionRepository();
     mockAuditLogRepository = new MockAuditLogRepository();
-    permissionCache.invalidateAll();
+    mockRbacPolicyService = {
+      validatePermissionDependencies: vi.fn().mockReturnValue({
+        valid: true,
+        missing: [],
+      }),
+      validateRoleAddition: vi.fn(),
+      detectRoleConflicts: vi.fn(),
+    };
+    mockPermissionCacheService = {
+      get: vi.fn(),
+      set: vi.fn(),
+      invalidate: vi.fn(),
+    };
     mockRoleRepository.setPermissionLookup((id: string) =>
       mockPermissionRepository.getById(id),
     );
@@ -129,6 +144,8 @@ describe("AssignPermissionsToRoleUseCase", () => {
       mockRoleRepository as unknown as IRoleRepository,
       mockPermissionRepository as unknown as IPermissionRepository,
       mockAuditLogRepository as unknown as IAuditLogRepository,
+      mockRbacPolicyService,
+      mockPermissionCacheService,
     );
   });
 
@@ -260,8 +277,6 @@ describe("AssignPermissionsToRoleUseCase", () => {
       });
       mockPermissionRepository.setPermission(perm1);
 
-      const invalidateAllSpy = vi.spyOn(permissionCache, "invalidateAll");
-
       // Act
       await useCase.execute({
         roleId: role.id,
@@ -270,7 +285,7 @@ describe("AssignPermissionsToRoleUseCase", () => {
       });
 
       // Assert
-      expect(invalidateAllSpy).toHaveBeenCalled();
+      expect(mockPermissionCacheService.invalidate).toHaveBeenCalledWith("all");
     });
   });
 

@@ -5,6 +5,27 @@
 
 import type { Person } from "../domain/entities/person.entity";
 
+export interface PersonWithoutUserView {
+  id: string;
+  firstName: string;
+  lastName: string;
+  middleName: string | null;
+  email: string;
+  employeeId: string | null;
+  title: string | null;
+  department: string | null;
+  isActive: boolean;
+  orgUnit: {
+    id: string;
+    name: string;
+  } | null;
+  primaryRole: {
+    id: string;
+    name: string;
+    displayName: string;
+  } | null;
+}
+
 export interface IPersonRepository {
   /**
    * Create a new person
@@ -90,6 +111,16 @@ export interface IPersonRepository {
   findNotLinkedToUsers(): Promise<Person[]>;
 
   /**
+   * Find persons without linked user accounts including org unit and primary role display info
+   */
+  findNotLinkedToUsersWithDetails(): Promise<PersonWithoutUserView[]>;
+
+  /**
+   * Find unlinked persons matching email (case-insensitive) for linking workflows
+   */
+  findNotLinkedToUsersByEmail(email: string): Promise<PersonWithoutUserView[]>;
+
+  /**
    * Find all persons
    */
   findAll(options?: {
@@ -135,6 +166,11 @@ export interface IPersonRepository {
    * Delete person
    */
   delete(id: string): Promise<void>;
+
+  /**
+   * Soft delete person (mark inactive + deletedAt)
+   */
+  updateSoftDelete(id: string): Promise<void>;
 
   /**
    * Check if email exists (for uniqueness validation)

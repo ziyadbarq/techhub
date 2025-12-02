@@ -10,7 +10,7 @@ import type { IUserRoleRepository } from "../../repositories/user-role-repositor
 import type { ILoggerService } from "../../services/logger.service.interface";
 import type { PermissionKey } from "../../domain/value-objects/permission-key";
 import { InsufficientPermissionsError } from "../../domain/errors/rbac-errors";
-import { permissionCache } from "@/lib/permissions/cache";
+import type { IPermissionCacheService } from "@/core/services/permission-cache.service.interface";
 
 export interface CheckPermissionRequest {
   userId: string;
@@ -28,13 +28,15 @@ export class CheckPermissionUseCase {
     private readonly userRoleRepository: IUserRoleRepository,
     @inject(DI_TOKENS.ILoggerService)
     private readonly logger: ILoggerService,
+    @inject(DI_TOKENS.IPermissionCacheService)
+    private readonly permissionCacheService: IPermissionCacheService,
   ) {}
 
   async execute(request: CheckPermissionRequest): Promise<boolean> {
     const { userId, permission, context } = request;
 
     // Try to get permissions from cache
-    let userPermissions = permissionCache.get(userId);
+    let userPermissions = this.permissionCacheService.get(userId);
     let cacheHit = userPermissions !== null;
 
     if (!userPermissions) {
@@ -48,7 +50,7 @@ export class CheckPermissionUseCase {
       });
 
       // Store in cache
-      permissionCache.set(userId, userPermissions);
+      this.permissionCacheService.set(userId, userPermissions);
       cacheHit = false;
     }
 
@@ -60,24 +62,23 @@ export class CheckPermissionUseCase {
       hasPermission: userPermissions.includes(permission),
     });
 
-    // Fast path: exact permission present
-    if (userPermissions.includes(permission)) {
+    const isOwnershipPermission = permission.endsWith(":own");
+
+    // Fast path for non-ownership permissions
+    if (!isOwnershipPermission && userPermissions.includes(permission)) {
       return true;
     }
-
-    const isOwnershipPermission = permission.endsWith(":own");
 
     if (isOwnershipPermission) {
       const basePermission = permission.replace(":own", "") as PermissionKey;
       const hasBasePermission = userPermissions.includes(basePermission);
       const hasOwnPermission = userPermissions.includes(permission);
 
-      // Full permission grants bypass ownership constraint
-      if (hasBasePermission) {
-        return true;
+      if (!context?.resourceOwnerId) {
+        return false;
       }
 
-      if (!hasOwnPermission || !context?.resourceOwnerId) {
+      if (!hasBasePermission && !hasOwnPermission) {
         return false;
       }
 
