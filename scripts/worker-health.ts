@@ -133,6 +133,9 @@ async function main(): Promise<void> {
     );
     console.log("   They indicate normal cleanup after the health check.");
     console.log("");
+
+    // Force exit to prevent hanging due to event loop
+    process.exit(process.exitCode ?? 0);
   }
 }
 
