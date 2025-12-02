@@ -78,6 +78,105 @@ export class UserService {
 }
 ```
 
+### Automated Boundary Logging (Recommended)
+
+**Status:** ✅ **IMPLEMENTED** - `@LogExecution` decorator for automatic use case logging
+
+Instead of manual timing and logging in every use case, use the `@LogExecution` decorator:
+
+```typescript
+import { injectable, inject } from "inversify";
+import { DI_TOKENS } from "@/di/types";
+import type { ILoggerService } from "@/core/services";
+import { LogExecution } from "@/lib/decorators";
+
+@injectable()
+export class CreateUserUseCase {
+  constructor(
+    @inject(DI_TOKENS.ILoggerService)
+    private logger: ILoggerService,
+    @inject(DI_TOKENS.IUserRepository)
+    private userRepository: IUserRepository
+  ) {}
+
+  @LogExecution('users.create')
+  async execute(dto: CreateUserDTO): Promise<User> {
+    // Pure business logic - logging is automatic
+    return this.userRepository.create(dto);
+  }
+}
+```
+
+**What the decorator does automatically:**
+- Logs use case entry with sanitized arguments
+- Tracks execution duration
+- Logs success/failure outcome
+- Includes error details on failure
+- Injects request context (requestId, userId, path, method)
+
+**Example log output:**
+
+```json
+// Entry
+{
+  "level": "debug",
+  "msg": "Starting users.create",
+  "operation": "users.create",
+  "args": "{ email: 'user@example.com', role: 'viewer' }",
+  "requestId": "req_1234567890_abc123",
+  "userId": "admin-123"
+}
+
+// Success (from logger.withTiming)
+{
+  "level": "debug",
+  "msg": "Operation completed: users.create in 150ms",
+  "operation": "users.create",
+  "durationMs": 150,
+  "result": "success",
+  "requestId": "req_1234567890_abc123"
+}
+
+// Failure (on error)
+{
+  "level": "error",
+  "msg": "Failed users.create",
+  "operation": "users.create",
+  "result": "failure",
+  "err": {
+    "type": "ValidationError",
+    "message": "Email already exists"
+  }
+}
+```
+
+**Benefits over manual logging:**
+- Eliminates 10-15 lines of boilerplate per use case
+- Consistent format across all use cases
+- Automatic sensitive data redaction
+- Can't forget to log entry/exit
+- Centralized logging behavior (easy to change)
+
+**Multiple methods:**
+
+```typescript
+@injectable()
+export class AssetService {
+  constructor(
+    @inject(DI_TOKENS.ILoggerService) private logger: ILoggerService
+  ) {}
+
+  @LogExecution('assets.create')
+  async create(dto: CreateAssetDTO): Promise<Asset> { ... }
+
+  @LogExecution('assets.update')
+  async update(id: string, dto: UpdateAssetDTO): Promise<Asset> { ... }
+
+  @LogExecution('assets.delete')
+  async delete(id: string): Promise<void> { ... }
+}
+```
+
 ## Core Concepts
 
 ### Structured Logging
@@ -226,16 +325,111 @@ logger.audit({
 
 ## Request Tracking
 
-**Current Status:** Request tracking (request IDs, correlation IDs, AsyncLocalStorage context) is not currently implemented in this application.
+**Status:** ✅ **IMPLEMENTED** - Automatic request tracking with AsyncLocalStorage
 
-**If you need request tracking**, you can implement it by:
+The application now includes production-ready request tracking that automatically correlates all logs within a single request.
 
-1. Creating request context utilities with AsyncLocalStorage
-2. Integrating into `proxy.ts` to generate/extract request IDs
-3. Adding correlation ID support for distributed tracing
-4. Updating logger service to automatically include context
+### How It Works
 
-This is an optional feature that can be added when monitoring and debugging requirements justify the additional complexity.
+1. **Automatic Context Creation** - `proxy.ts` wraps every request in AsyncLocalStorage context
+2. **Request ID Generation** - Extracts `x-request-id` header or generates unique ID (`req_<timestamp>_<random>`)
+3. **Correlation IDs** - Supports `x-correlation-id` header for distributed tracing
+4. **Automatic Injection** - Logger automatically includes context in all log entries
+
+### Features
+
+- **Zero Configuration** - Works automatically for all requests
+- **Context Propagation** - Persists across async operations (database calls, API calls, etc.)
+- **No Manual Passing** - Context available via `getRequestContext()` anywhere in call stack
+- **Isolation** - Concurrent requests have independent contexts (no cross-contamination)
+
+### Usage Example
+
+```typescript
+// In any use case, controller, or service
+import { getRequestContext } from '@/lib/request-context';
+
+export class MyService {
+  async doSomething() {
+    const context = getRequestContext();
+    // context.requestId, context.userId, context.path available
+  }
+}
+```
+
+### Log Output With Request Context
+
+```json
+{
+  "level": "info",
+  "time": "2025-01-20T10:30:00.000Z",
+  "msg": "User action completed",
+  "requestId": "req_1234567890_abc123",
+  "correlationId": "req_1234567890_abc123",
+  "userId": "user-456",
+  "path": "/api/users",
+  "method": "POST",
+  "operation": "users.create"
+}
+```
+
+### Advanced Usage
+
+```typescript
+import {
+  getRequestContext,
+  updateRequestContext,
+  getRequestDuration,
+} from '@/lib/request-context';
+
+// Get current context
+const context = getRequestContext();
+if (context) {
+  console.log(`Request ${context.requestId} from user ${context.userId}`);
+}
+
+// Update context (e.g., after authentication)
+const session = await getSession();
+if (session?.user?.id) {
+  updateRequestContext({ userId: session.user.id });
+}
+
+// Get request duration
+const duration = getRequestDuration();
+if (duration && duration > 5000) {
+  logger.warn('Slow request detected', { durationMs: duration });
+}
+```
+
+### Client Request ID
+
+To trace requests from client to server, include the `x-request-id` header:
+
+```typescript
+// Client-side
+fetch('/api/users', {
+  headers: {
+    'x-request-id': generateClientRequestId(),
+  },
+});
+```
+
+### Correlation IDs for Distributed Tracing
+
+For multi-service architectures, use correlation IDs:
+
+```typescript
+// Service A
+const correlationId = generateRequestId();
+fetch('https://service-b/api/endpoint', {
+  headers: {
+    'x-correlation-id': correlationId,
+  },
+});
+
+// Service B automatically logs with same correlationId
+// Enables tracing across service boundaries
+```
 
 ## Performance Monitoring
 

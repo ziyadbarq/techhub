@@ -33,6 +33,7 @@ import type {
   GraphIntuneDevice,
   IntuneFetchDevicesOptions,
 } from "@/core/services/intune-device-mapper.service.interface";
+import { LogExecution } from "@/lib/decorators";
 
 /**
  * Result of a sync operation
@@ -120,6 +121,7 @@ export class SyncDevicesFromIntuneUseCase {
   /**
    * Execute device sync from Microsoft Intune
    */
+  @LogExecution("intune.devices.sync")
   async execute(options?: SyncDevicesOptions): Promise<IntuneSyncResult> {
     const startTime = Date.now();
     const result: IntuneSyncResult = {

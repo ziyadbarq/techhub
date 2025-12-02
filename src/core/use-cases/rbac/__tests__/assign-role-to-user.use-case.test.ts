@@ -15,6 +15,7 @@ import { AssignRoleToUserUseCase } from "../assign-role-to-user.use-case";
 import type { IUserRoleRepository } from "@/core/repositories/user-role-repository.interface";
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import type { IAuditLogRepository } from "@/core/repositories/audit-log-repository.interface";
+import type { ILoggerService } from "@/core/services";
 import { Role } from "@/core/domain/entities/role.entity";
 import { UserRole } from "@/core/domain/entities/user-role.entity";
 import {
@@ -85,6 +86,16 @@ class MockAuditLogRepository implements Partial<IAuditLogRepository> {
   });
 }
 
+class MockLoggerService implements Partial<ILoggerService> {
+  debug = vi.fn();
+  info = vi.fn();
+  warn = vi.fn();
+  error = vi.fn();
+  async withTiming<T>(_operation: string, fn: () => Promise<T>): Promise<T> {
+    return fn();
+  }
+}
+
 describe("AssignRoleToUserUseCase", () => {
   let useCase: AssignRoleToUserUseCase;
   let mockUserRoleRepository: MockUserRoleRepository;
@@ -92,6 +103,7 @@ describe("AssignRoleToUserUseCase", () => {
   let mockAuditLogRepository: MockAuditLogRepository;
   let mockRbacPolicyService: IRbacPolicyService;
   let mockPermissionCacheService: IPermissionCacheService;
+  let mockLogger: MockLoggerService;
 
   beforeEach(() => {
     // Create fresh instances
@@ -111,6 +123,7 @@ describe("AssignRoleToUserUseCase", () => {
       set: vi.fn(),
       invalidate: vi.fn(),
     };
+    mockLogger = new MockLoggerService();
 
     // Create use case
     useCase = new AssignRoleToUserUseCase(
@@ -119,6 +132,7 @@ describe("AssignRoleToUserUseCase", () => {
       mockAuditLogRepository as unknown as IAuditLogRepository,
       mockRbacPolicyService,
       mockPermissionCacheService,
+      mockLogger as unknown as ILoggerService,
     );
   });
 

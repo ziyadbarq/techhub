@@ -11,6 +11,7 @@ import type {
   ISystemSeederService,
   ResetDatabaseResult,
 } from "@/core/services/system-seeder.service.interface";
+import { LogExecution } from "@/lib/decorators";
 export type { ResetDatabaseResult } from "@/core/services/system-seeder.service.interface";
 
 export interface ResetDatabaseRequest {
@@ -26,6 +27,7 @@ export class ResetDatabaseUseCase {
     private readonly systemSeederService: ISystemSeederService,
   ) {}
 
+  @LogExecution("system.database.reset")
   async execute(
     request: ResetDatabaseRequest = {},
   ): Promise<ResetDatabaseResult> {

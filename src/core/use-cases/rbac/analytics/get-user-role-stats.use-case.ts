@@ -15,6 +15,7 @@ import type { IUserRepository } from "@/core/repositories/user-repository.interf
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import { DI_TOKENS } from "@/di/types";
 import type { IRbacPolicyService } from "@/core/services";
+import { LogExecution } from "@/lib/decorators";
 
 export interface UserRoleStatsResult {
   totalUsers: number;
@@ -51,6 +52,7 @@ export class GetUserRoleStatsUseCase {
     @inject(DI_TOKENS.ILoggerService) private logger: ILoggerService,
   ) {}
 
+  @LogExecution("rbac.analytics.user_role_stats")
   async execute(): Promise<UserRoleStatsResult> {
     this.logger.info("Fetching user role statistics");
 

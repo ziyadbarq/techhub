@@ -28,6 +28,7 @@ import type {
   TransformGraphUserOptions,
 } from "@/core/services/graph-user-mapper.service.interface";
 import type { GraphUser } from "@/core/services/graph-user-mapper.service.interface";
+import { LogExecution } from "@/lib/decorators";
 
 /**
  * Options for the sync operation
@@ -171,6 +172,7 @@ export class SyncUsersFromGraphUseCase {
   /**
    * Execute user sync from Microsoft Graph
    */
+  @LogExecution("graph.users.sync")
   async execute(options?: SyncUsersOptions): Promise<SyncResult> {
     const result: SyncResult = {
       created: 0,

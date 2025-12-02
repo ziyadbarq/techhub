@@ -7,6 +7,7 @@ import { DI_TOKENS } from "@/di/types";
 import type { IUserRoleRepository } from "../../repositories/user-role-repository.interface";
 import type { IRoleRepository } from "../../repositories/role-repository.interface";
 import type { IAuditLogRepository } from "../../repositories/audit-log-repository.interface";
+import type { ILoggerService } from "@/core/services";
 import { UserRole } from "../../domain/entities/user-role.entity";
 import {
   RoleNotFoundError,
@@ -17,6 +18,7 @@ import type {
   IRbacPolicyService,
   RoleConflict,
 } from "@/core/services/rbac-policy.service.interface";
+import { LogExecution } from "@/lib/decorators";
 
 export interface AssignRoleToUserRequest {
   userId: string;
@@ -51,8 +53,11 @@ export class AssignRoleToUserUseCase {
     private readonly rbacPolicyService: IRbacPolicyService,
     @inject(DI_TOKENS.IPermissionCacheService)
     private readonly permissionCacheService: IPermissionCacheService,
+    @inject(DI_TOKENS.ILoggerService)
+    private readonly logger: ILoggerService,
   ) {}
 
+  @LogExecution("rbac.user_role.assign")
   async execute(request: AssignRoleToUserRequest): Promise<UserRole> {
     // Verify role exists
     const role = await this.roleRepository.findById(request.roleId);

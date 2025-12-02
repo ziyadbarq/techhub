@@ -10,6 +10,7 @@ import type {
   ISystemSeederService,
   SeedMinimalDataResult,
 } from "@/core/services/system-seeder.service.interface";
+import { LogExecution } from "@/lib/decorators";
 
 @injectable()
 export class SeedMinimalDataUseCase {
@@ -20,6 +21,7 @@ export class SeedMinimalDataUseCase {
     private readonly systemSeederService: ISystemSeederService,
   ) {}
 
+  @LogExecution("system.seed.minimal")
   async execute(): Promise<SeedMinimalDataResult> {
     this.logger.info("Starting minimal data seeding (RBAC only)");
 

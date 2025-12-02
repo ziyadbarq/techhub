@@ -195,9 +195,13 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 
 ### Architecture Patterns (ALWAYS Follow)
 
-**Logging**:
+**Logging** (CRITICAL - Production-Ready System):
 - NEVER use `console.log` - inject DI logger: `@inject(DI_TOKENS.ILoggerService)`
-- See [LOGGING.md](docs/guides/LOGGING.md)
+- **Request tracking**: All logs automatically include requestId, correlationId, userId, path, method (via AsyncLocalStorage)
+- **Automated boundary logging**: Use `@LogExecution('operation.name')` decorator on use case execute() methods
+- **DRY compliance**: Timing utilities in `timing-utils.ts`, no code duplication
+- **Sensitive data**: Automatically redacted (passwords, tokens, API keys)
+- See [LOGGING.md](docs/guides/LOGGING.md) and [LOGGING_IMPROVEMENTS.md](docs/architecture/LOGGING_IMPROVEMENTS.md)
 
 **Database Seeding**:
 - **Fully idempotent**: Never wipes data, never creates duplicates, safe to run repeatedly
@@ -314,7 +318,8 @@ Keep messages concise with relevant context (what was done, files affected, next
 - Register new routes in `protected-routes.ts` configuration
 - Test new protected routes with viewer account to verify access denial
 - Create barrel exports (`index.ts`) for new use case modules
-- Use DI logger (not `console.log`)
+- Use DI logger with `@LogExecution` decorator for use cases: `@LogExecution('operation.name') async execute() { ... }`
+- Request context automatically included in all logs (requestId, userId, path, method)
 - Validate at boundaries
 - Follow Clean Architecture layers
 - Use `formatDate()` from `@/lib/utils/date-format` (not `.toLocaleDateString()`)
