@@ -4,7 +4,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
@@ -44,7 +44,7 @@ export function ConfigurationItemsPageClient({
     null,
   );
 
-  const loadItems = async () => {
+  const loadItems = useCallback(async () => {
     setIsLoading(true);
     try {
       const result = await listConfigurationItemsAction();
@@ -58,27 +58,27 @@ export function ConfigurationItemsPageClient({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const handleView = (item: ConfigurationItemDTO) => {
+  const handleView = useCallback((item: ConfigurationItemDTO) => {
     setSelectedItem(item);
-  };
+  }, []);
 
-  const handleEdit = (item: ConfigurationItemDTO) => {
+  const handleEdit = useCallback((item: ConfigurationItemDTO) => {
     setEditingItem(item);
     setIsFormOpen(true);
-  };
+  }, []);
 
-  const handleSuccess = () => {
+  const handleSuccess = useCallback(() => {
     loadItems();
     setIsFormOpen(false);
     setEditingItem(null);
-  };
+  }, [loadItems]);
 
-  const handleFormClose = () => {
+  const handleFormClose = useCallback(() => {
     setIsFormOpen(false);
     setEditingItem(null);
-  };
+  }, []);
 
   return (
     <div className="space-y-6">
