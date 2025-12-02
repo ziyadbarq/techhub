@@ -143,7 +143,7 @@ Documentation embedded within the codebase:
 - **[MISSING]** Controller Patterns - Comprehensive guide to server action patterns and Clean Architecture controllers
 - **[MISSING]** Repository Patterns - Complete repository implementation guide with Prisma best practices
 - **[MISSING]** DTO Validation System - Zod schema patterns and validation at API boundaries
-- **[MISSING]** DI Container Guide - InversifyJS container configuration and dependency injection patterns
+- [DI Container Modularization](./architecture/DI_MODULARIZATION.md) - Three-tier modular DI system with lazy loading, health checks, and performance optimization
 - **[MISSING]** Use Case Patterns - Use case implementation guide and business logic organization
 
 ## 🛠️ Development

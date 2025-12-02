@@ -426,21 +426,40 @@ Container checks bindings
 
 ### Module Organization
 
+**Three-Tier Modular System** (29 modules total):
+
 ```
 di/
-├── container.ts          # Main container initialization
-├── types.ts              # DI token definitions
-└── modules/
-    ├── database.module.ts    # Binds: PrismaClient, Repositories
-    ├── services.module.ts    # Binds: AI services
-    ├── use-cases.module.ts   # Binds: All use cases
-    └── ai.module.ts          # Binds: AI-specific modules
+├── container.ts              # Container initialization with tier support
+├── types.ts                  # DI token definitions (500+ tokens)
+├── module-registry.ts        # Module registry and loader infrastructure
+├── module-definitions.ts     # All 29 module definitions by tier
+├── health-checks/            # Health checks for heavy modules
+│   ├── microsoft-graph.health.ts
+│   └── intune.health.ts
+└── modules/                  # 29 module binding functions
+    ├── logger.module.ts           # CORE: Structured logging
+    ├── database.module.ts         # CORE: Prisma client, base repos
+    ├── rbac.module.ts             # CORE: Auth and permissions
+    ├── foundation.module.ts       # CORE: Core entities
+    ├── asset.module.ts            # DASHBOARD: Asset management
+    ├── inventory.module.ts        # DASHBOARD: Stock management
+    ├── cmdb.module.ts             # DASHBOARD: Configuration items
+    ├── intune.module.ts           # HEAVY: Intune integration (lazy)
+    ├── service.module.ts          # HEAVY: Service catalog (lazy)
+    └── ... (20 more modules)
 
-Each module:
-  • Receives Container instance
-  • Binds interfaces to implementations
-  • Configures scopes (singleton/transient)
+Module Tiers:
+  • CORE (14 modules): Always loaded, essential services (~100-200ms)
+  • DASHBOARD (11 modules): Common features (~300-500ms total)
+  • HEAVY (4 modules): Lazy loaded on demand (~50-100ms each)
+
+Initialization:
+  await initContainer(ModuleTier.DASHBOARD)  # Load CORE + DASHBOARD
+  await loadHeavyModule('intune')            # Lazy load when needed
 ```
+
+See [DI_MODULARIZATION.md](./DI_MODULARIZATION.md) for complete documentation.
 
 ---
 

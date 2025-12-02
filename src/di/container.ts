@@ -1,19 +1,27 @@
 /**
  * Dependency Injection Container
  *
- * This file configures and exports the InversifyJS container instance.
- * The container manages dependency resolution and lifecycle of all services.
+ * This file configures and exports the InversifyJS container instance with
+ * support for modular lazy loading.
  *
  * Architecture:
+ * - Three-tier module system: Core (always-on), Dashboard (common), Heavy (lazy)
  * - Follows SOLID principles, particularly Dependency Inversion Principle
  * - Uses constructor injection for explicit dependencies
  * - Supports singleton and transient scopes
  * - Enables testability through interface-based design
+ * - Lazy loading for heavy modules (Intune, Services, Licenses)
+ *
+ * Module Tiers:
+ * - CORE: RBAC, Foundation, base infrastructure (always loaded)
+ * - DASHBOARD: Assets, Inventory, CMDB (loaded for dashboard users)
+ * - HEAVY: Intune, Services, Licenses (lazy loaded on demand)
  *
  * Usage:
  * 1. Import getContainer() to access the configured container
- * 2. Call initContainer() once at application startup
+ * 2. Call initContainer(tier?) once at application startup
  * 3. Use container.get(DI_TOKENS.ServiceName) to resolve dependencies
+ * 4. Call loadHeavyModule(name) to lazy load heavy modules
  */
 
 // IMPORTANT: Must import reflect-metadata before any InversifyJS usage
@@ -22,61 +30,10 @@ import "reflect-metadata";
 import { Container } from "inversify";
 import { logger } from "@/lib/logger";
 import { markContainerInitialized, resetLoggerState } from "@/lib/logger-state";
-
-// Import module binding functions
-import { bindLoggerDependencies } from "./modules/logger.module";
-import { bindFileStorageDependencies } from "./modules/file-storage.module";
-import { bindCodeGeneratorDependencies } from "./modules/code-generator.module";
-import { bindDatabaseDependencies } from "./modules/database.module";
-import { bindRBACDependencies } from "./modules/rbac.module";
-import { bindUserProvisioningDependencies } from "./modules/user-provisioning.module";
-import { bindSystemSetupDependencies } from "./modules/system-setup.module";
-import { bindFeatureFlagsDependencies } from "./modules/feature-flags.module";
-import { bindFoundationDependencies } from "./modules/foundation.module";
-import { bindMicrosoftGraphDependencies } from "./modules/ms-graph.module";
-import { bindAssetDependencies } from "./modules/asset.module";
-import { bindInventoryDependencies } from "./modules/inventory.module";
-import { bindCMDBDependencies } from "./modules/cmdb.module";
-import { bindContractsDependencies } from "./modules/contracts.module";
-import { bindLicensesDependencies } from "./modules/licenses.module";
-import { bindGovernanceDependencies } from "./modules/governance.module";
-import { bindAttachmentsDependencies } from "./modules/attachments.module";
-import { bindServiceDependencies } from "./modules/service.module";
-import { bindIntuneDependencies } from "./modules/intune.module";
-import { loadDisposalModule } from "./modules/disposal.module";
-import { loadAssetKitsModule } from "./modules/asset-kits.module";
-import { loadReservationsModule } from "./modules/reservations.module";
-import { bindDatabaseBackupDependencies } from "./modules/database-backup.module";
-
-/**
- * AI Services Module - Currently Disabled
- *
- * The AI services infrastructure is complete but not currently bound in the container.
- * This is intentional as the code contains presentation-specific concepts (Slidev) that
- * need to be adapted for your use case.
- *
- * To re-enable:
- * 1. Review src/infrastructure/services/ai/ for your domain requirements
- * 2. Update OpenAI integration code (remove Slidev references)
- * 3. Uncomment the import and binding below
- * 4. Uncomment the cache warming code in initContainer()
- * 5. See CLAUDE.md "Future Features" section for full documentation
- */
-// import { bindAIServiceDependencies } from "./modules/ai-services.module";
-
-import { bindUseCaseDependencies } from "./modules/use-cases.module";
-import { bindCSVServiceDependencies } from "./modules/csv.module";
-import { bindRealtimeDependencies } from "./modules/realtime.module";
-import { bindQueueDependencies } from "./modules/queue.module";
-import { bindEmailDependencies } from "./modules/email.module";
-import { bindSearchDependencies } from "./modules/search.module";
-
-/**
- * AI Service Interfaces - Uncomment when enabling AI services
- *
- * These are needed for prompt cache warming on container initialization.
- */
-// import type { IAIPromptManagerService } from "@/core/services";
+import { moduleRegistry, ModuleLoader, ModuleTier } from "./module-registry";
+import { ALL_MODULES } from "./module-definitions";
+import { DI_TOKENS } from "./types";
+import type { ILoggerService } from "@/core/services";
 
 /**
  * Global container instance
@@ -85,12 +42,41 @@ import { bindSearchDependencies } from "./modules/search.module";
 let container: Container | null = null;
 
 /**
- * Creates and configures the DI container
+ * Module loader instance (created after container initialization)
+ */
+let moduleLoader: ModuleLoader | null = null;
+
+/**
+ * Registers all modules in the module registry
  *
- * This function initializes the container and binds all dependencies
- * via module-specific binding functions.
+ * This function is called once at application startup to populate
+ * the module registry with all available modules.
+ */
+function registerModules(): void {
+  // Register all modules from module-definitions
+  for (const diModule of ALL_MODULES) {
+    moduleRegistry.register(diModule);
+  }
+
+  // Validate module dependencies
+  const errors = moduleRegistry.validateAll();
+  if (errors.size > 0) {
+    console.error("Module dependency validation errors:");
+    errors.forEach((moduleErrors, moduleName) => {
+      console.error(`  ${moduleName}:`);
+      moduleErrors.forEach((error) => console.error(`    - ${error}`));
+    });
+    throw new Error("Module dependency validation failed");
+  }
+}
+
+/**
+ * Creates and configures the DI container (without loading modules)
  *
- * @returns Configured Container instance
+ * This function creates an empty container. Modules are loaded separately
+ * via the ModuleLoader.
+ *
+ * @returns Empty Container instance
  */
 function createContainer(): Container {
   const newContainer = new Container({
@@ -98,167 +84,277 @@ function createContainer(): Container {
     defaultScope: "Singleton", // Default to singleton lifecycle
   });
 
-  // ==========================================
-  // Module Bindings
-  // ==========================================
-
-  // Bind logger dependencies (must be first for other modules to use)
-  bindLoggerDependencies(newContainer);
-
-  // Bind file storage dependencies (depends on logger)
-  bindFileStorageDependencies(newContainer);
-
-  // Bind code generator dependencies (depends on logger and database)
-  bindCodeGeneratorDependencies(newContainer);
-
-  // Bind database dependencies (repositories, Prisma client)
-  bindDatabaseDependencies(newContainer);
-
-  // Bind RBAC dependencies (role, permission, user-role management)
-  bindRBACDependencies(newContainer);
-
-  // Bind User Provisioning dependencies (admin user account creation, password reset)
-  bindUserProvisioningDependencies(newContainer);
-
-  // Bind System Setup dependencies (health checks, migration status, seeding)
-  bindSystemSetupDependencies(newContainer);
-
-  // Bind Database Backup dependencies
-  bindDatabaseBackupDependencies(newContainer);
-
-  // Bind Feature Flags dependencies (feature flags management)
-  bindFeatureFlagsDependencies(newContainer);
-
-  // Bind Foundation dependencies (lifecycle, vendor, organization, location, person)
-  bindFoundationDependencies(newContainer);
-
-  // Bind Microsoft Graph dependencies (user sync from Azure AD)
-  bindMicrosoftGraphDependencies(newContainer);
-
-  // Bind CMDB dependencies (CIs, relationships)
-  bindCMDBDependencies(newContainer);
-
-  // Bind Contracts dependencies (contract types, contracts)
-  bindContractsDependencies(newContainer);
-
-  // Bind Licenses dependencies (license products, entitlements, allocations)
-  bindLicensesDependencies(newContainer);
-
-  // Bind Governance dependencies (data domains, ownerships, verification campaigns/items)
-  bindGovernanceDependencies(newContainer);
-
-  // Bind Attachments dependencies (attachment types, attachments)
-  bindAttachmentsDependencies(newContainer);
-
-  // Bind Service Management dependencies (services, business processes, infrastructure)
-  bindServiceDependencies(newContainer);
-
-  // Bind Intune dependencies (Intune devices, compliance tracking)
-  bindIntuneDependencies(newContainer);
-
-  // Bind Asset dependencies (asset categories, asset models, assets, assignments)
-  bindAssetDependencies(newContainer);
-
-  // Bind Inventory dependencies (stock locations, stock movements)
-  bindInventoryDependencies(newContainer);
-
-  // Bind Disposal dependencies (disposal workflow, approvals, documents)
-  loadDisposalModule(newContainer);
-
-  // Bind Asset Kits dependencies (kits, kit items, checkouts)
-  loadAssetKitsModule(newContainer);
-
-  // Bind Reservations dependencies (reservations, conflicts, availability)
-  loadReservationsModule(newContainer);
-
-  // Bind Search dependencies (global search across entities)
-  bindSearchDependencies(newContainer);
-
-  /**
-   * AI Services - Currently Disabled
-   *
-   * Uncomment the line below to enable AI services:
-   * - AIDebugTraceService (debug tracing for AI operations)
-   * - AIPromptManagerService (modular prompt system with 24h caching)
-   * - FileStorageService (file operations for AI artifacts)
-   * - OpenAI integration (content generation)
-   *
-   * See CLAUDE.md "Future Features" section before enabling.
-   */
-  // bindAIServiceDependencies(newContainer);
-
-  // Bind use case dependencies (business logic orchestration)
-  bindUseCaseDependencies(newContainer);
-
-  // Bind CSV service dependencies
-  bindCSVServiceDependencies(newContainer);
-
-  // Bind real-time service dependencies (SSE, Partykit)
-  bindRealtimeDependencies(newContainer);
-
-  // Bind job queue dependencies (BullMQ, background jobs)
-  bindQueueDependencies(newContainer);
-
-  // Bind email service dependencies
-  bindEmailDependencies(newContainer);
-
   return newContainer;
 }
 
 /**
- * Initializes the DI container with automatic cache warming
+ * Initializes the DI container with modular loading
  *
- * Should be called once at application startup, typically in:
- * - Next.js: app/layout.tsx or a root provider
- * - Standalone: index.ts or main.ts
+ * Should be called once at application startup. Supports three initialization modes:
+ * - CORE: Load only core modules (minimal, for public pages)
+ * - DASHBOARD: Load core + dashboard modules (default, for authenticated users)
+ * - HEAVY: Load all modules including heavy ones (for specific feature access)
  *
- * Cache warming runs in the background and does not block initialization.
- *
+ * @param tier - Module tier to load (defaults to DASHBOARD)
  * @returns The initialized container instance
  *
  * @example
  * ```typescript
- * // In app/layout.tsx or root provider
+ * // In app/layout.tsx - load core + dashboard
  * import { initContainer } from '@/di/container';
  *
  * export default function RootLayout() {
  *   useEffect(() => {
- *     initContainer(); // Cache warming happens automatically in background
+ *     initContainer(); // Loads CORE + DASHBOARD tiers
  *   }, []);
  *
  *   return <html>...</html>;
  * }
+ *
+ * // For public pages - minimal container
+ * initContainer(ModuleTier.CORE);
+ *
+ * // For specific features - load heavy modules
+ * await loadHeavyModule('intune');
  * ```
  */
-export function initContainer(): Container {
+export async function initContainer(
+  tier: ModuleTier = ModuleTier.DASHBOARD,
+): Promise<Container> {
   const scopedLogger = logger.scope("DIContainer");
 
   if (!container) {
+    // Register all modules in the registry
+    registerModules();
+
+    // Create empty container
     container = createContainer();
 
     // Mark container as initialized so logger can start using DI
-    // This must happen after createContainer() completes to avoid circular dependency
-    // Pass the getter function so logger can access container without require()
+    // This must happen before loading modules
     markContainerInitialized(() => container!);
 
-    scopedLogger.debug("initContainer", "Container initialized successfully");
+    // Create module loader
+    moduleLoader = new ModuleLoader(container);
 
-    /**
-     * Prompt Cache Warming - Currently Disabled
-     *
-     * When AI services are enabled, uncomment this block to warm the prompt cache
-     * on application startup. This eliminates the first-request penalty for AI operations.
-     *
-     * Cache warming is fire-and-forget - it runs in the background and does not
-     * block container initialization.
-     */
-    // const promptManager = container.get<IAIPromptManagerService>(
-    //   DI_TOKENS.IAIPromptManagerService,
-    // );
-    // promptManager.warmCache().catch((error) => {
-    //   logger.warn("Prompt cache warming failed (non-critical)", error instanceof Error ? error : new Error(String(error)));
-    // });
+    // Load CORE modules (always required)
+    scopedLogger.info("initContainer", "Loading CORE tier modules...");
+    await moduleLoader.loadTier(ModuleTier.CORE);
+
+    // Get logger from container (now available after CORE tier loaded)
+    const diLogger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
+    moduleRegistry.setLogger(diLogger);
+    moduleLoader = new ModuleLoader(container, diLogger);
+
+    // Log statistics after CORE tier
+    const coreStats = moduleRegistry.getStats();
+    diLogger.info("CORE tier loaded", {
+      loaded: coreStats.loaded,
+      total: coreStats.total,
+    });
+
+    // Load DASHBOARD modules if requested
+    if (tier === ModuleTier.DASHBOARD || tier === ModuleTier.HEAVY) {
+      diLogger.info("Loading DASHBOARD tier modules...");
+      await moduleLoader.loadTier(ModuleTier.DASHBOARD);
+
+      const dashboardStats = moduleRegistry.getStats();
+      diLogger.info("DASHBOARD tier loaded", {
+        loaded: dashboardStats.loaded,
+        total: dashboardStats.total,
+      });
+    }
+
+    // Load HEAVY modules if explicitly requested (rare - usually loaded on demand)
+    if (tier === ModuleTier.HEAVY) {
+      diLogger.info("Loading HEAVY tier modules...");
+      await moduleLoader.loadTier(ModuleTier.HEAVY);
+
+      const heavyStats = moduleRegistry.getStats();
+      diLogger.info("HEAVY tier loaded", {
+        loaded: heavyStats.loaded,
+        total: heavyStats.total,
+      });
+    }
+
+    // Final statistics
+    const finalStats = moduleRegistry.getStats();
+    diLogger.info("Container initialization complete", {
+      tier,
+      loaded: finalStats.loaded,
+      total: finalStats.total,
+      byTier: finalStats.byTier,
+    });
   }
+
+  return container;
+}
+
+/**
+ * Load a heavy module on demand
+ *
+ * Heavy modules (Intune, Services, Licenses) are not loaded by default.
+ * Call this function to lazy load them when needed.
+ *
+ * @param moduleName - Name of the heavy module to load
+ *
+ * @example
+ * ```typescript
+ * // Load Intune module when user accesses Intune page
+ * await loadHeavyModule('intune');
+ * ```
+ */
+export async function loadHeavyModule(moduleName: string): Promise<void> {
+  if (!container || !moduleLoader) {
+    throw new Error("Container not initialized. Call initContainer() first.");
+  }
+
+  const diModule = moduleRegistry.get(moduleName);
+  if (!diModule) {
+    throw new Error(`Module ${moduleName} not found in registry`);
+  }
+
+  if (diModule.tier !== ModuleTier.HEAVY) {
+    throw new Error(
+      `Module ${moduleName} is not a heavy module (tier: ${diModule.tier})`,
+    );
+  }
+
+  // Check if already loaded
+  if (moduleRegistry.isLoaded(moduleName)) {
+    const logger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
+    logger.debug(`Module ${moduleName} already loaded, skipping`);
+    return;
+  }
+
+  // Load the module
+  await moduleLoader.loadModule(moduleName);
+}
+
+/**
+ * Check if a module is loaded
+ *
+ * @param moduleName - Name of the module to check
+ * @returns true if module is loaded, false otherwise
+ */
+export function isModuleLoaded(moduleName: string): boolean {
+  return moduleRegistry.isLoaded(moduleName);
+}
+
+/**
+ * Get module statistics
+ *
+ * Returns information about loaded/unloaded modules by tier
+ */
+export function getModuleStats() {
+  return moduleRegistry.getStats();
+}
+
+/**
+ * Check health of all loaded modules
+ *
+ * Runs health checks for all modules that implement them.
+ * Useful for system status pages and monitoring.
+ */
+export async function checkModuleHealth() {
+  if (!container || !moduleLoader) {
+    throw new Error("Container not initialized. Call initContainer() first.");
+  }
+
+  return moduleLoader.checkHealth();
+}
+
+/**
+ * Initialize container synchronously with CORE + DASHBOARD tiers
+ *
+ * This is a synchronous wrapper that creates the container and loads modules.
+ * Heavy modules are not loaded - use loadHeavyModule() for those.
+ *
+ * NOTE: This blocks execution. Prefer async initContainer() at app startup.
+ *
+ * @internal
+ */
+function initContainerSync(): Container {
+  const scopedLogger = logger.scope("DIContainer");
+
+  if (container) {
+    return container;
+  }
+
+  scopedLogger.info(
+    "initContainerSync",
+    "Initializing container synchronously (blocking)...",
+  );
+
+  // Register all modules
+  registerModules();
+
+  // Create container
+  container = createContainer();
+
+  // Mark as initialized
+  markContainerInitialized(() => container!);
+
+  // Create loader without logger (core not loaded yet)
+  moduleLoader = new ModuleLoader(container);
+
+  // Load CORE tier synchronously (this should be fast ~100ms)
+  const coreModules = moduleRegistry.getByTier(ModuleTier.CORE);
+  const coreLoadOrder = moduleRegistry.getLoadOrder(
+    coreModules.map((m) => m.name),
+  );
+
+  for (const moduleName of coreLoadOrder) {
+    const diModule = moduleRegistry.get(moduleName)!;
+    try {
+      diModule.bindFunction(container);
+      moduleRegistry.markLoaded(moduleName);
+    } catch (error) {
+      console.error(`Failed to load module ${moduleName}:`, error);
+      throw error;
+    }
+  }
+
+  // Get logger from container
+  const diLogger = container.get<ILoggerService>(DI_TOKENS.ILoggerService);
+  moduleRegistry.setLogger(diLogger);
+  moduleLoader = new ModuleLoader(container, diLogger);
+
+  diLogger.info("CORE tier loaded (sync)", {
+    loaded: moduleRegistry.getLoaded().length,
+    total: moduleRegistry.getAll().length,
+  });
+
+  // Load DASHBOARD tier synchronously
+  const dashboardModules = moduleRegistry.getByTier(ModuleTier.DASHBOARD);
+  const dashboardLoadOrder = moduleRegistry.getLoadOrder(
+    dashboardModules.map((m) => m.name),
+  );
+
+  for (const moduleName of dashboardLoadOrder) {
+    const diModule = moduleRegistry.get(moduleName)!;
+    // Skip if already loaded (from dependencies)
+    if (diModule.isLoaded) continue;
+
+    try {
+      diModule.bindFunction(container);
+      moduleRegistry.markLoaded(moduleName);
+    } catch (error) {
+      diLogger.error(
+        `Failed to load module ${moduleName}`,
+        error instanceof Error ? error : new Error(String(error)),
+      );
+      throw error;
+    }
+  }
+
+  const finalStats = moduleRegistry.getStats();
+  diLogger.info("Container initialized (sync)", {
+    loaded: finalStats.loaded,
+    total: finalStats.total,
+    byTier: finalStats.byTier,
+  });
+
   return container;
 }
 
@@ -266,15 +362,17 @@ export function initContainer(): Container {
  * Gets the current container instance
  *
  * Lazily initializes the container if it hasn't been created yet.
- * Prefer calling initContainer() during startup, but this helper
- * guarantees callers never receive an uninitialized container.
+ * This synchronous version loads CORE + DASHBOARD tiers.
+ * For heavy modules, use loadHeavyModule() explicitly.
+ *
+ * NOTE: Prefer async initContainer() at application startup to avoid blocking.
  *
  * @returns The active container instance
  *
  * @example
  * ```typescript
  * import { getContainer } from '@/di/container';
- * import { type DI_TOKENS } from '@/di/types';
+ * import { DI_TOKENS } from '@/di/types';
  *
  * const container = getContainer();
  * const repo = container.get<ITaskRepository>(
@@ -284,7 +382,7 @@ export function initContainer(): Container {
  */
 export function getContainer(): Container {
   if (!container) {
-    return initContainer();
+    return initContainerSync();
   }
   return container;
 }
@@ -312,6 +410,10 @@ export function resetContainer(): void {
 
     container.unbindAll();
     container = null;
+    moduleLoader = null;
+
+    // Reset module registry
+    moduleRegistry.reset();
 
     // Reset logger's container initialization flag
     resetLoggerState();
@@ -329,7 +431,7 @@ export function resetContainer(): void {
  * @example
  * ```typescript
  * import { resolve } from '@/di/container';
- * import { type DI_TOKENS } from '@/di/types';
+ * import { DI_TOKENS } from '@/di/types';
  *
  * const repo = resolve<ITaskRepository>(
  *   DI_TOKENS.ITaskRepository
@@ -351,3 +453,14 @@ export { container };
  * Export Container type for type annotations
  */
 export type { Container };
+
+/**
+ * Export module-related types and utilities
+ */
+export {
+  ModuleTier,
+  ModuleHealthStatus,
+  type DIModule,
+  type ModuleHealthCheck,
+} from "./module-registry";
+export { moduleRegistry };

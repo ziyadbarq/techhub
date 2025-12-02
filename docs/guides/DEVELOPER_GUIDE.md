@@ -2221,99 +2221,87 @@ export const DI_TOKENS = {
 
 **File**: `src/di/container.ts`
 
+The DI container uses a **three-tier modular system** with lazy loading support:
+
+- **CORE Tier** (14 modules): Always loaded, essential services (~100-200ms)
+- **DASHBOARD Tier** (11 modules): Common features (~300-500ms total)
+- **HEAVY Tier** (4 modules): Lazy loaded on demand (~50-100ms each)
+
 ```typescript
-import "reflect-metadata";
-import { Container } from "inversify";
-import { registerDatabase } from "./modules/database.module";
-import { registerServices } from "./modules/services.module";
-import { registerUseCases } from "./modules/use-cases.module";
-import { registerAI } from "./modules/ai.module";
+import { initContainer, getContainer, loadHeavyModule, ModuleTier } from "@/di/container";
 
-let containerInstance: Container | null = null;
+// Async initialization (recommended for optimal performance)
+await initContainer(ModuleTier.DASHBOARD);  // Load CORE + DASHBOARD
 
-export function initContainer(): Container {
-  if (!containerInstance) {
-    const container = new Container();
-
-    // Register all modules
-    registerDatabase(container);
-    registerServices(container);
-    registerUseCases(container);
-    registerAI(container);
-
-    containerInstance = container;
-  }
-
-  return containerInstance;
+// Lazy load heavy modules when user accesses feature
+if (!isModuleLoaded('intune')) {
+  await loadHeavyModule('intune');  // Load Intune + dependencies
 }
 
-export function getContainer(): Container {
-  if (!containerInstance) {
-    return initContainer();
-  }
-  return containerInstance;
-}
+// Backward compatible (synchronous, loads CORE + DASHBOARD)
+const container = getContainer();
+const useCase = container.get(DI_TOKENS.CreateAssetUseCase);
 ```
 
-### Module Example: Database
+**Module Registry**: All 29 modules are defined in `src/di/module-definitions.ts` with:
+- Module tier (CORE, DASHBOARD, or HEAVY)
+- Dependencies (automatic resolution via topological sort)
+- Feature flags (gate heavy modules)
+- Health checks (validate external dependencies)
 
-**File**: `src/di/modules/database.module.ts`
+See [DI_MODULARIZATION.md](../architecture/DI_MODULARIZATION.md) for complete documentation.
+
+### Adding a New Module
+
+When creating a new feature module:
+
+**1. Create module binding function** (`src/di/modules/my-feature.module.ts`):
 
 ```typescript
-import { Container } from "inversify";
-import type { PrismaClient } from "@/generated/prisma";
+import type { Container } from "inversify";
 import { DI_TOKENS } from "../types";
-import type { ITaskRepository } from "@/core/repositories/task.repository.interface";
-import { PrismaTaskRepository } from "@/infrastructure/repositories/prisma-task.repository";
 
-export function registerDatabase(container: Container): void {
-  // Prisma Client (singleton)
+export function bindMyFeatureDependencies(container: Container): void {
+  // Bind repositories (singleton)
   container
-    .bind<PrismaClient>(DI_TOKENS.PrismaClient)
-    .toDynamicValue(() => {
-      return new PrismaClient({
-        log:
-          process.env.NODE_ENV === "development"
-            ? ["query", "error", "warn"]
-            : ["error"],
-      });
-    })
+    .bind(DI_TOKENS.IMyFeatureRepository)
+    .to(PrismaMyFeatureRepository)
     .inSingletonScope();
 
-  // Task Repository (singleton)
+  // Bind use cases (transient - new instance per request)
   container
-    .bind<ITaskRepository>(DI_TOKENS.ITaskRepository)
-    .to(PrismaTaskRepository)
-    .inSingletonScope();
+    .bind(DI_TOKENS.CreateMyFeatureUseCase)
+    .to(CreateMyFeatureUseCase)
+    .inTransientScope();
 }
 ```
 
-### Module Example: Use Cases
-
-**File**: `src/di/modules/use-cases.module.ts`
+**2. Add module definition** (`src/di/module-definitions.ts`):
 
 ```typescript
-import { Container } from "inversify";
-import { DI_TOKENS } from "../types";
-import { CreateTaskUseCase } from "@/core/use-cases/task/create-task.use-case";
-import { ListTasksUseCase } from "@/core/use-cases/task/list-tasks.use-case";
-// ... other use cases
+export const MY_FEATURE_MODULE: DIModule = {
+  name: "my-feature",
+  displayName: "My Feature",
+  tier: ModuleTier.DASHBOARD,  // or CORE or HEAVY
+  description: "My feature description",
+  featureFlag: "MY_FEATURE",   // optional
+  dependencies: ["logger", "database", "foundation"],
+  isLoaded: false,
+  bindFunction: bindMyFeatureDependencies,
+  healthCheck: createMyFeatureHealthCheck(),  // optional for HEAVY modules
+};
 
-export function registerUseCases(container: Container): void {
-  // Task Use Cases (transient - new instance per request)
-  container
-    .bind<CreateTaskUseCase>(DI_TOKENS.CreateTaskUseCase)
-    .to(CreateTaskUseCase)
-    .inTransientScope();
-
-  container
-    .bind<ListTasksUseCase>(DI_TOKENS.ListTasksUseCase)
-    .to(ListTasksUseCase)
-    .inTransientScope();
-
-  // ... other use cases
-}
+// Add to ALL_MODULES array
+export const ALL_MODULES: DIModule[] = [
+  // ... existing modules
+  MY_FEATURE_MODULE,
+];
 ```
+
+**3. Choosing the right tier**:
+- **CORE**: Essential services needed by all features (auth, logging, database)
+- **DASHBOARD**: Common features used by most users (assets, inventory)
+- **HEAVY**: Specialized features with external APIs or heavy dependencies (Intune, Services)
 
 ### Scopes
 

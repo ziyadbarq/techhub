@@ -218,8 +218,12 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 - See [SYSTEM_SETUP.md](docs/features/SYSTEM_SETUP.md#sso-login-restriction-microsoft-oauth)
 
 **Dependency Injection**:
-- Resolve via `getContainer()`/`resolve()`, never use `new`
-- Validate at boundaries (DTOs with Zod)
+- Three-tier modular system: CORE (14 modules), DASHBOARD (11 modules), HEAVY (4 modules, lazy loaded)
+- Use async `initContainer(tier?)` at startup for optimal performance, `getContainer()` for backward compatibility
+- Lazy load heavy modules: `await loadHeavyModule('intune')` when user accesses feature
+- Resolve dependencies: `getContainer().get(DI_TOKENS.ServiceName)`, never use `new`
+- Health checks available for modules with external dependencies
+- See [DI_MODULARIZATION.md](docs/architecture/DI_MODULARIZATION.md)
 
 ### Feature-Specific Patterns
 
