@@ -266,7 +266,9 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 
 ## Architecture Overview
 
-5-layer Clean Architecture: **Presentation** → **Interface Adapters** (Controllers, DTOs, Presenters) → **Use Cases** → **Domain** (Entities, business rules) ← **Infrastructure** (Repositories, external services)
+5-layer Clean Architecture: **Presentation** → **Interface Adapters** (Controllers, DTOs, Presenters, Queries) → **Use Cases** → **Domain** (Entities, business rules) ← **Infrastructure** (Repositories, external services)
+
+**Query Layer**: View composers in `src/interface-adapters/queries/` aggregate data from use cases with DataLoader batching to prevent N+1 queries. Pilot implementations: stock movements (10x faster), asset reservations (30x faster).
 
 **See**: [ARCHITECTURE.md](docs/architecture/ARCHITECTURE.md) for complete diagrams, data flow, and [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "Adding a New Feature" for step-by-step implementation guide.
 

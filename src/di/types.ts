@@ -1013,6 +1013,22 @@ export const DI_TOKENS = {
   ),
 
   // ==========================================
+  // Query Layer Tokens
+  // ==========================================
+
+  /**
+   * Token for StockMovementsTableQuery
+   * Provides enriched stock movement data for table views with batching
+   */
+  StockMovementsTableQuery: Symbol.for("StockMovementsTableQuery"),
+
+  /**
+   * Token for AssetReservationsTableQuery
+   * Provides enriched asset reservation data for table views with batching
+   */
+  AssetReservationsTableQuery: Symbol.for("AssetReservationsTableQuery"),
+
+  // ==========================================
   // Infrastructure Tokens
   // ==========================================
 
