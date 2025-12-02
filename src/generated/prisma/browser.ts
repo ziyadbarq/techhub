@@ -163,11 +163,6 @@ export type OrganizationUnit = Prisma.OrganizationUnitModel
  */
 export type Person = Prisma.PersonModel
 /**
- * Model PersonRoleAssignment
- * 
- */
-export type PersonRoleAssignment = Prisma.PersonRoleAssignmentModel
-/**
  * Model Location
  * 
  */

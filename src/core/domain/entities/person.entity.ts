@@ -15,9 +15,9 @@ export interface PersonProps {
   mobile: string | null;
   employeeId: string | null;
   orgUnitId: string;
-  primaryRoleId: string;
+  primaryRoleId: string | null;
   managerId: string | null;
-  title: string | null;
+  title: string | null; // Job title from Intune sync
   office: string | null; // Office location from MS Graph (e.g., "Riyadh HQ")
   locationId: string | null;
   department: string | null;
@@ -41,7 +41,7 @@ export interface CreatePersonProps {
   mobile?: string | null;
   employeeId?: string | null;
   orgUnitId: string;
-  primaryRoleId: string;
+  primaryRoleId?: string | null;
   managerId?: string | null;
   title?: string | null;
   office?: string | null;
@@ -60,7 +60,6 @@ export class Person {
     Person.validateLastName(props.lastName);
     Person.validateEmail(props.email);
     Person.validateOrgUnitId(props.orgUnitId);
-    Person.validateRoleId(props.primaryRoleId);
 
     const now = new Date();
 
@@ -76,7 +75,7 @@ export class Person {
       mobile: props.mobile?.trim() || null,
       employeeId: props.employeeId?.trim() || null,
       orgUnitId: props.orgUnitId,
-      primaryRoleId: props.primaryRoleId,
+      primaryRoleId: props.primaryRoleId ?? null,
       managerId: props.managerId || null,
       title: props.title?.trim() || null,
       office: props.office?.trim() || null,
@@ -105,7 +104,7 @@ export class Person {
     mobile?: string | null;
     employeeId?: string | null;
     orgUnitId?: string;
-    primaryRoleId?: string;
+    primaryRoleId?: string | null;
     managerId?: string | null;
     title?: string | null;
     office?: string | null;
@@ -153,7 +152,6 @@ export class Person {
     }
 
     if (props.primaryRoleId !== undefined) {
-      Person.validateRoleId(props.primaryRoleId);
       this.props.primaryRoleId = props.primaryRoleId;
     }
 
@@ -235,12 +233,6 @@ export class Person {
     this.props.updatedAt = new Date();
   }
 
-  changePrimaryRole(roleId: string): void {
-    Person.validateRoleId(roleId);
-    this.props.primaryRoleId = roleId;
-    this.props.updatedAt = new Date();
-  }
-
   private static validateFirstName(name: string): void {
     if (!name || name.trim().length === 0) {
       throw new Error("Person first name cannot be empty");
@@ -275,12 +267,6 @@ export class Person {
   private static validateOrgUnitId(id: string): void {
     if (!id || id.trim().length === 0) {
       throw new Error("Organization unit ID cannot be empty");
-    }
-  }
-
-  private static validateRoleId(id: string): void {
-    if (!id || id.trim().length === 0) {
-      throw new Error("Primary role ID cannot be empty");
     }
   }
 
@@ -326,7 +312,7 @@ export class Person {
   get orgUnitId(): string {
     return this.props.orgUnitId;
   }
-  get primaryRoleId(): string {
+  get primaryRoleId(): string | null {
     return this.props.primaryRoleId;
   }
   get managerId(): string | null {

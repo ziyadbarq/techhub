@@ -266,7 +266,6 @@ const ensurePersonLinkedToUser = async (
           lastName,
           email,
           orgUnitId: orgUnit.id,
-          primaryRoleId: viewerRole.id,
           isActive: true,
         },
       });

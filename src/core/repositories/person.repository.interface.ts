@@ -19,11 +19,6 @@ export interface PersonWithoutUserView {
     id: string;
     name: string;
   } | null;
-  primaryRole: {
-    id: string;
-    name: string;
-    displayName: string;
-  } | null;
 }
 
 export interface IPersonRepository {
@@ -81,7 +76,8 @@ export interface IPersonRepository {
   ): Promise<Person[]>;
 
   /**
-   * Find all persons with a primary role
+   * Find persons whose legacy primary role matched the specified role.
+   * Returns an empty array now that primaryRole is removed.
    */
   findByPrimaryRoleId(roleId: string): Promise<Person[]>;
 

@@ -1,5 +1,5 @@
-export * from "./create-person-role-assignment.use-case";
-export * from "./delete-person-role-assignment.use-case";
-export * from "./get-person-role-assignment.use-case";
-export * from "./list-person-role-assignments.use-case";
-export * from "./update-person-role-assignment.use-case";
+export { CreatePersonRoleAssignmentUseCase } from "./create-person-role-assignment.use-case";
+export { GetPersonRoleAssignmentUseCase } from "./get-person-role-assignment.use-case";
+export { ListPersonRoleAssignmentsUseCase } from "./list-person-role-assignments.use-case";
+export { UpdatePersonRoleAssignmentUseCase } from "./update-person-role-assignment.use-case";
+export { DeletePersonRoleAssignmentUseCase } from "./delete-person-role-assignment.use-case";

@@ -14,7 +14,6 @@ export interface PersonDTO {
   phone: string | null;
   employeeId: string | null;
   organizationUnitId: string;
-  primaryRoleId: string;
   locationId: string | null;
   managerId: string | null;
   title: string | null;
@@ -39,7 +38,6 @@ export function presentPerson(person: Person): PersonDTO {
     phone: person.phone,
     employeeId: person.employeeId,
     organizationUnitId: person.orgUnitId,
-    primaryRoleId: person.primaryRoleId,
     locationId: person.locationId,
     managerId: person.managerId,
     title: person.title,

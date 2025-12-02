@@ -38,7 +38,9 @@ The Foundation Layer provides the core building blocks for the entire Barq Asset
 
 ---
 
-## Foundation Entities (11 Total)
+## Foundation Entities (10 Total)
+
+> **Note**: Person.title (from Intune) is the job title field. Roles are ONLY for RBAC (UserRole table for system permissions).
 
 ### 1. Organization Structure
 
@@ -187,8 +189,6 @@ model Person {
   employeeId          String              @unique
   orgUnitId           BigInt
   orgUnit             OrganizationUnit    @relation(fields: [orgUnitId], references: [id])
-  primaryRoleId       BigInt
-  primaryRole         Role                @relation("PersonPrimaryRole", fields: [primaryRoleId], references: [id])
   hireDate            DateTime?
   terminationDate     DateTime?
   isActive            Boolean             @default(true)
@@ -224,7 +224,6 @@ const person = Person.create({
   email: "ahmed.alsayed@barq.com",
   employeeId: "EMP-2025-001",
   orgUnitId: itDeptId,
-  primaryRoleId: developerRoleId,
   hireDate: new Date("2025-01-15"),
   mobile: "+966501234567",
   isActive: true,
@@ -288,226 +287,9 @@ See [Person Details Page](../features/PERSON_DETAILS.md) for complete implementa
 
 ---
 
-#### 1.3 Role (RBAC + Organizational)
-
-**Purpose**: Merged concept - both system permissions (RBAC) and organizational job roles
-
-**Design Decision**: User chose "Option C: Merge concepts" - Role entity serves dual purpose:
-
-1. **RBAC Role**: System access control with permissions (e.g., "Admin", "Manager", "User")
-2. **Organizational Role**: Job title/function (e.g., "Software Engineer", "IT Manager", "Finance Director")
-
-**Schema**:
-
-```prisma
-model Role {
-  id                      String                 @id @default(cuid())
-  name                    String                 @unique
-  description             String?
-
-  // RBAC fields
-  permissions             RolePermission[]
-  users                   UserRole[]
-  isSystemRole            Boolean                @default(false)
-
-  // Organizational fields
-  personsPrimaryRole      Person[]               @relation("PersonPrimaryRole")
-  personRoleAssignments   PersonRoleAssignment[] @relation("PersonRoleAssignments")
-  lifecycleTransitions    LifecycleTransition[]  @relation("TransitionRequiredRole")
-
-  createdAt               DateTime               @default(now())
-  updatedAt               DateTime               @updatedAt
-}
-```
-
-**Entity Methods**:
-
-```typescript
-class Role {
-  static create(props: CreateRoleProps): Role;
-  static createSystemRole(props: CreateRoleProps): Role;
-  addPermission(permissionId: string): void;
-  removePermission(permissionId: string): void;
-  canBeDeleted(): boolean;
-  isAdmin(): boolean;
-  toObject(): RoleData;
-}
-```
-
-**Common Workflows**:
-
-1. **Create Organizational Role**:
-
-```typescript
-const engineerRole = Role.create({
-  name: "Software Engineer",
-  description: "Develops and maintains software applications",
-  isSystemRole: false,
-});
-await roleRepository.create(engineerRole);
-```
-
-2. **Create RBAC Role with Permissions**:
-
-```typescript
-// Create role
-const managerRole = Role.createSystemRole({
-  name: "Department Manager",
-  description: "Can manage department assets and approve requests",
-  isSystemRole: true,
-});
-await roleRepository.create(managerRole);
-
-// Assign permissions
-await assignRolePermissionUseCase.execute({
-  roleId: managerRole.id,
-  permissionIds: [
-    PERMISSIONS.ASSETS_VIEW,
-    PERMISSIONS.ASSETS_CREATE,
-    PERMISSIONS.ASSETS_UPDATE,
-    PERMISSIONS.CI_VIEW,
-    PERMISSIONS.CI_CREATE,
-  ],
-});
-```
-
-3. **Assign Role to Person**:
-
-```typescript
-const assignment = PersonRoleAssignment.create({
-  personId: person.id,
-  roleId: engineerRole.id,
-  startDate: new Date("2025-01-15"),
-  endDate: null, // Ongoing
-  note: "Primary role assignment",
-});
-await personRoleAssignmentRepository.create(assignment);
-```
-
-**Permission Requirements**:
-
-- `ROLES_VIEW` - View roles
-- `ROLES_CREATE` - Create new roles
-- `ROLES_UPDATE` - Modify existing roles
-- `ROLES_DELETE` - Delete roles (if no dependencies)
-- `ROLES_MANAGE` - Full access
-- `PERMISSIONS_ASSIGN` - Assign permissions to roles (RBAC)
-
-**UI Routes**:
-
-- [/admin/roles](/admin/roles) - List all roles
-- [/admin/roles/new](/admin/roles/new) - Create new role
-- [/admin/roles/:id](/admin/roles/:id) - View/edit role and permissions
-
----
-
-#### 1.4 PersonRoleAssignment
-
-**Purpose**: Many-to-many relationship between Person and Role with temporal data
-
-**Use Cases**:
-
-- Track role history (person had role X from date Y to date Z)
-- Support multiple concurrent roles (e.g., "Team Lead" + "Senior Engineer")
-- Audit trail of role changes
-
-**Schema**:
-
-```prisma
-model PersonRoleAssignment {
-  id          BigInt    @id @default(autoincrement())
-  personId    BigInt
-  person      Person    @relation(fields: [personId], references: [id])
-  roleId      String
-  role        Role      @relation("PersonRoleAssignments", fields: [roleId], references: [id])
-  startDate   DateTime
-  endDate     DateTime?
-  note        String?
-  metadata    Json?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-}
-```
-
-**Entity Methods**:
-
-```typescript
-class PersonRoleAssignment {
-  static create(props: CreateAssignmentProps): PersonRoleAssignment;
-  end(endDate: Date): void;
-  isActive(): boolean;
-  overlaps(other: PersonRoleAssignment): boolean;
-  toObject(): AssignmentData;
-}
-```
-
-**Common Workflows**:
-
-1. **Assign Role to Person**:
-
-```typescript
-const assignment = PersonRoleAssignment.create({
-  personId: person.id,
-  roleId: seniorEngineerRole.id,
-  startDate: new Date("2025-01-01"),
-  note: "Promoted to Senior Engineer",
-});
-await personRoleAssignmentRepository.create(assignment);
-```
-
-2. **End Role Assignment**:
-
-```typescript
-assignment.end(new Date("2025-12-31"));
-await personRoleAssignmentRepository.update(assignment);
-```
-
-3. **Query Person's Roles**:
-
-```typescript
-// Get all current roles for a person
-const activeRoles = await personRoleAssignmentRepository.findByPerson({
-  personId: person.id,
-  activeOnly: true,
-});
-
-// Get role history
-const roleHistory = await personRoleAssignmentRepository.findByPerson({
-  personId: person.id,
-  activeOnly: false,
-});
-```
-
-4. **Check for Overlapping Assignments**:
-
-```typescript
-const hasOverlap = await personRoleAssignmentRepository.hasOverlap({
-  personId: person.id,
-  roleId: roleId,
-  startDate: new Date("2025-01-01"),
-  endDate: new Date("2025-12-31"),
-  excludeId: null, // Exclude current assignment if updating
-});
-```
-
-**Permission Requirements**:
-
-- `PERSON_ROLE_ASSIGNMENTS_VIEW` - View assignments
-- `PERSON_ROLE_ASSIGNMENTS_CREATE` - Create new assignments
-- `PERSON_ROLE_ASSIGNMENTS_UPDATE` - Modify existing assignments
-- `PERSON_ROLE_ASSIGNMENTS_DELETE` - Delete assignments
-- `PERSON_ROLE_ASSIGNMENTS_MANAGE` - Full access
-
-**UI Routes**:
-
-- Managed via Person detail page: [/persons/:id](/persons/:id) (Roles tab)
-- Managed via Role detail page: [/admin/roles/:id](/admin/roles/:id) (Members tab)
-
----
-
 ### 2. Location Hierarchy
 
-#### 2.1 Location
+#### 1.3 Location
 
 **Purpose**: Hierarchical geographical and logical locations (Country → City → Campus → Building → Floor → Room → Rack)
 
@@ -1610,15 +1392,14 @@ OrganizationUnit (Company)
 └── OrganizationUnit (Business Unit)
 ```
 
-### Person-Role Relationships
+### Person-User Relationships
 
 ```
 Person
-├── primaryRoleId → Role (Main job role)
-└── PersonRoleAssignment[]
-    ├── roleId → Role (Additional role 1)
-    ├── roleId → Role (Additional role 2)
-    └── ...
+├── userId → User (Optional link to system account)
+├── title (Job title from Intune)
+├── office (Office location from MS Graph)
+└── orgUnit → OrganizationUnit
 ```
 
 ### Location Hierarchy
@@ -1698,15 +1479,7 @@ const person = await createPersonUseCase.execute({
   email: "ahmed.alsayed@barq.com",
   employeeId: "EMP-001",
   orgUnitId: itDept.id,
-  primaryRoleId: engineerRole.id,
   hireDate: new Date("2025-01-15"),
-});
-
-// 5. Assign additional role
-await createPersonRoleAssignmentUseCase.execute({
-  personId: person.id,
-  roleId: teamLeadRoleId,
-  startDate: new Date("2025-03-01"),
 });
 ```
 
@@ -1878,8 +1651,6 @@ All Foundation entities follow RBAC permission model with standardized permissio
 | -------------------- | ---------------------------- | ------------------------------ | ------------------------------ | ------------------------------ | ------------------------------ |
 | OrganizationUnit     | ORGANIZATION_UNITS_VIEW      | ORGANIZATION_UNITS_CREATE      | ORGANIZATION_UNITS_UPDATE      | ORGANIZATION_UNITS_DELETE      | ORGANIZATION_UNITS_MANAGE      |
 | Person               | PERSONS_VIEW                 | PERSONS_CREATE                 | PERSONS_UPDATE                 | PERSONS_DELETE                 | PERSONS_MANAGE                 |
-| Role                 | ROLES_VIEW                   | ROLES_CREATE                   | ROLES_UPDATE                   | ROLES_DELETE                   | ROLES_MANAGE                   |
-| PersonRoleAssignment | PERSON_ROLE_ASSIGNMENTS_VIEW | PERSON_ROLE_ASSIGNMENTS_CREATE | PERSON_ROLE_ASSIGNMENTS_UPDATE | PERSON_ROLE_ASSIGNMENTS_DELETE | PERSON_ROLE_ASSIGNMENTS_MANAGE |
 | Location             | LOCATIONS_VIEW               | LOCATIONS_CREATE               | LOCATIONS_UPDATE               | LOCATIONS_DELETE               | LOCATIONS_MANAGE               |
 | Vendor               | VENDORS_VIEW                 | VENDORS_CREATE                 | VENDORS_UPDATE                 | VENDORS_DELETE                 | VENDORS_MANAGE                 |
 | VendorContact        | VENDOR_CONTACTS_VIEW         | VENDOR_CONTACTS_CREATE         | VENDOR_CONTACTS_UPDATE         | VENDOR_CONTACTS_DELETE         | VENDOR_CONTACTS_MANAGE         |

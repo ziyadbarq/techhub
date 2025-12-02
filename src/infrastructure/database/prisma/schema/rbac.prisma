@@ -25,11 +25,9 @@ model Role {
   children Role[]  @relation("RoleHierarchy")
 
   // Relations
-  permissions           RolePermission[]
-  users                 UserRole[]
-  personsPrimaryRole    Person[]               @relation("PersonPrimaryRole")
-  personRoleAssignments PersonRoleAssignment[] @relation("PersonRoleAssignments")
-  lifecycleTransitions  LifecycleTransition[]  @relation("TransitionRequiredRole")
+  permissions          RolePermission[]
+  users                UserRole[]
+  lifecycleTransitions LifecycleTransition[] @relation("TransitionRequiredRole")
 
   @@index([name])
   @@index([isActive])

@@ -33,6 +33,7 @@ export class MockJobQueueService implements IJobQueueService {
       delayed: number;
     }
   > = new Map();
+  private activeQueues = new Set<string>();
 
   async addJob<T = unknown>(
     _queueName: string,
@@ -40,6 +41,7 @@ export class MockJobQueueService implements IJobQueueService {
     data: T,
     options?: JobOptions,
   ): Promise<string> {
+    this.activeQueues.add(_queueName);
     const jobId = `mock-job-${++this.jobCounter}`;
     const state: JobType = options?.delay ? "delayed" : "wait";
 
@@ -68,6 +70,7 @@ export class MockJobQueueService implements IJobQueueService {
     _repeatOptions: RepeatableJobOptions,
   ): Promise<void> {
     // For testing, just add a single job
+    this.activeQueues.add(_queueName);
     await this.addJob(_queueName, jobName, data);
   }
 
@@ -131,6 +134,14 @@ export class MockJobQueueService implements IJobQueueService {
     // Mock implementation - no-op for tests
   }
 
+  async isHealthy(): Promise<boolean> {
+    return true;
+  }
+
+  getActiveQueues(): string[] {
+    return Array.from(this.activeQueues);
+  }
+
   async hasActiveWorkers(_queueName: string): Promise<boolean> {
     // Simulate at least one worker running in tests
     return true;
@@ -169,6 +180,7 @@ export class MockJobQueueService implements IJobQueueService {
     this.jobStates.clear();
     this.jobQueues.clear();
     this.queueMetrics.clear();
+    this.activeQueues.clear();
   }
 
   // ========================================

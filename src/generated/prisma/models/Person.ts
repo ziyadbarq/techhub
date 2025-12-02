@@ -36,7 +36,6 @@ export type PersonMinAggregateOutputType = {
   mobile: string | null
   employeeId: string | null
   orgUnitId: string | null
-  primaryRoleId: string | null
   managerId: string | null
   title: string | null
   office: string | null
@@ -66,7 +65,6 @@ export type PersonMaxAggregateOutputType = {
   mobile: string | null
   employeeId: string | null
   orgUnitId: string | null
-  primaryRoleId: string | null
   managerId: string | null
   title: string | null
   office: string | null
@@ -96,7 +94,6 @@ export type PersonCountAggregateOutputType = {
   mobile: number
   employeeId: number
   orgUnitId: number
-  primaryRoleId: number
   managerId: number
   title: number
   office: number
@@ -129,7 +126,6 @@ export type PersonMinAggregateInputType = {
   mobile?: true
   employeeId?: true
   orgUnitId?: true
-  primaryRoleId?: true
   managerId?: true
   title?: true
   office?: true
@@ -159,7 +155,6 @@ export type PersonMaxAggregateInputType = {
   mobile?: true
   employeeId?: true
   orgUnitId?: true
-  primaryRoleId?: true
   managerId?: true
   title?: true
   office?: true
@@ -189,7 +184,6 @@ export type PersonCountAggregateInputType = {
   mobile?: true
   employeeId?: true
   orgUnitId?: true
-  primaryRoleId?: true
   managerId?: true
   title?: true
   office?: true
@@ -293,7 +287,6 @@ export type PersonGroupByOutputType = {
   mobile: string | null
   employeeId: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId: string | null
   title: string | null
   office: string | null
@@ -345,7 +338,6 @@ export type PersonWhereInput = {
   mobile?: Prisma.StringNullableFilter<"Person"> | string | null
   employeeId?: Prisma.StringNullableFilter<"Person"> | string | null
   orgUnitId?: Prisma.StringFilter<"Person"> | string
-  primaryRoleId?: Prisma.StringFilter<"Person"> | string
   managerId?: Prisma.StringNullableFilter<"Person"> | string | null
   title?: Prisma.StringNullableFilter<"Person"> | string | null
   office?: Prisma.StringNullableFilter<"Person"> | string | null
@@ -364,12 +356,10 @@ export type PersonWhereInput = {
   updatedById?: Prisma.StringNullableFilter<"Person"> | string | null
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   orgUnit?: Prisma.XOR<Prisma.OrganizationUnitScalarRelationFilter, Prisma.OrganizationUnitWhereInput>
-  primaryRole?: Prisma.XOR<Prisma.RoleScalarRelationFilter, Prisma.RoleWhereInput>
   manager?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
   directReports?: Prisma.PersonListRelationFilter
   location?: Prisma.XOR<Prisma.LocationNullableScalarRelationFilter, Prisma.LocationWhereInput> | null
   managedOrgUnits?: Prisma.OrganizationUnitListRelationFilter
-  roleAssignments?: Prisma.PersonRoleAssignmentListRelationFilter
   configurationItems?: Prisma.ConfigurationItemListRelationFilter
   stockMovementsPerformed?: Prisma.StockMovementListRelationFilter
   stockMovementsVoided?: Prisma.StockMovementListRelationFilter
@@ -437,7 +427,6 @@ export type PersonOrderByWithRelationInput = {
   mobile?: Prisma.SortOrderInput | Prisma.SortOrder
   employeeId?: Prisma.SortOrderInput | Prisma.SortOrder
   orgUnitId?: Prisma.SortOrder
-  primaryRoleId?: Prisma.SortOrder
   managerId?: Prisma.SortOrderInput | Prisma.SortOrder
   title?: Prisma.SortOrderInput | Prisma.SortOrder
   office?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -456,12 +445,10 @@ export type PersonOrderByWithRelationInput = {
   updatedById?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   orgUnit?: Prisma.OrganizationUnitOrderByWithRelationInput
-  primaryRole?: Prisma.RoleOrderByWithRelationInput
   manager?: Prisma.PersonOrderByWithRelationInput
   directReports?: Prisma.PersonOrderByRelationAggregateInput
   location?: Prisma.LocationOrderByWithRelationInput
   managedOrgUnits?: Prisma.OrganizationUnitOrderByRelationAggregateInput
-  roleAssignments?: Prisma.PersonRoleAssignmentOrderByRelationAggregateInput
   configurationItems?: Prisma.ConfigurationItemOrderByRelationAggregateInput
   stockMovementsPerformed?: Prisma.StockMovementOrderByRelationAggregateInput
   stockMovementsVoided?: Prisma.StockMovementOrderByRelationAggregateInput
@@ -532,7 +519,6 @@ export type PersonWhereUniqueInput = Prisma.AtLeast<{
   phone?: Prisma.StringNullableFilter<"Person"> | string | null
   mobile?: Prisma.StringNullableFilter<"Person"> | string | null
   orgUnitId?: Prisma.StringFilter<"Person"> | string
-  primaryRoleId?: Prisma.StringFilter<"Person"> | string
   managerId?: Prisma.StringNullableFilter<"Person"> | string | null
   title?: Prisma.StringNullableFilter<"Person"> | string | null
   office?: Prisma.StringNullableFilter<"Person"> | string | null
@@ -551,12 +537,10 @@ export type PersonWhereUniqueInput = Prisma.AtLeast<{
   updatedById?: Prisma.StringNullableFilter<"Person"> | string | null
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   orgUnit?: Prisma.XOR<Prisma.OrganizationUnitScalarRelationFilter, Prisma.OrganizationUnitWhereInput>
-  primaryRole?: Prisma.XOR<Prisma.RoleScalarRelationFilter, Prisma.RoleWhereInput>
   manager?: Prisma.XOR<Prisma.PersonNullableScalarRelationFilter, Prisma.PersonWhereInput> | null
   directReports?: Prisma.PersonListRelationFilter
   location?: Prisma.XOR<Prisma.LocationNullableScalarRelationFilter, Prisma.LocationWhereInput> | null
   managedOrgUnits?: Prisma.OrganizationUnitListRelationFilter
-  roleAssignments?: Prisma.PersonRoleAssignmentListRelationFilter
   configurationItems?: Prisma.ConfigurationItemListRelationFilter
   stockMovementsPerformed?: Prisma.StockMovementListRelationFilter
   stockMovementsVoided?: Prisma.StockMovementListRelationFilter
@@ -624,7 +608,6 @@ export type PersonOrderByWithAggregationInput = {
   mobile?: Prisma.SortOrderInput | Prisma.SortOrder
   employeeId?: Prisma.SortOrderInput | Prisma.SortOrder
   orgUnitId?: Prisma.SortOrder
-  primaryRoleId?: Prisma.SortOrder
   managerId?: Prisma.SortOrderInput | Prisma.SortOrder
   title?: Prisma.SortOrderInput | Prisma.SortOrder
   office?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -661,7 +644,6 @@ export type PersonScalarWhereWithAggregatesInput = {
   mobile?: Prisma.StringNullableWithAggregatesFilter<"Person"> | string | null
   employeeId?: Prisma.StringNullableWithAggregatesFilter<"Person"> | string | null
   orgUnitId?: Prisma.StringWithAggregatesFilter<"Person"> | string
-  primaryRoleId?: Prisma.StringWithAggregatesFilter<"Person"> | string
   managerId?: Prisma.StringNullableWithAggregatesFilter<"Person"> | string | null
   title?: Prisma.StringNullableWithAggregatesFilter<"Person"> | string | null
   office?: Prisma.StringNullableWithAggregatesFilter<"Person"> | string | null
@@ -703,12 +685,10 @@ export type PersonCreateInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -776,7 +756,6 @@ export type PersonUncheckedCreateInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -795,7 +774,6 @@ export type PersonUncheckedCreateInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -871,12 +849,10 @@ export type PersonUpdateInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -944,7 +920,6 @@ export type PersonUncheckedUpdateInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -963,7 +938,6 @@ export type PersonUncheckedUpdateInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -1028,7 +1002,6 @@ export type PersonCreateManyInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -1082,7 +1055,6 @@ export type PersonUncheckedUpdateManyInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1133,7 +1105,6 @@ export type PersonCountOrderByAggregateInput = {
   mobile?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
   orgUnitId?: Prisma.SortOrder
-  primaryRoleId?: Prisma.SortOrder
   managerId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   office?: Prisma.SortOrder
@@ -1164,7 +1135,6 @@ export type PersonMaxOrderByAggregateInput = {
   mobile?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
   orgUnitId?: Prisma.SortOrder
-  primaryRoleId?: Prisma.SortOrder
   managerId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   office?: Prisma.SortOrder
@@ -1194,7 +1164,6 @@ export type PersonMinOrderByAggregateInput = {
   mobile?: Prisma.SortOrder
   employeeId?: Prisma.SortOrder
   orgUnitId?: Prisma.SortOrder
-  primaryRoleId?: Prisma.SortOrder
   managerId?: Prisma.SortOrder
   title?: Prisma.SortOrder
   office?: Prisma.SortOrder
@@ -1860,20 +1829,6 @@ export type PersonUncheckedUpdateManyWithoutUpdatedByNestedInput = {
   deleteMany?: Prisma.PersonScalarWhereInput | Prisma.PersonScalarWhereInput[]
 }
 
-export type PersonCreateNestedOneWithoutRoleAssignmentsInput = {
-  create?: Prisma.XOR<Prisma.PersonCreateWithoutRoleAssignmentsInput, Prisma.PersonUncheckedCreateWithoutRoleAssignmentsInput>
-  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutRoleAssignmentsInput
-  connect?: Prisma.PersonWhereUniqueInput
-}
-
-export type PersonUpdateOneRequiredWithoutRoleAssignmentsNestedInput = {
-  create?: Prisma.XOR<Prisma.PersonCreateWithoutRoleAssignmentsInput, Prisma.PersonUncheckedCreateWithoutRoleAssignmentsInput>
-  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutRoleAssignmentsInput
-  upsert?: Prisma.PersonUpsertWithoutRoleAssignmentsInput
-  connect?: Prisma.PersonWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutRoleAssignmentsInput, Prisma.PersonUpdateWithoutRoleAssignmentsInput>, Prisma.PersonUncheckedUpdateWithoutRoleAssignmentsInput>
-}
-
 export type PersonCreateNestedManyWithoutLocationInput = {
   create?: Prisma.XOR<Prisma.PersonCreateWithoutLocationInput, Prisma.PersonUncheckedCreateWithoutLocationInput> | Prisma.PersonCreateWithoutLocationInput[] | Prisma.PersonUncheckedCreateWithoutLocationInput[]
   connectOrCreate?: Prisma.PersonCreateOrConnectWithoutLocationInput | Prisma.PersonCreateOrConnectWithoutLocationInput[]
@@ -2214,48 +2169,6 @@ export type PersonUpdateOneWithoutPerformedMaintenanceRecordsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PersonUpdateToOneWithWhereWithoutPerformedMaintenanceRecordsInput, Prisma.PersonUpdateWithoutPerformedMaintenanceRecordsInput>, Prisma.PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput>
 }
 
-export type PersonCreateNestedManyWithoutPrimaryRoleInput = {
-  create?: Prisma.XOR<Prisma.PersonCreateWithoutPrimaryRoleInput, Prisma.PersonUncheckedCreateWithoutPrimaryRoleInput> | Prisma.PersonCreateWithoutPrimaryRoleInput[] | Prisma.PersonUncheckedCreateWithoutPrimaryRoleInput[]
-  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutPrimaryRoleInput | Prisma.PersonCreateOrConnectWithoutPrimaryRoleInput[]
-  createMany?: Prisma.PersonCreateManyPrimaryRoleInputEnvelope
-  connect?: Prisma.PersonWhereUniqueInput | Prisma.PersonWhereUniqueInput[]
-}
-
-export type PersonUncheckedCreateNestedManyWithoutPrimaryRoleInput = {
-  create?: Prisma.XOR<Prisma.PersonCreateWithoutPrimaryRoleInput, Prisma.PersonUncheckedCreateWithoutPrimaryRoleInput> | Prisma.PersonCreateWithoutPrimaryRoleInput[] | Prisma.PersonUncheckedCreateWithoutPrimaryRoleInput[]
-  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutPrimaryRoleInput | Prisma.PersonCreateOrConnectWithoutPrimaryRoleInput[]
-  createMany?: Prisma.PersonCreateManyPrimaryRoleInputEnvelope
-  connect?: Prisma.PersonWhereUniqueInput | Prisma.PersonWhereUniqueInput[]
-}
-
-export type PersonUpdateManyWithoutPrimaryRoleNestedInput = {
-  create?: Prisma.XOR<Prisma.PersonCreateWithoutPrimaryRoleInput, Prisma.PersonUncheckedCreateWithoutPrimaryRoleInput> | Prisma.PersonCreateWithoutPrimaryRoleInput[] | Prisma.PersonUncheckedCreateWithoutPrimaryRoleInput[]
-  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutPrimaryRoleInput | Prisma.PersonCreateOrConnectWithoutPrimaryRoleInput[]
-  upsert?: Prisma.PersonUpsertWithWhereUniqueWithoutPrimaryRoleInput | Prisma.PersonUpsertWithWhereUniqueWithoutPrimaryRoleInput[]
-  createMany?: Prisma.PersonCreateManyPrimaryRoleInputEnvelope
-  set?: Prisma.PersonWhereUniqueInput | Prisma.PersonWhereUniqueInput[]
-  disconnect?: Prisma.PersonWhereUniqueInput | Prisma.PersonWhereUniqueInput[]
-  delete?: Prisma.PersonWhereUniqueInput | Prisma.PersonWhereUniqueInput[]
-  connect?: Prisma.PersonWhereUniqueInput | Prisma.PersonWhereUniqueInput[]
-  update?: Prisma.PersonUpdateWithWhereUniqueWithoutPrimaryRoleInput | Prisma.PersonUpdateWithWhereUniqueWithoutPrimaryRoleInput[]
-  updateMany?: Prisma.PersonUpdateManyWithWhereWithoutPrimaryRoleInput | Prisma.PersonUpdateManyWithWhereWithoutPrimaryRoleInput[]
-  deleteMany?: Prisma.PersonScalarWhereInput | Prisma.PersonScalarWhereInput[]
-}
-
-export type PersonUncheckedUpdateManyWithoutPrimaryRoleNestedInput = {
-  create?: Prisma.XOR<Prisma.PersonCreateWithoutPrimaryRoleInput, Prisma.PersonUncheckedCreateWithoutPrimaryRoleInput> | Prisma.PersonCreateWithoutPrimaryRoleInput[] | Prisma.PersonUncheckedCreateWithoutPrimaryRoleInput[]
-  connectOrCreate?: Prisma.PersonCreateOrConnectWithoutPrimaryRoleInput | Prisma.PersonCreateOrConnectWithoutPrimaryRoleInput[]
-  upsert?: Prisma.PersonUpsertWithWhereUniqueWithoutPrimaryRoleInput | Prisma.PersonUpsertWithWhereUniqueWithoutPrimaryRoleInput[]
-  createMany?: Prisma.PersonCreateManyPrimaryRoleInputEnvelope
-  set?: Prisma.PersonWhereUniqueInput | Prisma.PersonWhereUniqueInput[]
-  disconnect?: Prisma.PersonWhereUniqueInput | Prisma.PersonWhereUniqueInput[]
-  delete?: Prisma.PersonWhereUniqueInput | Prisma.PersonWhereUniqueInput[]
-  connect?: Prisma.PersonWhereUniqueInput | Prisma.PersonWhereUniqueInput[]
-  update?: Prisma.PersonUpdateWithWhereUniqueWithoutPrimaryRoleInput | Prisma.PersonUpdateWithWhereUniqueWithoutPrimaryRoleInput[]
-  updateMany?: Prisma.PersonUpdateManyWithWhereWithoutPrimaryRoleInput | Prisma.PersonUpdateManyWithWhereWithoutPrimaryRoleInput[]
-  deleteMany?: Prisma.PersonScalarWhereInput | Prisma.PersonScalarWhereInput[]
-}
-
 export type PersonCreateNestedOneWithoutDeletedAssetReservationsInput = {
   create?: Prisma.XOR<Prisma.PersonCreateWithoutDeletedAssetReservationsInput, Prisma.PersonUncheckedCreateWithoutDeletedAssetReservationsInput>
   connectOrCreate?: Prisma.PersonCreateOrConnectWithoutDeletedAssetReservationsInput
@@ -2387,12 +2300,10 @@ export type PersonCreateWithoutDeletedAssetCategoriesInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -2459,7 +2370,6 @@ export type PersonUncheckedCreateWithoutDeletedAssetCategoriesInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -2478,7 +2388,6 @@ export type PersonUncheckedCreateWithoutDeletedAssetCategoriesInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -2569,12 +2478,10 @@ export type PersonUpdateWithoutDeletedAssetCategoriesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -2641,7 +2548,6 @@ export type PersonUncheckedUpdateWithoutDeletedAssetCategoriesInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -2660,7 +2566,6 @@ export type PersonUncheckedUpdateWithoutDeletedAssetCategoriesInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -2735,12 +2640,10 @@ export type PersonCreateWithoutDeletedAssetModelsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -2807,7 +2710,6 @@ export type PersonUncheckedCreateWithoutDeletedAssetModelsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -2826,7 +2728,6 @@ export type PersonUncheckedCreateWithoutDeletedAssetModelsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -2917,12 +2818,10 @@ export type PersonUpdateWithoutDeletedAssetModelsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -2989,7 +2888,6 @@ export type PersonUncheckedUpdateWithoutDeletedAssetModelsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3008,7 +2906,6 @@ export type PersonUncheckedUpdateWithoutDeletedAssetModelsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -3083,12 +2980,10 @@ export type PersonCreateWithoutStockMovementsPerformedInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
   verificationCampaigns?: Prisma.VerificationCampaignCreateNestedManyWithoutCreatedByInput
@@ -3155,7 +3050,6 @@ export type PersonUncheckedCreateWithoutStockMovementsPerformedInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -3174,7 +3068,6 @@ export type PersonUncheckedCreateWithoutStockMovementsPerformedInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
   verificationCampaigns?: Prisma.VerificationCampaignUncheckedCreateNestedManyWithoutCreatedByInput
@@ -3254,12 +3147,10 @@ export type PersonCreateWithoutStockMovementsVoidedInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   verificationCampaigns?: Prisma.VerificationCampaignCreateNestedManyWithoutCreatedByInput
@@ -3326,7 +3217,6 @@ export type PersonUncheckedCreateWithoutStockMovementsVoidedInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -3345,7 +3235,6 @@ export type PersonUncheckedCreateWithoutStockMovementsVoidedInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   verificationCampaigns?: Prisma.VerificationCampaignUncheckedCreateNestedManyWithoutCreatedByInput
@@ -3436,12 +3325,10 @@ export type PersonUpdateWithoutStockMovementsPerformedInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
   verificationCampaigns?: Prisma.VerificationCampaignUpdateManyWithoutCreatedByNestedInput
@@ -3508,7 +3395,6 @@ export type PersonUncheckedUpdateWithoutStockMovementsPerformedInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3527,7 +3413,6 @@ export type PersonUncheckedUpdateWithoutStockMovementsPerformedInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
   verificationCampaigns?: Prisma.VerificationCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -3613,12 +3498,10 @@ export type PersonUpdateWithoutStockMovementsVoidedInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   verificationCampaigns?: Prisma.VerificationCampaignUpdateManyWithoutCreatedByNestedInput
@@ -3685,7 +3568,6 @@ export type PersonUncheckedUpdateWithoutStockMovementsVoidedInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -3704,7 +3586,6 @@ export type PersonUncheckedUpdateWithoutStockMovementsVoidedInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   verificationCampaigns?: Prisma.VerificationCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -3779,12 +3660,10 @@ export type PersonCreateWithoutDeletedAssetsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -3851,7 +3730,6 @@ export type PersonUncheckedCreateWithoutDeletedAssetsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -3870,7 +3748,6 @@ export type PersonUncheckedCreateWithoutDeletedAssetsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -3950,12 +3827,10 @@ export type PersonCreateWithoutCreatedAssetsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -4022,7 +3897,6 @@ export type PersonUncheckedCreateWithoutCreatedAssetsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -4041,7 +3915,6 @@ export type PersonUncheckedCreateWithoutCreatedAssetsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -4121,12 +3994,10 @@ export type PersonCreateWithoutUpdatedAssetsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -4193,7 +4064,6 @@ export type PersonUncheckedCreateWithoutUpdatedAssetsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -4212,7 +4082,6 @@ export type PersonUncheckedCreateWithoutUpdatedAssetsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -4303,12 +4172,10 @@ export type PersonUpdateWithoutDeletedAssetsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -4375,7 +4242,6 @@ export type PersonUncheckedUpdateWithoutDeletedAssetsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4394,7 +4260,6 @@ export type PersonUncheckedUpdateWithoutDeletedAssetsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -4480,12 +4345,10 @@ export type PersonUpdateWithoutCreatedAssetsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -4552,7 +4415,6 @@ export type PersonUncheckedUpdateWithoutCreatedAssetsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4571,7 +4433,6 @@ export type PersonUncheckedUpdateWithoutCreatedAssetsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -4657,12 +4518,10 @@ export type PersonUpdateWithoutUpdatedAssetsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -4729,7 +4588,6 @@ export type PersonUncheckedUpdateWithoutUpdatedAssetsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -4748,7 +4606,6 @@ export type PersonUncheckedUpdateWithoutUpdatedAssetsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -4823,12 +4680,10 @@ export type PersonCreateWithoutDeletedWarrantiesInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -4895,7 +4750,6 @@ export type PersonUncheckedCreateWithoutDeletedWarrantiesInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -4914,7 +4768,6 @@ export type PersonUncheckedCreateWithoutDeletedWarrantiesInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -5005,12 +4858,10 @@ export type PersonUpdateWithoutDeletedWarrantiesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -5077,7 +4928,6 @@ export type PersonUncheckedUpdateWithoutDeletedWarrantiesInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5096,7 +4946,6 @@ export type PersonUncheckedUpdateWithoutDeletedWarrantiesInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -5171,12 +5020,10 @@ export type PersonCreateWithoutAttachmentsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -5243,7 +5090,6 @@ export type PersonUncheckedCreateWithoutAttachmentsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -5262,7 +5108,6 @@ export type PersonUncheckedCreateWithoutAttachmentsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -5353,12 +5198,10 @@ export type PersonUpdateWithoutAttachmentsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -5425,7 +5268,6 @@ export type PersonUncheckedUpdateWithoutAttachmentsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5444,7 +5286,6 @@ export type PersonUncheckedUpdateWithoutAttachmentsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -5518,12 +5359,10 @@ export type PersonCreateWithoutUserInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -5590,7 +5429,6 @@ export type PersonUncheckedCreateWithoutUserInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -5609,7 +5447,6 @@ export type PersonUncheckedCreateWithoutUserInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -5700,12 +5537,10 @@ export type PersonUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -5772,7 +5607,6 @@ export type PersonUncheckedUpdateWithoutUserInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -5791,7 +5625,6 @@ export type PersonUncheckedUpdateWithoutUserInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -5867,12 +5700,10 @@ export type PersonCreateWithoutDeletedCIClassesInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -5939,7 +5770,6 @@ export type PersonUncheckedCreateWithoutDeletedCIClassesInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -5958,7 +5788,6 @@ export type PersonUncheckedCreateWithoutDeletedCIClassesInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -6049,12 +5878,10 @@ export type PersonUpdateWithoutDeletedCIClassesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -6121,7 +5948,6 @@ export type PersonUncheckedUpdateWithoutDeletedCIClassesInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -6140,7 +5966,6 @@ export type PersonUncheckedUpdateWithoutDeletedCIClassesInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -6215,12 +6040,10 @@ export type PersonCreateWithoutConfigurationItemsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
   verificationCampaigns?: Prisma.VerificationCampaignCreateNestedManyWithoutCreatedByInput
@@ -6287,7 +6110,6 @@ export type PersonUncheckedCreateWithoutConfigurationItemsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -6306,7 +6128,6 @@ export type PersonUncheckedCreateWithoutConfigurationItemsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
   verificationCampaigns?: Prisma.VerificationCampaignUncheckedCreateNestedManyWithoutCreatedByInput
@@ -6386,12 +6207,10 @@ export type PersonCreateWithoutDeletedConfigurationItemsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -6458,7 +6277,6 @@ export type PersonUncheckedCreateWithoutDeletedConfigurationItemsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -6477,7 +6295,6 @@ export type PersonUncheckedCreateWithoutDeletedConfigurationItemsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -6557,12 +6374,10 @@ export type PersonCreateWithoutCreatedConfigurationItemsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -6629,7 +6444,6 @@ export type PersonUncheckedCreateWithoutCreatedConfigurationItemsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -6648,7 +6462,6 @@ export type PersonUncheckedCreateWithoutCreatedConfigurationItemsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -6728,12 +6541,10 @@ export type PersonCreateWithoutUpdatedConfigurationItemsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -6800,7 +6611,6 @@ export type PersonUncheckedCreateWithoutUpdatedConfigurationItemsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -6819,7 +6629,6 @@ export type PersonUncheckedCreateWithoutUpdatedConfigurationItemsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -6910,12 +6719,10 @@ export type PersonUpdateWithoutConfigurationItemsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
   verificationCampaigns?: Prisma.VerificationCampaignUpdateManyWithoutCreatedByNestedInput
@@ -6982,7 +6789,6 @@ export type PersonUncheckedUpdateWithoutConfigurationItemsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7001,7 +6807,6 @@ export type PersonUncheckedUpdateWithoutConfigurationItemsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
   verificationCampaigns?: Prisma.VerificationCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
@@ -7087,12 +6892,10 @@ export type PersonUpdateWithoutDeletedConfigurationItemsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -7159,7 +6962,6 @@ export type PersonUncheckedUpdateWithoutDeletedConfigurationItemsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7178,7 +6980,6 @@ export type PersonUncheckedUpdateWithoutDeletedConfigurationItemsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -7264,12 +7065,10 @@ export type PersonUpdateWithoutCreatedConfigurationItemsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -7336,7 +7135,6 @@ export type PersonUncheckedUpdateWithoutCreatedConfigurationItemsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7355,7 +7153,6 @@ export type PersonUncheckedUpdateWithoutCreatedConfigurationItemsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -7441,12 +7238,10 @@ export type PersonUpdateWithoutUpdatedConfigurationItemsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -7513,7 +7308,6 @@ export type PersonUncheckedUpdateWithoutUpdatedConfigurationItemsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7532,7 +7326,6 @@ export type PersonUncheckedUpdateWithoutUpdatedConfigurationItemsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -7607,12 +7400,10 @@ export type PersonCreateWithoutDeletedContractTypesInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -7679,7 +7470,6 @@ export type PersonUncheckedCreateWithoutDeletedContractTypesInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -7698,7 +7488,6 @@ export type PersonUncheckedCreateWithoutDeletedContractTypesInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -7789,12 +7578,10 @@ export type PersonUpdateWithoutDeletedContractTypesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -7861,7 +7648,6 @@ export type PersonUncheckedUpdateWithoutDeletedContractTypesInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -7880,7 +7666,6 @@ export type PersonUncheckedUpdateWithoutDeletedContractTypesInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -7955,12 +7740,10 @@ export type PersonCreateWithoutDeletedContractsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -8027,7 +7810,6 @@ export type PersonUncheckedCreateWithoutDeletedContractsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -8046,7 +7828,6 @@ export type PersonUncheckedCreateWithoutDeletedContractsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -8137,12 +7918,10 @@ export type PersonUpdateWithoutDeletedContractsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -8209,7 +7988,6 @@ export type PersonUncheckedUpdateWithoutDeletedContractsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -8228,7 +8006,6 @@ export type PersonUncheckedUpdateWithoutDeletedContractsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -8303,12 +8080,10 @@ export type PersonCreateWithoutInitiatedDisposalsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -8375,7 +8150,6 @@ export type PersonUncheckedCreateWithoutInitiatedDisposalsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -8394,7 +8168,6 @@ export type PersonUncheckedCreateWithoutInitiatedDisposalsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -8474,12 +8247,10 @@ export type PersonCreateWithoutApprovedDisposalsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -8546,7 +8317,6 @@ export type PersonUncheckedCreateWithoutApprovedDisposalsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -8565,7 +8335,6 @@ export type PersonUncheckedCreateWithoutApprovedDisposalsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -8656,12 +8425,10 @@ export type PersonUpdateWithoutInitiatedDisposalsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -8728,7 +8495,6 @@ export type PersonUncheckedUpdateWithoutInitiatedDisposalsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -8747,7 +8513,6 @@ export type PersonUncheckedUpdateWithoutInitiatedDisposalsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -8833,12 +8598,10 @@ export type PersonUpdateWithoutApprovedDisposalsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -8905,7 +8668,6 @@ export type PersonUncheckedUpdateWithoutApprovedDisposalsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -8924,7 +8686,6 @@ export type PersonUncheckedUpdateWithoutApprovedDisposalsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -8999,12 +8760,10 @@ export type PersonCreateWithoutDisposalApprovalsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -9071,7 +8830,6 @@ export type PersonUncheckedCreateWithoutDisposalApprovalsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -9090,7 +8848,6 @@ export type PersonUncheckedCreateWithoutDisposalApprovalsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -9181,12 +8938,10 @@ export type PersonUpdateWithoutDisposalApprovalsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -9253,7 +9008,6 @@ export type PersonUncheckedUpdateWithoutDisposalApprovalsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -9272,7 +9026,6 @@ export type PersonUncheckedUpdateWithoutDisposalApprovalsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -9347,12 +9100,10 @@ export type PersonCreateWithoutUploadedDisposalDocumentsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -9419,7 +9170,6 @@ export type PersonUncheckedCreateWithoutUploadedDisposalDocumentsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -9438,7 +9188,6 @@ export type PersonUncheckedCreateWithoutUploadedDisposalDocumentsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -9529,12 +9278,10 @@ export type PersonUpdateWithoutUploadedDisposalDocumentsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -9601,7 +9348,6 @@ export type PersonUncheckedUpdateWithoutUploadedDisposalDocumentsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -9620,7 +9366,6 @@ export type PersonUncheckedUpdateWithoutUploadedDisposalDocumentsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -9695,11 +9440,9 @@ export type PersonCreateWithoutManagedOrgUnitsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -9767,7 +9510,6 @@ export type PersonUncheckedCreateWithoutManagedOrgUnitsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -9785,7 +9527,6 @@ export type PersonUncheckedCreateWithoutManagedOrgUnitsInput = {
   createdById?: string | null
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -9865,12 +9606,10 @@ export type PersonCreateWithoutOrgUnitInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -9937,7 +9676,6 @@ export type PersonUncheckedCreateWithoutOrgUnitInput = {
   phone?: string | null
   mobile?: string | null
   employeeId?: string | null
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -9956,7 +9694,6 @@ export type PersonUncheckedCreateWithoutOrgUnitInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -10042,12 +9779,10 @@ export type PersonCreateWithoutDeletedOrgUnitsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -10114,7 +9849,6 @@ export type PersonUncheckedCreateWithoutDeletedOrgUnitsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -10133,7 +9867,6 @@ export type PersonUncheckedCreateWithoutDeletedOrgUnitsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -10224,11 +9957,9 @@ export type PersonUpdateWithoutManagedOrgUnitsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -10296,7 +10027,6 @@ export type PersonUncheckedUpdateWithoutManagedOrgUnitsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -10314,7 +10044,6 @@ export type PersonUncheckedUpdateWithoutManagedOrgUnitsInput = {
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -10398,7 +10127,6 @@ export type PersonScalarWhereInput = {
   mobile?: Prisma.StringNullableFilter<"Person"> | string | null
   employeeId?: Prisma.StringNullableFilter<"Person"> | string | null
   orgUnitId?: Prisma.StringFilter<"Person"> | string
-  primaryRoleId?: Prisma.StringFilter<"Person"> | string
   managerId?: Prisma.StringNullableFilter<"Person"> | string | null
   title?: Prisma.StringNullableFilter<"Person"> | string | null
   office?: Prisma.StringNullableFilter<"Person"> | string | null
@@ -10451,12 +10179,10 @@ export type PersonUpdateWithoutDeletedOrgUnitsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -10523,7 +10249,6 @@ export type PersonUncheckedUpdateWithoutDeletedOrgUnitsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -10542,7 +10267,6 @@ export type PersonUncheckedUpdateWithoutDeletedOrgUnitsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -10617,11 +10341,9 @@ export type PersonCreateWithoutDirectReportsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -10689,7 +10411,6 @@ export type PersonUncheckedCreateWithoutDirectReportsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -10707,7 +10428,6 @@ export type PersonUncheckedCreateWithoutDirectReportsInput = {
   createdById?: string | null
   updatedById?: string | null
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -10788,11 +10508,9 @@ export type PersonCreateWithoutManagerInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -10860,7 +10578,6 @@ export type PersonUncheckedCreateWithoutManagerInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   title?: string | null
   office?: string | null
   locationId?: string | null
@@ -10878,7 +10595,6 @@ export type PersonUncheckedCreateWithoutManagerInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -10964,12 +10680,10 @@ export type PersonCreateWithoutDeletedPersonsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -11036,7 +10750,6 @@ export type PersonUncheckedCreateWithoutDeletedPersonsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -11055,7 +10768,6 @@ export type PersonUncheckedCreateWithoutDeletedPersonsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -11135,12 +10847,10 @@ export type PersonCreateWithoutDeletedByInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -11207,7 +10917,6 @@ export type PersonUncheckedCreateWithoutDeletedByInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -11225,7 +10934,6 @@ export type PersonUncheckedCreateWithoutDeletedByInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -11311,12 +11019,10 @@ export type PersonCreateWithoutCreatedPersonsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -11383,7 +11089,6 @@ export type PersonUncheckedCreateWithoutCreatedPersonsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -11402,7 +11107,6 @@ export type PersonUncheckedCreateWithoutCreatedPersonsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -11482,12 +11186,10 @@ export type PersonCreateWithoutCreatedByInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -11554,7 +11256,6 @@ export type PersonUncheckedCreateWithoutCreatedByInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -11572,7 +11273,6 @@ export type PersonUncheckedCreateWithoutCreatedByInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -11658,12 +11358,10 @@ export type PersonCreateWithoutUpdatedPersonsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -11730,7 +11428,6 @@ export type PersonUncheckedCreateWithoutUpdatedPersonsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -11749,7 +11446,6 @@ export type PersonUncheckedCreateWithoutUpdatedPersonsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -11829,12 +11525,10 @@ export type PersonCreateWithoutUpdatedByInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -11901,7 +11595,6 @@ export type PersonUncheckedCreateWithoutUpdatedByInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -11919,7 +11612,6 @@ export type PersonUncheckedCreateWithoutUpdatedByInput = {
   createdById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -12016,11 +11708,9 @@ export type PersonUpdateWithoutDirectReportsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -12088,7 +11778,6 @@ export type PersonUncheckedUpdateWithoutDirectReportsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -12106,7 +11795,6 @@ export type PersonUncheckedUpdateWithoutDirectReportsInput = {
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -12209,12 +11897,10 @@ export type PersonUpdateWithoutDeletedPersonsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -12281,7 +11967,6 @@ export type PersonUncheckedUpdateWithoutDeletedPersonsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -12300,7 +11985,6 @@ export type PersonUncheckedUpdateWithoutDeletedPersonsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -12402,12 +12086,10 @@ export type PersonUpdateWithoutCreatedPersonsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -12474,7 +12156,6 @@ export type PersonUncheckedUpdateWithoutCreatedPersonsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -12493,7 +12174,6 @@ export type PersonUncheckedUpdateWithoutCreatedPersonsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -12595,12 +12275,10 @@ export type PersonUpdateWithoutUpdatedPersonsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -12667,7 +12345,6 @@ export type PersonUncheckedUpdateWithoutUpdatedPersonsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -12686,7 +12363,6 @@ export type PersonUncheckedUpdateWithoutUpdatedPersonsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -12754,354 +12430,6 @@ export type PersonUpdateManyWithWhereWithoutUpdatedByInput = {
   data: Prisma.XOR<Prisma.PersonUpdateManyMutationInput, Prisma.PersonUncheckedUpdateManyWithoutUpdatedByInput>
 }
 
-export type PersonCreateWithoutRoleAssignmentsInput = {
-  id?: string
-  azureAdId?: string | null
-  firstName: string
-  lastName: string
-  middleName?: string | null
-  email: string
-  phone?: string | null
-  mobile?: string | null
-  employeeId?: string | null
-  title?: string | null
-  office?: string | null
-  department?: string | null
-  hireDate?: Date | string | null
-  terminationDate?: Date | string | null
-  isActive?: boolean
-  isExcluded?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  user?: Prisma.UserCreateNestedOneWithoutPersonInput
-  orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
-  manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
-  directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
-  location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
-  managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
-  stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
-  stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
-  verificationCampaigns?: Prisma.VerificationCampaignCreateNestedManyWithoutCreatedByInput
-  verificationItems?: Prisma.VerificationItemCreateNestedManyWithoutVerifierPersonInput
-  auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
-  attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
-  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
-  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
-  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
-  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
-  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
-  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
-  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
-  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
-  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
-  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
-  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
-  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
-  serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
-  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
-  deletedFieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutDeletedByInput
-  archivedFieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutArchivedByInput
-  createdFieldTemplates?: Prisma.FieldTemplateCreateNestedManyWithoutCreatedByInput
-  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedPersonsInput
-  deletedPersons?: Prisma.PersonCreateNestedManyWithoutDeletedByInput
-  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedPersonsInput
-  createdPersons?: Prisma.PersonCreateNestedManyWithoutCreatedByInput
-  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedPersonsInput
-  updatedPersons?: Prisma.PersonCreateNestedManyWithoutUpdatedByInput
-  deletedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutDeletedByInput
-  deletedLocations?: Prisma.LocationCreateNestedManyWithoutDeletedByInput
-  deletedVendors?: Prisma.VendorCreateNestedManyWithoutDeletedByInput
-  deletedLifecycleModels?: Prisma.LifecycleModelCreateNestedManyWithoutDeletedByInput
-  deletedLifecycleStates?: Prisma.LifecycleStateCreateNestedManyWithoutDeletedByInput
-  deletedAssetCategories?: Prisma.AssetCategoryCreateNestedManyWithoutDeletedByInput
-  deletedAssetModels?: Prisma.AssetModelCreateNestedManyWithoutDeletedByInput
-  deletedAssets?: Prisma.AssetCreateNestedManyWithoutDeletedByInput
-  createdAssets?: Prisma.AssetCreateNestedManyWithoutCreatedByInput
-  updatedAssets?: Prisma.AssetCreateNestedManyWithoutUpdatedByInput
-  deletedWarranties?: Prisma.WarrantyCreateNestedManyWithoutDeletedByInput
-  deletedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutDeletedByInput
-  deletedContractTypes?: Prisma.ContractTypeCreateNestedManyWithoutDeletedByInput
-  deletedContracts?: Prisma.ContractCreateNestedManyWithoutDeletedByInput
-  deletedCIClasses?: Prisma.CIClassCreateNestedManyWithoutDeletedByInput
-  deletedConfigurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutDeletedByInput
-  createdConfigurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutCreatedByInput
-  updatedConfigurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutUpdatedByInput
-  deletedServices?: Prisma.ServiceCreateNestedManyWithoutDeletedByInput
-  deletedLicenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutDeletedByInput
-  deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
-  deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
-  deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
-}
-
-export type PersonUncheckedCreateWithoutRoleAssignmentsInput = {
-  id?: string
-  azureAdId?: string | null
-  userId?: string | null
-  firstName: string
-  lastName: string
-  middleName?: string | null
-  email: string
-  phone?: string | null
-  mobile?: string | null
-  employeeId?: string | null
-  orgUnitId: string
-  primaryRoleId: string
-  managerId?: string | null
-  title?: string | null
-  office?: string | null
-  locationId?: string | null
-  department?: string | null
-  hireDate?: Date | string | null
-  terminationDate?: Date | string | null
-  isActive?: boolean
-  isExcluded?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  deletedById?: string | null
-  createdById?: string | null
-  updatedById?: string | null
-  directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
-  managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
-  stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
-  stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
-  verificationCampaigns?: Prisma.VerificationCampaignUncheckedCreateNestedManyWithoutCreatedByInput
-  verificationItems?: Prisma.VerificationItemUncheckedCreateNestedManyWithoutVerifierPersonInput
-  auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
-  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
-  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
-  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
-  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
-  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
-  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
-  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
-  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
-  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
-  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
-  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
-  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
-  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
-  serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
-  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
-  deletedFieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutDeletedByInput
-  archivedFieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutArchivedByInput
-  createdFieldTemplates?: Prisma.FieldTemplateUncheckedCreateNestedManyWithoutCreatedByInput
-  deletedPersons?: Prisma.PersonUncheckedCreateNestedManyWithoutDeletedByInput
-  createdPersons?: Prisma.PersonUncheckedCreateNestedManyWithoutCreatedByInput
-  updatedPersons?: Prisma.PersonUncheckedCreateNestedManyWithoutUpdatedByInput
-  deletedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedLocations?: Prisma.LocationUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedVendors?: Prisma.VendorUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedLifecycleModels?: Prisma.LifecycleModelUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedLifecycleStates?: Prisma.LifecycleStateUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedAssetCategories?: Prisma.AssetCategoryUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedAssetModels?: Prisma.AssetModelUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedAssets?: Prisma.AssetUncheckedCreateNestedManyWithoutDeletedByInput
-  createdAssets?: Prisma.AssetUncheckedCreateNestedManyWithoutCreatedByInput
-  updatedAssets?: Prisma.AssetUncheckedCreateNestedManyWithoutUpdatedByInput
-  deletedWarranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedContractTypes?: Prisma.ContractTypeUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedContracts?: Prisma.ContractUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedCIClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedConfigurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutDeletedByInput
-  createdConfigurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutCreatedByInput
-  updatedConfigurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutUpdatedByInput
-  deletedServices?: Prisma.ServiceUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedLicenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
-}
-
-export type PersonCreateOrConnectWithoutRoleAssignmentsInput = {
-  where: Prisma.PersonWhereUniqueInput
-  create: Prisma.XOR<Prisma.PersonCreateWithoutRoleAssignmentsInput, Prisma.PersonUncheckedCreateWithoutRoleAssignmentsInput>
-}
-
-export type PersonUpsertWithoutRoleAssignmentsInput = {
-  update: Prisma.XOR<Prisma.PersonUpdateWithoutRoleAssignmentsInput, Prisma.PersonUncheckedUpdateWithoutRoleAssignmentsInput>
-  create: Prisma.XOR<Prisma.PersonCreateWithoutRoleAssignmentsInput, Prisma.PersonUncheckedCreateWithoutRoleAssignmentsInput>
-  where?: Prisma.PersonWhereInput
-}
-
-export type PersonUpdateToOneWithWhereWithoutRoleAssignmentsInput = {
-  where?: Prisma.PersonWhereInput
-  data: Prisma.XOR<Prisma.PersonUpdateWithoutRoleAssignmentsInput, Prisma.PersonUncheckedUpdateWithoutRoleAssignmentsInput>
-}
-
-export type PersonUpdateWithoutRoleAssignmentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  user?: Prisma.UserUpdateOneWithoutPersonNestedInput
-  orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
-  manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
-  directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
-  location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
-  managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
-  stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
-  stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
-  verificationCampaigns?: Prisma.VerificationCampaignUpdateManyWithoutCreatedByNestedInput
-  verificationItems?: Prisma.VerificationItemUpdateManyWithoutVerifierPersonNestedInput
-  auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
-  attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
-  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
-  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
-  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
-  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
-  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
-  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
-  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
-  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
-  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
-  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
-  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
-  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
-  serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
-  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
-  deletedFieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutDeletedByNestedInput
-  archivedFieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutArchivedByNestedInput
-  createdFieldTemplates?: Prisma.FieldTemplateUpdateManyWithoutCreatedByNestedInput
-  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedPersonsNestedInput
-  deletedPersons?: Prisma.PersonUpdateManyWithoutDeletedByNestedInput
-  createdBy?: Prisma.PersonUpdateOneWithoutCreatedPersonsNestedInput
-  createdPersons?: Prisma.PersonUpdateManyWithoutCreatedByNestedInput
-  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedPersonsNestedInput
-  updatedPersons?: Prisma.PersonUpdateManyWithoutUpdatedByNestedInput
-  deletedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutDeletedByNestedInput
-  deletedLocations?: Prisma.LocationUpdateManyWithoutDeletedByNestedInput
-  deletedVendors?: Prisma.VendorUpdateManyWithoutDeletedByNestedInput
-  deletedLifecycleModels?: Prisma.LifecycleModelUpdateManyWithoutDeletedByNestedInput
-  deletedLifecycleStates?: Prisma.LifecycleStateUpdateManyWithoutDeletedByNestedInput
-  deletedAssetCategories?: Prisma.AssetCategoryUpdateManyWithoutDeletedByNestedInput
-  deletedAssetModels?: Prisma.AssetModelUpdateManyWithoutDeletedByNestedInput
-  deletedAssets?: Prisma.AssetUpdateManyWithoutDeletedByNestedInput
-  createdAssets?: Prisma.AssetUpdateManyWithoutCreatedByNestedInput
-  updatedAssets?: Prisma.AssetUpdateManyWithoutUpdatedByNestedInput
-  deletedWarranties?: Prisma.WarrantyUpdateManyWithoutDeletedByNestedInput
-  deletedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutDeletedByNestedInput
-  deletedContractTypes?: Prisma.ContractTypeUpdateManyWithoutDeletedByNestedInput
-  deletedContracts?: Prisma.ContractUpdateManyWithoutDeletedByNestedInput
-  deletedCIClasses?: Prisma.CIClassUpdateManyWithoutDeletedByNestedInput
-  deletedConfigurationItems?: Prisma.ConfigurationItemUpdateManyWithoutDeletedByNestedInput
-  createdConfigurationItems?: Prisma.ConfigurationItemUpdateManyWithoutCreatedByNestedInput
-  updatedConfigurationItems?: Prisma.ConfigurationItemUpdateManyWithoutUpdatedByNestedInput
-  deletedServices?: Prisma.ServiceUpdateManyWithoutDeletedByNestedInput
-  deletedLicenseProducts?: Prisma.LicenseProductUpdateManyWithoutDeletedByNestedInput
-  deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
-  deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
-  deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
-}
-
-export type PersonUncheckedUpdateWithoutRoleAssignmentsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
-  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
-  managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
-  stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
-  stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
-  verificationCampaigns?: Prisma.VerificationCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
-  verificationItems?: Prisma.VerificationItemUncheckedUpdateManyWithoutVerifierPersonNestedInput
-  auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
-  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
-  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
-  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
-  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
-  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
-  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
-  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
-  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
-  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
-  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
-  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
-  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
-  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
-  serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
-  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
-  deletedFieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutDeletedByNestedInput
-  archivedFieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutArchivedByNestedInput
-  createdFieldTemplates?: Prisma.FieldTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
-  deletedPersons?: Prisma.PersonUncheckedUpdateManyWithoutDeletedByNestedInput
-  createdPersons?: Prisma.PersonUncheckedUpdateManyWithoutCreatedByNestedInput
-  updatedPersons?: Prisma.PersonUncheckedUpdateManyWithoutUpdatedByNestedInput
-  deletedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedLocations?: Prisma.LocationUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedVendors?: Prisma.VendorUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedLifecycleModels?: Prisma.LifecycleModelUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedLifecycleStates?: Prisma.LifecycleStateUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedAssetCategories?: Prisma.AssetCategoryUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedAssetModels?: Prisma.AssetModelUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedAssets?: Prisma.AssetUncheckedUpdateManyWithoutDeletedByNestedInput
-  createdAssets?: Prisma.AssetUncheckedUpdateManyWithoutCreatedByNestedInput
-  updatedAssets?: Prisma.AssetUncheckedUpdateManyWithoutUpdatedByNestedInput
-  deletedWarranties?: Prisma.WarrantyUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedContractTypes?: Prisma.ContractTypeUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedContracts?: Prisma.ContractUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedCIClasses?: Prisma.CIClassUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedConfigurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutDeletedByNestedInput
-  createdConfigurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutCreatedByNestedInput
-  updatedConfigurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutUpdatedByNestedInput
-  deletedServices?: Prisma.ServiceUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedLicenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
-}
-
 export type PersonCreateWithoutLocationInput = {
   id?: string
   azureAdId?: string | null
@@ -13125,11 +12453,9 @@ export type PersonCreateWithoutLocationInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -13197,7 +12523,6 @@ export type PersonUncheckedCreateWithoutLocationInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -13215,7 +12540,6 @@ export type PersonUncheckedCreateWithoutLocationInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -13301,12 +12625,10 @@ export type PersonCreateWithoutDeletedLocationsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -13373,7 +12695,6 @@ export type PersonUncheckedCreateWithoutDeletedLocationsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -13392,7 +12713,6 @@ export type PersonUncheckedCreateWithoutDeletedLocationsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -13499,12 +12819,10 @@ export type PersonUpdateWithoutDeletedLocationsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -13571,7 +12889,6 @@ export type PersonUncheckedUpdateWithoutDeletedLocationsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -13590,7 +12907,6 @@ export type PersonUncheckedUpdateWithoutDeletedLocationsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -13665,12 +12981,10 @@ export type PersonCreateWithoutDeletedVendorsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -13737,7 +13051,6 @@ export type PersonUncheckedCreateWithoutDeletedVendorsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -13756,7 +13069,6 @@ export type PersonUncheckedCreateWithoutDeletedVendorsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -13847,12 +13159,10 @@ export type PersonUpdateWithoutDeletedVendorsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -13919,7 +13229,6 @@ export type PersonUncheckedUpdateWithoutDeletedVendorsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -13938,7 +13247,6 @@ export type PersonUncheckedUpdateWithoutDeletedVendorsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -14013,12 +13321,10 @@ export type PersonCreateWithoutDeletedLifecycleModelsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -14085,7 +13391,6 @@ export type PersonUncheckedCreateWithoutDeletedLifecycleModelsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -14104,7 +13409,6 @@ export type PersonUncheckedCreateWithoutDeletedLifecycleModelsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -14195,12 +13499,10 @@ export type PersonUpdateWithoutDeletedLifecycleModelsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -14267,7 +13569,6 @@ export type PersonUncheckedUpdateWithoutDeletedLifecycleModelsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -14286,7 +13587,6 @@ export type PersonUncheckedUpdateWithoutDeletedLifecycleModelsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -14361,12 +13661,10 @@ export type PersonCreateWithoutDeletedLifecycleStatesInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -14433,7 +13731,6 @@ export type PersonUncheckedCreateWithoutDeletedLifecycleStatesInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -14452,7 +13749,6 @@ export type PersonUncheckedCreateWithoutDeletedLifecycleStatesInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -14543,12 +13839,10 @@ export type PersonUpdateWithoutDeletedLifecycleStatesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -14615,7 +13909,6 @@ export type PersonUncheckedUpdateWithoutDeletedLifecycleStatesInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -14634,7 +13927,6 @@ export type PersonUncheckedUpdateWithoutDeletedLifecycleStatesInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -14709,12 +14001,10 @@ export type PersonCreateWithoutDeletedFieldDefinitionsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -14781,7 +14071,6 @@ export type PersonUncheckedCreateWithoutDeletedFieldDefinitionsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -14800,7 +14089,6 @@ export type PersonUncheckedCreateWithoutDeletedFieldDefinitionsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -14880,12 +14168,10 @@ export type PersonCreateWithoutArchivedFieldDefinitionsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -14952,7 +14238,6 @@ export type PersonUncheckedCreateWithoutArchivedFieldDefinitionsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -14971,7 +14256,6 @@ export type PersonUncheckedCreateWithoutArchivedFieldDefinitionsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -15062,12 +14346,10 @@ export type PersonUpdateWithoutDeletedFieldDefinitionsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -15134,7 +14416,6 @@ export type PersonUncheckedUpdateWithoutDeletedFieldDefinitionsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -15153,7 +14434,6 @@ export type PersonUncheckedUpdateWithoutDeletedFieldDefinitionsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -15239,12 +14519,10 @@ export type PersonUpdateWithoutArchivedFieldDefinitionsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -15311,7 +14589,6 @@ export type PersonUncheckedUpdateWithoutArchivedFieldDefinitionsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -15330,7 +14607,6 @@ export type PersonUncheckedUpdateWithoutArchivedFieldDefinitionsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -15405,12 +14681,10 @@ export type PersonCreateWithoutCreatedFieldTemplatesInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -15477,7 +14751,6 @@ export type PersonUncheckedCreateWithoutCreatedFieldTemplatesInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -15496,7 +14769,6 @@ export type PersonUncheckedCreateWithoutCreatedFieldTemplatesInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -15587,12 +14859,10 @@ export type PersonUpdateWithoutCreatedFieldTemplatesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -15659,7 +14929,6 @@ export type PersonUncheckedUpdateWithoutCreatedFieldTemplatesInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -15678,7 +14947,6 @@ export type PersonUncheckedUpdateWithoutCreatedFieldTemplatesInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -15753,12 +15021,10 @@ export type PersonCreateWithoutDataOwnershipsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -15825,7 +15091,6 @@ export type PersonUncheckedCreateWithoutDataOwnershipsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -15844,7 +15109,6 @@ export type PersonUncheckedCreateWithoutDataOwnershipsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -15935,12 +15199,10 @@ export type PersonUpdateWithoutDataOwnershipsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -16007,7 +15269,6 @@ export type PersonUncheckedUpdateWithoutDataOwnershipsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -16026,7 +15287,6 @@ export type PersonUncheckedUpdateWithoutDataOwnershipsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -16101,12 +15361,10 @@ export type PersonCreateWithoutVerificationCampaignsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -16173,7 +15431,6 @@ export type PersonUncheckedCreateWithoutVerificationCampaignsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -16192,7 +15449,6 @@ export type PersonUncheckedCreateWithoutVerificationCampaignsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -16283,12 +15539,10 @@ export type PersonUpdateWithoutVerificationCampaignsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -16355,7 +15609,6 @@ export type PersonUncheckedUpdateWithoutVerificationCampaignsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -16374,7 +15627,6 @@ export type PersonUncheckedUpdateWithoutVerificationCampaignsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -16449,12 +15701,10 @@ export type PersonCreateWithoutVerificationItemsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -16521,7 +15771,6 @@ export type PersonUncheckedCreateWithoutVerificationItemsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -16540,7 +15789,6 @@ export type PersonUncheckedCreateWithoutVerificationItemsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -16631,12 +15879,10 @@ export type PersonUpdateWithoutVerificationItemsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -16703,7 +15949,6 @@ export type PersonUncheckedUpdateWithoutVerificationItemsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -16722,7 +15967,6 @@ export type PersonUncheckedUpdateWithoutVerificationItemsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -16797,12 +16041,10 @@ export type PersonCreateWithoutAuditLogsChangedInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -16869,7 +16111,6 @@ export type PersonUncheckedCreateWithoutAuditLogsChangedInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -16888,7 +16129,6 @@ export type PersonUncheckedCreateWithoutAuditLogsChangedInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -16979,12 +16219,10 @@ export type PersonUpdateWithoutAuditLogsChangedInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -17051,7 +16289,6 @@ export type PersonUncheckedUpdateWithoutAuditLogsChangedInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -17070,7 +16307,6 @@ export type PersonUncheckedUpdateWithoutAuditLogsChangedInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -17145,12 +16381,10 @@ export type PersonCreateWithoutIntuneDevicesInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -17217,7 +16451,6 @@ export type PersonUncheckedCreateWithoutIntuneDevicesInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -17236,7 +16469,6 @@ export type PersonUncheckedCreateWithoutIntuneDevicesInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -17327,12 +16559,10 @@ export type PersonUpdateWithoutIntuneDevicesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -17399,7 +16629,6 @@ export type PersonUncheckedUpdateWithoutIntuneDevicesInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -17418,7 +16647,6 @@ export type PersonUncheckedUpdateWithoutIntuneDevicesInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -17493,12 +16721,10 @@ export type PersonCreateWithoutDeletedAssetKitsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -17565,7 +16791,6 @@ export type PersonUncheckedCreateWithoutDeletedAssetKitsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -17584,7 +16809,6 @@ export type PersonUncheckedCreateWithoutDeletedAssetKitsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -17675,12 +16899,10 @@ export type PersonUpdateWithoutDeletedAssetKitsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -17747,7 +16969,6 @@ export type PersonUncheckedUpdateWithoutDeletedAssetKitsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -17766,7 +16987,6 @@ export type PersonUncheckedUpdateWithoutDeletedAssetKitsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -17841,12 +17061,10 @@ export type PersonCreateWithoutKitCheckoutsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -17913,7 +17131,6 @@ export type PersonUncheckedCreateWithoutKitCheckoutsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -17932,7 +17149,6 @@ export type PersonUncheckedCreateWithoutKitCheckoutsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -18023,12 +17239,10 @@ export type PersonUpdateWithoutKitCheckoutsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -18095,7 +17309,6 @@ export type PersonUncheckedUpdateWithoutKitCheckoutsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -18114,7 +17327,6 @@ export type PersonUncheckedUpdateWithoutKitCheckoutsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -18189,12 +17401,10 @@ export type PersonCreateWithoutDeletedLicenseProductsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -18261,7 +17471,6 @@ export type PersonUncheckedCreateWithoutDeletedLicenseProductsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -18280,7 +17489,6 @@ export type PersonUncheckedCreateWithoutDeletedLicenseProductsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -18371,12 +17579,10 @@ export type PersonUpdateWithoutDeletedLicenseProductsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -18443,7 +17649,6 @@ export type PersonUncheckedUpdateWithoutDeletedLicenseProductsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -18462,7 +17667,6 @@ export type PersonUncheckedUpdateWithoutDeletedLicenseProductsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -18537,12 +17741,10 @@ export type PersonCreateWithoutDeletedLicenseEntitlementsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -18609,7 +17811,6 @@ export type PersonUncheckedCreateWithoutDeletedLicenseEntitlementsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -18628,7 +17829,6 @@ export type PersonUncheckedCreateWithoutDeletedLicenseEntitlementsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -18719,12 +17919,10 @@ export type PersonUpdateWithoutDeletedLicenseEntitlementsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -18791,7 +17989,6 @@ export type PersonUncheckedUpdateWithoutDeletedLicenseEntitlementsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -18810,7 +18007,6 @@ export type PersonUncheckedUpdateWithoutDeletedLicenseEntitlementsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -18885,12 +18081,10 @@ export type PersonCreateWithoutAssignedMaintenanceSchedulesInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -18957,7 +18151,6 @@ export type PersonUncheckedCreateWithoutAssignedMaintenanceSchedulesInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -18976,7 +18169,6 @@ export type PersonUncheckedCreateWithoutAssignedMaintenanceSchedulesInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -19056,12 +18248,10 @@ export type PersonCreateWithoutDeletedMaintenanceSchedulesInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -19128,7 +18318,6 @@ export type PersonUncheckedCreateWithoutDeletedMaintenanceSchedulesInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -19147,7 +18336,6 @@ export type PersonUncheckedCreateWithoutDeletedMaintenanceSchedulesInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -19238,12 +18426,10 @@ export type PersonUpdateWithoutAssignedMaintenanceSchedulesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -19310,7 +18496,6 @@ export type PersonUncheckedUpdateWithoutAssignedMaintenanceSchedulesInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -19329,7 +18514,6 @@ export type PersonUncheckedUpdateWithoutAssignedMaintenanceSchedulesInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -19415,12 +18599,10 @@ export type PersonUpdateWithoutDeletedMaintenanceSchedulesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -19487,7 +18669,6 @@ export type PersonUncheckedUpdateWithoutDeletedMaintenanceSchedulesInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -19506,7 +18687,6 @@ export type PersonUncheckedUpdateWithoutDeletedMaintenanceSchedulesInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -19581,12 +18761,10 @@ export type PersonCreateWithoutPerformedMaintenanceRecordsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -19653,7 +18831,6 @@ export type PersonUncheckedCreateWithoutPerformedMaintenanceRecordsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -19672,7 +18849,6 @@ export type PersonUncheckedCreateWithoutPerformedMaintenanceRecordsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -19763,12 +18939,10 @@ export type PersonUpdateWithoutPerformedMaintenanceRecordsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -19835,7 +19009,6 @@ export type PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -19854,7 +19027,6 @@ export type PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -19906,198 +19078,6 @@ export type PersonUncheckedUpdateWithoutPerformedMaintenanceRecordsInput = {
   deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
 }
 
-export type PersonCreateWithoutPrimaryRoleInput = {
-  id?: string
-  azureAdId?: string | null
-  firstName: string
-  lastName: string
-  middleName?: string | null
-  email: string
-  phone?: string | null
-  mobile?: string | null
-  employeeId?: string | null
-  title?: string | null
-  office?: string | null
-  department?: string | null
-  hireDate?: Date | string | null
-  terminationDate?: Date | string | null
-  isActive?: boolean
-  isExcluded?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  user?: Prisma.UserCreateNestedOneWithoutPersonInput
-  orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
-  directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
-  location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
-  managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
-  configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
-  stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
-  stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
-  verificationCampaigns?: Prisma.VerificationCampaignCreateNestedManyWithoutCreatedByInput
-  verificationItems?: Prisma.VerificationItemCreateNestedManyWithoutVerifierPersonInput
-  auditLogsChanged?: Prisma.AuditLogEntryCreateNestedManyWithoutChangedByInput
-  attachments?: Prisma.AttachmentCreateNestedManyWithoutUploadedByInput
-  dataOwnerships?: Prisma.DataOwnershipCreateNestedManyWithoutOwnerPersonInput
-  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutAssignedToInput
-  performedMaintenanceRecords?: Prisma.MaintenanceRecordCreateNestedManyWithoutPerformedByInput
-  initiatedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutInitiatedByInput
-  approvedDisposals?: Prisma.AssetDisposalCreateNestedManyWithoutApprovedByInput
-  disposalApprovals?: Prisma.DisposalApprovalCreateNestedManyWithoutApproverInput
-  uploadedDisposalDocuments?: Prisma.DisposalDocumentCreateNestedManyWithoutUploadedByInput
-  kitCheckouts?: Prisma.AssetKitCheckoutCreateNestedManyWithoutCheckedOutByInput
-  reservationsFor?: Prisma.AssetReservationCreateNestedManyWithoutReservedForPersonInput
-  reservationsCreated?: Prisma.AssetReservationCreateNestedManyWithoutReservedByInput
-  reservationsConfirmed?: Prisma.AssetReservationCreateNestedManyWithoutConfirmedByInput
-  reservationsCancelled?: Prisma.AssetReservationCreateNestedManyWithoutCancelledByInput
-  serviceOwnerships?: Prisma.ServiceOwnershipCreateNestedManyWithoutPersonInput
-  intuneDevices?: Prisma.IntuneDeviceCreateNestedManyWithoutLinkedPersonInput
-  deletedFieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutDeletedByInput
-  archivedFieldDefinitions?: Prisma.FieldDefinitionCreateNestedManyWithoutArchivedByInput
-  createdFieldTemplates?: Prisma.FieldTemplateCreateNestedManyWithoutCreatedByInput
-  deletedBy?: Prisma.PersonCreateNestedOneWithoutDeletedPersonsInput
-  deletedPersons?: Prisma.PersonCreateNestedManyWithoutDeletedByInput
-  createdBy?: Prisma.PersonCreateNestedOneWithoutCreatedPersonsInput
-  createdPersons?: Prisma.PersonCreateNestedManyWithoutCreatedByInput
-  updatedBy?: Prisma.PersonCreateNestedOneWithoutUpdatedPersonsInput
-  updatedPersons?: Prisma.PersonCreateNestedManyWithoutUpdatedByInput
-  deletedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutDeletedByInput
-  deletedLocations?: Prisma.LocationCreateNestedManyWithoutDeletedByInput
-  deletedVendors?: Prisma.VendorCreateNestedManyWithoutDeletedByInput
-  deletedLifecycleModels?: Prisma.LifecycleModelCreateNestedManyWithoutDeletedByInput
-  deletedLifecycleStates?: Prisma.LifecycleStateCreateNestedManyWithoutDeletedByInput
-  deletedAssetCategories?: Prisma.AssetCategoryCreateNestedManyWithoutDeletedByInput
-  deletedAssetModels?: Prisma.AssetModelCreateNestedManyWithoutDeletedByInput
-  deletedAssets?: Prisma.AssetCreateNestedManyWithoutDeletedByInput
-  createdAssets?: Prisma.AssetCreateNestedManyWithoutCreatedByInput
-  updatedAssets?: Prisma.AssetCreateNestedManyWithoutUpdatedByInput
-  deletedWarranties?: Prisma.WarrantyCreateNestedManyWithoutDeletedByInput
-  deletedMaintenanceSchedules?: Prisma.MaintenanceScheduleCreateNestedManyWithoutDeletedByInput
-  deletedContractTypes?: Prisma.ContractTypeCreateNestedManyWithoutDeletedByInput
-  deletedContracts?: Prisma.ContractCreateNestedManyWithoutDeletedByInput
-  deletedCIClasses?: Prisma.CIClassCreateNestedManyWithoutDeletedByInput
-  deletedConfigurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutDeletedByInput
-  createdConfigurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutCreatedByInput
-  updatedConfigurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutUpdatedByInput
-  deletedServices?: Prisma.ServiceCreateNestedManyWithoutDeletedByInput
-  deletedLicenseProducts?: Prisma.LicenseProductCreateNestedManyWithoutDeletedByInput
-  deletedLicenseEntitlements?: Prisma.LicenseEntitlementCreateNestedManyWithoutDeletedByInput
-  deletedAssetKits?: Prisma.AssetKitCreateNestedManyWithoutDeletedByInput
-  deletedAssetReservations?: Prisma.AssetReservationCreateNestedManyWithoutDeletedByInput
-}
-
-export type PersonUncheckedCreateWithoutPrimaryRoleInput = {
-  id?: string
-  azureAdId?: string | null
-  userId?: string | null
-  firstName: string
-  lastName: string
-  middleName?: string | null
-  email: string
-  phone?: string | null
-  mobile?: string | null
-  employeeId?: string | null
-  orgUnitId: string
-  managerId?: string | null
-  title?: string | null
-  office?: string | null
-  locationId?: string | null
-  department?: string | null
-  hireDate?: Date | string | null
-  terminationDate?: Date | string | null
-  isActive?: boolean
-  isExcluded?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  deletedById?: string | null
-  createdById?: string | null
-  updatedById?: string | null
-  directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
-  managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
-  stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
-  stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
-  verificationCampaigns?: Prisma.VerificationCampaignUncheckedCreateNestedManyWithoutCreatedByInput
-  verificationItems?: Prisma.VerificationItemUncheckedCreateNestedManyWithoutVerifierPersonInput
-  auditLogsChanged?: Prisma.AuditLogEntryUncheckedCreateNestedManyWithoutChangedByInput
-  attachments?: Prisma.AttachmentUncheckedCreateNestedManyWithoutUploadedByInput
-  dataOwnerships?: Prisma.DataOwnershipUncheckedCreateNestedManyWithoutOwnerPersonInput
-  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutAssignedToInput
-  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedCreateNestedManyWithoutPerformedByInput
-  initiatedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutInitiatedByInput
-  approvedDisposals?: Prisma.AssetDisposalUncheckedCreateNestedManyWithoutApprovedByInput
-  disposalApprovals?: Prisma.DisposalApprovalUncheckedCreateNestedManyWithoutApproverInput
-  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedCreateNestedManyWithoutUploadedByInput
-  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedCreateNestedManyWithoutCheckedOutByInput
-  reservationsFor?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedForPersonInput
-  reservationsCreated?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutReservedByInput
-  reservationsConfirmed?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutConfirmedByInput
-  reservationsCancelled?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutCancelledByInput
-  serviceOwnerships?: Prisma.ServiceOwnershipUncheckedCreateNestedManyWithoutPersonInput
-  intuneDevices?: Prisma.IntuneDeviceUncheckedCreateNestedManyWithoutLinkedPersonInput
-  deletedFieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutDeletedByInput
-  archivedFieldDefinitions?: Prisma.FieldDefinitionUncheckedCreateNestedManyWithoutArchivedByInput
-  createdFieldTemplates?: Prisma.FieldTemplateUncheckedCreateNestedManyWithoutCreatedByInput
-  deletedPersons?: Prisma.PersonUncheckedCreateNestedManyWithoutDeletedByInput
-  createdPersons?: Prisma.PersonUncheckedCreateNestedManyWithoutCreatedByInput
-  updatedPersons?: Prisma.PersonUncheckedCreateNestedManyWithoutUpdatedByInput
-  deletedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedLocations?: Prisma.LocationUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedVendors?: Prisma.VendorUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedLifecycleModels?: Prisma.LifecycleModelUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedLifecycleStates?: Prisma.LifecycleStateUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedAssetCategories?: Prisma.AssetCategoryUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedAssetModels?: Prisma.AssetModelUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedAssets?: Prisma.AssetUncheckedCreateNestedManyWithoutDeletedByInput
-  createdAssets?: Prisma.AssetUncheckedCreateNestedManyWithoutCreatedByInput
-  updatedAssets?: Prisma.AssetUncheckedCreateNestedManyWithoutUpdatedByInput
-  deletedWarranties?: Prisma.WarrantyUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedContractTypes?: Prisma.ContractTypeUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedContracts?: Prisma.ContractUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedCIClasses?: Prisma.CIClassUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedConfigurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutDeletedByInput
-  createdConfigurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutCreatedByInput
-  updatedConfigurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutUpdatedByInput
-  deletedServices?: Prisma.ServiceUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedLicenseProducts?: Prisma.LicenseProductUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedAssetKits?: Prisma.AssetKitUncheckedCreateNestedManyWithoutDeletedByInput
-  deletedAssetReservations?: Prisma.AssetReservationUncheckedCreateNestedManyWithoutDeletedByInput
-}
-
-export type PersonCreateOrConnectWithoutPrimaryRoleInput = {
-  where: Prisma.PersonWhereUniqueInput
-  create: Prisma.XOR<Prisma.PersonCreateWithoutPrimaryRoleInput, Prisma.PersonUncheckedCreateWithoutPrimaryRoleInput>
-}
-
-export type PersonCreateManyPrimaryRoleInputEnvelope = {
-  data: Prisma.PersonCreateManyPrimaryRoleInput | Prisma.PersonCreateManyPrimaryRoleInput[]
-  skipDuplicates?: boolean
-}
-
-export type PersonUpsertWithWhereUniqueWithoutPrimaryRoleInput = {
-  where: Prisma.PersonWhereUniqueInput
-  update: Prisma.XOR<Prisma.PersonUpdateWithoutPrimaryRoleInput, Prisma.PersonUncheckedUpdateWithoutPrimaryRoleInput>
-  create: Prisma.XOR<Prisma.PersonCreateWithoutPrimaryRoleInput, Prisma.PersonUncheckedCreateWithoutPrimaryRoleInput>
-}
-
-export type PersonUpdateWithWhereUniqueWithoutPrimaryRoleInput = {
-  where: Prisma.PersonWhereUniqueInput
-  data: Prisma.XOR<Prisma.PersonUpdateWithoutPrimaryRoleInput, Prisma.PersonUncheckedUpdateWithoutPrimaryRoleInput>
-}
-
-export type PersonUpdateManyWithWhereWithoutPrimaryRoleInput = {
-  where: Prisma.PersonScalarWhereInput
-  data: Prisma.XOR<Prisma.PersonUpdateManyMutationInput, Prisma.PersonUncheckedUpdateManyWithoutPrimaryRoleInput>
-}
-
 export type PersonCreateWithoutDeletedAssetReservationsInput = {
   id?: string
   azureAdId?: string | null
@@ -20121,12 +19101,10 @@ export type PersonCreateWithoutDeletedAssetReservationsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -20193,7 +19171,6 @@ export type PersonUncheckedCreateWithoutDeletedAssetReservationsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -20212,7 +19189,6 @@ export type PersonUncheckedCreateWithoutDeletedAssetReservationsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -20292,12 +19268,10 @@ export type PersonCreateWithoutReservationsForInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -20364,7 +19338,6 @@ export type PersonUncheckedCreateWithoutReservationsForInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -20383,7 +19356,6 @@ export type PersonUncheckedCreateWithoutReservationsForInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -20463,12 +19435,10 @@ export type PersonCreateWithoutReservationsCreatedInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -20535,7 +19505,6 @@ export type PersonUncheckedCreateWithoutReservationsCreatedInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -20554,7 +19523,6 @@ export type PersonUncheckedCreateWithoutReservationsCreatedInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -20634,12 +19602,10 @@ export type PersonCreateWithoutReservationsConfirmedInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -20706,7 +19672,6 @@ export type PersonUncheckedCreateWithoutReservationsConfirmedInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -20725,7 +19690,6 @@ export type PersonUncheckedCreateWithoutReservationsConfirmedInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -20805,12 +19769,10 @@ export type PersonCreateWithoutReservationsCancelledInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -20877,7 +19839,6 @@ export type PersonUncheckedCreateWithoutReservationsCancelledInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -20896,7 +19857,6 @@ export type PersonUncheckedCreateWithoutReservationsCancelledInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -20987,12 +19947,10 @@ export type PersonUpdateWithoutDeletedAssetReservationsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -21059,7 +20017,6 @@ export type PersonUncheckedUpdateWithoutDeletedAssetReservationsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -21078,7 +20035,6 @@ export type PersonUncheckedUpdateWithoutDeletedAssetReservationsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -21164,12 +20120,10 @@ export type PersonUpdateWithoutReservationsForInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -21236,7 +20190,6 @@ export type PersonUncheckedUpdateWithoutReservationsForInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -21255,7 +20208,6 @@ export type PersonUncheckedUpdateWithoutReservationsForInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -21341,12 +20293,10 @@ export type PersonUpdateWithoutReservationsCreatedInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -21413,7 +20363,6 @@ export type PersonUncheckedUpdateWithoutReservationsCreatedInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -21432,7 +20381,6 @@ export type PersonUncheckedUpdateWithoutReservationsCreatedInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -21518,12 +20466,10 @@ export type PersonUpdateWithoutReservationsConfirmedInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -21590,7 +20536,6 @@ export type PersonUncheckedUpdateWithoutReservationsConfirmedInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -21609,7 +20554,6 @@ export type PersonUncheckedUpdateWithoutReservationsConfirmedInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -21695,12 +20639,10 @@ export type PersonUpdateWithoutReservationsCancelledInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -21767,7 +20709,6 @@ export type PersonUncheckedUpdateWithoutReservationsCancelledInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -21786,7 +20727,6 @@ export type PersonUncheckedUpdateWithoutReservationsCancelledInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -21861,12 +20801,10 @@ export type PersonCreateWithoutDeletedServicesInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -21933,7 +20871,6 @@ export type PersonUncheckedCreateWithoutDeletedServicesInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -21952,7 +20889,6 @@ export type PersonUncheckedCreateWithoutDeletedServicesInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -22043,12 +20979,10 @@ export type PersonUpdateWithoutDeletedServicesInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -22115,7 +21049,6 @@ export type PersonUncheckedUpdateWithoutDeletedServicesInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -22134,7 +21067,6 @@ export type PersonUncheckedUpdateWithoutDeletedServicesInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -22209,12 +21141,10 @@ export type PersonCreateWithoutServiceOwnershipsInput = {
   deletedAt?: Date | string | null
   user?: Prisma.UserCreateNestedOneWithoutPersonInput
   orgUnit: Prisma.OrganizationUnitCreateNestedOneWithoutPeopleInput
-  primaryRole: Prisma.RoleCreateNestedOneWithoutPersonsPrimaryRoleInput
   manager?: Prisma.PersonCreateNestedOneWithoutDirectReportsInput
   directReports?: Prisma.PersonCreateNestedManyWithoutManagerInput
   location?: Prisma.LocationCreateNestedOneWithoutPersonsInput
   managedOrgUnits?: Prisma.OrganizationUnitCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementCreateNestedManyWithoutVoidedByInput
@@ -22281,7 +21211,6 @@ export type PersonUncheckedCreateWithoutServiceOwnershipsInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -22300,7 +21229,6 @@ export type PersonUncheckedCreateWithoutServiceOwnershipsInput = {
   updatedById?: string | null
   directReports?: Prisma.PersonUncheckedCreateNestedManyWithoutManagerInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedCreateNestedManyWithoutManagerInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedCreateNestedManyWithoutPersonInput
   configurationItems?: Prisma.ConfigurationItemUncheckedCreateNestedManyWithoutPrimaryOwnerPersonInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedCreateNestedManyWithoutPerformedByInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedCreateNestedManyWithoutVoidedByInput
@@ -22391,12 +21319,10 @@ export type PersonUpdateWithoutServiceOwnershipsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -22463,7 +21389,6 @@ export type PersonUncheckedUpdateWithoutServiceOwnershipsInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -22482,7 +21407,6 @@ export type PersonUncheckedUpdateWithoutServiceOwnershipsInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -22545,7 +21469,6 @@ export type PersonCreateManyOrgUnitInput = {
   phone?: string | null
   mobile?: string | null
   employeeId?: string | null
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -22586,12 +21509,10 @@ export type PersonUpdateWithoutOrgUnitInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -22658,7 +21579,6 @@ export type PersonUncheckedUpdateWithoutOrgUnitInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -22677,7 +21597,6 @@ export type PersonUncheckedUpdateWithoutOrgUnitInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -22741,7 +21660,6 @@ export type PersonUncheckedUpdateManyWithoutOrgUnitInput = {
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -22772,7 +21690,6 @@ export type PersonCreateManyManagerInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   title?: string | null
   office?: string | null
   locationId?: string | null
@@ -22802,7 +21719,6 @@ export type PersonCreateManyDeletedByInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -22832,7 +21748,6 @@ export type PersonCreateManyCreatedByInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -22862,7 +21777,6 @@ export type PersonCreateManyUpdatedByInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -22903,11 +21817,9 @@ export type PersonUpdateWithoutManagerInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -22975,7 +21887,6 @@ export type PersonUncheckedUpdateWithoutManagerInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -22993,7 +21904,6 @@ export type PersonUncheckedUpdateWithoutManagerInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -23058,7 +21968,6 @@ export type PersonUncheckedUpdateManyWithoutManagerInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -23099,12 +22008,10 @@ export type PersonUpdateWithoutDeletedByInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -23171,7 +22078,6 @@ export type PersonUncheckedUpdateWithoutDeletedByInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -23189,7 +22095,6 @@ export type PersonUncheckedUpdateWithoutDeletedByInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -23254,7 +22159,6 @@ export type PersonUncheckedUpdateManyWithoutDeletedByInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -23295,12 +22199,10 @@ export type PersonUpdateWithoutCreatedByInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -23367,7 +22269,6 @@ export type PersonUncheckedUpdateWithoutCreatedByInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -23385,7 +22286,6 @@ export type PersonUncheckedUpdateWithoutCreatedByInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -23450,7 +22350,6 @@ export type PersonUncheckedUpdateManyWithoutCreatedByInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -23491,12 +22390,10 @@ export type PersonUpdateWithoutUpdatedByInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -23563,7 +22460,6 @@ export type PersonUncheckedUpdateWithoutUpdatedByInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -23581,7 +22477,6 @@ export type PersonUncheckedUpdateWithoutUpdatedByInput = {
   createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -23646,7 +22541,6 @@ export type PersonUncheckedUpdateManyWithoutUpdatedByInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -23676,7 +22570,6 @@ export type PersonCreateManyLocationInput = {
   mobile?: string | null
   employeeId?: string | null
   orgUnitId: string
-  primaryRoleId: string
   managerId?: string | null
   title?: string | null
   office?: string | null
@@ -23717,11 +22610,9 @@ export type PersonUpdateWithoutLocationInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneWithoutPersonNestedInput
   orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  primaryRole?: Prisma.RoleUpdateOneRequiredWithoutPersonsPrimaryRoleNestedInput
   manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
   directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
@@ -23789,7 +22680,6 @@ export type PersonUncheckedUpdateWithoutLocationInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -23807,7 +22697,6 @@ export type PersonUncheckedUpdateWithoutLocationInput = {
   updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
   managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
   configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
   stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
   stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
@@ -23872,236 +22761,9 @@ export type PersonUncheckedUpdateManyWithoutLocationInput = {
   mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  primaryRoleId?: Prisma.StringFieldUpdateOperationsInput | string
   managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-}
-
-export type PersonCreateManyPrimaryRoleInput = {
-  id?: string
-  azureAdId?: string | null
-  userId?: string | null
-  firstName: string
-  lastName: string
-  middleName?: string | null
-  email: string
-  phone?: string | null
-  mobile?: string | null
-  employeeId?: string | null
-  orgUnitId: string
-  managerId?: string | null
-  title?: string | null
-  office?: string | null
-  locationId?: string | null
-  department?: string | null
-  hireDate?: Date | string | null
-  terminationDate?: Date | string | null
-  isActive?: boolean
-  isExcluded?: boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  deletedById?: string | null
-  createdById?: string | null
-  updatedById?: string | null
-}
-
-export type PersonUpdateWithoutPrimaryRoleInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  user?: Prisma.UserUpdateOneWithoutPersonNestedInput
-  orgUnit?: Prisma.OrganizationUnitUpdateOneRequiredWithoutPeopleNestedInput
-  manager?: Prisma.PersonUpdateOneWithoutDirectReportsNestedInput
-  directReports?: Prisma.PersonUpdateManyWithoutManagerNestedInput
-  location?: Prisma.LocationUpdateOneWithoutPersonsNestedInput
-  managedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUpdateManyWithoutPersonNestedInput
-  configurationItems?: Prisma.ConfigurationItemUpdateManyWithoutPrimaryOwnerPersonNestedInput
-  stockMovementsPerformed?: Prisma.StockMovementUpdateManyWithoutPerformedByNestedInput
-  stockMovementsVoided?: Prisma.StockMovementUpdateManyWithoutVoidedByNestedInput
-  verificationCampaigns?: Prisma.VerificationCampaignUpdateManyWithoutCreatedByNestedInput
-  verificationItems?: Prisma.VerificationItemUpdateManyWithoutVerifierPersonNestedInput
-  auditLogsChanged?: Prisma.AuditLogEntryUpdateManyWithoutChangedByNestedInput
-  attachments?: Prisma.AttachmentUpdateManyWithoutUploadedByNestedInput
-  dataOwnerships?: Prisma.DataOwnershipUpdateManyWithoutOwnerPersonNestedInput
-  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutAssignedToNestedInput
-  performedMaintenanceRecords?: Prisma.MaintenanceRecordUpdateManyWithoutPerformedByNestedInput
-  initiatedDisposals?: Prisma.AssetDisposalUpdateManyWithoutInitiatedByNestedInput
-  approvedDisposals?: Prisma.AssetDisposalUpdateManyWithoutApprovedByNestedInput
-  disposalApprovals?: Prisma.DisposalApprovalUpdateManyWithoutApproverNestedInput
-  uploadedDisposalDocuments?: Prisma.DisposalDocumentUpdateManyWithoutUploadedByNestedInput
-  kitCheckouts?: Prisma.AssetKitCheckoutUpdateManyWithoutCheckedOutByNestedInput
-  reservationsFor?: Prisma.AssetReservationUpdateManyWithoutReservedForPersonNestedInput
-  reservationsCreated?: Prisma.AssetReservationUpdateManyWithoutReservedByNestedInput
-  reservationsConfirmed?: Prisma.AssetReservationUpdateManyWithoutConfirmedByNestedInput
-  reservationsCancelled?: Prisma.AssetReservationUpdateManyWithoutCancelledByNestedInput
-  serviceOwnerships?: Prisma.ServiceOwnershipUpdateManyWithoutPersonNestedInput
-  intuneDevices?: Prisma.IntuneDeviceUpdateManyWithoutLinkedPersonNestedInput
-  deletedFieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutDeletedByNestedInput
-  archivedFieldDefinitions?: Prisma.FieldDefinitionUpdateManyWithoutArchivedByNestedInput
-  createdFieldTemplates?: Prisma.FieldTemplateUpdateManyWithoutCreatedByNestedInput
-  deletedBy?: Prisma.PersonUpdateOneWithoutDeletedPersonsNestedInput
-  deletedPersons?: Prisma.PersonUpdateManyWithoutDeletedByNestedInput
-  createdBy?: Prisma.PersonUpdateOneWithoutCreatedPersonsNestedInput
-  createdPersons?: Prisma.PersonUpdateManyWithoutCreatedByNestedInput
-  updatedBy?: Prisma.PersonUpdateOneWithoutUpdatedPersonsNestedInput
-  updatedPersons?: Prisma.PersonUpdateManyWithoutUpdatedByNestedInput
-  deletedOrgUnits?: Prisma.OrganizationUnitUpdateManyWithoutDeletedByNestedInput
-  deletedLocations?: Prisma.LocationUpdateManyWithoutDeletedByNestedInput
-  deletedVendors?: Prisma.VendorUpdateManyWithoutDeletedByNestedInput
-  deletedLifecycleModels?: Prisma.LifecycleModelUpdateManyWithoutDeletedByNestedInput
-  deletedLifecycleStates?: Prisma.LifecycleStateUpdateManyWithoutDeletedByNestedInput
-  deletedAssetCategories?: Prisma.AssetCategoryUpdateManyWithoutDeletedByNestedInput
-  deletedAssetModels?: Prisma.AssetModelUpdateManyWithoutDeletedByNestedInput
-  deletedAssets?: Prisma.AssetUpdateManyWithoutDeletedByNestedInput
-  createdAssets?: Prisma.AssetUpdateManyWithoutCreatedByNestedInput
-  updatedAssets?: Prisma.AssetUpdateManyWithoutUpdatedByNestedInput
-  deletedWarranties?: Prisma.WarrantyUpdateManyWithoutDeletedByNestedInput
-  deletedMaintenanceSchedules?: Prisma.MaintenanceScheduleUpdateManyWithoutDeletedByNestedInput
-  deletedContractTypes?: Prisma.ContractTypeUpdateManyWithoutDeletedByNestedInput
-  deletedContracts?: Prisma.ContractUpdateManyWithoutDeletedByNestedInput
-  deletedCIClasses?: Prisma.CIClassUpdateManyWithoutDeletedByNestedInput
-  deletedConfigurationItems?: Prisma.ConfigurationItemUpdateManyWithoutDeletedByNestedInput
-  createdConfigurationItems?: Prisma.ConfigurationItemUpdateManyWithoutCreatedByNestedInput
-  updatedConfigurationItems?: Prisma.ConfigurationItemUpdateManyWithoutUpdatedByNestedInput
-  deletedServices?: Prisma.ServiceUpdateManyWithoutDeletedByNestedInput
-  deletedLicenseProducts?: Prisma.LicenseProductUpdateManyWithoutDeletedByNestedInput
-  deletedLicenseEntitlements?: Prisma.LicenseEntitlementUpdateManyWithoutDeletedByNestedInput
-  deletedAssetKits?: Prisma.AssetKitUpdateManyWithoutDeletedByNestedInput
-  deletedAssetReservations?: Prisma.AssetReservationUpdateManyWithoutDeletedByNestedInput
-}
-
-export type PersonUncheckedUpdateWithoutPrimaryRoleInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isExcluded?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  deletedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  updatedById?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  directReports?: Prisma.PersonUncheckedUpdateManyWithoutManagerNestedInput
-  managedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutManagerNestedInput
-  roleAssignments?: Prisma.PersonRoleAssignmentUncheckedUpdateManyWithoutPersonNestedInput
-  configurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutPrimaryOwnerPersonNestedInput
-  stockMovementsPerformed?: Prisma.StockMovementUncheckedUpdateManyWithoutPerformedByNestedInput
-  stockMovementsVoided?: Prisma.StockMovementUncheckedUpdateManyWithoutVoidedByNestedInput
-  verificationCampaigns?: Prisma.VerificationCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
-  verificationItems?: Prisma.VerificationItemUncheckedUpdateManyWithoutVerifierPersonNestedInput
-  auditLogsChanged?: Prisma.AuditLogEntryUncheckedUpdateManyWithoutChangedByNestedInput
-  attachments?: Prisma.AttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
-  dataOwnerships?: Prisma.DataOwnershipUncheckedUpdateManyWithoutOwnerPersonNestedInput
-  assignedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutAssignedToNestedInput
-  performedMaintenanceRecords?: Prisma.MaintenanceRecordUncheckedUpdateManyWithoutPerformedByNestedInput
-  initiatedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutInitiatedByNestedInput
-  approvedDisposals?: Prisma.AssetDisposalUncheckedUpdateManyWithoutApprovedByNestedInput
-  disposalApprovals?: Prisma.DisposalApprovalUncheckedUpdateManyWithoutApproverNestedInput
-  uploadedDisposalDocuments?: Prisma.DisposalDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
-  kitCheckouts?: Prisma.AssetKitCheckoutUncheckedUpdateManyWithoutCheckedOutByNestedInput
-  reservationsFor?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedForPersonNestedInput
-  reservationsCreated?: Prisma.AssetReservationUncheckedUpdateManyWithoutReservedByNestedInput
-  reservationsConfirmed?: Prisma.AssetReservationUncheckedUpdateManyWithoutConfirmedByNestedInput
-  reservationsCancelled?: Prisma.AssetReservationUncheckedUpdateManyWithoutCancelledByNestedInput
-  serviceOwnerships?: Prisma.ServiceOwnershipUncheckedUpdateManyWithoutPersonNestedInput
-  intuneDevices?: Prisma.IntuneDeviceUncheckedUpdateManyWithoutLinkedPersonNestedInput
-  deletedFieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutDeletedByNestedInput
-  archivedFieldDefinitions?: Prisma.FieldDefinitionUncheckedUpdateManyWithoutArchivedByNestedInput
-  createdFieldTemplates?: Prisma.FieldTemplateUncheckedUpdateManyWithoutCreatedByNestedInput
-  deletedPersons?: Prisma.PersonUncheckedUpdateManyWithoutDeletedByNestedInput
-  createdPersons?: Prisma.PersonUncheckedUpdateManyWithoutCreatedByNestedInput
-  updatedPersons?: Prisma.PersonUncheckedUpdateManyWithoutUpdatedByNestedInput
-  deletedOrgUnits?: Prisma.OrganizationUnitUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedLocations?: Prisma.LocationUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedVendors?: Prisma.VendorUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedLifecycleModels?: Prisma.LifecycleModelUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedLifecycleStates?: Prisma.LifecycleStateUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedAssetCategories?: Prisma.AssetCategoryUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedAssetModels?: Prisma.AssetModelUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedAssets?: Prisma.AssetUncheckedUpdateManyWithoutDeletedByNestedInput
-  createdAssets?: Prisma.AssetUncheckedUpdateManyWithoutCreatedByNestedInput
-  updatedAssets?: Prisma.AssetUncheckedUpdateManyWithoutUpdatedByNestedInput
-  deletedWarranties?: Prisma.WarrantyUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedMaintenanceSchedules?: Prisma.MaintenanceScheduleUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedContractTypes?: Prisma.ContractTypeUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedContracts?: Prisma.ContractUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedCIClasses?: Prisma.CIClassUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedConfigurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutDeletedByNestedInput
-  createdConfigurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutCreatedByNestedInput
-  updatedConfigurationItems?: Prisma.ConfigurationItemUncheckedUpdateManyWithoutUpdatedByNestedInput
-  deletedServices?: Prisma.ServiceUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedLicenseProducts?: Prisma.LicenseProductUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedLicenseEntitlements?: Prisma.LicenseEntitlementUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedAssetKits?: Prisma.AssetKitUncheckedUpdateManyWithoutDeletedByNestedInput
-  deletedAssetReservations?: Prisma.AssetReservationUncheckedUpdateManyWithoutDeletedByNestedInput
-}
-
-export type PersonUncheckedUpdateManyWithoutPrimaryRoleInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  azureAdId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  firstName?: Prisma.StringFieldUpdateOperationsInput | string
-  lastName?: Prisma.StringFieldUpdateOperationsInput | string
-  middleName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.StringFieldUpdateOperationsInput | string
-  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  mobile?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  employeeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  orgUnitId?: Prisma.StringFieldUpdateOperationsInput | string
-  managerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  office?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  locationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   department?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hireDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   terminationDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -24124,7 +22786,6 @@ export type PersonUncheckedUpdateManyWithoutPrimaryRoleInput = {
 export type PersonCountOutputType = {
   directReports: number
   managedOrgUnits: number
-  roleAssignments: number
   configurationItems: number
   stockMovementsPerformed: number
   stockMovementsVoided: number
@@ -24180,7 +22841,6 @@ export type PersonCountOutputType = {
 export type PersonCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   directReports?: boolean | PersonCountOutputTypeCountDirectReportsArgs
   managedOrgUnits?: boolean | PersonCountOutputTypeCountManagedOrgUnitsArgs
-  roleAssignments?: boolean | PersonCountOutputTypeCountRoleAssignmentsArgs
   configurationItems?: boolean | PersonCountOutputTypeCountConfigurationItemsArgs
   stockMovementsPerformed?: boolean | PersonCountOutputTypeCountStockMovementsPerformedArgs
   stockMovementsVoided?: boolean | PersonCountOutputTypeCountStockMovementsVoidedArgs
@@ -24255,13 +22915,6 @@ export type PersonCountOutputTypeCountDirectReportsArgs<ExtArgs extends runtime.
  */
 export type PersonCountOutputTypeCountManagedOrgUnitsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.OrganizationUnitWhereInput
-}
-
-/**
- * PersonCountOutputType without action
- */
-export type PersonCountOutputTypeCountRoleAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.PersonRoleAssignmentWhereInput
 }
 
 /**
@@ -24627,7 +23280,6 @@ export type PersonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   mobile?: boolean
   employeeId?: boolean
   orgUnitId?: boolean
-  primaryRoleId?: boolean
   managerId?: boolean
   title?: boolean
   office?: boolean
@@ -24646,12 +23298,10 @@ export type PersonSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   updatedById?: boolean
   user?: boolean | Prisma.Person$userArgs<ExtArgs>
   orgUnit?: boolean | Prisma.OrganizationUnitDefaultArgs<ExtArgs>
-  primaryRole?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   manager?: boolean | Prisma.Person$managerArgs<ExtArgs>
   directReports?: boolean | Prisma.Person$directReportsArgs<ExtArgs>
   location?: boolean | Prisma.Person$locationArgs<ExtArgs>
   managedOrgUnits?: boolean | Prisma.Person$managedOrgUnitsArgs<ExtArgs>
-  roleAssignments?: boolean | Prisma.Person$roleAssignmentsArgs<ExtArgs>
   configurationItems?: boolean | Prisma.Person$configurationItemsArgs<ExtArgs>
   stockMovementsPerformed?: boolean | Prisma.Person$stockMovementsPerformedArgs<ExtArgs>
   stockMovementsVoided?: boolean | Prisma.Person$stockMovementsVoidedArgs<ExtArgs>
@@ -24720,7 +23370,6 @@ export type PersonSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   mobile?: boolean
   employeeId?: boolean
   orgUnitId?: boolean
-  primaryRoleId?: boolean
   managerId?: boolean
   title?: boolean
   office?: boolean
@@ -24739,7 +23388,6 @@ export type PersonSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   updatedById?: boolean
   user?: boolean | Prisma.Person$userArgs<ExtArgs>
   orgUnit?: boolean | Prisma.OrganizationUnitDefaultArgs<ExtArgs>
-  primaryRole?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   manager?: boolean | Prisma.Person$managerArgs<ExtArgs>
   location?: boolean | Prisma.Person$locationArgs<ExtArgs>
   deletedBy?: boolean | Prisma.Person$deletedByArgs<ExtArgs>
@@ -24759,7 +23407,6 @@ export type PersonSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   mobile?: boolean
   employeeId?: boolean
   orgUnitId?: boolean
-  primaryRoleId?: boolean
   managerId?: boolean
   title?: boolean
   office?: boolean
@@ -24778,7 +23425,6 @@ export type PersonSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   updatedById?: boolean
   user?: boolean | Prisma.Person$userArgs<ExtArgs>
   orgUnit?: boolean | Prisma.OrganizationUnitDefaultArgs<ExtArgs>
-  primaryRole?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   manager?: boolean | Prisma.Person$managerArgs<ExtArgs>
   location?: boolean | Prisma.Person$locationArgs<ExtArgs>
   deletedBy?: boolean | Prisma.Person$deletedByArgs<ExtArgs>
@@ -24798,7 +23444,6 @@ export type PersonSelectScalar = {
   mobile?: boolean
   employeeId?: boolean
   orgUnitId?: boolean
-  primaryRoleId?: boolean
   managerId?: boolean
   title?: boolean
   office?: boolean
@@ -24817,16 +23462,14 @@ export type PersonSelectScalar = {
   updatedById?: boolean
 }
 
-export type PersonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "azureAdId" | "userId" | "firstName" | "lastName" | "middleName" | "email" | "phone" | "mobile" | "employeeId" | "orgUnitId" | "primaryRoleId" | "managerId" | "title" | "office" | "locationId" | "department" | "hireDate" | "terminationDate" | "isActive" | "isExcluded" | "metadata" | "createdAt" | "updatedAt" | "deletedAt" | "deletedById" | "createdById" | "updatedById", ExtArgs["result"]["person"]>
+export type PersonOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "azureAdId" | "userId" | "firstName" | "lastName" | "middleName" | "email" | "phone" | "mobile" | "employeeId" | "orgUnitId" | "managerId" | "title" | "office" | "locationId" | "department" | "hireDate" | "terminationDate" | "isActive" | "isExcluded" | "metadata" | "createdAt" | "updatedAt" | "deletedAt" | "deletedById" | "createdById" | "updatedById", ExtArgs["result"]["person"]>
 export type PersonInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Person$userArgs<ExtArgs>
   orgUnit?: boolean | Prisma.OrganizationUnitDefaultArgs<ExtArgs>
-  primaryRole?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   manager?: boolean | Prisma.Person$managerArgs<ExtArgs>
   directReports?: boolean | Prisma.Person$directReportsArgs<ExtArgs>
   location?: boolean | Prisma.Person$locationArgs<ExtArgs>
   managedOrgUnits?: boolean | Prisma.Person$managedOrgUnitsArgs<ExtArgs>
-  roleAssignments?: boolean | Prisma.Person$roleAssignmentsArgs<ExtArgs>
   configurationItems?: boolean | Prisma.Person$configurationItemsArgs<ExtArgs>
   stockMovementsPerformed?: boolean | Prisma.Person$stockMovementsPerformedArgs<ExtArgs>
   stockMovementsVoided?: boolean | Prisma.Person$stockMovementsVoidedArgs<ExtArgs>
@@ -24885,7 +23528,6 @@ export type PersonInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type PersonIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Person$userArgs<ExtArgs>
   orgUnit?: boolean | Prisma.OrganizationUnitDefaultArgs<ExtArgs>
-  primaryRole?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   manager?: boolean | Prisma.Person$managerArgs<ExtArgs>
   location?: boolean | Prisma.Person$locationArgs<ExtArgs>
   deletedBy?: boolean | Prisma.Person$deletedByArgs<ExtArgs>
@@ -24895,7 +23537,6 @@ export type PersonIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type PersonIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Person$userArgs<ExtArgs>
   orgUnit?: boolean | Prisma.OrganizationUnitDefaultArgs<ExtArgs>
-  primaryRole?: boolean | Prisma.RoleDefaultArgs<ExtArgs>
   manager?: boolean | Prisma.Person$managerArgs<ExtArgs>
   location?: boolean | Prisma.Person$locationArgs<ExtArgs>
   deletedBy?: boolean | Prisma.Person$deletedByArgs<ExtArgs>
@@ -24908,12 +23549,10 @@ export type $PersonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   objects: {
     user: Prisma.$UserPayload<ExtArgs> | null
     orgUnit: Prisma.$OrganizationUnitPayload<ExtArgs>
-    primaryRole: Prisma.$RolePayload<ExtArgs>
     manager: Prisma.$PersonPayload<ExtArgs> | null
     directReports: Prisma.$PersonPayload<ExtArgs>[]
     location: Prisma.$LocationPayload<ExtArgs> | null
     managedOrgUnits: Prisma.$OrganizationUnitPayload<ExtArgs>[]
-    roleAssignments: Prisma.$PersonRoleAssignmentPayload<ExtArgs>[]
     configurationItems: Prisma.$ConfigurationItemPayload<ExtArgs>[]
     stockMovementsPerformed: Prisma.$StockMovementPayload<ExtArgs>[]
     stockMovementsVoided: Prisma.$StockMovementPayload<ExtArgs>[]
@@ -24980,7 +23619,6 @@ export type $PersonPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     mobile: string | null
     employeeId: string | null
     orgUnitId: string
-    primaryRoleId: string
     managerId: string | null
     title: string | null
     office: string | null
@@ -25393,12 +24031,10 @@ export interface Prisma__PersonClient<T, Null = never, ExtArgs extends runtime.T
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.Person$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   orgUnit<T extends Prisma.OrganizationUnitDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationUnitDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationUnitClient<runtime.Types.Result.GetResult<Prisma.$OrganizationUnitPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  primaryRole<T extends Prisma.RoleDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RoleDefaultArgs<ExtArgs>>): Prisma.Prisma__RoleClient<runtime.Types.Result.GetResult<Prisma.$RolePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   manager<T extends Prisma.Person$managerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$managerArgs<ExtArgs>>): Prisma.Prisma__PersonClient<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   directReports<T extends Prisma.Person$directReportsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$directReportsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PersonPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   location<T extends Prisma.Person$locationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$locationArgs<ExtArgs>>): Prisma.Prisma__LocationClient<runtime.Types.Result.GetResult<Prisma.$LocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   managedOrgUnits<T extends Prisma.Person$managedOrgUnitsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$managedOrgUnitsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrganizationUnitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  roleAssignments<T extends Prisma.Person$roleAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$roleAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PersonRoleAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   configurationItems<T extends Prisma.Person$configurationItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$configurationItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConfigurationItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   stockMovementsPerformed<T extends Prisma.Person$stockMovementsPerformedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$stockMovementsPerformedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StockMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   stockMovementsVoided<T extends Prisma.Person$stockMovementsVoidedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Person$stockMovementsVoidedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StockMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -25492,7 +24128,6 @@ export interface PersonFieldRefs {
   readonly mobile: Prisma.FieldRef<"Person", 'String'>
   readonly employeeId: Prisma.FieldRef<"Person", 'String'>
   readonly orgUnitId: Prisma.FieldRef<"Person", 'String'>
-  readonly primaryRoleId: Prisma.FieldRef<"Person", 'String'>
   readonly managerId: Prisma.FieldRef<"Person", 'String'>
   readonly title: Prisma.FieldRef<"Person", 'String'>
   readonly office: Prisma.FieldRef<"Person", 'String'>
@@ -26007,30 +24642,6 @@ export type Person$managedOrgUnitsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.OrganizationUnitScalarFieldEnum | Prisma.OrganizationUnitScalarFieldEnum[]
-}
-
-/**
- * Person.roleAssignments
- */
-export type Person$roleAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the PersonRoleAssignment
-   */
-  select?: Prisma.PersonRoleAssignmentSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the PersonRoleAssignment
-   */
-  omit?: Prisma.PersonRoleAssignmentOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.PersonRoleAssignmentInclude<ExtArgs> | null
-  where?: Prisma.PersonRoleAssignmentWhereInput
-  orderBy?: Prisma.PersonRoleAssignmentOrderByWithRelationInput | Prisma.PersonRoleAssignmentOrderByWithRelationInput[]
-  cursor?: Prisma.PersonRoleAssignmentWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.PersonRoleAssignmentScalarFieldEnum | Prisma.PersonRoleAssignmentScalarFieldEnum[]
 }
 
 /**

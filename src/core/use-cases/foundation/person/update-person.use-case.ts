@@ -20,7 +20,6 @@ export interface UpdatePersonProps {
   mobile?: string | null;
   employeeId?: string | null;
   orgUnitId?: string;
-  primaryRoleId?: string;
   managerId?: string | null;
   title?: string | null;
   locationId?: string | null;
@@ -90,7 +89,6 @@ export class UpdatePersonUseCase {
       mobile: props.mobile,
       employeeId: props.employeeId,
       orgUnitId: props.orgUnitId,
-      primaryRoleId: props.primaryRoleId,
       managerId: props.managerId,
       title: props.title,
       locationId: props.locationId,

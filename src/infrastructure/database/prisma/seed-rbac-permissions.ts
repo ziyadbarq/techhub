@@ -324,30 +324,6 @@ const BASE_PERMISSIONS: PermissionDefinition[] = [
     deleteDescription: "Remove person records",
   }),
 
-  createPermission("person-roles", "view", {
-    displayName: "View Person Roles",
-    description: "View person role assignments",
-  }),
-  createPermission("person-roles", "assign", {
-    displayName: "Assign Person Roles",
-    description: "Assign roles to persons",
-  }),
-  createPermission("person-roles", "remove", {
-    displayName: "Remove Person Roles",
-    description: "Remove role assignments from persons",
-  }),
-  createPermission("person-roles", "manage", {
-    displayName: "Manage Person Roles",
-    description: "Full person role management access",
-  }),
-
-  ...createCRUDPermissions("person-role-assignments", {
-    viewDescription: "View role assignment details",
-    createDescription: "Create new role assignments",
-    updateDescription: "Edit role assignment information",
-    deleteDescription: "Remove role assignments",
-  }),
-
   ...createCRUDPermissions("locations", {
     viewDescription: "View location list and details",
     createDescription: "Create new locations",

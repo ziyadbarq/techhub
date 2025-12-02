@@ -70,18 +70,6 @@ export const PERMISSIONS = {
   PERSONS_MANAGE: "persons:manage",
   PERSONS_SYNC: "persons:sync", // Trigger user sync from Microsoft Graph
 
-  // Foundation: Person Role Assignments
-  PERSON_ROLES_VIEW: "person-roles:view",
-  PERSON_ROLES_ASSIGN: "person-roles:assign",
-  PERSON_ROLES_REMOVE: "person-roles:remove",
-  PERSON_ROLES_MANAGE: "person-roles:manage",
-
-  PERSON_ROLE_ASSIGNMENTS_VIEW: "person-role-assignments:view",
-  PERSON_ROLE_ASSIGNMENTS_CREATE: "person-role-assignments:create",
-  PERSON_ROLE_ASSIGNMENTS_UPDATE: "person-role-assignments:update",
-  PERSON_ROLE_ASSIGNMENTS_DELETE: "person-role-assignments:delete",
-  PERSON_ROLE_ASSIGNMENTS_MANAGE: "person-role-assignments:manage",
-
   // Foundation: Locations
   LOCATIONS_VIEW: "locations:view",
   LOCATIONS_CREATE: "locations:create",

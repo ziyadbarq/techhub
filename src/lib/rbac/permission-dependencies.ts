@@ -59,17 +59,6 @@ export const PERMISSION_DEPENDENCIES: Partial<
   // ===== Foundation Layer (Layer 1) =====
   generateCRUDDependencies("ORGANIZATION_UNITS"),
   generateCRUDDependencies("PERSONS"),
-  {
-    // Person Roles (assign/remove instead of create/update)
-    [PERMISSIONS.PERSON_ROLES_ASSIGN]: [PERMISSIONS.PERSON_ROLES_VIEW],
-    [PERMISSIONS.PERSON_ROLES_REMOVE]: [PERMISSIONS.PERSON_ROLES_VIEW],
-    [PERMISSIONS.PERSON_ROLES_MANAGE]: [
-      PERMISSIONS.PERSON_ROLES_VIEW,
-      PERMISSIONS.PERSON_ROLES_ASSIGN,
-      PERMISSIONS.PERSON_ROLES_REMOVE,
-    ],
-  },
-  generateCRUDDependencies("PERSON_ROLE_ASSIGNMENTS"),
   generateCRUDDependencies("LOCATIONS"),
   generateCRUDDependencies("VENDORS"),
   {

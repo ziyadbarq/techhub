@@ -150,6 +150,7 @@ class MockJobQueue implements IJobQueueService {
     data: unknown;
     options?: unknown;
   }> = [];
+  private activeQueues = new Set<string>();
 
   async addJob(
     queueName: string,
@@ -157,6 +158,7 @@ class MockJobQueue implements IJobQueueService {
     data: unknown,
     options?: unknown,
   ) {
+    this.activeQueues.add(queueName);
     this.jobs.push({ queue: queueName, name: jobName, data, options });
     return `job-${this.jobs.length}`;
   }
@@ -178,6 +180,12 @@ class MockJobQueue implements IJobQueueService {
   async hasActiveWorkers(): Promise<boolean> {
     return true;
   }
+  async isHealthy(): Promise<boolean> {
+    return true;
+  }
+  getActiveQueues(): string[] {
+    return Array.from(this.activeQueues);
+  }
   async findJob(
     _queueName: string,
     jobName: string,
@@ -191,7 +199,9 @@ class MockJobQueue implements IJobQueueService {
   }
   async pauseQueue() {}
   async resumeQueue() {}
-  async close() {}
+  async close() {
+    this.activeQueues.clear();
+  }
 }
 
 class MockBackupService implements IDatabaseBackupService {

@@ -2,7 +2,7 @@
 // FOUNDATION LAYER - Organization, People, Locations, Vendors, Lifecycle
 // ============================================
 //
-// Models: OrganizationUnit, Person, PersonRoleAssignment, Location, Vendor, VendorContact, ExchangeRate, LifecycleModel, LifecycleState, LifecycleTransition, FieldDefinition
+// Models: OrganizationUnit, Person, Location, Vendor, VendorContact, ExchangeRate, LifecycleModel, LifecycleState, LifecycleTransition, FieldDefinition
 // Enums: OrganizationUnitType, VendorType, LocationType, StateType
 // Layer: Layer 1 (Foundation)
 // Related DI Module: foundation.module.ts
@@ -65,7 +65,6 @@ model Person {
   mobile          String?
   employeeId      String?   @unique
   orgUnitId       String
-  primaryRoleId   String
   managerId       String?
   title           String?
   office          String?            // Office location from MS Graph (e.g., "Riyadh HQ", "India Office")
@@ -90,12 +89,10 @@ model Person {
   // Relations
   user                         User?                  @relation(fields: [userId], references: [id], onDelete: SetNull)
   orgUnit                      OrganizationUnit       @relation("PersonOrgUnit", fields: [orgUnitId], references: [id], onDelete: Restrict)
-  primaryRole                  Role                   @relation("PersonPrimaryRole", fields: [primaryRoleId], references: [id], onDelete: Restrict)
   manager                      Person?                @relation("PersonManager", fields: [managerId], references: [id], onDelete: SetNull)
   directReports                Person[]               @relation("PersonManager")
   location                     Location?              @relation(fields: [locationId], references: [id], onDelete: SetNull)
   managedOrgUnits              OrganizationUnit[]     @relation("OrgUnitManager")
-  roleAssignments              PersonRoleAssignment[]
   configurationItems           ConfigurationItem[]
   stockMovementsPerformed      StockMovement[]        @relation("StockMovementPerformedBy")
   stockMovementsVoided         StockMovement[]        @relation("StockMovementVoidedBy")
@@ -158,7 +155,6 @@ model Person {
   @@index([email])
   @@index([employeeId])
   @@index([orgUnitId])
-  @@index([primaryRoleId])
   @@index([managerId])
   @@index([locationId])
   @@index([isActive])
@@ -166,34 +162,6 @@ model Person {
   @@index([deletedAt])
   @@index([firstName, lastName])
   @@map("persons")
-}
-
-// PersonRoleAssignment model
-// Many-to-many Person-Role with temporal data
-model PersonRoleAssignment {
-  id        String    @id @default(cuid())
-  personId  String
-  roleId    String
-  scope     String?
-  startDate DateTime  @default(now())
-  endDate   DateTime?
-  isPrimary Boolean   @default(false)
-  isActive  Boolean   @default(true)
-  note      String?   @db.Text
-  metadata  Json?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  // Relations
-  person Person @relation(fields: [personId], references: [id], onDelete: Restrict)
-  role   Role   @relation("PersonRoleAssignments", fields: [roleId], references: [id], onDelete: Restrict)
-
-  // Indexes
-  @@index([personId])
-  @@index([roleId])
-  @@index([isPrimary])
-  @@index([startDate, endDate])
-  @@map("person_role_assignments")
 }
 
 // Location model

@@ -413,7 +413,6 @@ export const ModelName = {
   DisposalDocument: 'DisposalDocument',
   OrganizationUnit: 'OrganizationUnit',
   Person: 'Person',
-  PersonRoleAssignment: 'PersonRoleAssignment',
   Location: 'Location',
   Vendor: 'Vendor',
   VendorContact: 'VendorContact',
@@ -481,7 +480,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "attachmentType" | "attachment" | "user" | "account" | "session" | "verification" | "databaseBackup" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "contractType" | "contract" | "contractLinkedObject" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "organizationUnit" | "person" | "personRoleAssignment" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "fieldTemplate" | "fieldTemplateItem" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "intuneDevice" | "intuneComplianceHistory" | "intuneSyncLog" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "maintenanceSchedule" | "maintenanceRecord" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "serviceHealthHistory" | "serviceSlaMetric" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock" | "featureFlag" | "featureFlagAuditLog"
+    modelProps: "assetCategory" | "assetCategoryField" | "assetModel" | "stockLocation" | "stockMovement" | "asset" | "assetAssignment" | "warranty" | "attachmentType" | "attachment" | "user" | "account" | "session" | "verification" | "databaseBackup" | "cIClass" | "cIClassField" | "configurationItem" | "relationshipType" | "relationshipTypeScope" | "cIRelationship" | "contractType" | "contract" | "contractLinkedObject" | "assetDisposal" | "disposalApproval" | "disposalDocument" | "organizationUnit" | "person" | "location" | "vendor" | "vendorContact" | "exchangeRate" | "lifecycleModel" | "lifecycleState" | "lifecycleTransition" | "fieldDefinition" | "fieldTemplate" | "fieldTemplateItem" | "dataDomain" | "dataOwnership" | "verificationCampaign" | "verificationItem" | "auditLogEntry" | "intuneDevice" | "intuneComplianceHistory" | "intuneSyncLog" | "assetKit" | "assetKitItem" | "assetKitCheckout" | "assetKitCheckoutItem" | "licenseProduct" | "licenseProductField" | "licenseEntitlement" | "licenseAllocation" | "licenseAddon" | "licenseEntitlementAddon" | "maintenanceSchedule" | "maintenanceRecord" | "role" | "permission" | "rolePermission" | "userRole" | "auditLog" | "codeSequence" | "assetReservation" | "assetReservationConflict" | "businessProcess" | "service" | "serviceOwnership" | "serviceInfrastructure" | "serviceAsset" | "serviceRelationship" | "serviceHealthHistory" | "serviceSlaMetric" | "task" | "promptBlock" | "promptComposition" | "promptCompositionBlock" | "featureFlag" | "featureFlagAuditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2628,80 +2627,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.PersonCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.PersonCountAggregateOutputType> | number
-        }
-      }
-    }
-    PersonRoleAssignment: {
-      payload: Prisma.$PersonRoleAssignmentPayload<ExtArgs>
-      fields: Prisma.PersonRoleAssignmentFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.PersonRoleAssignmentFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonRoleAssignmentPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.PersonRoleAssignmentFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonRoleAssignmentPayload>
-        }
-        findFirst: {
-          args: Prisma.PersonRoleAssignmentFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonRoleAssignmentPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.PersonRoleAssignmentFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonRoleAssignmentPayload>
-        }
-        findMany: {
-          args: Prisma.PersonRoleAssignmentFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonRoleAssignmentPayload>[]
-        }
-        create: {
-          args: Prisma.PersonRoleAssignmentCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonRoleAssignmentPayload>
-        }
-        createMany: {
-          args: Prisma.PersonRoleAssignmentCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.PersonRoleAssignmentCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonRoleAssignmentPayload>[]
-        }
-        delete: {
-          args: Prisma.PersonRoleAssignmentDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonRoleAssignmentPayload>
-        }
-        update: {
-          args: Prisma.PersonRoleAssignmentUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonRoleAssignmentPayload>
-        }
-        deleteMany: {
-          args: Prisma.PersonRoleAssignmentDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.PersonRoleAssignmentUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.PersonRoleAssignmentUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonRoleAssignmentPayload>[]
-        }
-        upsert: {
-          args: Prisma.PersonRoleAssignmentUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$PersonRoleAssignmentPayload>
-        }
-        aggregate: {
-          args: Prisma.PersonRoleAssignmentAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregatePersonRoleAssignment>
-        }
-        groupBy: {
-          args: Prisma.PersonRoleAssignmentGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.PersonRoleAssignmentGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.PersonRoleAssignmentCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.PersonRoleAssignmentCountAggregateOutputType> | number
         }
       }
     }
@@ -7128,7 +7053,6 @@ export const PersonScalarFieldEnum = {
   mobile: 'mobile',
   employeeId: 'employeeId',
   orgUnitId: 'orgUnitId',
-  primaryRoleId: 'primaryRoleId',
   managerId: 'managerId',
   title: 'title',
   office: 'office',
@@ -7148,24 +7072,6 @@ export const PersonScalarFieldEnum = {
 } as const
 
 export type PersonScalarFieldEnum = (typeof PersonScalarFieldEnum)[keyof typeof PersonScalarFieldEnum]
-
-
-export const PersonRoleAssignmentScalarFieldEnum = {
-  id: 'id',
-  personId: 'personId',
-  roleId: 'roleId',
-  scope: 'scope',
-  startDate: 'startDate',
-  endDate: 'endDate',
-  isPrimary: 'isPrimary',
-  isActive: 'isActive',
-  note: 'note',
-  metadata: 'metadata',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type PersonRoleAssignmentScalarFieldEnum = (typeof PersonRoleAssignmentScalarFieldEnum)[keyof typeof PersonRoleAssignmentScalarFieldEnum]
 
 
 export const LocationScalarFieldEnum = {
@@ -9157,7 +9063,6 @@ export type GlobalOmitConfig = {
   disposalDocument?: Prisma.DisposalDocumentOmit
   organizationUnit?: Prisma.OrganizationUnitOmit
   person?: Prisma.PersonOmit
-  personRoleAssignment?: Prisma.PersonRoleAssignmentOmit
   location?: Prisma.LocationOmit
   vendor?: Prisma.VendorOmit
   vendorContact?: Prisma.VendorContactOmit

@@ -46,7 +46,7 @@ All domain entities follow these validation patterns to ensure data quality and 
 #### Date Range Fields
 
 - **Rule**: End date must be >= start date
-- **Examples**: `AssetAssignment.startDate/endDate`, `PersonRoleAssignment.startDate/endDate`
+- **Examples**: `AssetAssignment.startDate/endDate`
 
 ### 3. Validation Levels
 
@@ -71,7 +71,7 @@ All domain entities follow these validation patterns to ensure data quality and 
 - Complex business rules (warranty status, hierarchy validation)
 - Used for core transactional entities
 
-#### Level 4: Business Logic (AssetAssignment, StockMovement, PersonRoleAssignment)
+#### Level 4: Business Logic (AssetAssignment, StockMovement)
 
 - Enum validation (constrained types)
 - Cross-field validation (date ranges, movement logic)
@@ -158,15 +158,15 @@ private static validateMovementLogic(
 
 ## Entity Overview
 
-### Foundation Layer (Layer 1)
+### Foundation Layer (Layer 1) - 10 Entities
 
-| Entity                                        | Purpose                     | Key Fields                             | Routes                   | Permissions                 |
-| --------------------------------------------- | --------------------------- | -------------------------------------- | ------------------------ | --------------------------- |
-| [OrganizationUnit](#organizationunit)         | Organizational hierarchy    | `code`, `level`, `parent`              | `/organization-units`    | `ORGANIZATION_UNITS_*`      |
-| [Person](#person)                             | Employee/contractor records | `employeeId`, `email`, `orgUnit`       | `/persons`               | `PERSONS_*`                 |
-| [Role](#role)                                 | RBAC + job roles (merged)   | `name`, `permissions`, `isSystemRole`  | `/admin/roles`           | `ROLES_*`                   |
-| [PersonRoleAssignment](#personroleassignment) | Person↔Role with dates     | `personId`, `roleId`, `startDate`      | `/persons/:id` (tab)     | `PERSON_ROLE_ASSIGNMENTS_*` |
-| [Location](#location)                         | Geographical hierarchy      | `code`, `locationType`, `parent`       | `/locations`             | `LOCATIONS_*`               |
+> **Note**: Person.title (from Intune) is the job title field. Roles are ONLY for RBAC (UserRole table for system permissions).
+
+| Entity                        | Purpose                     | Key Fields                                | Routes                | Permissions            |
+| ----------------------------- | --------------------------- | ----------------------------------------- | --------------------- | ---------------------- |
+| [OrganizationUnit](#organizationunit) | Organizational hierarchy    | `code`, `level`, `parent`                 | `/organization-units` | `ORGANIZATION_UNITS_*` |
+| [Person](#person)             | Employee/contractor records | `employeeId`, `email`, `orgUnit`, `title` | `/persons`            | `PERSONS_*`            |
+| [Location](#location)         | Geographical hierarchy      | `code`, `locationType`, `parent`          | `/locations`          | `LOCATIONS_*`          |
 | [Vendor](#vendor)                             | Suppliers/manufacturers     | `code`, `vendorType`, `isPreferred`    | `/vendors`               | `VENDORS_*`                 |
 | [VendorContact](#vendorcontact)               | Vendor representatives      | `vendorId`, `role`, `isPrimary`        | `/vendors/:id/contacts`  | `VENDOR_CONTACTS_*`         |
 | [LifecycleModel](#lifecyclemodel)             | State machine definitions   | `name`, `states`, `transitions`        | `/lifecycle-models`      | `LIFECYCLE_MODELS_*`        |
@@ -256,22 +256,25 @@ model OrganizationUnit {
 
 **Purpose**: Organizational people (employees, contractors) - separate from system User accounts
 
+> **Note**: Person.title (from Intune) is the job title field. Roles are ONLY for RBAC (UserRole table for system permissions).
+
 **Schema**:
 
 ```prisma
 model Person {
   id                  String              @id @default(cuid())
   userId              String?             @unique // Link to Better Auth User
+  azureAdId           String?             @unique // Immutable MS Graph ID
   firstName           String
   middleName          String?
   lastName            String
-  email               String              @unique
+  email               String              // Can change (not unique)
   mobile              String?
-  employeeId          String              @unique
+  employeeId          String?             @unique
   orgUnitId           String
   orgUnit             OrganizationUnit    @relation(...)
-  primaryRoleId       String
-  primaryRole         Role                @relation("PersonPrimaryRole")
+  title               String?             // Job title (from Intune)
+  office              String?             // Office location (from MS Graph)
   hireDate            DateTime?
   terminationDate     DateTime?
   isActive            Boolean             @default(true)
@@ -290,19 +293,18 @@ model Person {
 
 **Validation Rules**:
 
-- Email: Valid email format, unique
-- EmployeeId: Required, unique
+- Email: Valid email format (can change, not unique)
+- EmployeeId: Optional, unique if provided
 - Names: Required
 - OrgUnit: Must exist
-- PrimaryRole: Must exist
+- AzureAdId: Optional, unique if provided (immutable MS Graph ID)
 
 **Relationships**:
 
 - Belongs to `OrganizationUnit`
-- Has one primary `Role`
-- Has many `PersonRoleAssignment` (additional roles)
 - Optionally linked to Better Auth `User`
 - Referenced by `ConfigurationItem` (owner), `Asset` (assignee)
+- Manager self-reference for org hierarchy
 
 **Use Cases**: 5 CRUD use cases in [`src/core/use-cases/foundation/person/`](../../src/core/use-cases/foundation/person/)
 **Controllers**: [person.controller.ts](../../src/interface-adapters/controllers/person.controller.ts)
@@ -311,108 +313,6 @@ model Person {
 
 ---
 
-### Role
-
-**Purpose**: Merged RBAC system role + organizational job role
-
-**Design**: User chose "Option C: Merge concepts" - single entity serves both purposes
-
-**Schema**:
-
-```prisma
-model Role {
-  id                      String                 @id @default(cuid())
-  name                    String                 @unique
-  description             String?
-
-  // RBAC fields
-  permissions             RolePermission[]       // System permissions
-  users                   UserRole[]             // User assignments
-  isSystemRole            Boolean                @default(false)
-
-  // Organizational fields
-  personsPrimaryRole      Person[]               @relation("PersonPrimaryRole")
-  personRoleAssignments   PersonRoleAssignment[] // Additional roles
-  lifecycleTransitions    LifecycleTransition[]  // Required for transitions
-
-  createdAt               DateTime               @default(now())
-  updatedAt               DateTime               @updatedAt
-}
-```
-
-**Key Methods**:
-
-- `Role.create()` / `Role.createSystemRole()` - Factory methods
-- `addPermission()`, `removePermission()` - Manage RBAC permissions
-- `canBeDeleted()` - Check dependencies
-- `hasRole("system-administrator")` - Check if System Administrator role
-
-**Validation Rules**:
-
-- Name: Required, unique, 1-100 characters
-- Description: Optional, max 500 characters
-
-**Relationships**:
-
-- Has many `RolePermission` (RBAC)
-- Has many `UserRole` (RBAC)
-- Has many `Person` as primary role
-- Has many `PersonRoleAssignment`
-- Referenced by `LifecycleTransition`
-
-**Use Cases**: 5 CRUD use cases + RBAC permission assignment
-**Controllers**: [role.controller.ts](../../src/interface-adapters/controllers/role.controller.ts)
-**DTOs**: [role.dto.ts](../../src/interface-adapters/dtos/generated/role.dto.ts)
-**UI**: [/admin/roles](/admin/roles)
-
----
-
-### PersonRoleAssignment
-
-**Purpose**: Many-to-many Person↔Role with temporal data (start/end dates)
-
-**Schema**:
-
-```prisma
-model PersonRoleAssignment {
-  id          String    @id @default(cuid())
-  personId    String
-  person      Person    @relation(...)
-  roleId      String
-  role        Role      @relation(...)
-  startDate   DateTime
-  endDate     DateTime?
-  note        String?
-  metadata    Json?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-}
-```
-
-**Key Methods**:
-
-- `PersonRoleAssignment.create()` - Factory with validation
-- `end()` - Set end date
-- `isActive()` - Check if currently active
-- `overlaps()` - Check for date overlap
-
-**Validation Rules**:
-
-- Start date: Required, must be valid date
-- End date: Optional, must be after start date if provided
-- Person and Role: Must exist
-
-**Relationships**:
-
-- Belongs to `Person`
-- Belongs to `Role`
-
-**Use Cases**: 5 CRUD use cases in [`src/core/use-cases/foundation/person-role-assignment/`](../../src/core/use-cases/foundation/person-role-assignment/)
-**Controllers**: [person-role-assignment.controller.ts](../../src/interface-adapters/controllers/person-role-assignment.controller.ts)
-**DTOs**: [person-role-assignment.dto.ts](../../src/interface-adapters/dtos/generated/person-role-assignment.dto.ts)
-**UI**: Managed via Person detail page - [/persons/:id](/persons/:id) (Roles tab)
-
----
 
 ### Location
 
@@ -1147,13 +1047,11 @@ All entities follow standardized RBAC permission pattern:
 
 ### Foundation Layer (Layer 1)
 
-| Entity               | View                           | Create                           | Update                           | Delete                           | Manage                           |
-| -------------------- | ------------------------------ | -------------------------------- | -------------------------------- | -------------------------------- | -------------------------------- |
-| OrganizationUnit     | `ORGANIZATION_UNITS_VIEW`      | `ORGANIZATION_UNITS_CREATE`      | `ORGANIZATION_UNITS_UPDATE`      | `ORGANIZATION_UNITS_DELETE`      | `ORGANIZATION_UNITS_MANAGE`      |
-| Person               | `PERSONS_VIEW`                 | `PERSONS_CREATE`                 | `PERSONS_UPDATE`                 | `PERSONS_DELETE`                 | `PERSONS_MANAGE`                 |
-| Role                 | `ROLES_VIEW`                   | `ROLES_CREATE`                   | `ROLES_UPDATE`                   | `ROLES_DELETE`                   | `ROLES_MANAGE`                   |
-| PersonRoleAssignment | `PERSON_ROLE_ASSIGNMENTS_VIEW` | `PERSON_ROLE_ASSIGNMENTS_CREATE` | `PERSON_ROLE_ASSIGNMENTS_UPDATE` | `PERSON_ROLE_ASSIGNMENTS_DELETE` | `PERSON_ROLE_ASSIGNMENTS_MANAGE` |
-| Location             | `LOCATIONS_VIEW`               | `LOCATIONS_CREATE`               | `LOCATIONS_UPDATE`               | `LOCATIONS_DELETE`               | `LOCATIONS_MANAGE`               |
+| Entity           | View                      | Create                      | Update                      | Delete                      | Manage                      |
+| ---------------- | ------------------------- | --------------------------- | --------------------------- | --------------------------- | --------------------------- |
+| OrganizationUnit | `ORGANIZATION_UNITS_VIEW` | `ORGANIZATION_UNITS_CREATE` | `ORGANIZATION_UNITS_UPDATE` | `ORGANIZATION_UNITS_DELETE` | `ORGANIZATION_UNITS_MANAGE` |
+| Person           | `PERSONS_VIEW`            | `PERSONS_CREATE`            | `PERSONS_UPDATE`            | `PERSONS_DELETE`            | `PERSONS_MANAGE`            |
+| Location         | `LOCATIONS_VIEW`          | `LOCATIONS_CREATE`          | `LOCATIONS_UPDATE`          | `LOCATIONS_DELETE`          | `LOCATIONS_MANAGE`          |
 | Vendor               | `VENDORS_VIEW`                 | `VENDORS_CREATE`                 | `VENDORS_UPDATE`                 | `VENDORS_DELETE`                 | `VENDORS_MANAGE`                 |
 | VendorContact        | `VENDOR_CONTACTS_VIEW`         | `VENDOR_CONTACTS_CREATE`         | `VENDOR_CONTACTS_UPDATE`         | `VENDOR_CONTACTS_DELETE`         | `VENDOR_CONTACTS_MANAGE`         |
 | LifecycleModel       | `LIFECYCLE_MODELS_VIEW`        | `LIFECYCLE_MODELS_CREATE`        | `LIFECYCLE_MODELS_UPDATE`        | `LIFECYCLE_MODELS_DELETE`        | `LIFECYCLE_MODELS_MANAGE`        |
@@ -1313,20 +1211,8 @@ OrganizationUnit (Company)
 
 Person
 ├── orgUnit: OrganizationUnit
-├── primaryRole: Role
-├── roleAssignments: PersonRoleAssignment[]
+├── title: string (Job title from Intune)
 └── userId?: User (Better Auth link)
-
-Role (RBAC + Organizational)
-├── permissions: RolePermission[] (RBAC)
-├── users: UserRole[] (RBAC)
-├── personsPrimaryRole: Person[]
-├── personRoleAssignments: PersonRoleAssignment[]
-└── lifecycleTransitions: LifecycleTransition[]
-
-PersonRoleAssignment
-├── person: Person
-└── role: Role
 
 Location (Country)
 ├── children: Location[] (Cities, Buildings, Rooms, Racks)
@@ -1442,18 +1328,10 @@ const person = await createPersonAction({
   email: "ahmed@barq.com",
   employeeId: "EMP-001",
   orgUnitId: itDeptId,
-  primaryRoleId: engineerRoleId,
   hireDate: new Date("2025-01-15"),
   userId: currentUserId,
 });
 
-// 2. Assign additional role
-const assignment = await createPersonRoleAssignmentAction({
-  personId: person.data.id,
-  roleId: teamLeadRoleId,
-  startDate: new Date("2025-03-01"),
-  userId: currentUserId,
-});
 ```
 
 ### Create Location Hierarchy

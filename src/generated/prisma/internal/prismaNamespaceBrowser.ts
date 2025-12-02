@@ -80,7 +80,6 @@ export const ModelName = {
   DisposalDocument: 'DisposalDocument',
   OrganizationUnit: 'OrganizationUnit',
   Person: 'Person',
-  PersonRoleAssignment: 'PersonRoleAssignment',
   Location: 'Location',
   Vendor: 'Vendor',
   VendorContact: 'VendorContact',
@@ -687,7 +686,6 @@ export const PersonScalarFieldEnum = {
   mobile: 'mobile',
   employeeId: 'employeeId',
   orgUnitId: 'orgUnitId',
-  primaryRoleId: 'primaryRoleId',
   managerId: 'managerId',
   title: 'title',
   office: 'office',
@@ -707,24 +705,6 @@ export const PersonScalarFieldEnum = {
 } as const
 
 export type PersonScalarFieldEnum = (typeof PersonScalarFieldEnum)[keyof typeof PersonScalarFieldEnum]
-
-
-export const PersonRoleAssignmentScalarFieldEnum = {
-  id: 'id',
-  personId: 'personId',
-  roleId: 'roleId',
-  scope: 'scope',
-  startDate: 'startDate',
-  endDate: 'endDate',
-  isPrimary: 'isPrimary',
-  isActive: 'isActive',
-  note: 'note',
-  metadata: 'metadata',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type PersonRoleAssignmentScalarFieldEnum = (typeof PersonRoleAssignmentScalarFieldEnum)[keyof typeof PersonRoleAssignmentScalarFieldEnum]
 
 
 export const LocationScalarFieldEnum = {

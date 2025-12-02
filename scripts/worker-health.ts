@@ -96,7 +96,9 @@ async function main(): Promise<void> {
         log.warn(
           "queueStatus",
           `Failed to fetch status for queue '${queueName}'`,
-          error instanceof Error ? error : new Error(String(error)),
+          {
+            error: error instanceof Error ? error : new Error(String(error)),
+          },
         );
       }
     }

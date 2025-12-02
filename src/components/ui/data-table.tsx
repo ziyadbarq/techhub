@@ -104,6 +104,24 @@ export interface DataTableProps<TData, TValue> {
   renderExpandedRow?: (row: { original: TData }) => React.ReactNode | null;
   // Custom className
   className?: string;
+  // NEW: Controlled state support
+  controlledState?: {
+    sorting?: SortingState;
+    columnFilters?: ColumnFiltersState;
+    pagination?: PaginationState;
+    columnVisibility?: VisibilityState;
+    rowSelection?: Record<string, boolean>;
+  };
+  onSortingChange?: (sorting: SortingState) => void;
+  onColumnFiltersChange?: (filters: ColumnFiltersState) => void;
+  onPaginationChange?: (pagination: PaginationState) => void;
+  onColumnVisibilityChange?: (visibility: VisibilityState) => void;
+  onRowSelectionChange?: (selection: Record<string, boolean>) => void;
+  // NEW: Preset filters slot
+  presetFilters?: React.ReactNode;
+  // NEW: Toolbar slots for advanced layouts
+  toolbarSlot?: React.ReactNode;
+  filtersSlot?: React.ReactNode;
 }
 
 export function DataTable<TData, TValue>({
@@ -122,19 +140,37 @@ export function DataTable<TData, TValue>({
   toolbarActions,
   renderExpandedRow,
   className,
+  controlledState,
+  onSortingChange: onSortingChangeProp,
+  onColumnFiltersChange: onColumnFiltersChangeProp,
+  onPaginationChange: onPaginationChangeProp,
+  onColumnVisibilityChange: onColumnVisibilityChangeProp,
+  onRowSelectionChange: onRowSelectionChangeProp,
+  presetFilters,
+  toolbarSlot,
+  filtersSlot,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  // Use controlled state if provided, otherwise use internal state
+  const [sorting, setSorting] = React.useState<SortingState>(
+    controlledState?.sorting ?? [],
+  );
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
+    controlledState?.columnFilters ?? [],
   );
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>(initialColumnVisibility ?? {});
-  const [rowSelection, setRowSelection] = React.useState({});
+    React.useState<VisibilityState>(
+      controlledState?.columnVisibility ?? initialColumnVisibility ?? {},
+    );
+  const [rowSelection, setRowSelection] = React.useState(
+    controlledState?.rowSelection ?? {},
+  );
   const [internalPagination, setInternalPagination] =
-    React.useState<PaginationState>({
-      pageIndex: pagination?.pageIndex ?? 0,
-      pageSize: pagination?.pageSize ?? 10,
-    });
+    React.useState<PaginationState>(
+      controlledState?.pagination ?? {
+        pageIndex: pagination?.pageIndex ?? 0,
+        pageSize: pagination?.pageSize ?? 10,
+      },
+    );
 
   // Track horizontal scroll availability for mobile indicator
   const tableContainerRef = React.useRef<HTMLDivElement>(null);
@@ -161,10 +197,46 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
+    onSortingChange: (updaterOrValue) => {
+      const newSorting =
+        typeof updaterOrValue === "function"
+          ? updaterOrValue(sorting)
+          : updaterOrValue;
+      setSorting(newSorting);
+      if (onSortingChangeProp) {
+        onSortingChangeProp(newSorting);
+      }
+    },
+    onColumnFiltersChange: (updaterOrValue) => {
+      const newFilters =
+        typeof updaterOrValue === "function"
+          ? updaterOrValue(columnFilters)
+          : updaterOrValue;
+      setColumnFilters(newFilters);
+      if (onColumnFiltersChangeProp) {
+        onColumnFiltersChangeProp(newFilters);
+      }
+    },
+    onColumnVisibilityChange: (updaterOrValue) => {
+      const newVisibility =
+        typeof updaterOrValue === "function"
+          ? updaterOrValue(columnVisibility)
+          : updaterOrValue;
+      setColumnVisibility(newVisibility);
+      if (onColumnVisibilityChangeProp) {
+        onColumnVisibilityChangeProp(newVisibility);
+      }
+    },
+    onRowSelectionChange: (updaterOrValue) => {
+      const newSelection =
+        typeof updaterOrValue === "function"
+          ? updaterOrValue(rowSelection)
+          : updaterOrValue;
+      setRowSelection(newSelection);
+      if (onRowSelectionChangeProp) {
+        onRowSelectionChangeProp(newSelection);
+      }
+    },
     onPaginationChange: (updaterOrValue) => {
       const current = pagination
         ? {
@@ -177,7 +249,9 @@ export function DataTable<TData, TValue>({
           ? updaterOrValue(current)
           : updaterOrValue;
 
-      if (pagination?.onPaginationChange) {
+      if (onPaginationChangeProp) {
+        onPaginationChangeProp(next);
+      } else if (pagination?.onPaginationChange) {
         pagination.onPaginationChange(next);
       } else if (pagination?.onPageChange) {
         pagination.onPageChange(next.pageIndex);
@@ -187,16 +261,18 @@ export function DataTable<TData, TValue>({
       }
     },
     state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-      pagination: pagination
-        ? {
-            pageIndex: pagination.pageIndex ?? 0,
-            pageSize: pagination.pageSize ?? 10,
-          }
-        : internalPagination,
+      sorting: controlledState?.sorting ?? sorting,
+      columnFilters: controlledState?.columnFilters ?? columnFilters,
+      columnVisibility: controlledState?.columnVisibility ?? columnVisibility,
+      rowSelection: controlledState?.rowSelection ?? rowSelection,
+      pagination:
+        controlledState?.pagination ??
+        (pagination
+          ? {
+              pageIndex: pagination.pageIndex ?? 0,
+              pageSize: pagination.pageSize ?? 10,
+            }
+          : internalPagination),
     },
     manualPagination:
       pagination?.manualPagination ?? !!pagination?.onPaginationChange,
@@ -222,23 +298,31 @@ export function DataTable<TData, TValue>({
   return (
     <div className={cn("space-y-4", className)}>
       {/* Toolbar */}
-      {(searchable || showColumnToggle || toolbarActions) && (
+      {(searchable || showColumnToggle || toolbarActions || toolbarSlot) && (
         <div className="flex items-center justify-between gap-2">
-          <div className="flex flex-1 items-center gap-2">
-            {searchable && searchKey && (
-              <Input
-                placeholder={searchPlaceholder}
-                value={
-                  (table.getColumn(searchKey)?.getFilterValue() as string) ?? ""
-                }
-                onChange={(event) =>
-                  table.getColumn(searchKey)?.setFilterValue(event.target.value)
-                }
-                className="max-w-sm"
-              />
-            )}
-            {toolbarActions}
-          </div>
+          {/* Custom toolbar slot takes priority if provided */}
+          {toolbarSlot ? (
+            toolbarSlot
+          ) : (
+            <div className="flex flex-1 items-center gap-2">
+              {searchable && searchKey && (
+                <Input
+                  placeholder={searchPlaceholder}
+                  value={
+                    (table.getColumn(searchKey)?.getFilterValue() as string) ??
+                    ""
+                  }
+                  onChange={(event) =>
+                    table
+                      .getColumn(searchKey)
+                      ?.setFilterValue(event.target.value)
+                  }
+                  className="max-w-sm"
+                />
+              )}
+              {toolbarActions}
+            </div>
+          )}
 
           {showColumnToggle && (
             <DropdownMenu>
@@ -271,6 +355,14 @@ export function DataTable<TData, TValue>({
               </DropdownMenuContent>
             </DropdownMenu>
           )}
+        </div>
+      )}
+
+      {/* Preset Filters Slot */}
+      {(presetFilters || filtersSlot) && (
+        <div className="flex flex-wrap gap-2">
+          {presetFilters}
+          {filtersSlot}
         </div>
       )}
 

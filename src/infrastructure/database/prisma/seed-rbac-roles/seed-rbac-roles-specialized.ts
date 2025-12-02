@@ -258,7 +258,6 @@ export const SPECIALIZED_ROLES: Record<string, RoleDefinition> = {
 
       // Persons - Read-only (employee directory and info)
       PERMISSIONS.PERSONS_VIEW,
-      PERMISSIONS.PERSON_ROLE_ASSIGNMENTS_VIEW,
 
       // Locations - Read-only (office locations for HR planning)
       PERMISSIONS.LOCATIONS_VIEW,

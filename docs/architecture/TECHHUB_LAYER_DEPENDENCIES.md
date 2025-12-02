@@ -62,7 +62,7 @@ For data migration or demo seeding, populate in this **exact order**:
 6.  Location (bottom-up: leaf→root)
 7.  ExchangeRate
 8.  FieldDefinition
-9.  Person → PersonRoleAssignment
+9.  Person
 10. CIClass → CIClassField
 11. RelationshipType → RelationshipTypeScope
 12. AssetCategory → AssetCategoryField
@@ -220,6 +220,8 @@ For data migration or demo seeding, populate in this **exact order**:
 **Purpose**: Core organizational data (vendors, people, locations, lifecycle models)
 **Dependencies**: Layer 0.5 (RBAC)
 
+> **Note**: Person.title (from Intune) is the job title field. Roles are ONLY for RBAC (UserRole table for system permissions).
+
 #### Lifecycle Management
 
 **LifecycleModel**
@@ -352,33 +354,22 @@ For data migration or demo seeding, populate in this **exact order**:
 |-------|------|----------|--------------|-------------|
 | firstName | String | ✅ | None | First name |
 | lastName | String | ✅ | None | Last name |
-| email | String | ✅ | None | Unique email |
+| email | String | ✅ | None | Email address (can change) |
 | orgUnitId | String | ✅ | OrganizationUnit | Organization unit |
-| primaryRoleId | String | ✅ | Role | Primary role |
 | userId | String | ❌ | User | Optional link to auth user |
+| azureAdId | String | ❌ | None | Immutable MS Graph ID (unique) |
 | middleName | String | ❌ | None | Middle name |
 | phone | String | ❌ | None | Phone number |
 | mobile | String | ❌ | None | Mobile number |
 | employeeId | String | ❌ | None | Employee ID |
 | managerId | String | ❌ | Person (self) | Manager reference |
-| title | String | ❌ | None | Job title |
+| title | String | ❌ | None | Job title (from Intune) |
+| office | String | ❌ | None | Office location (from MS Graph) |
 | locationId | String | ❌ | Location | Primary location |
 | department | String | ❌ | None | Department name |
 | hireDate | DateTime | ❌ | None | Hire date |
 | terminationDate | DateTime | ❌ | None | Termination date |
 | deletedAt | DateTime | ❌ | None | Soft delete timestamp |
-
-**PersonRoleAssignment**
-
-| Field | Type | Required | Dependencies | Description |
-|-------|------|----------|--------------|-------------|
-| personId | String | ✅ | Person | Person reference |
-| roleId | String | ✅ | Role | Role reference |
-| scope | String | ❌ | None | Scope (e.g., specific OrgUnit) |
-| startDate | DateTime | ❌ | None | Assignment start date |
-| endDate | DateTime | ❌ | None | Assignment end date |
-| isPrimary | Boolean | ❌ | None | Primary role flag |
-| note | String | ❌ | None | Notes |
 
 ---
 
@@ -1223,7 +1214,6 @@ const sequenceConfigs = [
 ### 6. RBAC First Principle
 
 **Critical**: Permission and Role data **must exist before**:
-- Creating Person records (requires `primaryRoleId`)
 - Enforcing permission checks in application
 
 **Recommended Approach**:

@@ -38,7 +38,6 @@ const SyncOptionsSchema = z.object({
   includeDisabled: z.boolean().optional().default(false),
   includeGuests: z.boolean().optional().default(false),
   defaultOrgUnitId: z.string().min(1, "Organization unit is required"),
-  defaultPrimaryRoleId: z.string().min(1, "Primary role is required"),
   deactivateMissing: z.boolean().optional().default(true),
 });
 
@@ -127,7 +126,6 @@ export async function syncUsersFromGraphAction(
       includeDisabled: validated.includeDisabled,
       includeGuests: validated.includeGuests,
       defaultOrgUnitId: validated.defaultOrgUnitId,
-      defaultPrimaryRoleId: validated.defaultPrimaryRoleId,
       deactivateMissing: validated.deactivateMissing,
     });
 
@@ -200,7 +198,6 @@ export async function syncPersonFromGraphAction(
       includeDisabled: true,
       includeGuests: false,
       defaultOrgUnitId: person.orgUnitId,
-      defaultPrimaryRoleId: person.primaryRoleId,
       deactivateMissing: false,
     });
 

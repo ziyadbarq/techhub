@@ -216,7 +216,7 @@ export function LinkUserToPersonDialog({
                         </div>
                         <div>
                           <Badge variant="secondary" className="text-xs">
-                            {person.primaryRole.displayName}
+                            Role not mapped
                           </Badge>
                         </div>
                       </div>

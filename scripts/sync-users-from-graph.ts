@@ -259,43 +259,6 @@ async function selectFallbackOrgUnit(): Promise<string | null> {
 }
 
 /**
- * Select primary role for new users
- */
-async function selectPrimaryRole(): Promise<string | null> {
-  const roles = await prisma.role.findMany({
-    where: { isActive: true },
-    select: { id: true, name: true, displayName: true },
-    orderBy: { displayName: "asc" },
-  });
-
-  if (roles.length === 0) {
-    console.log(chalk.red("✗ No roles found. Create one first."));
-    return null;
-  }
-
-  // Sort to put viewer first (minimal access role), then alphabetical
-  const sortedRoles = [...roles].sort((a, b) => {
-    if (a.name === "viewer") return -1;
-    if (b.name === "viewer") return 1;
-    return a.displayName.localeCompare(b.displayName);
-  });
-
-  // Find viewer's id to set as default
-  const viewerRole = sortedRoles.find((r) => r.name === "viewer");
-
-  const selectedId = await select({
-    message: "Select default primary role for new users:",
-    choices: sortedRoles.map((r) => ({
-      name: `${r.displayName} (${r.name})`,
-      value: r.id,
-    })),
-    default: viewerRole?.id,
-  });
-
-  return selectedId;
-}
-
-/**
  * Run the sync process
  */
 async function runSync(): Promise<void> {
@@ -316,11 +279,6 @@ async function runSync(): Promise<void> {
 
   const defaultOrgUnitId = await selectFallbackOrgUnit();
   if (!defaultOrgUnitId) {
-    return;
-  }
-
-  const defaultPrimaryRoleId = await selectPrimaryRole();
-  if (!defaultPrimaryRoleId) {
     return;
   }
 
@@ -444,7 +402,6 @@ async function runSync(): Promise<void> {
     includeDisabled,
     includeGuests,
     defaultOrgUnitId,
-    defaultPrimaryRoleId,
     deactivateMissing,
     onProgress: handleProgress,
   });

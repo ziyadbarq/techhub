@@ -68,7 +68,6 @@ Use **PascalCase** for model names:
 
 ```prisma
 model OrganizationUnit { }
-model PersonRoleAssignment { }
 model LicenseAllocation { }
 ```
 
@@ -132,9 +131,6 @@ model User {
 model Person {
   // Forward relation
   user User? @relation(fields: [userId], references: [id])
-
-  // Reverse relation
-  roleAssignments PersonRoleAssignment[]
 }
 ```
 
@@ -470,31 +466,31 @@ model Contract {
 ### Many-to-Many (Explicit Join Table)
 
 ```prisma
-model Person {
-  id               String                    @id @default(cuid())
-  roleAssignments  PersonRoleAssignment[]    // Reverse relation
+model User {
+  id        String     @id @default(cuid())
+  roles     UserRole[]  // Reverse relation
 }
 
 model Role {
-  id               String                    @id @default(cuid())
-  personAssignments PersonRoleAssignment[]   // Reverse relation
+  id        String     @id @default(cuid())
+  users     UserRole[] // Reverse relation
 }
 
-model PersonRoleAssignment {
+model UserRole {
   id        String   @id @default(cuid())
-  personId  String
+  userId    String
   roleId    String
 
-  person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
-  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
-  @@index([personId])
+  @@index([userId])
   @@index([roleId])
-  @@unique([personId, roleId])  // Prevent duplicate assignments
+  @@unique([userId, roleId])  // Prevent duplicate assignments
 }
 ```
 
-**Why explicit join table?** Allows temporal data (effectiveStart, effectiveEnd, note, metadata).
+**Why explicit join table?** Allows temporal data (expiresAt, createdBy).
 
 ### Self-Referencing (Hierarchies)
 

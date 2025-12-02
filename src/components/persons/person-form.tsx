@@ -42,10 +42,8 @@ import {
   type CreatePersonDTO,
 } from "@/interface-adapters/dtos/generated/person.dto";
 import { listOrganizationUnitsAction } from "@/interface-adapters/controllers/organization-unit.controller";
-import { listRolesAction } from "@/interface-adapters/controllers/role.controller";
 import { listLocationsAction } from "@/interface-adapters/controllers/location.controller";
 import type { OrganizationUnitDTO } from "@/interface-adapters/presenters/organization-unit.presenter";
-import type { RoleDTO } from "@/interface-adapters/presenters/role.presenter";
 import type { LocationDTO } from "@/interface-adapters/presenters/location.presenter";
 
 interface PersonFormProps {
@@ -69,7 +67,6 @@ export function PersonForm({
 
   // Entity lists for dropdowns
   const [orgUnits, setOrgUnits] = useState<OrganizationUnitDTO[]>([]);
-  const [roles, setRoles] = useState<RoleDTO[]>([]);
   const [locations, setLocations] = useState<LocationDTO[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -81,15 +78,6 @@ export function PersonForm({
         label: `${unit.name} (${unit.code})`,
       })),
     [orgUnits],
-  );
-
-  const roleOptions: SearchableSelectOption[] = useMemo(
-    () =>
-      roles.map((role) => ({
-        value: role.id,
-        label: role.displayName,
-      })),
-    [roles],
   );
 
   const locationOptions: SearchableSelectOption[] = useMemo(
@@ -113,17 +101,13 @@ export function PersonForm({
   const loadData = async () => {
     setLoading(true);
     try {
-      const [orgUnitsResult, rolesResult, locationsResult] = await Promise.all([
+      const [orgUnitsResult, locationsResult] = await Promise.all([
         listOrganizationUnitsAction(),
-        listRolesAction(),
         listLocationsAction(),
       ]);
 
       if (orgUnitsResult.success) {
         setOrgUnits(orgUnitsResult.data);
-      }
-      if (rolesResult.success) {
-        setRoles(rolesResult.data);
       }
       if (locationsResult.success) {
         setLocations(locationsResult.data);
@@ -144,7 +128,6 @@ export function PersonForm({
       email: person?.email ?? "",
       phone: person?.phone ?? "",
       organizationUnitId: person?.organizationUnitId ?? "",
-      primaryRoleId: person?.primaryRoleId ?? "",
       locationId: person?.locationId ?? "",
       employeeId: person?.employeeId ?? "",
       title: person?.title ?? "",
@@ -161,7 +144,6 @@ export function PersonForm({
       email: person?.email ?? "",
       phone: person?.phone ?? "",
       organizationUnitId: person?.organizationUnitId ?? "",
-      primaryRoleId: person?.primaryRoleId ?? "",
       locationId: person?.locationId ?? "",
       employeeId: person?.employeeId ?? "",
       title: person?.title ?? "",
@@ -287,7 +269,7 @@ export function PersonForm({
                 )}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-2">
               <FormField
                 control={form.control}
                 name="organizationUnitId"
@@ -304,28 +286,6 @@ export function PersonForm({
                         onValueChange={field.onChange}
                         placeholder="Select organization unit..."
                         searchPlaceholder="Search organization units..."
-                        disabled={loading}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="primaryRoleId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      Primary Role <span className="text-destructive">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <SearchableSelect
-                        options={roleOptions}
-                        value={field.value || undefined}
-                        onValueChange={field.onChange}
-                        placeholder="Select role..."
-                        searchPlaceholder="Search roles..."
                         disabled={loading}
                       />
                     </FormControl>

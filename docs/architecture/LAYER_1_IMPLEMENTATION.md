@@ -163,44 +163,39 @@ model Location {
 **Pattern**: Explicit junction table with additional fields
 
 ```prisma
-model Person {
-  id                  String                 @id @default(cuid())
-  primaryRoleId       String
-  primaryRole         Role                   @relation("PersonPrimaryRole", fields: [primaryRoleId], references: [id])
-  roleAssignments     PersonRoleAssignment[] @relation("PersonRoleAssignments")
+model User {
+  id        String     @id @default(cuid())
+  roles     UserRole[] @relation("UserRoles")
   // ... other fields
 }
 
 model Role {
-  id                  String                 @id @default(cuid())
-  personsPrimaryRole  Person[]               @relation("PersonPrimaryRole")
-  personRoleAssignments PersonRoleAssignment[] @relation("PersonRoleAssignments")
+  id        String     @id @default(cuid())
+  users     UserRole[] @relation("UserRoles")
   // ... other fields
 }
 
-model PersonRoleAssignment {
+model UserRole {
   id          String    @id @default(cuid())
-  personId    String
-  person      Person    @relation("PersonRoleAssignments", fields: [personId], references: [id])
+  userId      String
+  user        User      @relation("UserRoles", fields: [userId], references: [id])
   roleId      String
-  role        Role      @relation("PersonRoleAssignments", fields: [roleId], references: [id])
-  startDate   DateTime
-  endDate     DateTime?
-  note        String?
-  metadata    Json?
+  role        Role      @relation("UserRoles", fields: [roleId], references: [id])
+  expiresAt   DateTime?
+  createdBy   String?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  @@index([personId])
+  @@index([userId])
   @@index([roleId])
-  @@index([startDate, endDate])
 }
 ```
 
 **Key Points**:
 
-- Primary role vs. additional roles (one-to-many vs. many-to-many)
-- Temporal data (start/end dates) for historical tracking
+- RBAC roles for system permissions (UserRole)
+- Person.title (from Intune) is the job title field
+- Temporal data (expiresAt) for time-bound access
 - Named relations prevent Prisma ambiguity errors
 
 #### JSON Fields for Dynamic Data
@@ -285,7 +280,6 @@ model Location {
 model Person {
   // ...
   @@index([orgUnitId])
-  @@index([primaryRoleId])
   @@index([employeeId])
   @@index([isActive])
 }
@@ -1106,9 +1100,6 @@ export const DI_TOKENS = {
   IOrganizationUnitRepository: Symbol.for("IOrganizationUnitRepository"),
   IPersonRepository: Symbol.for("IPersonRepository"),
   IRoleRepository: Symbol.for("IRoleRepository"),
-  IPersonRoleAssignmentRepository: Symbol.for(
-    "IPersonRoleAssignmentRepository",
-  ),
   ILocationRepository: Symbol.for("ILocationRepository"),
   IVendorRepository: Symbol.for("IVendorRepository"),
   IVendorContactRepository: Symbol.for("IVendorContactRepository"),

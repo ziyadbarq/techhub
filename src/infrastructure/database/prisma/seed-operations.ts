@@ -69,7 +69,6 @@ export async function performFullCleanup(prisma: PrismaClient): Promise<void> {
   await prisma.stockLocation.deleteMany({});
 
   // Layer 1 cleanup (Foundation)
-  await prisma.personRoleAssignment.deleteMany({});
   await prisma.person.deleteMany({});
   await prisma.fieldDefinition.deleteMany({});
   await prisma.location.deleteMany({});

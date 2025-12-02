@@ -61,10 +61,12 @@ Users can access the Person Details page by:
 
 | Card | Content |
 |------|---------|
-| **Role & Org** | Primary role badge + Organization unit name |
+| **Organization** | Organization unit name + department |
 | **Team** | Direct reports count + "Manager" or "Individual Contributor" label |
 | **Assets & Devices** | Total count of Intune devices + license allocations + reservations + kit checkouts |
 | **Activity** | Governance items count (verification campaigns, items, attachments, disposals) |
+
+> **Note**: Person.title (synced from Intune) is the job title field. Roles are ONLY for RBAC (UserRole table for system permissions).
 
 ### Tab Structure (6 Tabs)
 
@@ -80,7 +82,6 @@ Users can access the Person Details page by:
 
 - **Reporting Chain**: Visual hierarchy from CEO to this person
 - **Direct Reports**: Grid of direct reports with lazy loading
-- **Role Assignments**: Active role assignments with dates, scope, and primary badge
 
 #### Tab 3: Assets & Licenses
 
@@ -125,7 +126,7 @@ const [personResult, countsResult, chainResult] = await Promise.all([
 
 ### Client-Side (Tab Loading)
 
-- **Organization Tab**: Direct reports via `getPersonDirectReportsAction`; role assignments via `getPersonRoleAssignmentsAction`
+- **Organization Tab**: Direct reports via `getPersonDirectReportsAction`
 - **Assets Tab**: License allocations, reservations, kit checkouts, maintenance schedules, stock movements via respective `getPerson*` actions
 - **Services Tab**: Service ownerships, configuration items, data ownerships via `getPerson*` actions
 - **Governance Tab**: Verification campaigns/items, attachments, disposals via `getPerson*` actions
@@ -136,7 +137,6 @@ const [personResult, countsResult, chainResult] = await Promise.all([
 ```typescript
 interface PersonRelationCounts {
   directReports: number;
-  roleAssignments: number;
   intuneDevices: number;
   licenseAllocations: number;
   assetReservations: number;

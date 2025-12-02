@@ -15,7 +15,6 @@ export interface ListPeopleOptions {
   orderBy?: "fullName" | "email" | "employeeId" | "createdAt";
   order?: "asc" | "desc";
   orgUnitId?: string;
-  primaryRoleId?: string;
   isActive?: boolean;
   linkedToUsers?: boolean;
 }
@@ -38,12 +37,6 @@ export class ListPeopleUseCase {
       return await this.personRepository.findByOrgUnitId(options.orgUnitId, {
         activeOnly: options.isActive,
       });
-    }
-
-    if (options?.primaryRoleId) {
-      return await this.personRepository.findByPrimaryRoleId(
-        options.primaryRoleId,
-      );
     }
 
     if (options?.linkedToUsers === true) {

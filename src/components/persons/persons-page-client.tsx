@@ -331,7 +331,6 @@ export function PersonsPageClient({
         includeDisabled: false,
         includeGuests: false,
         defaultOrgUnitId: defaults.data.orgUnitId,
-        defaultPrimaryRoleId: defaults.data.roleId,
         deactivateMissing: true,
       });
 
@@ -550,7 +549,6 @@ export function PersonsPageClient({
                 phone: editingPerson.phone,
                 employeeId: editingPerson.employeeId,
                 organizationUnitId: editingPerson.orgUnitId,
-                primaryRoleId: "", // Not available in directory DTO, form will need to fetch
                 locationId: editingPerson.locationId,
                 managerId: editingPerson.managerId,
                 title: editingPerson.title,

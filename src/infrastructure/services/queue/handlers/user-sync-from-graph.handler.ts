@@ -84,7 +84,6 @@ export async function handleUserSyncFromGraph(
       includeDisabled: job.data.includeDisabled ?? false,
       includeGuests: job.data.includeGuests ?? false,
       defaultOrgUnitId: job.data.defaultOrgUnitId,
-      defaultPrimaryRoleId: job.data.defaultPrimaryRoleId,
       deactivateMissing: job.data.deactivateMissing ?? true,
       onProgress,
     });

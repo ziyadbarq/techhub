@@ -251,9 +251,7 @@ Please change your password after first login.`;
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="secondary">
-                      {person.primaryRole.displayName}
-                    </Badge>
+                    <Badge variant="secondary">Not mapped</Badge>
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">

@@ -38,7 +38,7 @@ export class PrismaPersonRepository implements IPersonRepository {
           email: person.email,
           employeeId: person.employeeId,
           orgUnitId: person.orgUnitId,
-          primaryRoleId: person.primaryRoleId,
+
           managerId: person.managerId,
           title: person.title,
           office: person.office,
@@ -139,13 +139,9 @@ export class PrismaPersonRepository implements IPersonRepository {
     return persons.map((p: PrismaPerson) => this.toDomain(p));
   }
 
-  async findByPrimaryRoleId(roleId: string): Promise<Person[]> {
-    const persons = await this.prisma.person.findMany({
-      where: { primaryRoleId: roleId },
-      orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
-    });
-
-    return persons.map((p: PrismaPerson) => this.toDomain(p));
+  // Legacy stub: primary role relationships were removed from the schema.
+  async findByPrimaryRoleId(_roleId: string): Promise<Person[]> {
+    return [];
   }
 
   async findActive(options?: {
@@ -216,9 +212,6 @@ export class PrismaPersonRepository implements IPersonRepository {
         orgUnit: {
           select: { id: true, name: true },
         },
-        primaryRole: {
-          select: { id: true, name: true, displayName: true },
-        },
       },
     });
 
@@ -238,13 +231,6 @@ export class PrismaPersonRepository implements IPersonRepository {
             name: person.orgUnit.name,
           }
         : null,
-      primaryRole: person.primaryRole
-        ? {
-            id: person.primaryRole.id,
-            name: person.primaryRole.name,
-            displayName: person.primaryRole.displayName,
-          }
-        : null,
     }));
   }
 
@@ -260,7 +246,6 @@ export class PrismaPersonRepository implements IPersonRepository {
       orderBy: [{ lastName: "asc" }, { firstName: "asc" }],
       include: {
         orgUnit: { select: { id: true, name: true } },
-        primaryRole: { select: { id: true, name: true, displayName: true } },
       },
     });
 
@@ -276,13 +261,6 @@ export class PrismaPersonRepository implements IPersonRepository {
       isActive: person.isActive,
       orgUnit: person.orgUnit
         ? { id: person.orgUnit.id, name: person.orgUnit.name }
-        : null,
-      primaryRole: person.primaryRole
-        ? {
-            id: person.primaryRole.id,
-            name: person.primaryRole.name,
-            displayName: person.primaryRole.displayName,
-          }
         : null,
     }));
   }
@@ -364,7 +342,7 @@ export class PrismaPersonRepository implements IPersonRepository {
           email: person.email,
           employeeId: person.employeeId,
           orgUnitId: person.orgUnitId,
-          primaryRoleId: person.primaryRoleId,
+
           managerId: person.managerId,
           title: person.title,
           office: person.office,
@@ -503,7 +481,7 @@ export class PrismaPersonRepository implements IPersonRepository {
       mobile: prismaPerson.mobile,
       employeeId: prismaPerson.employeeId,
       orgUnitId: prismaPerson.orgUnitId,
-      primaryRoleId: prismaPerson.primaryRoleId,
+      primaryRoleId: null, // Deprecated: removed from schema
       managerId: prismaPerson.managerId,
       title: prismaPerson.title,
       office: prismaPerson.office,

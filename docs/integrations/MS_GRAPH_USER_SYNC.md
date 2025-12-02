@@ -157,7 +157,6 @@ model Person {
   mobile          String?
   employeeId      String?   @unique
   orgUnitId       String
-  primaryRoleId   String
   managerId       String?
   title           String?
   office          String?                 // ⭐ NEW: Office location
@@ -194,7 +193,6 @@ model Person {
   mobile          String?
   employeeId      String?   @unique
   orgUnitId       String
-  primaryRoleId   String
   managerId       String?
   title           String?
   office          String?                 // Office location from MS Graph
@@ -216,7 +214,6 @@ model Person {
   @@index([email])        // Keep index for lookups, just not unique
   @@index([employeeId])
   @@index([orgUnitId])
-  @@index([primaryRoleId])
   @@index([managerId])
   @@index([isActive])
   @@map("persons")
@@ -452,7 +449,6 @@ model Person {
   mobile          String?
   employeeId      String?   @unique
   orgUnitId       String
-  primaryRoleId   String
   managerId       String?
   title           String?
   office          String?                 // Office location from MS Graph
@@ -468,7 +464,6 @@ model Person {
   // Relations
   user        User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
   orgUnit     OrganizationUnit @relation(fields: [orgUnitId], references: [id])
-  primaryRole Role             @relation(fields: [primaryRoleId], references: [id])
   manager     Person?          @relation("PersonManager", fields: [managerId], references: [id])
   directReports Person[]       @relation("PersonManager")
 
@@ -477,7 +472,6 @@ model Person {
   @@index([email])
   @@index([employeeId])
   @@index([orgUnitId])
-  @@index([primaryRoleId])
   @@index([managerId])
   @@index([isActive])
   @@map("persons")
@@ -633,7 +627,7 @@ const isInternalUser = (user: GraphUser) =>
 | `phone` | `businessPhones[0]` | `string \| null` | First item | Usually empty array |
 | `mobile` | `mobilePhone` | `string \| null` | Direct | Good coverage (84%) |
 | `employeeId` | `employeeId` | `string \| null` | Direct | Requires AD setup (14%) |
-| `title` | `jobTitle` | `string \| null` | Direct | Good coverage (81%) |
+| `title` | `jobTitle` | `string \| null` | Direct | ⭐ Job title field (Good coverage 81%) |
 | `department` | `department` | `string \| null` | Direct | Good coverage (75%) |
 | `office` | `officeLocation` | `string \| null` | Direct | e.g. "India Office", "Riyadh HQ" |
 | `locationId` | `officeLocation` | `string \| null` | Lookup | Optional: map to Location entity |
@@ -641,6 +635,8 @@ const isInternalUser = (user: GraphUser) =>
 | `hireDate` | `employeeHireDate` | `string \| null` | Parse ISO | Requires AD setup (14%) |
 | `terminationDate` | — | — | Set `null` | Not available |
 | `managerId` | `manager.id` | `string \| null` | 2-pass lookup | Lookup Person by `azureAdId` |
+
+> **Note**: Person.title (from MS Graph jobTitle) is the job title field. Roles are ONLY for RBAC (UserRole table for system permissions).
 
 ### Zod Validation Schema
 
@@ -690,12 +686,11 @@ interface PersonCreateInput {
   isActive: boolean;
   hireDate: Date | null;
   orgUnitId: string;
-  primaryRoleId: string;
 }
 
 export function transformGraphUserToPerson(
   graphUser: GraphUser,
-  defaults: { orgUnitId: string; primaryRoleId: string }
+  defaults: { orgUnitId: string }
 ): PersonCreateInput {
   // Extract name parts
   const firstName = graphUser.givenName || graphUser.displayName.split(' ')[0] || 'Unknown';
@@ -718,7 +713,6 @@ export function transformGraphUserToPerson(
     isActive: graphUser.accountEnabled,
     hireDate: graphUser.employeeHireDate ? new Date(graphUser.employeeHireDate) : null,
     orgUnitId: defaults.orgUnitId,
-    primaryRoleId: defaults.primaryRoleId,
   };
 }
 ```
@@ -910,7 +904,6 @@ export class SyncUsersFromGraphUseCase {
       try {
         const personData = transformGraphUserToPerson(graphUser, {
           orgUnitId: defaultOrgUnit.id,
-          primaryRoleId: viewerRole.id,
         });
 
         // ⭐ UPSERT BY azureAdId - NOT email!

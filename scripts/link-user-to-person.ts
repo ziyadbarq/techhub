@@ -107,7 +107,6 @@ async function linkUsersToPersons() {
             lastName,
             email,
             orgUnitId: orgUnit.id,
-            primaryRoleId: viewerRole.id,
             isActive: true,
           },
         });

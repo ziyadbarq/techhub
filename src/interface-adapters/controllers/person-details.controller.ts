@@ -289,7 +289,6 @@ export async function getPersonRelationCountsAction(
 
     // Permission checks for related modules
     const [
-      canViewRoleAssignments,
       canViewIntune,
       canViewLicenseAllocations,
       canViewAssetReservations,
@@ -304,7 +303,6 @@ export async function getPersonRelationCountsAction(
       canViewAttachments,
       canViewAssetDisposals,
     ] = await Promise.all([
-      hasPermission(PERMISSIONS.PERSON_ROLE_ASSIGNMENTS_VIEW),
       hasPermission(PERMISSIONS.INTUNE_DEVICES_VIEW),
       hasPermission(PERMISSIONS.LICENSE_ALLOCATIONS_VIEW),
       hasPermission(PERMISSIONS.ASSET_RESERVATIONS_VIEW),
@@ -323,7 +321,6 @@ export async function getPersonRelationCountsAction(
     // Fetch all counts in parallel using Prisma directly for efficiency
     const [
       directReports,
-      roleAssignments,
       intuneDevices,
       licenseAllocations,
       assetReservations,
@@ -340,11 +337,6 @@ export async function getPersonRelationCountsAction(
       approvedDisposals,
     ] = await Promise.all([
       prisma.person.count({ where: { managerId: personId, isActive: true } }),
-      canViewRoleAssignments
-        ? prisma.personRoleAssignment.count({
-            where: { personId, isActive: true },
-          })
-        : Promise.resolve(0),
       intuneEnabled && canViewIntune
         ? prisma.intuneDevice.count({ where: { linkedPersonId: personId } })
         : Promise.resolve(0),
@@ -405,7 +397,7 @@ export async function getPersonRelationCountsAction(
       success: true,
       data: {
         directReports,
-        roleAssignments,
+        roleAssignments: 0, // Role assignments removed - Person-Role business relationships deprecated
         intuneDevices,
         licenseAllocations,
         assetReservations,
@@ -1270,13 +1262,12 @@ export async function getPersonAuditLogAction(
 
 /**
  * Get role assignments for a person
+ * @deprecated Person-Role business relationships removed. Returns empty array.
  */
 export async function getPersonRoleAssignmentsAction(
   personId: string,
 ): Promise<ActionResponse<PersonRoleAssignmentSummaryDTO[]>> {
   try {
-    await requirePermission(PERMISSIONS.PERSON_ROLES_VIEW);
-
     if (!personId) {
       return {
         success: false,
@@ -1284,35 +1275,11 @@ export async function getPersonRoleAssignmentsAction(
       };
     }
 
-    const container = getContainer();
-    const prisma = container.get<PrismaClient>(DI_TOKENS.PrismaClient);
-
-    const assignments = await prisma.personRoleAssignment.findMany({
-      where: { personId, isActive: true },
-      orderBy: [{ isPrimary: "desc" }, { startDate: "desc" }],
-      take: 10,
-      select: {
-        id: true,
-        scope: true,
-        startDate: true,
-        endDate: true,
-        isPrimary: true,
-        isActive: true,
-        role: { select: { name: true } },
-      },
-    });
-
+    // Person-Role business relationships removed
+    // Role assignments now only exist for RBAC (UserRole table)
     return {
       success: true,
-      data: assignments.map((assignment) => ({
-        id: assignment.id,
-        roleName: assignment.role.name,
-        scope: assignment.scope,
-        startDate: assignment.startDate.toISOString(),
-        endDate: assignment.endDate ? assignment.endDate.toISOString() : null,
-        isPrimary: assignment.isPrimary,
-        isActive: assignment.isActive,
-      })),
+      data: [],
     };
   } catch (error) {
     return handleControllerError(

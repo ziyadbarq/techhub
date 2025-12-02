@@ -58,7 +58,6 @@ export async function createPersonAction(
       mobile: validated.mobile ?? undefined,
       employeeId: validated.employeeId ?? undefined,
       orgUnitId: validated.organizationUnitId,
-      primaryRoleId: validated.primaryRoleId,
       locationId: validated.locationId || undefined,
       managerId: validated.managerId || undefined,
       title: validated.title ?? undefined,
@@ -163,7 +162,6 @@ export async function updatePersonAction(
       mobile: validated.mobile,
       employeeId: validated.employeeId,
       orgUnitId: validated.organizationUnitId ?? undefined,
-      primaryRoleId: validated.primaryRoleId ?? undefined,
       locationId: validated.locationId || null,
       managerId: validated.managerId || null,
       title: validated.title,
@@ -331,7 +329,6 @@ export async function bulkCreatePersonsAction(
           mobile: validated.mobile ?? undefined,
           employeeId: validated.employeeId ?? undefined,
           orgUnitId: validated.organizationUnitId,
-          primaryRoleId: validated.primaryRoleId,
           locationId: validated.locationId ?? undefined,
           managerId: validated.managerId ?? undefined,
           title: validated.title ?? undefined,
@@ -530,8 +527,6 @@ export async function bulkUpsertPersonsAction(
                 updateData.employeeId = validated.employeeId;
               if (validated.organizationUnitId)
                 updateData.organizationUnitId = validated.organizationUnitId;
-              if (validated.primaryRoleId)
-                updateData.primaryRoleId = validated.primaryRoleId;
               if (validated.locationId)
                 updateData.locationId = validated.locationId;
               if (validated.managerId)
@@ -571,7 +566,6 @@ export async function bulkUpsertPersonsAction(
                 mobile: validated.mobile ?? undefined,
                 employeeId: validated.employeeId ?? undefined,
                 orgUnitId: validated.organizationUnitId,
-                primaryRoleId: validated.primaryRoleId,
                 locationId: validated.locationId ?? undefined,
                 managerId: validated.managerId ?? undefined,
                 title: validated.title ?? undefined,
@@ -597,7 +591,6 @@ export async function bulkUpsertPersonsAction(
             mobile: validated.mobile ?? undefined,
             employeeId: validated.employeeId ?? undefined,
             orgUnitId: validated.organizationUnitId,
-            primaryRoleId: validated.primaryRoleId,
             locationId: validated.locationId ?? undefined,
             managerId: validated.managerId ?? undefined,
             title: validated.title ?? undefined,

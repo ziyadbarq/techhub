@@ -39,7 +39,6 @@ export const CreatePersonSchema = z.object({
     .optional()
     .nullable(),
   organizationUnitId: z.string().min(1, "Organization unit is required"),
-  primaryRoleId: z.string().min(1, "Primary role is required"),
   locationId: z.string().optional().nullable(),
   managerId: z.string().optional().nullable(),
   title: z
@@ -98,7 +97,6 @@ export const UpdatePersonSchema = z.object({
     .optional()
     .nullable(),
   organizationUnitId: z.string().optional().nullable(),
-  primaryRoleId: z.string().optional(),
   locationId: z.string().optional().nullable(),
   managerId: z.string().optional().nullable(),
   title: z

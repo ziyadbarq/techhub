@@ -38,11 +38,6 @@ export interface PersonWithoutUserDTO {
     id: string;
     name: string;
   };
-  primaryRole: {
-    id: string;
-    name: string;
-    displayName: string;
-  };
 }
 
 /**
@@ -103,13 +98,6 @@ export async function listPersonsWithoutUsersAction(): Promise<
       department: person.department,
       isActive: person.isActive,
       orgUnit: person.orgUnit ?? { id: "", name: "" },
-      primaryRole:
-        person.primaryRole ??
-        ({
-          id: "",
-          name: "",
-          displayName: "",
-        } as PersonWithoutUserDTO["primaryRole"]),
     }));
 
     return { success: true, data };
@@ -290,11 +278,6 @@ export interface PersonForLinkingDTO {
     id: string;
     name: string;
   };
-  primaryRole: {
-    id: string;
-    name: string;
-    displayName: string;
-  };
 }
 
 /**
@@ -423,13 +406,6 @@ export async function listUnlinkedPersonsForUserAction(
       employeeId: person.employeeId,
       title: person.title,
       orgUnit: person.orgUnit ?? { id: "", name: "" },
-      primaryRole:
-        person.primaryRole ??
-        ({
-          id: "",
-          name: "",
-          displayName: "",
-        } as PersonForLinkingDTO["primaryRole"]),
     }));
 
     return { success: true, data };

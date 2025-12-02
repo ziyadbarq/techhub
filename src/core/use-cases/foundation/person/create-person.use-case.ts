@@ -19,7 +19,6 @@ export interface CreatePersonProps {
   mobile?: string | null;
   employeeId?: string | null;
   orgUnitId: string;
-  primaryRoleId: string;
   managerId?: string | null;
   title?: string | null;
   locationId?: string | null;

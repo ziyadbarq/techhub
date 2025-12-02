@@ -106,6 +106,7 @@ bash scripts/db-backup.sh restore                  # Interactive rollback (selec
 ### Essential Reading (Start Here)
 
 - **[DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md)** - Complete development guide, adding features, troubleshooting
+- **[TABLE_COMPONENTS_GUIDE.md](docs/guides/TABLE_COMPONENTS_GUIDE.md)** - Table standardization: hooks, components, migration recipes
 - **[PRISMA_GUIDE.md](docs/guides/PRISMA_GUIDE.md)** - Critical: Connection pool, imports, type-safe patterns
 - **[NEXTJS_16_GUIDE.md](docs/guides/NEXTJS_16_GUIDE.md)** - Critical: Async APIs, rendering, breaking changes
 - **[STACK_UPGRADES.md](docs/guides/STACK_UPGRADES.md)** - Breaking changes reference (Prisma 7, Next 16, Zod 4, etc.)

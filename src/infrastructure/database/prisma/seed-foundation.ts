@@ -18,7 +18,7 @@ import {
   createLocations,
   createOrganizationUnits,
   createPersons,
-  createPersonRoleAssignments,
+  // createPersonRoleAssignments, // Removed - person-role relationships deleted
   createFieldDefinitions,
   createExchangeRates,
 } from "./seed-foundation-factories.js";
@@ -421,8 +421,7 @@ export async function seedDemoPersons(prisma: PrismaClient) {
   // ==============================================
   logStep("👥", "Seeding demo persons...");
 
-  const { emailMap: personEmailMap, nameMap: personNameMap } =
-    await createPersons(prisma, SEED_CONFIG.PERSONS, orgUnitMap);
+  await createPersons(prisma, SEED_CONFIG.PERSONS, orgUnitMap);
 
   logSuccess(`Created ${await prisma.person.count()} demo persons`);
 
@@ -431,16 +430,17 @@ export async function seedDemoPersons(prisma: PrismaClient) {
   // ==============================================
   logStep("🎭", "Seeding person role assignments...");
 
-  await createPersonRoleAssignments(
-    prisma,
-    SEED_CONFIG.PERSON_ROLE_ASSIGNMENTS,
-    personEmailMap,
-    personNameMap,
-  );
+  // NOTE: personRoleAssignment seeding disabled - table no longer exists
+  // await createPersonRoleAssignments(
+  //   prisma,
+  //   SEED_CONFIG.PERSON_ROLE_ASSIGNMENTS,
+  //   personEmailMap,
+  //   personNameMap,
+  // );
 
-  logSuccess(
-    `Created ${await prisma.personRoleAssignment.count()} person role assignments`,
-  );
+  // logSuccess(
+  //   `Created ${await prisma.personRoleAssignment.count()} person role assignments`,
+  // );
 
   console.log("✅ Demo persons seeding complete!");
 }

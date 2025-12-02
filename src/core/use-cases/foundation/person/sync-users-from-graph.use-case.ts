@@ -51,12 +51,6 @@ export interface SyncUsersOptions {
   includeGuests?: boolean;
 
   /**
-   * Default primary role ID for new users
-   * If not provided, uses "viewer" role
-   */
-  defaultPrimaryRoleId?: string;
-
-  /**
    * Skip manager linking pass
    * Useful for faster initial sync
    */
@@ -405,7 +399,6 @@ export class SyncUsersFromGraphUseCase {
                 hireDate: personData.hireDate,
                 orgUnitId: personData.orgUnitId,
                 locationId: personData.locationId,
-                primaryRoleId: personData.primaryRoleId,
               });
 
               // Auto-exclude new users without department (service accounts, system accounts)

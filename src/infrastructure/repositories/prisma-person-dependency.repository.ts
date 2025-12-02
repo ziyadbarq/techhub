@@ -32,7 +32,6 @@ export class PrismaPersonDependencyRepository
       reservationsCreated,
       reservationsConfirmed,
       reservationsCancelled,
-      roleAssignments,
     ] = await Promise.all([
       prisma.person.findFirst({
         where: { id: personId, userId: { not: null } },
@@ -66,7 +65,6 @@ export class PrismaPersonDependencyRepository
       prisma.assetReservation.count({
         where: { reservedById: personId, status: "CANCELLED" },
       }),
-      prisma.personRoleAssignment.count({ where: { personId } }),
     ]);
 
     return {
@@ -91,7 +89,7 @@ export class PrismaPersonDependencyRepository
       reservationsCreated,
       reservationsConfirmed,
       reservationsCancelled,
-      roleAssignments,
+      roleAssignments: 0,
     };
   }
 

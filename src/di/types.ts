@@ -67,7 +67,7 @@ export const DI_TOKENS = {
   IPersonRepository: Symbol.for("IPersonRepository"),
   IPersonRoleAssignmentRepository: Symbol.for(
     "IPersonRoleAssignmentRepository",
-  ),
+  ), // Deprecated: feature removed
   IFieldDefinitionRepository: Symbol.for("IFieldDefinitionRepository"),
   IFieldTemplateRepository: Symbol.for("IFieldTemplateRepository"),
   IExchangeRateRepository: Symbol.for("IExchangeRateRepository"),

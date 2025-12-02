@@ -374,7 +374,6 @@ export async function createPersons(
         email,
         title: person.title ?? null,
         orgUnit: orgUnitId ? { connect: { id: orgUnitId } } : undefined,
-        primaryRole: { connect: { id: defaultRole.id } },
         isActive: true,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any,
@@ -553,27 +552,9 @@ export async function createPersonRoleAssignments(
       continue;
     }
 
-    // Check if assignment already exists (idempotent)
-    const existing = await prisma.personRoleAssignment.findFirst({
-      where: {
-        personId,
-        roleId,
-      },
-    });
-
-    if (existing) {
-      continue; // Skip duplicate
-    }
-
-    await prisma.personRoleAssignment.create({
-      data: {
-        person: { connect: { id: personId } },
-        role: { connect: { id: roleId } },
-        isPrimary: assignment.isPrimary ?? false,
-        scope: assignment.scope ?? null,
-        isActive: true,
-      },
-    });
+    // NOTE: personRoleAssignment table no longer exists
+    // Role assignments are now managed via BetterAuth and PersonAuthenticationProvider
+    // TODO: Implement role assignment seeding through appropriate authentication flow
   }
 }
 

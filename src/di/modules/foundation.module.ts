@@ -35,7 +35,7 @@ import { PrismaVendorContactRepository } from "@/infrastructure/repositories/pri
 import { PrismaOrganizationUnitRepository } from "@/infrastructure/repositories/prisma-organization-unit.repository";
 import { PrismaLocationRepository } from "@/infrastructure/repositories/prisma-location.repository";
 import { PrismaPersonRepository } from "@/infrastructure/repositories/prisma-person.repository";
-import { PrismaPersonRoleAssignmentRepository } from "@/infrastructure/repositories/prisma-person-role-assignment.repository";
+import { InMemoryPersonRoleAssignmentRepository } from "@/infrastructure/repositories/in-memory-person-role-assignment.repository";
 import { PrismaFieldDefinitionRepository } from "@/infrastructure/repositories/prisma-field-definition.repository";
 import { PrismaFieldTemplateRepository } from "@/infrastructure/repositories/prisma-field-template.repository";
 import { PrismaExchangeRateRepository } from "@/infrastructure/repositories/prisma-exchange-rate.repository";
@@ -113,7 +113,7 @@ import {
   GetRootEmployeesUseCase,
 } from "@/core/use-cases/foundation/employee-directory";
 
-// Person Role Assignment Use Cases
+// Person Role Assignment Use Cases (feature stub)
 import { CreatePersonRoleAssignmentUseCase } from "@/core/use-cases/foundation/person-role-assignment/create-person-role-assignment.use-case";
 import { GetPersonRoleAssignmentUseCase } from "@/core/use-cases/foundation/person-role-assignment/get-person-role-assignment.use-case";
 import { ListPersonRoleAssignmentsUseCase } from "@/core/use-cases/foundation/person-role-assignment/list-person-role-assignments.use-case";
@@ -208,7 +208,7 @@ export function bindFoundationDependencies(container: Container): void {
     .bind<IPersonRoleAssignmentRepository>(
       DI_TOKENS.IPersonRoleAssignmentRepository,
     )
-    .to(PrismaPersonRoleAssignmentRepository)
+    .to(InMemoryPersonRoleAssignmentRepository)
     .inSingletonScope();
 
   container
@@ -525,7 +525,7 @@ export function bindFoundationDependencies(container: Container): void {
     .inTransientScope();
 
   // ==========================================
-  // Person Role Assignment Use Cases
+  // Person Role Assignment Use Cases (stubbed)
   // ==========================================
 
   container

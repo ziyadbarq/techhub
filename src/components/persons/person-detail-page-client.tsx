@@ -811,7 +811,6 @@ Please change your password after first login.`;
           phone: person.phone,
           employeeId: person.employeeId,
           organizationUnitId: person.orgUnitId,
-          primaryRoleId: "", // Not available in EmployeeDirectoryDTO - form will load from server
           locationId: person.locationId,
           managerId: person.managerId,
           title: person.title,
