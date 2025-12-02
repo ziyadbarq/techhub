@@ -14,8 +14,8 @@
  * - CI will catch regressions before they reach production
  *
  * THRESHOLD LOGIC:
- * - Base queries: ListReservations (1), ListAssets (1), ListPeople (1)
- * - Total: Should be ~3 queries for 100 reservations (not 100+ queries)
+ * - Base queries: ListReservations (1), ListAssets (1), ListPeople (1 when any person references exist)
+ * - Total: Should stay between 2-3 queries for 100 reservations (not 100+ queries)
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
@@ -298,8 +298,8 @@ describe("AssetReservationsTableQuery - N+1 Watch", () => {
 
       const totalQueries = queryCounter.getTotalCount();
 
-      // Should still only make the base 3 queries (even though no people are referenced)
-      expect(totalQueries).toBe(3);
+      // Should only make the reservations + assets queries (no person lookups needed)
+      expect(totalQueries).toBe(2);
     });
   });
 

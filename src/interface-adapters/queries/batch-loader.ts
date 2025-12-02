@@ -34,8 +34,8 @@ export type BatchLoadFn<K, V> = (
 
 interface QueueItem<K, V> {
   key: K;
-  resolve: (value: V | null) => void;
-  reject: (error: Error) => void;
+  resolvers: Array<(value: V | null) => void>;
+  rejecters: Array<(error: Error) => void>;
 }
 
 /**
@@ -72,21 +72,20 @@ export class BatchLoader<K, V> {
     const existingItem = this.queue.find((item) => item.key === key);
     if (existingItem) {
       return new Promise<V | null>((resolve, reject) => {
-        existingItem.resolve = resolve;
-        existingItem.reject = reject;
+        existingItem.resolvers.push(resolve);
+        existingItem.rejecters.push(reject);
       });
     }
 
     // Add to queue
     return new Promise<V | null>((resolve, reject) => {
-      this.queue.push({ key, resolve, reject });
+      this.queue.push({ key, resolvers: [resolve], rejecters: [reject] });
 
-      // Schedule batch execution
-      // Use setImmediate for Node.js or fallback to Promise.resolve().then()
+      // Schedule batch execution with a short batch window to collect calls
       if (!this.batchTimer) {
         this.batchTimer = setTimeout(() => {
           this.executeBatch();
-        }, 0); // Use 0ms for immediate next tick batching
+        }, this.config.batchWindow);
       }
     });
   }
@@ -134,14 +133,16 @@ export class BatchLoader<K, V> {
             this.cache.set(key, value);
           }
 
-          chunk[i].resolve(value);
+          chunk[i].resolvers.forEach((resolve) => resolve(value));
         }
       }
     } catch (error) {
       // Reject all items in batch
       for (const item of batch) {
-        item.reject(
-          error instanceof Error ? error : new Error("Batch load failed"),
+        item.rejecters.forEach((reject) =>
+          reject(
+            error instanceof Error ? error : new Error("Batch load failed"),
+          ),
         );
       }
     }
