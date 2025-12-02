@@ -172,9 +172,12 @@ notify_worker_unavailable() {
     msg+=$'\n'"  • Maintenance tasks paused"
     msg+=$'\n'"  • Intune sync disabled"
     msg+=$'\n'""
+    msg+=$'\n'"Diagnostics:"
+    msg+=$'\n'"  npm run worker:health"
+    msg+=$'\n'"  pm2 logs barq-worker"
+    msg+=$'\n'""
     msg+=$'\n'"Action Required:"
     msg+=$'\n'"  pm2 restart barq-worker"
-    msg+=$'\n'"  pm2 logs barq-worker"
 
     # Priority 0 (normal - informational), default sound
     notify "Barq Worker Unavailable" "$msg" 0
