@@ -109,11 +109,18 @@ const createMockAssetAssignment = (
     conditionOnAssignment: null,
     conditionOnReturn: null,
     note: "Test assignment",
+    source: "MANUAL",
+    sourceReferenceType: null,
+    sourceReferenceId: null,
+    hasConflict: false,
+    conflictNote: null,
     createdAt: new Date("2024-01-01"),
     updatedAt: new Date("2024-01-01"),
     // Methods required by presenter
     isActive: () => true,
     getDurationInDays: () => 365,
+    isIntuneManaged: () => false,
+    isManual: () => true,
     ...overrides,
   }) as AssetAssignment;
 

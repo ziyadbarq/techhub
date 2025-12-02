@@ -67,3 +67,10 @@ export type {
   BulkCreateAssetResult,
   BulkCreateAssetsOutput,
 } from "./bulk-create-assets-from-intune-devices.use-case";
+
+// Assignment Sync
+export { SyncAssetAssignmentFromIntuneDeviceUseCase } from "./sync-asset-assignment-from-intune-device.use-case";
+export type {
+  SyncAssetAssignmentFromIntuneDeviceInput,
+  SyncAssetAssignmentFromIntuneDeviceOutput,
+} from "./sync-asset-assignment-from-intune-device.dto";

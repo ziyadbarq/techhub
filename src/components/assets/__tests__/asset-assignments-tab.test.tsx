@@ -58,6 +58,16 @@ const createMockAssignment = (
   durationInDays: 30,
   // Display fields
   assigneeName: "John Doe",
+  // Source tracking
+  source: "MANUAL",
+  sourceReferenceType: null,
+  sourceReferenceId: null,
+  // Conflict tracking
+  hasConflict: false,
+  conflictNote: null,
+  // Computed fields for source
+  isIntuneManaged: false,
+  isManual: true,
   ...overrides,
 });
 

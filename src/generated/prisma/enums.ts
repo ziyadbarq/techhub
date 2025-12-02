@@ -19,6 +19,17 @@ export const AssigneeTypeEnum = {
 export type AssigneeTypeEnum = (typeof AssigneeTypeEnum)[keyof typeof AssigneeTypeEnum]
 
 
+export const AssignmentSourceEnum = {
+  MANUAL: 'MANUAL',
+  INTUNE_SYNC: 'INTUNE_SYNC',
+  INTUNE_MANUAL: 'INTUNE_MANUAL',
+  IMPORT: 'IMPORT',
+  SYSTEM: 'SYSTEM'
+} as const
+
+export type AssignmentSourceEnum = (typeof AssignmentSourceEnum)[keyof typeof AssignmentSourceEnum]
+
+
 export const StockMovementTypeEnum = {
   IN: 'IN',
   OUT: 'OUT',

@@ -194,6 +194,9 @@ export default [
                 "@/interface-adapters/**",
                 "@/infrastructure/**",
                 "@/lib/**",
+                // Exception: Allow logging decorator (cross-cutting concern for observability)
+                "!@/lib/decorators/log-execution.decorator",
+                "!@/lib/decorators",
               ],
               message:
                 "Use cases depend only on domain/services/contracts; route through adapters for everything else.",

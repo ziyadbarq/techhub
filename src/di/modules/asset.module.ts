@@ -76,6 +76,8 @@ import { GetAssetAssignmentUseCase } from "@/core/use-cases/asset/asset-assignme
 import { ListAssetAssignmentsUseCase } from "@/core/use-cases/asset/asset-assignment/list-asset-assignments.use-case";
 import { UpdateAssetAssignmentUseCase } from "@/core/use-cases/asset/asset-assignment/update-asset-assignment.use-case";
 import { DeleteAssetAssignmentUseCase } from "@/core/use-cases/asset/asset-assignment/delete-asset-assignment.use-case";
+import { ListConflictsUseCase } from "@/core/use-cases/asset/asset-assignment/list-conflicts.use-case";
+import { UpdateConflictStatusUseCase } from "@/core/use-cases/asset/asset-assignment/update-conflict-status.use-case";
 
 // Warranty Repository
 import type { IWarrantyRepository } from "@/core/repositories/warranty.repository.interface";
@@ -402,6 +404,18 @@ export function bindAssetDependencies(container: Container): void {
   container
     .bind<DeleteAssetAssignmentUseCase>(DI_TOKENS.DeleteAssetAssignmentUseCase)
     .to(DeleteAssetAssignmentUseCase)
+    .inTransientScope();
+
+  container
+    .bind<ListConflictsUseCase>(DI_TOKENS.ListAssignmentConflictsUseCase)
+    .to(ListConflictsUseCase)
+    .inTransientScope();
+
+  container
+    .bind<UpdateConflictStatusUseCase>(
+      DI_TOKENS.UpdateAssignmentConflictStatusUseCase,
+    )
+    .to(UpdateConflictStatusUseCase)
     .inTransientScope();
 
   // ==========================================

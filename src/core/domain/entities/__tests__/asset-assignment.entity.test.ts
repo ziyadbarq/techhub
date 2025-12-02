@@ -44,6 +44,11 @@ describe("AssetAssignment Entity", () => {
     note: "Assigned to engineering team member",
     createdAt: new Date("2024-01-15"),
     updatedAt: new Date("2024-01-15"),
+    source: "MANUAL",
+    sourceReferenceType: null,
+    sourceReferenceId: null,
+    hasConflict: false,
+    conflictNote: null,
   };
 
   describe("create - factory method", () => {

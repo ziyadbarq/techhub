@@ -17,6 +17,8 @@ The Intune Integration module enables synchronization of Microsoft Intune manage
 - **Automated Linking**: Auto-link devices to assets via serial number matching
 - **User Association**: Auto-link devices to persons via Azure AD user ID
 - **Asset Creation**: Create single or bulk ITAM assets directly from Intune devices
+- **Automatic Assignment Sync**: Auto-create asset assignments when devices are linked to both assets and persons
+- **Conflict Detection**: Flag discrepancies between Intune and manual assignments for admin review
 
 ## Architecture
 
@@ -31,7 +33,7 @@ Intune Integration Module
 │   ├── MSGraphService                    # Microsoft Graph API client
 │   ├── PrismaIntuneDeviceRepository      # Device persistence
 │   └── PrismaIntuneComplianceHistoryRepository
-├── Use Cases (11 total)
+├── Use Cases (12 total)
 │   ├── SyncDevicesFromIntuneUseCase      # Main sync orchestrator
 │   ├── GetIntuneDeviceUseCase            # Single device lookup
 │   ├── ListIntuneDevicesUseCase          # Paginated list with filters
@@ -41,18 +43,22 @@ Intune Integration Module
 │   ├── LinkIntuneDeviceToAssetUseCase    # Manual asset linking
 │   ├── UnlinkIntuneDeviceFromAssetUseCase
 │   ├── LinkIntuneDeviceToPersonUseCase   # Manual person linking
-│   └── UnlinkIntuneDeviceFromPersonUseCase
+│   ├── UnlinkIntuneDeviceFromPersonUseCase
+│   └── SyncAssetAssignmentFromIntuneDeviceUseCase # Auto-sync assignments
 ├── Controllers
 │   └── intune-device.controller.ts       # Server actions
 ├── UI Components
 │   ├── /intune/devices                   # Device list page
 │   ├── /intune/devices/[id]              # Device detail page
+│   ├── /admin/assignment-conflicts       # Admin conflict resolution page
 │   ├── IntuneDevicesTable                # Data table with row selection
 │   ├── IntuneDeviceDetailClient          # Detail view with tabs, stats & ITAM Links Management
 │   ├── CreateAssetFromDeviceWizard       # Single asset creation wizard
 │   ├── BulkCreateAssetsWizard            # Bulk asset creation wizard
 │   ├── ComplianceHistoryTab              # Timeline of compliance changes
-│   └── RelatedItemsTab                   # Linked asset/person enriched details
+│   ├── RelatedItemsTab                   # Linked asset/person enriched details
+│   ├── AssetAssignmentsTab               # Intune vs Manual assignments with CountedTabs
+│   └── AssignmentConflictsPageClient     # Admin conflict management interface
 └── Background Jobs
     └── handleIntuneDeviceSync            # BullMQ scheduled job (daily 3 AM UTC)
 ```
@@ -72,6 +78,18 @@ Intune Integration Module
    - Deactivates devices no longer in Intune
    ↓
 4. UI displays synced data with compliance badges
+
+Manual Linking Flow (with Assignment Sync):
+1. User links device to asset or person
+   ↓
+2. Link use case updates device entity
+   ↓
+3. SyncAssetAssignmentFromIntuneDeviceUseCase automatically triggers:
+   - If device has BOTH asset + person links → creates/updates assignment
+   - If incomplete links → ends any existing assignment
+   - Detects conflicts (Intune person ≠ Manual person) → flags both
+   ↓
+4. Admin can review conflicts at /admin/assignment-conflicts
 ```
 
 ## Configuration
@@ -182,6 +200,43 @@ MS_GRAPH_CLIENT_SECRET=your-client-secret
 3. Click **"Unlink"** button under Person Link
 4. Confirm the action
 5. Device is immediately unlinked from the person
+6. **Automatic Behavior**: If an Intune-sourced assignment existed, it will be automatically ended
+
+### Automatic Assignment Synchronization
+
+**How It Works** (✅ Implemented v1.2.0):
+
+When you manually link an Intune device to both an asset and a person, the system automatically:
+1. Creates an `AssetAssignment` record linking the asset to the person
+2. Sets the assignment source to `INTUNE_MANUAL` (distinguishing it from pure manual assignments)
+3. Stores a reference to the Intune device for traceability
+4. Detects conflicts when Intune and manual sources disagree on assignment
+
+**Dual Assignment Support**:
+- Both Intune-sourced and manual assignments can coexist on the same asset
+- No overriding - assignments are tracked separately by source
+- Real-world scenario: IT helpdesk provisions device under their account, but actual user is different
+
+**Conflict Detection**:
+- Automatic flagging when Intune person ≠ Manual person
+- Admin review page at `/admin/assignment-conflicts`
+- Conflict notes for documentation
+- Clear/flag conflict actions
+
+**Assignment Sources**:
+- `MANUAL`: Created manually by user in ITAM
+- `INTUNE_SYNC`: Auto-created during daily Intune sync (future)
+- `INTUNE_MANUAL`: Created via manual Intune device linking
+- `IMPORT`: Created during data import
+- `SYSTEM`: System-generated
+
+**Viewing Assignments by Source**:
+
+On the Asset detail page, the **Assignments tab** now displays assignments separated by source:
+- **Manual Tab**: Shows assignments created directly in ITAM
+- **Intune Tab**: Shows assignments created from Intune device links
+- **Conflict badges**: Red alert icon on conflicted assignments
+- Icons: User (manual), Laptop (Intune)
 
 ### Viewing Device Details
 
@@ -362,9 +417,19 @@ npm run worker:dev
 # Look for log entries with scope "IntuneSync" or "MSGraphService"
 ```
 
-## Recent Updates (v1.2.0 - December 1, 2024)
+## Recent Updates (v1.2.0 - December 2, 2024)
 
 ### ✅ Completed Features
+
+- **Automatic Assignment Synchronization** (NEW):
+  - Auto-creates `AssetAssignment` records when Intune devices are linked to both assets and persons
+  - Dual assignment support: Intune and manual assignments coexist on same asset
+  - Conflict detection and flagging when sources disagree
+  - Assignment sources tracked: `MANUAL`, `INTUNE_SYNC`, `INTUNE_MANUAL`, `IMPORT`, `SYSTEM`
+  - Source reference tracking for audit trails
+  - Admin conflict resolution page at `/admin/assignment-conflicts`
+  - Enhanced AssetAssignmentsTab with CountedTabs showing Intune vs Manual assignments separately
+  - Automatic cleanup: ends assignments when devices are unlinked
 
 - **ITAM Links Management Card**: Comprehensive UI for managing device-asset-person links
   - Unlink Asset/Person buttons with loading states

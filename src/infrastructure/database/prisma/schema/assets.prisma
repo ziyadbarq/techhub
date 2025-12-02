@@ -236,18 +236,28 @@ model Asset {
 
 // AssetAssignment model
 model AssetAssignment {
-  id                    String           @id @default(cuid())
+  id                    String                 @id @default(cuid())
   assetId               String
   assigneeType          AssigneeTypeEnum
   assigneeId            String // points to Person/OrgUnit/Location/CI depending on type
-  startDate             DateTime         @default(now())
+  startDate             DateTime               @default(now())
   endDate               DateTime?
-  isPrimary             Boolean          @default(false)
+  isPrimary             Boolean                @default(false)
   conditionOnAssignment String? // Condition when asset was assigned
   conditionOnReturn     String? // Condition when asset was returned
-  note                  String?          @db.Text
-  createdAt             DateTime         @default(now())
-  updatedAt             DateTime         @updatedAt
+  note                  String?                @db.Text
+
+  // Source tracking (for Intune integration)
+  source                AssignmentSourceEnum   @default(MANUAL)
+  sourceReferenceType   String? // e.g., "IntuneDevice"
+  sourceReferenceId     String? // e.g., IntuneDevice.id
+
+  // Conflict tracking
+  hasConflict           Boolean                @default(false)
+  conflictNote          String?                @db.Text
+
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
 
   // Relations
   asset Asset @relation(fields: [assetId], references: [id], onDelete: Restrict)
@@ -256,6 +266,9 @@ model AssetAssignment {
   @@index([assetId])
   @@index([assigneeType, assigneeId])
   @@index([startDate, endDate])
+  @@index([source])
+  @@index([sourceReferenceType, sourceReferenceId])
+  @@index([hasConflict])
   @@map("asset_assignments")
 }
 
@@ -306,6 +319,14 @@ enum AssigneeTypeEnum {
   ORG_UNIT
   LOCATION
   CI
+}
+
+enum AssignmentSourceEnum {
+  MANUAL        // Created manually by user in ITAM
+  INTUNE_SYNC   // Auto-created during daily Intune sync
+  INTUNE_MANUAL // Created via manual Intune device linking
+  IMPORT        // Created during data import
+  SYSTEM        // System-generated
 }
 
 enum StockMovementTypeEnum {

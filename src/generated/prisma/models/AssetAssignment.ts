@@ -35,6 +35,11 @@ export type AssetAssignmentMinAggregateOutputType = {
   conditionOnAssignment: string | null
   conditionOnReturn: string | null
   note: string | null
+  source: $Enums.AssignmentSourceEnum | null
+  sourceReferenceType: string | null
+  sourceReferenceId: string | null
+  hasConflict: boolean | null
+  conflictNote: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -50,6 +55,11 @@ export type AssetAssignmentMaxAggregateOutputType = {
   conditionOnAssignment: string | null
   conditionOnReturn: string | null
   note: string | null
+  source: $Enums.AssignmentSourceEnum | null
+  sourceReferenceType: string | null
+  sourceReferenceId: string | null
+  hasConflict: boolean | null
+  conflictNote: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -65,6 +75,11 @@ export type AssetAssignmentCountAggregateOutputType = {
   conditionOnAssignment: number
   conditionOnReturn: number
   note: number
+  source: number
+  sourceReferenceType: number
+  sourceReferenceId: number
+  hasConflict: number
+  conflictNote: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -82,6 +97,11 @@ export type AssetAssignmentMinAggregateInputType = {
   conditionOnAssignment?: true
   conditionOnReturn?: true
   note?: true
+  source?: true
+  sourceReferenceType?: true
+  sourceReferenceId?: true
+  hasConflict?: true
+  conflictNote?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -97,6 +117,11 @@ export type AssetAssignmentMaxAggregateInputType = {
   conditionOnAssignment?: true
   conditionOnReturn?: true
   note?: true
+  source?: true
+  sourceReferenceType?: true
+  sourceReferenceId?: true
+  hasConflict?: true
+  conflictNote?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -112,6 +137,11 @@ export type AssetAssignmentCountAggregateInputType = {
   conditionOnAssignment?: true
   conditionOnReturn?: true
   note?: true
+  source?: true
+  sourceReferenceType?: true
+  sourceReferenceId?: true
+  hasConflict?: true
+  conflictNote?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -200,6 +230,11 @@ export type AssetAssignmentGroupByOutputType = {
   conditionOnAssignment: string | null
   conditionOnReturn: string | null
   note: string | null
+  source: $Enums.AssignmentSourceEnum
+  sourceReferenceType: string | null
+  sourceReferenceId: string | null
+  hasConflict: boolean
+  conflictNote: string | null
   createdAt: Date
   updatedAt: Date
   _count: AssetAssignmentCountAggregateOutputType | null
@@ -236,6 +271,11 @@ export type AssetAssignmentWhereInput = {
   conditionOnAssignment?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
   conditionOnReturn?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
   note?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
+  source?: Prisma.EnumAssignmentSourceEnumFilter<"AssetAssignment"> | $Enums.AssignmentSourceEnum
+  sourceReferenceType?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
+  sourceReferenceId?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
+  hasConflict?: Prisma.BoolFilter<"AssetAssignment"> | boolean
+  conflictNote?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AssetAssignment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AssetAssignment"> | Date | string
   asset?: Prisma.XOR<Prisma.AssetScalarRelationFilter, Prisma.AssetWhereInput>
@@ -252,6 +292,11 @@ export type AssetAssignmentOrderByWithRelationInput = {
   conditionOnAssignment?: Prisma.SortOrderInput | Prisma.SortOrder
   conditionOnReturn?: Prisma.SortOrderInput | Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
+  source?: Prisma.SortOrder
+  sourceReferenceType?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceReferenceId?: Prisma.SortOrderInput | Prisma.SortOrder
+  hasConflict?: Prisma.SortOrder
+  conflictNote?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   asset?: Prisma.AssetOrderByWithRelationInput
@@ -271,6 +316,11 @@ export type AssetAssignmentWhereUniqueInput = Prisma.AtLeast<{
   conditionOnAssignment?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
   conditionOnReturn?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
   note?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
+  source?: Prisma.EnumAssignmentSourceEnumFilter<"AssetAssignment"> | $Enums.AssignmentSourceEnum
+  sourceReferenceType?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
+  sourceReferenceId?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
+  hasConflict?: Prisma.BoolFilter<"AssetAssignment"> | boolean
+  conflictNote?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AssetAssignment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AssetAssignment"> | Date | string
   asset?: Prisma.XOR<Prisma.AssetScalarRelationFilter, Prisma.AssetWhereInput>
@@ -287,6 +337,11 @@ export type AssetAssignmentOrderByWithAggregationInput = {
   conditionOnAssignment?: Prisma.SortOrderInput | Prisma.SortOrder
   conditionOnReturn?: Prisma.SortOrderInput | Prisma.SortOrder
   note?: Prisma.SortOrderInput | Prisma.SortOrder
+  source?: Prisma.SortOrder
+  sourceReferenceType?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceReferenceId?: Prisma.SortOrderInput | Prisma.SortOrder
+  hasConflict?: Prisma.SortOrder
+  conflictNote?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.AssetAssignmentCountOrderByAggregateInput
@@ -308,6 +363,11 @@ export type AssetAssignmentScalarWhereWithAggregatesInput = {
   conditionOnAssignment?: Prisma.StringNullableWithAggregatesFilter<"AssetAssignment"> | string | null
   conditionOnReturn?: Prisma.StringNullableWithAggregatesFilter<"AssetAssignment"> | string | null
   note?: Prisma.StringNullableWithAggregatesFilter<"AssetAssignment"> | string | null
+  source?: Prisma.EnumAssignmentSourceEnumWithAggregatesFilter<"AssetAssignment"> | $Enums.AssignmentSourceEnum
+  sourceReferenceType?: Prisma.StringNullableWithAggregatesFilter<"AssetAssignment"> | string | null
+  sourceReferenceId?: Prisma.StringNullableWithAggregatesFilter<"AssetAssignment"> | string | null
+  hasConflict?: Prisma.BoolWithAggregatesFilter<"AssetAssignment"> | boolean
+  conflictNote?: Prisma.StringNullableWithAggregatesFilter<"AssetAssignment"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"AssetAssignment"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"AssetAssignment"> | Date | string
 }
@@ -322,6 +382,11 @@ export type AssetAssignmentCreateInput = {
   conditionOnAssignment?: string | null
   conditionOnReturn?: string | null
   note?: string | null
+  source?: $Enums.AssignmentSourceEnum
+  sourceReferenceType?: string | null
+  sourceReferenceId?: string | null
+  hasConflict?: boolean
+  conflictNote?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   asset: Prisma.AssetCreateNestedOneWithoutAssetAssignmentsInput
@@ -338,6 +403,11 @@ export type AssetAssignmentUncheckedCreateInput = {
   conditionOnAssignment?: string | null
   conditionOnReturn?: string | null
   note?: string | null
+  source?: $Enums.AssignmentSourceEnum
+  sourceReferenceType?: string | null
+  sourceReferenceId?: string | null
+  hasConflict?: boolean
+  conflictNote?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -352,6 +422,11 @@ export type AssetAssignmentUpdateInput = {
   conditionOnAssignment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionOnReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.EnumAssignmentSourceEnumFieldUpdateOperationsInput | $Enums.AssignmentSourceEnum
+  sourceReferenceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceReferenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasConflict?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  conflictNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   asset?: Prisma.AssetUpdateOneRequiredWithoutAssetAssignmentsNestedInput
@@ -368,6 +443,11 @@ export type AssetAssignmentUncheckedUpdateInput = {
   conditionOnAssignment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionOnReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.EnumAssignmentSourceEnumFieldUpdateOperationsInput | $Enums.AssignmentSourceEnum
+  sourceReferenceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceReferenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasConflict?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  conflictNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -383,6 +463,11 @@ export type AssetAssignmentCreateManyInput = {
   conditionOnAssignment?: string | null
   conditionOnReturn?: string | null
   note?: string | null
+  source?: $Enums.AssignmentSourceEnum
+  sourceReferenceType?: string | null
+  sourceReferenceId?: string | null
+  hasConflict?: boolean
+  conflictNote?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -397,6 +482,11 @@ export type AssetAssignmentUpdateManyMutationInput = {
   conditionOnAssignment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionOnReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.EnumAssignmentSourceEnumFieldUpdateOperationsInput | $Enums.AssignmentSourceEnum
+  sourceReferenceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceReferenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasConflict?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  conflictNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -412,6 +502,11 @@ export type AssetAssignmentUncheckedUpdateManyInput = {
   conditionOnAssignment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionOnReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.EnumAssignmentSourceEnumFieldUpdateOperationsInput | $Enums.AssignmentSourceEnum
+  sourceReferenceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceReferenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasConflict?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  conflictNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -437,6 +532,11 @@ export type AssetAssignmentCountOrderByAggregateInput = {
   conditionOnAssignment?: Prisma.SortOrder
   conditionOnReturn?: Prisma.SortOrder
   note?: Prisma.SortOrder
+  source?: Prisma.SortOrder
+  sourceReferenceType?: Prisma.SortOrder
+  sourceReferenceId?: Prisma.SortOrder
+  hasConflict?: Prisma.SortOrder
+  conflictNote?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -452,6 +552,11 @@ export type AssetAssignmentMaxOrderByAggregateInput = {
   conditionOnAssignment?: Prisma.SortOrder
   conditionOnReturn?: Prisma.SortOrder
   note?: Prisma.SortOrder
+  source?: Prisma.SortOrder
+  sourceReferenceType?: Prisma.SortOrder
+  sourceReferenceId?: Prisma.SortOrder
+  hasConflict?: Prisma.SortOrder
+  conflictNote?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -467,6 +572,11 @@ export type AssetAssignmentMinOrderByAggregateInput = {
   conditionOnAssignment?: Prisma.SortOrder
   conditionOnReturn?: Prisma.SortOrder
   note?: Prisma.SortOrder
+  source?: Prisma.SortOrder
+  sourceReferenceType?: Prisma.SortOrder
+  sourceReferenceId?: Prisma.SortOrder
+  hasConflict?: Prisma.SortOrder
+  conflictNote?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -517,6 +627,10 @@ export type EnumAssigneeTypeEnumFieldUpdateOperationsInput = {
   set?: $Enums.AssigneeTypeEnum
 }
 
+export type EnumAssignmentSourceEnumFieldUpdateOperationsInput = {
+  set?: $Enums.AssignmentSourceEnum
+}
+
 export type AssetAssignmentCreateWithoutAssetInput = {
   id?: string
   assigneeType: $Enums.AssigneeTypeEnum
@@ -527,6 +641,11 @@ export type AssetAssignmentCreateWithoutAssetInput = {
   conditionOnAssignment?: string | null
   conditionOnReturn?: string | null
   note?: string | null
+  source?: $Enums.AssignmentSourceEnum
+  sourceReferenceType?: string | null
+  sourceReferenceId?: string | null
+  hasConflict?: boolean
+  conflictNote?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -541,6 +660,11 @@ export type AssetAssignmentUncheckedCreateWithoutAssetInput = {
   conditionOnAssignment?: string | null
   conditionOnReturn?: string | null
   note?: string | null
+  source?: $Enums.AssignmentSourceEnum
+  sourceReferenceType?: string | null
+  sourceReferenceId?: string | null
+  hasConflict?: boolean
+  conflictNote?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -585,6 +709,11 @@ export type AssetAssignmentScalarWhereInput = {
   conditionOnAssignment?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
   conditionOnReturn?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
   note?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
+  source?: Prisma.EnumAssignmentSourceEnumFilter<"AssetAssignment"> | $Enums.AssignmentSourceEnum
+  sourceReferenceType?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
+  sourceReferenceId?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
+  hasConflict?: Prisma.BoolFilter<"AssetAssignment"> | boolean
+  conflictNote?: Prisma.StringNullableFilter<"AssetAssignment"> | string | null
   createdAt?: Prisma.DateTimeFilter<"AssetAssignment"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"AssetAssignment"> | Date | string
 }
@@ -599,6 +728,11 @@ export type AssetAssignmentCreateManyAssetInput = {
   conditionOnAssignment?: string | null
   conditionOnReturn?: string | null
   note?: string | null
+  source?: $Enums.AssignmentSourceEnum
+  sourceReferenceType?: string | null
+  sourceReferenceId?: string | null
+  hasConflict?: boolean
+  conflictNote?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -613,6 +747,11 @@ export type AssetAssignmentUpdateWithoutAssetInput = {
   conditionOnAssignment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionOnReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.EnumAssignmentSourceEnumFieldUpdateOperationsInput | $Enums.AssignmentSourceEnum
+  sourceReferenceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceReferenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasConflict?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  conflictNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -627,6 +766,11 @@ export type AssetAssignmentUncheckedUpdateWithoutAssetInput = {
   conditionOnAssignment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionOnReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.EnumAssignmentSourceEnumFieldUpdateOperationsInput | $Enums.AssignmentSourceEnum
+  sourceReferenceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceReferenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasConflict?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  conflictNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -641,6 +785,11 @@ export type AssetAssignmentUncheckedUpdateManyWithoutAssetInput = {
   conditionOnAssignment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   conditionOnReturn?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   note?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  source?: Prisma.EnumAssignmentSourceEnumFieldUpdateOperationsInput | $Enums.AssignmentSourceEnum
+  sourceReferenceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceReferenceId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  hasConflict?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  conflictNote?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -658,6 +807,11 @@ export type AssetAssignmentSelect<ExtArgs extends runtime.Types.Extensions.Inter
   conditionOnAssignment?: boolean
   conditionOnReturn?: boolean
   note?: boolean
+  source?: boolean
+  sourceReferenceType?: boolean
+  sourceReferenceId?: boolean
+  hasConflict?: boolean
+  conflictNote?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
@@ -674,6 +828,11 @@ export type AssetAssignmentSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   conditionOnAssignment?: boolean
   conditionOnReturn?: boolean
   note?: boolean
+  source?: boolean
+  sourceReferenceType?: boolean
+  sourceReferenceId?: boolean
+  hasConflict?: boolean
+  conflictNote?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
@@ -690,6 +849,11 @@ export type AssetAssignmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   conditionOnAssignment?: boolean
   conditionOnReturn?: boolean
   note?: boolean
+  source?: boolean
+  sourceReferenceType?: boolean
+  sourceReferenceId?: boolean
+  hasConflict?: boolean
+  conflictNote?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
@@ -706,11 +870,16 @@ export type AssetAssignmentSelectScalar = {
   conditionOnAssignment?: boolean
   conditionOnReturn?: boolean
   note?: boolean
+  source?: boolean
+  sourceReferenceType?: boolean
+  sourceReferenceId?: boolean
+  hasConflict?: boolean
+  conflictNote?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type AssetAssignmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "assetId" | "assigneeType" | "assigneeId" | "startDate" | "endDate" | "isPrimary" | "conditionOnAssignment" | "conditionOnReturn" | "note" | "createdAt" | "updatedAt", ExtArgs["result"]["assetAssignment"]>
+export type AssetAssignmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "assetId" | "assigneeType" | "assigneeId" | "startDate" | "endDate" | "isPrimary" | "conditionOnAssignment" | "conditionOnReturn" | "note" | "source" | "sourceReferenceType" | "sourceReferenceId" | "hasConflict" | "conflictNote" | "createdAt" | "updatedAt", ExtArgs["result"]["assetAssignment"]>
 export type AssetAssignmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
 }
@@ -737,6 +906,11 @@ export type $AssetAssignmentPayload<ExtArgs extends runtime.Types.Extensions.Int
     conditionOnAssignment: string | null
     conditionOnReturn: string | null
     note: string | null
+    source: $Enums.AssignmentSourceEnum
+    sourceReferenceType: string | null
+    sourceReferenceId: string | null
+    hasConflict: boolean
+    conflictNote: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["assetAssignment"]>
@@ -1173,6 +1347,11 @@ export interface AssetAssignmentFieldRefs {
   readonly conditionOnAssignment: Prisma.FieldRef<"AssetAssignment", 'String'>
   readonly conditionOnReturn: Prisma.FieldRef<"AssetAssignment", 'String'>
   readonly note: Prisma.FieldRef<"AssetAssignment", 'String'>
+  readonly source: Prisma.FieldRef<"AssetAssignment", 'AssignmentSourceEnum'>
+  readonly sourceReferenceType: Prisma.FieldRef<"AssetAssignment", 'String'>
+  readonly sourceReferenceId: Prisma.FieldRef<"AssetAssignment", 'String'>
+  readonly hasConflict: Prisma.FieldRef<"AssetAssignment", 'Boolean'>
+  readonly conflictNote: Prisma.FieldRef<"AssetAssignment", 'String'>
   readonly createdAt: Prisma.FieldRef<"AssetAssignment", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"AssetAssignment", 'DateTime'>
 }

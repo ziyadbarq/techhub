@@ -278,6 +278,11 @@ export const AssetAssignmentScalarFieldEnum = {
   conditionOnAssignment: 'conditionOnAssignment',
   conditionOnReturn: 'conditionOnReturn',
   note: 'note',
+  source: 'source',
+  sourceReferenceType: 'sourceReferenceType',
+  sourceReferenceId: 'sourceReferenceId',
+  hasConflict: 'hasConflict',
+  conflictNote: 'conflictNote',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

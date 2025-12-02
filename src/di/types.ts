@@ -818,6 +818,10 @@ export const DI_TOKENS = {
   ListAssetAssignmentsUseCase: Symbol.for("ListAssetAssignmentsUseCase"),
   UpdateAssetAssignmentUseCase: Symbol.for("UpdateAssetAssignmentUseCase"),
   DeleteAssetAssignmentUseCase: Symbol.for("DeleteAssetAssignmentUseCase"),
+  ListAssignmentConflictsUseCase: Symbol.for("ListAssignmentConflictsUseCase"),
+  UpdateAssignmentConflictStatusUseCase: Symbol.for(
+    "UpdateAssignmentConflictStatusUseCase",
+  ),
 
   // Assets: Warranty Repository
   IWarrantyRepository: Symbol.for("IWarrantyRepository"),

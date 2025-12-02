@@ -6719,6 +6719,11 @@ export const AssetAssignmentScalarFieldEnum = {
   conditionOnAssignment: 'conditionOnAssignment',
   conditionOnReturn: 'conditionOnReturn',
   note: 'note',
+  source: 'source',
+  sourceReferenceType: 'sourceReferenceType',
+  sourceReferenceId: 'sourceReferenceId',
+  hasConflict: 'hasConflict',
+  conflictNote: 'conflictNote',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -8342,6 +8347,20 @@ export type EnumAssigneeTypeEnumFieldRefInput<$PrismaModel> = FieldRefInputType<
  * Reference to a field of type 'AssigneeTypeEnum[]'
  */
 export type ListEnumAssigneeTypeEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AssigneeTypeEnum[]'>
+    
+
+
+/**
+ * Reference to a field of type 'AssignmentSourceEnum'
+ */
+export type EnumAssignmentSourceEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AssignmentSourceEnum'>
+    
+
+
+/**
+ * Reference to a field of type 'AssignmentSourceEnum[]'
+ */
+export type ListEnumAssignmentSourceEnumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AssignmentSourceEnum[]'>
     
 
 
