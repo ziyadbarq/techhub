@@ -26,6 +26,7 @@
     "db:migrate": "dotenv -e .env.local -- prisma migrate dev",
     "db:migrate:deploy": "dotenv -e .env.local -- prisma migrate deploy",
     "db:migrate:status": "dotenv -e .env.local -- prisma migrate status",
+    "db:drift-remedy": "tsx scripts/prisma-drift-remedy.ts",
     "db:seed": "dotenv -e .env.local -- tsx src/infrastructure/database/prisma/seed.ts production",
     "db:seed:dev": "dotenv -e .env.local -- tsx src/infrastructure/database/prisma/seed.ts dev",
     "db:seed:full": "dotenv -e .env.local -- tsx src/infrastructure/database/prisma/seed.ts full",

@@ -207,7 +207,16 @@ export class PrismaAssetAssignmentRepository
           startDate: assignment.startDate,
           endDate: assignment.endDate,
           isPrimary: assignment.isPrimary,
+          conditionOnAssignment: assignment.conditionOnAssignment,
+          conditionOnReturn: assignment.conditionOnReturn,
           note: assignment.note,
+          // Source tracking
+          source: assignment.source,
+          sourceReferenceType: assignment.sourceReferenceType,
+          sourceReferenceId: assignment.sourceReferenceId,
+          // Conflict tracking
+          hasConflict: assignment.hasConflict,
+          conflictNote: assignment.conflictNote,
           updatedAt: assignment.updatedAt,
         },
       });

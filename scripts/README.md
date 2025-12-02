@@ -96,6 +96,35 @@ bash scripts/db-backup.sh restore
 - Interactive restore picks the most recent backup if you don’t pass `--file`, asks before dropping schema, and offers a `--drop-schema` escape hatch for drifted DBs
 - Use `--no-auto-latest` if you prefer to manually input the backup path every time
 
+### 4. Prisma Drift Remedy (Dev Only)
+
+**Purpose:** Recover migration history after an accidental `db push` or manual schema tweak without wiping local data.
+
+**Usage:**
+
+```bash
+npm run db:drift-remedy
+```
+
+**What it does:**
+
+1. Loads `.env.local`/`.env`, verifies `DATABASE_URL` is localhost
+2. Uses `prisma migrate diff` to capture drift SQL into `local/backups/drift-remedy`
+3. Generates an idempotent reconciliation migration in `src/infrastructure/database/prisma/schema/migrations`
+4. Prompts you to review and then run `npm run db:migrate` (no-op on already-updated DBs, but records the migration)
+
+**When to use:**
+
+- `npm run db:migrate` reports drift and you want to keep your data
+- You used `db push` in dev and need to restore a clean migration workflow
+
+**Safety:**
+
+- Dev-only guard (fails fast if `DATABASE_URL` is not localhost)
+- Stores the raw diff for audit before writing the migration
+- Statements are wrapped to be idempotent so applying on a drifted DB succeeds without data loss
+- Uses a derived shadow DB (`<dbname>_shadow`) unless you set `SHADOW_DATABASE_URL`; ensure your local user can create/drop databases (also configured in `prisma.config.ts`)
+
 ## Common Workflows
 
 ### Starting Fresh
