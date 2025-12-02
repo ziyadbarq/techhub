@@ -10,13 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import {
-  CheckCircle2,
-  XCircle,
-  AlertCircle,
-  Loader2,
-  Terminal,
-} from "lucide-react";
+import { CheckCircle2, XCircle, AlertCircle, Loader2 } from "lucide-react";
 import { checkSystemHealthAction } from "@/interface-adapters/controllers/setup.controller";
 import type { SystemHealthCheckDto } from "@/interface-adapters/dtos/system-setup.dto";
 
@@ -85,22 +79,23 @@ interface SystemStatus {
   database: HealthStatus;
   redis: HealthStatus;
   migrations: HealthStatus;
-  rbac: HealthStatus;
   worker: HealthStatus;
+  overall: boolean;
+  coreServicesHealthy: boolean;
   databaseMessage?: string;
   redisMessage?: string;
   migrationsMessage?: string;
-  rbacMessage?: string;
   workerMessage?: string;
 }
 
-export function SystemStatusPage() {
+export function SystemHealthPage() {
   const [status, setStatus] = useState<SystemStatus>({
     database: "checking",
     redis: "checking",
     migrations: "checking",
-    rbac: "checking",
     worker: "checking",
+    overall: false,
+    coreServicesHealthy: false,
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -115,8 +110,9 @@ export function SystemStatusPage() {
             database: "error",
             redis: "error",
             migrations: "error",
-            rbac: "error",
             worker: "error",
+            overall: false,
+            coreServicesHealthy: false,
             databaseMessage: "Failed to check system health",
             workerMessage: "Worker status unavailable",
           });
@@ -129,15 +125,12 @@ export function SystemStatusPage() {
           database: health.database.connected ? "healthy" : "unhealthy",
           redis: health.redis.connected ? "healthy" : "unhealthy",
           migrations: health.migrations.applied ? "healthy" : "unhealthy",
-          rbac: health.rbac.roles > 0 ? "healthy" : "unhealthy",
           worker: health.worker.active ? "healthy" : "unhealthy",
+          overall: health.overall,
+          coreServicesHealthy: health.coreServicesHealthy,
           databaseMessage: health.database.message,
           redisMessage: health.redis.message,
           migrationsMessage: health.migrations.message,
-          rbacMessage:
-            health.rbac.roles === 0
-              ? "No roles found - run database seeding"
-              : `${health.rbac.roles} roles, ${health.rbac.permissions} permissions`,
           workerMessage:
             health.worker.message ??
             (health.worker.error
@@ -150,8 +143,9 @@ export function SystemStatusPage() {
           database: "error",
           redis: "error",
           migrations: "error",
-          rbac: "error",
           worker: "error",
+          overall: false,
+          coreServicesHealthy: false,
           databaseMessage: "Unexpected error during health check",
           workerMessage: "Worker status unavailable",
         });
@@ -163,24 +157,18 @@ export function SystemStatusPage() {
     checkHealth();
   }, []);
 
-  const coreHealthy =
-    !isLoading &&
-    status.database === "healthy" &&
-    status.redis === "healthy" &&
-    status.migrations === "healthy" &&
-    status.rbac === "healthy";
-  const workerHealthy = !isLoading && status.worker === "healthy";
-  const needsSeeding = !isLoading && status.rbac === "unhealthy";
-  const workerWarning = coreHealthy && !workerHealthy;
+  const coreHealthy = !isLoading && status.coreServicesHealthy;
+  const overallHealthy = !isLoading && status.overall;
+  const workerWarning = coreHealthy && !overallHealthy;
 
   return (
     <div className="from-background to-muted/20 flex min-h-screen items-center justify-center bg-gradient-to-b p-4">
       <div className="w-full max-w-2xl space-y-6">
         {/* Header */}
         <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-bold tracking-tight">System Setup</h1>
+          <h1 className="text-3xl font-bold tracking-tight">System Health</h1>
           <p className="text-muted-foreground">
-            Initial setup and system health status
+            Real-time system status and service health monitoring
           </p>
         </div>
 
@@ -189,7 +177,7 @@ export function SystemStatusPage() {
           <CardHeader>
             <CardTitle>System Health Check</CardTitle>
             <CardDescription>
-              Verify that all system components are running correctly
+              Current status of all system components and services
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -214,123 +202,48 @@ export function SystemStatusPage() {
                 status={status.worker}
                 message={status.workerMessage}
               />
-              <StatusItem
-                label="RBAC Configuration"
-                status={status.rbac}
-                message={status.rbacMessage}
-              />
             </div>
           </CardContent>
         </Card>
 
-        {/* Setup Instructions */}
+        {/* Health Status Summary */}
         {!isLoading && (
           <>
-            {needsSeeding && (
+            {overallHealthy && (
               <Alert>
-                <Terminal className="h-4 w-4" />
-                <AlertTitle>Database Seeding Required</AlertTitle>
-                <AlertDescription className="mt-2 space-y-2">
-                  <p>
-                    The database needs to be seeded with initial data before you
-                    can create an admin account.
-                  </p>
-                  <div className="bg-muted mt-2 rounded-md p-3 font-mono text-sm">
-                    npm run db:seed
-                  </div>
+                <CheckCircle2 className="h-4 w-4 text-green-600" />
+                <AlertTitle>All Systems Operational</AlertTitle>
+                <AlertDescription>
+                  All system components are healthy and operating normally.
                 </AlertDescription>
               </Alert>
             )}
 
-            {coreHealthy && (
+            {workerWarning && (
               <Alert>
-                {workerHealthy ? (
-                  <CheckCircle2 className="h-4 w-4 text-green-600" />
-                ) : (
-                  <AlertCircle className="h-4 w-4 text-amber-500" />
-                )}
-                <AlertTitle>
-                  {workerHealthy ? "System Ready" : "Core Services Ready"}
-                </AlertTitle>
-                <AlertDescription className="mt-2 space-y-3">
+                <AlertCircle className="h-4 w-4 text-amber-500" />
+                <AlertTitle>Core Services Operational</AlertTitle>
+                <AlertDescription className="space-y-2">
                   <p>
-                    {workerHealthy
-                      ? "All system components are healthy. Create your administrator account via the UI."
-                      : "Core services are healthy. You can create your administrator account while you start the background worker."}
+                    Core services (database, Redis, migrations) are healthy. The
+                    system can serve requests.
                   </p>
-
-                  <div className="space-y-2">
-                    <p className="font-medium">Step 1: Register</p>
-                    <p className="text-muted-foreground text-sm">
-                      Visit{" "}
-                      <a
-                        href="/register"
-                        className="text-primary hover:underline"
-                      >
-                        /register
-                      </a>{" "}
-                      and create the initial user. Better Auth will handle
-                      password hashing.
-                    </p>
-                  </div>
-
-                  <div className="space-y-2 pt-2">
-                    <p className="font-medium">
-                      Step 2: Promote to System Administrator
-                    </p>
-                    <p className="text-muted-foreground text-sm">
-                      Use Prisma Studio (<code>npm run db:studio</code>) or SQL
-                      to add that user to the <code>system-administrator</code>{" "}
-                      role in the <code>UserRole</code> table.
-                    </p>
-                  </div>
-
-                  <div className="space-y-2 pt-2">
-                    <p className="font-medium">Step 3: Login</p>
-                    <p className="text-muted-foreground text-sm">
-                      Sign in at{" "}
-                      <a href="/login" className="text-primary hover:underline">
-                        /login
-                      </a>{" "}
-                      with the new admin credentials.
-                    </p>
-                  </div>
-
-                  <div className="border-t pt-2">
-                    <p className="text-muted-foreground text-sm">
-                      <strong>Note:</strong> After logging in, you can register
-                      additional users at{" "}
-                      <a
-                        href="/register"
-                        className="text-primary hover:underline"
-                      >
-                        /register
-                      </a>
-                      . New users will be assigned the viewer role by default.
-                    </p>
-                  </div>
-
-                  {workerWarning && (
-                    <div className="mt-2 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
-                      Background worker is offline. Run{" "}
-                      <code className="font-mono text-xs">
-                        npm run worker:start
-                      </code>{" "}
-                      to enable backups, scheduled jobs, and maintenance tasks.
-                    </div>
-                  )}
+                  <p className="text-sm">
+                    Background worker is offline. Scheduled jobs, maintenance
+                    tasks, and background processing are unavailable.
+                  </p>
                 </AlertDescription>
               </Alert>
             )}
 
-            {!coreHealthy && !needsSeeding && (
+            {!coreHealthy && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>System Issues Detected</AlertTitle>
                 <AlertDescription>
-                  Please resolve the issues above before proceeding with the
-                  setup. Ensure that PostgreSQL and Redis are running and
-                  accessible.
+                  One or more core services are unhealthy. Please check the
+                  status above and ensure that PostgreSQL and Redis are running
+                  and accessible.
                 </AlertDescription>
               </Alert>
             )}
