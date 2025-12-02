@@ -80,6 +80,10 @@ export function ConfigurationItemsPageClient({
     setEditingItem(null);
   }, []);
 
+  const handleDetailClose = useCallback(() => {
+    setSelectedItem(null);
+  }, []);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -125,7 +129,7 @@ export function ConfigurationItemsPageClient({
       {selectedItem && (
         <ConfigurationItemDetail
           item={selectedItem}
-          onClose={() => setSelectedItem(null)}
+          onClose={handleDetailClose}
           onEdit={handleEdit}
         />
       )}
