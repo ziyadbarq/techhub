@@ -241,13 +241,6 @@ export async function seedFoundation(prisma: PrismaClient) {
 
   await createFieldDefinitions(prisma, [
     {
-      name: "Serial Number",
-      code: "SERIAL_NUM",
-      dataType: "STRING",
-      description: "Asset serial number",
-      isRequired: true,
-    },
-    {
       name: "MAC Address",
       code: "MAC_ADDR",
       dataType: "STRING",

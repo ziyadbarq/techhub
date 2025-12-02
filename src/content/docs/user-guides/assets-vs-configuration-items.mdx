@@ -1,0 +1,422 @@
+---
+title: "Assets vs Configuration Items"
+description: "When to track as an Asset, CI, or both - a practical guide"
+icon: "GitCompare"
+order: 2
+taskType: "concept"
+estimatedTime: "10 minutes"
+keywords: ["assets", "configuration items", "CI", "CMDB", "ITAM", "when to use", "decision guide"]
+searchBoost: 10
+relatedDocs: ["reference/entities", "user-guides/workflows"]
+---
+
+# Assets vs Configuration Items
+
+Understanding when to track something as an **Asset**, a **Configuration Item (CI)**, or **both** is crucial for effective IT management.
+
+<Callout type="info">
+**Quick Summary:** Assets track financial value and physical inventory. CIs track technical configuration and operational relationships. Many items benefit from both perspectives.
+</Callout>
+
+---
+
+## The Key Difference
+
+### Assets (ITAM Focus)
+
+**Purpose:** Financial accountability and inventory control
+
+**Key Characteristics:**
+- Has **purchase cost** and depreciation
+- Tracked through **lifecycle states** (ordered, in stock, deployed, retired)
+- Has **physical location** or stock assignment
+- Subject to **warranty** and maintenance
+- Can be **assigned to people** or departments
+- Focus on **ownership and value**
+
+**Example:** A Dell laptop purchased for $1,200 with 3-year warranty, assigned to John Smith, depreciated over 4 years.
+
+### Configuration Items (CMDB Focus)
+
+**Purpose:** Understanding service delivery and dependencies
+
+**Key Characteristics:**
+- Represents a **component of IT infrastructure**
+- Has **technical configuration** and relationships
+- Connected to **services** it supports
+- Tracked for **change management** and impact analysis
+- Focus on **dependencies and configuration**
+- Can be **virtual** (no physical form)
+
+**Example:** Production web server cluster with relationships to load balancer, database, and application code repository.
+
+---
+
+## Decision Guide
+
+<Tabs defaultValue="physical">
+  <TabsList>
+    <TabsTrigger value="physical">Physical Hardware</TabsTrigger>
+    <TabsTrigger value="virtual">Virtual/Cloud</TabsTrigger>
+    <TabsTrigger value="software">Software</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="physical">
+    ### Physical Hardware You Own
+
+    **Recommendation:** Asset + CI (linked together)
+
+    <Steps>
+      <Step title="Create the Asset">
+        Track the **physical device** as an Asset:
+        - Purchase cost and depreciation
+        - Serial number and warranty
+        - Stock location
+        - Assignment to person/department
+      </Step>
+
+      <Step title="Create the CI">
+        Track the **operational role** as a CI:
+        - Technical configuration (IP, specs, OS)
+        - Relationships to services it supports
+        - Dependencies (network, power, storage)
+        - Change history
+      </Step>
+
+      <Step title="Link Them Together">
+        In the CI form, link to the Asset via the **Linked Asset** field.
+        This connects financial tracking with operational tracking.
+      </Step>
+    </Steps>
+
+    **Examples:**
+    - F5 Load Balancer appliance
+    - Cisco network switch
+    - Dell PowerEdge server
+    - SAN storage array
+    - UPS backup power unit
+
+    <Callout type="success">
+    **Best Practice:** Create both Asset and CI, then link them. This gives you complete visibility: financial (Asset) + operational (CI).
+    </Callout>
+  </TabsContent>
+
+  <TabsContent value="virtual">
+    ### Virtual/Cloud Resources
+
+    **Recommendation:** CI only (+ optional Contract)
+
+    **Why CI only:**
+    - No physical hardware to depreciate
+    - No purchase cost (pay-as-you-go or subscription)
+    - Focus is on configuration and relationships
+    - Cost tracked via Contracts or License Management
+
+    **Examples:**
+    - AWS Application Load Balancer (ALB/ELB)
+    - Azure Virtual Machine
+    - Google Cloud Storage Bucket
+    - Kubernetes cluster
+    - Cloud database instance (RDS, Azure SQL)
+    - Virtual network (VPC, VNet)
+
+    <Callout type="warning">
+    **Common Mistake:** Don't create Assets for cloud resources unless you purchase reserved instances with upfront payment that needs depreciation tracking.
+    </Callout>
+
+    **Track costs via:**
+    - **Contract:** Monthly/annual cloud subscription
+    - **License:** For software licenses (Office 365, Adobe Creative Cloud)
+  </TabsContent>
+
+  <TabsContent value="software">
+    ### Software on Existing Hardware
+
+    **Recommendation:** CI only (linked to server Asset)
+
+    **Why:**
+    - The **server is already the Asset**
+    - The **software is a CI** representing its operational role
+    - Use License Management for software costs
+
+    **Examples:**
+    - NGINX load balancer on your server
+    - HAProxy on your server
+    - Apache Tomcat application server
+    - PostgreSQL database
+    - Monitoring agent (Prometheus, Datadog)
+
+    <Steps>
+      <Step title="Ensure Server Asset Exists">
+        The physical server should already be tracked as an Asset.
+      </Step>
+
+      <Step title="Create CI for Software">
+        Create a CI representing the software instance:
+        - CI Class: "Application" or "Database"
+        - Link to server Asset: "Runs on"
+        - Configuration: version, settings, ports
+      </Step>
+
+      <Step title="Track License Separately">
+        If the software requires a license, use **License Management** to track:
+        - License entitlements
+        - Cost and renewal
+        - Compliance
+      </Step>
+    </Steps>
+  </TabsContent>
+</Tabs>
+
+---
+
+## Real-World Examples
+
+### Example 1: Load Balancer
+
+<Tabs defaultValue="physical-lb">
+  <TabsList>
+    <TabsTrigger value="physical-lb">Physical F5</TabsTrigger>
+    <TabsTrigger value="cloud-lb">AWS ALB</TabsTrigger>
+    <TabsTrigger value="software-lb">NGINX</TabsTrigger>
+  </TabsList>
+
+  <TabsContent value="physical-lb">
+    **Physical F5 BIG-IP Appliance**
+
+    ✅ **Create both:**
+
+    **Asset:**
+    - Asset Tag: `LB-001`
+    - Category: Network Equipment
+    - Vendor: F5 Networks
+    - Model: BIG-IP 5200v
+    - Purchase Cost: $45,000
+    - Serial Number: f5-xxxx-yyyy
+    - Warranty: 3 years
+    - Location: Data Center Rack A12
+    - Lifecycle: Deployed
+
+    **CI:**
+    - Name: Production Load Balancer
+    - CI Class: Network Device
+    - **Linked Asset:** LB-001 ← *links to Asset above*
+    - IP Address: 10.0.1.100
+    - Virtual Servers: 15
+    - Relationships:
+      - Balances → Web Server Pool 1
+      - Balances → Web Server Pool 2
+      - Depends on → Core Switch 1
+      - Supports → E-Commerce Service
+  </TabsContent>
+
+  <TabsContent value="cloud-lb">
+    **AWS Application Load Balancer**
+
+    ✅ **Create CI only:**
+
+    **CI:**
+    - Name: Production ALB - Web Traffic
+    - CI Class: Load Balancer
+    - Environment: Production
+    - AWS ARN: arn:aws:elasticloadbalancing:...
+    - DNS Name: prod-web-alb-123456789.us-east-1.elb.amazonaws.com
+    - Listeners: HTTP:80, HTTPS:443
+    - Relationships:
+      - Routes to → EC2 Target Group (Web Servers)
+      - Depends on → VPC Subnet 1
+      - Depends on → VPC Subnet 2
+      - Supports → E-Commerce Service
+
+    **Track costs via:**
+    - Contract: "AWS Enterprise Support" (monthly subscription)
+  </TabsContent>
+
+  <TabsContent value="software-lb">
+    **NGINX on Ubuntu Server**
+
+    ✅ **Create CI only:**
+
+    **CI:**
+    - Name: NGINX Load Balancer - Prod
+    - CI Class: Application
+    - **Runs on:** SERVER-042 ← *links to existing server Asset*
+    - Version: nginx/1.24.0
+    - Config File: /etc/nginx/nginx.conf
+    - Upstream Servers: 4
+    - Relationships:
+      - Runs on → Asset SERVER-042 (Ubuntu Server)
+      - Routes to → App Server 1
+      - Routes to → App Server 2
+      - Supports → Web Application Service
+
+    **The server (SERVER-042) is already an Asset** with purchase cost, warranty, etc.
+  </TabsContent>
+</Tabs>
+
+### Example 2: Database Server
+
+**Physical Database Server** → Asset + CI
+
+**Asset (Financial View):**
+- Dell PowerEdge R740
+- Purchase cost: $8,500
+- 3-year warranty
+- Assigned to IT Infrastructure team
+- Lifecycle: In Production
+
+**CI (Operational View):**
+- Production PostgreSQL Primary
+- Version: PostgreSQL 15.2
+- Linked to Asset (the Dell server)
+- Relationships:
+  - Replicates to → PostgreSQL Standby
+  - Backs up to → S3 Backup Storage
+  - Supports → Customer Portal Service
+  - Supports → Mobile App Backend
+
+### Example 3: Employee Laptop
+
+**Physical Laptop** → Asset + CI
+
+**Asset (Financial View):**
+- MacBook Pro 16"
+- Purchase cost: $2,800
+- AppleCare warranty: 3 years
+- Assigned to: Jane Doe (Engineering)
+- Lifecycle: Deployed
+
+**CI (Operational View):**
+- Jane's MacBook Pro
+- OS: macOS 14.2
+- RAM: 32GB
+- Storage: 1TB SSD
+- Linked to Asset
+- Relationships:
+  - Used by → Jane Doe (Person)
+  - Connected to → Corporate VPN
+  - Has → Intune Device Management
+  - Runs → Developer Tools CI
+
+---
+
+## Quick Reference Table
+
+| Type | Asset? | CI? | Linked? | Example |
+|------|--------|-----|---------|---------|
+| **Physical hardware you own** | ✅ Yes | ✅ Yes | ✅ Link | F5 load balancer, Dell server, Cisco switch |
+| **Cloud/Virtual resource** | ❌ No | ✅ Yes | 📝 Optional Contract | AWS ALB, Azure VM, GCP Storage |
+| **Software on your hardware** | ❌ No | ✅ Yes | ✅ Link to server Asset | NGINX, PostgreSQL, HAProxy |
+| **SaaS application** | ❌ No | ✅ Yes | 📝 Optional Contract | Salesforce, Office 365, GitHub |
+| **Network service/concept** | ❌ No | ✅ Yes | 🔗 Relationships only | VPN connection, API gateway |
+| **Employee device** | ✅ Yes | ✅ Yes | ✅ Link | Laptop, phone, monitor |
+| **Furniture** | ✅ Yes | ❌ No | N/A | Desk, chair, cabinet |
+
+---
+
+## Common Questions
+
+### "Why create both Asset and CI for the same thing?"
+
+**Different perspectives, different needs:**
+
+**Finance/Procurement needs (Asset):**
+- "How much did we spend on network equipment?"
+- "When does the warranty expire?"
+- "What's the current depreciated value?"
+- "Who is responsible for this device?"
+
+**IT Operations needs (CI):**
+- "What services will be impacted if this fails?"
+- "What other systems depend on this?"
+- "What's the current configuration?"
+- "What changes were made last week?"
+
+By creating both and linking them, you satisfy both needs while maintaining a single source of truth.
+
+### "Can a CI exist without an Asset?"
+
+✅ **Yes!** Many CIs have no physical form or purchase cost:
+
+- Cloud resources (AWS, Azure, GCP)
+- Virtual machines
+- Software instances
+- Network configurations
+- API endpoints
+- SaaS applications
+- Business services
+
+### "Can an Asset exist without a CI?"
+
+✅ **Yes!** Some assets don't need operational tracking:
+
+- Office furniture (desk, chair)
+- Non-IT equipment (printer for office use)
+- Spare parts in stock
+- Assets not yet deployed
+- Decommissioned equipment
+
+### "How do I link an Asset to a CI?"
+
+<Steps>
+  <Step title="Navigate to CI">
+    Go to **Configuration Items** → select or create your CI
+  </Step>
+
+  <Step title="Find Linked Asset Field">
+    In the CI form, find the **Linked Asset** field
+  </Step>
+
+  <Step title="Search and Select">
+    Search for your Asset by tag or serial number, then select it
+  </Step>
+
+  <Step title="Save">
+    Save the CI. The link is now established.
+  </Step>
+</Steps>
+
+The CI will now show the linked Asset, and the Asset detail page will show the related CI.
+
+---
+
+## Best Practices
+
+<Callout type="success">
+**Do:**
+- Create both Asset + CI for physical hardware you own
+- Always link CIs to their underlying Assets when applicable
+- Use CIs to model virtual/cloud resources
+- Use Contracts to track cloud subscriptions
+- Use License Management for software costs
+</Callout>
+
+<Callout type="warning">
+**Don't:**
+- Create Assets for cloud resources (unless reserved instances with upfront cost)
+- Duplicate cost tracking in both Asset and License/Contract
+- Create CIs for office furniture or non-IT equipment
+- Forget to link CIs to Assets when both exist
+</Callout>
+
+---
+
+## Summary
+
+**The Rule of Thumb:**
+
+```
+Physical hardware you own = Asset + CI (linked)
+Virtual/Cloud resource = CI only (+ Contract for costs)
+Software on your server = CI only (linked to server Asset)
+Office equipment = Asset only
+```
+
+**When in doubt:**
+1. Does it have a **purchase cost** and need **depreciation**? → Asset
+2. Does it have **technical configuration** and **service relationships**? → CI
+3. Both? → Create both and link them together
+
+<Callout type="info">
+**Still not sure?** Check the **Quick Reference Table** above or ask your IT Asset Manager for guidance on your specific use case.
+</Callout>

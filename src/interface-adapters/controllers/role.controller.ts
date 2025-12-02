@@ -237,7 +237,7 @@ export async function deleteRoleAction(
 }
 
 /**
- * Get a single role by ID
+ * Get a single role by name
  */
 export async function getRoleAction(
   name: string,
@@ -271,6 +271,46 @@ export async function getRoleAction(
     return handleControllerError(
       error,
       { function: "getRoleAction", name },
+      "Failed to get role",
+    );
+  }
+}
+
+/**
+ * Get a single role by ID
+ */
+export async function getRoleByIdAction(
+  id: string,
+): Promise<ActionResponse<RoleDTO>> {
+  try {
+    // Check permission
+    await requirePermission(PERMISSIONS.ROLES_VIEW);
+
+    // Get repository from DI container
+    const container = getContainer();
+    const roleRepository = container.get<IRoleRepository>(
+      DI_TOKENS.IRoleRepository,
+    );
+
+    // Find role by ID
+    const role = await roleRepository.findById(id);
+
+    if (!role) {
+      return {
+        success: false,
+        error: "Role not found",
+      };
+    }
+
+    // Transform to DTO
+    return {
+      success: true,
+      data: presentRole(role),
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "getRoleByIdAction", id },
       "Failed to get role",
     );
   }

@@ -400,6 +400,17 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     navGroup: "foundation",
     navOrder: 5,
   },
+  {
+    path: "/roles/[id]",
+    label: "Role Details",
+    icon: Briefcase,
+    description:
+      "Role details - 360-degree view with people assigned and hierarchy",
+    requiredPermissions: ["ROLES_VIEW"],
+    visibleInNav: false,
+    isChildRoute: true,
+    parentRoute: "/roles",
+  },
 
   // ============================================================================
   // ASSETS & INVENTORY GROUP

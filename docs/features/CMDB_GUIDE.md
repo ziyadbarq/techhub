@@ -646,7 +646,8 @@ export function bindCMDBDependencies(container: Container) {
 
 ## See Also
 
+- **[Assets vs Configuration Items User Guide](/docs/user-guides/assets-vs-configuration-items)** - When to create Assets, CIs, or both (in-app documentation)
 - [ITAM_FEATURES.md](./ITAM_FEATURES.md) - Overview of all ITAM modules
-- [DATABASE_SCHEMA.md](./architecture/DATABASE_SCHEMA.md) - Schema design
-- [DEVELOPER_GUIDE.md](./guides/DEVELOPER_GUIDE.md) - Development patterns
-- [RBAC_DEVELOPER_GUIDE.md](./guides/RBAC_DEVELOPER_GUIDE.md) - Permission system
+- [DATABASE_SCHEMA.md](../architecture/DATABASE_SCHEMA.md) - Schema design
+- [DEVELOPER_GUIDE.md](../guides/DEVELOPER_GUIDE.md) - Development patterns
+- [RBAC_DEVELOPER_GUIDE.md](../guides/RBAC_DEVELOPER_GUIDE.md) - Permission system

@@ -7,9 +7,8 @@
  * - Preferences
  */
 
-import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth/session";
-import { requirePermission } from "@/lib/permissions/server";
+import { requireAuth } from "@/lib/auth/session";
+import { requirePermission as requireUserPermission } from "@/lib/permissions/check-permission";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { SettingsForm } from "@/components/settings/settings-form";
 import { Button } from "@/components/ui/button";
@@ -20,17 +19,13 @@ import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-re
 export const dynamic = "force-dynamic";
 
 export default async function SettingsPage() {
+  const { user } = await requireAuth();
+
   try {
-    await requirePermission(PERMISSIONS.SETTINGS_VIEW);
+    await requireUserPermission(user.id, PERMISSIONS.SETTINGS_VIEW);
   } catch (error) {
     handlePermissionRedirect(error, "/settings");
     throw error;
-  }
-
-  const { user } = await getSession();
-
-  if (!user) {
-    redirect("/login");
   }
 
   return (

@@ -33,6 +33,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Icons: User (manual), Laptop (Intune)
   - Conflict notes displayed in destructive background
 
+#### Documentation
+- **New User Guide**: "Assets vs Configuration Items" (`/docs/user-guides/assets-vs-configuration-items`)
+  - Comprehensive decision guide for when to create Assets, CIs, or both
+  - Interactive tabs for Physical/Cloud/Software scenarios
+  - Real-world examples (load balancers, databases, laptops)
+  - Quick reference table and best practices
+  - Step-by-step linking instructions
+
 ### Changed
 - Updated AssetAssignment entity with new methods: `isIntuneManaged()`, `isManual()`, `flagConflict()`, `clearConflict()`
 - Added 5 new fields to AssetAssignment schema: `source`, `sourceReferenceType`, `sourceReferenceId`, `hasConflict`, `conflictNote`
@@ -40,6 +48,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced AssetAssignment repository with 4 new methods for conflict management
 - Integrated sync logic into all 4 Intune linking/unlinking use cases
 - Updated Intune Integration documentation with assignment sync workflows
+- Removed truncated Intune User ID badge from Related Items tab (cleaner UI)
+- Removed redundant "Serial Number" custom field from seed data (Asset.serialNumber built-in field is sufficient)
 
 ### Technical
 - New use case: `SyncAssetAssignmentFromIntuneDeviceUseCase` with `@LogExecution` decorator

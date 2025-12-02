@@ -7,24 +7,22 @@
  * - Roles and permissions
  */
 
-import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth/session";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Mail, Calendar, Clock, Shield, Settings } from "lucide-react";
 import Link from "next/link";
 import { EmailVerificationBadge } from "@/components/auth/EmailVerificationBadge";
 import { VerifyEmailButton } from "@/components/auth/VerifyEmailButton";
-import {
-  getCurrentPersonAction,
-  getMyAssetsAction,
-  getMyLicensesAction,
-  getMyReservationsAction,
-} from "@/interface-adapters/controllers/my-dashboard.controller";
-import type { ActionResponse } from "@/interface-adapters/controllers/types";
 import { formatDate, formatDateTime } from "@/lib/utils/date-format";
+import { loadProfileSummary } from "../shared/profile-summary";
 
 export const dynamic = "force-dynamic";
 
@@ -32,24 +30,8 @@ const isDateLike = (value: unknown): value is Date | string =>
   typeof value === "string" || value instanceof Date;
 
 export default async function ProfilePage() {
-  const { user } = await getSession();
-
-  if (!user) {
-    redirect("/login");
-  }
-
-  const [personResult, assetsResult, licensesResult, reservationsResult] =
-    await Promise.all([
-      getCurrentPersonAction(),
-      safeAction(() => getMyAssetsAction()),
-      safeAction(() => getMyLicensesAction()),
-      safeAction(() => getMyReservationsAction()),
-    ]);
-
-  const person = personResult.success ? personResult.data : null;
-  const assets = assetsResult ?? [];
-  const licenses = licensesResult ?? [];
-  const reservations = reservationsResult ?? [];
+  const { user, person, assets, licenses, reservations, errors } =
+    await loadProfileSummary();
 
   // Generate initials for avatar fallback
   const initials = user.name
@@ -79,13 +61,35 @@ export default async function ProfilePage() {
             View and manage your account information
           </p>
         </div>
-        <Link href="/settings">
-          <Button variant="outline" className="gap-2">
-            <Settings className="h-4 w-4" />
-            Settings
-          </Button>
-        </Link>
+        <div className="flex gap-2">
+          <Link href="/settings#preferences">
+            <Button variant="outline" className="gap-2">
+              Notifications
+            </Button>
+          </Link>
+          <Link href="/settings">
+            <Button variant="default" className="gap-2">
+              <Settings className="h-4 w-4" />
+              Edit Profile
+            </Button>
+          </Link>
+        </div>
       </div>
+
+      {errors.length > 0 && (
+        <Card className="border-destructive/30 bg-destructive/5 mb-6">
+          <CardHeader>
+            <CardTitle className="text-destructive">
+              We couldn&apos;t load everything
+            </CardTitle>
+            <CardDescription className="space-y-1">
+              {errors.map((error) => (
+                <p key={error}>{error}</p>
+              ))}
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      )}
 
       {/* Profile Overview Card */}
       <Card className="mb-6">
@@ -276,11 +280,9 @@ export default async function ProfilePage() {
                 Last updated recently
               </p>
             </div>
-            <Link href="/settings">
-              <Button variant="outline" size="sm">
-                Change Password
-              </Button>
-            </Link>
+            <Button variant="outline" size="sm" disabled>
+              Managed by SSO
+            </Button>
           </div>
 
           <div className="flex items-center justify-between rounded-lg border p-4">
@@ -301,20 +303,6 @@ export default async function ProfilePage() {
       </Card>
     </div>
   );
-}
-
-async function safeAction<T>(
-  fn: () => Promise<ActionResponse<T>>,
-): Promise<T | null> {
-  try {
-    const result = await fn();
-    if (result.success) {
-      return result.data;
-    }
-    return null;
-  } catch {
-    return null;
-  }
 }
 
 interface SummaryBadgeProps {

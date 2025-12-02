@@ -204,6 +204,13 @@ npx prisma migrate deploy
 - ✅ Updated [INTUNE_INTEGRATION.md](features/INTUNE_INTEGRATION.md) with assignment sync workflows
 - ✅ Updated [CHANGELOG.md](../CHANGELOG.md) with detailed changes
 - ✅ Updated [CLAUDE.md](../CLAUDE.md) with new use case counts
+- ✅ Created new user guide: [Assets vs Configuration Items](/docs/user-guides/assets-vs-configuration-items) - comprehensive decision guide
+- ✅ Updated [CMDB_GUIDE.md](features/CMDB_GUIDE.md) with reference to new user guide
+
+## UI/UX Improvements
+
+- ✅ Removed truncated Intune User ID badge from Related Items tab (cleaner display)
+- ✅ Removed redundant "Serial Number" custom field from seed data (built-in Asset.serialNumber is sufficient)
 
 ## Validation
 

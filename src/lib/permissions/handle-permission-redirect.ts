@@ -6,6 +6,15 @@ import { InsufficientPermissionsError } from "@/core/domain/errors/rbac-errors";
  * Intended for server components/pages that call requirePermission.
  */
 export function handlePermissionRedirect(error: unknown, path: string): void {
+  // Redirect unauthenticated users to login
+  if (
+    error instanceof Error &&
+    (error.message?.includes("Not authenticated") ||
+      error.name === "NotAuthenticatedError")
+  ) {
+    redirect("/login");
+  }
+
   if (
     error instanceof InsufficientPermissionsError ||
     (error instanceof Error &&
