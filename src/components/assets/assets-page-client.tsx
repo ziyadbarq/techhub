@@ -1,29 +1,20 @@
 /**
  * Assets Page Client Component
- *
- * Full-featured assets management page with:
- * - Summary statistics cards
- * - Search and filter toolbar
- * - Server-side pagination
- * - Bulk actions (delete, status change, export)
- * - Column visibility persistence
  */
 
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Plus, Download, FileSpreadsheet } from "lucide-react";
 import { toast } from "sonner";
-import type { PaginationState } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
 import {
-  listAssetsPaginatedAction,
+  listAssetsAction,
   getAssetStatisticsAction,
   getAssetFilterOptionsAction,
   type AssetFilterOptions,
-  type PaginatedAssetsResponse,
 } from "@/interface-adapters/controllers/asset.controller";
 import type { AssetStatistics } from "@/core/repositories/asset.repository.interface";
 
@@ -32,17 +23,16 @@ import { AssetForm } from "./asset-form";
 import { AssetsSummaryCards } from "./assets-summary-cards";
 import { AssetsToolbar } from "./assets-toolbar";
 import { BulkActionBar } from "./bulk-action-bar";
-import { AssetsPageSkeleton } from "./assets-table-skeleton";
 
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { exportAssetsToCSV } from "@/lib/csv-export";
 import { exportAssetsToXLSX } from "@/lib/xlsx-export";
-import { useAssetsFilters } from "@/hooks/use-assets-filters";
+import { useTableFilters } from "@/hooks/use-table-filters";
 
 interface AssetsPageClientProps {
-  /** Initial paginated data from server */
-  initialData?: PaginatedAssetsResponse;
+  /** Initial data from server */
+  initialAssets: AssetDTO[];
   /** Initial statistics from server */
   initialStatistics?: AssetStatistics;
   /** Initial filter options from server */
@@ -50,14 +40,12 @@ interface AssetsPageClientProps {
 }
 
 export function AssetsPageClient({
-  initialData,
+  initialAssets,
   initialStatistics,
   initialFilterOptions,
 }: AssetsPageClientProps) {
   // Assets data state
-  const [assets, setAssets] = useState<AssetDTO[]>(initialData?.assets ?? []);
-  const [total, setTotal] = useState(initialData?.total ?? 0);
-  const [totalPages, setTotalPages] = useState(initialData?.totalPages ?? 1);
+  const [assets, setAssets] = useState<AssetDTO[]>(initialAssets);
 
   // Statistics state
   const [statistics, setStatistics] = useState<AssetStatistics | null>(
@@ -77,20 +65,20 @@ export function AssetsPageClient({
   const [editingAsset, setEditingAsset] = useState<AssetDTO | null>(null);
   const [selectedAssets, setSelectedAssets] = useState<AssetDTO[]>([]);
 
-  // Filter and pagination state
-  const {
-    filters,
-    debouncedSearchTerm,
-    pagination,
-    setSearchTerm,
-    setFilter,
-    clearFilters,
-    setPage,
-    setPageSize,
-    searchOptions,
-  } = useAssetsFilters(undefined, {
-    page: initialData?.page ?? 1,
-    pageSize: initialData?.pageSize ?? 20,
+  // Filters using generic hook
+  const filters = useTableFilters<{
+    assetCategoryId: string;
+    lifecycleStateId: string;
+    currentStockLocationId: string;
+    vendorId: string;
+  }>({
+    initialFilters: {
+      assetCategoryId: "all",
+      lifecycleStateId: "all",
+      currentStockLocationId: "all",
+      vendorId: "all",
+    },
+    searchConfig: { debounceMs: 300 },
   });
 
   const loadFilterOptions = async () => {
@@ -107,14 +95,9 @@ export function AssetsPageClient({
   const loadAssets = useCallback(async () => {
     setIsLoading(true);
     try {
-      const result = await listAssetsPaginatedAction(searchOptions, {
-        page: pagination.page,
-        pageSize: pagination.pageSize,
-      });
+      const result = await listAssetsAction();
       if (result.success && result.data) {
-        setAssets(result.data.assets);
-        setTotal(result.data.total);
-        setTotalPages(result.data.totalPages);
+        setAssets(result.data);
         // Clear selection when data changes
         setSelectedAssets([]);
       } else if (!result.success) {
@@ -125,12 +108,12 @@ export function AssetsPageClient({
     } finally {
       setIsLoading(false);
     }
-  }, [searchOptions, pagination.page, pagination.pageSize]);
+  }, []);
 
   const loadStatistics = useCallback(async () => {
     setStatisticsLoading(true);
     try {
-      const result = await getAssetStatisticsAction(searchOptions);
+      const result = await getAssetStatisticsAction();
       if (result.success && result.data) {
         setStatistics(result.data);
       }
@@ -139,7 +122,57 @@ export function AssetsPageClient({
     } finally {
       setStatisticsLoading(false);
     }
-  }, [searchOptions]);
+  }, []);
+
+  // Pre-filter assets data based on filters (following TABLE_COMPONENTS_GUIDE pattern)
+  const filteredAssets = useMemo(() => {
+    let result = assets;
+
+    // Apply search filter
+    if (filters.debouncedSearchTerm) {
+      const term = filters.debouncedSearchTerm.toLowerCase();
+      result = result.filter(
+        (asset) =>
+          asset.assetTag.toLowerCase().includes(term) ||
+          (asset.serialNumber?.toLowerCase().includes(term) ?? false) ||
+          (asset.categoryName?.toLowerCase().includes(term) ?? false) ||
+          (asset.modelName?.toLowerCase().includes(term) ?? false) ||
+          (asset.vendorName?.toLowerCase().includes(term) ?? false),
+      );
+    }
+
+    // Apply category filter
+    if (filters.filters.assetCategoryId !== "all") {
+      result = result.filter(
+        (asset) => asset.assetCategoryId === filters.filters.assetCategoryId,
+      );
+    }
+
+    // Apply lifecycle state filter
+    if (filters.filters.lifecycleStateId !== "all") {
+      result = result.filter(
+        (asset) => asset.lifecycleStateId === filters.filters.lifecycleStateId,
+      );
+    }
+
+    // Apply stock location filter
+    if (filters.filters.currentStockLocationId !== "all") {
+      result = result.filter(
+        (asset) =>
+          asset.currentStockLocationId ===
+          filters.filters.currentStockLocationId,
+      );
+    }
+
+    // Apply vendor filter
+    if (filters.filters.vendorId !== "all") {
+      result = result.filter(
+        (asset) => asset.vendorId === filters.filters.vendorId,
+      );
+    }
+
+    return result;
+  }, [assets, filters.debouncedSearchTerm, filters.filters]);
 
   // Load filter options on mount if not provided
   useEffect(() => {
@@ -148,31 +181,8 @@ export function AssetsPageClient({
     }
   }, [initialFilterOptions]);
 
-  // Load assets when filters or pagination change
-  useEffect(() => {
-    loadAssets();
-  }, [
-    loadAssets,
-    debouncedSearchTerm,
-    filters.assetCategoryId,
-    filters.lifecycleStateId,
-    filters.currentStockLocationId,
-    filters.vendorId,
-    pagination.page,
-    pagination.pageSize,
-  ]);
-
-  // Load statistics when filters change (debounced search term triggers this)
-  useEffect(() => {
-    loadStatistics();
-  }, [
-    loadStatistics,
-    debouncedSearchTerm,
-    filters.assetCategoryId,
-    filters.lifecycleStateId,
-    filters.currentStockLocationId,
-    filters.vendorId,
-  ]);
+  // No need to load assets on mount - we have initialAssets
+  // Assets are only reloaded when handleSuccess is called (after create/update/delete)
 
   const handleEdit = (asset: AssetDTO) => {
     setEditingAsset(asset);
@@ -189,27 +199,22 @@ export function AssetsPageClient({
     loadStatistics();
   };
 
-  const handlePaginationChange = (paginationState: PaginationState) => {
-    setPage(paginationState.pageIndex + 1);
-    setPageSize(paginationState.pageSize);
-  };
-
   const handleExportCSV = () => {
-    if (assets.length === 0) {
+    if (filteredAssets.length === 0) {
       toast.error("No assets to export");
       return;
     }
-    exportAssetsToCSV(assets);
-    toast.success(`Exported ${assets.length} asset(s) to CSV`);
+    exportAssetsToCSV(filteredAssets);
+    toast.success(`Exported ${filteredAssets.length} asset(s) to CSV`);
   };
 
   const handleExportXLSX = () => {
-    if (assets.length === 0) {
+    if (filteredAssets.length === 0) {
       toast.error("No assets to export");
       return;
     }
-    exportAssetsToXLSX(assets);
-    toast.success(`Exported ${assets.length} asset(s) to Excel`);
+    exportAssetsToXLSX(filteredAssets);
+    toast.success(`Exported ${filteredAssets.length} asset(s) to Excel`);
   };
 
   const handleExportSelected = (selected: AssetDTO[]) => {
@@ -226,11 +231,6 @@ export function AssetsPageClient({
     setSelectedAssets([]);
   };
 
-  // Show skeleton on initial load
-  if (!initialData && isLoading && assets.length === 0) {
-    return <AssetsPageSkeleton />;
-  }
-
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -238,8 +238,11 @@ export function AssetsPageClient({
         <div>
           <h2 className="text-2xl font-bold">Assets</h2>
           <p className="text-muted-foreground">
-            {total.toLocaleString()} asset{total !== 1 ? "s" : ""} total
-            {filters.searchTerm && ` • Filtered by "${filters.searchTerm}"`}
+            {filteredAssets.length.toLocaleString()} asset
+            {filteredAssets.length !== 1 ? "s" : ""}
+            {assets.length !== filteredAssets.length &&
+              ` (filtered from ${assets.length})`}
+            {filters.searchTerm && ` • Search: "${filters.searchTerm}"`}
           </p>
         </div>
 
@@ -283,10 +286,25 @@ export function AssetsPageClient({
 
       {/* Search and Filters Toolbar */}
       <AssetsToolbar
-        filters={filters}
-        onSearchChange={setSearchTerm}
-        onFilterChange={setFilter}
-        onClearFilters={clearFilters}
+        filters={{
+          searchTerm: filters.searchTerm,
+          assetCategoryId: filters.filters.assetCategoryId,
+          lifecycleStateId: filters.filters.lifecycleStateId,
+          currentStockLocationId: filters.filters.currentStockLocationId,
+          vendorId: filters.filters.vendorId,
+        }}
+        onSearchChange={filters.setSearchTerm}
+        onFilterChange={(key, value) => {
+          if (
+            key === "assetCategoryId" ||
+            key === "lifecycleStateId" ||
+            key === "currentStockLocationId" ||
+            key === "vendorId"
+          ) {
+            filters.setFilter(key, value as string);
+          }
+        }}
+        onClearFilters={filters.clearFilters}
         filterOptions={filterOptions}
         loading={isLoading}
       />
@@ -302,18 +320,11 @@ export function AssetsPageClient({
 
       {/* Assets Table */}
       <AssetsTable
-        data={assets}
+        data={filteredAssets}
         loading={isLoading}
         onEdit={handleEdit}
         onRefresh={handleSuccess}
         onSelectionChange={setSelectedAssets}
-        pagination={{
-          pageIndex: pagination.page - 1,
-          pageSize: pagination.pageSize,
-          pageCount: totalPages,
-          total,
-          onPaginationChange: handlePaginationChange,
-        }}
       />
 
       {/* Asset Form Dialog */}

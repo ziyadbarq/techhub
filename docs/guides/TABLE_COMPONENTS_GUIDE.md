@@ -42,7 +42,10 @@ export function PersonsTable({ persons }) {
 
 ### Advanced Table (With URL Sync + Filters)
 
+**Note**: When using filters, pre-filter the data instead of using controlled `columnFilters` (see [Critical Pattern](#critical-pattern-pre-filter-data-dont-use-controlled-columnfilters)).
+
 ```tsx
+import { useMemo } from "react";
 import { DataTable } from "@/components/ui/data-table";
 import { TableSearch } from "@/components/ui/table-search";
 import { TableFilterSelect } from "@/components/ui/table-filter-select";
@@ -82,16 +85,39 @@ export function AdvancedTable({ data }) {
     onApply: filters.setFilters,
   });
 
+  // IMPORTANT: Pre-filter data (don't use controlled columnFilters!)
+  const filteredData = useMemo(() => {
+    let result = data;
+
+    if (filters.debouncedSearchTerm) {
+      const term = filters.debouncedSearchTerm.toLowerCase();
+      result = result.filter(item =>
+        item.name.toLowerCase().includes(term)
+      );
+    }
+
+    if (filters.filters.status !== 'all') {
+      result = result.filter(item => item.status === filters.filters.status);
+    }
+
+    if (filters.filters.priority !== 'all') {
+      result = result.filter(item => item.priority === filters.filters.priority);
+    }
+
+    return result;
+  }, [data, filters.debouncedSearchTerm, filters.filters]);
+
   const columns = [ /* ... */ ];
 
   return (
     <DataTable
       columns={columns}
-      data={data}
+      data={filteredData} // ✅ Pre-filtered data
       controlledState={{
         sorting: tableState.sorting,
         pagination: tableState.pagination,
         columnVisibility: tableState.columnVisibility,
+        // NO columnFilters here!
       }}
       onSortingChange={tableState.setSorting}
       onPaginationChange={tableState.setPagination}
@@ -640,7 +666,43 @@ export function ConfigurationItemsTable({
     onApply: filters.setFilters,
   });
 
-  // 4. Column definitions (mostly unchanged)
+  // 4. Pre-filter data (IMPORTANT: Don't use controlled columnFilters!)
+  const filteredData = useMemo(() => {
+    let result = data;
+
+    // Apply search filter
+    if (filters.debouncedSearchTerm) {
+      const term = filters.debouncedSearchTerm.toLowerCase();
+      result = result.filter(item =>
+        item.name.toLowerCase().includes(term) ||
+        (item.ciKey?.toLowerCase().includes(term) ?? false)
+      );
+    }
+
+    // Apply criticality filter
+    if (filters.filters.criticality !== 'all') {
+      result = result.filter(item => item.criticality === filters.filters.criticality);
+    }
+
+    // Apply environment filter
+    if (filters.filters.environment !== 'all') {
+      result = result.filter(item => item.environment === filters.filters.environment);
+    }
+
+    // Apply owner filter
+    if (filters.filters.owner === 'none') {
+      result = result.filter(item => !item.primaryOwnerName);
+    }
+
+    // Apply asset link filter
+    if (filters.filters.assetLink === 'unlinked') {
+      result = result.filter(item => !item.linkedAssetTag);
+    }
+
+    return result;
+  }, [data, filters.debouncedSearchTerm, filters.filters]);
+
+  // 5. Column definitions (no filterFn needed - we're pre-filtering!)
   const columns: ColumnDef<ConfigurationItemDTO>[] = [
     {
       accessorKey: 'name',
@@ -654,16 +716,17 @@ export function ConfigurationItemsTable({
     // ... more columns
   ];
 
-  // 5. Render with DataTable
+  // 6. Render with DataTable
   return (
     <DataTable
       columns={columns}
-      data={data}
+      data={filteredData} // ✅ Pre-filtered data, NOT raw data!
       loading={loading}
       controlledState={{
         sorting: tableState.sorting,
         pagination: tableState.pagination,
         columnVisibility: tableState.columnVisibility,
+        // NO columnFilters here!
       }}
       onSortingChange={tableState.setSorting}
       onPaginationChange={tableState.setPagination}
@@ -703,6 +766,92 @@ export function ConfigurationItemsTable({
 ```
 
 **Result**: 698 lines removed (78% reduction)!
+
+## Critical Pattern: Pre-Filter Data (Don't Use Controlled columnFilters)
+
+**IMPORTANT**: When using custom filters (`useTableFilters`), **do NOT pass `columnFilters` to controlled state**. Instead, filter the data array before passing to DataTable.
+
+### ❌ Wrong Pattern (Causes Infinite Loops)
+
+```tsx
+// DON'T DO THIS - causes infinite loop!
+const columnFiltersState = useMemo(() => {
+  const result = [];
+  if (filters.filters.status !== 'all') {
+    result.push({ id: 'status', value: filters.filters.status });
+  }
+  return result;
+}, [filters.filters]);
+
+<DataTable
+  data={data}
+  controlledState={{
+    columnFilters: columnFiltersState, // ❌ Causes infinite loop!
+  }}
+/>
+```
+
+**Why it fails**: DataTable has internal state that conflicts with external derived state, creating circular updates.
+
+### ✅ Correct Pattern (Pre-Filter Data)
+
+```tsx
+// Filter data BEFORE passing to DataTable
+const filteredData = useMemo(() => {
+  let result = data;
+
+  // Apply search filter
+  if (filters.debouncedSearchTerm) {
+    const term = filters.debouncedSearchTerm.toLowerCase();
+    result = result.filter(item =>
+      item.name.toLowerCase().includes(term)
+    );
+  }
+
+  // Apply status filter
+  if (filters.filters.status !== 'all') {
+    result = result.filter(item => item.status === filters.filters.status);
+  }
+
+  // Apply priority filter
+  if (filters.filters.priority !== 'all') {
+    result = result.filter(item => item.priority === filters.filters.priority);
+  }
+
+  return result;
+}, [data, filters.debouncedSearchTerm, filters.filters]);
+
+// Pass filtered data to DataTable
+<DataTable
+  data={filteredData} // ✅ Pre-filtered data
+  controlledState={{
+    sorting: tableState.sorting,
+    pagination: tableState.pagination,
+    columnVisibility: tableState.columnVisibility,
+    // NO columnFilters here!
+  }}
+/>
+```
+
+**Benefits of pre-filtering**:
+- ✅ No infinite loops - no state synchronization issues
+- ✅ Simpler code - explicit filter logic
+- ✅ Better performance - filtering happens once in useMemo
+- ✅ Easier debugging - can log `filteredData` to see results
+- ✅ More maintainable - clear separation of concerns
+
+### When to Use Each Approach
+
+**Use Pre-Filtering When**:
+- Using custom filter UI (`useTableFilters` + `TableFilterSelect`)
+- Complex filter logic (multiple conditions, OR logic, etc.)
+- Filters from external sources (URL params, props, etc.)
+- Need full control over filtering logic
+
+**Use TanStack Table's Built-in Filtering When**:
+- Simple single-column filters
+- Using DataTable's built-in search feature
+- Table manages its own filter state internally
 
 ## Best Practices
 
@@ -814,15 +963,56 @@ const tableState = useTableState({
 });
 ```
 
-### Issue: Filters not updating table
+### Issue: Infinite loop / "Maximum update depth exceeded"
 
-**Solution**: Make sure to apply filters to table columns:
+**Problem**: Passing `columnFilters` to controlled state while using `useTableFilters`.
+
+**Solution**: Pre-filter data instead of using controlled `columnFilters`:
 
 ```tsx
-useEffect(() => {
-  table.getColumn('name')?.setFilterValue(filters.debouncedSearchTerm);
-  table.getColumn('status')?.setFilterValue(filters.filters.status);
-}, [filters, table]);
+// ❌ DON'T DO THIS
+<DataTable
+  data={data}
+  controlledState={{ columnFilters: derivedFilters }} // Causes infinite loop!
+/>
+
+// ✅ DO THIS INSTEAD
+const filteredData = useMemo(() => {
+  let result = data;
+  if (filters.filters.status !== 'all') {
+    result = result.filter(item => item.status === filters.filters.status);
+  }
+  return result;
+}, [data, filters.filters]);
+
+<DataTable data={filteredData} /> // Pre-filtered, no controlled columnFilters
+```
+
+**Note**: The `useTableFilters` hook already handles the `onFilterChange` dependency correctly (it's excluded from the effect dependencies to prevent infinite loops). You don't need to worry about this - just use the hook as documented.
+
+See [Critical Pattern: Pre-Filter Data](#critical-pattern-pre-filter-data-dont-use-controlled-columnfilters) for full explanation.
+
+### Issue: Filters not updating table
+
+**Solution**: When using pre-filtering pattern, make sure `filteredData` has correct dependencies:
+
+```tsx
+const filteredData = useMemo(() => {
+  let result = data;
+  // ... apply filters
+  return result;
+}, [
+  data,
+  filters.debouncedSearchTerm,  // ✅ Include all filter values
+  filters.filters.status,        // ✅ Include all filter values
+  filters.filters.priority,      // ✅ Include all filter values
+]);
+```
+
+Alternatively, use `filters.filters` as a dependency:
+
+```tsx
+}, [data, filters.debouncedSearchTerm, filters.filters]);
 ```
 
 ### Issue: TypeScript errors with controlled state

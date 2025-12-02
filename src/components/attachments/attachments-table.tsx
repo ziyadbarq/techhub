@@ -1,50 +1,18 @@
 "use client";
-"use no memo";
 
 import * as React from "react";
-import {
-  type ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  type SortingState,
-  useReactTable,
-} from "@tanstack/react-table";
-import { ArrowUpDown, Download, Trash2, FileIcon, Image } from "lucide-react";
+import type { ColumnDef } from "@tanstack/react-table";
+import { Download, FileIcon, Image } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
+
 import type { AttachmentDTO } from "@/interface-adapters/presenters/attachment.presenter";
 import { deleteAttachment } from "@/interface-adapters/controllers/attachment.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { usePermissions } from "@/hooks/use-permissions";
-import { toast } from "sonner";
+import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 import { formatDate } from "@/lib/utils/date-format";
-
-interface AttachmentsTableProps {
-  data: AttachmentDTO[];
-  loading?: boolean;
-  onDownload?: (attachment: AttachmentDTO) => void;
-  onRefresh?: () => void;
-}
 
 // Helper function to format file size
 function formatFileSize(bytes: number): string {
@@ -63,236 +31,148 @@ function getFileIcon(mimeType: string | null) {
   return <FileIcon className="h-4 w-4" />;
 }
 
+interface AttachmentsTableProps {
+  data: AttachmentDTO[];
+  loading?: boolean;
+  onDownload?: (attachment: AttachmentDTO) => void;
+  onRefresh?: () => void;
+}
+
 export function AttachmentsTable({
   data,
   loading = false,
   onDownload,
   onRefresh,
 }: AttachmentsTableProps) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
-  const [selectedAttachment, setSelectedAttachment] =
-    React.useState<AttachmentDTO | null>(null);
-  const [isDeleting, setIsDeleting] = React.useState(false);
+  // Use reusable delete dialog hook
+  const deleteDialog = useDeleteDialog<AttachmentDTO>({
+    onDelete: (attachment) => deleteAttachment(attachment.id),
+    onSuccess: onRefresh || (() => {}),
+    getItemName: (attachment) => attachment.fileName,
+    entityName: "Attachment",
+  });
 
-  const { hasPermission } = usePermissions();
-  const canDelete = hasPermission(PERMISSIONS.ATTACHMENTS_DELETE);
-
-  const handleDelete = async () => {
-    if (!selectedAttachment) return;
-
-    setIsDeleting(true);
-    try {
-      const result = await deleteAttachment(selectedAttachment.id);
-      if (result.success) {
-        toast.success("Attachment deleted successfully");
-        onRefresh?.();
-      } else {
-        toast.error(result.error || "Failed to delete attachment");
-      }
-    } finally {
-      setIsDeleting(false);
-      setDeleteDialogOpen(false);
-      setSelectedAttachment(null);
-    }
-  };
-
-  const columns: ColumnDef<AttachmentDTO>[] = [
-    {
-      accessorKey: "fileName",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            File Name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
+  const baseColumns = React.useMemo<ColumnDef<AttachmentDTO>[]>(
+    () => [
+      buildSelectColumn<AttachmentDTO>(),
+      {
+        accessorKey: "fileName",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="File Name" />
+        ),
+        cell: ({ row }) => {
+          const attachment = row.original;
+          return (
+            <div className="flex items-center gap-2">
+              {getFileIcon(attachment.mimeType)}
+              <span className="font-medium">{attachment.fileName}</span>
+            </div>
+          );
+        },
+        meta: {
+          label: "File Name",
+        },
       },
-      cell: ({ row }) => {
-        const attachment = row.original;
-        return (
-          <div className="flex items-center gap-2">
-            {getFileIcon(attachment.mimeType)}
-            <span className="font-medium">{attachment.fileName}</span>
-          </div>
-        );
+      {
+        accessorKey: "attachmentType",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Type" />
+        ),
+        cell: ({ row }) => {
+          const typeId = row.original.attachmentTypeId;
+          return typeId ? (
+            <Badge variant="outline">{typeId}</Badge>
+          ) : (
+            <span className="text-muted-foreground">-</span>
+          );
+        },
+        meta: {
+          label: "Type",
+        },
       },
-    },
-    {
-      accessorKey: "attachmentType",
-      header: "Type",
-      cell: ({ row }) => {
-        const typeId = row.original.attachmentTypeId;
-        return typeId ? (
-          <Badge variant="outline">{typeId}</Badge>
-        ) : (
-          <span className="text-muted-foreground">-</span>
-        );
+      {
+        accessorKey: "targetType",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Entity Type" />
+        ),
+        cell: ({ row }) => (
+          <Badge variant="secondary">{row.original.targetType}</Badge>
+        ),
+        meta: {
+          label: "Entity Type",
+        },
       },
-    },
-    {
-      accessorKey: "targetType",
-      header: "Entity Type",
-      cell: ({ row }) => {
-        return <Badge variant="secondary">{row.original.targetType}</Badge>;
-      },
-    },
-    {
-      accessorKey: "sizeBytes",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Size
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        return (
+      {
+        accessorKey: "sizeBytes",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Size" />
+        ),
+        cell: ({ row }) => (
           <span className="text-sm">
             {formatFileSize(Number(row.original.sizeBytes))}
           </span>
-        );
+        ),
+        meta: {
+          label: "Size",
+        },
       },
-    },
-    {
-      accessorKey: "uploadedAt",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Uploaded
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
+      {
+        accessorKey: "uploadedAt",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Uploaded" />
+        ),
+        cell: ({ row }) => formatDate(row.original.uploadedAt),
+        meta: {
+          label: "Uploaded",
+        },
       },
-      cell: ({ row }) => formatDate(row.original.uploadedAt),
-    },
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => {
-        const attachment = row.original;
+    ],
+    [],
+  );
 
-        return (
-          <div className="flex items-center gap-2">
-            {onDownload && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onDownload(attachment)}
-              >
-                <Download className="h-4 w-4" />
-              </Button>
-            )}
-            {canDelete && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setSelectedAttachment(attachment);
-                  setDeleteDialogOpen(true);
-                }}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-        );
-      },
-    },
-  ];
+  // Actions column with download and delete
+  const actionsColumn = React.useMemo(
+    () =>
+      buildActionsColumn<AttachmentDTO>([
+        {
+          type: "custom",
+          label: "Download",
+          icon: Download,
+          onClick: (attachment) => {
+            if (onDownload) {
+              onDownload(attachment);
+            }
+          },
+          hidden: () => !onDownload,
+        },
+        {
+          type: "delete",
+          label: "Delete",
+          permission: PERMISSIONS.ATTACHMENTS_DELETE,
+          variant: "destructive",
+          separator: true,
+          onClick: deleteDialog.openDialog,
+        },
+      ]),
+    [onDownload, deleteDialog.openDialog],
+  );
 
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    onSortingChange: setSorting,
-    state: {
-      sorting,
-    },
-  });
-
-  if (loading) {
-    return (
-      <div className="text-muted-foreground py-8 text-center">
-        Loading attachments...
-      </div>
-    );
-  }
-
-  if (data.length === 0) {
-    return (
-      <div className="text-muted-foreground py-8 text-center">
-        No attachments found
-      </div>
-    );
-  }
+  // Merge static columns + actions column
+  const allColumns = React.useMemo(() => {
+    return [...baseColumns, actionsColumn];
+  }, [baseColumns, actionsColumn]);
 
   return (
     <>
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id}>
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+      <DataTable
+        columns={allColumns}
+        data={data}
+        loading={loading}
+        emptyMessage="No attachments found"
+      />
 
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Attachment</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete "{selectedAttachment?.fileName}"?
-              This action cannot be undone and will permanently delete the file.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {isDeleting ? "Deleting..." : "Delete"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {/* Delete Confirmation Dialog */}
+      <deleteDialog.DialogComponent />
     </>
   );
 }

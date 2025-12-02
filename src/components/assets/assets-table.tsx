@@ -1,65 +1,30 @@
 /**
  * Assets Table Component
- *
- * Supports server-side pagination, row selection, and column visibility persistence.
  */
 
 "use client";
 
 import * as React from "react";
 import Link from "next/link";
-import { type ColumnDef, type PaginationState } from "@tanstack/react-table";
-import { MoreHorizontal, Trash2, Pencil } from "lucide-react";
+import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { toast } from "sonner";
 
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import { CurrencyDisplay } from "@/components/ui/currency-display";
 
 import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
 import { deleteAssetAction } from "@/interface-adapters/controllers/asset.controller";
-import { listExchangeRatesAction } from "@/interface-adapters/controllers/exchange-rate.controller";
-import type { ExchangeRateResponseDTO } from "@/interface-adapters/presenters/exchange-rate.presenter";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { usePermissions } from "@/hooks/use-permissions";
-
-const COLUMN_VISIBILITY_KEY = "assets-table-column-visibility";
+import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useExchangeRates } from "@/hooks/use-exchange-rates";
+import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 
 interface AssetsTableProps {
   data: AssetDTO[];
   loading?: boolean;
   onEdit: (asset: AssetDTO) => void;
   onRefresh: () => void;
-  /** Callback when row selection changes */
   onSelectionChange?: (selectedAssets: AssetDTO[]) => void;
-  /** Server-side pagination props */
-  pagination?: {
-    pageIndex: number;
-    pageSize: number;
-    pageCount: number;
-    total: number;
-    onPaginationChange: (pagination: PaginationState) => void;
-  };
 }
 
 export function AssetsTable({
@@ -68,109 +33,20 @@ export function AssetsTable({
   onEdit,
   onRefresh,
   onSelectionChange,
-  pagination,
 }: AssetsTableProps) {
-  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
-  const [assetToDelete, setAssetToDelete] = React.useState<AssetDTO | null>(
-    null,
-  );
-  const [isDeleting, setIsDeleting] = React.useState(false);
-  const [exchangeRates, setExchangeRates] = React.useState<
-    Map<string, ExchangeRateResponseDTO>
-  >(new Map());
+  // Use reusable hooks
+  const deleteDialog = useDeleteDialog<AssetDTO>({
+    onDelete: (asset) => deleteAssetAction(asset.assetTag),
+    onSuccess: onRefresh,
+    getItemName: (asset) => asset.assetTag,
+    entityName: "Asset",
+  });
 
-  const { hasPermission } = usePermissions();
-
-  // Fetch exchange rates on mount
-  React.useEffect(() => {
-    async function fetchExchangeRates() {
-      try {
-        const result = await listExchangeRatesAction({ onlyActive: true });
-        if (result.success && result.data) {
-          const ratesMap = new Map<string, ExchangeRateResponseDTO>();
-          result.data.forEach((rate) => {
-            ratesMap.set(rate.currency, rate);
-          });
-          setExchangeRates(ratesMap);
-        }
-      } catch (error) {
-        // Silently fail - the table will still work with single currency display
-        console.error("Failed to fetch exchange rates:", error);
-      }
-    }
-
-    fetchExchangeRates();
-  }, []);
-
-  // Helper function to calculate SAR conversion
-  const calculateSARAmount = React.useCallback(
-    (
-      amount: number,
-      currency: string,
-    ): { sarAmount?: number; exchangeRate?: number } => {
-      // If already in SAR, no conversion needed
-      if (currency === "SAR") {
-        return { sarAmount: amount, exchangeRate: 1.0 };
-      }
-
-      // Get exchange rate for the currency
-      const rate = exchangeRates.get(currency);
-      if (!rate) {
-        return {}; // No conversion available
-      }
-
-      // Calculate SAR amount
-      const sarAmount = amount * rate.rateToSAR;
-      return { sarAmount, exchangeRate: rate.rateToSAR };
-    },
-    [exchangeRates],
-  );
-
-  const handleDelete = async (asset: AssetDTO) => {
-    setIsDeleting(true);
-    try {
-      const result = await deleteAssetAction(asset.assetTag);
-      if (result.success) {
-        toast.success("Asset deleted successfully");
-        onRefresh();
-      } else {
-        toast.error(result.error);
-      }
-    } catch (_error) {
-      toast.error("Failed to delete asset");
-    } finally {
-      setIsDeleting(false);
-      setDeleteDialogOpen(false);
-      setAssetToDelete(null);
-    }
-  };
+  const { calculateSARAmount } = useExchangeRates();
 
   const baseColumns = React.useMemo<ColumnDef<AssetDTO>[]>(
     () => [
-      {
-        id: "select",
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value) =>
-              table.toggleAllPageRowsSelected(!!value)
-            }
-            aria-label="Select all"
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-          />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-      },
+      buildSelectColumn<AssetDTO>(),
       {
         accessorKey: "assetTag",
         header: ({ column }) => (
@@ -354,57 +230,26 @@ export function AssetsTable({
     [calculateSARAmount],
   );
 
-  // Actions column defined separately so we can append it after custom columns
-  const actionsColumn = React.useMemo<ColumnDef<AssetDTO>>(
-    () => ({
-      id: "actions",
-      cell: ({ row }) => {
-        const asset = row.original;
-        const canUpdate = hasPermission(PERMISSIONS.ASSETS_UPDATE);
-        const canDelete = hasPermission(PERMISSIONS.ASSETS_DELETE);
-
-        if (!canUpdate && !canDelete) {
-          return null;
-        }
-
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {canUpdate && (
-                <DropdownMenuItem onClick={() => onEdit(asset)}>
-                  <Pencil className="mr-2 h-4 w-4" />
-                  Edit
-                </DropdownMenuItem>
-              )}
-              {canDelete && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setAssetToDelete(asset);
-                      setDeleteDialogOpen(true);
-                    }}
-                    className="text-destructive"
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    Delete
-                  </DropdownMenuItem>
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
-      },
-    }),
-    [hasPermission, onEdit],
+  // Actions column using reusable builder
+  const actionsColumn = React.useMemo(
+    () =>
+      buildActionsColumn<AssetDTO>([
+        {
+          type: "edit",
+          label: "Edit",
+          permission: PERMISSIONS.ASSETS_UPDATE,
+          onClick: onEdit,
+        },
+        {
+          type: "delete",
+          label: "Delete",
+          permission: PERMISSIONS.ASSETS_DELETE,
+          variant: "destructive",
+          separator: true,
+          onClick: deleteDialog.openDialog,
+        },
+      ]),
+    [onEdit, deleteDialog.openDialog],
   );
 
   // Merge static columns + actions column
@@ -412,87 +257,18 @@ export function AssetsTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
-  // Build initial column visibility - load from localStorage or use defaults
-  const initialColumnVisibility = React.useMemo(() => {
-    // Try to load saved visibility from localStorage
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem(COLUMN_VISIBILITY_KEY);
-      if (saved) {
-        try {
-          return JSON.parse(saved) as Record<string, boolean>;
-        } catch {
-          // Fall through to defaults
-        }
-      }
-    }
-
-    // Default visibility - show only essential columns by default
-    return {
-      stockLocationName: false,
-      purchaseDate: false,
-      purchaseCost: false,
-    };
-  }, []);
-
-  // Handle column visibility change - persist to localStorage
-  const _handleColumnVisibilityChange = React.useCallback(
-    (visibility: Record<string, boolean>) => {
-      if (typeof window !== "undefined") {
-        localStorage.setItem(COLUMN_VISIBILITY_KEY, JSON.stringify(visibility));
-      }
-    },
-    [],
-  );
-
   return (
     <>
       <DataTable
         columns={allColumns}
         data={data}
         loading={loading}
-        initialColumnVisibility={initialColumnVisibility}
         onSelectionChange={onSelectionChange}
         selectable={!!onSelectionChange}
-        pagination={
-          pagination
-            ? {
-                pageIndex: pagination.pageIndex,
-                pageSize: pagination.pageSize,
-                pageCount: pagination.pageCount,
-                total: pagination.total,
-                onPaginationChange: pagination.onPaginationChange,
-                manualPagination: true,
-              }
-            : undefined
-        }
       />
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Asset?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will permanently delete asset &quot;{assetToDelete?.assetTag}
-              &quot;. This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                if (assetToDelete) {
-                  handleDelete(assetToDelete);
-                }
-              }}
-              disabled={isDeleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {isDeleting ? "Deleting..." : "Delete"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <deleteDialog.DialogComponent />
     </>
   );
 }

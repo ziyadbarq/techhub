@@ -9,20 +9,12 @@
 
 import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";
-import {
-  MoreHorizontal,
-  Trash2,
-  Download,
-  Upload,
-  Pencil,
-  CheckCircle2,
-} from "lucide-react";
+import { Download, Upload, CheckCircle2, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
@@ -32,16 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { MoreHorizontal, Pencil } from "lucide-react";
 
 import type { TaskDTO } from "@/interface-adapters/presenters/task.presenter";
 import { TaskStatus } from "@/core/domain/entities/task.entity";
@@ -54,6 +37,8 @@ import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useSessionContext } from "@/contexts/session-context";
+import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { buildSelectColumn } from "@/lib/table-utils";
 
 interface TasksTableProps {
   data: TaskDTO[];
@@ -71,16 +56,20 @@ export function TasksTable({
   onImport,
 }: TasksTableProps) {
   const [selectedRows, setSelectedRows] = React.useState<TaskDTO[]>([]);
-  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
-  const [taskToDelete, setTaskToDelete] = React.useState<TaskDTO | null>(null);
-  const [bulkDeleteDialogOpen, setBulkDeleteDialogOpen] = React.useState(false);
   const [isExporting, setIsExporting] = React.useState(false);
-  const [isDeleting, setIsDeleting] = React.useState(false);
 
   // Get current user and permissions
   const { user } = useSessionContext();
   const { hasPermission } = usePermissions();
   const currentUserId = user?.id;
+
+  // Use reusable delete dialog hook
+  const deleteDialog = useDeleteDialog<TaskDTO>({
+    onDelete: (task) => deleteTaskAction(task.id),
+    onSuccess: onRefresh,
+    getItemName: (task) => task.title,
+    entityName: "Task",
+  });
 
   // Helper to check if user can modify a task
   const canModifyTask = React.useCallback(
@@ -109,27 +98,7 @@ export function TasksTable({
     [hasPermission, currentUserId],
   );
 
-  const handleDelete = async (task: TaskDTO) => {
-    setIsDeleting(true);
-    try {
-      const result = await deleteTaskAction(task.id);
-      if (result.success) {
-        toast.success("Task deleted successfully");
-        onRefresh();
-      } else {
-        toast.error(result.error);
-      }
-    } catch (_error) {
-      toast.error("Failed to delete task");
-    } finally {
-      setIsDeleting(false);
-      setDeleteDialogOpen(false);
-      setTaskToDelete(null);
-    }
-  };
-
   const handleBulkDelete = async () => {
-    setIsDeleting(true);
     try {
       const results = await Promise.all(
         selectedRows.map((task) => deleteTaskAction(task.id)),
@@ -144,28 +113,28 @@ export function TasksTable({
         );
       }
       onRefresh();
+      setSelectedRows([]);
     } catch (_error) {
       toast.error("Failed to delete tasks");
-    } finally {
-      setIsDeleting(false);
-      setBulkDeleteDialogOpen(false);
-      setSelectedRows([]);
     }
   };
 
-  const handleComplete = async (task: TaskDTO) => {
-    try {
-      const result = await completeTaskAction(task.id);
-      if (result.success) {
-        toast.success("Task marked as complete");
-        onRefresh();
-      } else {
-        toast.error(result.error);
+  const handleComplete = React.useCallback(
+    async (task: TaskDTO) => {
+      try {
+        const result = await completeTaskAction(task.id);
+        if (result.success) {
+          toast.success("Task marked as complete");
+          onRefresh();
+        } else {
+          toast.error(result.error);
+        }
+      } catch (_error) {
+        toast.error("Failed to complete task");
       }
-    } catch (_error) {
-      toast.error("Failed to complete task");
-    }
-  };
+    },
+    [onRefresh],
+  );
 
   const handleExport = async () => {
     setIsExporting(true);
@@ -215,99 +184,86 @@ export function TasksTable({
     }
   };
 
-  const columns: ColumnDef<TaskDTO>[] = [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
-    {
-      accessorKey: "title",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Title" />
-      ),
-      cell: ({ row }) => {
-        const title = row.getValue("title") as string;
-        return (
-          <div className="flex flex-col gap-1">
-            <span className="font-medium">{title}</span>
-            {row.original.description && (
-              <span className="text-muted-foreground line-clamp-1 text-xs">
-                {row.original.description}
-              </span>
-            )}
-          </div>
-        );
+  // Build base columns (without actions)
+  const baseColumns = React.useMemo<ColumnDef<TaskDTO>[]>(
+    () => [
+      buildSelectColumn<TaskDTO>(),
+      {
+        accessorKey: "title",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Title" />
+        ),
+        cell: ({ row }) => {
+          const title = row.getValue("title") as string;
+          return (
+            <div className="flex flex-col gap-1">
+              <span className="font-medium">{title}</span>
+              {row.original.description && (
+                <span className="text-muted-foreground line-clamp-1 text-xs">
+                  {row.original.description}
+                </span>
+              )}
+            </div>
+          );
+        },
+        meta: {
+          label: "Title",
+        },
       },
-      meta: {
-        label: "Title",
+      {
+        accessorKey: "status",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Status" />
+        ),
+        cell: ({ row }) => getStatusBadge(row.getValue("status")),
+        filterFn: (row, id, value) => {
+          return value.includes(row.getValue(id));
+        },
+        meta: {
+          label: "Status",
+        },
       },
-    },
-    {
-      accessorKey: "status",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Status" />
-      ),
-      cell: ({ row }) => getStatusBadge(row.getValue("status")),
-      filterFn: (row, id, value) => {
-        return value.includes(row.getValue(id));
+      {
+        accessorKey: "createdAt",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Created" />
+        ),
+        cell: ({ row }) => {
+          const date = new Date(row.getValue("createdAt"));
+          return (
+            <span className="text-muted-foreground text-sm">
+              {format(date, "MMM d, yyyy")}
+            </span>
+          );
+        },
+        meta: {
+          label: "Created",
+        },
       },
-      meta: {
-        label: "Status",
+      {
+        accessorKey: "updatedAt",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} title="Updated" />
+        ),
+        cell: ({ row }) => {
+          const date = new Date(row.getValue("updatedAt"));
+          return (
+            <span className="text-muted-foreground text-sm">
+              {format(date, "MMM d, yyyy")}
+            </span>
+          );
+        },
+        meta: {
+          label: "Updated",
+        },
       },
-    },
-    {
-      accessorKey: "createdAt",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Created" />
-      ),
-      cell: ({ row }) => {
-        const date = new Date(row.getValue("createdAt"));
-        return (
-          <span className="text-muted-foreground text-sm">
-            {format(date, "MMM d, yyyy")}
-          </span>
-        );
-      },
-      meta: {
-        label: "Created",
-      },
-    },
-    {
-      accessorKey: "updatedAt",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Updated" />
-      ),
-      cell: ({ row }) => {
-        const date = new Date(row.getValue("updatedAt"));
-        return (
-          <span className="text-muted-foreground text-sm">
-            {format(date, "MMM d, yyyy")}
-          </span>
-        );
-      },
-      meta: {
-        label: "Updated",
-      },
-    },
-    {
+    ],
+    [],
+  );
+
+  // Custom actions column with task-specific logic (complete action)
+  const actionsColumn = React.useMemo<ColumnDef<TaskDTO>>(() => {
+    return {
       id: "actions",
       cell: ({ row }) => {
         const task = row.original;
@@ -347,10 +303,7 @@ export function TasksTable({
               {canUpdate && canDelete && <DropdownMenuSeparator />}
               {canDelete && (
                 <DropdownMenuItem
-                  onClick={() => {
-                    setTaskToDelete(task);
-                    setDeleteDialogOpen(true);
-                  }}
+                  onClick={() => deleteDialog.openDialog(task)}
                   className="text-destructive focus:text-destructive"
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
@@ -361,8 +314,14 @@ export function TasksTable({
           </DropdownMenu>
         );
       },
-    },
-  ];
+    };
+  }, [canModifyTask, onEdit, deleteDialog, handleComplete]);
+
+  // Combine all columns
+  const columns = React.useMemo(
+    () => [...baseColumns, actionsColumn],
+    [baseColumns, actionsColumn],
+  );
 
   return (
     <>
@@ -387,7 +346,7 @@ export function TasksTable({
                 <Button
                   variant="destructive"
                   size="sm"
-                  onClick={() => setBulkDeleteDialogOpen(true)}
+                  onClick={handleBulkDelete}
                 >
                   <Trash2 className="mr-2 h-4 w-4" />
                   Delete ({selectedRows.length})
@@ -414,56 +373,8 @@ export function TasksTable({
         }
       />
 
-      {/* Single Delete Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will permanently delete the task &quot;{taskToDelete?.title}
-              &quot;. This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => taskToDelete && handleDelete(taskToDelete)}
-              disabled={isDeleting}
-              className="bg-destructive hover:bg-destructive/90 text-white"
-            >
-              {isDeleting ? "Deleting..." : "Delete"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      {/* Bulk Delete Dialog */}
-      <AlertDialog
-        open={bulkDeleteDialogOpen}
-        onOpenChange={setBulkDeleteDialogOpen}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              Delete {selectedRows.length} tasks?
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              This will permanently delete the selected tasks. This action
-              cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleBulkDelete}
-              disabled={isDeleting}
-              className="bg-destructive hover:bg-destructive/90 text-white"
-            >
-              {isDeleting ? "Deleting..." : "Delete All"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {/* Delete Confirmation Dialog */}
+      <deleteDialog.DialogComponent />
     </>
   );
 }

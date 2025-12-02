@@ -1,15 +1,12 @@
 /**
  * Assets Page
  *
- * Server component that fetches initial data for the assets page:
- * - Paginated assets list
- * - Asset statistics for summary cards
- * - Filter options (categories, statuses, locations, vendors)
+ * Server component that fetches initial data for the assets page.
  */
 
 import { AssetsPageClient } from "@/components/assets/assets-page-client";
 import {
-  listAssetsPaginatedAction,
+  listAssetsAction,
   getAssetStatisticsAction,
   getAssetFilterOptionsAction,
 } from "@/interface-adapters/controllers/asset.controller";
@@ -28,14 +25,14 @@ export default async function AssetsPage() {
   // Fetch initial data in parallel for better performance
   const [assetsResult, statisticsResult, filterOptionsResult] =
     await Promise.all([
-      listAssetsPaginatedAction(undefined, { page: 1, pageSize: 20 }),
+      listAssetsAction(),
       getAssetStatisticsAction(),
       getAssetFilterOptionsAction(),
     ]);
 
   return (
     <AssetsPageClient
-      initialData={assetsResult.success ? assetsResult.data : undefined}
+      initialAssets={assetsResult.success ? assetsResult.data : []}
       initialStatistics={
         statisticsResult.success ? statisticsResult.data : undefined
       }

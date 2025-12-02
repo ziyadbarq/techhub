@@ -110,6 +110,8 @@ export function useTableFilters<TFilters extends Record<string, unknown>>({
   const debouncedSearchTerm = useDebounce(searchTerm, debounceMs);
 
   // Notify parent when filters change
+  // Note: onFilterChange is intentionally excluded from deps to prevent infinite loops
+  // It's expected to be a stable function reference from the parent component
   useEffect(() => {
     if (onFilterChange) {
       onFilterChange(filters);

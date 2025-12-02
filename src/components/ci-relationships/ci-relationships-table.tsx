@@ -16,9 +16,7 @@ import {
   type SortingState,
   type ColumnFiltersState,
 } from "@tanstack/react-table";
-import { Eye, Pencil, Trash2, Link } from "lucide-react";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { Link } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -30,19 +28,10 @@ import {
 import { Input } from "@/components/ui/input";
 import type { CIRelationshipDTO } from "@/interface-adapters/dtos/generated/ci-relationship.dto";
 import { Badge } from "@/components/ui/badge";
-import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { deleteCIRelationshipAction } from "@/interface-adapters/controllers/ci-relationship.controller";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { buildActionsColumn } from "@/lib/table-utils";
 import { format } from "date-fns";
 
 interface CIRelationshipsTableProps {
@@ -62,31 +51,15 @@ export function CIRelationshipsTable({
 }: CIRelationshipsTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [relationshipToDelete, setRelationshipToDelete] =
-    useState<CIRelationshipDTO | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleDelete = async () => {
-    if (!relationshipToDelete) return;
-
-    setIsDeleting(true);
-    try {
-      const result = await deleteCIRelationshipAction(relationshipToDelete.id);
-      if (result.success) {
-        toast.success("Relationship deleted successfully");
-        onRefresh();
-      } else {
-        toast.error(result.error);
-      }
-    } catch (_error) {
-      toast.error("Failed to delete relationship");
-    } finally {
-      setIsDeleting(false);
-      setDeleteDialogOpen(false);
-      setRelationshipToDelete(null);
-    }
-  };
+  // Use reusable delete dialog hook
+  const deleteDialog = useDeleteDialog<CIRelationshipDTO>({
+    onDelete: (relationship) => deleteCIRelationshipAction(relationship.id),
+    onSuccess: onRefresh,
+    getItemName: (relationship) =>
+      `${relationship.fromCiName} → ${relationship.toCiName}`,
+    entityName: "Relationship",
+  });
 
   const columns: ColumnDef<CIRelationshipDTO>[] = [
     {
@@ -152,45 +125,27 @@ export function CIRelationshipsTable({
         </div>
       ),
     },
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => (
-        <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onView(row.original)}
-            title="View details"
-          >
-            <Eye className="h-4 w-4" />
-          </Button>
-          <PermissionGuard permission={PERMISSIONS.CI_RELATIONSHIPS_UPDATE}>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onEdit(row.original)}
-              title="Edit"
-            >
-              <Pencil className="h-4 w-4" />
-            </Button>
-          </PermissionGuard>
-          <PermissionGuard permission={PERMISSIONS.CI_RELATIONSHIPS_DELETE}>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                setRelationshipToDelete(row.original);
-                setDeleteDialogOpen(true);
-              }}
-              title="Delete"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </PermissionGuard>
-        </div>
-      ),
-    },
+    buildActionsColumn<CIRelationshipDTO>([
+      {
+        type: "view",
+        label: "View",
+        onClick: onView,
+      },
+      {
+        type: "edit",
+        label: "Edit",
+        permission: PERMISSIONS.CI_RELATIONSHIPS_UPDATE,
+        onClick: onEdit,
+      },
+      {
+        type: "delete",
+        label: "Delete",
+        permission: PERMISSIONS.CI_RELATIONSHIPS_DELETE,
+        variant: "destructive",
+        separator: true,
+        onClick: deleteDialog.openDialog,
+      },
+    ]),
   ];
 
   const table = useReactTable({
@@ -306,27 +261,7 @@ export function CIRelationshipsTable({
       </div>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Relationship?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this relationship? This action
-              cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="bg-red-500 hover:bg-red-600"
-            >
-              {isDeleting ? "Deleting..." : "Delete"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <deleteDialog.DialogComponent />
     </>
   );
 }

@@ -16,17 +16,7 @@ import {
   type SortingState,
   type ColumnFiltersState,
 } from "@tanstack/react-table";
-import {
-  Eye,
-  Pencil,
-  Trash2,
-  ArrowRightLeft,
-  ArrowRight,
-  Check,
-  X,
-} from "lucide-react";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { ArrowRightLeft, ArrowRight, Check, X } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -37,19 +27,10 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import type { RelationshipTypeDTO } from "@/interface-adapters/dtos/generated/relationship-type.dto";
-import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { deleteRelationshipTypeAction } from "@/interface-adapters/controllers/relationship-type.controller";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { buildActionsColumn } from "@/lib/table-utils";
 
 interface RelationshipTypesTableProps {
   data: RelationshipTypeDTO[];
@@ -68,32 +49,16 @@ export function RelationshipTypesTable({
 }: RelationshipTypesTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [typeToDelete, setTypeToDelete] = useState<RelationshipTypeDTO | null>(
-    null,
-  );
-  const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleDelete = async () => {
-    if (!typeToDelete) return;
-
-    setIsDeleting(true);
-    try {
-      const result = await deleteRelationshipTypeAction(typeToDelete.id);
-      if (result.success) {
-        toast.success("Relationship type deleted successfully");
-        onRefresh();
-      } else {
-        toast.error(result.error);
-      }
-    } catch (_error) {
-      toast.error("Failed to delete relationship type");
-    } finally {
-      setIsDeleting(false);
-      setDeleteDialogOpen(false);
-      setTypeToDelete(null);
-    }
-  };
+  // Use reusable delete dialog hook
+  const deleteDialog = useDeleteDialog<RelationshipTypeDTO>({
+    onDelete: (type) => deleteRelationshipTypeAction(type.id),
+    onSuccess: onRefresh,
+    getItemName: (type) => type.name,
+    entityName: "Relationship Type",
+    description:
+      "This action cannot be undone and may affect existing relationships.",
+  });
 
   const columns: ColumnDef<RelationshipTypeDTO>[] = [
     {
@@ -155,45 +120,27 @@ export function RelationshipTypesTable({
         </div>
       ),
     },
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => (
-        <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onView(row.original)}
-            title="View details"
-          >
-            <Eye className="h-4 w-4" />
-          </Button>
-          <PermissionGuard permission={PERMISSIONS.RELATIONSHIP_TYPES_UPDATE}>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onEdit(row.original)}
-              title="Edit"
-            >
-              <Pencil className="h-4 w-4" />
-            </Button>
-          </PermissionGuard>
-          <PermissionGuard permission={PERMISSIONS.RELATIONSHIP_TYPES_DELETE}>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                setTypeToDelete(row.original);
-                setDeleteDialogOpen(true);
-              }}
-              title="Delete"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </PermissionGuard>
-        </div>
-      ),
-    },
+    buildActionsColumn<RelationshipTypeDTO>([
+      {
+        type: "view",
+        label: "View",
+        onClick: onView,
+      },
+      {
+        type: "edit",
+        label: "Edit",
+        permission: PERMISSIONS.RELATIONSHIP_TYPES_UPDATE,
+        onClick: onEdit,
+      },
+      {
+        type: "delete",
+        label: "Delete",
+        permission: PERMISSIONS.RELATIONSHIP_TYPES_DELETE,
+        variant: "destructive",
+        separator: true,
+        onClick: deleteDialog.openDialog,
+      },
+    ]),
   ];
 
   const table = useReactTable({
@@ -291,28 +238,7 @@ export function RelationshipTypesTable({
       </div>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Relationship Type?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete &quot;{typeToDelete?.name}&quot;?
-              This action cannot be undone and may affect existing
-              relationships.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="bg-red-500 hover:bg-red-600"
-            >
-              {isDeleting ? "Deleting..." : "Delete"}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <deleteDialog.DialogComponent />
     </>
   );
 }

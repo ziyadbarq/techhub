@@ -33,7 +33,6 @@ interface ConfigurationItemsPageClientProps {
 
 export function ConfigurationItemsPageClient({
   initialItems,
-  initialViewState,
 }: ConfigurationItemsPageClientProps) {
   const [items, setItems] = useState<ConfigurationItemDTO[]>(initialItems);
   const [isLoading, setIsLoading] = useState(false);
@@ -112,7 +111,6 @@ export function ConfigurationItemsPageClient({
         onView={handleView}
         onEdit={handleEdit}
         onRefresh={handleSuccess}
-        initialViewState={initialViewState}
       />
 
       {/* Configuration Item Form Dialog */}

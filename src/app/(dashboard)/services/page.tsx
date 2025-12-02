@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { ServicesTable } from "@/components/services/services-table";
+import { ServicesPageClient } from "@/components/services/services-page-client";
 import { listServicesAction } from "@/interface-adapters/controllers/service.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { hasPermission } from "@/lib/permissions/server";
@@ -40,7 +40,7 @@ export default async function ServicesPage() {
         )}
       </div>
 
-      <ServicesTable data={result.success ? result.data : []} />
+      <ServicesPageClient data={result.success ? result.data : []} />
     </div>
   );
 }

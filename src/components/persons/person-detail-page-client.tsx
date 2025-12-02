@@ -693,7 +693,7 @@ Please change your password after first login.`;
               <Building2 className="text-primary h-5 w-5" />
             </div>
             <div>
-              <p className="text-muted-foreground text-xs">Role</p>
+              <p className="text-muted-foreground text-xs">Job Title</p>
               <p className="font-semibold">{person.title ?? "Not set"}</p>
               <p className="text-muted-foreground text-xs">
                 {person.orgUnitName}

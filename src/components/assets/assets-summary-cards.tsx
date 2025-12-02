@@ -80,21 +80,21 @@ export function AssetsSummaryCards({
       <StatCard
         title="Total Assets"
         value={statistics.total}
-        icon={<Package className="h-4 w-4" />}
+        icon={<Package className="h-[30px] w-[30px]" />}
         description="All assets in system"
         color="text-blue-500"
       />
       <StatCard
         title="Assigned"
         value={statistics.assigned}
-        icon={<UserCheck className="h-4 w-4" />}
+        icon={<UserCheck className="h-[30px] w-[30px]" />}
         description="Currently assigned to employees"
         color="text-purple-500"
       />
       <StatCard
         title="Available"
         value={statistics.available}
-        icon={<PackageOpen className="h-4 w-4" />}
+        icon={<PackageOpen className="h-[30px] w-[30px]" />}
         description="In stock, ready to assign"
         color="text-amber-500"
       />
