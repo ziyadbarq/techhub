@@ -200,8 +200,14 @@ export function isNavItemActive(
     return currentPath === "/";
   }
 
-  // For other routes, check if current path starts with nav item href
-  return currentPath.startsWith(navItemHref);
+  // Exact match
+  if (currentPath === navItemHref) {
+    return true;
+  }
+
+  // Check if current path is a sub-route of nav item href
+  // Use path separator to avoid false matches (e.g., /admin shouldn't match /admin-tools)
+  return currentPath.startsWith(navItemHref + "/");
 }
 
 /**

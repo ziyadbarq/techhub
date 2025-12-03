@@ -274,7 +274,7 @@ const CollapsibleGroupHeader = React.memo(function CollapsibleGroupHeader({
 }: CollapsibleGroupHeaderProps) {
   if (!group.collapsible) {
     return (
-      <h3 className="text-muted-foreground px-3 text-xs font-semibold tracking-wider uppercase">
+      <h3 className="text-muted-foreground px-3 text-xs font-semibold tracking-wider whitespace-nowrap uppercase">
         {group.title}
       </h3>
     );
@@ -283,7 +283,7 @@ const CollapsibleGroupHeader = React.memo(function CollapsibleGroupHeader({
   return (
     <button
       onClick={onToggle}
-      className="text-muted-foreground hover:text-foreground flex w-full items-center gap-2 px-3 py-1 text-xs font-semibold tracking-wider uppercase transition-colors"
+      className="text-muted-foreground hover:text-foreground flex w-full min-w-0 items-center gap-2 px-3 py-1 text-xs font-semibold tracking-wider uppercase transition-colors"
       aria-expanded={isExpanded}
       aria-label={`${isExpanded ? "Collapse" : "Expand"} ${group.title} group`}
     >
@@ -293,7 +293,7 @@ const CollapsibleGroupHeader = React.memo(function CollapsibleGroupHeader({
       >
         <ChevronDown className="h-3 w-3" />
       </motion.div>
-      <span>{group.title}</span>
+      <span className="truncate whitespace-nowrap">{group.title}</span>
     </button>
   );
 });
@@ -344,7 +344,7 @@ const NestedNavItem = React.memo(function NestedNavItem({
     }
 
     // Only scroll for exact matches or best matches (not parent sections)
-    if (!isExactOrBestMatch || isCollapsed || !scrollArea) {
+    if (!isExactOrBestMatch || !scrollArea) {
       return;
     }
 
@@ -385,7 +385,7 @@ const NestedNavItem = React.memo(function NestedNavItem({
       aria-current={isActive ? "page" : undefined}
       aria-expanded={itemHasChildren ? isExpanded : undefined}
       className={cn(
-        "relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
+        "relative flex min-w-0 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
         // Default state
         "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
         // Active state - accent background with yellow border
@@ -409,7 +409,9 @@ const NestedNavItem = React.memo(function NestedNavItem({
       />
 
       {/* Title (expanded only) */}
-      {!isCollapsed && <span className="flex-1">{item.title}</span>}
+      {!isCollapsed && (
+        <span className="flex-1 truncate whitespace-nowrap">{item.title}</span>
+      )}
 
       {/* Expand/Collapse Icon for items with children */}
       {!isCollapsed && itemHasChildren && (

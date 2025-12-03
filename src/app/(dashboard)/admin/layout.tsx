@@ -14,7 +14,6 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
 import { hasAnyPermission } from "@/lib/permissions/check-permission";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { AdminNav } from "@/components/admin/AdminNav";
 import { Card } from "@/components/ui/card";
 
 // Force dynamic rendering - admin pages require authentication
@@ -39,6 +38,9 @@ export default async function AdminLayout({
     PERMISSIONS.PERMISSIONS_VIEW,
     PERMISSIONS.USERS_VIEW,
     PERMISSIONS.AUDIT_LOGS_VIEW,
+    PERMISSIONS.DATABASE_BACKUP,
+    PERMISSIONS.DATABASE_RESTORE,
+    PERMISSIONS.FEATURE_FLAGS_MANAGE,
   ]);
 
   // Redirect to unauthorized page if no admin access
@@ -48,9 +50,6 @@ export default async function AdminLayout({
 
   return (
     <div className="space-y-6">
-      {/* Admin Navigation */}
-      <AdminNav />
-
       {/* Admin Content Area */}
       <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
         <Card className="min-h-[calc(100vh-16rem)] p-6">{children}</Card>

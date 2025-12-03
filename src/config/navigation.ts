@@ -46,6 +46,7 @@ import { assetsNavGroup } from "./navigation-groups/assets";
 import { servicescmdbNavGroup } from "./navigation-groups/services-cmdb";
 import { complianceNavGroup } from "./navigation-groups/compliance";
 import { systemNavGroup } from "./navigation-groups/system";
+import { rbacNavGroup } from "./navigation-groups/rbac";
 
 // ============================================================================
 // Aggregate Navigation Groups
@@ -62,7 +63,8 @@ import { systemNavGroup } from "./navigation-groups/system";
  * 4. Asset Catalog (categories, models, stock locations)
  * 5. Services & CMDB
  * 6. Compliance & Governance (licenses, contracts, governance, attachments)
- * 7. System & Admin
+ * 7. System & Operations
+ * 8. RBAC & Access Control
  */
 export const navGroups = [
   // Core navigation (always visible)
@@ -83,8 +85,11 @@ export const navGroups = [
   // Compliance, licensing, contracts, governance, and attachments
   complianceNavGroup,
 
-  // Administration and platform settings
+  // System operations and platform settings
   systemNavGroup,
+
+  // RBAC and access control (feature flag gated)
+  rbacNavGroup,
 ];
 
 // ============================================================================

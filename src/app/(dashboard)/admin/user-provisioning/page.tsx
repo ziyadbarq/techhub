@@ -23,9 +23,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
 import { requirePermission } from "@/lib/permissions/server";
 
 export const dynamic = "force-dynamic";
@@ -88,78 +86,6 @@ async function UsersTableContent() {
   return <UsersWithoutPersonsTable data={result.data} />;
 }
 
-async function TabsWithCounts() {
-  // Server-side permission check (CRITICAL - client checks can be bypassed)
-  await requirePermission(PERMISSIONS.USERS_MANAGE);
-
-  // Fetch counts in parallel
-  const [personsResult, usersResult] = await Promise.all([
-    listPersonsWithoutUsersAction(),
-    listUsersWithoutPersonsAction(),
-  ]);
-
-  const personsCount = personsResult.success ? personsResult.data.length : 0;
-  const usersCount = usersResult.success ? usersResult.data.length : 0;
-
-  return (
-    <Tabs defaultValue="persons" className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="persons" className="flex items-center gap-2">
-          Employees Without Accounts
-          {personsCount > 0 && (
-            <Badge variant="secondary" className="ml-1">
-              {personsCount}
-            </Badge>
-          )}
-        </TabsTrigger>
-        <TabsTrigger value="users" className="flex items-center gap-2">
-          Users Without Persons
-          {usersCount > 0 && (
-            <Badge variant="secondary" className="ml-1">
-              {usersCount}
-            </Badge>
-          )}
-        </TabsTrigger>
-      </TabsList>
-
-      <TabsContent value="persons" className="mt-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Employees Without User Accounts</CardTitle>
-            <CardDescription>
-              These employees are in the system but cannot login yet. Create a
-              user account or link to an existing user to grant them access.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Suspense fallback={<LoadingSkeleton />}>
-              <PersonsTableContent />
-            </Suspense>
-          </CardContent>
-        </Card>
-      </TabsContent>
-
-      <TabsContent value="users" className="mt-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Users Without Person Records</CardTitle>
-            <CardDescription>
-              These users have login accounts but are not linked to employee
-              records. Link them to existing Person records to associate their
-              organizational context.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Suspense fallback={<LoadingSkeleton />}>
-              <UsersTableContent />
-            </Suspense>
-          </CardContent>
-        </Card>
-      </TabsContent>
-    </Tabs>
-  );
-}
-
 function LoadingSkeleton() {
   return (
     <div className="space-y-4">
@@ -169,7 +95,9 @@ function LoadingSkeleton() {
   );
 }
 
-export default function UserProvisioningPage() {
+export default async function UserProvisioningPage() {
+  await requirePermission(PERMISSIONS.USERS_MANAGE);
+
   return (
     <PermissionGuard
       permission={PERMISSIONS.USERS_MANAGE}
@@ -194,9 +122,38 @@ export default function UserProvisioningPage() {
           </p>
         </div>
 
-        <Suspense fallback={<LoadingSkeleton />}>
-          <TabsWithCounts />
-        </Suspense>
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Employees Without User Accounts</CardTitle>
+              <CardDescription>
+                These employees are in the system but cannot login yet. Create a
+                user account or link to an existing user to grant them access.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <PersonsTableContent />
+              </Suspense>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Users Without Person Records</CardTitle>
+              <CardDescription>
+                These users have login accounts but are not linked to employee
+                records. Link them to existing Person records to associate their
+                organizational context.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Suspense fallback={<LoadingSkeleton />}>
+                <UsersTableContent />
+              </Suspense>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </PermissionGuard>
   );

@@ -1,12 +1,10 @@
 /**
- * Admin System Setup Page
- * Post-installation system operations and diagnostics
+ * System Health Page
+ * System health monitoring and diagnostics
  *
  * Features:
  * - System health dashboard
  * - System info display (DB size, counts)
- * - Database seeding controls
- * - Database reset (dev-only, danger zone)
  */
 
 import { redirect } from "next/navigation";
@@ -17,13 +15,13 @@ import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-re
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminSystemSetupPage() {
+export default async function AdminSystemHealthPage() {
   // Require SYSTEM_ADMIN permission (or create specific permission)
   // For now, we'll require USERS_MANAGE as a proxy for admin access
   try {
     await requirePermission(PERMISSIONS.USERS_MANAGE);
   } catch (error) {
-    handlePermissionRedirect(error, "/admin/system-setup");
+    handlePermissionRedirect(error, "/admin/system-health");
     redirect("/unauthorized");
   }
 
@@ -31,9 +29,9 @@ export default async function AdminSystemSetupPage() {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">System Setup</h1>
+        <h1 className="text-3xl font-bold tracking-tight">System Health</h1>
         <p className="text-muted-foreground mt-2">
-          System administration, diagnostics, and database operations
+          System health monitoring and diagnostics
         </p>
       </div>
 

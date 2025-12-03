@@ -47,9 +47,11 @@ import {
   ShieldCheck,
   Binary,
   HardDrive,
+  UserPlus,
 } from "lucide-react";
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import type { FeatureFlagKey } from "@/lib/features/feature-flag-keys";
 
 /**
  * Icon name mapping for code generation
@@ -90,6 +92,7 @@ export const ICON_NAME_MAP = new Map<LucideIcon, string>([
   [ShieldCheck, "ShieldCheck"],
   [Binary, "Binary"],
   [HardDrive, "HardDrive"],
+  [UserPlus, "UserPlus"],
 ]);
 
 /**
@@ -124,7 +127,7 @@ export interface RouteDefinition {
   requiredRoles?: string[];
 
   /** Feature flag required to access this route */
-  featureFlag?: string;
+  featureFlag?: FeatureFlagKey;
 
   /** Navigation visibility */
   visibleInNav?: boolean;
@@ -158,7 +161,8 @@ export type NavGroupId =
   | "asset-catalog"
   | "services-cmdb"
   | "compliance"
-  | "system";
+  | "system"
+  | "rbac";
 
 /**
  * Navigation group metadata
@@ -219,11 +223,19 @@ export const NAV_GROUPS: Record<NavGroupId, NavGroupMetadata> = {
   },
   system: {
     id: "system",
-    title: "System & Admin",
+    title: "System & Operations",
     collapsible: true,
     defaultCollapsed: true,
     permission: PERMISSIONS.USERS_VIEW,
     order: 7,
+  },
+  rbac: {
+    id: "rbac",
+    title: "RBAC & Access Control",
+    collapsible: true,
+    defaultCollapsed: true,
+    permission: PERMISSIONS.USERS_VIEW,
+    order: 8,
   },
 };
 
@@ -599,7 +611,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     icon: Gauge,
     description: "IT service catalog and management",
     requiredPermissions: ["SERVICES_VIEW"],
-    featureFlag: "SERVICE_MANAGEMENT",
+    featureFlag: "SERVICES",
     visibleInNav: true,
     navGroup: "services-cmdb",
     navOrder: 1,
@@ -610,7 +622,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     icon: Workflow,
     description: "Business process management",
     requiredPermissions: ["BUSINESS_PROCESSES_VIEW"],
-    featureFlag: "SERVICE_MANAGEMENT",
+    featureFlag: "SERVICES",
     visibleInNav: true,
     navGroup: "services-cmdb",
     navOrder: 2,
@@ -658,7 +670,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     icon: FileText,
     description: "Contract management",
     requiredPermissions: ["CONTRACTS_VIEW"],
-    featureFlag: "CONTRACT_MANAGEMENT",
+    featureFlag: "CONTRACTS",
     visibleInNav: true,
     navGroup: "compliance",
     navOrder: 1,
@@ -669,7 +681,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     icon: FileCode,
     description: "Contract type management",
     requiredPermissions: ["CONTRACT_TYPES_VIEW"],
-    featureFlag: "CONTRACT_MANAGEMENT",
+    featureFlag: "CONTRACTS",
     visibleInNav: true,
     navGroup: "compliance",
     navOrder: 2,
@@ -680,7 +692,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     icon: FileKey,
     description: "License product management",
     requiredPermissions: ["LICENSE_PRODUCTS_VIEW"],
-    featureFlag: "LICENSE_MANAGEMENT",
+    featureFlag: "LICENSES",
     visibleInNav: true,
     navGroup: "compliance",
     navOrder: 3,
@@ -691,7 +703,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     icon: ShoppingCart,
     description: "License entitlement management",
     requiredPermissions: ["LICENSE_ENTITLEMENTS_VIEW"],
-    featureFlag: "LICENSE_MANAGEMENT",
+    featureFlag: "LICENSES",
     visibleInNav: true,
     navGroup: "compliance",
     navOrder: 4,
@@ -702,7 +714,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     icon: ClipboardList,
     description: "License allocation tracking",
     requiredPermissions: ["LICENSE_ALLOCATIONS_VIEW"],
-    featureFlag: "LICENSE_MANAGEMENT",
+    featureFlag: "LICENSES",
     visibleInNav: true,
     navGroup: "compliance",
     navOrder: 5,
@@ -753,37 +765,64 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
   },
 
   // ============================================================================
-  // SYSTEM & ADMIN GROUP
+  // SYSTEM & OPERATIONS GROUP
   // ============================================================================
   {
-    path: "/admin",
-    label: "Admin Dashboard",
-    icon: Shield,
-    description: "Admin dashboard - requires any admin permission",
-    requiredPermissions: ["USERS_MANAGE", "ROLES_VIEW", "PERMISSIONS_VIEW"],
+    path: "/admin/system-health",
+    label: "System Health",
+    icon: Settings,
+    description: "System health monitoring and diagnostics",
+    requiredPermissions: ["USERS_MANAGE"],
     visibleInNav: true,
     navGroup: "system",
     navOrder: 1,
   },
   {
-    path: "/admin/system-setup",
-    label: "System Setup",
+    path: "/admin/features",
+    label: "Feature Flags",
     icon: Settings,
-    description: "System setup and database operations",
-    requiredPermissions: ["USERS_MANAGE"],
+    description: "Feature flag management",
+    requiredPermissions: ["FEATURE_FLAGS_MANAGE"],
     visibleInNav: true,
     navGroup: "system",
     navOrder: 2,
   },
+  {
+    path: "/admin/backups",
+    label: "Database Backups",
+    icon: HardDrive,
+    description: "Create, download, and manage database backups",
+    requiredPermissions: ["DATABASE_BACKUP"],
+    visibleInNav: true,
+    navGroup: "system",
+    navOrder: 3,
+  },
+  {
+    path: "/admin/assignment-conflicts",
+    label: "Assignment Conflicts",
+    icon: AlertCircle,
+    description:
+      "Review and resolve conflicts between Intune and manual asset assignments",
+    requiredPermissions: ["ASSET_ASSIGNMENTS_VIEW"],
+    featureFlag: "INTUNE",
+    visibleInNav: true,
+    navGroup: "system",
+    navOrder: 4,
+  },
+
+  // ============================================================================
+  // RBAC & ACCESS CONTROL GROUP
+  // ============================================================================
   {
     path: "/admin/roles",
     label: "System Roles",
     icon: Shield,
     description: "Role management - view, create, edit, delete roles",
     requiredPermissions: ["ROLES_VIEW"],
+    featureFlag: "RBAC",
     visibleInNav: true,
-    navGroup: "system",
-    navOrder: 3,
+    navGroup: "rbac",
+    navOrder: 1,
   },
   {
     path: "/admin/roles/new",
@@ -791,6 +830,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     icon: Shield,
     description: "Create new role",
     requiredPermissions: ["ROLES_CREATE"],
+    featureFlag: "RBAC",
     visibleInNav: false,
     isChildRoute: true,
     parentRoute: "/admin/roles",
@@ -801,6 +841,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     icon: Shield,
     description: "View/edit specific role",
     requiredPermissions: ["ROLES_VIEW"],
+    featureFlag: "RBAC",
     visibleInNav: false,
     isChildRoute: true,
     parentRoute: "/admin/roles",
@@ -811,6 +852,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     icon: Shield,
     description: "Assign permissions to role",
     requiredPermissions: ["ROLES_MANAGE"],
+    featureFlag: "RBAC",
     visibleInNav: false,
     isChildRoute: true,
     parentRoute: "/admin/roles",
@@ -822,9 +864,10 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     description:
       "Permission management - view, create, edit, delete permissions",
     requiredPermissions: ["PERMISSIONS_VIEW"],
+    featureFlag: "RBAC",
     visibleInNav: true,
-    navGroup: "system",
-    navOrder: 4,
+    navGroup: "rbac",
+    navOrder: 2,
   },
   {
     path: "/admin/permissions/new",
@@ -832,6 +875,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     icon: ShieldCheck,
     description: "Create new permission",
     requiredPermissions: ["PERMISSIONS_CREATE"],
+    featureFlag: "RBAC",
     visibleInNav: false,
     isChildRoute: true,
     parentRoute: "/admin/permissions",
@@ -842,6 +886,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     icon: ShieldCheck,
     description: "View/edit specific permission",
     requiredPermissions: ["PERMISSIONS_VIEW"],
+    featureFlag: "RBAC",
     visibleInNav: false,
     isChildRoute: true,
     parentRoute: "/admin/permissions",
@@ -852,9 +897,21 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     icon: Users,
     description: "User management - view users and their roles",
     requiredPermissions: ["USERS_VIEW"],
+    featureFlag: "RBAC",
     visibleInNav: true,
-    navGroup: "system",
-    navOrder: 5,
+    navGroup: "rbac",
+    navOrder: 3,
+  },
+  {
+    path: "/admin/user-provisioning",
+    label: "User Provisioning",
+    icon: UserPlus,
+    description: "Link persons to users and create missing accounts",
+    requiredPermissions: ["USERS_MANAGE"],
+    featureFlag: "RBAC",
+    visibleInNav: true,
+    navGroup: "rbac",
+    navOrder: 4,
   },
   {
     path: "/admin/users/[id]",
@@ -862,6 +919,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     icon: Users,
     description: "View specific user details",
     requiredPermissions: ["USERS_VIEW"],
+    featureFlag: "RBAC",
     visibleInNav: false,
     isChildRoute: true,
     parentRoute: "/admin/users",
@@ -872,6 +930,7 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     icon: Users,
     description: "Assign roles to user",
     requiredPermissions: ["USERS_MANAGE"],
+    featureFlag: "RBAC",
     visibleInNav: false,
     isChildRoute: true,
     parentRoute: "/admin/users",
@@ -882,19 +941,10 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     icon: AlertCircle,
     description: "View audit logs of all RBAC changes",
     requiredPermissions: ["AUDIT_LOGS_VIEW"],
+    featureFlag: "RBAC",
     visibleInNav: true,
-    navGroup: "system",
-    navOrder: 6,
-  },
-  {
-    path: "/admin/features",
-    label: "Feature Flags",
-    icon: Settings,
-    description: "Feature flag management",
-    requiredPermissions: ["FEATURE_FLAGS_MANAGE"],
-    visibleInNav: true,
-    navGroup: "system",
-    navOrder: 7,
+    navGroup: "rbac",
+    navOrder: 5,
   },
   {
     path: "/rbac-analytics",
@@ -902,9 +952,10 @@ export const ROUTES_MANIFEST: RouteDefinition[] = [
     icon: BarChart3,
     description: "RBAC analytics dashboard",
     requiredPermissions: ["ROLES_VIEW"],
-    visibleInNav: false,
-    navGroup: "system",
-    navOrder: 8,
+    featureFlag: "RBAC",
+    visibleInNav: true,
+    navGroup: "rbac",
+    navOrder: 6,
   },
   {
     path: "/settings",

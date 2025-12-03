@@ -14,6 +14,8 @@ import { toast } from "sonner";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { usePermissions } from "@/hooks/use-permissions";
 import { useRolePreviewContext } from "@/contexts/role-preview-context";
+import { useFeatureFlagsContext } from "@/contexts/feature-flags-context";
+import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -43,9 +45,14 @@ export function RolePreviewSwitcher({ isCollapsed }: RolePreviewSwitcherProps) {
     clearPreview,
   } = useRolePreviewContext();
   const { actualPermissions } = usePermissions();
+  const { isFeatureEnabled, isLoading: featuresLoading } =
+    useFeatureFlagsContext();
   const [open, setOpen] = React.useState(false);
 
-  const canPreview = actualPermissions.includes(PERMISSIONS.ROLES_VIEW);
+  const canPreview =
+    !featuresLoading &&
+    isFeatureEnabled(FEATURE_FLAGS.RBAC) &&
+    actualPermissions.includes(PERMISSIONS.ROLES_VIEW);
   const activeLabel = isPreviewing
     ? `Previewing ${previewRoleName ?? "role"}`
     : "Preview roles";
