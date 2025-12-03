@@ -232,7 +232,7 @@ stage_backup() {
     # Call existing db-backup.sh script
     log "Creating database backup: $(basename "$backup_file")"
 
-    if ! bash "$SCRIPT_DIR/deploy/db-backup.sh" backup --file "$backup_file" --env-file "$ROOT_DIR/.env.local" --force >> "$DEPLOY_LOG" 2>&1; then
+    if ! bash "$SCRIPT_DIR/db-backup.sh" backup --file "$backup_file" --env-file "$ROOT_DIR/.env.local" --force >> "$DEPLOY_LOG" 2>&1; then
         log_error "Database backup failed"
         exit 20
     fi
@@ -338,7 +338,7 @@ stage_migrations() {
     if ! run_command "Database migrations" npx dotenv -e .env.local -- prisma migrate deploy; then
         log_error "Database migrations failed"
         log "CRITICAL: Deployment halted before PM2 reload. Old code still running."
-        log "To rollback database: bash scripts/db-backup.sh restore"
+        log "To rollback database: bash scripts/deploy/db-backup.sh restore"
         exit 50
     fi
 
