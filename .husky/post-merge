@@ -1,0 +1,16 @@
+#!/bin/sh
+# Husky post-merge hook
+# Runs after git pull or git merge
+
+# Check if migrations folder changed during merge
+if git diff-tree -r --name-only HEAD@{1} HEAD 2>/dev/null | grep -q "src/infrastructure/database/prisma/schema/migrations/"; then
+  echo ""
+  echo "⚠️  Migration files changed after merge!"
+  echo ""
+  echo "📋 Action needed:"
+  echo "   npx prisma migrate status"
+  echo ""
+  echo "If there are pending migrations:"
+  echo "   npx prisma migrate dev"
+  echo ""
+fi

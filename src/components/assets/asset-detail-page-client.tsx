@@ -71,6 +71,7 @@ import { ReturnAssetWizard } from "./return-asset-wizard";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { useIsFeatureEnabled } from "@/hooks/use-feature-flags";
 import { formatDate } from "@/lib/utils/date-format";
 import {
   CountedTabs,
@@ -107,10 +108,18 @@ export function AssetDetailPageClient({
     intune: number;
   } | null>(null);
 
+  // Feature flag checks
+  const isCmdbEnabled = useIsFeatureEnabled("CMDB");
+  const isServicesEnabled = useIsFeatureEnabled("SERVICE_MANAGEMENT");
+  const isIntuneEnabled = useIsFeatureEnabled("INTUNE");
+
   // Permission checks for additional tabs
-  const canViewCmdb = hasPermission(PERMISSIONS.CONFIGURATION_ITEMS_VIEW);
-  const canViewServices = hasPermission(PERMISSIONS.SERVICES_VIEW);
-  const canViewIntune = hasPermission(PERMISSIONS.INTUNE_DEVICES_VIEW);
+  const canViewCmdb =
+    isCmdbEnabled && hasPermission(PERMISSIONS.CONFIGURATION_ITEMS_VIEW);
+  const canViewServices =
+    isServicesEnabled && hasPermission(PERMISSIONS.SERVICES_VIEW);
+  const canViewIntune =
+    isIntuneEnabled && hasPermission(PERMISSIONS.INTUNE_DEVICES_VIEW);
   const isLoadingCounts = tabCounts === null;
 
   // Fetch updated asset data from server

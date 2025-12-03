@@ -47,6 +47,7 @@ import type {
 } from "@/interface-adapters/controllers/vendor-details.controller";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { useIsFeatureEnabled } from "@/hooks/use-feature-flags";
 import {
   deleteVendorAction,
   getVendorAction,
@@ -97,6 +98,12 @@ export function VendorDetailPageClient({
   // Permission checks
   const canUpdate = hasPermission(PERMISSIONS.VENDORS_UPDATE);
   const canDelete = hasPermission(PERMISSIONS.VENDORS_DELETE);
+
+  // Feature flag checks
+  const isContractsEnabled = useIsFeatureEnabled("CONTRACT_MANAGEMENT");
+  const isServicesEnabled = useIsFeatureEnabled("SERVICE_MANAGEMENT");
+  const isAssetDisposalsEnabled = useIsFeatureEnabled("ASSET_DISPOSALS");
+
   const isCountsLoading = !counts;
   const tabCount = (value: number | undefined) =>
     isCountsLoading ? undefined : (value ?? 0);
@@ -156,6 +163,7 @@ export function VendorDetailPageClient({
       value: "contracts",
       label: "Contracts",
       count: tabCount(counts?.contracts),
+      canView: isContractsEnabled,
       content: (
         <VendorContractsTab
           vendorId={vendor.id}
@@ -167,6 +175,7 @@ export function VendorDetailPageClient({
       value: "services",
       label: "Services",
       count: tabCount(servicesCount),
+      canView: isServicesEnabled || isAssetDisposalsEnabled,
       content: (
         <VendorServicesTab
           vendorId={vendor.id}

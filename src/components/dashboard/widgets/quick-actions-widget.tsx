@@ -63,7 +63,7 @@ const quickActions: QuickAction[] = [
     icon: TrendingUp,
     description: "Record movement",
     color: "bg-purple-500 hover:bg-purple-600",
-    featureFlag: "STOCK",
+    featureFlag: "INVENTORY",
     permission: PERMISSIONS.STOCK_MOVEMENTS_CREATE,
   },
   {

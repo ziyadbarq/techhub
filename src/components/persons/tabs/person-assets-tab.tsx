@@ -57,12 +57,20 @@ interface PersonAssetsTabProps {
     stockMovements: number;
     maintenanceSchedules: number;
   };
+  isLicensesEnabled: boolean;
+  isAssetReservationsEnabled: boolean;
+  isAssetKitsEnabled: boolean;
+  isIntuneEnabled: boolean;
 }
 
 export function PersonAssetsTab({
   personId,
   intuneDevices,
   counts,
+  isLicensesEnabled,
+  isAssetReservationsEnabled,
+  isAssetKitsEnabled,
+  isIntuneEnabled,
 }: PersonAssetsTabProps) {
   const [licenseAllocations, setLicenseAllocations] = useState<
     PersonLicenseAllocationDTO[]
@@ -86,13 +94,19 @@ export function PersonAssetsTab({
 
   const totalItems = useMemo(
     () =>
-      counts.intuneDevices +
-      counts.licenseAllocations +
-      counts.assetReservations +
-      counts.kitCheckouts +
+      (isIntuneEnabled ? counts.intuneDevices : 0) +
+      (isLicensesEnabled ? counts.licenseAllocations : 0) +
+      (isAssetReservationsEnabled ? counts.assetReservations : 0) +
+      (isAssetKitsEnabled ? counts.kitCheckouts : 0) +
       counts.maintenanceSchedules +
       counts.stockMovements,
-    [counts],
+    [
+      counts,
+      isIntuneEnabled,
+      isLicensesEnabled,
+      isAssetReservationsEnabled,
+      isAssetKitsEnabled,
+    ],
   );
 
   const loadLicenseAllocations = useCallback(async () => {
@@ -229,7 +243,7 @@ export function PersonAssetsTab({
       )}
 
       {/* License Allocations */}
-      {counts.licenseAllocations > 0 && (
+      {isLicensesEnabled && counts.licenseAllocations > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -294,7 +308,7 @@ export function PersonAssetsTab({
       )}
 
       {/* Intune Devices */}
-      {counts.intuneDevices > 0 && (
+      {isIntuneEnabled && counts.intuneDevices > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -360,7 +374,7 @@ export function PersonAssetsTab({
       )}
 
       {/* Asset Reservations */}
-      {counts.assetReservations > 0 && (
+      {isAssetReservationsEnabled && counts.assetReservations > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -415,7 +429,7 @@ export function PersonAssetsTab({
       )}
 
       {/* Kit Checkouts */}
-      {counts.kitCheckouts > 0 && (
+      {isAssetKitsEnabled && counts.kitCheckouts > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

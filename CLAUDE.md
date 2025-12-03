@@ -99,6 +99,7 @@ bash scripts/db-backup.sh restore                  # Interactive rollback (selec
 - **Schema changes**: Edit `.prisma` files → `npx prisma migrate dev --name descriptive_name` → `npm run db:generate`
 - **Common commands**: `npm run db:seed`, `npm run db:seed:dev`, `npm run db:reset`, `npx prisma studio`
 - **Critical rules**: Let Prisma generate migrations; never use `prisma db push` or `prisma migrate resolve --applied`; quote camelCase columns in raw SQL and use `@@map("table_name")`
+- **Fixing drift**: If schema already applied but migrations not recorded: `npm run drift:check` → `npm run drift:fix` → verify with `npx prisma migrate status`
 - **Environment**: PostgreSQL runs natively (no Docker); `DATABASE_URL` lives in `.env.local`
 
 ## Documentation

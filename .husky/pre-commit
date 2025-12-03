@@ -28,4 +28,22 @@ if [ $? -ne 0 ]; then
 fi
 
 echo ""
+echo "✅ Type check passed!"
+echo ""
+
+# Phase 3: Drift detection (warn only, non-blocking)
+echo "🔍 Phase 3: Checking for migration drift..."
+npm run drift:check-warn
+
+# Drift check uses warn-only mode, so it won't block commits
+# Exit code 0 or 2 (warning) are both acceptable
+drift_exit=$?
+if [ $drift_exit -eq 1 ]; then
+  echo ""
+  echo "⚠️  Migration drift detected: schema changes missing from database"
+  echo "💡 Tip: Run 'npx prisma migrate dev --name describe_changes' to fix"
+  echo ""
+fi
+
+echo ""
 echo "✅ All checks passed! Committing..."

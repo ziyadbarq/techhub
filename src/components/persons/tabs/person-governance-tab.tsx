@@ -40,11 +40,17 @@ interface PersonGovernanceTabProps {
     initiatedDisposals: number;
     approvedDisposals: number;
   };
+  isGovernanceEnabled: boolean;
+  isAttachmentsEnabled: boolean;
+  isAssetDisposalsEnabled: boolean;
 }
 
 export function PersonGovernanceTab({
   personId,
   counts,
+  isGovernanceEnabled,
+  isAttachmentsEnabled,
+  isAssetDisposalsEnabled,
 }: PersonGovernanceTabProps) {
   const [campaigns, setCampaigns] = useState<PersonVerificationCampaignDTO[]>(
     [],
@@ -62,12 +68,19 @@ export function PersonGovernanceTab({
 
   const totalItems = useMemo(
     () =>
-      counts.verificationCampaigns +
-      counts.verificationItems +
-      counts.attachments +
-      counts.initiatedDisposals +
-      counts.approvedDisposals,
-    [counts],
+      (isGovernanceEnabled
+        ? counts.verificationCampaigns + counts.verificationItems
+        : 0) +
+      (isAttachmentsEnabled ? counts.attachments : 0) +
+      (isAssetDisposalsEnabled
+        ? counts.initiatedDisposals + counts.approvedDisposals
+        : 0),
+    [
+      counts,
+      isGovernanceEnabled,
+      isAttachmentsEnabled,
+      isAssetDisposalsEnabled,
+    ],
   );
 
   const loadCampaigns = useCallback(async () => {
@@ -179,7 +192,7 @@ export function PersonGovernanceTab({
       )}
 
       {/* Verification Campaigns */}
-      {counts.verificationCampaigns > 0 && (
+      {isGovernanceEnabled && counts.verificationCampaigns > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -229,7 +242,7 @@ export function PersonGovernanceTab({
       )}
 
       {/* Verification Items */}
-      {counts.verificationItems > 0 && (
+      {isGovernanceEnabled && counts.verificationItems > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -282,7 +295,7 @@ export function PersonGovernanceTab({
       )}
 
       {/* Attachments */}
-      {counts.attachments > 0 && (
+      {isAttachmentsEnabled && counts.attachments > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -331,59 +344,60 @@ export function PersonGovernanceTab({
       )}
 
       {/* Disposal Activities */}
-      {(counts.initiatedDisposals > 0 || counts.approvedDisposals > 0) && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Trash2 className="h-4 w-4" />
-              Disposal Activities
-            </CardTitle>
-            <CardDescription>
-              Asset disposal workflow participation
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {loadingDisposals ? (
-              <div className="space-y-2">
-                {[1, 2].map((i) => (
-                  <Skeleton key={i} className="h-10 w-full" />
-                ))}
-              </div>
-            ) : disposals.length === 0 ? (
-              <p className="text-muted-foreground text-sm">
-                No disposal records found
-              </p>
-            ) : (
-              <div className="divide-border rounded-md border">
-                {disposals.map((disposal) => (
-                  <div
-                    key={disposal.id}
-                    className="flex items-start justify-between gap-3 border-b px-4 py-3 last:border-b-0"
-                  >
-                    <div className="space-y-1">
-                      <p className="font-medium">{disposal.assetTag}</p>
-                      <p className="text-muted-foreground text-xs">
-                        {disposal.disposalDate
-                          ? formatDate(disposal.disposalDate)
-                          : "Date not set"}
-                      </p>
+      {isAssetDisposalsEnabled &&
+        (counts.initiatedDisposals > 0 || counts.approvedDisposals > 0) && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Trash2 className="h-4 w-4" />
+                Disposal Activities
+              </CardTitle>
+              <CardDescription>
+                Asset disposal workflow participation
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {loadingDisposals ? (
+                <div className="space-y-2">
+                  {[1, 2].map((i) => (
+                    <Skeleton key={i} className="h-10 w-full" />
+                  ))}
+                </div>
+              ) : disposals.length === 0 ? (
+                <p className="text-muted-foreground text-sm">
+                  No disposal records found
+                </p>
+              ) : (
+                <div className="divide-border rounded-md border">
+                  {disposals.map((disposal) => (
+                    <div
+                      key={disposal.id}
+                      className="flex items-start justify-between gap-3 border-b px-4 py-3 last:border-b-0"
+                    >
+                      <div className="space-y-1">
+                        <p className="font-medium">{disposal.assetTag}</p>
+                        <p className="text-muted-foreground text-xs">
+                          {disposal.disposalDate
+                            ? formatDate(disposal.disposalDate)
+                            : "Date not set"}
+                        </p>
+                      </div>
+                      <div className="flex flex-col items-end gap-1">
+                        <Badge variant="outline">{disposal.disposalType}</Badge>
+                        <Badge variant="secondary">{disposal.status}</Badge>
+                        <Badge variant="outline">
+                          {disposal.role === "initiated"
+                            ? "Initiated"
+                            : "Approved"}
+                        </Badge>
+                      </div>
                     </div>
-                    <div className="flex flex-col items-end gap-1">
-                      <Badge variant="outline">{disposal.disposalType}</Badge>
-                      <Badge variant="secondary">{disposal.status}</Badge>
-                      <Badge variant="outline">
-                        {disposal.role === "initiated"
-                          ? "Initiated"
-                          : "Approved"}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
     </div>
   );
 }

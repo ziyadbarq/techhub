@@ -250,25 +250,96 @@ npm run db:generate
 ```
 
 5. **NEVER use `prisma db push`**
+
+   ⚠️ **THIS IS THE #1 CAUSE OF MIGRATION DRIFT IN THIS PROJECT**
+
    ```bash
    # ❌ WRONG - Bypasses migration system, causes drift
    npx prisma db push
-   npm run db:push
+   npm run db:push  # Intentionally disabled with educational error
    ```
-   `db push` applies schema changes without creating migration files. This causes the database to drift from migration history, breaking future migrations.
+
+   **Why this is dangerous**:
+   - `db push` applies schema changes to the database ✅
+   - No migration file created ❌
+   - Migration history out of sync ❌
+   - Next `migrate dev` fails with drift errors ❌
+   - Database reset required ❌❌❌
+
+   **What happens**:
+   1. You run `npm run db:push` (or `npx prisma db push`)
+   2. Schema changes apply to your database immediately
+   3. No migration file is created in `migrations/` folder
+   4. `_prisma_migrations` table is NOT updated
+   5. Next developer runs `npx prisma migrate dev` and gets errors
+   6. Team loses hours debugging drift issues
+
+   **Correct workflow**:
+   ```bash
+   # 1. Edit schema files
+   vim src/infrastructure/database/prisma/schema/assets.prisma
+
+   # 2. Create migration (let Prisma generate SQL)
+   npx prisma migrate dev --name describe_your_changes
+
+   # 3. Regenerate client
+   npm run db:generate
+
+   # 4. Commit both schema files AND migration files
+   git add .
+   git commit -m "Add new field to Asset"
+   ```
+
+   **Protection**: `npm run db:push` is intentionally blocked and will show an educational error message directing you to use `migrate dev` instead.
 
 ### Fixing Migration Issues
 
 #### Issue: Schema Drift (DB differs from migrations)
 
-If your database is out of sync with migration history:
-
-```bash
-# Reset and replay all migrations (DELETES ALL DATA - dev only!)
-npx prisma migrate reset
+**Symptom**: `npx prisma migrate dev` fails with error like:
+```
+Drift detected: Your database schema is not in sync with your migration history.
 ```
 
-**Note**: Do NOT use `prisma db push` to fix drift. Always use `migrate reset` in development to ensure clean state.
+**Two scenarios**:
+
+**Scenario 1: Schema changes already applied (most common)**
+
+If someone accidentally ran `db:push` and schema changes exist in database:
+
+```bash
+# 1. Verify drift (identifies what's missing)
+npm run drift:check
+
+# 2. Fix drift (registers existing migrations)
+npm run drift:fix
+
+# 3. Verify fix worked
+npx prisma migrate status
+# Should show: "Database schema is up to date"
+
+# 4. Test with new migration
+npx prisma migrate dev --name test_fix_worked
+```
+
+**Scenario 2: Schema changes missing (less common)**
+
+If migrations exist but haven't been applied:
+
+```bash
+# Development: Reset and replay all migrations (DELETES ALL DATA)
+npx prisma migrate reset
+
+# Production: Apply pending migrations
+npx prisma migrate deploy
+```
+
+**Prevention**:
+- Pre-commit hook warns if drift detected
+- Post-merge hook alerts if migrations changed
+- `npm run db:push` is blocked with educational message
+
+**Note**: Do NOT use `prisma db push` to fix drift. Always use the drift fix tools or `migrate reset` in development.
 
 #### Issue: Failed Migration
 

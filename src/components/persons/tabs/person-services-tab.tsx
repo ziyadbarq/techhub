@@ -34,11 +34,17 @@ interface PersonServicesTabProps {
     configurationItems: number;
     dataOwnerships: number;
   };
+  isServicesEnabled: boolean;
+  isCmdbEnabled: boolean;
+  isGovernanceEnabled: boolean;
 }
 
 export function PersonServicesTab({
   personId,
   counts,
+  isServicesEnabled,
+  isCmdbEnabled,
+  isGovernanceEnabled,
 }: PersonServicesTabProps) {
   const [serviceOwnerships, setServiceOwnerships] = useState<
     PersonServiceOwnershipDTO[]
@@ -56,10 +62,10 @@ export function PersonServicesTab({
 
   const totalItems = useMemo(
     () =>
-      counts.serviceOwnerships +
-      counts.configurationItems +
-      counts.dataOwnerships,
-    [counts],
+      (isServicesEnabled ? counts.serviceOwnerships : 0) +
+      (isCmdbEnabled ? counts.configurationItems : 0) +
+      (isGovernanceEnabled ? counts.dataOwnerships : 0),
+    [counts, isServicesEnabled, isCmdbEnabled, isGovernanceEnabled],
   );
 
   const loadServiceOwnerships = useCallback(async () => {
@@ -147,7 +153,7 @@ export function PersonServicesTab({
       )}
 
       {/* Service Ownerships */}
-      {counts.serviceOwnerships > 0 && (
+      {isServicesEnabled && counts.serviceOwnerships > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -200,7 +206,7 @@ export function PersonServicesTab({
       )}
 
       {/* Configuration Items */}
-      {counts.configurationItems > 0 && (
+      {isCmdbEnabled && counts.configurationItems > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -249,7 +255,7 @@ export function PersonServicesTab({
       )}
 
       {/* Data Ownerships */}
-      {counts.dataOwnerships > 0 && (
+      {isGovernanceEnabled && counts.dataOwnerships > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">

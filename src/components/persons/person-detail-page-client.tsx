@@ -76,6 +76,7 @@ import type {
 } from "@/interface-adapters/controllers/person-details.controller";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { useIsFeatureEnabled } from "@/hooks/use-feature-flags";
 import {
   deletePersonAction,
   togglePersonExclusionAction,
@@ -154,6 +155,18 @@ export function PersonDetailPageClient({
   const canManage = hasPermission(PERMISSIONS.PERSONS_MANAGE);
   const canManageUsers = hasPermission(PERMISSIONS.USERS_MANAGE);
   const canSync = hasPermission(PERMISSIONS.PERSONS_SYNC);
+
+  // Feature flag checks
+  const isLicensesEnabled = useIsFeatureEnabled("LICENSE_MANAGEMENT");
+  const isAssetReservationsEnabled = useIsFeatureEnabled("ASSET_RESERVATIONS");
+  const isAssetKitsEnabled = useIsFeatureEnabled("ASSET_KITS");
+  const isIntuneEnabled = useIsFeatureEnabled("INTUNE");
+  const isServicesEnabled = useIsFeatureEnabled("SERVICE_MANAGEMENT");
+  const isCmdbEnabled = useIsFeatureEnabled("CMDB");
+  const isGovernanceEnabled = useIsFeatureEnabled("GOVERNANCE");
+  const isAttachmentsEnabled = useIsFeatureEnabled("ATTACHMENTS");
+  const isAssetDisposalsEnabled = useIsFeatureEnabled("ASSET_DISPOSALS");
+
   const isCountsLoading = !counts;
   const totalAssets =
     (intuneDevices.length || counts?.intuneDevices || 0) +
@@ -200,6 +213,11 @@ export function PersonDetailPageClient({
       value: "assets",
       label: "Assets & Licenses",
       count: tabCount(totalAssets),
+      canView:
+        isLicensesEnabled ||
+        isAssetReservationsEnabled ||
+        isAssetKitsEnabled ||
+        isIntuneEnabled,
       content: (
         <PersonAssetsTab
           personId={person.id}
@@ -212,6 +230,10 @@ export function PersonDetailPageClient({
             stockMovements: counts?.stockMovements ?? 0,
             maintenanceSchedules: counts?.maintenanceSchedules ?? 0,
           }}
+          isLicensesEnabled={isLicensesEnabled}
+          isAssetReservationsEnabled={isAssetReservationsEnabled}
+          isAssetKitsEnabled={isAssetKitsEnabled}
+          isIntuneEnabled={isIntuneEnabled}
         />
       ),
     },
@@ -219,6 +241,7 @@ export function PersonDetailPageClient({
       value: "services",
       label: "Services & CMDB",
       count: tabCount(servicesAndCmdbCount),
+      canView: isServicesEnabled || isCmdbEnabled || isGovernanceEnabled,
       content: (
         <PersonServicesTab
           personId={person.id}
@@ -227,6 +250,9 @@ export function PersonDetailPageClient({
             configurationItems: counts?.configurationItems ?? 0,
             dataOwnerships: counts?.dataOwnerships ?? 0,
           }}
+          isServicesEnabled={isServicesEnabled}
+          isCmdbEnabled={isCmdbEnabled}
+          isGovernanceEnabled={isGovernanceEnabled}
         />
       ),
     },
@@ -234,6 +260,8 @@ export function PersonDetailPageClient({
       value: "governance",
       label: "Governance",
       count: tabCount(governanceCount),
+      canView:
+        isGovernanceEnabled || isAttachmentsEnabled || isAssetDisposalsEnabled,
       content: (
         <PersonGovernanceTab
           personId={person.id}
@@ -244,6 +272,9 @@ export function PersonDetailPageClient({
             initiatedDisposals: counts?.initiatedDisposals ?? 0,
             approvedDisposals: counts?.approvedDisposals ?? 0,
           }}
+          isGovernanceEnabled={isGovernanceEnabled}
+          isAttachmentsEnabled={isAttachmentsEnabled}
+          isAssetDisposalsEnabled={isAssetDisposalsEnabled}
         />
       ),
     },
