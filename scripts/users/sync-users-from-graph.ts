@@ -12,18 +12,21 @@
  */
 
 import "reflect-metadata";
-import { prisma, pool } from "../src/infrastructure/database/prisma/client.js";
+import {
+  prisma,
+  pool,
+} from "../../src/infrastructure/database/prisma/client.js";
 import { confirm, select } from "@inquirer/prompts";
 import chalk from "chalk";
 import ora, { type Ora } from "ora";
-import { initContainer, getContainer } from "../src/di/container.js";
-import { DI_TOKENS } from "../src/di/types.js";
-import type { SyncUsersFromGraphUseCase } from "../src/core/use-cases/foundation/person/index.js";
-import { IMicrosoftGraphService } from "../src/core/services/microsoft-graph.service.interface.js";
+import { initContainer, getContainer } from "../../src/di/container.js";
+import { DI_TOKENS } from "../../src/di/types.js";
+import type { SyncUsersFromGraphUseCase } from "../../src/core/use-cases/foundation/person/index.js";
+import { IMicrosoftGraphService } from "../../src/core/services/microsoft-graph.service.interface.js";
 import type {
   GraphSyncProgress,
   GraphSyncPhase,
-} from "../src/lib/schemas/graph-sync-progress.types.js";
+} from "../../src/lib/schemas/graph-sync-progress.types.js";
 
 // Global state
 let isDryRun = false;

@@ -27,6 +27,8 @@ bash scripts/deploy/production-deploy.sh           # Manual 8-stage pipeline
 # User Management
 npm run roles:manage         # Interactive role manager
 npm run sync:users           # Sync from Microsoft Graph
+npm run link:user-to-person  # Link User account to Person record
+npm run fix:admin-perms      # Ensure system admin has all permissions
 ```
 
 ## Directory Structure
@@ -87,8 +89,8 @@ scripts/
 | **manage-user-roles.ts** | Interactive role manager | `npm run roles:manage` |
 | **sync-users-from-graph.ts** | Sync from Microsoft Graph | `npm run sync:users` |
 | **backfill-azure-ad-ids.ts** | Match existing users with Azure AD | `npm run backfill:azure-ids` |
-| **link-user-to-person.ts** | Link orphaned users to persons | `npx tsx scripts/users/link-user-to-person.ts` |
-| **ensure-system-admin-permissions.ts** | Fix system-administrator role | `npx tsx scripts/users/ensure-system-admin-permissions.ts` |
+| **link-user-to-person.ts** | Link User account to Person record | `npm run link:user-to-person` |
+| **ensure-system-admin-permissions.ts** | Ensure system admin has all permissions | `npm run fix:admin-perms` |
 
 ### Build Tools
 

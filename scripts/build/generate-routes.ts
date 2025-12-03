@@ -25,7 +25,7 @@ import {
   getRoutesByNavGroup,
   type NavGroupId,
   type RouteDefinition,
-} from "../src/config/routes-manifest";
+} from "../../src/config/routes-manifest";
 
 const GENERATION_TIMESTAMP = new Date().toISOString();
 const GENERATOR_VERSION = "1.0.0";

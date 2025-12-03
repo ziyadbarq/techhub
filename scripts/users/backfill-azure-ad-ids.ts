@@ -14,12 +14,15 @@
  */
 
 import "reflect-metadata";
-import { prisma, pool } from "../src/infrastructure/database/prisma/client.js";
+import {
+  prisma,
+  pool,
+} from "../../src/infrastructure/database/prisma/client.js";
 import { confirm } from "@inquirer/prompts";
 import chalk from "chalk";
-import { initContainer, getContainer } from "../src/di/container.js";
-import { IMicrosoftGraphService } from "../src/core/services/microsoft-graph.service.interface.js";
-import type { GraphUser } from "../src/lib/schemas/graph-user.schema.js";
+import { initContainer, getContainer } from "../../src/di/container.js";
+import { IMicrosoftGraphService } from "../../src/core/services/microsoft-graph.service.interface.js";
+import type { GraphUser } from "../../src/lib/schemas/graph-user.schema.js";
 
 // Global state
 let isDryRun = false;

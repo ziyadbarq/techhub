@@ -9,7 +9,7 @@
  *   npx dotenv -e .env.local -- npx tsx scripts/fix-network-asset-tags.ts --dry-run
  */
 
-import { prisma } from "../src/infrastructure/database/prisma/client.js";
+import { prisma } from "../../src/infrastructure/database/prisma/client.js";
 
 const DRY_RUN = process.argv.includes("--dry-run");
 

@@ -25,7 +25,7 @@ import { BullMQAdapter } from "@bull-board/api/bullMQAdapter";
 import { ExpressAdapter } from "@bull-board/express";
 import { Queue } from "bullmq";
 import IORedis from "ioredis";
-import { QUEUE_NAMES } from "../src/core/domain/jobs/job-names";
+import { QUEUE_NAMES } from "../../src/core/domain/jobs/job-names";
 import path from "path";
 
 // Load env files (local first)

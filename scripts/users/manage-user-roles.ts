@@ -17,7 +17,10 @@
  */
 
 import "reflect-metadata";
-import { prisma, pool } from "../src/infrastructure/database/prisma/client.js";
+import {
+  prisma,
+  pool,
+} from "../../src/infrastructure/database/prisma/client.js";
 import { select, checkbox, confirm, input } from "@inquirer/prompts";
 import chalk from "chalk";
 import { createId as cuid } from "@paralleldrive/cuid2";
@@ -26,7 +29,7 @@ import {
   CONFLICT_REASONS,
   CONFLICT_CONFIG,
   type ConflictSeverity,
-} from "../src/lib/rbac/role-conflicts.js";
+} from "../../src/lib/rbac/role-conflicts.js";
 
 // Types
 interface UserWithRoles {

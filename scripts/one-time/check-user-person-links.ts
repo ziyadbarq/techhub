@@ -1,4 +1,4 @@
-import { prisma } from "../src/infrastructure/database/prisma/client";
+import { prisma } from "../../src/infrastructure/database/prisma/client";
 
 async function checkUserPersonLinks() {
   try {

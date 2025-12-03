@@ -9,7 +9,7 @@
 
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { prisma } from "../src/infrastructure/database/prisma/client.js";
+import { prisma } from "../../src/infrastructure/database/prisma/client.js";
 
 // ==============================================
 // Types

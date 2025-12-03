@@ -17,7 +17,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import Papa from "papaparse";
-import { prisma } from "../src/infrastructure/database/prisma/client.js";
+import { prisma } from "../../src/infrastructure/database/prisma/client.js";
 import { mergePrismaJson, toPrismaJson } from "./utils/prisma-json.js";
 
 const DRY_RUN = process.argv.includes("--dry-run");

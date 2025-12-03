@@ -3,7 +3,7 @@
  * Usage: npx dotenv -e .env.local -- npx tsx scripts/extract-lookup-values.ts
  */
 
-import { prisma } from "../src/infrastructure/database/prisma/client.js";
+import { prisma } from "../../src/infrastructure/database/prisma/client.js";
 
 async function extractLookupValues() {
   console.log("\n" + "=".repeat(80));

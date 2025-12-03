@@ -5,12 +5,12 @@
  * authentication system by testing against actual database hashes.
  */
 
-import { prisma } from "../src/infrastructure/database/prisma/client";
+import { prisma } from "../../src/infrastructure/database/prisma/client";
 import {
   hashPassword,
   verifyPassword,
   generateSecurePassword,
-} from "../src/lib/utils/password";
+} from "../../src/lib/utils/password";
 
 async function testPasswordCompatibility() {
   try {

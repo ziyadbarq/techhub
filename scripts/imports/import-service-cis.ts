@@ -11,7 +11,7 @@
  *   npx dotenv -e .env.local -- npx tsx scripts/import-service-cis.ts --dry-run
  */
 
-import { prisma } from "../src/infrastructure/database/prisma/client.js";
+import { prisma } from "../../src/infrastructure/database/prisma/client.js";
 import { mergePrismaJson, toPrismaJson } from "./utils/prisma-json.js";
 
 const DRY_RUN = process.argv.includes("--dry-run");

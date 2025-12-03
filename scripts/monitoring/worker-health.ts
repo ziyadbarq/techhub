@@ -18,11 +18,11 @@ import {
   initContainer,
   getContainer,
   resetContainer,
-} from "../src/di/container";
-import { DI_TOKENS } from "../src/di/types";
-import type { IJobQueueService } from "../src/core/services/job-queue.service.interface";
-import { QUEUE_NAMES } from "../src/core/domain/jobs/job-names";
-import { logger } from "../src/lib/logger";
+} from "../../src/di/container";
+import { DI_TOKENS } from "../../src/di/types";
+import type { IJobQueueService } from "../../src/core/services/job-queue.service.interface";
+import { QUEUE_NAMES } from "../../src/core/domain/jobs/job-names";
+import { logger } from "../../src/lib/logger";
 
 async function main(): Promise<void> {
   const log = logger.scope("WorkerHealth");
