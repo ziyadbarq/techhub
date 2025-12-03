@@ -260,15 +260,20 @@ stage_backup() {
 stage_dependencies() {
     log_stage 3 "Dependencies, Type-Check & Prisma Generation"
 
+    # Ensure husky directory is writable (deployment runs without hooks)
+    if [ -d "$ROOT_DIR/.husky" ]; then
+        chmod -R u+rwX,g+rwX "$ROOT_DIR/.husky" >/dev/null 2>&1 || true
+    fi
+
     # Install dependencies (include dev deps for type-checking)
     if [ "$FORCE_INSTALL" = true ]; then
-        log "Force reinstall requested (--install): running npm ci --include=dev..."
-        if ! run_command "npm ci --include=dev" npm ci --include=dev; then
+        log "Force reinstall requested (--install): running npm ci --include=dev (HUSKY=0)..."
+        if ! run_command "npm ci --include=dev (HUSKY=0)" env HUSKY=0 npm ci --include=dev; then
             exit 30
         fi
     elif ! file_exists "$ROOT_DIR/node_modules"; then
-        log "node_modules not found, running npm ci --include=dev for reproducible install (includes dev deps)..."
-        if ! run_command "npm ci --include=dev" npm ci --include=dev; then
+        log "node_modules not found, running npm ci --include=dev with HUSKY=0 (includes dev deps)..."
+        if ! run_command "npm ci --include=dev (HUSKY=0)" env HUSKY=0 npm ci --include=dev; then
             exit 30
         fi
     else

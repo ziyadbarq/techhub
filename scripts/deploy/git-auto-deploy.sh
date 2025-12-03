@@ -545,8 +545,10 @@ main() {
     # Call production-deploy.sh
     log "Starting production deployment..."
     DEPLOY_EXIT_CODE=0
+    set +e
     bash "$PROJECT_DIR/scripts/deploy/production-deploy.sh"
     DEPLOY_EXIT_CODE=$?
+    set -e
 
     if [ $DEPLOY_EXIT_CODE -ne 0 ]; then
 
