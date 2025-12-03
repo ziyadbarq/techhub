@@ -31,7 +31,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const generatedDir = path.join(__dirname, '../src/generated/prisma');
+const generatedDir = path.join(__dirname, '../../src/generated/prisma');
 
 // 1. index.ts - Browser-safe default (SAFE FOR CLIENT COMPONENTS)
 const indexContent = `/**
