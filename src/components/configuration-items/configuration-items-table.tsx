@@ -311,7 +311,7 @@ export function ConfigurationItemsTable({
       assetLink: "all",
     },
     searchConfig: { debounceMs: 250 },
-    onFilterChange: () => tableState.resetPagination(),
+    onFilterChange: tableState.resetPagination,
   });
 
   // Preset filter combinations
