@@ -25,18 +25,5 @@ export default async function AdminSystemHealthPage() {
     redirect("/unauthorized");
   }
 
-  return (
-    <div className="space-y-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">System Health</h1>
-        <p className="text-muted-foreground mt-2">
-          System health monitoring and diagnostics
-        </p>
-      </div>
-
-      {/* Main Dashboard */}
-      <SystemSetupDashboard />
-    </div>
-  );
+  return <SystemSetupDashboard />;
 }

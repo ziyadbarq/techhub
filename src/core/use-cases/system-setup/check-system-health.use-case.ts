@@ -3,13 +3,15 @@
  * Verifies that all system requirements are met
  */
 
-import { injectable, inject } from "inversify";
+import { injectable, inject, optional } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { ISystemSetupRepository } from "@/core/repositories/system-setup-repository.interface";
 import type { IRoleRepository } from "@/core/repositories/role-repository.interface";
 import type { IPermissionRepository } from "@/core/repositories/permission-repository.interface";
 import type { IJobQueueService } from "@/core/services/job-queue.service.interface";
 import type { ILoggerService } from "@/core/services";
+import type { IMicrosoftGraphService } from "@/core/services/microsoft-graph.service.interface";
+import type { IEmailService } from "@/core/services/email.service.interface";
 import type { SystemHealthCheckDto } from "@/core/dtos/system-setup.dto";
 import { QUEUE_NAMES } from "@/core/domain/jobs/job-names";
 import { LogExecution } from "@/lib/decorators";
@@ -27,6 +29,12 @@ export class CheckSystemHealthUseCase {
     private readonly jobQueueService: IJobQueueService,
     @inject(DI_TOKENS.ILoggerService)
     private readonly logger: ILoggerService,
+    @inject(DI_TOKENS.IMicrosoftGraphService)
+    @optional()
+    private readonly graphService: IMicrosoftGraphService | null,
+    @inject(DI_TOKENS.IEmailService)
+    @optional()
+    private readonly emailService: IEmailService | null,
   ) {}
 
   @LogExecution("system.health.check")
@@ -36,9 +44,12 @@ export class CheckSystemHealthUseCase {
     // Check database connection
     let databaseConnected = false;
     let databaseError: string | undefined;
+    let databaseResponseTime: number | undefined;
     try {
+      const dbStart = performance.now();
       databaseConnected =
         await this.systemSetupRepository.checkDatabaseConnection();
+      databaseResponseTime = Math.round(performance.now() - dbStart);
     } catch (_error) {
       databaseError =
         _error instanceof Error ? _error.message : "Unknown database error";
@@ -47,8 +58,11 @@ export class CheckSystemHealthUseCase {
     // Check Redis connection
     let redisConnected = false;
     let redisError: string | undefined;
+    let redisResponseTime: number | undefined;
     try {
+      const redisStart = performance.now();
       redisConnected = await this.systemSetupRepository.checkRedisConnection();
+      redisResponseTime = Math.round(performance.now() - redisStart);
     } catch (_error) {
       redisError =
         _error instanceof Error ? _error.message : "Unknown Redis error";
@@ -119,6 +133,79 @@ export class CheckSystemHealthUseCase {
         _error instanceof Error ? _error.message : "Unknown worker error";
     }
 
+    // Check MS Graph SSO connection
+    let msGraphSSOConfigured = false;
+    let msGraphSSOConnected = false;
+    let msGraphSSOError: string | undefined;
+    let msGraphSSOResponseTime: number | undefined;
+    try {
+      // Check if credentials are configured
+      const hasCredentials = !!(
+        process.env.AZURE_TENANT_ID &&
+        process.env.AZURE_CLIENT_ID &&
+        process.env.AZURE_CLIENT_SECRET
+      );
+      msGraphSSOConfigured = hasCredentials;
+
+      if (hasCredentials && this.graphService) {
+        const msGraphStart = performance.now();
+        msGraphSSOConnected = await this.graphService.testConnection();
+        msGraphSSOResponseTime = Math.round(performance.now() - msGraphStart);
+      }
+    } catch (_error) {
+      msGraphSSOError =
+        _error instanceof Error ? _error.message : "Unknown MS Graph error";
+    }
+
+    // Check Intune connection
+    let intuneConfigured = false;
+    let intuneConnected = false;
+    let intuneError: string | undefined;
+    let intuneResponseTime: number | undefined;
+    try {
+      // Intune uses same Graph credentials
+      const hasCredentials = !!(
+        process.env.AZURE_TENANT_ID &&
+        process.env.AZURE_CLIENT_ID &&
+        process.env.AZURE_CLIENT_SECRET
+      );
+      intuneConfigured = hasCredentials;
+
+      if (hasCredentials && this.graphService) {
+        const intuneStart = performance.now();
+        intuneConnected = await this.graphService.testIntuneConnection();
+        intuneResponseTime = Math.round(performance.now() - intuneStart);
+      }
+    } catch (_error) {
+      intuneError =
+        _error instanceof Error ? _error.message : "Unknown Intune error";
+    }
+
+    // Check Email service connection
+    let emailConfigured = false;
+    let emailConnected = false;
+    let emailError: string | undefined;
+    let emailResponseTime: number | undefined;
+    try {
+      // Check if email credentials are configured
+      const hasCredentials = !!(
+        process.env.AZURE_EMAIL_TENANT_ID &&
+        process.env.AZURE_EMAIL_CLIENT_ID &&
+        process.env.AZURE_EMAIL_CLIENT_SECRET &&
+        process.env.AZURE_EMAIL_FROM
+      );
+      emailConfigured = hasCredentials;
+
+      if (hasCredentials && this.emailService) {
+        const emailStart = performance.now();
+        emailConnected = await this.emailService.testConnection();
+        emailResponseTime = Math.round(performance.now() - emailStart);
+      }
+    } catch (_error) {
+      emailError =
+        _error instanceof Error ? _error.message : "Unknown email error";
+    }
+
     // Core services health (deployment gate - excludes worker)
     const coreServicesHealthy =
       databaseConnected &&
@@ -147,11 +234,13 @@ export class CheckSystemHealthUseCase {
         connected: databaseConnected,
         error: databaseError,
         message: databaseConnected ? "Connected" : "Disconnected",
+        responseTimeMs: databaseResponseTime,
       },
       redis: {
         connected: redisConnected,
         error: redisError,
         message: redisConnected ? "Connected" : "Disconnected",
+        responseTimeMs: redisResponseTime,
       },
       environment: {
         valid: environmentValid,
@@ -178,6 +267,45 @@ export class CheckSystemHealthUseCase {
           : workerError
             ? `Worker check failed: ${workerError}`
             : "No active maintenance worker detected. Start with: npm run worker:start",
+      },
+      msGraphSSO: {
+        configured: msGraphSSOConfigured,
+        connected: msGraphSSOConnected,
+        error: msGraphSSOError,
+        message: !msGraphSSOConfigured
+          ? "Not configured (optional)"
+          : msGraphSSOConnected
+            ? "Connected"
+            : msGraphSSOError
+              ? `Connection failed: ${msGraphSSOError}`
+              : "Not connected",
+        responseTimeMs: msGraphSSOResponseTime,
+      },
+      intune: {
+        configured: intuneConfigured,
+        connected: intuneConnected,
+        error: intuneError,
+        message: !intuneConfigured
+          ? "Not configured (optional)"
+          : intuneConnected
+            ? "Connected"
+            : intuneError
+              ? `Connection failed: ${intuneError}`
+              : "Not connected",
+        responseTimeMs: intuneResponseTime,
+      },
+      email: {
+        configured: emailConfigured,
+        connected: emailConnected,
+        error: emailError,
+        message: !emailConfigured
+          ? "Not configured (optional)"
+          : emailConnected
+            ? "Connected"
+            : emailError
+              ? `Connection failed: ${emailError}`
+              : "Not connected",
+        responseTimeMs: emailResponseTime,
       },
       overall,
       coreServicesHealthy,

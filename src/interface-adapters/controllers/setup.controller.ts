@@ -20,6 +20,11 @@ import type { GetMigrationStatusUseCase } from "@/core/use-cases/system-setup/ge
 import type { ResetDatabaseUseCase } from "@/core/use-cases/system-setup/reset-database.use-case";
 import type { GetSystemInfoUseCase } from "@/core/use-cases/system-setup/get-system-info.use-case";
 import type {
+  SendTestEmailUseCase,
+  SendTestEmailDto,
+  SendTestEmailResultDto,
+} from "@/core/use-cases/system-setup/send-test-email.use-case";
+import type {
   SystemHealthCheckDto,
   MigrationStatusDto,
   SystemInfoDto,
@@ -218,6 +223,32 @@ export async function getSystemInfoAction(): Promise<
       error,
       { function: "getSystemInfoAction" },
       "Failed to get system info",
+    );
+  }
+}
+
+/**
+ * Send test email
+ */
+export async function sendTestEmailAction(
+  dto: SendTestEmailDto,
+): Promise<ActionResponse<SendTestEmailResultDto>> {
+  try {
+    const container = getContainer();
+    const sendTestEmail = container.get<SendTestEmailUseCase>(
+      DI_TOKENS.SendTestEmailUseCase,
+    );
+
+    const result = await sendTestEmail.execute(dto);
+
+    return result.success
+      ? { success: true as const, data: result }
+      : { success: false as const, error: result.error || "Unknown error" };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "sendTestEmailAction" },
+      "Failed to send test email",
     );
   }
 }

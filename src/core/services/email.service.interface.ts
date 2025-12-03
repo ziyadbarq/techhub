@@ -196,4 +196,25 @@ export interface IEmailService {
    * ```
    */
   sendBatch(messages: EmailMessage[]): Promise<SendEmailResult[]>;
+
+  /**
+   * Tests the connection to the email service.
+   *
+   * Verifies that email service credentials are valid and service is accessible.
+   * Useful for health checks and configuration validation.
+   *
+   * @returns Promise resolving to true if connection is successful
+   * @throws Error if connection fails with details about the failure
+   *
+   * @example
+   * ```typescript
+   * try {
+   *   await emailService.testConnection();
+   *   console.log('Email service connection successful');
+   * } catch (error) {
+   *   console.error('Email service connection failed:', error);
+   * }
+   * ```
+   */
+  testConnection(): Promise<boolean>;
 }

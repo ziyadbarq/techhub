@@ -18,6 +18,7 @@ import { GetMigrationStatusUseCase } from "@/core/use-cases/system-setup/get-mig
 import { SeedMinimalDataUseCase } from "@/core/use-cases/system-setup/seed-minimal-data.use-case";
 import { ResetDatabaseUseCase } from "@/core/use-cases/system-setup/reset-database.use-case";
 import { GetSystemInfoUseCase } from "@/core/use-cases/system-setup/get-system-info.use-case";
+import { SendTestEmailUseCase } from "@/core/use-cases/system-setup/send-test-email.use-case";
 
 /**
  * Bind all System Setup dependencies to the container
@@ -64,5 +65,10 @@ export function bindSystemSetupDependencies(container: Container): void {
   container
     .bind(DI_TOKENS.GetSystemInfoUseCase)
     .to(GetSystemInfoUseCase)
+    .inTransientScope();
+
+  container
+    .bind(DI_TOKENS.SendTestEmailUseCase)
+    .to(SendTestEmailUseCase)
     .inTransientScope();
 }

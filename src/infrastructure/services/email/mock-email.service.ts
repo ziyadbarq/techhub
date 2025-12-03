@@ -250,6 +250,14 @@ export class MockEmailService implements IEmailService {
   }
 
   /**
+   * Test email service connection (mock always succeeds)
+   */
+  async testConnection(): Promise<boolean> {
+    this.logger.debug("Mock email service connection test - always succeeds");
+    return true;
+  }
+
+  /**
    * Get statistics (useful for testing)
    */
   getStats() {

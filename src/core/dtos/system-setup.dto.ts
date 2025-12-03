@@ -8,11 +8,13 @@ export interface SystemHealthCheckDto {
     connected: boolean;
     error?: string;
     message?: string;
+    responseTimeMs?: number;
   };
   redis: {
     connected: boolean;
     error?: string;
     message?: string;
+    responseTimeMs?: number;
   };
   environment: {
     valid: boolean;
@@ -33,6 +35,27 @@ export interface SystemHealthCheckDto {
     queue: string;
     error?: string;
     message?: string;
+  };
+  msGraphSSO: {
+    configured: boolean;
+    connected: boolean;
+    error?: string;
+    message?: string;
+    responseTimeMs?: number;
+  };
+  intune: {
+    configured: boolean;
+    connected: boolean;
+    error?: string;
+    message?: string;
+    responseTimeMs?: number;
+  };
+  email: {
+    configured: boolean;
+    connected: boolean;
+    error?: string;
+    message?: string;
+    responseTimeMs?: number;
   };
   overall: boolean; // ALL services including worker (for monitoring/alerts)
   coreServicesHealthy: boolean; // Core services only: DB + Redis + Env + Migrations (for deployment gates)

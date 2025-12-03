@@ -396,6 +396,31 @@ export class MicrosoftGraphEmailService implements IEmailService {
   }
 
   /**
+   * Test email service connection
+   */
+  async testConnection(): Promise<boolean> {
+    try {
+      const client = this.getClient();
+      const from = this.getFromAddress();
+
+      // Test by fetching user profile to verify credentials
+      // GET /users/{from}
+      await client.api(`/users/${from}`).select("id,mail").get();
+
+      this.logger.debug("Email service connection test successful", { from });
+      return true;
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      this.logger.error(
+        "Email service connection test failed",
+        error instanceof Error ? error : new Error(errorMessage),
+      );
+      throw error;
+    }
+  }
+
+  /**
    * Get statistics (useful for testing)
    */
   getStats() {

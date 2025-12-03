@@ -200,6 +200,12 @@ export const DI_TOKENS = {
   IEmailService: Symbol.for("IEmailService"),
 
   /**
+   * Token for IMicrosoftGraphService
+   * Provides Microsoft Graph API operations (users, managers, Intune devices)
+   */
+  IMicrosoftGraphService: Symbol.for("IMicrosoftGraphService"),
+
+  /**
    * Token for ICodeGeneratorService
    * Provides auto-generation of unique codes and tags for entities
    */
@@ -299,6 +305,7 @@ export const DI_TOKENS = {
   SeedMinimalDataUseCase: Symbol.for("SeedMinimalDataUseCase"),
   ResetDatabaseUseCase: Symbol.for("ResetDatabaseUseCase"),
   GetSystemInfoUseCase: Symbol.for("GetSystemInfoUseCase"),
+  SendTestEmailUseCase: Symbol.for("SendTestEmailUseCase"),
   CreateDatabaseBackupUseCase: Symbol.for("CreateDatabaseBackupUseCase"),
   ListDatabaseBackupsUseCase: Symbol.for("ListDatabaseBackupsUseCase"),
   GetDatabaseBackupUseCase: Symbol.for("GetDatabaseBackupUseCase"),
