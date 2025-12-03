@@ -87,9 +87,9 @@ npm run roles:manage -- --help     # Show role manager help
 # Production Deployment (Auto-Deploy on Server)
 tail -f local/logs/auto-deploy-$(date +%Y%m).log  # Monitor auto-deployment logs
 tail -f local/logs/cron.log                        # Monitor cron execution
-bash scripts/production-deploy.sh                  # Manual deployment (testing)
-bash scripts/db-backup.sh backup --force           # Manual database backup
-bash scripts/db-backup.sh restore                  # Interactive rollback (select backup)
+bash scripts/deploy/production-deploy.sh           # Manual deployment (testing)
+bash scripts/deploy/db-backup.sh backup --force    # Manual database backup
+bash scripts/deploy/db-backup.sh restore           # Interactive rollback (select backup)
 ```
 
 ## Database Development Quick Reference
@@ -378,7 +378,43 @@ Keep messages concise with relevant context (what was done, files affected, next
 - Repositories: `prisma-*.repository.ts`
 - Interfaces: `*.interface.ts`
 - Seeders: `seed-*.ts` (in `src/infrastructure/database/prisma/`)
+- Scripts: Organized by category in `scripts/` subdirectories
 - MDX Content: `*.mdx` (in `src/content/docs/`)
 - MDX Components: `*.tsx` (in `src/components/mdx/`)
 
 **See**: [DATABASE_SCHEMA.md](docs/architecture/DATABASE_SCHEMA.md) for database naming conventions.
+
+## Adding New Scripts
+
+Scripts are organized into categorical folders for maintainability. Follow these guidelines:
+
+**Directory Structure:**
+- `scripts/deploy/` - Production deployment pipeline
+- `scripts/db/` - Database operations (migrations, backups)
+- `scripts/imports/` - Data import tools
+- `scripts/users/` - User & admin management
+- `scripts/build/` - Build & bundling tools
+- `scripts/dev/` - Development utilities
+- `scripts/monitoring/` - Infrastructure monitoring
+- `scripts/one-time/` - Historical fixes (archive)
+
+**When creating a new script:**
+1. Place in appropriate category folder (e.g., `scripts/db/new-script.ts`)
+2. Use descriptive, kebab-case naming (e.g., `import-licenses.ts`, `fix-permissions.sh`)
+3. Add `--help` flag for usage instructions
+4. Support `--dry-run` for preview mode where applicable
+5. Add npm script to `package.json` if frequently used
+6. Update `scripts/README.md` with entry in appropriate category table
+7. Use relative imports: `from "../../src/..."` (not `from "../src/..."`)
+8. Follow technology standards: `@inquirer/prompts` v8+, Prisma singleton, structured logging
+
+**Technology checklist:**
+- ✅ Use `@inquirer/prompts` v8+ (NOT legacy `inquirer`)
+- ✅ Import Prisma from `@/infrastructure/database/prisma/client` singleton
+- ✅ Use `dotenv -e .env.local` wrapper for environment loading
+- ✅ Initialize DI container with `await initContainer()`
+- ✅ Use structured logging (inject `ILoggerService`, never `console.log`)
+- ✅ Create backups before destructive operations
+- ✅ Validate environment variables before use
+
+**See**: [scripts/README.md](scripts/README.md) for complete guide with examples, workflows, and troubleshooting.

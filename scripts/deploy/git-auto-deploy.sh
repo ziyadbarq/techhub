@@ -485,7 +485,7 @@ main() {
     # Call production-deploy.sh
     log "Starting production deployment..."
     DEPLOY_EXIT_CODE=0
-    if ! bash "$PROJECT_DIR/scripts/production-deploy.sh"; then
+    if ! bash "$PROJECT_DIR/scripts/deploy/production-deploy.sh"; then
         DEPLOY_EXIT_CODE=$?
 
         # Categorize exit codes: critical (10-70) vs warning (80)

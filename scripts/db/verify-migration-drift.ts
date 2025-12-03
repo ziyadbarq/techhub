@@ -18,7 +18,7 @@
 
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { prisma } from "../src/infrastructure/database/prisma/client.js";
+import { prisma } from "../../src/infrastructure/database/prisma/client.js";
 
 const WARN_ONLY = process.argv.includes("--warn-only");
 const VERBOSE = process.argv.includes("--verbose");

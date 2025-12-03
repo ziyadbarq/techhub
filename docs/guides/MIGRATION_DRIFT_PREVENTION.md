@@ -232,7 +232,7 @@ npm run drift:rollback -- \
   --migration "20251202084549_add_assignment_source"
 
 # Or restore database backup
-bash scripts/db-backup.sh restore
+bash scripts/deploy/db-backup.sh restore
 ```
 
 ### Nuclear Option (Last Resort)
@@ -390,7 +390,7 @@ npm run db:seed:dev
 **Solution 2** (restoring old backup):
 ```bash
 # When prompted, choose "y" to drop and recreate schema
-bash scripts/db-backup.sh restore
+bash scripts/deploy/db-backup.sh restore
 # > Drop and recreate schema 'public' before restore? [y/N] y
 
 # Then apply all migrations on top of restored data
@@ -408,7 +408,7 @@ npx dotenv -e .env.local -- npx prisma migrate deploy
 **Solution**:
 ```bash
 # 1. Restore backup with schema drop
-bash scripts/db-backup.sh restore
+bash scripts/deploy/db-backup.sh restore
 # When prompted: "Drop and recreate schema 'public' before restore? [y/N]"
 # Answer: y
 

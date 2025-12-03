@@ -23,7 +23,7 @@ import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { execSync } from "node:child_process";
-import { prisma } from "../src/infrastructure/database/prisma/client.js";
+import { prisma } from "../../src/infrastructure/database/prisma/client.js";
 
 const DRY_RUN = process.argv.includes("--dry-run");
 const SKIP_BACKUP = process.argv.includes("--skip-backup");
@@ -118,7 +118,7 @@ async function createBackup(): Promise<void> {
   console.log("💾 Creating automatic backup...");
 
   try {
-    const output = execSync("bash scripts/db-backup.sh backup --force", {
+    const output = execSync("bash scripts/deploy/db-backup.sh backup --force", {
       encoding: "utf-8",
       stdio: "pipe",
     });

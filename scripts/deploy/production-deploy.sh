@@ -232,7 +232,7 @@ stage_backup() {
     # Call existing db-backup.sh script
     log "Creating database backup: $(basename "$backup_file")"
 
-    if ! bash "$SCRIPT_DIR/db-backup.sh" backup --file "$backup_file" --env-file "$ROOT_DIR/.env.local" --force >> "$DEPLOY_LOG" 2>&1; then
+    if ! bash "$SCRIPT_DIR/deploy/db-backup.sh" backup --file "$backup_file" --env-file "$ROOT_DIR/.env.local" --force >> "$DEPLOY_LOG" 2>&1; then
         log_error "Database backup failed"
         exit 20
     fi

@@ -555,7 +555,7 @@ async function main() {
   } else {
     log("🛑", "Stopping existing processes...");
     try {
-      execSync("bash scripts/stop-services.sh --force", { stdio: "inherit" });
+      execSync("bash scripts/dev/stop-services.sh --force", { stdio: "inherit" });
     } catch (_error) {
       // Ignore errors - processes may not be running
     }

@@ -67,7 +67,7 @@ Pushover notification (success or failure)
 
 ```bash
 # Barq Assets Auto-Deployment (every 2 minutes)
-*/2 * * * * /home/opc/node-projects/barq-assets/scripts/git-auto-deploy.sh >> /home/opc/node-projects/barq-assets/local/logs/cron.log 2>&1
+*/2 * * * * /home/opc/node-projects/barq-assets/scripts/deploy/git-auto-deploy.sh >> /home/opc/node-projects/barq-assets/local/logs/cron.log 2>&1
 ```
 
 **Verify cron is running:**
@@ -138,7 +138,7 @@ cd /home/opc/node-projects/barq-assets
 sudo chown -R opc:opc .
 
 # Run deployment pipeline
-bash scripts/production-deploy.sh
+bash scripts/deploy/production-deploy.sh
 
 # Fix permissions back to www user
 sudo chown -R www:www .
@@ -172,7 +172,7 @@ cd /home/opc/node-projects/barq-assets
 ls -lt local/backups/db-script/ | head -5
 
 # 3. Restore database (latest backup auto-selected)
-bash scripts/db-backup.sh restore --force --drop-schema
+bash scripts/deploy/db-backup.sh restore --force --drop-schema
 
 # 4. Reset git to previous working commit
 git log --oneline -5  # Find last working commit
@@ -204,7 +204,7 @@ ssh opc@your-server
 cd /home/opc/node-projects/barq-assets
 
 # 2. Restore database to pre-deployment state
-bash scripts/db-backup.sh restore  # Interactive - select backup
+bash scripts/deploy/db-backup.sh restore  # Interactive - select backup
 
 # 3. Reset code to previous version
 git log --oneline -10  # Find previous commit
@@ -232,7 +232,7 @@ npm run pm2:logs
 crontab -e  # Comment out the deployment cron job
 
 # 2. Rollback database
-bash scripts/db-backup.sh restore
+bash scripts/deploy/db-backup.sh restore
 
 # 3. Rollback code
 git log --oneline -10
@@ -285,8 +285,8 @@ crontab -e  # Uncomment the cron job
 
 4. Script permissions?
    ```bash
-   ls -la scripts/git-auto-deploy.sh  # Should be 700 (executable)
-   chmod +x scripts/git-auto-deploy.sh
+   ls -la scripts/deploy/git-auto-deploy.sh  # Should be 700 (executable)
+   chmod +x scripts/deploy/git-auto-deploy.sh
    ```
 
 ---
@@ -296,7 +296,7 @@ crontab -e  # Uncomment the cron job
 **Check:**
 1. `db-backup.sh` executable?
    ```bash
-   chmod +x scripts/db-backup.sh
+   chmod +x scripts/deploy/db-backup.sh
    ```
 
 2. `local/backups/db-script/` writable?
@@ -443,23 +443,23 @@ Create `/etc/logrotate.d/barq-assets`:
 
 ```bash
 # Create backup
-bash scripts/db-backup.sh backup --force
+bash scripts/deploy/db-backup.sh backup --force
 
 # Create backup with custom filename
-bash scripts/db-backup.sh backup --file local/backups/db-script/pre-maintenance-backup.sql --force
+bash scripts/deploy/db-backup.sh backup --file local/backups/db-script/pre-maintenance-backup.sql --force
 ```
 
 ### **Restore from Backup**
 
 ```bash
 # Interactive restore (auto-selects latest)
-bash scripts/db-backup.sh restore
+bash scripts/deploy/db-backup.sh restore
 
 # Restore specific backup
-bash scripts/db-backup.sh restore --file local/backups/db-script/barq-assets-20250101_120000.sql --force
+bash scripts/deploy/db-backup.sh restore --file local/backups/db-script/barq-assets-20250101_120000.sql --force
 
 # Restore with schema wipe (fixes drifted DB)
-bash scripts/db-backup.sh restore --drop-schema --force
+bash scripts/deploy/db-backup.sh restore --drop-schema --force
 ```
 
 ### **Backup Cleanup**

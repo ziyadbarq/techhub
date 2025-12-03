@@ -1,333 +1,293 @@
-# Utility Scripts
+# Scripts Directory
 
-This directory contains TypeScript and shell scripts to help with development, testing, and maintenance of the Barq Assets.
+Reorganized scripts folder with clean categorical organization. All scripts are organized by function for better discoverability and maintainability.
 
-## Available Scripts
+## Quick Reference
 
-### 1. Reset Development Environment
-
-**Purpose:** Completely resets your local development environment to a clean state.
-
-**Usage:**
+### Most Common Commands
 
 ```bash
-npm run reset
-# or
-npx tsx scripts/reset-dev-environment.ts
+# Development
+npm run dev:restart          # Clear cache + restart dev server
+npm run cache:clear          # Clear all caches (.next, Turbo, etc.)
+npm run reset                # Reset environment: drop DB + reseed
+
+# Database
+npm run drift:check          # Check for schema drift
+npm run drift:fix            # Auto-fix migration drift
+npm run db:generate          # Generate Prisma client
+bash scripts/deploy/db-backup.sh backup --force    # Manual backup
+bash scripts/deploy/db-backup.sh restore           # Interactive restore
+
+# Production
+npm run deploy               # Deploy with migrations + seed
+npm run build                # Production build with validation
+bash scripts/deploy/production-deploy.sh           # Manual 8-stage pipeline
+
+# User Management
+npm run roles:manage         # Interactive role manager
+npm run sync:users           # Sync from Microsoft Graph
 ```
 
-**What it does:**
+## Directory Structure
 
-1. Clears build caches (.next, coverage directories)
-2. Drops all database tables
-3. Recreates database schema
-4. Re-seeds database with default data
-
-**When to use:**
-
-- Starting fresh after major changes
-- Testing migrations
-- Resolving database inconsistencies
-- Preparing for demos
-- Cleaning up after experimentation
-
-**Safety:**
-
-- Prompts for confirmation before executing
-- Shows what will be deleted and total size
-- Cannot be undone - use with caution!
-
----
-
-### 2. Type Check Staged Files
-
-**Purpose:** Fast TypeScript type-checking for git pre-commit hooks.
-
-**Usage:**
-
-```bash
-npm run type-check:staged
-# or
-bash scripts/type-check-staged.sh
+```
+scripts/
+├── deploy/          # Production deployment pipeline (4 scripts)
+├── db/              # Database operations (4 scripts)
+├── imports/         # Data import tools (9 scripts)
+├── users/           # User & admin management (5 scripts)
+├── build/           # Build & bundling tools (7 scripts)
+├── dev/             # Development utilities (9 scripts)
+├── monitoring/      # Infrastructure monitoring (2 scripts)
+├── one-time/        # Historical fixes (5 scripts)
+└── utils/           # Shared utilities (1 script)
 ```
 
-**What it does:**
+## Scripts by Category
 
-- Gets list of staged TypeScript files from git
-- Runs `tsc --noEmit` only on those files
-- Skips check if no TypeScript files are staged
-- Much faster than checking entire project
+### Deploy (Production-Critical)
 
-**When to use:**
+| Script | Purpose | Usage |
+|--------|---------|-------|
+| **git-auto-deploy.sh** | Auto-deploy from Git | Cron: `*/2 * * * *` (production only) |
+| **production-deploy.sh** | 8-stage deployment pipeline | `bash scripts/deploy/production-deploy.sh` |
+| **db-backup.sh** | Database backup/restore | `bash scripts/deploy/db-backup.sh backup` |
+| **start-server.js** | Production server startup | `node scripts/deploy/start-server.js` |
 
-- Automatically runs in git pre-commit hook
-- Manual check before committing: `npm run type-check:staged`
-- Compare with full check: `npm run type-check` (checks all files)
+### Database Operations
 
-**Benefits:**
+| Script | Purpose | Usage |
+|--------|---------|-------|
+| **fix-migration-drift.ts** | Auto-fix schema drift | `npm run drift:fix` |
+| **verify-migration-drift.ts** | Detect schema drift | `npm run drift:check` |
+| **rollback-migration-fix.ts** | Rollback drift fix | `npm run drift:rollback` |
+| **migrate-sla-data.ts** | One-time SLA migration | `npx tsx scripts/db/migrate-sla-data.ts` |
 
-- **10-20x faster** than full project type-check
-- Only validates code you're about to commit
-- Faster git workflow
+### Data Imports
 
----
+| Script | Purpose | Usage |
+|--------|---------|-------|
+| **import-physical-assets.ts** | Import laptops + monitors | `npx tsx scripts/imports/import-physical-assets.ts` |
+| **import-network-assets.ts** | Import network infrastructure | `npx tsx scripts/imports/import-network-assets.ts` |
+| **import-telephone-assets.ts** | Import telephone systems | `npx tsx scripts/imports/import-telephone-assets.ts` |
+| **import-network-cis.ts** | Import network CIs | `npx tsx scripts/imports/import-network-cis.ts` |
+| **import-cloud-cis.ts** | Import cloud infrastructure CIs | `npx tsx scripts/imports/import-cloud-cis.ts` |
+| **import-services.ts** | Import service definitions | `npx tsx scripts/imports/import-services.ts` |
+| **import-service-cis.ts** | Import service-to-CI relationships | `npx tsx scripts/imports/import-service-cis.ts` |
+| **import-service-ownership.ts** | Import service ownership | `npx tsx scripts/imports/import-service-ownership.ts` |
+| **import-service-bia.ts** | Import business impact analysis | `npx tsx scripts/imports/import-service-bia.ts` |
 
-### 3. Database Backup & Restore
+**Note:** All import scripts support `--dry-run` mode and source from `local/barq-data/`.
 
-**Purpose:** Quick PostgreSQL backup/restore using `DATABASE_URL` (use while in-app backup is incomplete).
+### User Management
 
-**Usage:**
+| Script | Purpose | Usage |
+|--------|---------|-------|
+| **manage-user-roles.ts** | Interactive role manager | `npm run roles:manage` |
+| **sync-users-from-graph.ts** | Sync from Microsoft Graph | `npm run sync:users` |
+| **backfill-azure-ad-ids.ts** | Match existing users with Azure AD | `npm run backfill:azure-ids` |
+| **link-user-to-person.ts** | Link orphaned users to persons | `npx tsx scripts/users/link-user-to-person.ts` |
+| **ensure-system-admin-permissions.ts** | Fix system-administrator role | `npx tsx scripts/users/ensure-system-admin-permissions.ts` |
 
-```bash
-bash scripts/db-backup.sh backup
-# Restore (interactive): picks latest backup automatically unless you choose a path
-bash scripts/db-backup.sh restore
-```
+### Build Tools
 
-**Details:**
+| Script | Purpose | Usage |
+|--------|---------|-------|
+| **build.js** | Enhanced build with progress | `npm run build` (via package.json) |
+| **deploy.js** | Deployment orchestrator | `npm run deploy` |
+| **analyze-bundle.js** | Bundle size analysis | `npm run build:analyze` |
+| **recreate-prisma-index.js** | Prisma client barrel exports | `npm run db:generate` (postgenerate hook) |
+| **generate-routes.ts** | Auto-generate route config | `npm run generate:routes` |
+| **shim-server-only.js** | Server-only shim for workers | Used in worker processes |
+| **silence-baseline-warning.cjs** | Suppress Browserslist warnings | Used in build scripts |
 
-- Loads `DATABASE_URL` from `.env.local` (override with `--env-file`)
-- Stores backups under `local/backups` by default with timestamped filenames
-- Uses plain SQL dumps with `--clean --if-exists` to make restore reliable
-- Add `--force` to overwrite an existing backup file or skip the restore confirmation
-- Verifies env file readability and DB connectivity before running to fail fast with clear errors
-- Post-backup validation prints size + SHA-256 checksum and warns if the dump looks empty
-- Restore runs quietly by default (errors still surface); add `--verbose` to see full psql output
-- Interactive restore picks the most recent backup if you don’t pass `--file`, asks before dropping schema, and offers a `--drop-schema` escape hatch for drifted DBs
-- Use `--no-auto-latest` if you prefer to manually input the backup path every time
+### Development Utilities
 
-### 4. Prisma Drift Remedy (Dev Only)
+| Script | Purpose | Usage |
+|--------|---------|-------|
+| **reset-dev-environment.ts** | Full reset: DB + cache | `npm run reset` |
+| **clear-cache.ts** | Clear all caches | `npm run cache:clear` |
+| **restart-dev.sh** | Restart dev server | `npm run dev:restart` |
+| **stop-services.sh** | Stop all services | `npm run stop` or `npm run stop:force` |
+| **type-check-staged.sh** | Fast staged file type-check | `npm run type-check:staged` (pre-commit hook) |
+| **setup-backup-storage.sh** | Setup backup directories | Manual (one-time) |
+| **test-email.ts** | Test Microsoft Graph email | `npx tsx scripts/dev/test-email.ts` |
+| **test-password-compatibility.ts** | Test password handling | `npx tsx scripts/dev/test-password-compatibility.ts` |
+| **debug-intune-graph.ts** | Debug Intune device sync | `npx tsx scripts/dev/debug-intune-graph.ts` |
 
-**Purpose:** Recover migration history after an accidental `db push` or manual schema tweak without wiping local data.
+### Monitoring
 
-**Usage:**
+| Script | Purpose | Usage |
+|--------|---------|-------|
+| **bull-board-server.ts** | BullMQ queue monitoring UI | `npm run queues:board` |
+| **worker-health.ts** | Background worker diagnostics | `npm run worker:health` |
 
-```bash
-npm run db:drift-remedy
-```
+### One-Time Fixes (Archive)
 
-**What it does:**
-
-1. Loads `.env.local`/`.env`, verifies `DATABASE_URL` is localhost
-2. Uses `prisma migrate diff` to capture drift SQL into `local/backups/drift-remedy`
-3. Generates an idempotent reconciliation migration in `src/infrastructure/database/prisma/schema/migrations`
-4. Prompts you to review and then run `npm run db:migrate` (no-op on already-updated DBs, but records the migration)
-
-**When to use:**
-
-- `npm run db:migrate` reports drift and you want to keep your data
-- You used `db push` in dev and need to restore a clean migration workflow
-
-**Safety:**
-
-- Dev-only guard (fails fast if `DATABASE_URL` is not localhost)
-- Stores the raw diff for audit before writing the migration
-- Statements are wrapped to be idempotent so applying on a drifted DB succeeds without data loss
-- Uses a derived shadow DB (`<dbname>_shadow`) unless you set `SHADOW_DATABASE_URL`; ensure your local user can create/drop databases (also configured in `prisma.config.ts`)
+| Script | Purpose | Status |
+|--------|---------|--------|
+| **fix-manifest-permissions.ts** | Fix route manifest permissions | Completed |
+| **fix-prisma-imports.ts** | Fix Prisma import paths | Completed |
+| **fix-network-asset-tags.ts** | Fix asset tag formatting | Completed |
+| **check-user-person-links.ts** | Diagnostic for user-person links | Utility |
+| **extract-lookup-values.ts** | Extract lookup values for debugging | Utility |
 
 ## Common Workflows
 
-### Starting Fresh
+### Production Deployment
 
-Reset your environment and start clean:
-
+**Automatic (Production Server):**
 ```bash
-# Full reset
-npm run reset
-
-# Start dev server
-npm run dev
+# Runs every 2 minutes via cron
+tail -f local/logs/auto-deploy-$(date +%Y%m).log
 ```
 
-### Before Committing
-
-The git pre-commit hook automatically:
-
-1. **Phase 1 (Auto-fix):**
-   - Runs Prettier formatting
-   - Fixes ESLint issues
-   - Stages fixed files
-
-2. **Phase 2 (Manual checks):**
-   - Type-checks only staged files
-   - Fails if type errors exist
-
-You can also run manually:
-
+**Manual Deployment:**
 ```bash
-# Check what will be validated
-npm run type-check:staged
-
-# Fix all issues before commit
-npm run format
-npm run lint
-npm run type-check
+npm run deploy                           # Standard deployment
+bash scripts/deploy/production-deploy.sh # Manual 8-stage pipeline
 ```
 
-### Daily Development
-
+**Rollback:**
 ```bash
-# Standard workflow
-npm run dev              # Start development server
-npm run type-check       # Full type check
-npm run lint             # Lint check
-npm run format           # Format code
-npm run test             # Run tests
-
-# Database operations
-npm run db:migrate       # Create/apply migrations (dev)
-npm run db:migrate:deploy # Apply migrations (prod)
-npm run db:seed          # Seed data
-npm run db:studio        # Open Prisma Studio
+bash scripts/deploy/db-backup.sh restore  # Interactive backup selection
 ```
 
----
+### Database Management
 
-## Script Architecture
+**Schema Changes:**
+```bash
+# 1. Edit .prisma files
+# 2. Create migration
+npx prisma migrate dev --name describe_changes
+# 3. Regenerate client
+npm run db:generate
+```
 
-All scripts in this directory follow these patterns:
+**Drift Detection & Fix:**
+```bash
+npm run drift:check    # Detect drift
+npm run drift:fix      # Auto-fix with backup
+npm run drift:rollback # Rollback if needed
+```
 
-### TypeScript Scripts
+**Backup & Restore:**
+```bash
+bash scripts/deploy/db-backup.sh backup --force   # Create backup
+bash scripts/deploy/db-backup.sh restore          # Interactive restore
+```
 
-- **ES Modules:** Use `import` syntax with `type: "module"` in package.json
-- **TypeScript with tsx:** Run with `tsx` for direct execution
-- **Shebang:** Include `#!/usr/bin/env tsx` for direct execution
-- **Error Handling:** Comprehensive error messages and graceful failures
-- **User Feedback:** Progress messages with emoji indicators
-- **Validation:** Check prerequisites before executing
-- **Safety:** Prompt for confirmation on destructive operations
+### Development Reset
 
-### Shell Scripts
+```bash
+npm run reset          # Nuclear reset: drop DB + reseed
+npm run cache:clear    # Clear caches only
+npm run dev:restart    # Clear cache + restart dev server
+```
 
-- **Bash:** Use `/bin/bash` for compatibility
-- **Error Handling:** Check exit codes and provide helpful messages
-- **Validation:** Verify prerequisites (git, files, etc.)
-- **Executable:** Use `chmod +x` to make executable
+## Best Practices
 
----
+### Technology Standards
 
-## Development
+- **Inquirer Prompts:** Use `@inquirer/prompts` v8+ (NOT legacy `inquirer`)
+- **Prisma Client:** Import from `@/infrastructure/database/prisma/client` singleton
+- **Environment:** Use `dotenv -e .env.local` wrapper for `.env.local` loading
+- **DI Container:** Initialize with `await initContainer()`, resolve via `getContainer()`
+- **Error Handling:** Always use try-catch with descriptive errors
+- **Logging:** Use structured logging with context (userId, requestId, etc.)
 
-### Creating New Scripts
+### Security Checklist
 
-1. **Create script file:**
+- [ ] No hardcoded credentials or secrets
+- [ ] Environment variables validated before use
+- [ ] Database connections properly closed (`await prisma.$disconnect()`)
+- [ ] Destructive operations require confirmation (unless `--force` flag)
+- [ ] Sensitive data redacted in logs
+- [ ] Backup created before destructive operations
 
-   ```bash
-   # TypeScript script
-   touch scripts/my-script.ts
+### DO's
 
-   # Shell script
-   touch scripts/my-script.sh
-   ```
+- ✅ Use `bash scripts/category/script-name.sh` for shell scripts
+- ✅ Use `npx tsx scripts/category/script-name.ts` for TypeScript scripts
+- ✅ Use `npm run command` when available (preferred)
+- ✅ Add `--help` flag for usage instructions
+- ✅ Support `--dry-run` for preview mode
+- ✅ Create backups before destructive operations
+- ✅ Use descriptive exit codes (0=success, 1-99=specific errors)
+- ✅ Log to files for production scripts (`local/logs/`)
 
-2. **Add shebang:**
+### DON'Ts
 
-   ```typescript
-   #!/usr/bin/env tsx
-   // For TypeScript scripts
-   ```
-
-   ```bash
-   #!/bin/bash
-   # For shell scripts
-   ```
-
-3. **Make executable:**
-
-   ```bash
-   chmod +x scripts/my-script.ts
-   chmod +x scripts/my-script.sh
-   ```
-
-4. **Add npm script** (optional):
-
-   ```json
-   {
-     "scripts": {
-       "my-script": "tsx scripts/my-script.ts"
-     }
-   }
-   ```
-
-5. **Document in this README**
-
-### Best Practices
-
-✅ **DO**:
-
-- Add clear descriptions and usage examples
-- Show what the script will do before executing
-- Prompt for confirmation on destructive operations
-- Provide helpful error messages
-- Use emoji indicators for visual feedback
-- Make scripts idempotent when possible
-- Document prerequisites and dependencies
-
-❌ **DON'T**:
-
-- Execute destructive operations without confirmation
-- Assume prerequisites exist (check first)
-- Use cryptic error messages
-- Hardcode paths or configuration
-- Mix concerns (one script, one purpose)
-
----
+- ❌ Never use `prisma db push` (bypasses migrations)
+- ❌ Never create migration files manually (use `prisma migrate dev`)
+- ❌ Never commit `.env.local` or credentials
+- ❌ Never skip confirmations without `--force` flag
+- ❌ Never use `console.log` in production (use structured logging)
+- ❌ Never hardcode paths (use `__dirname` or env variables)
 
 ## Troubleshooting
 
-### "Permission denied"
+### Common Errors
 
+**"BASH_SOURCE[0]: parameter not set"**
+- **Cause:** Script executed without bash
+- **Fix:** Use `bash scripts/deploy/db-backup.sh` (not `sh`)
+
+**"Migration drift detected"**
+- **Cause:** Database schema doesn't match migration history
+- **Fix:** Run `npm run drift:fix` (creates automatic backup)
+
+**"Prisma Client generation failed"**
+- **Cause:** Invalid schema or missing `@prisma/client`
+- **Fix:** Check schema syntax, run `npm install`
+
+**"Port 3000 already in use"**
+- **Cause:** Dev server or PM2 process running
+- **Fix:** Run `npm run stop:force` to kill all processes
+
+## Production Cron Job
+
+**Location:** Production server only (`/home/opc/node-projects/barq-assets/`)
+
+**Cron Entry:**
 ```bash
-# Make script executable
-chmod +x scripts/your-script.ts
+*/2 * * * * /home/opc/node-projects/barq-assets/scripts/deploy/git-auto-deploy.sh
 ```
 
-### "Container not initialized" (TypeScript scripts)
-
-Ensure you import `reflect-metadata` at the top:
-
-```typescript
-import "reflect-metadata";
-```
-
-### "Command not found: tsx"
-
+**Monitoring:**
 ```bash
-# Install tsx globally (optional)
-npm install -g tsx
-
-# Or use npx
-npx tsx scripts/your-script.ts
+tail -f local/logs/auto-deploy-$(date +%Y%m).log
+tail -f local/logs/cron.log
 ```
 
-### "Database connection failed"
+**Health Checks:**
+- Auto-deploy runs every 2 minutes
+- Performs 8-stage deployment (backup, dependencies, build, migrations, etc.)
+- Sends Pushover notifications on failure/recovery
+- Zero-downtime PM2 graceful reload
 
-- Check `.env` file exists and has `DATABASE_URL`
-- Verify PostgreSQL is running
-- Confirm database exists
+## Related Documentation
 
-### Reset script fails
+- **[MODERNIZATION_NOTES.md](MODERNIZATION_NOTES.md)** - Modern patterns applied to scripts
+- **[ROLE_MANAGER_TESTING.md](ROLE_MANAGER_TESTING.md)** - Role manager testing procedures
+- **[FILE_MAPPING.md](FILE_MAPPING.md)** - Complete old → new path mapping
+- **[../CLAUDE.md](../CLAUDE.md)** - Project-wide quick reference
+- **[../docs/operations/AUTOMATED_DEPLOYMENT.md](../docs/operations/AUTOMATED_DEPLOYMENT.md)** - Production deployment guide
+- **[../docs/guides/DEVELOPER_GUIDE.md](../docs/guides/DEVELOPER_GUIDE.md)** - Complete development guide
 
-- Ensure PostgreSQL is running
-- Check database permissions
-- Verify `.env` configuration
-- Try running steps manually:
-  ```bash
-  npm run db:migrate
-  npm run db:seed
-  ```
+## Maintenance
 
----
+**When adding new scripts:**
+1. Place in appropriate category folder
+2. Add entry to this README (category table)
+3. Add npm script to `package.json` if frequently used
+4. Document usage with `--help` flag
+5. Follow technology standards above
 
-## Support
+**Archive criteria:**
+- One-time migrations → `one-time/`
+- Completed fixes → `one-time/`
+- No longer used but keep for reference → `one-time/`
 
-For issues or questions:
-
-1. Check this README for documentation
-2. Review the script source code (well-documented)
-3. Check [CLAUDE.md](../CLAUDE.md) for project architecture
-4. Review [docs/README.md](../docs/README.md) for additional documentation
-
----
-
-**Last Updated:** 2025-11-19
+**Folder structure last updated:** 2025-12-03

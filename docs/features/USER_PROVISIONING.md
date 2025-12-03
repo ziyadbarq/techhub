@@ -476,7 +476,7 @@ npm run roles:manage
 **Password Utilities**:
 ```bash
 # Test password generation and hashing
-npx tsx scripts/test-password-compatibility.ts
+npx tsx scripts/dev/test-password-compatibility.ts
 ```
 
 Expected output:
@@ -499,7 +499,7 @@ Expected output:
 2. Verify User doesn't already exist with same email
 3. If unlinking needed, use utility script:
    ```bash
-   npx tsx scripts/link-user-to-person.ts
+   npx tsx scripts/users/link-user-to-person.ts
    ```
 
 ### Issue: "User account already exists with email"

@@ -229,7 +229,7 @@ npx prisma migrate dev --name add_azure_ad_fields
 npm run db:generate
 
 # 2. Run backfill script to populate azureAdId for existing persons
-npx dotenv -e .env.local -- npx tsx scripts/backfill-azure-ad-ids.ts
+npx dotenv -e .env.local -- npx tsx scripts/users/backfill-azure-ad-ids.ts
 
 # 3. Remove @unique from email in schema/foundation.prisma, then:
 npx prisma migrate dev --name remove_email_unique_constraint
@@ -1367,7 +1367,7 @@ If you have existing Person records without `azureAdId`, you need to backfill th
 ### Backfill Script
 
 ```typescript
-// scripts/backfill-azure-ad-ids.ts
+// scripts/users/backfill-azure-ad-ids.ts
 
 import { prisma } from '@/infrastructure/database/prisma/client';
 import { MicrosoftGraphService } from '@/infrastructure/services/microsoft-graph.service';
@@ -1440,7 +1440,7 @@ backfillAzureAdIds().catch(console.error);
 ### Run Backfill
 
 ```bash
-npx dotenv -e .env.local -- npx tsx scripts/backfill-azure-ad-ids.ts
+npx dotenv -e .env.local -- npx tsx scripts/users/backfill-azure-ad-ids.ts
 ```
 
 ### Handling Unmatched Records
@@ -1468,7 +1468,7 @@ Persons without a Graph match may be:
 | `src/use-cases/person/sync-users-from-graph.use-case.ts` | Sync business logic |
 | `src/infrastructure/jobs/user-sync.job.ts` | BullMQ job definition |
 | `src/app/api/admin/sync-users/route.ts` | Manual trigger API |
-| `scripts/backfill-azure-ad-ids.ts` | One-time backfill script |
+| `scripts/users/backfill-azure-ad-ids.ts` | One-time backfill script |
 | `scripts/sync-users.ts` | CLI sync trigger |
 
 ---
@@ -1490,7 +1490,7 @@ npm run db:generate
 # 4. Create the service and use case files (copy from this doc)
 
 # 5. Backfill existing users
-npx dotenv -e .env.local -- npx tsx scripts/backfill-azure-ad-ids.ts
+npx dotenv -e .env.local -- npx tsx scripts/users/backfill-azure-ad-ids.ts
 
 # 6. Test sync manually
 npx dotenv -e .env.local -- npx tsx scripts/sync-users.ts

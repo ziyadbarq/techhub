@@ -467,7 +467,7 @@ healthCheckEnabled: z.boolean().default(false)
 
 ### Data Migration Script
 
-**Location**: `scripts/migrate-sla-data.ts`
+**Location**: `scripts/db/migrate-sla-data.ts`
 
 **Purpose**: Safely migrate existing `slaDetails` JSON to structured fields
 
@@ -480,7 +480,7 @@ healthCheckEnabled: z.boolean().default(false)
 
 **Usage**:
 ```bash
-npx tsx scripts/migrate-sla-data.ts
+npx tsx scripts/db/migrate-sla-data.ts
 ```
 
 **Sample Output**:

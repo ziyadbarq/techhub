@@ -135,7 +135,7 @@ Successfully removed all Person-Role business relationships from the system. Rol
 ```
 ✅ 0 new TypeScript errors introduced
 ⚠️  6 pre-existing errors remain (unrelated to person-role):
-   - scripts/worker-health.ts (1 error - pre-existing)
+   - scripts/monitoring/worker-health.ts (1 error - pre-existing)
    - src/hooks/use-column-visibility.ts (1 error - pre-existing)
    - tests/helpers/queue.helper.ts (4 errors - IJobQueueService interface)
 ```
