@@ -133,23 +133,40 @@ export function useSidebarNavigation() {
     hasNoPermissions,
   ]);
 
+  // Group collapse state - persisted to localStorage
+  // Initialize with empty object to allow useLocalStorage to hydrate from storage first
   const [collapsedGroups, setCollapsedGroups] =
-    useLocalStorage<SidebarGroupState>(
-      "sidebar-groups-collapsed",
-      buildGroupStates(navGroups),
-    );
+    useLocalStorage<SidebarGroupState>("sidebar-groups-collapsed", {});
 
+  // Item expansion state - session-based (not persisted)
   const [expandedItems, setExpandedItems] = React.useState<SidebarItemState>(
-    () => buildItemStates(navGroups),
+    {},
   );
 
   const badges = useBadgeUpdates();
 
-  // Sync group/item state when navigation changes (e.g., permissions update)
+  // Track initialization to prevent race condition with localStorage hydration
+  // Without this ref, the effect would overwrite localStorage values with defaults
+  // during initial load when navGroups changes from [] → actual groups
+  const initializedRef = React.useRef(false);
+
+  // Initialize and sync group/item state when navigation changes
+  // Pattern: Initialization Ref (see docs/guides/LOCALSTORAGE_HYDRATION.md)
   React.useEffect(() => {
-    setCollapsedGroups((prev) => buildGroupStates(navGroups, prev));
-    setExpandedItems((prev) => buildItemStates(navGroups, prev));
-  }, [navGroups, setCollapsedGroups, setExpandedItems]);
+    // Guard 1: Only proceed if navGroups are loaded (permissions/features resolved)
+    if (navGroups.length === 0) return;
+
+    // Guard 2: Only initialize once OR when group count changes (permission change)
+    const currentGroupCount = Object.keys(collapsedGroups).length;
+    const newGroupCount = navGroups.filter((g) => g.collapsible).length;
+
+    if (!initializedRef.current || currentGroupCount !== newGroupCount) {
+      // Merge navGroups with existing localStorage state (preserves user preferences)
+      setCollapsedGroups((prev) => buildGroupStates(navGroups, prev));
+      setExpandedItems((prev) => buildItemStates(navGroups, prev));
+      initializedRef.current = true;
+    }
+  }, [navGroups, collapsedGroups, setCollapsedGroups]);
 
   // Auto-expand group containing active page
   React.useEffect(() => {

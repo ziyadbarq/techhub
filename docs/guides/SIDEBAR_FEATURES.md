@@ -921,11 +921,45 @@ const isExpanded = getItemDefaultState("/docs"); // true/false
    - Saved in localStorage: `sidebar-groups-collapsed`
    - Persists across sessions
    - User preference remembered
+   - **Implementation Note**: Uses initialization ref pattern to prevent race conditions during async data loading (permissions/features)
 
 2. **Item State** (Session)
    - Kept in component state
    - Resets on page reload
    - Prevents overwhelming nested menus
+
+#### State Persistence Best Practices
+
+When implementing localStorage persistence with async data dependencies (like permissions/features), avoid race conditions by:
+
+```typescript
+// ✅ CORRECT: Initialize with empty state, use ref to track initialization
+const [state, setState] = useLocalStorage("key", {});
+const initializedRef = useRef(false);
+
+useEffect(() => {
+  const currentCount = Object.keys(state).length;
+  const newCount = asyncData.filter(condition).length;
+
+  if (asyncData.length > 0 && (!initializedRef.current || currentCount !== newCount)) {
+    setState(prev => buildState(asyncData, prev)); // Merge with localStorage
+    initializedRef.current = true;
+  }
+}, [asyncData, state]);
+
+// ❌ WRONG: Initialize with computed state, sync unconditionally
+const [state, setState] = useLocalStorage("key", buildState(asyncData));
+
+useEffect(() => {
+  setState(buildState(asyncData)); // Overwrites localStorage on every change!
+}, [asyncData]);
+```
+
+**Why this matters**: When `useLocalStorage` hydrates from localStorage (in its internal effect), if you have another effect that rebuilds state whenever async data changes, there's a race condition. The async data changes from `[]` → actual data during initial load, triggering your sync effect before localStorage hydration completes, overwriting the saved state with defaults.
+
+**Solution**: Track initialization with a ref and only sync when:
+- Initial mount (haven't initialized yet)
+- OR when the data structure changes (e.g., different number of groups due to permission changes)
 
 ### Configuration
 
