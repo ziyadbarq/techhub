@@ -10,13 +10,22 @@ import { Button } from "@/components/ui/button";
 import { ServicesPageClient } from "@/components/services/services-page-client";
 import { listServicesAction } from "@/interface-adapters/controllers/service.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { hasPermission } from "@/lib/permissions/server";
+import { hasPermission, requirePermission } from "@/lib/permissions/server";
 import { requireFeature } from "@/lib/features/server";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
 export default async function ServicesPage() {
   await requireFeature("SERVICES");
+
+  // Security: Require permission to view services list
+  try {
+    await requirePermission(PERMISSIONS.SERVICES_VIEW);
+  } catch (error) {
+    handlePermissionRedirect(error, "/services");
+    throw error;
+  }
 
   const canCreate = await hasPermission(PERMISSIONS.SERVICES_CREATE);
   const result = await listServicesAction();

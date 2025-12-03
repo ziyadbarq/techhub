@@ -12,7 +12,7 @@
  */
 
 import { prisma } from "../../src/infrastructure/database/prisma/client.js";
-import { mergePrismaJson, toPrismaJson } from "./utils/prisma-json.js";
+import { mergePrismaJson, toPrismaJson } from "../utils/prisma-json.js";
 
 const DRY_RUN = process.argv.includes("--dry-run");
 

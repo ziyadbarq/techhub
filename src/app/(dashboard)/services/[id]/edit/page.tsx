@@ -3,14 +3,15 @@
  */
 
 import * as React from "react";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 import { ServiceForm } from "@/components/services/service-form";
 import { getServiceAction } from "@/interface-adapters/controllers/service.controller";
 import { listVendorsAction } from "@/interface-adapters/controllers/vendor.controller";
 import { listBusinessProcessesAction } from "@/interface-adapters/controllers/business-process.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { hasPermission } from "@/lib/permissions/server";
+import { requirePermission } from "@/lib/permissions/server";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
@@ -24,10 +25,13 @@ export default async function EditServicePage({
   params,
 }: EditServicePageProps) {
   const { id } = await params;
-  const canUpdate = await hasPermission(PERMISSIONS.SERVICES_UPDATE);
 
-  if (!canUpdate) {
-    redirect(`/services/${id}`);
+  // Security: Require permission to update services
+  try {
+    await requirePermission(PERMISSIONS.SERVICES_UPDATE);
+  } catch (error) {
+    handlePermissionRedirect(error, `/services/${id}/edit`);
+    throw error;
   }
 
   // Fetch service and reference data

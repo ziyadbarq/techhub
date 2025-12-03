@@ -16,9 +16,10 @@ import { getServiceInfrastructureAction } from "@/interface-adapters/controllers
 import { getServiceAssetsAction } from "@/interface-adapters/controllers/service-asset.controller";
 import { listPersonsAction } from "@/interface-adapters/controllers/person.controller";
 import type { PersonDTO } from "@/interface-adapters/presenters/person.presenter";
-import { hasPermission } from "@/lib/permissions/server";
+import { hasPermission, requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { isFeatureEnabled } from "@/lib/features/server";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +33,14 @@ export default async function ServiceDetailPage({
   params,
 }: ServiceDetailPageProps) {
   const { id } = await params;
+
+  // Security: Require permission to view services
+  try {
+    await requirePermission(PERMISSIONS.SERVICES_VIEW);
+  } catch (error) {
+    handlePermissionRedirect(error, `/services/${id}`);
+    throw error;
+  }
 
   const [canManageOwners, canViewPersons, healthSlaEnabled] = await Promise.all(
     [

@@ -13,7 +13,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { prisma } from "../../src/infrastructure/database/prisma/client.js";
-import { mergePrismaJson, toPrismaJson } from "./utils/prisma-json.js";
+import { mergePrismaJson, toPrismaJson } from "../utils/prisma-json.js";
 
 const DRY_RUN = process.argv.includes("--dry-run");
 const DATA_FILE = join(process.cwd(), "local/barq-data/Nework_Assets.json");

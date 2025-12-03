@@ -15,8 +15,21 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AuditLogsPageClient } from "@/components/audit/audit-logs-page-client";
 import { listAuditLogsAction } from "@/interface-adapters/controllers/audit-log.controller";
+import { requirePermission } from "@/lib/permissions/server";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+
+export const dynamic = "force-dynamic";
 
 export default async function AuditLogsPage() {
+  // Security: Require permission to view audit logs
+  try {
+    await requirePermission(PERMISSIONS.AUDIT_LOGS_VIEW);
+  } catch (error) {
+    handlePermissionRedirect(error, "/admin/audit-logs");
+    throw error;
+  }
+
   // Fetch initial data on the server
   const result = await listAuditLogsAction({ page: 1, pageSize: 10 });
   const initialData = result.success

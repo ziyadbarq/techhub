@@ -25,6 +25,7 @@ import { createId } from "@paralleldrive/cuid2";
 import type { IFileStorageService } from "@/core/services/file-storage.service.interface";
 import type { ILoggerService } from "@/core/services/logger.service.interface";
 import { DI_TOKENS } from "@/di/types";
+import { Attachment } from "@/core/domain/entities/attachment.entity";
 
 @injectable()
 export class LocalFileStorageService implements IFileStorageService {
@@ -92,10 +93,19 @@ export class LocalFileStorageService implements IFileStorageService {
       const filePath = path.join(dirPath, uniqueFileName);
       const fullFilePath = path.join(this.projectRoot, filePath);
 
+      // Security: Validate file content matches declared MIME type
+      // This prevents malicious files disguised with fake extensions
+      this.logger.debug("Validating file content", {
+        fileName,
+        mimeType,
+        fileSize: file.length,
+      });
+      await Attachment.validateFileContent(file, mimeType);
+
       // Create directory if it doesn't exist
       await fs.mkdir(fullDirPath, { recursive: true });
 
-      // Write file to disk
+      // Write file to disk (only after validation passes)
       await fs.writeFile(fullFilePath, file);
 
       this.logger.info("File uploaded successfully", {

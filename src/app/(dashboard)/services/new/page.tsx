@@ -3,21 +3,23 @@
  */
 
 import * as React from "react";
-import { redirect } from "next/navigation";
 
 import { ServiceForm } from "@/components/services/service-form";
 import { listVendorsAction } from "@/interface-adapters/controllers/vendor.controller";
 import { listBusinessProcessesAction } from "@/interface-adapters/controllers/business-process.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { hasPermission } from "@/lib/permissions/server";
+import { requirePermission } from "@/lib/permissions/server";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
 export default async function NewServicePage() {
-  const canCreate = await hasPermission(PERMISSIONS.SERVICES_CREATE);
-
-  if (!canCreate) {
-    redirect("/services");
+  // Security: Require permission to create services
+  try {
+    await requirePermission(PERMISSIONS.SERVICES_CREATE);
+  } catch (error) {
+    handlePermissionRedirect(error, "/services/new");
+    throw error;
   }
 
   // Fetch vendors and business processes for dropdowns

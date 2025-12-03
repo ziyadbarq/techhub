@@ -9,6 +9,7 @@ import { encryptTokens, decryptTokens } from "@/lib/auth/encryption";
 import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { IEmailService } from "@/core/services/email.service.interface";
+import type { ILoggerService } from "@/core/services/logger.service.interface";
 
 /**
  * Prisma Client Extension for Token Encryption
@@ -32,6 +33,18 @@ const authDebugEnabled = process.env.AUTH_DEBUG_LOGS === "true";
 
 type AuthLogLevel = "info" | "warn" | "error";
 
+/**
+ * Get logger from DI container
+ * Lazy initialization to avoid circular dependencies
+ */
+let _logger: ILoggerService | null = null;
+function getLogger(): ILoggerService {
+  if (!_logger) {
+    _logger = getContainer().get<ILoggerService>(DI_TOKENS.ILoggerService);
+  }
+  return _logger;
+}
+
 const authDebugLog = (
   level: AuthLogLevel,
   message: string,
@@ -49,19 +62,20 @@ const authDebugLog = (
       )
     : undefined;
 
-  const prefix = "[Auth Debug]";
+  // Use structured logging via ILoggerService
+  const logger = getLogger();
   switch (level) {
     case "info":
-      console.info(prefix, message, payload);
+      logger.info(`[Auth Debug] ${message}`, payload);
       break;
     case "warn":
-      console.warn(prefix, message, payload);
+      logger.warn(`[Auth Debug] ${message}`, payload);
       break;
     case "error":
-      console.error(prefix, message, payload);
+      logger.error(`[Auth Debug] ${message}`, new Error(message), payload);
       break;
     default:
-      console.log(prefix, message, payload);
+      logger.debug(`[Auth Debug] ${message}`, payload);
   }
 };
 
@@ -179,6 +193,7 @@ const ensurePersonLinkedToUser = async (
   options: { allowCreation?: boolean } = { allowCreation: true },
 ): Promise<PersonLinkResult> => {
   const { allowCreation = true } = options;
+  const normalizedEmail = user.email?.toLowerCase() ?? null;
 
   try {
     return await prismaWithEncryption.$transaction(async (tx) => {
@@ -189,8 +204,6 @@ const ensurePersonLinkedToUser = async (
       if (existingPerson) {
         return { status: "already-linked", personId: existingPerson.id };
       }
-
-      const normalizedEmail = user.email?.toLowerCase() ?? null;
 
       // Try to link by email if a person exists without a userId
       if (normalizedEmail) {
@@ -294,9 +307,13 @@ const ensurePersonLinkedToUser = async (
       return { status: "created", personId: createdPerson.id };
     });
   } catch (error) {
-    console.error(
-      "[Auth Debug] Failed to ensure person linkage",
-      error instanceof Error ? error.message : String(error),
+    getLogger().error(
+      "Failed to ensure person linkage",
+      error instanceof Error ? error : new Error(String(error)),
+      {
+        userId: user.id,
+        userEmail: normalizedEmail ?? user.email ?? "unknown",
+      },
     );
     return {
       status: "blocked",
@@ -755,9 +772,11 @@ export const auth = betterAuth({
 
         if (!validation.valid) {
           // Person not found, inactive, or excluded - block access
-          console.warn(
-            `🚫 SSO login blocked for ${user.email}: ${validation.reason} - ${validation.message}`,
-          );
+          getLogger().warn("SSO login blocked - Person validation failed", {
+            userEmail: user.email,
+            reason: validation.reason,
+            message: validation.message,
+          });
           authDebugLog("warn", "SSO login blocked - Person validation failed", {
             userId: user.id,
             userEmail: user.email,
@@ -785,11 +804,12 @@ export const auth = betterAuth({
               userId: user.id,
             });
           } catch (cleanupError) {
-            console.error(
-              "Failed to clean up unauthorized SSO user records:",
+            getLogger().error(
+              "Failed to clean up unauthorized SSO user records",
               cleanupError instanceof Error
-                ? cleanupError.message
-                : String(cleanupError),
+                ? cleanupError
+                : new Error(String(cleanupError)),
+              { userId: user.id },
             );
           }
 
@@ -826,30 +846,34 @@ export const auth = betterAuth({
       if (linkResult.status === "blocked") {
         // For OAuth, this shouldn't happen as we validated above
         // For email/password, log and continue (don't block login, just Person linkage)
-        console.error(
-          "⚠️ Failed to auto-link user to person",
-          linkResult.message,
-          linkResult.reason,
+        getLogger().error(
+          "Failed to auto-link user to person",
+          new Error(linkResult.message ?? "Unknown error"),
           {
             userId: user.id,
             userEmail: user.email,
+            reason: linkResult.reason,
           },
         );
         return;
       }
 
       if (linkResult.status === "created") {
-        console.log(
-          `✅ Person created and linked for user ${user.email} (Person ID: ${linkResult.personId})`,
-        );
+        getLogger().info("Person created and linked for user", {
+          userId: user.id,
+          userEmail: user.email,
+          personId: linkResult.personId,
+        });
         authDebugLog("info", "Person created and linked for user", {
           userId: user.id,
           personId: linkResult.personId,
         });
       } else if (linkResult.status === "linked-existing") {
-        console.log(
-          `✅ Person linked for user ${user.email} (Person ID: ${linkResult.personId})`,
-        );
+        getLogger().info("Person linked for user", {
+          userId: user.id,
+          userEmail: user.email,
+          personId: linkResult.personId,
+        });
         authDebugLog("info", "Person linked for user", {
           userId: user.id,
           personId: linkResult.personId,

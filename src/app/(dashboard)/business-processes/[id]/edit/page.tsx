@@ -3,12 +3,13 @@
  */
 
 import * as React from "react";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 import { BusinessProcessPageForm } from "@/components/services/business-process-page-form";
 import { getBusinessProcessAction } from "@/interface-adapters/controllers/business-process.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
-import { hasPermission } from "@/lib/permissions/server";
+import { requirePermission } from "@/lib/permissions/server";
+import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 
 export const dynamic = "force-dynamic";
 
@@ -22,10 +23,13 @@ export default async function EditBusinessProcessPage({
   params,
 }: EditBusinessProcessPageProps) {
   const { id } = await params;
-  const canManage = await hasPermission(PERMISSIONS.BUSINESS_PROCESSES_MANAGE);
 
-  if (!canManage) {
-    redirect(`/business-processes/${id}`);
+  // Security: Require permission to manage business processes
+  try {
+    await requirePermission(PERMISSIONS.BUSINESS_PROCESSES_MANAGE);
+  } catch (error) {
+    handlePermissionRedirect(error, `/business-processes/${id}/edit`);
+    throw error;
   }
 
   const result = await getBusinessProcessAction(id);

@@ -195,6 +195,28 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 - Client: `useIsFeatureEnabled("MODULE")`
 - See [FEATURE_FLAGS.md](docs/features/FEATURE_FLAGS.md)
 
+**Security Headers**:
+- Configured in [next.config.ts](next.config.ts): CSP, X-Frame-Options, HSTS (production), X-Content-Type-Options, Referrer-Policy, Permissions-Policy
+- CSP intentionally allows 'unsafe-inline' and 'unsafe-eval' for Next.js hydration and Tailwind
+- Headers auto-apply to all routes via `headers()` function
+
+**File Upload Security**:
+- MIME type whitelist in [attachment.entity.ts](src/core/domain/entities/attachment.entity.ts): PDF, Office docs, images, archives only
+- Extension whitelist enforced: `.pdf`, `.docx`, `.xlsx`, `.png`, `.jpg`, `.zip`, etc.
+- Magic number detection via `file-type` library validates file content matches declared MIME type
+- Content validation runs in [local-file-storage.service.ts](src/infrastructure/services/local-file-storage.service.ts) before file write
+
+**Rate Limiting**:
+- Better Auth handles auth endpoints: 20 login attempts/min, 10 sign-ups/min, 5 password resets per 5 min, 2000 session checks/min
+- Application-level rate limiting NOT needed (internal on-premises app with authenticated users)
+- If abuse detected, use existing `ioredis` package with `rate-limiter-flexible` library (NOT @upstash packages)
+- See [roadmap/REDIS_RATE_LIMITING.md](roadmap/REDIS_RATE_LIMITING.md) for migrating Better Auth to Redis storage
+
+**Auth Logging**:
+- Better Auth uses structured logging via lazy DI-injected `ILoggerService` (NOT console.log)
+- Auth debug logs: `AUTH_DEBUG_LOGS=true` env var enables detailed logging with automatic PII redaction
+- See [better-auth.ts](src/infrastructure/services/auth/better-auth.ts) for implementation
+
 ### Architecture Patterns (ALWAYS Follow)
 
 **Logging** (CRITICAL - Production-Ready System):
@@ -330,6 +352,8 @@ Keep messages concise with relevant context (what was done, files affected, next
 - Add new seed data to `seed-config.ts` (centralized configuration)
 - Use seed factories for complex entity creation
 - Use idempotent patterns in seeders (upsert, skipDuplicates, check-before-create)
+- Validate file uploads: check MIME whitelist, extension whitelist, and run magic number detection
+- Use lazy DI initialization for logging in auth code to avoid circular dependencies
 
 ### ❌ DON'T
 
@@ -358,6 +382,9 @@ Keep messages concise with relevant context (what was done, files affected, next
 - Hardcode seed data in seeder files (use `seed-config.ts`)
 - Wipe data in seeders (seeders are idempotent - use `db:reset` for wipes)
 - Duplicate logic across seeders (use utilities and factories)
+- Accept file uploads without MIME/extension whitelist validation
+- Install `@upstash/ratelimit` or `@upstash/redis` (use existing `ioredis` package instead)
+- Use `console.log` in Better Auth code (use lazy DI-injected ILoggerService)
 
 ## Environment
 

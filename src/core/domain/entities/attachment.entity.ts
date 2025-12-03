@@ -9,6 +9,59 @@ import { v4 as uuid } from "uuid";
 import type { TargetObjectTypeEnum } from "@/generated/prisma";
 import { ValidationError } from "../errors/validation.error";
 
+// Security: Whitelist of allowed MIME types for file uploads
+const ALLOWED_MIME_TYPES = [
+  // Documents
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
+  "application/vnd.ms-powerpoint",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation", // .pptx
+  "text/plain",
+  "text/csv",
+  "application/json",
+  // Images
+  "image/png",
+  "image/jpeg",
+  "image/gif",
+  "image/webp",
+  "image/svg+xml",
+  // Archives (for batch uploads)
+  "application/zip",
+  "application/x-7z-compressed",
+  "application/x-rar-compressed",
+  "application/gzip",
+] as const;
+
+// Security: Whitelist of allowed file extensions
+const ALLOWED_EXTENSIONS = [
+  // Documents
+  ".pdf",
+  ".doc",
+  ".docx",
+  ".xls",
+  ".xlsx",
+  ".ppt",
+  ".pptx",
+  ".txt",
+  ".csv",
+  ".json",
+  // Images
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".gif",
+  ".webp",
+  ".svg",
+  // Archives
+  ".zip",
+  ".7z",
+  ".rar",
+  ".gz",
+] as const;
+
 export interface CreateAttachmentProps {
   attachmentTypeId: string;
   targetType: TargetObjectTypeEnum;
@@ -201,6 +254,7 @@ export class Attachment {
   public static create(props: CreateAttachmentProps): Attachment {
     // Validations
     Attachment.validateFileName(props.fileName);
+    Attachment.validateFileExtension(props.fileName);
     Attachment.validateFilePath(props.filePath);
     if (props.sizeBytes !== null && props.sizeBytes !== undefined) {
       Attachment.validateFileSize(props.sizeBytes);
@@ -263,6 +317,74 @@ export class Attachment {
     // Basic MIME type validation (format: type/subtype)
     if (!/^[a-zA-Z0-9]+\/[a-zA-Z0-9+.-]+$/.test(mimeType)) {
       throw new ValidationError("Invalid MIME type format");
+    }
+    // Security: Check against whitelist
+    if (!ALLOWED_MIME_TYPES.includes(mimeType as never)) {
+      throw new ValidationError(
+        `File type not allowed. Allowed types: PDF, Word, Excel, PowerPoint, images (PNG, JPG, GIF, WebP, SVG), text/JSON files, and archives (ZIP, 7Z, RAR, GZ)`,
+      );
+    }
+  }
+
+  private static validateFileExtension(fileName: string): void {
+    const lastDotIndex = fileName.lastIndexOf(".");
+    if (lastDotIndex === -1) {
+      // Allow files without an extension (legacy or system-generated names)
+      return;
+    }
+    const extension = fileName.substring(lastDotIndex).toLowerCase();
+    // Security: Check against whitelist
+    if (!ALLOWED_EXTENSIONS.includes(extension as never)) {
+      throw new ValidationError(
+        `File extension not allowed. Allowed extensions: ${ALLOWED_EXTENSIONS.join(", ")}`,
+      );
+    }
+  }
+
+  /**
+   * Validate file content matches declared MIME type using magic number detection
+   * This prevents attackers from uploading malicious files with fake extensions
+   *
+   * @param fileBuffer - The file buffer to validate
+   * @param declaredMimeType - The MIME type claimed by the client
+   * @throws ValidationError if content doesn't match declared type
+   */
+  public static async validateFileContent(
+    fileBuffer: Buffer,
+    declaredMimeType: string,
+  ): Promise<void> {
+    try {
+      // Dynamic import to avoid bundling file-type in client
+      const { fileTypeFromBuffer } = await import("file-type");
+      const detectedType = await fileTypeFromBuffer(fileBuffer);
+
+      // Some file types (like .txt, .csv) don't have magic numbers
+      // Allow them to pass if they're in the whitelist
+      const textBasedTypes = ["text/plain", "text/csv", "application/json"];
+      if (textBasedTypes.includes(declaredMimeType)) {
+        return; // Skip magic number check for text files
+      }
+
+      if (!detectedType) {
+        throw new ValidationError(
+          "Could not detect file type. File may be corrupted or unsupported.",
+        );
+      }
+
+      // Check if detected MIME type matches declared type
+      if (detectedType.mime !== declaredMimeType) {
+        throw new ValidationError(
+          `File content (${detectedType.mime}) does not match declared type (${declaredMimeType}). ` +
+            `This may indicate a disguised executable or malicious file.`,
+        );
+      }
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        throw error;
+      }
+      // If file-type library fails, log and allow through (fail open for rare cases)
+      // In production, you may want to fail closed instead
+      console.warn("File type detection failed:", error);
     }
   }
 }

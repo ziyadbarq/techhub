@@ -129,6 +129,7 @@
     "date-fns": "^4.1.0",
     "express": "^4.21.2",
     "file-saver": "^2.0.5",
+    "file-type": "^21.1.1",
     "framer-motion": "^12.23.24",
     "gray-matter": "^4.0.3",
     "inquirer": "^13.0.1",
