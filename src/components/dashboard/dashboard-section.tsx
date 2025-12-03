@@ -10,6 +10,7 @@ import type { ReactNode } from "react";
 import { useIsFeatureEnabled } from "@/hooks/use-feature-flags";
 import { usePermissions } from "@/hooks/use-permissions";
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
+import type { FeatureFlagKey } from "@/lib/features/feature-flag-keys";
 
 interface DashboardSectionProps {
   /** Section title */
@@ -17,7 +18,7 @@ interface DashboardSectionProps {
   /** Optional description */
   description?: string;
   /** Optional feature flag - section hidden if feature is disabled */
-  featureFlag?: string;
+  featureFlag?: FeatureFlagKey;
   /** Optional permission - section hidden if user lacks permission */
   permission?: PermissionKey;
   /** Child widgets */
@@ -37,7 +38,7 @@ export function DashboardSection({
   className = "",
   columns = 2,
 }: DashboardSectionProps) {
-  const isFeatureEnabled = useIsFeatureEnabled(featureFlag ?? "");
+  const isFeatureEnabled = useIsFeatureEnabled(featureFlag);
   const { hasPermission, isLoading: permissionsLoading } = usePermissions();
 
   // Hide section if feature flag is specified and disabled

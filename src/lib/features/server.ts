@@ -9,6 +9,7 @@ import { getContainer } from "@/di/container";
 import { DI_TOKENS } from "@/di/types";
 import type { IFeatureFlagRepository } from "@/core/repositories/feature-flag.repository.interface";
 import { getRedis } from "@/lib/redis";
+import type { FeatureFlagKey } from "./feature-flag-keys";
 
 // Cache TTL: 5 minutes (300 seconds)
 const CACHE_TTL = 300;
@@ -55,9 +56,11 @@ async function getCachedFeatureState(featureName: string): Promise<boolean> {
 /**
  * Invalidate cached feature flag state
  * Call this after toggling a feature flag
+ *
+ * @param featureName - Type-safe feature flag key
  */
 export async function invalidateFeatureCache(
-  featureName: string,
+  featureName: FeatureFlagKey,
 ): Promise<void> {
   const upperName = featureName.toUpperCase();
   const cacheKey = `${CACHE_PREFIX}${upperName}`;
@@ -75,8 +78,23 @@ export async function invalidateFeatureCache(
 
 /**
  * Check if a feature is enabled
+ *
+ * @param featureName - Type-safe feature flag key from FEATURE_FLAGS constant
+ *
+ * @example
+ * ```typescript
+ * import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
+ *
+ * // ✅ Type-safe usage
+ * const enabled = await isFeatureEnabled(FEATURE_FLAGS.LICENSE_MANAGEMENT);
+ *
+ * // ❌ TypeScript error - typo caught at compile time
+ * const enabled = await isFeatureEnabled("LICENCES");
+ * ```
  */
-export async function isFeatureEnabled(featureName: string): Promise<boolean> {
+export async function isFeatureEnabled(
+  featureName: FeatureFlagKey,
+): Promise<boolean> {
   return await getCachedFeatureState(featureName);
 }
 
@@ -94,15 +112,21 @@ export async function isMaintenanceModeEnabled(): Promise<boolean> {
  *
  * Use this in server components and API routes to enforce feature flags
  *
+ * @param featureName - Type-safe feature flag key from FEATURE_FLAGS constant
+ *
  * @example
  * ```typescript
+ * import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
+ *
  * export default async function ContractsPage() {
- *   await requireFeature("CONTRACTS");
+ *   await requireFeature(FEATURE_FLAGS.CONTRACT_MANAGEMENT);
  *   // ... rest of component
  * }
  * ```
  */
-export async function requireFeature(featureName: string): Promise<void> {
+export async function requireFeature(
+  featureName: FeatureFlagKey,
+): Promise<void> {
   // Check maintenance mode first (blocks everyone)
   if (await isMaintenanceModeEnabled()) {
     redirect("/maintenance");

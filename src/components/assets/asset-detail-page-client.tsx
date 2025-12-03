@@ -72,6 +72,7 @@ import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useIsFeatureEnabled } from "@/hooks/use-feature-flags";
+import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { formatDate } from "@/lib/utils/date-format";
 import {
   CountedTabs,
@@ -108,10 +109,12 @@ export function AssetDetailPageClient({
     intune: number;
   } | null>(null);
 
-  // Feature flag checks
-  const isCmdbEnabled = useIsFeatureEnabled("CMDB");
-  const isServicesEnabled = useIsFeatureEnabled("SERVICE_MANAGEMENT");
-  const isIntuneEnabled = useIsFeatureEnabled("INTUNE");
+  // Feature flag checks (type-safe)
+  const isCmdbEnabled = useIsFeatureEnabled(FEATURE_FLAGS.CMDB);
+  const isServicesEnabled = useIsFeatureEnabled(
+    FEATURE_FLAGS.SERVICE_MANAGEMENT,
+  );
+  const isIntuneEnabled = useIsFeatureEnabled(FEATURE_FLAGS.INTUNE);
 
   // Permission checks for additional tabs
   const canViewCmdb =

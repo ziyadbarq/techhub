@@ -12,6 +12,7 @@ import {
   isFeatureFlagsPollingEnabled,
 } from "@/config/feature-flags.config";
 import { useFeatureFlagsContext } from "@/contexts/feature-flags-context";
+import type { FeatureFlagKey } from "@/lib/features/feature-flag-keys";
 
 interface FeatureFlagsState {
   enabledFeatures: Set<string>;
@@ -111,9 +112,24 @@ export function useFeatureFlags(): FeatureFlagsState {
 /**
  * Check if a specific feature is enabled
  * Uses FeatureFlagsProvider context - single fetch shared across all components
- * @param featureName - Feature name to check (e.g., "CONTRACTS", "LICENSES")
+ *
+ * @param featureName - Type-safe feature flag key from FEATURE_FLAGS constant
+ *
+ * @example
+ * ```typescript
+ * import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
+ *
+ * // ✅ Type-safe usage
+ * const isEnabled = useIsFeatureEnabled(FEATURE_FLAGS.LICENSE_MANAGEMENT);
+ *
+ * // ❌ TypeScript error - typo caught at compile time
+ * const isEnabled = useIsFeatureEnabled("LICENCES");
+ * ```
  */
-export function useIsFeatureEnabled(featureName: string): boolean {
+export function useIsFeatureEnabled(featureName?: FeatureFlagKey): boolean {
   const { isFeatureEnabled } = useFeatureFlagsContext();
+  if (!featureName) {
+    return true;
+  }
   return isFeatureEnabled(featureName);
 }

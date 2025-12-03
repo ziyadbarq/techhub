@@ -48,6 +48,7 @@ import type {
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useIsFeatureEnabled } from "@/hooks/use-feature-flags";
+import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import {
   deleteVendorAction,
   getVendorAction,
@@ -99,10 +100,16 @@ export function VendorDetailPageClient({
   const canUpdate = hasPermission(PERMISSIONS.VENDORS_UPDATE);
   const canDelete = hasPermission(PERMISSIONS.VENDORS_DELETE);
 
-  // Feature flag checks
-  const isContractsEnabled = useIsFeatureEnabled("CONTRACT_MANAGEMENT");
-  const isServicesEnabled = useIsFeatureEnabled("SERVICE_MANAGEMENT");
-  const isAssetDisposalsEnabled = useIsFeatureEnabled("ASSET_DISPOSALS");
+  // Feature flag checks (type-safe)
+  const isContractsEnabled = useIsFeatureEnabled(
+    FEATURE_FLAGS.CONTRACT_MANAGEMENT,
+  );
+  const isServicesEnabled = useIsFeatureEnabled(
+    FEATURE_FLAGS.SERVICE_MANAGEMENT,
+  );
+  const isAssetDisposalsEnabled = useIsFeatureEnabled(
+    FEATURE_FLAGS.ASSET_DISPOSALS,
+  );
 
   const isCountsLoading = !counts;
   const tabCount = (value: number | undefined) =>

@@ -12,6 +12,7 @@ import { $Enums } from "@/generated/prisma";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { getSession } from "@/lib/auth";
+import { isValidFeatureFlag } from "@/lib/features/feature-flag-keys";
 import { invalidateFeatureCache } from "@/lib/features/server";
 
 import type { ListFeatureFlagsUseCase } from "@/core/use-cases/feature-flags/list-feature-flags.use-case";
@@ -106,6 +107,13 @@ export async function toggleFeatureFlagAction(
       return {
         success: false,
         error: "Authentication required",
+      };
+    }
+
+    if (!isValidFeatureFlag(request.name)) {
+      return {
+        success: false,
+        error: "Invalid feature flag name",
       };
     }
 
@@ -231,7 +239,9 @@ export async function bulkToggleFeatureFlagsAction(
         });
 
         // Invalidate cache for this flag
-        await invalidateFeatureCache(flag.name);
+        if (isValidFeatureFlag(flag.name)) {
+          await invalidateFeatureCache(flag.name);
+        }
 
         toggledCount++;
       }

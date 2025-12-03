@@ -27,6 +27,8 @@ import { useIsFeatureEnabled } from "@/hooks/use-feature-flags";
 import { usePermissions } from "@/hooks/use-permissions";
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
+import type { FeatureFlagKey } from "@/lib/features/feature-flag-keys";
 
 interface QuickAction {
   label: string;
@@ -34,7 +36,7 @@ interface QuickAction {
   icon: LucideIcon;
   description: string;
   color: string;
-  featureFlag?: string;
+  featureFlag?: FeatureFlagKey;
   permission?: PermissionKey;
 }
 
@@ -45,7 +47,7 @@ const quickActions: QuickAction[] = [
     icon: Plus,
     description: "Add new asset",
     color: "bg-blue-500 hover:bg-blue-600",
-    featureFlag: "ASSETS",
+    featureFlag: FEATURE_FLAGS.ASSETS,
     permission: PERMISSIONS.ASSETS_CREATE,
   },
   {
@@ -54,7 +56,7 @@ const quickActions: QuickAction[] = [
     icon: Package,
     description: "Assign to employee",
     color: "bg-green-500 hover:bg-green-600",
-    featureFlag: "ASSETS",
+    featureFlag: FEATURE_FLAGS.ASSETS,
     permission: PERMISSIONS.ASSET_ASSIGNMENTS_CREATE,
   },
   {
@@ -63,7 +65,7 @@ const quickActions: QuickAction[] = [
     icon: TrendingUp,
     description: "Record movement",
     color: "bg-purple-500 hover:bg-purple-600",
-    featureFlag: "INVENTORY",
+    featureFlag: FEATURE_FLAGS.INVENTORY,
     permission: PERMISSIONS.STOCK_MOVEMENTS_CREATE,
   },
   {
@@ -72,7 +74,7 @@ const quickActions: QuickAction[] = [
     icon: Wrench,
     description: "Create schedule",
     color: "bg-orange-500 hover:bg-orange-600",
-    featureFlag: "MAINTENANCE",
+    featureFlag: FEATURE_FLAGS.MAINTENANCE,
     permission: PERMISSIONS.MAINTENANCE_SCHEDULES_CREATE,
   },
   {
@@ -81,13 +83,13 @@ const quickActions: QuickAction[] = [
     icon: ShieldCheck,
     description: "Register warranty",
     color: "bg-indigo-500 hover:bg-indigo-600",
-    featureFlag: "WARRANTIES",
+    featureFlag: FEATURE_FLAGS.WARRANTIES,
     permission: PERMISSIONS.WARRANTIES_CREATE,
   },
 ];
 
 function QuickActionButton({ action }: { action: QuickAction }) {
-  const isFeatureEnabled = useIsFeatureEnabled(action.featureFlag ?? "");
+  const isFeatureEnabled = useIsFeatureEnabled(action.featureFlag);
   const { hasPermission, isLoading } = usePermissions();
 
   // Skip if feature flag is specified and disabled

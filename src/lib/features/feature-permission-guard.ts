@@ -1,6 +1,7 @@
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
 import { handlePermissionRedirect } from "@/lib/permissions/handle-permission-redirect";
 import { requirePermission } from "@/lib/permissions/server";
+import type { FeatureFlagKey } from "./feature-flag-keys";
 import { requireFeature } from "./server";
 
 /**
@@ -8,7 +9,7 @@ import { requireFeature } from "./server";
  * Ensures feature enforcement happens before the permission check.
  */
 export async function requireFeatureAndPermission(
-  featureName: string,
+  featureName: FeatureFlagKey,
   permission: PermissionKey,
   redirectPath: string,
 ): Promise<void> {

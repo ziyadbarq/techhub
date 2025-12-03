@@ -77,6 +77,7 @@ import type {
 import { usePermissions } from "@/hooks/use-permissions";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useIsFeatureEnabled } from "@/hooks/use-feature-flags";
+import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import {
   deletePersonAction,
   togglePersonExclusionAction,
@@ -156,16 +157,24 @@ export function PersonDetailPageClient({
   const canManageUsers = hasPermission(PERMISSIONS.USERS_MANAGE);
   const canSync = hasPermission(PERMISSIONS.PERSONS_SYNC);
 
-  // Feature flag checks
-  const isLicensesEnabled = useIsFeatureEnabled("LICENSE_MANAGEMENT");
-  const isAssetReservationsEnabled = useIsFeatureEnabled("ASSET_RESERVATIONS");
-  const isAssetKitsEnabled = useIsFeatureEnabled("ASSET_KITS");
-  const isIntuneEnabled = useIsFeatureEnabled("INTUNE");
-  const isServicesEnabled = useIsFeatureEnabled("SERVICE_MANAGEMENT");
-  const isCmdbEnabled = useIsFeatureEnabled("CMDB");
-  const isGovernanceEnabled = useIsFeatureEnabled("GOVERNANCE");
-  const isAttachmentsEnabled = useIsFeatureEnabled("ATTACHMENTS");
-  const isAssetDisposalsEnabled = useIsFeatureEnabled("ASSET_DISPOSALS");
+  // Feature flag checks (type-safe)
+  const isLicensesEnabled = useIsFeatureEnabled(
+    FEATURE_FLAGS.LICENSE_MANAGEMENT,
+  );
+  const isAssetReservationsEnabled = useIsFeatureEnabled(
+    FEATURE_FLAGS.ASSET_RESERVATIONS,
+  );
+  const isAssetKitsEnabled = useIsFeatureEnabled(FEATURE_FLAGS.ASSET_KITS);
+  const isIntuneEnabled = useIsFeatureEnabled(FEATURE_FLAGS.INTUNE);
+  const isServicesEnabled = useIsFeatureEnabled(
+    FEATURE_FLAGS.SERVICE_MANAGEMENT,
+  );
+  const isCmdbEnabled = useIsFeatureEnabled(FEATURE_FLAGS.CMDB);
+  const isGovernanceEnabled = useIsFeatureEnabled(FEATURE_FLAGS.GOVERNANCE);
+  const isAttachmentsEnabled = useIsFeatureEnabled(FEATURE_FLAGS.ATTACHMENTS);
+  const isAssetDisposalsEnabled = useIsFeatureEnabled(
+    FEATURE_FLAGS.ASSET_DISPOSALS,
+  );
 
   const isCountsLoading = !counts;
   const totalAssets =

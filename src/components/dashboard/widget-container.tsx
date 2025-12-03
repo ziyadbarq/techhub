@@ -19,10 +19,11 @@ import {
 import { useIsFeatureEnabled } from "@/hooks/use-feature-flags";
 import { usePermissions } from "@/hooks/use-permissions";
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
+import type { FeatureFlagKey } from "@/lib/features/feature-flag-keys";
 
 interface WidgetContainerProps {
   /** Optional feature flag - widget hidden if feature is disabled */
-  featureFlag?: string;
+  featureFlag?: FeatureFlagKey;
   /** Optional permission - widget hidden if user lacks permission */
   permission?: PermissionKey;
   /** Widget title displayed in card header */
@@ -49,7 +50,7 @@ export function WidgetContainer({
   className,
   headerAction,
 }: WidgetContainerProps) {
-  const isFeatureEnabled = useIsFeatureEnabled(featureFlag ?? "");
+  const isFeatureEnabled = useIsFeatureEnabled(featureFlag);
   const { hasPermission, isLoading: permissionsLoading } = usePermissions();
 
   // Hide widget if feature flag is specified and disabled
