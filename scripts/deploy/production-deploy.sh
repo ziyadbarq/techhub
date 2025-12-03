@@ -93,6 +93,30 @@ run_command() {
     fi
 }
 
+# Run command with retries (default 3 attempts)
+run_with_retry() {
+    local attempts="$1"
+    local description="$2"
+    shift 2
+
+    local try=1
+    while [ "$try" -le "$attempts" ]; do
+        local label="$description (attempt $try/$attempts)"
+        if run_command "$label" "$@"; then
+            return 0
+        fi
+
+        if [ "$try" -lt "$attempts" ]; then
+            log_warning "$description failed on attempt $try, retrying..."
+            sleep 2
+        fi
+
+        try=$((try + 1))
+    done
+
+    return 1
+}
+
 # Check if file/directory exists
 file_exists() {
     [ -e "$1" ]
@@ -268,12 +292,12 @@ stage_dependencies() {
     # Install dependencies (include dev deps for type-checking)
     if [ "$FORCE_INSTALL" = true ]; then
         log "Force reinstall requested (--install): running npm ci --include=dev (HUSKY=0)..."
-        if ! run_command "npm ci --include=dev (HUSKY=0)" env HUSKY=0 npm ci --include=dev; then
+        if ! run_with_retry 3 "npm ci --include=dev (HUSKY=0)" env HUSKY=0 npm ci --include=dev; then
             exit 30
         fi
     elif ! file_exists "$ROOT_DIR/node_modules"; then
         log "node_modules not found, running npm ci --include=dev with HUSKY=0 (includes dev deps)..."
-        if ! run_command "npm ci --include=dev (HUSKY=0)" env HUSKY=0 npm ci --include=dev; then
+        if ! run_with_retry 3 "npm ci --include=dev (HUSKY=0)" env HUSKY=0 npm ci --include=dev; then
             exit 30
         fi
     else
