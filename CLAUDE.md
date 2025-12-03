@@ -11,22 +11,9 @@ This file provides high-level guidance when working with this repository.
 5. **Easy Navigation**: Maintain clear hierarchy with proper cross-references to detailed docs
 6. **Maintainable**: Changes to detailed docs should NOT require CLAUDE.md updates
 
-**What to do when adding new features**:
-- Add 1-2 line summary with reference to detailed doc
-- Do NOT add code examples, implementation details, or step-by-step guides
-- Do NOT add "Status:", "Impact:", "Phase X (COMPLETED)", or similar tracking
+**What to do when adding new features**: Add 1-2 line summary with reference to detailed doc. NO code examples, implementation details, or status tracking.
 
-**What belongs in CLAUDE.md**:
-- Essential patterns and critical rules
-- Quick command reference
-- Links to detailed documentation
-- Architecture overview (high-level only)
-
-**What belongs in separate docs**:
-- Code examples and implementation details
-- Feature descriptions and workflows
-- Progress tracking and metrics
-- Historical information and changelogs
+**What belongs in CLAUDE.md**: Essential patterns, critical rules, quick command reference, links to detailed documentation, and high-level architecture overview.
 
 ## Project Overview
 
@@ -38,69 +25,34 @@ This file provides high-level guidance when working with this repository.
 
 **Architecture**: 5-layer Clean Architecture (Presentation → Interface Adapters → Use Cases → Domain ← Infrastructure)
 
-**Current Implementation**:
-
-- **System Setup**: Status page (`/setup`) for system health monitoring and admin dashboard (`/admin/system-setup`) for database operations; first admin is created via the `/register` UI and promoted to system-administrator via Prisma Studio/SQL (see docs/features/SYSTEM_SETUP.md)
-- **Layer 1 (Foundation)**: 12 core entities - OrganizationUnit, Person, Role, Location, Vendor, Lifecycle models, Field definitions, **ExchangeRate** (multi-currency support)
-- **Layer 2 (Asset/Inventory)**: 9 entities - Asset, AssetCategory, AssetModel, AssetAssignment, StockLocation, StockMovement, Warranty, MaintenanceSchedule, MaintenanceRecord
-- **Layer 3 (Advanced ITAM & Extensions)**: 10 modules (~35 entities)
-  - **Asset Disposals**: AssetDisposal, DisposalApproval, DisposalDocument (3 entities, 11 use cases)
-  - **Asset Kits**: AssetKit, AssetKitItem, AssetKitCheckout, AssetKitCheckoutItem (4 entities, 19 use cases)
-  - **Asset Reservations**: AssetReservation, AssetReservationConflict (2 entities, 17 use cases)
-  - **CMDB**: ConfigurationItem, CIRelationship, RelationshipType, CIClass, CIClassField, RelationshipTypeScope (6 entities, 28 use cases)
-  - **Contract Management**: ContractType, Contract, ContractLinkedObject (3 entities, 17 use cases)
-  - **License Management**: LicenseProduct, LicenseProductField, LicenseEntitlement, LicenseAllocation, LicenseAddon, LicenseEntitlementAddon (6 entities, 33 use cases) - includes cost tracking with multi-currency support
-  - **Governance**: DataDomain, DataOwnership, VerificationCampaign, VerificationItem (4 entities, 24 use cases)
-  - **Attachments**: AttachmentType, Attachment (2 entities, 11 use cases)
-  - **Service Management**: Service, ServiceOwnership, BusinessProcess, ServiceInfrastructure, ServiceAsset, ServiceHealthHistory, ServiceSlaMetric (7 entities, 37 use cases) - includes SLA management, health monitoring, and compliance tracking (Health & SLA features can be toggled independently via `SERVICE_HEALTH_SLA` flag)
-  - **Intune Integration**: IntuneDevice, IntuneComplianceHistory (2 entities, 12 use cases) - MS Graph device sync with compliance tracking and automatic assignment synchronization
-- **Reference**: Task entity (complete implementation, hidden from UI)
-- **Marketing**: Public landing page showcasing system capabilities
+**Current Implementation**: Layer 1 (12 foundation entities), Layer 2 (9 asset/inventory entities), Layer 3 (10 modules with ~35 entities including CMDB, License Management, Service Management, and Intune Integration). See [docs/README.md](docs/README.md) for complete feature documentation.
 
 ## Quick Commands
 
 ```bash
+# IMPORTANT: NEVER run `npm run dev` - user manages the dev server
+
 # Initial Setup
 npm run db:seed        # production preset (config/reference only)
 npm run db:seed:dev    # dev preset (full demo data)
 # Create first admin via /register, then assign system-administrator role via Prisma Studio or SQL
 
 # Development
-npm run dev      # Start dev server with Turbopack
 npm run validate # Type-check + lint + test
 
 # Build & Deploy
 npm run build         # Production build (type-check + lint + build)
 npm run build:fast    # Fast build (skips TypeScript)
-npm run start         # Start server only (auto-kills port conflicts)
 npm run deploy        # Full deployment: build → migrate → seed (if empty) → cache clear → PM2 start
-npm run deploy:full   # Full deployment with npm install and force rebuild
 
 # Database
-npm run db:reset # Reset database + seed (drops all data!)
+npm run db:reset      # Reset database + seed (drops all data!)
+npx prisma studio     # Visual DB editor
+# See docs/guides/PRISMA_GUIDE.md for migrations, schema, and troubleshooting
 
-# Admin Tools
-npm run roles:manage            # Interactive user role manager
-npm run roles:manage -- --dry-run  # Preview role changes without applying
-npm run roles:manage -- --help     # Show role manager help
-
-# Production Deployment (Auto-Deploy on Server)
-tail -f local/logs/auto-deploy-$(date +%Y%m).log  # Monitor auto-deployment logs
-tail -f local/logs/cron.log                        # Monitor cron execution
-bash scripts/deploy/production-deploy.sh           # Manual deployment (testing)
-bash scripts/deploy/db-backup.sh backup --force    # Manual database backup
-bash scripts/deploy/db-backup.sh restore           # Interactive rollback (select backup)
+# Admin Tools & Scripts
+# See scripts/README.md for user management, backups, and deployment tools
 ```
-
-## Database Development Quick Reference
-
-- **Running Prisma queries / DB connectivity check**: `npx dotenv -e .env.local -- npx tsx -e "import { prisma } from './src/infrastructure/database/prisma/client.ts'; (async()=>{ const persons = await prisma.person.findMany({ select: { firstName: true, lastName: true } }); console.log('Persons (' + persons.length + '):'); persons.slice(0, 15).forEach(p => console.log('  - ' + p.firstName + ' ' + p.lastName)); await prisma.$disconnect(); })();"` (loads `.env.local`, uses Prisma singleton; see docs/guides/PRISMA_GUIDE.md)
-- **Schema location**: Multi-file schema in `prisma/schema/` (`schema.prisma`, `assets.prisma`, `licenses.prisma`, `cmdb.prisma`, etc.)
-- **Schema changes**: Edit `.prisma` files → `npx prisma migrate dev --name descriptive_name` → `npm run db:generate`
-- **Common commands**: `npm run db:seed`, `npm run db:seed:dev`, `npm run db:reset`, `npx prisma studio`
-- **Critical rules**: Let Prisma generate migrations; never use `prisma db push` or `prisma migrate resolve --applied`; quote camelCase columns in raw SQL and use `@@map("table_name")`
-- **Fixing drift**: If schema already applied but migrations not recorded: `npm run drift:check` → `npm run drift:fix` → verify with `npx prisma migrate status`
-- **Environment**: PostgreSQL runs natively (no Docker); `DATABASE_URL` lives in `.env.local`
 
 ## Documentation
 
@@ -113,15 +65,7 @@ bash scripts/deploy/db-backup.sh restore           # Interactive rollback (selec
 - **[STACK_UPGRADES.md](docs/guides/STACK_UPGRADES.md)** - Breaking changes reference (Prisma 7, Next 16, Zod 4, etc.)
 - **[DATABASE_SEEDING.md](docs/guides/DATABASE_SEEDING.md)** - Comprehensive seed system guide: architecture, factories, configuration
 
-### Complete Documentation Index
-
-For organized documentation by category, see **[docs/README.md](docs/README.md)**:
-- Architecture & Design (6 docs - includes [IMPORT_RULES.md](docs/architecture/IMPORT_RULES.md), [LOGGING_IMPROVEMENTS.md](docs/architecture/LOGGING_IMPROVEMENTS.md))
-- Development Guides (15+ docs)
-- Layer 2 & 3 Features (15+ docs)
-- Infrastructure & Systems (12+ docs)
-- In-App Documentation (MDX)
-- Roadmap & Future Features
+See **[docs/README.md](docs/README.md)** for full documentation index (Architecture, Guides, Features, Infrastructure, Roadmap).
 
 ## Critical Patterns (AI Must Know)
 
@@ -130,23 +74,11 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 **Prisma**:
 - Default `@/generated/prisma` is browser-safe (types + enums), use anywhere
 - Server code needing `PrismaClient`: `import from "@/generated/prisma/server"`
-- Client components: `import from "@/generated/prisma"` or `@/generated/prisma/enums`
 - Use singleton from `@/infrastructure/database/prisma/client` (NOT new instances)
 - NEVER import from `@prisma/client` (ESLint enforced)
-- **Multi-file schema**: Add models to domain files in `schema/` (e.g., `assets.prisma`, `licenses.prisma`)
-- **Schema naming**: Use camelCase fields WITHOUT `@map` (Prisma auto-converts to snake_case); ALWAYS use `@@map` for table names
-- **Raw SQL**: Quote camelCase columns (`"deletedAt"`), use snake_case for tables (`assets`)
-- **Migrations**: See critical rules below
-- See [PRISMA_GUIDE.md](docs/guides/PRISMA_GUIDE.md)
+- See [PRISMA_GUIDE.md](docs/guides/PRISMA_GUIDE.md) for schema, migrations, and detailed patterns
 
-**Prisma Migrations** (CRITICAL - AI MUST FOLLOW):
-- **ALWAYS let Prisma generate migrations**: After schema changes, run `npx prisma migrate dev --name descriptive_name`
-- **NEVER create migration files manually**: Prisma uses shadow database validation; hand-written SQL will fail
-- **NEVER use `prisma migrate resolve --applied`**: This only marks migrations in live DB, not shadow DB
-- **NEVER execute schema changes via `$executeRaw`**: This bypasses migration history completely
-- **NEVER use `prisma db push`**: Always use migrations for schema changes, even in development
-- **If drift detected**: Use `npx prisma migrate reset` (dev only, deletes data) to start fresh
-- **Workflow**: Edit `.prisma` files → `npx prisma migrate dev --name change_name` → `npm run db:generate`
+**Prisma Migrations**: Edit `.prisma` files → `npx prisma migrate dev --name change_name` → `npm run db:generate`. NEVER create migrations manually, use `db push`, or `migrate resolve --applied`. See [PRISMA_GUIDE.md](docs/guides/PRISMA_GUIDE.md).
 
 **Next.js 16 Async APIs**:
 - ALWAYS await: `params`, `searchParams`, `cookies()`, `headers()`, `draftMode()`
@@ -158,21 +90,16 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 **Type Safety & UI**:
 - Use `import type` for type-only imports (ESLint enforced)
 - Use Sonner toast: `toast.success("Message")` (NOT shadcn useToast)
-- Add `"use no memo";` directive to TanStack Table components (React Compiler incompatibility)
-- Use centralized utilities: `formatDate()` from `@/lib/utils/date-format`, `getStatusBadgeClasses()` from `@/lib/utils/status-colors`
-- See [STACK_UPGRADES.md](docs/guides/STACK_UPGRADES.md)
+- Add `"use no memo";` directive to TanStack Table components
+- Use centralized utilities: `formatDate()`, `getStatusBadgeClasses()`
 
 **Client-Side Session**:
-- In dashboard: use `useSessionContext()` from `@/contexts/session-context` (NOT direct `useSession()`)
-- Outside dashboard (marketing): use `authClient.getSession()` in useEffect
-- Rate limiting: 2000 req/min for `/get-session`, auth endpoints more restrictive
-- See [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "3b. Client-Side Session Access"
+- In dashboard: use `useSessionContext()` from `@/contexts/session-context`
+- Outside dashboard: use `authClient.getSession()` in useEffect
 
 **Client-Side Permissions & Feature Flags**:
-- Use `usePermissions()` hook - delegates to `PermissionsProvider` context (single API call)
-- Use `useIsFeatureEnabled("FLAG")` hook - delegates to `FeatureFlagsProvider` context (single API call)
-- Provider hierarchy: `SessionProvider` → `PermissionsProvider` → `FeatureFlagsProvider`
-- See [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "3c. Client-Side Permissions"
+- Use `usePermissions()` hook - delegates to `PermissionsProvider` context
+- Use `useIsFeatureEnabled("FLAG")` hook - delegates to `FeatureFlagsProvider` context
 
 ### Security Patterns (ALWAYS Enforce)
 
@@ -180,121 +107,53 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 - ALL protected routes MUST have server-side `requirePermission()` - client checks can be bypassed
 - Pattern: Server component checks permissions → returns client component
 - Add `export const dynamic = "force-dynamic"` to protected pages
+- Register new routes in `protected-routes.ts` configuration
 - Defense in depth: (1) Server component, (2) Server actions, (3) Client hooks (UX only)
-- Cross-module data: when aggregating counts/relations across modules (e.g., person detail tabs), gate each fetch by feature flag + permission to avoid leaking presence or triggering unauthorized queries
+- Cross-module data: gate each fetch by feature flag + permission to avoid leaking presence
 
 **Permission Checking**:
 - Check permissions at server action layer: `await requirePermission(PERMISSIONS.ENTITY_VIEW);`
-- Use `handlePermissionRedirect(error, "/route")` in try/catch for proper error handling
-- 269 permissions organized into 14 groups (see `src/lib/rbac/permission-groups.ts`)
-- See [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md)
+- 269 permissions in 14 groups - see [RBAC_DEVELOPER_GUIDE.md](docs/guides/RBAC_DEVELOPER_GUIDE.md)
 
-**Feature Flags**:
+**Feature Flags** (Order Matters):
 - Check feature flag FIRST: `await requireFeature("MODULE")`
 - Then permission check SECOND: `await requirePermission(PERMISSIONS.X_VIEW)`
-- Client: `useIsFeatureEnabled("MODULE")`
-- See [FEATURE_FLAGS.md](docs/features/FEATURE_FLAGS.md)
 
-**Security Headers**:
-- Configured in [next.config.ts](next.config.ts): CSP, X-Frame-Options, HSTS (production), X-Content-Type-Options, Referrer-Policy, Permissions-Policy
-- CSP intentionally allows 'unsafe-inline' and 'unsafe-eval' for Next.js hydration and Tailwind
-- Headers auto-apply to all routes via `headers()` function
+**File Upload Security**: Validate MIME whitelist, extension whitelist, and magic number detection. See [attachment.entity.ts](src/core/domain/entities/attachment.entity.ts).
 
-**File Upload Security**:
-- MIME type whitelist in [attachment.entity.ts](src/core/domain/entities/attachment.entity.ts): PDF, Office docs, images, archives only
-- Extension whitelist enforced: `.pdf`, `.docx`, `.xlsx`, `.png`, `.jpg`, `.zip`, etc.
-- Magic number detection via `file-type` library validates file content matches declared MIME type
-- Content validation runs in [local-file-storage.service.ts](src/infrastructure/services/local-file-storage.service.ts) before file write
-
-**Rate Limiting**:
-- Better Auth handles auth endpoints: 20 login attempts/min, 10 sign-ups/min, 5 password resets per 5 min, 2000 session checks/min
-- Application-level rate limiting NOT needed (internal on-premises app with authenticated users)
-- If abuse detected, use existing `ioredis` package with `rate-limiter-flexible` library (NOT @upstash packages)
-- See [roadmap/REDIS_RATE_LIMITING.md](roadmap/REDIS_RATE_LIMITING.md) for migrating Better Auth to Redis storage
-
-**Auth Logging**:
-- Better Auth uses structured logging via lazy DI-injected `ILoggerService` (NOT console.log)
-- Auth debug logs: `AUTH_DEBUG_LOGS=true` env var enables detailed logging with automatic PII redaction
-- See [better-auth.ts](src/infrastructure/services/auth/better-auth.ts) for implementation
+**Rate Limiting**: Better Auth handles auth endpoints. Use existing `ioredis` package with `rate-limiter-flexible` for application-level rate limiting (NOT @upstash packages).
 
 ### Architecture Patterns (ALWAYS Follow)
 
-**Logging** (CRITICAL - Production-Ready System):
+**Logging** (CRITICAL):
 - NEVER use `console.log` - inject DI logger: `@inject(DI_TOKENS.ILoggerService)`
-- **Request tracking**: All logs automatically include requestId, correlationId, userId, path, method (via AsyncLocalStorage)
-- **Automated boundary logging**: Use `@LogExecution('operation.name')` decorator on use case execute() methods
-- **DRY compliance**: Timing utilities in `timing-utils.ts`, no code duplication
-- **Sensitive data**: Automatically redacted (passwords, tokens, API keys)
-- See [LOGGING.md](docs/guides/LOGGING.md) and [LOGGING_IMPROVEMENTS.md](docs/architecture/LOGGING_IMPROVEMENTS.md)
+- Use `@LogExecution('operation.name')` decorator on use case execute() methods
+- Request context (requestId, userId, path) auto-included; sensitive data auto-redacted
 
 **Database Seeding**:
-- **Fully idempotent**: Never wipes data, never creates duplicates, safe to run repeatedly
-- Layered seeders (RBAC → Foundation → Assets → Layer 3)
-- All config in `seed-config.ts`, factories in `seed-factories/`, utils in `seed-utils.ts`
-- Use `db:seed` for safe seeding (idempotent), `db:reset` when wipe is needed
-- Use `ioredis` package (NOT `redis`)
-- See [DATABASE_SEEDING.md](docs/guides/DATABASE_SEEDING.md)
+- Fully idempotent: Never wipes data, safe to run repeatedly
+- Config in `seed-config.ts`, factories in `seed-factories/`. See [DATABASE_SEEDING.md](docs/guides/DATABASE_SEEDING.md)
 
 **Barrel Exports**:
 - CRITICAL: Create `index.ts` in use case modules (pre-commit fails without them)
 - See [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "Adding a New Feature"
 
-**Better Auth**:
-- Use repository layer for user creation (NOT Better Auth API)
-- Account type: All providers use `type: "oauth"` (intentional design)
-- SSO restriction: Microsoft OAuth requires pre-existing active Person record (blocks unknown users)
-- See [SYSTEM_SETUP.md](docs/features/SYSTEM_SETUP.md#sso-login-restriction-microsoft-oauth)
+**Better Auth**: Use repository layer for user creation (NOT Better Auth API). SSO requires pre-existing active Person record.
 
 **Dependency Injection**:
 - Three-tier modular system: CORE (14 modules), DASHBOARD (11 modules), HEAVY (4 modules, lazy loaded)
-- Use async `initContainer(tier?)` at startup for optimal performance, `getContainer()` for backward compatibility
-- Lazy load heavy modules: `await loadHeavyModule('intune')` when user accesses feature
 - Resolve dependencies: `getContainer().get(DI_TOKENS.ServiceName)`, never use `new`
-- Health checks available for modules with external dependencies
 - See [DI_MODULARIZATION.md](docs/architecture/DI_MODULARIZATION.md)
 
 ### Feature-Specific Patterns
 
-**Multi-Currency**:
-- SAR as base currency for all aggregations
-- Dual display: `$100.00 (ر.س 375.00)` using `<CurrencyDisplay>`
-- Utilities: `formatCurrency()`, `formatSAR()`, `formatDualCurrency()`
-- See [MULTI_CURRENCY_GUIDE.md](docs/features/MULTI_CURRENCY_GUIDE.md)
-
-**Universal Data Importer**:
-- Route: `/data-import` | Permission: `DATA_IMPORT_MANAGE`
-- 7-step wizard with auto-mapping, fuzzy matching, sanitization
-- **Universal Assets Importer**: Single-file import with prefixed columns (`vendor.name`, `asset.serial_number`, `custom.cpu_cores`)
-  - Auto-creates: Vendor, Category, Model, Location, StockLocation, FieldDefinition
-  - No auto-create: Person (must exist), LifecycleState (lookup only)
-  - Module: `src/lib/data-import/universal-assets/`
-- See [roadmap/UNIVERSAL_DATA_IMPORTER.md](roadmap/UNIVERSAL_DATA_IMPORTER.md) and [docs/features/UNIVERSAL_ASSETS_IMPORTER.md](docs/features/UNIVERSAL_ASSETS_IMPORTER.md)
-
-**Custom Fields**:
-- Dynamic fields attached to Asset Categories via FieldDefinition + AssetCategoryField
-- Use `useCategoryFields(categoryId)` hook to fetch fields for a category
-- Components: `CustomFieldsSection` (form), `CustomFieldsDisplay` (read-only), `CustomFieldInput` (20 data types)
-- Conditional logic: Use `ConditionalCustomField` with `useConditionalField` hook for visibility/required/disabled
-- Field usage dashboard at `/field-definitions` (Usage Dashboard tab)
-- Asset.attributes JSON stores custom field values
-- See [roadmap/CUSTOM_FIELDS_COMPLETION.md](roadmap/CUSTOM_FIELDS_COMPLETION.md)
-
-**Entity Registry**:
-- Centralized registry of 20 business entities supporting custom fields across 7 categories
-- Use `getCustomFieldsEnabledEntities()` for entity list, `useEntityTypeOptions()` hook for form selects
-- See [docs/features/ENTITY_REGISTRY.md](docs/features/ENTITY_REGISTRY.md)
-
-**Refactoring**:
-- When files exceed 300-500 lines: Extract hooks, create sub-components, use builders
-- See [REFACTORING_PATTERNS.md](docs/guides/REFACTORING_PATTERNS.md)
-
-**End-User Documentation**:
-- Location: `src/content/docs/` (MDX files for in-app help, NOT developer docs)
-- Categories: getting-started, user-guides, admin-guides, modules, reference, troubleshooting
-- Add `_meta.ts` for category config; use frontmatter for doc metadata
-- MDX components: Callout, Steps, Tabs, PropertyTable, LinkCard, CardGrid, DocsAccordion
-- Permission gating: `requiredPermission` in frontmatter or category `_meta.ts`
-- See [DOCUMENTATION_SYSTEM.md](docs/guides/DOCUMENTATION_SYSTEM.md)
+For specialized features, see dedicated guides:
+- **Multi-Currency**: [MULTI_CURRENCY_GUIDE.md](docs/features/MULTI_CURRENCY_GUIDE.md) - SAR base, dual display with `<CurrencyDisplay>`
+- **Custom Fields**: [CUSTOM_FIELDS_COMPLETION.md](roadmap/CUSTOM_FIELDS_COMPLETION.md) - `useCategoryFields()`, Asset.attributes JSON
+- **Data Import**: [UNIVERSAL_ASSETS_IMPORTER.md](docs/features/UNIVERSAL_ASSETS_IMPORTER.md) - Prefixed columns, auto-entity creation
+- **Entity Registry**: [ENTITY_REGISTRY.md](docs/features/ENTITY_REGISTRY.md) - 20 entities across 7 categories
+- **Refactoring**: [REFACTORING_PATTERNS.md](docs/guides/REFACTORING_PATTERNS.md) - Extract when files exceed 300-500 lines
+- **End-User Docs**: [DOCUMENTATION_SYSTEM.md](docs/guides/DOCUMENTATION_SYSTEM.md) - MDX in `src/content/docs/`, configure plugins in components (runtime)
 
 ## Architecture Overview
 
@@ -313,135 +172,66 @@ For organized documentation by category, see **[docs/README.md](docs/README.md)*
 5. **Use structured logging** - Inject `ILoggerService`, never `console.log`
 6. **Before committing** - Run `npm run validate` (type-check + lint + test)
 
+## Adding New Features - Quick Checklist
+
+When adding a new feature, follow these steps in order:
+
+### 1. Architecture Setup
+- [ ] Add Prisma model to appropriate `prisma/schema/*.prisma` file
+- [ ] Run `npx prisma migrate dev --name feature_name && npm run db:generate`
+- [ ] Create entity in `src/core/domain/entities/`
+- [ ] Create repository interface + Prisma implementation
+- [ ] Create use cases in `src/core/use-cases/{feature}/`
+- [ ] **CRITICAL**: Create barrel export (`index.ts`) in use case folder
+
+### 2. DI & Controllers
+- [ ] Register in DI container (`container.ts`)
+- [ ] Create controller with server actions (`{feature}.controller.ts`)
+
+### 3. Security (Defense in Depth)
+- [ ] Define permissions in `permission-key.ts` + add to seed
+- [ ] **Feature flag FIRST**: `await requireFeature("MODULE")`
+- [ ] **Permission SECOND**: `await requirePermission(PERMISSIONS.X_VIEW)`
+- [ ] Add `export const dynamic = "force-dynamic"` to page
+- [ ] Register route in `protected-routes.ts`
+- [ ] Add to navigation sidebar in routes manifest + run `npm run generate:routes`
+- [ ] Test with viewer account to verify access denial
+
+### 4. Logging & Validation
+- [ ] Use `@LogExecution('feature.operation')` decorator on use cases
+- [ ] Inject `ILoggerService` via DI (never `console.log`)
+- [ ] Run `npm run validate` before committing
+
+See [DEVELOPER_GUIDE.md](docs/guides/DEVELOPER_GUIDE.md) section "Adding a New Feature" for detailed walkthrough.
+
 ## Developer Notifications
 
-Send push notifications via `mcp__pushover-mcp__send` tool to alert the developer in these scenarios:
+Send push notifications via `mcp__pushover-mcp__send` tool for:
+- **New features**: Completing significant new functionality
+- **Refactoring**: Major code restructuring or architecture changes
+- **Debugging**: Resolving complex bugs after extended investigation
+- **Planning complete**: Ready for implementation approval
 
-- **New features**: When completing significant new functionality
-- **Refactoring**: After completing major code restructuring or architecture changes
-- **Debugging**: When resolving complex bugs or after extended debugging sessions
-- **Planning phase complete**: When finishing a planning phase and ready for implementation approval
-- **Complex bug fixes**: When fixing non-trivial issues that required investigation
-
-Keep messages concise with relevant context (what was done, files affected, next steps if applicable).
-
-## Critical Checklist
-
-### ✅ DO
-
-- Import Prisma from `@/generated/prisma`
-- Use Prisma singleton from `client.ts`
-- Use `@@map("snake_case")` for table names in schema; quote camelCase columns in raw SQL (`"deletedAt"`)
-- Await async request APIs (`params`, `cookies()`, etc.)
-- Use `import type` for type-only imports
-- Use Sonner toast: `import { toast } from "sonner";`
-- **ALWAYS** add server-side permission checks to protected routes (`await requirePermission()` in page.tsx)
-- Add `export const dynamic = "force-dynamic"` to all protected pages
-- Check permissions in server actions (defense in depth)
-- Extract client logic to `*-page-client.tsx` when page needs server-side checks
-- Register new routes in `protected-routes.ts` configuration
-- Test new protected routes with viewer account to verify access denial
-- Create barrel exports (`index.ts`) for new use case modules
-- Use DI logger with `@LogExecution` decorator for use cases: `@LogExecution('operation.name') async execute() { ... }`
-- Request context automatically included in all logs (requestId, userId, path, method)
-- Validate at boundaries
-- Follow Clean Architecture layers
-- Use `formatDate()` from `@/lib/utils/date-format` (not `.toLocaleDateString()`)
-- Use `getStatusBadgeClasses()` from `@/lib/utils/status-colors` for status badges
-- Configure MDX plugins in components (runtime), not next.config.ts (build-time)
-- Add new seed data to `seed-config.ts` (centralized configuration)
-- Use seed factories for complex entity creation
-- Use idempotent patterns in seeders (upsert, skipDuplicates, check-before-create)
-- Validate file uploads: check MIME whitelist, extension whitelist, and run magic number detection
-- Use lazy DI initialization for logging in auth code to avoid circular dependencies
-
-### ❌ DON'T
-
-- **NEVER** start the dev server (`npm run dev`) or kill a running dev server (user manages this)
-- Import from `@prisma/client` (causes TypeScript errors)
-- **NEVER** use `npx prisma generate` directly (use `npm run db:generate` - creates browser-safe entry points)
-- **NEVER** create migration files manually (use `npx prisma migrate dev` - Prisma validates against shadow DB)
-- **NEVER** use `prisma migrate resolve --applied` to fix migrations (only affects live DB, breaks shadow DB)
-- **NEVER** execute schema changes via `$executeRaw` or `$executeRawUnsafe` (bypasses migration history)
-- **NEVER** use `prisma db push` or `npm run db:push` (bypasses migrations, causes drift)
-- Use `@map` on schema fields (Prisma auto-converts camelCase → snake_case)
-- Create new `Pool()` or `PrismaClient()` instances (exhausts connections)
-- Access `params`/`searchParams` synchronously (runtime errors in Next.js 16)
-- Use shadcn useToast hook (use Sonner toast instead)
-- Create `middleware.ts` (use existing `proxy.ts` instead - Next.js 16 convention)
-- Use `withMDX` wrapper in next.config.ts (breaks Turbopack serialization)
-- **NEVER** rely solely on client-side permission checks (`usePermissions()`, `PermissionGuard` alone)
-- **NEVER** create protected routes without server-side `requirePermission()` checks
-- Skip permission checks in server actions
-- Forget barrel exports for use case modules (breaks pre-commit)
-- Use `console.log` in server code
-- Bypass architecture layers
-- Use `.toLocaleDateString()` or `.toLocaleString()` for dates (use centralized utilities)
-- Manually define status badge colors (use `getStatusBadgeClasses()`)
-- Use Docker (macOS native only)
-- Hardcode seed data in seeder files (use `seed-config.ts`)
-- Wipe data in seeders (seeders are idempotent - use `db:reset` for wipes)
-- Duplicate logic across seeders (use utilities and factories)
-- Accept file uploads without MIME/extension whitelist validation
-- Install `@upstash/ratelimit` or `@upstash/redis` (use existing `ioredis` package instead)
-- Use `console.log` in Better Auth code (use lazy DI-injected ILoggerService)
+Keep messages concise with relevant context.
 
 ## Environment
 
-**Platform**: macOS only (PostgreSQL and Redis run natively via Homebrew)
-**Docker**: NOT used in this project
+**Platform**: macOS only (PostgreSQL and Redis run natively via Homebrew). **Docker NOT used**.
 
 **Environment Variables**: Copy `.env.example` to `.env.local`
-
 - Required: `DATABASE_URL`, `REDIS_URL`, `OPENAI_API_KEY`
-- Optional: `PRISMA_VERBOSE_LOGS=true`, `AUTH_DEBUG_LOGS=true`, `LOG_LEVEL=debug`
+- Debug: `PRISMA_VERBOSE_LOGS=true`, `AUTH_DEBUG_LOGS=true`, `LOG_LEVEL=debug`
 
 ## Naming Conventions
 
-- Controllers: `*.controller.ts`
-- DTOs: `*.dto.ts`
-- Entities: `*.entity.ts`
-- Use Cases: `*.use-case.ts`
-- Repositories: `prisma-*.repository.ts`
-- Interfaces: `*.interface.ts`
-- Seeders: `seed-*.ts` (in `src/infrastructure/database/prisma/`)
-- Scripts: Organized by category in `scripts/` subdirectories
-- MDX Content: `*.mdx` (in `src/content/docs/`)
-- MDX Components: `*.tsx` (in `src/components/mdx/`)
+- Controllers: `*.controller.ts` | DTOs: `*.dto.ts` | Entities: `*.entity.ts`
+- Use Cases: `*.use-case.ts` | Repositories: `prisma-*.repository.ts`
+- Interfaces: `*.interface.ts` | Seeders: `seed-*.ts`
+- Scripts: Organized in `scripts/` subdirectories
+- MDX: `*.mdx` in `src/content/docs/` | MDX Components: `*.tsx` in `src/components/mdx/`
 
-**See**: [DATABASE_SCHEMA.md](docs/architecture/DATABASE_SCHEMA.md) for database naming conventions.
+See [DATABASE_SCHEMA.md](docs/architecture/DATABASE_SCHEMA.md) for database naming conventions.
 
 ## Adding New Scripts
 
-Scripts are organized into categorical folders for maintainability. Follow these guidelines:
-
-**Directory Structure:**
-- `scripts/deploy/` - Production deployment pipeline
-- `scripts/db/` - Database operations (migrations, backups)
-- `scripts/imports/` - Data import tools
-- `scripts/users/` - User & admin management
-- `scripts/build/` - Build & bundling tools
-- `scripts/dev/` - Development utilities
-- `scripts/monitoring/` - Infrastructure monitoring
-- `scripts/one-time/` - Historical fixes (archive)
-
-**When creating a new script:**
-1. Place in appropriate category folder (e.g., `scripts/db/new-script.ts`)
-2. Use descriptive, kebab-case naming (e.g., `import-licenses.ts`, `fix-permissions.sh`)
-3. Add `--help` flag for usage instructions
-4. Support `--dry-run` for preview mode where applicable
-5. Add npm script to `package.json` if frequently used
-6. Update `scripts/README.md` with entry in appropriate category table
-7. Use relative imports: `from "../../src/..."` (not `from "../src/..."`)
-8. Follow technology standards: `@inquirer/prompts` v8+, Prisma singleton, structured logging
-
-**Technology checklist:**
-- ✅ Use `@inquirer/prompts` v8+ (NOT legacy `inquirer`)
-- ✅ Import Prisma from `@/infrastructure/database/prisma/client` singleton
-- ✅ Use `dotenv -e .env.local` wrapper for environment loading
-- ✅ Initialize DI container with `await initContainer()`
-- ✅ Use structured logging (inject `ILoggerService`, never `console.log`)
-- ✅ Create backups before destructive operations
-- ✅ Validate environment variables before use
-
-**See**: [scripts/README.md](scripts/README.md) for complete guide with examples, workflows, and troubleshooting.
+See [scripts/README.md](scripts/README.md) for script organization, technology standards (`@inquirer/prompts` v8+, Prisma singleton, structured logging), and complete guide.
