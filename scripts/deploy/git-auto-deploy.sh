@@ -14,6 +14,7 @@
 #   aaPanel: Keep for monitoring, PM2 handles deployments
 #
 # Run via cron: */2 * * * * /home/opc/node-projects/barq-assets/scripts/git-auto-deploy.sh
+# Manual: scripts/deploy/git-auto-deploy.sh [--force|--skip-git-check]
 
 set -euo pipefail
 
@@ -53,6 +54,56 @@ HEALTH_ALERT_FILE="/tmp/barq-health-alert-sent"
 
 # GitHub repo URL for compare links
 GITHUB_REPO_URL="https://github.com/azzuwayed/barq-assets"
+
+# Optional flags
+FORCE_DEPLOY=0
+
+# ========================================
+# Helpers
+# ========================================
+
+# Try to infer last deployment stage from the most recent deploy log
+infer_stage_from_latest_deploy_log() {
+    # Find most recent deploy log (sorted by mtime)
+    local latest_log
+    latest_log=$(ls -1t "$LOG_DIR"/deploy-*.log 2>/dev/null | head -1 || true)
+
+    if [ -z "$latest_log" ] || [ ! -f "$latest_log" ]; then
+        return
+    fi
+
+    # Extract the last logged stage title: "STAGE X: <name>"
+    local inferred
+    inferred=$(grep -a "STAGE " "$latest_log" | tail -1 | sed -E 's/.*STAGE [0-9]+: //')
+
+    if [ -n "$inferred" ]; then
+        echo "$inferred"
+    fi
+}
+
+# ========================================
+# Argument Parsing
+# ========================================
+
+parse_args() {
+    while [ "$#" -gt 0 ]; do
+        case "$1" in
+            --force|--skip-git-check)
+                FORCE_DEPLOY=1
+                ;;
+            -h|--help)
+                echo "Usage: $0 [--force|--skip-git-check]" >&2
+                echo "  --force / --skip-git-check   Deploy even if git shows no changes" >&2
+                exit 0
+                ;;
+            *)
+                echo "Unknown option: $1" >&2
+                exit 1
+                ;;
+        esac
+        shift
+    done
+}
 
 # ========================================
 # Logging Functions
@@ -376,12 +427,17 @@ handle_stale_lock() {
 # ========================================
 
 main() {
+    parse_args "$@"
+
     # Create log directory if missing
     mkdir -p "$LOG_DIR"
 
     log_separator
     echo "=== Barq Auto-Deploy [$(date '+%Y-%m-%d %H:%M:%S')] ===" | tee -a "$LOG_FILE"
     log "Checking for updates..."
+    if [ "$FORCE_DEPLOY" -eq 1 ]; then
+        log "Force redeploy requested - skipping git change detection"
+    fi
 
     # Handle stale lock files
     if ! handle_stale_lock; then
@@ -424,14 +480,18 @@ main() {
         exit 1
     }
 
-    # If already up to date, still run healthcheck
-    if [ "$LOCAL_HEAD" = "$REMOTE_HEAD" ]; then
+    # If already up to date, still run healthcheck unless forced
+    if [ "$LOCAL_HEAD" = "$REMOTE_HEAD" ] && [ "$FORCE_DEPLOY" -eq 0 ]; then
         echo "✓ Already up to date (${LOCAL_HEAD:0:7})" | tee -a "$LOG_FILE"
         check_health || true
         exit 0
     fi
 
-    log "Changes detected: ${LOCAL_HEAD:0:7} -> ${REMOTE_HEAD:0:7}"
+    if [ "$LOCAL_HEAD" = "$REMOTE_HEAD" ] && [ "$FORCE_DEPLOY" -eq 1 ]; then
+        log "Force redeploy: deploying ${LOCAL_HEAD:0:7} without git changes"
+    else
+        log "Changes detected: ${LOCAL_HEAD:0:7} -> ${REMOTE_HEAD:0:7}"
+    fi
 
     # Sync local branch to remote before deployment to avoid repeated triggers
     log "Syncing local main to origin/main..."
@@ -504,6 +564,16 @@ main() {
                 70) STAGE="PM2 reload" ;;
                 *) STAGE="Unknown stage" ;;
             esac
+
+            # If stage is unknown, try to infer from the latest deployment log
+            if [ "$STAGE" = "Unknown stage" ]; then
+                local inferred_stage
+                inferred_stage=$(infer_stage_from_latest_deploy_log || true)
+                if [ -n "$inferred_stage" ]; then
+                    STAGE="${inferred_stage} (inferred)"
+                    log "Inferred stage from deploy log: $STAGE"
+                fi
+            fi
 
             # Send failure notification
             notify_deployment_failure "$LOCAL_HEAD" "$REMOTE_HEAD" "$STAGE" "$DEPLOY_EXIT_CODE"
