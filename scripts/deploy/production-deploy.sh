@@ -119,11 +119,11 @@ run_with_retry() {
 
 log_latest_npm_debug() {
     local latest_log
-    latest_log=$(ls -1t "$HOME/.npm/_logs/"* 2>/dev/null | head -1 || true)
+    latest_log=$(ls -1t "$ROOT_DIR/local/.npm-cache/_logs/"* "$HOME/.npm/_logs/"* 2>/dev/null | head -1 || true)
 
     if [ -n "$latest_log" ] && [ -f "$latest_log" ]; then
         log "npm debug log: $(basename "$latest_log")"
-        tail -n 40 "$latest_log" | sed 's/^/    /' | tee -a "$DEPLOY_LOG" || true
+        tail -n 120 "$latest_log" | sed 's/^/    /' | tee -a "$DEPLOY_LOG" || true
     fi
 }
 
@@ -142,20 +142,40 @@ clean_node_modules() {
     fi
 }
 
+prepare_npm_environment() {
+    mkdir -p "$ROOT_DIR/local/.npm-cache" >/dev/null 2>&1 || true
+    chmod -R u+rwX,g+rwX "$ROOT_DIR/local/.npm-cache" >/dev/null 2>&1 || true
+    export NPM_CONFIG_CACHE="$ROOT_DIR/local/.npm-cache"
+    export NPM_CONFIG_PROGRESS=false
+    export NPM_CONFIG_FUND=false
+    export NPM_CONFIG_AUDIT=false
+}
+
 install_dependencies_resilient() {
     local max_attempts=3
     local attempt=1
 
+    prepare_npm_environment
+
     while [ "$attempt" -le "$max_attempts" ]; do
-        log "Running: npm ci --include=dev (HUSKY=0, attempt $attempt/$max_attempts)"
+        # Use npm ci for deterministic installs; last attempt falls back to npm install
+        local cmd
+        if [ "$attempt" -lt "$max_attempts" ]; then
+            cmd="npm ci --include=dev"
+        else
+            cmd="npm install"
+        fi
+
+        log "Running: $cmd (HUSKY=0, attempt $attempt/$max_attempts)"
 
         # Allow scripts to run with current user and skip husky hooks
-        if env HUSKY=0 npm ci --include=dev --unsafe-perm >> "$DEPLOY_LOG" 2>&1; then
-            log_success "npm ci --include=dev completed"
+        if env HUSKY=0 $cmd --unsafe-perm --foreground-scripts --no-progress >> "$DEPLOY_LOG" 2>&1; then
+            log_success "$cmd completed"
             return 0
         fi
 
-        log_error "npm ci --include=dev failed (attempt $attempt)"
+        local npm_exit=$?
+        log_error "$cmd failed (attempt $attempt, exit $npm_exit)"
         log_latest_npm_debug
 
         if [ "$attempt" -lt "$max_attempts" ]; then
