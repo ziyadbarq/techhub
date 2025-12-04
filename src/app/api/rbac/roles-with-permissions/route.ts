@@ -8,6 +8,8 @@ import { NextResponse } from "next/server";
 import { listRolesWithPermissionsAction } from "@/interface-adapters/controllers/rbac.controller";
 import { InsufficientPermissionsError } from "@/core/domain/errors/rbac-errors";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const result = await listRolesWithPermissionsAction();

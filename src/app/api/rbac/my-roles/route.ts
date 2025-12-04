@@ -6,6 +6,8 @@
 import { NextResponse } from "next/server";
 import { getMyRolesAction } from "@/interface-adapters/controllers/rbac.controller";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const result = await getMyRolesAction();

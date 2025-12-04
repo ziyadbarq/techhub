@@ -101,6 +101,7 @@ Cross-cutting features and utilities:
 - **[System Setup](./features/SYSTEM_SETUP.md)** - First-time installation wizard and admin dashboard for system health, diagnostics, and database operations
 - **[Prisma Guide](./guides/PRISMA_GUIDE.md)** - Complete Prisma 7 patterns, connection pool management, type-safe imports, and repository implementation
 - **[Next.js 16 Guide](./guides/NEXTJS_16_GUIDE.md)** - Next.js 16 async request APIs, rendering modes, Turbopack, and migration patterns
+- **[Performance Optimizations](./performance/PERFORMANCE_OPTIMIZATIONS.md)** - Session memoization, Redis caching, N+1 query elimination, and client-side optimizations
 - **[localStorage & Hydration Patterns](./guides/LOCALSTORAGE_HYDRATION.md)** - Best practices for client-side state persistence, avoiding race conditions, and async data dependencies
 - **[Code Generation System](./guides/CODE_GENERATION.md)** - Automatic code/tag generation for entities with database-backed sequences and manual override
 - **[Stack Upgrades Reference](./guides/STACK_UPGRADES.md)** - Breaking changes in Prisma 7, Zod 4, Next.js 16, React 19, and InversifyJS 7

@@ -3,13 +3,15 @@
  * Caches user permissions to reduce database queries
  *
  * Strategy:
- * - In-memory cache with TTL (Time To Live)
+ * - Redis-based cache with TTL (Time To Live) for multi-process sync
+ * - Falls back to in-memory cache if Redis unavailable
  * - Cache per user ID
  * - Automatic cache invalidation on permission/role changes
  * - Fallback to database if cache miss
  */
 
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
+import { getRedis } from "@/lib/redis";
 
 interface CachedPermissions {
   permissions: PermissionKey[];
@@ -22,37 +24,67 @@ interface CachedPermissions {
  */
 const CACHE_CONFIG = {
   /**
-   * Cache TTL in milliseconds (5 minutes)
+   * Cache TTL in seconds (5 minutes) - Redis uses seconds for SETEX
    */
-  TTL: 5 * 60 * 1000,
+  TTL_SECONDS: 5 * 60,
 
   /**
-   * Maximum cache size (number of users)
+   * Cache TTL in milliseconds (5 minutes) - for in-memory fallback
+   */
+  TTL_MS: 5 * 60 * 1000,
+
+  /**
+   * Maximum in-memory cache size (number of users)
    */
   MAX_SIZE: 1000,
+
+  /**
+   * Redis key prefix
+   */
+  REDIS_PREFIX: "perm:",
 } as const;
 
 /**
- * In-memory permission cache
+ * Hybrid permission cache (Redis + in-memory fallback)
  * Maps userId -> cached permissions
  */
 class PermissionCache {
-  private cache = new Map<string, CachedPermissions>();
+  private memoryCache = new Map<string, CachedPermissions>();
+  private useRedis = true;
 
   /**
    * Get cached permissions for a user
+   * Tries Redis first, falls back to in-memory cache
    * Returns null if cache miss or expired
    */
-  get(userId: string): PermissionKey[] | null {
-    const cached = this.cache.get(userId);
+  async get(userId: string): Promise<PermissionKey[] | null> {
+    const key = `${CACHE_CONFIG.REDIS_PREFIX}${userId}`;
 
+    // Try Redis first
+    if (this.useRedis) {
+      try {
+        const redis = await getRedis();
+        const cached = await redis.get(key);
+        if (cached) {
+          const permissions = JSON.parse(cached) as PermissionKey[];
+          return permissions;
+        }
+      } catch (error) {
+        // Redis unavailable, fall back to in-memory
+        console.error("Redis error in permission cache get:", error);
+        this.useRedis = false;
+      }
+    }
+
+    // Fallback to in-memory cache
+    const cached = this.memoryCache.get(userId);
     if (!cached) {
       return null;
     }
 
     // Check if expired
     if (Date.now() > cached.expiresAt) {
-      this.cache.delete(userId);
+      this.memoryCache.delete(userId);
       return null;
     }
 
@@ -61,38 +93,83 @@ class PermissionCache {
 
   /**
    * Set permissions in cache for a user
+   * Stores in both Redis and in-memory cache
    */
-  set(userId: string, permissions: PermissionKey[]): void {
-    // Enforce max cache size (LRU-like behavior)
-    if (this.cache.size >= CACHE_CONFIG.MAX_SIZE) {
-      // Remove oldest entry
-      const firstKey = this.cache.keys().next().value;
+  async set(userId: string, permissions: PermissionKey[]): Promise<void> {
+    const key = `${CACHE_CONFIG.REDIS_PREFIX}${userId}`;
+
+    // Try Redis first
+    if (this.useRedis) {
+      try {
+        const redis = await getRedis();
+        await redis.setex(
+          key,
+          CACHE_CONFIG.TTL_SECONDS,
+          JSON.stringify(permissions),
+        );
+      } catch (error) {
+        console.error("Redis error in permission cache set:", error);
+        this.useRedis = false;
+      }
+    }
+
+    // Also store in memory as fallback
+    if (this.memoryCache.size >= CACHE_CONFIG.MAX_SIZE) {
+      const firstKey = this.memoryCache.keys().next().value;
       if (firstKey) {
-        this.cache.delete(firstKey);
+        this.memoryCache.delete(firstKey);
       }
     }
 
     const now = Date.now();
-    this.cache.set(userId, {
+    this.memoryCache.set(userId, {
       permissions,
       timestamp: now,
-      expiresAt: now + CACHE_CONFIG.TTL,
+      expiresAt: now + CACHE_CONFIG.TTL_MS,
     });
   }
 
   /**
    * Invalidate cache for a specific user
+   * Removes from both Redis and in-memory cache
    */
-  invalidate(userId: string): void {
-    this.cache.delete(userId);
+  async invalidate(userId: string): Promise<void> {
+    const key = `${CACHE_CONFIG.REDIS_PREFIX}${userId}`;
+
+    // Remove from Redis
+    if (this.useRedis) {
+      try {
+        const redis = await getRedis();
+        await redis.del(key);
+      } catch (error) {
+        console.error("Redis error in permission cache invalidate:", error);
+      }
+    }
+
+    // Remove from in-memory cache
+    this.memoryCache.delete(userId);
   }
 
   /**
    * Invalidate entire cache
    * Called when roles/permissions are modified
    */
-  invalidateAll(): void {
-    this.cache.clear();
+  async invalidateAll(): Promise<void> {
+    // Remove all permission keys from Redis
+    if (this.useRedis) {
+      try {
+        const redis = await getRedis();
+        const keys = await redis.keys(`${CACHE_CONFIG.REDIS_PREFIX}*`);
+        if (keys.length > 0) {
+          await redis.del(...keys);
+        }
+      } catch (error) {
+        console.error("Redis error in permission cache invalidateAll:", error);
+      }
+    }
+
+    // Clear in-memory cache
+    this.memoryCache.clear();
   }
 
   /**
@@ -103,7 +180,7 @@ class PermissionCache {
     let validEntries = 0;
     let expiredEntries = 0;
 
-    for (const cached of this.cache.values()) {
+    for (const cached of this.memoryCache.values()) {
       if (now <= cached.expiresAt) {
         validEntries++;
       } else {
@@ -112,29 +189,30 @@ class PermissionCache {
     }
 
     return {
-      totalEntries: this.cache.size,
+      totalEntries: this.memoryCache.size,
       validEntries,
       expiredEntries,
       maxSize: CACHE_CONFIG.MAX_SIZE,
-      ttlMs: CACHE_CONFIG.TTL,
+      ttlSeconds: CACHE_CONFIG.TTL_SECONDS,
+      usingRedis: this.useRedis,
     };
   }
 
   /**
-   * Clean up expired entries
+   * Clean up expired entries from in-memory cache
    */
   cleanup(): void {
     const now = Date.now();
     const expiredKeys: string[] = [];
 
-    for (const [userId, cached] of this.cache.entries()) {
+    for (const [userId, cached] of this.memoryCache.entries()) {
       if (now > cached.expiresAt) {
         expiredKeys.push(userId);
       }
     }
 
     for (const key of expiredKeys) {
-      this.cache.delete(key);
+      this.memoryCache.delete(key);
     }
   }
 }
@@ -157,13 +235,13 @@ if (typeof setInterval !== "undefined") {
  * Helper to invalidate cache when permissions change
  * Call this in mutation use cases (create/update/delete role/permission)
  */
-export function invalidatePermissionCache(
+export async function invalidatePermissionCache(
   scope: "user" | "all",
   userId?: string,
-): void {
+): Promise<void> {
   if (scope === "all") {
-    permissionCache.invalidateAll();
+    await permissionCache.invalidateAll();
   } else if (scope === "user" && userId) {
-    permissionCache.invalidate(userId);
+    await permissionCache.invalidate(userId);
   }
 }

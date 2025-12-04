@@ -90,21 +90,39 @@ export function FeatureFlagsProvider({ children }: FeatureFlagsProviderProps) {
 
     // Setup polling if enabled
     let pollInterval: NodeJS.Timeout | undefined;
-    if (isFeatureFlagsPollingEnabled()) {
-      const interval = getFeatureFlagsPollInterval();
-      pollInterval = setInterval(fetchFeatures, interval);
+
+    const startPolling = () => {
+      if (isFeatureFlagsPollingEnabled() && !pollInterval) {
+        const interval = getFeatureFlagsPollInterval();
+        pollInterval = setInterval(fetchFeatures, interval);
+      }
+    };
+
+    const stopPolling = () => {
+      if (pollInterval) {
+        clearInterval(pollInterval);
+        pollInterval = undefined;
+      }
+    };
+
+    // Start polling only if tab is visible
+    if (document.visibilityState === "visible") {
+      startPolling();
     }
 
-    // Refetch when tab becomes visible
+    // Handle visibility changes: pause when hidden, resume when visible
     const handleVisibilityChange = () => {
       if (document.visibilityState === "visible") {
-        fetchFeatures();
+        fetchFeatures(); // Immediate fetch when tab becomes visible
+        startPolling(); // Resume polling
+      } else {
+        stopPolling(); // Pause polling when tab is hidden
       }
     };
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      if (pollInterval) clearInterval(pollInterval);
+      stopPolling();
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [fetchFeatures]);

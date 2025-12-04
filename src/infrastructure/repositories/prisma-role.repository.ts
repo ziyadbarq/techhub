@@ -191,6 +191,72 @@ export class PrismaRoleRepository implements IRoleRepository {
   }
 
   /**
+   * Get all roles with their permissions in a single query (optimized)
+   * Avoids N+1 query pattern by using a single join
+   */
+  async findAllWithPermissions(params?: {
+    includeInactive?: boolean;
+  }): Promise<Array<[Role, PermissionKey[]]>> {
+    const timer = this.logger.startTimer();
+    const includeInactive = params?.includeInactive ?? false;
+
+    this.logger.debug(
+      "findAllWithPermissions",
+      "Finding all roles with permissions",
+      {
+        includeInactive,
+      },
+    );
+
+    try {
+      const rolesWithPermissions = await this.prisma.role.findMany({
+        where: includeInactive ? undefined : { isActive: true },
+        include: {
+          permissions: {
+            include: {
+              permission: true,
+            },
+          },
+        },
+        orderBy: {
+          name: "asc",
+        },
+      });
+
+      const result = rolesWithPermissions.map(
+        (roleData): [Role, PermissionKey[]] => {
+          const role = this.toDomain(roleData);
+          const permissions = roleData.permissions.map(
+            (rp: { permission: { name: string } }) =>
+              rp.permission.name as PermissionKey,
+          );
+          return [role, permissions];
+        },
+      );
+
+      this.logger.timed(
+        "findAllWithPermissions",
+        "Roles with permissions fetched successfully",
+        timer(),
+        {
+          roleCount: result.length,
+          includeInactive,
+        },
+      );
+
+      return result;
+    } catch (error) {
+      this.logger.error(
+        "findAllWithPermissions",
+        "Failed to find roles with permissions",
+        error,
+        { includeInactive },
+      );
+      throw error;
+    }
+  }
+
+  /**
    * Create a new role
    */
   async create(role: Role): Promise<Role> {

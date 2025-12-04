@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useSyncExternalStore, type ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
@@ -14,28 +14,10 @@ import { SessionProvider } from "@/contexts/session-context";
 import { SidebarSkeleton } from "@/components/layout/sidebar/SidebarSkeleton";
 import { HeaderSkeleton } from "@/components/layout/HeaderSkeleton";
 
-// Hydration detection using useSyncExternalStore (React 18+ recommended pattern)
-// This fixes "Cannot read properties of null (reading 'useRef')" errors
-// that occur when Better-Auth's useSession() is called before React is ready
-const emptySubscribe = () => () => {};
-
-function useHydrated(): boolean {
-  return useSyncExternalStore(
-    emptySubscribe,
-    () => true, // Client: always hydrated
-    () => false, // Server: not hydrated
-  );
-}
-
 export function DashboardLayoutClient({ children }: { children: ReactNode }) {
-  const isHydrated = useHydrated();
   const pathname = usePathname();
   const hideSidebar =
     pathname?.startsWith("/settings") || pathname?.startsWith("/docs");
-
-  if (!isHydrated) {
-    return <GlobalLoading />;
-  }
 
   // Check if we're on a special page that needs full-width layout (no padding/max-width)
   // Add your special routes here (e.g., editor pages, canvas pages, etc.)

@@ -66,11 +66,13 @@ describe("CheckPermissionUseCase", () => {
     mockLogger = new MockLoggerService();
     permissionCacheStore = {};
     mockPermissionCacheService = {
-      get: vi.fn((userId: string) => permissionCacheStore[userId] ?? null),
-      set: vi.fn((userId: string, permissions: PermissionKey[]) => {
+      get: vi.fn(
+        async (userId: string) => permissionCacheStore[userId] ?? null,
+      ),
+      set: vi.fn(async (userId: string, permissions: PermissionKey[]) => {
         permissionCacheStore[userId] = permissions;
       }),
-      invalidate: vi.fn((scope, userId?: string) => {
+      invalidate: vi.fn(async (scope, userId?: string) => {
         if (scope === "all") {
           permissionCacheStore = {};
           return;

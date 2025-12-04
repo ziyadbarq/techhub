@@ -36,13 +36,6 @@ function hasSessionCookie(request: NextRequest): boolean {
   // Better Auth uses "better-auth.session_token" cookie by default
   const sessionToken = request.cookies.get("better-auth.session_token");
 
-  // Debug logging (can be removed after testing)
-  console.log("[Proxy Debug]", {
-    pathname: request.nextUrl.pathname,
-    hasSessionToken: !!sessionToken?.value,
-    allCookies: Array.from(request.cookies.getAll().map((c) => c.name)),
-  });
-
   return !!sessionToken?.value;
 }
 

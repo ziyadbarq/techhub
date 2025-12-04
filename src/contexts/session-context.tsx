@@ -6,7 +6,12 @@
 
 "use client";
 
-import { createContext, useContext, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
 import { useSession } from "@/lib/auth/client";
 import type { Session } from "@/interface-adapters/auth/better-auth";
 
@@ -31,6 +36,19 @@ interface SessionProviderProps {
   children: ReactNode;
 }
 
+// Hydration detection using useSyncExternalStore (React 18+ recommended pattern)
+// This fixes "Cannot read properties of null (reading 'useRef')" errors
+// that occur when Better-Auth's useSession() is called before React is ready
+const emptySubscribe = () => () => {};
+
+function useHydrated(): boolean {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true, // Client: always hydrated
+    () => false, // Server: not hydrated
+  );
+}
+
 /**
  * SessionProvider - Centralizes session state management
  *
@@ -42,8 +60,41 @@ interface SessionProviderProps {
  * - Reduces API calls from N components to 1
  * - Consistent session state across all consumers
  * - Prevents rate limiting issues from excessive /api/auth/get-session calls
+ *
+ * Hydration Strategy:
+ * - SSR: Returns loading state (isPending: true) to allow React to render component tree
+ * - Client: Calls Better Auth's useSession() only after hydration completes
+ * - This enables Suspense boundaries and RSC streaming to work correctly
  */
 export function SessionProvider({ children }: SessionProviderProps) {
+  const isHydrated = useHydrated();
+
+  // During SSR, return a loading state to enable progressive rendering
+  // This allows Suspense boundaries to show loading states instead of blank screen
+  if (!isHydrated) {
+    return (
+      <SessionContext.Provider
+        value={{
+          session: null,
+          user: null,
+          isPending: true,
+          error: null,
+        }}
+      >
+        {children}
+      </SessionContext.Provider>
+    );
+  }
+
+  // After hydration, use Better Auth's useSession() hook
+  return <SessionProviderHydrated>{children}</SessionProviderHydrated>;
+}
+
+/**
+ * Internal component that uses Better Auth's useSession() after hydration
+ * Separated to keep the hydration check at the provider boundary
+ */
+function SessionProviderHydrated({ children }: SessionProviderProps) {
   const { data, isPending, error } = useSession();
 
   return (

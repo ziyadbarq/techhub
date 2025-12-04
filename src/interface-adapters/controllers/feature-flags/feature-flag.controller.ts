@@ -13,7 +13,10 @@ import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { getSession } from "@/lib/auth";
 import { isValidFeatureFlag } from "@/lib/features/feature-flag-keys";
-import { invalidateFeatureCache } from "@/lib/features/server";
+import {
+  invalidateFeatureCache,
+  invalidateAllFeaturesCache,
+} from "@/lib/features/server";
 
 import type { ListFeatureFlagsUseCase } from "@/core/use-cases/feature-flags/list-feature-flags.use-case";
 import type { GetFeatureFlagUseCase } from "@/core/use-cases/feature-flags/get-feature-flag.use-case";
@@ -146,8 +149,9 @@ export async function toggleFeatureFlagAction(
       reason: request.reason,
     });
 
-    // Invalidate cache
+    // Invalidate cache (both individual and bulk cache)
     await invalidateFeatureCache(request.name);
+    await invalidateAllFeaturesCache();
 
     // Revalidate paths
     revalidatePath("/admin/features");
@@ -246,6 +250,9 @@ export async function bulkToggleFeatureFlagsAction(
         toggledCount++;
       }
     }
+
+    // Invalidate the bulk features cache after all toggles
+    await invalidateAllFeaturesCache();
 
     // Revalidate paths
     revalidatePath("/admin/features");

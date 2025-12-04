@@ -190,6 +190,7 @@ export async function getMyRolesAction(): Promise<
 
 /**
  * List all active roles with their permission keys (admin-only).
+ * Optimized to use single query with join instead of N+1 pattern
  */
 export async function listRolesWithPermissionsAction(): Promise<
   ActionResponse<
@@ -212,23 +213,22 @@ export async function listRolesWithPermissionsAction(): Promise<
       DI_TOKENS.IRoleRepository,
     );
 
-    const roles = await roleRepository.findAll({ includeInactive: false });
-    const rolesWithPermissions = await Promise.all(
-      roles.map(async (role) => {
-        const permissions = await roleRepository.getRolePermissions(role.id);
-        return {
-          id: role.id,
-          name: role.name,
-          displayName: role.displayName,
-          description: role.description ?? null,
-          isSystem: role.isSystem,
-          isActive: role.isActive,
-          permissions,
-        };
-      }),
-    );
+    // Use optimized single-query method instead of N+1 pattern
+    const rolesWithPermissions = await roleRepository.findAllWithPermissions({
+      includeInactive: false,
+    });
 
-    return { success: true, data: rolesWithPermissions };
+    const data = rolesWithPermissions.map(([role, permissions]) => ({
+      id: role.id,
+      name: role.name,
+      displayName: role.displayName,
+      description: role.description ?? null,
+      isSystem: role.isSystem,
+      isActive: role.isActive,
+      permissions,
+    }));
+
+    return { success: true, data };
   } catch (error) {
     return handleControllerError(
       error,

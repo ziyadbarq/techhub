@@ -11,15 +11,18 @@ import {
 
 @injectable()
 export class PermissionCacheService implements IPermissionCacheService {
-  get(userId: string): PermissionKey[] | null {
-    return permissionCache.get(userId);
+  async get(userId: string): Promise<PermissionKey[] | null> {
+    return await permissionCache.get(userId);
   }
 
-  set(userId: string, permissions: PermissionKey[]): void {
-    permissionCache.set(userId, permissions);
+  async set(userId: string, permissions: PermissionKey[]): Promise<void> {
+    await permissionCache.set(userId, permissions);
   }
 
-  invalidate(scope: PermissionCacheScope, userId?: string): void {
-    invalidatePermissionCache(scope, userId);
+  async invalidate(
+    scope: PermissionCacheScope,
+    userId?: string,
+  ): Promise<void> {
+    await invalidatePermissionCache(scope, userId);
   }
 }

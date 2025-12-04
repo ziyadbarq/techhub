@@ -33,6 +33,14 @@ export interface IRoleRepository {
   getRolePermissions(roleId: string): Promise<PermissionKey[]>;
 
   /**
+   * Get all roles with their permissions in a single query (optimized)
+   * Returns an array of [role, permissions[]] tuples
+   */
+  findAllWithPermissions(params?: {
+    includeInactive?: boolean;
+  }): Promise<Array<[Role, PermissionKey[]]>>;
+
+  /**
    * Create a new role
    */
   create(role: Role): Promise<Role>;

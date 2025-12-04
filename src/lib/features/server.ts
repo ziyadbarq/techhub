@@ -141,12 +141,58 @@ export async function requireFeature(
 
 /**
  * Get all enabled features (for navigation filtering)
+ * Uses Redis cache to avoid full-table scans on every poll
  */
 export async function getEnabledFeatures(): Promise<Set<string>> {
-  // Get enabled features from database
-  const container = getContainer();
-  const repo = container.get<IFeatureFlagRepository>(
-    DI_TOKENS.IFeatureFlagRepository,
-  );
-  return await repo.getEnabledFeatureNames();
+  const cacheKey = `${CACHE_PREFIX}all_enabled`;
+
+  try {
+    const redis = await getRedis();
+
+    // Try to get from cache
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+      try {
+        const features = JSON.parse(cached) as string[];
+        return new Set(features);
+      } catch {
+        // Invalid JSON, fall through to fetch
+      }
+    }
+
+    // Not in cache, fetch from database
+    const container = getContainer();
+    const repo = container.get<IFeatureFlagRepository>(
+      DI_TOKENS.IFeatureFlagRepository,
+    );
+    const features = await repo.getEnabledFeatureNames();
+
+    // Cache the result as JSON array
+    await redis.setex(cacheKey, CACHE_TTL, JSON.stringify([...features]));
+
+    return features;
+  } catch (error) {
+    // Redis error - fall back to database
+    console.error("Feature flags cache error:", error);
+    const container = getContainer();
+    const repo = container.get<IFeatureFlagRepository>(
+      DI_TOKENS.IFeatureFlagRepository,
+    );
+    return await repo.getEnabledFeatureNames();
+  }
+}
+
+/**
+ * Invalidate all enabled features cache
+ * Call this when toggling any feature flag
+ */
+export async function invalidateAllFeaturesCache(): Promise<void> {
+  const cacheKey = `${CACHE_PREFIX}all_enabled`;
+
+  try {
+    const redis = await getRedis();
+    await redis.del(cacheKey);
+  } catch (error) {
+    console.error("Failed to invalidate all features cache:", error);
+  }
 }

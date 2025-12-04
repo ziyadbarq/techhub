@@ -35,8 +35,8 @@ export class CheckPermissionUseCase {
   async execute(request: CheckPermissionRequest): Promise<boolean> {
     const { userId, permission, context } = request;
 
-    // Try to get permissions from cache
-    let userPermissions = this.permissionCacheService.get(userId);
+    // Try to get permissions from cache (now async with Redis)
+    let userPermissions = await this.permissionCacheService.get(userId);
     let cacheHit = userPermissions !== null;
 
     if (!userPermissions) {
@@ -49,8 +49,8 @@ export class CheckPermissionUseCase {
         permissionCount: userPermissions.length,
       });
 
-      // Store in cache
-      this.permissionCacheService.set(userId, userPermissions);
+      // Store in cache (now async with Redis)
+      await this.permissionCacheService.set(userId, userPermissions);
       cacheHit = false;
     }
 

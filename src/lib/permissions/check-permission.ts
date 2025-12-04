@@ -53,30 +53,62 @@ export async function requirePermission(
 
 /**
  * Check multiple permissions (user must have ALL)
+ *
+ * Performance optimization: Checks first permission serially to populate cache,
+ * then checks remaining permissions in parallel. This prevents N parallel DB queries
+ * on cold cache (race condition where all checks miss cache simultaneously).
  */
 export async function hasAllPermissions(
   userId: string,
   permissions: PermissionKey[],
   context?: PermissionContext,
 ): Promise<boolean> {
-  const results = await Promise.all(
-    permissions.map((permission) => hasPermission(userId, permission, context)),
+  if (permissions.length === 0) return true;
+  if (permissions.length === 1) {
+    return hasPermission(userId, permissions[0], context);
+  }
+
+  // Check first permission to populate cache (if cold)
+  const firstResult = await hasPermission(userId, permissions[0], context);
+  if (!firstResult) return false; // Short-circuit if first check fails
+
+  // Now cache is warm - check remaining permissions in parallel
+  const remainingResults = await Promise.all(
+    permissions
+      .slice(1)
+      .map((permission) => hasPermission(userId, permission, context)),
   );
 
-  return results.every((result) => result === true);
+  return remainingResults.every((result) => result === true);
 }
 
 /**
  * Check multiple permissions (user must have ANY)
+ *
+ * Performance optimization: Checks first permission serially to populate cache,
+ * then checks remaining permissions in parallel. This prevents N parallel DB queries
+ * on cold cache (race condition where all checks miss cache simultaneously).
  */
 export async function hasAnyPermission(
   userId: string,
   permissions: PermissionKey[],
   context?: PermissionContext,
 ): Promise<boolean> {
-  const results = await Promise.all(
-    permissions.map((permission) => hasPermission(userId, permission, context)),
+  if (permissions.length === 0) return false;
+  if (permissions.length === 1) {
+    return hasPermission(userId, permissions[0], context);
+  }
+
+  // Check first permission to populate cache (if cold)
+  const firstResult = await hasPermission(userId, permissions[0], context);
+  if (firstResult) return true; // Short-circuit if first check succeeds
+
+  // Now cache is warm - check remaining permissions in parallel
+  const remainingResults = await Promise.all(
+    permissions
+      .slice(1)
+      .map((permission) => hasPermission(userId, permission, context)),
   );
 
-  return results.some((result) => result === true);
+  return remainingResults.some((result) => result === true);
 }
