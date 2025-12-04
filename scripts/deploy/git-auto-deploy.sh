@@ -59,6 +59,22 @@ GITHUB_REPO_URL="https://github.com/azzuwayed/barq-assets"
 FORCE_DEPLOY=0
 
 # ========================================
+# Sanity Checks
+# ========================================
+
+ensure_project_dir() {
+    if [ ! -d "$PROJECT_DIR" ]; then
+        echo "✗ ERROR: PROJECT_DIR does not exist: $PROJECT_DIR" >&2
+        exit 1
+    fi
+
+    if [ ! -f "$PROJECT_DIR/package.json" ] || [ ! -f "$PROJECT_DIR/next.config.ts" ]; then
+        echo "✗ ERROR: Invalid PROJECT_DIR (missing package.json or next.config.ts): $PROJECT_DIR" >&2
+        exit 1
+    fi
+}
+
+# ========================================
 # Helpers
 # ========================================
 
@@ -428,6 +444,9 @@ handle_stale_lock() {
 
 main() {
     parse_args "$@"
+
+    # Verify project directory before proceeding
+    ensure_project_dir
 
     # Create log directory if missing
     mkdir -p "$LOG_DIR"

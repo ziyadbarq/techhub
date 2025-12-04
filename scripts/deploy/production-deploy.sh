@@ -20,9 +20,10 @@ set -euo pipefail
 # ========================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
-LOG_DIR="$ROOT_DIR/local/logs"
-DEPLOY_LOG="$LOG_DIR/deploy-$(date +%Y%m%d_%H%M%S).log"
+# Initial guess: repo root (script lives in scripts/deploy)
+ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+LOG_DIR=""
+DEPLOY_LOG=""
 
 # Flags
 FORCE_INSTALL=false
@@ -31,6 +32,41 @@ for arg in "$@"; do
         FORCE_INSTALL=true
     fi
 done
+
+# Resolve project root by locating package.json and next.config.ts
+ensure_project_root() {
+    # Try git to get the real repo root first
+    if command -v git >/dev/null 2>&1; then
+        local git_root
+        git_root=$(cd "$SCRIPT_DIR" && git rev-parse --show-toplevel 2>/dev/null || true)
+        if [ -n "$git_root" ] && [ -d "$git_root" ]; then
+            ROOT_DIR="$git_root"
+        fi
+    fi
+
+    # If still missing markers, walk up from script dir until we find them
+    if [ ! -f "$ROOT_DIR/package.json" ] || [ ! -f "$ROOT_DIR/next.config.ts" ]; then
+        local dir="$SCRIPT_DIR"
+        while [ "$dir" != "/" ]; do
+            if [ -f "$dir/package.json" ] && [ -f "$dir/next.config.ts" ]; then
+                ROOT_DIR="$dir"
+                break
+            fi
+            dir=$(dirname "$dir")
+        done
+    fi
+
+    if [ ! -f "$ROOT_DIR/package.json" ] || [ ! -f "$ROOT_DIR/next.config.ts" ]; then
+        echo "❌ ERROR: Could not locate project root (package.json + next.config.ts)" >&2
+        exit 10
+    fi
+}
+
+ensure_project_root
+
+# Now that ROOT_DIR is confirmed, set log paths
+LOG_DIR="$ROOT_DIR/local/logs"
+DEPLOY_LOG="$LOG_DIR/deploy-$(date +%Y%m%d_%H%M%S).log"
 
 # Load environment variables
 if [ -f "$ROOT_DIR/.env.local" ]; then
@@ -259,6 +295,17 @@ stage_preflight() {
         exit 10
     fi
     log_success "Working directory: $ROOT_DIR"
+    log "Resolved project root: $ROOT_DIR"
+
+    # Guard: required root files
+    if [ ! -f "$ROOT_DIR/next.config.ts" ]; then
+        log_error "next.config.ts not found at $ROOT_DIR (invalid project root)"
+        exit 10
+    fi
+    if [ ! -f "$ROOT_DIR/package.json" ]; then
+        log_error "package.json not found at $ROOT_DIR (invalid project root)"
+        exit 10
+    fi
 
     # Ensure current user can read/write key directories (may be owned by www)
     ensure_workspace_access
