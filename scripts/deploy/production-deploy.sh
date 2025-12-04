@@ -117,6 +117,61 @@ run_with_retry() {
     return 1
 }
 
+log_latest_npm_debug() {
+    local latest_log
+    latest_log=$(ls -1t "$HOME/.npm/_logs/"* 2>/dev/null | head -1 || true)
+
+    if [ -n "$latest_log" ] && [ -f "$latest_log" ]; then
+        log "npm debug log: $(basename "$latest_log")"
+        tail -n 40 "$latest_log" | sed 's/^/    /' | tee -a "$DEPLOY_LOG" || true
+    fi
+}
+
+repair_husky_permissions() {
+    if [ -d "$ROOT_DIR/.husky" ]; then
+        chmod -R u+rwX,g+rwX "$ROOT_DIR/.husky" >/dev/null 2>&1 || true
+        # Remove stale generated file that often triggers EPERM during husky prepare
+        rm -f "$ROOT_DIR/.husky/_/h" >/dev/null 2>&1 || true
+        mkdir -p "$ROOT_DIR/.husky/_" >/dev/null 2>&1 || true
+    fi
+}
+
+clean_node_modules() {
+    if [ -d "$ROOT_DIR/node_modules" ]; then
+        rm -rf "$ROOT_DIR/node_modules" >/dev/null 2>&1 || true
+    fi
+}
+
+install_dependencies_resilient() {
+    local max_attempts=3
+    local attempt=1
+
+    while [ "$attempt" -le "$max_attempts" ]; do
+        log "Running: npm ci --include=dev (HUSKY=0, attempt $attempt/$max_attempts)"
+
+        # Allow scripts to run with current user and skip husky hooks
+        if env HUSKY=0 npm ci --include=dev --unsafe-perm >> "$DEPLOY_LOG" 2>&1; then
+            log_success "npm ci --include=dev completed"
+            return 0
+        fi
+
+        log_error "npm ci --include=dev failed (attempt $attempt)"
+        log_latest_npm_debug
+
+        if [ "$attempt" -lt "$max_attempts" ]; then
+            log_warning "Repairing install state before retry..."
+            repair_husky_permissions
+            clean_node_modules
+            npm cache verify >> "$DEPLOY_LOG" 2>&1 || true
+            sleep 3
+        fi
+
+        attempt=$((attempt + 1))
+    done
+
+    return 1
+}
+
 # Check if file/directory exists
 file_exists() {
     [ -e "$1" ]
@@ -291,13 +346,14 @@ stage_dependencies() {
 
     # Install dependencies (include dev deps for type-checking)
     if [ "$FORCE_INSTALL" = true ]; then
-        log "Force reinstall requested (--install): running npm ci --include=dev (HUSKY=0)..."
-        if ! run_with_retry 3 "npm ci --include=dev (HUSKY=0)" env HUSKY=0 npm ci --include=dev; then
+        log "Force reinstall requested (--install): running npm ci --include=dev (HUSKY=0, resilient)..."
+        clean_node_modules
+        if ! install_dependencies_resilient; then
             exit 30
         fi
     elif ! file_exists "$ROOT_DIR/node_modules"; then
-        log "node_modules not found, running npm ci --include=dev with HUSKY=0 (includes dev deps)..."
-        if ! run_with_retry 3 "npm ci --include=dev (HUSKY=0)" env HUSKY=0 npm ci --include=dev; then
+        log "node_modules not found, running npm ci --include=dev with HUSKY=0 (includes dev deps, resilient)..."
+        if ! install_dependencies_resilient; then
             exit 30
         fi
     else
