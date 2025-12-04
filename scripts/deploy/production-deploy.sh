@@ -138,7 +138,34 @@ repair_husky_permissions() {
 
 clean_node_modules() {
     if [ -d "$ROOT_DIR/node_modules" ]; then
+        local nm_size
+        nm_size=$(du -sh "$ROOT_DIR/node_modules" 2>/dev/null | awk '{print $1}' || echo "unknown")
+        log "Removing existing node_modules (size: ${nm_size:-unknown})..."
         rm -rf "$ROOT_DIR/node_modules" >/dev/null 2>&1 || true
+    fi
+}
+
+get_mtime() {
+    local path="$1"
+    # Linux stat
+    if stat -c %y "$path" >/dev/null 2>&1; then
+        stat -c %y "$path" 2>/dev/null | head -n 1
+    # macOS stat
+    elif stat -f "%Sm" -t "%Y-%m-%d %H:%M:%S" "$path" >/dev/null 2>&1; then
+        stat -f "%Sm" -t "%Y-%m-%d %H:%M:%S" "$path" 2>/dev/null | head -n 1
+    else
+        echo "unknown"
+    fi
+}
+
+log_node_modules_state() {
+    if [ -d "$ROOT_DIR/node_modules" ]; then
+        local nm_size nm_mtime
+        nm_size=$(du -sh "$ROOT_DIR/node_modules" 2>/dev/null | awk '{print $1}' || echo "unknown")
+        nm_mtime=$(get_mtime "$ROOT_DIR/node_modules")
+        log "node_modules present (size: ${nm_size:-unknown}, mtime: ${nm_mtime:-unknown})"
+    else
+        log "node_modules not present"
     fi
 }
 
@@ -149,6 +176,20 @@ prepare_npm_environment() {
     export NPM_CONFIG_PROGRESS=false
     export NPM_CONFIG_FUND=false
     export NPM_CONFIG_AUDIT=false
+}
+
+ensure_workspace_access() {
+    # Make sure opc owns the project tree (including build/install dirs) even if www touched it
+    log "Normalizing ownership to $(whoami):$(whoami) for project workspace..."
+    sudo chown -R "$(whoami)":"$(whoami)" "$ROOT_DIR" >/dev/null 2>&1 || true
+    chmod -R u+rwX "$ROOT_DIR" >/dev/null 2>&1 || true
+
+    # Explicitly ensure these critical directories are writable
+    for path in "$ROOT_DIR/node_modules" "$ROOT_DIR/.next"; do
+        if [ -d "$path" ]; then
+            chmod -R u+rwX "$path" >/dev/null 2>&1 || true
+        fi
+    done
 }
 
 install_dependencies_resilient() {
@@ -179,15 +220,18 @@ install_dependencies_resilient() {
         log_latest_npm_debug
 
         if [ "$attempt" -lt "$max_attempts" ]; then
-            log_warning "Repairing install state before retry..."
-            repair_husky_permissions
-            clean_node_modules
-            npm cache verify >> "$DEPLOY_LOG" 2>&1 || true
-            sleep 3
+        log_warning "Repairing install state before retry..."
+        repair_husky_permissions
+        clean_node_modules
+        npm cache verify >> "$DEPLOY_LOG" 2>&1 || true
+        sleep 3
+        log_node_modules_state
         fi
 
         attempt=$((attempt + 1))
     done
+
+    log_node_modules_state
 
     return 1
 }
@@ -215,6 +259,9 @@ stage_preflight() {
         exit 10
     fi
     log_success "Working directory: $ROOT_DIR"
+
+    # Ensure current user can read/write key directories (may be owned by www)
+    ensure_workspace_access
 
     # Check disk space (require at least 5GB free)
     log "Checking disk space..."
@@ -364,6 +411,8 @@ stage_dependencies() {
         chmod -R u+rwX,g+rwX "$ROOT_DIR/.husky" >/dev/null 2>&1 || true
     fi
 
+    log_node_modules_state
+
     # Install dependencies (include dev deps for type-checking)
     if [ "$FORCE_INSTALL" = true ]; then
         log "Force reinstall requested (--install): running npm ci --include=dev (HUSKY=0, resilient)..."
@@ -395,6 +444,7 @@ stage_dependencies() {
     fi
 
     log_success "Dependencies, type-check, and Prisma client ready"
+    log_node_modules_state
 }
 
 # ========================================
@@ -418,10 +468,39 @@ stage_build() {
         exit 40
     fi
 
-    # Verify build directory was created
-    if ! file_exists "$ROOT_DIR/.next"; then
+    # Verify build output and normalize to .next if needed
+    local build_dir_path=""
+    local build_dir_label=""
+    for candidate in ".next" ".next-turbo" "out" "dist"; do
+        if file_exists "$ROOT_DIR/$candidate"; then
+            build_dir_path="$ROOT_DIR/$candidate"
+            build_dir_label="$candidate"
+            break
+        fi
+    done
+
+    # Fallback: search for .next anywhere in the project (e.g., Next output redirect)
+    if [ -z "$build_dir_path" ]; then
+        build_dir_path=$(find "$ROOT_DIR" -maxdepth 2 -type d -name ".next" | head -1 || true)
+        if [ -n "$build_dir_path" ]; then
+            build_dir_label=$(basename "$build_dir_path")
+        fi
+    fi
+
+    if [ -z "$build_dir_path" ]; then
         log_error "Build directory not created (.next missing)"
+        log "Root directory listing (recent):"
+        ls -lhat "$ROOT_DIR" | head -n 40 | sed 's/^/    /' | tee -a "$DEPLOY_LOG" || true
+        log "Find .next result:"
+        find "$ROOT_DIR" -maxdepth 2 -type d -name ".next" | sed 's/^/    /' | tee -a "$DEPLOY_LOG" || true
         exit 40
+    fi
+
+    if [ "$build_dir_path" != "$ROOT_DIR/.next" ]; then
+        log_warning "Build output located at ${build_dir_label:-$build_dir_path} (expected .next). Normalizing..."
+        rm -rf "$ROOT_DIR/.next" >/dev/null 2>&1 || true
+        mv "$build_dir_path" "$ROOT_DIR/.next"
+        log_success "Build output moved to .next"
     fi
 
     local build_size

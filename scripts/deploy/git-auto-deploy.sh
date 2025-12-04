@@ -439,9 +439,15 @@ main() {
         log "Force redeploy requested - skipping git change detection"
     fi
 
+    # If force requested, clear any existing lock so we don't bail early
+    if [ "$FORCE_DEPLOY" -eq 1 ] && [ -f "$LOCK_FILE" ]; then
+        log "Force redeploy: removing existing lock file $LOCK_FILE"
+        rm -f "$LOCK_FILE" || true
+    fi
+
     # Handle stale lock files
     if ! handle_stale_lock; then
-        # Lock exists and is not stale - exit silently
+        log "Another deployment is in progress (lock file present). Exiting."
         exit 0
     fi
 
