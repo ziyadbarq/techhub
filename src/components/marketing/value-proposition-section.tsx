@@ -83,44 +83,45 @@ const VALUE_PROPOSITIONS = [
   {
     icon: ShieldCheck,
     title: "Regulatory Compliance",
-    description: "Built for financial services regulatory frameworks.",
-    outcomes: [
-      "Audit-ready documentation and disposal certificates",
-      "Exportable compliance reports",
-      "Immutable change history",
-    ],
-  },
-  {
-    icon: TrendingDown,
-    title: "Cost Control",
     description:
-      "Reduce wasteful spending on licenses, contracts, and emergency purchases.",
+      "Audit-ready controls for financial services: verification campaigns, audit exports, and immutable histories.",
     outcomes: [
-      "License allocation tracking",
-      "Contract renewal alerts",
-      "Depreciation and warranty monitoring",
-    ],
-  },
-  {
-    icon: AlertTriangle,
-    title: "Risk Mitigation",
-    description:
-      "Minimize security breaches and infrastructure outages through visibility.",
-    outcomes: [
-      "Secure disposal workflows",
-      "CMDB dependency impact analysis",
-      "Role-based access control",
+      "Immutable audit trails across 26+ entity types",
+      "Disposal certificates with sanitization evidence",
+      "Verification campaigns and compliance-ready exports",
     ],
   },
   {
     icon: FileCheck,
-    title: "Operational Efficiency",
+    title: "Lifecycle Automation",
     description:
-      "Automate manual workflows and eliminate administrative overhead.",
+      "Automate stock, reservations, kits, deployments, and secure disposals with multi-step approvals.",
     outcomes: [
-      "Asset kit automation",
-      "Reservation conflict detection",
-      "Automated stock tracking",
+      "Stock → Reservation → Assignment workflows",
+      "Asset kits & new-hire bundles with tracking",
+      "Secure disposal workflows and certificates",
+    ],
+  },
+  {
+    icon: AlertTriangle,
+    title: "Operational Resilience",
+    description:
+      "Map CMDB dependencies, overlay Intune compliance, and run impact analysis on every change.",
+    outcomes: [
+      "End-to-end service & infrastructure mapping",
+      "Change impact analysis using CMDB relationships",
+      "Intune compliance + patch tracking dashboards",
+    ],
+  },
+  {
+    icon: TrendingDown,
+    title: "Financial Governance",
+    description:
+      "Control hardware, software, and contract spend with live telemetry from assets and services.",
+    outcomes: [
+      "License allocation vs. entitlement tracking",
+      "Contract renewal, depreciation, and warranty alerts",
+      "Procurement-to-asset linkage with PO tracking",
     ],
   },
 ];

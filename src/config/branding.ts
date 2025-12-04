@@ -50,26 +50,27 @@ export const BRANDING = {
   taglines: {
     main: "Enterprise CMDB & IT Asset Management for Financial Services",
     short: "Enterprise CMDB & ITAM system",
-    hero: "Track everything. Automate workflows. Pass audits.",
+    hero: "Map dependencies, automate lifecycles, and stay audit-ready.",
     compliance: "Built for financial services compliance.",
-    full: "Complete asset and inventory management for barq. Track devices, manage warranties, control inventory, and maintain full audit trails with enterprise-grade architecture.",
+    full: "Unified CMDB, lifecycle automation, Intune compliance monitoring, contracts, licenses, and service mapping — all in one platform for Technology Operations.",
     landing:
-      "Enterprise IT Asset Management and CMDB built for regulated financial services operations. Track assets, manage dependencies, ensure compliance, and pass audits with confidence.",
+      "Enterprise CMDB & IT Asset Management built for regulated financial services operations. Map services, track assets end-to-end, enforce controls, and pass audits with confidence.",
     auth: "Enterprise CMDB & ITAM system built for financial services compliance and operational excellence.",
   },
 
   // Value Propositions
   valueProps: {
     heading: "Why barq TechHub?",
-    subheading: "Four critical outcomes for regulated fintech operations.",
+    subheading:
+      "Four outcomes that power CMDB visibility, lifecycle automation, compliance, and financial control.",
   },
 
   // Footer Content
   footer: {
     description:
-      "barq TechHub — Enterprise CMDB & ITAM system for financial services teams.",
+      "barq TechHub — Unified CMDB & IT Asset Management platform for Technology Operations.",
     deployment:
-      "On-premises deployment for Technology Operations with full compliance controls.",
+      "On-premises deployment with Intune sync, audit trails, and enterprise compliance controls.",
     builtBy: "Built by Barq Technology Team",
     builtFor: "Built for Technology Operations",
   },

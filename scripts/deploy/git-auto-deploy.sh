@@ -97,6 +97,68 @@ infer_stage_from_latest_deploy_log() {
     fi
 }
 
+# Strip any non-JSON lines (PM2 sometimes prints upgrade reminders before JSON)
+strip_non_json_prefix() {
+    awk 'BEGIN{started=0} {
+        if (started) {
+            print
+            next
+        }
+
+        if ($0 ~ /^[[:space:]]*[\[{\]]/) {
+            started=1
+            print
+        }
+    }'
+}
+
+# Safely extract PM2 process status even when CLI prints noisy banners
+get_pm2_process_status() {
+    local process_name="$1"
+    local pm2_raw pm2_json status describe_raw describe_json
+
+    pm2_raw=$(pm2 jlist 2>/dev/null || true)
+    if [ -n "$pm2_raw" ]; then
+        pm2_json=$(strip_non_json_prefix <<<"$pm2_raw")
+        if [ -n "$pm2_json" ]; then
+            if status=$(jq -r --arg name "$process_name" 'map(select(.name == $name)) | (.[0].pm2_env.status // empty)' 2>/dev/null <<<"$pm2_json"); then
+                if [ -n "$status" ]; then
+                    echo "$status"
+                    return 0
+                fi
+            fi
+        fi
+    fi
+
+    describe_raw=$(pm2 describe "$process_name" --json 2>/dev/null || true)
+    if [ -n "$describe_raw" ]; then
+        describe_json=$(strip_non_json_prefix <<<"$describe_raw")
+        if [ -n "$describe_json" ]; then
+            if status=$(jq -r '
+                if type == "array" then
+                    (.[0].pm2_env.status // empty)
+                elif type == "object" then
+                    (.pm2_env.status // empty)
+                else
+                    empty
+                end' 2>/dev/null <<<"$describe_json"); then
+                if [ -n "$status" ]; then
+                    echo "$status"
+                    return 0
+                fi
+            fi
+        fi
+    fi
+
+    if pm2 pid "$process_name" >/dev/null 2>&1; then
+        echo "online"
+        return 0
+    fi
+
+    echo "stopped"
+    return 0
+}
+
 # ========================================
 # Argument Parsing
 # ========================================
@@ -669,7 +731,7 @@ main() {
     # Check if worker is online via PM2
     if command -v pm2 >/dev/null 2>&1 && command -v jq >/dev/null 2>&1; then
         local worker_status
-        worker_status=$(pm2 jlist 2>/dev/null | jq -r '.[] | select(.name=="barq-worker") | .pm2_env.status' || echo "unknown")
+        worker_status=$(get_pm2_process_status "barq-worker" || echo "unknown")
 
         if [ "$worker_status" = "online" ]; then
             log "✓ Worker is online"
