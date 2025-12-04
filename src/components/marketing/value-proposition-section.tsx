@@ -34,7 +34,7 @@ interface ValuePropCardProps {
 
 /**
  * Value Proposition Card Component
- * Showcases business outcomes and SAMA compliance benefits
+ * Showcases business outcomes and compliance benefits
  */
 function ValuePropCard({
   icon: Icon,
@@ -82,9 +82,8 @@ function ValuePropCard({
 const VALUE_PROPOSITIONS = [
   {
     icon: ShieldCheck,
-    title: "SAMA Compliance",
-    description:
-      "Built for Saudi Arabia's financial services regulatory framework.",
+    title: "Regulatory Compliance",
+    description: "Built for financial services regulatory frameworks.",
     outcomes: [
       "Audit-ready documentation and disposal certificates",
       "Exportable compliance reports",
@@ -128,7 +127,7 @@ const VALUE_PROPOSITIONS = [
 
 /**
  * Value Proposition Section Component
- * Highlights business value for SAMA-regulated fintech operations
+ * Highlights business value for regulated fintech operations
  */
 export function ValuePropositionSection() {
   return (
@@ -152,7 +151,7 @@ export function ValuePropositionSection() {
             variant="outline"
             className="border-barq-yellow text-barq-yellow"
           >
-            SAMA Compliant
+            Compliance Ready
           </Badge>
         </motion.div>
         <motion.h2
@@ -352,12 +351,12 @@ export function ValuePropositionSection() {
               </TooltipContent>
             </Tooltip>
 
-            {/* SAMA Compliance */}
+            {/* Compliance */}
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="cursor-help transition-transform hover:scale-105">
                   <p className="text-barq-yellow mb-2 text-4xl font-bold">
-                    SAMA
+                    24/7
                   </p>
                   <p className="text-muted-foreground text-sm">
                     Compliance Ready
@@ -367,7 +366,7 @@ export function ValuePropositionSection() {
               <TooltipContent className="max-w-xs" side="top">
                 <div className="space-y-3">
                   <p className="text-barq-yellow text-sm font-semibold">
-                    SAMA Requirements Met:
+                    Compliance Requirements Met:
                   </p>
                   <div className="space-y-2.5 text-xs">
                     <div>

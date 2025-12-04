@@ -3,7 +3,7 @@
 /**
  * Login Page
  * Email/password and OAuth login with Microsoft via Better Auth
- * Split-screen design with branding and SAMA compliance messaging
+ * Split-screen design with branding and compliance messaging
  */
 
 import { authClient } from "@/lib/auth/client";
@@ -110,7 +110,7 @@ export default function LoginPage() {
           <div>
             <h1 className="mb-4 text-4xl font-bold">
               <span className="from-barq-yellow to-barq-yellow/70 bg-gradient-to-r bg-clip-text text-transparent">
-                SAMA-Ready
+                Audit-Ready
               </span>
               <br />
               IT Asset Management
@@ -127,12 +127,10 @@ export default function LoginPage() {
                 <ShieldCheck className="h-5 w-5" />
               </div>
               <div>
-                <p className="font-semibold">
-                  {BRANDING.sama.compliance.ready}
-                </p>
+                <p className="font-semibold">{BRANDING.compliance.ready}</p>
                 <p className="text-muted-foreground text-sm">
-                  {BRANDING.sama.compliance.features[0]} and{" "}
-                  {BRANDING.sama.compliance.features[1].toLowerCase()}
+                  {BRANDING.compliance.features[0]} and{" "}
+                  {BRANDING.compliance.features[1].toLowerCase()}
                 </p>
               </div>
             </div>
@@ -253,7 +251,7 @@ export default function LoginPage() {
                 <div className="flex items-center gap-2 text-sm">
                   <Shield className="text-barq-yellow h-4 w-4 flex-shrink-0" />
                   <p className="text-muted-foreground text-xs">
-                    {BRANDING.sama.compliance.internal}
+                    {BRANDING.compliance.internal}
                   </p>
                 </div>
               </div>

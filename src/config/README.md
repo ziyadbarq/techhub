@@ -299,14 +299,14 @@ import { BRANDING, getCopyrightText } from "@/config/branding";
 </footer>;
 ```
 
-#### SAMA Compliance Notice
+#### Compliance Notice
 
 ```tsx
 import { BRANDING } from "@/config/branding";
 
 <div className="compliance-notice">
   <Shield className="icon" />
-  <p>{BRANDING.sama.compliance.internal}</p>
+  <p>{BRANDING.compliance.internal}</p>
 </div>;
 ```
 

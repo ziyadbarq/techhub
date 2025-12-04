@@ -251,7 +251,7 @@ export default function RegisterPage() {
                 <div className="flex items-center gap-2 text-sm">
                   <Shield className="text-barq-yellow h-4 w-4 flex-shrink-0" />
                   <p className="text-muted-foreground text-xs">
-                    {BRANDING.sama.compliance.internalApproval}
+                    {BRANDING.compliance.internalApproval}
                   </p>
                 </div>
               </div>

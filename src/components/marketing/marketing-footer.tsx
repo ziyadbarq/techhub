@@ -4,8 +4,6 @@ import Link from "next/link";
 import { Logo } from "@/components/ui/logo";
 import { ExternalLink } from "lucide-react";
 import { BRANDING, getCopyrightText } from "@/config/branding";
-import { authClient } from "@/lib/auth/client";
-import { useEffect, useState } from "react";
 
 /**
  * Marketing Footer Component
@@ -13,19 +11,6 @@ import { useEffect, useState } from "react";
  */
 export function MarketingFooter() {
   const currentYear = new Date().getFullYear();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // Check session after mount to avoid SSR issues with better-auth
-  useEffect(() => {
-    authClient
-      .getSession()
-      .then((session) => {
-        setIsLoggedIn(!!session?.data?.user);
-      })
-      .catch(() => {
-        setIsLoggedIn(false);
-      });
-  }, []);
 
   return (
     <footer className="bg-muted/30 w-full border-t">
@@ -42,7 +27,7 @@ export function MarketingFooter() {
                 🔒 Internal Use Only
               </p>
               <p className="text-muted-foreground mt-1 text-xs">
-                {BRANDING.sama.compliance.tagline}
+                {BRANDING.compliance.tagline}
               </p>
             </div>
           </div>
@@ -55,7 +40,7 @@ export function MarketingFooter() {
             <ul className="space-y-3 text-sm">
               <li>
                 <Link
-                  href={isLoggedIn ? "/dashboard" : "/login"}
+                  href="/dashboard"
                   className="text-muted-foreground hover:text-barq-yellow transition-colors"
                 >
                   Login
@@ -63,7 +48,7 @@ export function MarketingFooter() {
               </li>
               <li>
                 <Link
-                  href={isLoggedIn ? "/dashboard" : "/login"}
+                  href="/dashboard"
                   className="text-muted-foreground hover:text-barq-yellow transition-colors"
                 >
                   Dashboard
@@ -132,7 +117,7 @@ export function MarketingFooter() {
               </li>
               <li>
                 <span className="text-muted-foreground text-xs">
-                  {BRANDING.sama.regulator}
+                  {BRANDING.compliance.regulator}
                 </span>
               </li>
             </ul>

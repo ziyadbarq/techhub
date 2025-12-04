@@ -10,7 +10,7 @@ import { BRANDING } from "@/config/branding";
 
 const faqs = [
   {
-    question: "Is barq TechHub compliant with SAMA regulations?",
+    question: "Is barq TechHub compliant with financial regulations?",
     answer:
       "Yes. Immutable audit trails, disposal certificates, and exportable compliance reports. All changes logged with who, what, when, and why.",
   },

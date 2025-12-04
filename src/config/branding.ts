@@ -48,50 +48,47 @@ export const BRANDING = {
 
   // Taglines & Descriptions
   taglines: {
-    main: "SAMA-Ready IT Asset Management for Financial Services",
+    main: "Enterprise CMDB & IT Asset Management for Financial Services",
     short: "Enterprise CMDB & ITAM system",
     hero: "Track everything. Automate workflows. Pass audits.",
-    compliance: "Built for SAMA compliance.",
+    compliance: "Built for financial services compliance.",
     full: "Complete asset and inventory management for barq. Track devices, manage warranties, control inventory, and maintain full audit trails with enterprise-grade architecture.",
     landing:
-      "Enterprise IT Asset Management and CMDB built for SAMA-regulated financial services. Track assets, manage dependencies, ensure compliance, and pass audits with confidence.",
+      "Enterprise IT Asset Management and CMDB built for regulated financial services operations. Track assets, manage dependencies, ensure compliance, and pass audits with confidence.",
     auth: "Enterprise CMDB & ITAM system built for financial services compliance and operational excellence.",
   },
 
   // Value Propositions
   valueProps: {
     heading: "Why barq TechHub?",
-    subheading: "Four critical outcomes for SAMA-regulated fintech operations.",
+    subheading: "Four critical outcomes for regulated fintech operations.",
   },
 
   // Footer Content
   footer: {
     description:
-      "barq TechHub — Enterprise CMDB & ITAM system. SAMA-compliant asset management for financial services.",
+      "barq TechHub — Enterprise CMDB & ITAM system for financial services teams.",
     deployment:
-      "On-premises deployment for Technology Operations. SAMA-compliant ITAM & CMDB.",
+      "On-premises deployment for Technology Operations with full compliance controls.",
     builtBy: "Built by Barq Technology Team",
     builtFor: "Built for Technology Operations",
   },
 
-  // SAMA Compliance
-  sama: {
-    name: "SAMA",
-    fullName: "Saudi Central Bank",
-    formerName: "Saudi Arabia Monetary Agency",
-    regulator: "Regulated by SAMA (Saudi Central Bank)",
-    compliance: {
-      ready: "SAMA Compliance Ready",
-      tagline: "Built for SAMA regulatory compliance and audit readiness",
-      internal: "Internal use only. All access is logged for SAMA compliance.",
-      internalApproval:
-        "Internal use only. Contact Technology Operations for access approval.",
-      features: [
-        "Immutable audit trails",
-        "Disposal certificates",
-        "Exportable compliance reports",
-      ],
-    },
+  // Compliance Messaging
+  compliance: {
+    label: "Regulatory Compliance",
+    regulator: "Internal platform for regulated financial services operations",
+    ready: "Regulatory Compliance Ready",
+    tagline:
+      "Built for financial services regulatory compliance and audit readiness",
+    internal: "Internal use only. All access is logged for compliance.",
+    internalApproval:
+      "Internal use only. Contact Technology Operations for access approval.",
+    features: [
+      "Immutable audit trails",
+      "Disposal certificates",
+      "Exportable compliance reports",
+    ],
   },
 
   // Contact
@@ -123,14 +120,14 @@ export const BRANDING = {
   metadata: {
     title: {
       home: "barq TechHub | Enterprise CMDB & ITAM System",
-      landing: "barq TechHub | SAMA-Ready CMDB & ITAM System",
+      landing: "barq TechHub | Enterprise CMDB & ITAM System",
       auth: "barq TechHub",
     },
     description: {
       default:
         "Complete asset and inventory management for barq. Track devices, manage warranties, control inventory, and maintain full audit trails with enterprise-grade architecture.",
       landing:
-        "Enterprise IT Asset Management and CMDB built for SAMA-regulated financial services. Track assets, manage dependencies, ensure compliance, and pass audits with confidence.",
+        "Enterprise IT Asset Management and CMDB built for regulated financial services operations. Track assets, manage dependencies, ensure compliance, and pass audits with confidence.",
       auth: "Enterprise CMDB & ITAM system built for financial services compliance and operational excellence.",
     },
   },
@@ -146,9 +143,9 @@ export const BRANDING = {
     register: {
       heading: "Join the barq TechHub Team",
       subheading:
-        "Get access to enterprise-grade ITAM & CMDB built for SAMA-regulated financial services.",
+        "Get access to enterprise-grade ITAM & CMDB built for regulated financial services.",
       cta: "Create Account",
-      ctaSubheading: "Join barq TechHub for SAMA-compliant ITAM",
+      ctaSubheading: "Join barq TechHub for compliant ITAM",
     },
     login: {
       heading: "Welcome Back",

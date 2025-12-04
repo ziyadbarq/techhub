@@ -83,9 +83,9 @@ const TEAM_USE_CASES = [
   {
     icon: FileCheck,
     team: "Compliance & Audit",
-    description: "SAMA audit readiness",
+    description: "Regulatory audit readiness",
     examples: [
-      "Export change logs for SAMA audits",
+      "Export change logs for regulatory audits",
       "Review disposal certificates",
       "Run verification campaigns",
       "Generate filtered compliance reports",

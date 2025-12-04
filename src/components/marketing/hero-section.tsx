@@ -2,33 +2,18 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, LogIn, ChevronDown, LayoutDashboard } from "lucide-react";
+import { ArrowRight, ChevronDown, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BRANDING } from "@/config/branding";
-import { authClient } from "@/lib/auth/client";
-import { useEffect, useState } from "react";
 
 /**
  * Hero Section Component
  * Landing page hero with tagline, subheading, and CTAs
  */
 export function HeroSection() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Check session after mount to avoid SSR issues with better-auth
-  useEffect(() => {
-    authClient
-      .getSession()
-      .then((session) => {
-        setIsLoggedIn(!!session?.data?.user);
-        setIsLoading(false);
-      })
-      .catch(() => {
-        setIsLoggedIn(false);
-        setIsLoading(false);
-      });
-  }, []);
+  const [firstWord, secondWord = "", ...restWords] =
+    BRANDING.taglines.main.split(" ");
+  const restOfTagline = restWords.join(" ");
 
   return (
     <div className="relative w-full overflow-hidden">
@@ -45,16 +30,17 @@ export function HeroSection() {
             transition={{ duration: 0.6 }}
             className="mb-6 max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
           >
-            {BRANDING.taglines.main.includes("SAMA-Ready") ? (
+            <span className="from-barq-yellow to-barq-yellow/70 bg-gradient-to-r bg-clip-text text-transparent">
+              {firstWord}
+            </span>{" "}
+            {secondWord && (
               <>
                 <span className="from-barq-yellow to-barq-yellow/70 bg-gradient-to-r bg-clip-text text-transparent">
-                  SAMA-Ready
+                  {secondWord}
                 </span>{" "}
-                {BRANDING.taglines.main.replace("SAMA-Ready ", "")}
               </>
-            ) : (
-              BRANDING.taglines.main
             )}
+            {restOfTagline}
           </motion.h1>
 
           {/* Subheading */}
@@ -81,19 +67,10 @@ export function HeroSection() {
               asChild
               size="lg"
               className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90"
-              disabled={isLoading}
             >
-              <Link href={isLoggedIn ? "/dashboard" : "/login"}>
-                {isLoggedIn ? (
-                  <LayoutDashboard className="mr-2 h-5 w-5" />
-                ) : (
-                  <LogIn className="mr-2 h-5 w-5" />
-                )}
-                {isLoading
-                  ? "Loading..."
-                  : isLoggedIn
-                    ? "Go to Dashboard"
-                    : "Login to Dashboard"}
+              <Link href="/dashboard">
+                <LayoutDashboard className="mr-2 h-5 w-5" />
+                Go to Dashboard
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline">
