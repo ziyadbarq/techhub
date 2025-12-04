@@ -282,6 +282,32 @@ file_size() {
     du -sh "$1" 2>/dev/null | awk '{print $1}' || echo "unknown"
 }
 
+get_pm2_status() {
+    local name="$1"
+    local raw status fallback
+
+    # Try jlist (with noisy banners stripped)
+    raw=$(pm2 jlist --silent 2>/dev/null | sed -n '/^\[/,$p')
+
+    # Fallback: describe single process
+    if [ -z "$raw" ]; then
+        raw=$(pm2 describe "$name" --json 2>/dev/null | sed -n '/^\[/,$p')
+    fi
+
+    if [ -n "$raw" ]; then
+        status=$(echo "$raw" | jq -r '.[] | select(.name=="'"$name"'") | .pm2_env.status' 2>/dev/null || true)
+    fi
+
+    # Last resort: parse pm2 list table for "online"
+    if [ -z "$status" ] || [ "$status" = "null" ]; then
+        if pm2 list 2>/dev/null | grep -E "[[:space:]]$name[[:space:]]" | grep -q "online"; then
+            status="online"
+        fi
+    fi
+
+    echo "${status:-unknown}"
+}
+
 # ========================================
 # STAGE 1: Pre-flight Checks
 # ========================================
@@ -688,7 +714,7 @@ stage_pm2_reload() {
     else
         # Verify web process
         local web_status
-        web_status=$(pm2 jlist 2>/dev/null | jq -r '.[] | select(.name=="barq-web") | .pm2_env.status' || echo "unknown")
+        web_status=$(get_pm2_status "barq-web")
 
         if [ "$web_status" = "online" ]; then
             log_success "barq-web is online ✓"
@@ -702,7 +728,7 @@ stage_pm2_reload() {
 
         # Verify worker process (non-blocking)
         local worker_status
-        worker_status=$(pm2 jlist 2>/dev/null | jq -r '.[] | select(.name=="barq-worker") | .pm2_env.status' || echo "unknown")
+        worker_status=$(get_pm2_status "barq-worker")
 
         if [ "$worker_status" = "online" ]; then
             log_success "barq-worker is online ✓"
