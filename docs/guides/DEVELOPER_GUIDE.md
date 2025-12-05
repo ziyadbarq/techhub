@@ -182,6 +182,24 @@ If validation fails, the user is redirected to `/auth/blocked` with an appropria
 2. Employees can then sign in via Microsoft OAuth
 3. Person record is automatically linked to User on first login
 
+**ENCRYPTION_KEY Requirement:**
+
+Microsoft OAuth **requires** the `ENCRYPTION_KEY` environment variable for secure token storage:
+
+- **Purpose**: AES-256-GCM encryption of OAuth tokens (access tokens, refresh tokens, ID tokens)
+- **Format**: Exactly 64 hexadecimal characters (32 bytes)
+- **Generation**: `openssl rand -hex 32`
+- **Security**: Must be unique per environment (dev/staging/prod), never reuse
+- **Impact**: Without this key, Microsoft OAuth login will fail with validation error
+
+**Implementation**: See [src/lib/auth/encryption.ts](src/lib/auth/encryption.ts) for encryption/decryption functions used by Better Auth.
+
+**Key Management Best Practices:**
+- Generate different keys for each environment
+- Store in secure secrets manager (AWS Secrets Manager, Vercel env vars, etc.)
+- Back up keys securely - losing the key means losing access to encrypted tokens
+- Rotate keys regularly and decrypt/re-encrypt existing tokens during rotation
+
 ### 3d. Client-Side Permissions via usePermissions()
 
 In client components within the dashboard, use `usePermissions()` hook which delegates to the centralized `PermissionsProvider`. This prevents duplicate permission API calls.
@@ -284,8 +302,19 @@ cd barq-assets
 npm install
 
 # Set up environment variables
-cp .env.example .env
-# Edit .env with your database URL and OpenAI key
+cp .env.example .env.local
+# Edit .env.local with your configuration
+
+# CRITICAL: Generate ENCRYPTION_KEY for Microsoft SSO
+# This key is REQUIRED for OAuth token encryption (32 bytes = 64 hex chars)
+openssl rand -hex 32
+# Copy the output and add to .env.local: ENCRYPTION_KEY=<output>
+
+# Configure other required variables in .env.local:
+# - DATABASE_URL (PostgreSQL connection string)
+# - REDIS_URL (Redis connection for background jobs)
+# - OPENAI_API_KEY (for AI features)
+# - NEXT_PUBLIC_APP_URL (your application URL)
 
 # Apply database migrations
 npm run db:migrate

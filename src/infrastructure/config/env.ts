@@ -22,8 +22,88 @@
  * @see https://env.t3.gg/docs/nextjs
  */
 
+/// <reference types="node" />
+
+import process from "node:process";
+
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
+
+type ServerEnvKeys =
+  | "DATABASE_URL"
+  | "REDIS_URL"
+  | "OPENAI_API_KEY"
+  | "NODE_ENV"
+  | "LOG_LEVEL"
+  | "AI_DEBUG_MODE"
+  | "ENCRYPTION_KEY"
+  | "BACKUP_STORAGE_PATH"
+  | "PG_DUMP_PATH"
+  | "PG_DUMP_FLAGS"
+  | "PSQL_PATH"
+  | "PSQL_FLAGS"
+  | "BACKUP_VERIFY_TEMP_DB"
+  | "SKIP_TYPE_CHECK"
+  | "ANALYZE";
+
+type ClientEnvKeys =
+  | "NEXT_PUBLIC_APP_URL"
+  | "NEXT_PUBLIC_FEATURE_FLAGS_POLL_INTERVAL"
+  | "NEXT_PUBLIC_ENABLE_EMAIL_REGISTRATION"
+  | "NEXT_PUBLIC_ENABLE_MS_AUTH";
+
+type RuntimeEnvKeys = ServerEnvKeys | ClientEnvKeys;
+
+const isTestEnv = process.env.NODE_ENV === "test";
+
+const testEnvFallbacks: Partial<Record<RuntimeEnvKeys, string>> = {
+  DATABASE_URL: "postgresql://user:password@localhost:5432/test?schema=public",
+  REDIS_URL: "redis://localhost:6379",
+  OPENAI_API_KEY: "sk-test",
+  ENCRYPTION_KEY:
+    "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  NEXT_PUBLIC_APP_URL: "http://localhost:3000",
+};
+
+const resolveEnv = (key: RuntimeEnvKeys): string | undefined => {
+  const value = process.env[key];
+  if (value && value.length > 0) {
+    return value;
+  }
+  if (isTestEnv) {
+    return testEnvFallbacks[key];
+  }
+  return undefined;
+};
+
+const runtimeEnv = {
+  // Server-side variables
+  DATABASE_URL: resolveEnv("DATABASE_URL"),
+  REDIS_URL: resolveEnv("REDIS_URL"),
+  OPENAI_API_KEY: resolveEnv("OPENAI_API_KEY"),
+  NODE_ENV: resolveEnv("NODE_ENV"),
+  LOG_LEVEL: resolveEnv("LOG_LEVEL"),
+  AI_DEBUG_MODE: resolveEnv("AI_DEBUG_MODE"),
+  ENCRYPTION_KEY: resolveEnv("ENCRYPTION_KEY"),
+  BACKUP_STORAGE_PATH: resolveEnv("BACKUP_STORAGE_PATH"),
+  PG_DUMP_PATH: resolveEnv("PG_DUMP_PATH"),
+  PG_DUMP_FLAGS: resolveEnv("PG_DUMP_FLAGS"),
+  PSQL_PATH: resolveEnv("PSQL_PATH"),
+  PSQL_FLAGS: resolveEnv("PSQL_FLAGS"),
+  BACKUP_VERIFY_TEMP_DB: resolveEnv("BACKUP_VERIFY_TEMP_DB"),
+  SKIP_TYPE_CHECK: resolveEnv("SKIP_TYPE_CHECK"),
+  ANALYZE: resolveEnv("ANALYZE"),
+
+  // Client-side variables
+  NEXT_PUBLIC_APP_URL: resolveEnv("NEXT_PUBLIC_APP_URL"),
+  NEXT_PUBLIC_FEATURE_FLAGS_POLL_INTERVAL: resolveEnv(
+    "NEXT_PUBLIC_FEATURE_FLAGS_POLL_INTERVAL",
+  ),
+  NEXT_PUBLIC_ENABLE_EMAIL_REGISTRATION: resolveEnv(
+    "NEXT_PUBLIC_ENABLE_EMAIL_REGISTRATION",
+  ),
+  NEXT_PUBLIC_ENABLE_MS_AUTH: resolveEnv("NEXT_PUBLIC_ENABLE_MS_AUTH"),
+} satisfies Record<RuntimeEnvKeys, string | undefined>;
 
 export const env = createEnv({
   /**
@@ -86,6 +166,45 @@ export const env = createEnv({
       .enum(["true", "false", "1", "0"])
       .optional()
       .transform((val) => val === "true" || val === "1"),
+
+    /**
+     * AES-256-GCM encryption key for OAuth tokens (REQUIRED for Microsoft SSO)
+     * Must be exactly 64 hex characters (32 bytes)
+     * Generate with: openssl rand -hex 32
+     * @example "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+     */
+    ENCRYPTION_KEY: z
+      .string()
+      .length(64, "ENCRYPTION_KEY must be exactly 64 hex characters (32 bytes)")
+      .regex(
+        /^[0-9a-f]{64}$/,
+        "ENCRYPTION_KEY must contain only lowercase hex characters (0-9, a-f)",
+      ),
+
+    /**
+     * Database Backup Configuration (optional)
+     */
+    BACKUP_STORAGE_PATH: z.string().optional(),
+    PG_DUMP_PATH: z.string().optional(),
+    PG_DUMP_FLAGS: z.string().optional(),
+    PSQL_PATH: z.string().optional(),
+    PSQL_FLAGS: z.string().optional(),
+    BACKUP_VERIFY_TEMP_DB: z
+      .enum(["true", "false"])
+      .optional()
+      .transform((val) => val === "true"),
+
+    /**
+     * Build Optimization (optional)
+     */
+    SKIP_TYPE_CHECK: z
+      .enum(["true", "false"])
+      .optional()
+      .transform((val) => val === "true"),
+    ANALYZE: z
+      .enum(["true", "false"])
+      .optional()
+      .transform((val) => val === "true"),
   },
 
   /**
@@ -95,9 +214,37 @@ export const env = createEnv({
    * Access them via `env.NEXT_PUBLIC_VARIABLE_NAME` in both client and server code.
    */
   client: {
-    // Add client-side env vars here when needed
-    // Example:
-    // NEXT_PUBLIC_API_URL: z.string().url(),
+    /**
+     * Public application URL
+     * Used for generating links in emails, webhooks, etc.
+     * @example "https://yourdomain.com"
+     */
+    NEXT_PUBLIC_APP_URL: z.string().url(),
+
+    /**
+     * Feature flags polling interval in milliseconds
+     * Set to 0 to disable automatic polling (only fetches when tab becomes visible)
+     * @default 30000 (30 seconds)
+     */
+    NEXT_PUBLIC_FEATURE_FLAGS_POLL_INTERVAL: z.coerce.number().default(30000),
+
+    /**
+     * Enable/disable email/password registration UI
+     * @default "true"
+     */
+    NEXT_PUBLIC_ENABLE_EMAIL_REGISTRATION: z
+      .enum(["true", "false"])
+      .default("true")
+      .transform((val) => val === "true"),
+
+    /**
+     * Enable/disable Microsoft OAuth (both login and registration)
+     * @default "true"
+     */
+    NEXT_PUBLIC_ENABLE_MS_AUTH: z
+      .enum(["true", "false"])
+      .default("true")
+      .transform((val) => val === "true"),
   },
 
   /**
@@ -106,18 +253,7 @@ export const env = createEnv({
    * Maps the schema keys to actual environment variable names.
    * This allows for custom naming or conditional loading.
    */
-  runtimeEnv: {
-    // Server-side variables
-    DATABASE_URL: process.env.DATABASE_URL,
-    REDIS_URL: process.env.REDIS_URL,
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-    NODE_ENV: process.env.NODE_ENV,
-    LOG_LEVEL: process.env.LOG_LEVEL,
-    AI_DEBUG_MODE: process.env.AI_DEBUG_MODE,
-
-    // Client-side variables (when added)
-    // NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
-  },
+  runtimeEnv,
 
   /**
    * Skip validation in specific contexts
