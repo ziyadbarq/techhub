@@ -17,7 +17,7 @@
  * <DataTable
  *   columns={columns}
  *   data={users}
- *   pagination={{ pageSize: 10 }}
+ *   // pagination prop is optional - defaults to pageSize: 10
  * />
  * ```
  */
@@ -70,6 +70,11 @@ import {
 } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+
+// Pagination constants following SOLID principles
+export const VALID_PAGE_SIZES = [10, 50, 100, 500] as const;
+export const DEFAULT_PAGE_SIZE = 10;
+export type ValidPageSize = (typeof VALID_PAGE_SIZES)[number];
 
 export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -168,7 +173,7 @@ export function DataTable<TData, TValue>({
     React.useState<PaginationState>(
       controlledState?.pagination ?? {
         pageIndex: pagination?.pageIndex ?? 0,
-        pageSize: pagination?.pageSize ?? 10,
+        pageSize: pagination?.pageSize ?? DEFAULT_PAGE_SIZE,
       },
     );
 
@@ -241,7 +246,7 @@ export function DataTable<TData, TValue>({
       const current = pagination
         ? {
             pageIndex: pagination.pageIndex ?? 0,
-            pageSize: pagination.pageSize ?? 10,
+            pageSize: pagination.pageSize ?? DEFAULT_PAGE_SIZE,
           }
         : internalPagination;
       const next =
@@ -279,7 +284,9 @@ export function DataTable<TData, TValue>({
     pageCount:
       pagination?.pageCount ??
       (pagination?.total
-        ? Math.ceil(pagination.total / (pagination.pageSize ?? 10))
+        ? Math.ceil(
+            pagination.total / (pagination.pageSize ?? DEFAULT_PAGE_SIZE),
+          )
         : undefined),
   });
 
@@ -476,7 +483,7 @@ export function DataTable<TData, TValue>({
               }}
               className="h-8 w-[70px] rounded-md border bg-transparent px-2 text-sm"
             >
-              {[10, 50, 100, 500].map((pageSize) => (
+              {VALID_PAGE_SIZES.map((pageSize) => (
                 <option key={pageSize} value={pageSize}>
                   {pageSize}
                 </option>

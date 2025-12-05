@@ -11,6 +11,7 @@
  */
 
 "use client";
+"use no memo";
 
 import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";

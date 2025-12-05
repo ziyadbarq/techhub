@@ -6,6 +6,7 @@
  */
 
 "use client";
+"use no memo";
 
 import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";
@@ -276,9 +277,6 @@ export function PermissionTable({
         searchPlaceholder="Search permissions..."
         showColumnToggle
         emptyMessage="No permissions found. Create one to get started!"
-        pagination={{
-          pageSize: 20,
-        }}
       />
 
       {/* Delete Confirmation Dialog */}

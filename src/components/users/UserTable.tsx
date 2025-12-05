@@ -6,6 +6,7 @@
  */
 
 "use client";
+"use no memo";
 
 import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";
@@ -229,9 +230,6 @@ export function UserTable({
         selectable
         onSelectionChange={setSelectedUsers}
         emptyMessage="No users found."
-        pagination={{
-          pageSize: 10,
-        }}
         toolbarActions={
           selectedUsers.length > 0 ? (
             <Button

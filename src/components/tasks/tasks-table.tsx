@@ -6,6 +6,7 @@
  */
 
 "use client";
+"use no memo";
 
 import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";
@@ -336,9 +337,6 @@ export function TasksTable({
         onSelectionChange={setSelectedRows}
         showColumnToggle
         emptyMessage="No tasks found. Create one to get started!"
-        pagination={{
-          pageSize: 10,
-        }}
         toolbarActions={
           <div className="flex items-center gap-2">
             {selectedRows.length > 0 &&

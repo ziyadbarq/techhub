@@ -503,9 +503,6 @@ export function StockMovementsTable({
               ? "No stock movements found. Create one to get started!"
               : "No active stock movements found."
         }
-        pagination={{
-          pageSize: 20,
-        }}
       />
 
       {/* Detail Sheet */}

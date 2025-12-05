@@ -3,6 +3,7 @@
  */
 
 "use client";
+"use no memo";
 
 import * as React from "react";
 import { type ColumnDef } from "@tanstack/react-table";
@@ -166,9 +167,6 @@ export function LifecycleTransitionsTable({
         onSelectionChange={_setSelectedRows}
         showColumnToggle
         emptyMessage="No transitions found. Create one to get started!"
-        pagination={{
-          pageSize: 10,
-        }}
       />
 
       {/* Delete Confirmation Dialog */}

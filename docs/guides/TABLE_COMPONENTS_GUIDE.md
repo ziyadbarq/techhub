@@ -40,6 +40,43 @@ export function PersonsTable({ persons }) {
 }
 ```
 
+## Critical: React Compiler Compatibility
+
+**REQUIRED**: All TanStack Table components MUST include the `"use no memo"` directive to ensure compatibility with React 19's Compiler.
+
+### The Directive
+
+```tsx
+"use client";
+"use no memo";  // Required for React Compiler compatibility
+
+import * as React from "react";
+import type { ColumnDef } from "@tanstack/react-table";
+```
+
+### Why This Is Required
+
+- **TanStack Table v8 is incompatible** with React 19's Compiler
+- Without the directive, tables may fail to re-render properly
+- The directive tells React Compiler to skip optimization for this component
+- This is React's official escape hatch for incompatible libraries
+
+### Placement Rules
+
+1. **Must be BEFORE all imports** (comments are OK before the directive)
+2. **Must use double or single quotes** (NOT backticks)
+3. **Must exactly match** `"use no memo"` or its alias `"use no forget"`
+
+### When to Remove
+
+- When upgrading to **TanStack Table v9** (expected Q2-Q3 2025)
+- See [STACK_UPGRADES.md](STACK_UPGRADES.md) for migration guide
+- All `"use no memo"` directives should be removed after the upgrade
+
+**Learn more**: [React Compiler Directives](https://react.dev/reference/react-compiler/directives/use-no-memo)
+
+---
+
 ### Advanced Table (With URL Sync + Filters)
 
 **Note**: When using filters, pre-filter the data instead of using controlled `columnFilters` (see [Critical Pattern](#critical-pattern-pre-filter-data-dont-use-controlled-columnfilters)).
