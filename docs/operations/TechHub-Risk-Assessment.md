@@ -97,14 +97,21 @@ Comprehensive risk view for the Barq TechHub IT Asset Management (ITAM) and CMDB
 
 **Platform implements 269 granular permissions across 14 permission groups.** Role assignments currently managed manually via database during development; production will integrate with Azure AD security groups.
 
-| Role                             | Purpose                                                           | Implementation Status                                          | Production Plan                                           |
-| -------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------- | --------------------------------------------------------- |
-| **System Administrator**   | Full platform configuration, feature flags, deployment approvals  | Implemented via RBAC (system-administrator role seeded)        | Map to Azure AD security group with CAB approval workflow |
-| **Security Administrator** | Audit exports, disposal certificate review, compliance dashboards | Implemented via RBAC (security-administrator role seeded)      | InfoSec approval + read-only finance access               |
-| **Platform Operator**      | Queue monitoring, Intune sync, job retries                        | Permission structure defined (operations-manager role seeded)  | TechOps manager approval, no schema modification rights   |
-| **Database Administrator** | PostgreSQL/Redis maintenance, schema migrations                   | Outside platform scope (native DB access)                      | Separate bastion access with SSH certificates             |
-| **Department Manager**     | View departmental assets, approve verifications                   | Implemented via RBAC (department-manager role + row-level sec) | Department head assignment via HR sync                    |
-| **Viewer**                 | Read-only access to assigned modules                              | Implemented via RBAC (viewer role seeded)                      | Default role for general staff                            |
+| Role                          | Purpose                                                              | Implementation Status                               | Production Plan                                           |
+| ----------------------------- | -------------------------------------------------------------------- | --------------------------------------------------- | --------------------------------------------------------- |
+| **System Administrator** | Full platform configuration with all permissions                     | Implemented (system-administrator role seeded)      | Map to Azure AD security group with CAB approval workflow |
+| **Viewer**               | Minimal read-only access - dashboard and documentation only          | Implemented (viewer role seeded)                    | Default role for general staff                            |
+| **Auditor**              | SAMA compliance officer - audit, verification, regulatory reporting  | Implemented (auditor role seeded)                   | InfoSec approval + read-only cross-module access          |
+| **IT Help Desk**         | Front-line IT support - user assistance, checkouts, reservations     | Implemented (it-help-desk role seeded)              | Service desk team assignment                              |
+| **Maintenance Technician**| Hands-on technical support - repairs, preventive maintenance        | Implemented (maintenance-technician role seeded)    | Facilities team assignment                                |
+| **Asset Coordinator**    | Asset lifecycle specialist - asset management, depreciation tracking | Implemented (asset-coordinator role seeded)         | Asset management team assignment                          |
+| **Finance Manager**      | Financial oversight - contracts, licenses, procurement, FX rates     | Implemented (finance-manager role seeded)           | Finance team approval required                            |
+| **Inventory Manager**    | Stock and warehouse management - inventory tracking, receiving       | Implemented (inventory-manager role seeded)         | Warehouse team assignment                                 |
+| **Security Officer**     | Information security - governance, data domains, InfoSec compliance  | Implemented (security-officer role seeded)          | InfoSec team assignment                                   |
+| **Service Owner**        | IT service management - service catalog, CMDB, business alignment    | Implemented (service-owner role seeded)             | Service managers assignment                               |
+| **Data Steward**         | Data quality specialist - data classification, ownership (SAMA)      | Implemented (data-steward role seeded)              | Data governance team assignment                           |
+| **HR Manager**           | Human Resources - employee data, org structure, people management    | Implemented (hr-manager role seeded)                | People & Culture team assignment                          |
+| **Database Administrator**| PostgreSQL/Redis maintenance, schema migrations                     | Outside platform scope (native DB access)           | Separate bastion access with SSH certificates             |
 
 ---
 

@@ -235,3 +235,11 @@ See [DATABASE_SCHEMA.md](docs/architecture/DATABASE_SCHEMA.md) for database nami
 ## Adding New Scripts
 
 See [scripts/README.md](scripts/README.md) for script organization, technology standards (`@inquirer/prompts` v8+, Prisma singleton, structured logging), and complete guide.
+
+## Documentation Organization
+
+**Archive to `docs/archive/`**: Completed implementations, status indicators (✅, ⏳, 🚧), phase reports
+
+**Delete**: Duplicates and files that only reference others
+
+See [docs/README.md](docs/README.md) for structure and complete index.

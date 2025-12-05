@@ -158,6 +158,26 @@ Development tools and utilities:
 - **[MISSING]** Testing Guide - Unit testing, integration testing, and test patterns
 - **[MISSING]** Deployment Guide - Production deployment, environment setup, and CI/CD
 
+## 🗄️ Operations & Deployment
+
+Operational documentation and deployment resources:
+
+- [Automated Deployment Guide](./operations/AUTOMATED_DEPLOYMENT.md) - PM2 deployment workflows and automation
+- [TechHub Risk Assessment](./operations/TechHub-Risk-Assessment.md) - Comprehensive risk assessment for CMDB and IT asset management platform
+- [Auth Security Testing Guide](./testing/AUTH_SECURITY_TESTING_GUIDE.md) - Security testing procedures and validation
+
+## 📦 Releases & Archive
+
+Release notes and archived documentation:
+
+- [Release Notes](./releases/) - Version release notes and changelogs
+  - [v1.2.0](./releases/RELEASE_NOTES_v1.2.0.md)
+  - [v1.3.0](./releases/RELEASE_NOTES_v1.3.0.md)
+- [Archive](./archive/) - Historical documentation and completed implementation summaries
+  - [Person-Role Removal](./archive/PERSON_ROLE_REMOVAL.md) - Completed implementation (Dec 2025)
+  - [Phase 3 DI Modularization](./archive/PHASE_3_SUMMARY.md) - DI container refactoring summary
+  - [Scripts Reorganization](./archive/scripts-reorganization-mapping.md) - Historical file mapping
+
 ## 🎯 Public & Marketing
 
 Content for public-facing pages:
@@ -219,4 +239,4 @@ When adding new documentation:
 
 ---
 
-**Last Updated**: November 2025
+**Last Updated**: December 2025
