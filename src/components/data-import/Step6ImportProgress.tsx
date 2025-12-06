@@ -22,6 +22,7 @@ import type {
 } from "@/lib/data-import/entity-config.types";
 import { importProcessor } from "@/lib/data-import/import-processor";
 import { processUniversalAssetsImportAction } from "@/interface-adapters/controllers/universal-assets-import.controller";
+import { ensureFeatureEnabledForImportAction } from "@/interface-adapters/controllers/data-import.controller";
 import {
   Card,
   CardContent,
@@ -110,6 +111,17 @@ export function Step6ImportProgress({
 
     const runImport = async () => {
       try {
+        // Check if the feature is enabled before importing
+        const featureGuardResult = await ensureFeatureEnabledForImportAction(
+          entity.featureFlag,
+        );
+        if (!featureGuardResult.success) {
+          throw new Error(
+            featureGuardResult.error ??
+              `${entity.name} import is unavailable because its feature is disabled.`,
+          );
+        }
+
         let result: ImportResult;
 
         if (isUniversalAssetsImport) {

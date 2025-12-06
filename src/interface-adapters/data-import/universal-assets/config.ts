@@ -11,6 +11,7 @@ import type {
 } from "@/lib/data-import/entity-config.types";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { STANDARD_SANITIZATION } from "@/lib/data-import/field-builders";
+import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 
 /**
  * Field definitions for Universal Assets Import
@@ -287,6 +288,7 @@ export const UNIVERSAL_ASSETS_CONFIG: EntityConfig = {
   description:
     "Import assets with all related data in a single file. Auto-creates manufacturers, categories, models, locations, and custom fields as needed.",
   category: "ASSET_MANAGEMENT",
+  featureFlag: FEATURE_FLAGS.ASSETS,
 
   // Permissions
   permission: PERMISSIONS.ASSETS_CREATE,

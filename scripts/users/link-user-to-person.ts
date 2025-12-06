@@ -79,34 +79,54 @@ async function linkUsersToPersons() {
       const { firstName, lastName } = parseName(user.name ?? user.email);
       const email = normalizedEmail ?? `${user.id}@local.barq`;
 
-      // Check if Person already exists with this email (unlinked)
+      // Check if Person already exists with this email (unlinked only)
       const existingPerson = await prisma.person.findFirst({
         where: {
           email: { equals: email, mode: "insensitive" },
-          userId: null,
+          userId: null, // Only find unlinked Person records
         },
       });
 
       if (existingPerson) {
-        // Link existing Person to User
-        await prisma.person.update({
-          where: { id: existingPerson.id },
-          data: { userId: user.id },
-        });
+        if (existingPerson.userId && existingPerson.userId !== user.id) {
+          console.log(
+            `  ⚠️  Skipping ${user.email}: Person already linked to a different user`,
+          );
+          continue;
+        }
 
-        console.log(
-          `  ✅ Linked existing Person "${existingPerson.firstName} ${existingPerson.lastName}" to user ${user.email}`,
-        );
+        if (!existingPerson.userId) {
+          // Link existing Person to User
+          await prisma.person.update({
+            where: { id: existingPerson.id },
+            data: { userId: user.id },
+          });
+
+          console.log(
+            `  ✅ Linked existing Person "${existingPerson.firstName} ${existingPerson.lastName}" to user ${user.email}`,
+          );
+        } else {
+          console.log(
+            `  ℹ️  Person "${existingPerson.firstName} ${existingPerson.lastName}" already linked to user ${user.email}`,
+          );
+        }
       } else {
-        // Create new Person
-        const createdPerson = await prisma.person.create({
-          data: {
+        // Use upsert to handle race conditions
+        const createdPerson = await prisma.person.upsert({
+          where: { email },
+          create: {
             id: createId(),
             userId: user.id,
             firstName,
             lastName,
             email,
             orgUnitId: orgUnit.id,
+            isActive: true,
+          },
+          update: {
+            userId: user.id,
+            firstName,
+            lastName,
             isActive: true,
           },
         });

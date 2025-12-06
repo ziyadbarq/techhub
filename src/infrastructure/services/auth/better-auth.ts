@@ -283,14 +283,23 @@ const ensurePersonLinkedToUser = async (
         // Fallback email for environments without identity provider email
         `${user.id}@local.barq`;
 
-      const createdPerson = await tx.person.create({
-        data: {
+      // Use upsert to handle race conditions where person with email already exists
+      const createdPerson = await tx.person.upsert({
+        where: { email },
+        create: {
           id: getIdGenerator().generateId(),
           userId: user.id,
           firstName,
           lastName,
           email,
           orgUnitId: orgUnit.id,
+          isActive: true,
+        },
+        update: {
+          // If person already exists, link to user
+          userId: user.id,
+          firstName,
+          lastName,
           isActive: true,
         },
       });

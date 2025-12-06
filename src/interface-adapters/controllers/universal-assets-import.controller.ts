@@ -15,6 +15,8 @@ import type { ILoggerService } from "@/core/services";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { requireFeature } from "@/lib/features/server";
+import { FEATURE_FLAGS } from "@/lib/features/feature-flag-keys";
 import { getSession } from "@/lib/auth/session";
 import {
   processUniversalAssetsImport,
@@ -110,6 +112,9 @@ export async function processUniversalAssetsImportAction(
   settings?: Partial<UniversalImportSettings>,
 ): Promise<ImportActionResponse> {
   try {
+    // Defense-in-depth: Check feature flag FIRST to ensure feature is enabled system-wide
+    await requireFeature(FEATURE_FLAGS.DATA_IMPORT);
+    // Then check user permissions to ensure they have authorization
     await requirePermission(PERMISSIONS.ASSETS_CREATE);
 
     const container = getContainer();
@@ -218,6 +223,9 @@ export async function processUniversalAssetsImportWithProgressAction(
   error?: string;
 }> {
   try {
+    // Defense-in-depth: Check feature flag FIRST to ensure feature is enabled system-wide
+    await requireFeature(FEATURE_FLAGS.DATA_IMPORT);
+    // Then check user permissions to ensure they have authorization
     await requirePermission(PERMISSIONS.ASSETS_CREATE);
 
     const container = getContainer();
@@ -278,6 +286,9 @@ export async function validateUniversalAssetsImportAction(
   sampleRows?: Array<Record<string, unknown>>,
 ): Promise<ValidationActionResponse> {
   try {
+    // Defense-in-depth: Check feature flag FIRST to ensure feature is enabled system-wide
+    await requireFeature(FEATURE_FLAGS.DATA_IMPORT);
+    // Then check user permissions to ensure they have authorization
     await requirePermission(PERMISSIONS.ASSETS_VIEW);
 
     // Detect and parse columns
@@ -376,6 +387,9 @@ export async function downloadUniversalAssetsTemplateAction(
   includeExamples: boolean = true,
 ): Promise<TemplateActionResponse> {
   try {
+    // Defense-in-depth: Check feature flag FIRST to ensure feature is enabled system-wide
+    await requireFeature(FEATURE_FLAGS.DATA_IMPORT);
+    // Then check user permissions to ensure they have authorization
     await requirePermission(PERMISSIONS.ASSETS_VIEW);
 
     const columns = getTemplateColumns();

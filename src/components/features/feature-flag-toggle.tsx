@@ -27,11 +27,13 @@ import type { FeatureFlagResponseDTO } from "@/interface-adapters/dtos/feature-f
 interface FeatureFlagToggleProps {
   featureFlag: FeatureFlagResponseDTO;
   onToggleSuccess: (newState: boolean) => void;
+  blockedDependencies?: string[];
 }
 
 export function FeatureFlagToggle({
   featureFlag,
   onToggleSuccess,
+  blockedDependencies = [],
 }: FeatureFlagToggleProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -41,6 +43,15 @@ export function FeatureFlagToggle({
 
   const handleToggleClick = (checked: boolean) => {
     const action = checked ? "enable" : "disable";
+
+    if (checked && blockedDependencies.length > 0) {
+      toast.error("Enable dependencies first", {
+        description: `${featureFlag.displayName} requires ${blockedDependencies.join(
+          ", ",
+        )} to be enabled.`,
+      });
+      return;
+    }
 
     // Always show confirmation for maintenance mode (both enable and disable)
     if (featureFlag.name === "MAINTENANCE_MODE") {

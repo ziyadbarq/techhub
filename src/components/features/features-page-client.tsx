@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import {
   Card,
@@ -97,6 +97,32 @@ export function FeaturesPageClient() {
   const [isBulkToggling, setIsBulkToggling] = useState(false);
   const [openCategories, setOpenCategories] = useState<Set<CategoryType>>(
     new Set(["SYSTEM"]), // Open SYSTEM by default
+  );
+
+  const flagStateMap = useMemo(() => {
+    const map = new Map<string, FeatureFlagResponseDTO>();
+    (Object.values(groupedFlags) as FeatureFlagResponseDTO[][]).forEach(
+      (flags) => {
+        flags.forEach((flag) => {
+          map.set(flag.name.toUpperCase(), flag);
+        });
+      },
+    );
+    return map;
+  }, [groupedFlags]);
+
+  const getUnsatisfiedDependencies = useCallback(
+    (flag: FeatureFlagResponseDTO) => {
+      if (flag.dependsOn.length === 0) {
+        return [];
+      }
+
+      return flag.dependsOn.filter((dependencyName) => {
+        const dependencyFlag = flagStateMap.get(dependencyName.toUpperCase());
+        return !dependencyFlag || !dependencyFlag.isEnabled;
+      });
+    },
+    [flagStateMap],
   );
 
   const loadFlags = async (silent = false) => {
@@ -363,62 +389,75 @@ export function FeaturesPageClient() {
 
                 <CollapsibleContent>
                   <CardContent className="space-y-4">
-                    {categoryFlags.map((flag) => (
-                      <div
-                        key={flag.id}
-                        className="flex items-start justify-between gap-4 rounded-lg border p-4 transition-all duration-200"
-                      >
-                        <div className="flex-1 space-y-2">
-                          <div className="flex items-center gap-2">
-                            <h3 className="font-semibold">
-                              {flag.displayName}
-                            </h3>
-                            {getStatusBadge(flag)}
-                            {flag.isSystem && (
-                              <Badge variant="outline" className="text-xs">
-                                System
-                              </Badge>
-                            )}
-                          </div>
-
-                          <p className="text-muted-foreground text-sm">
-                            {flag.description}
-                          </p>
-
-                          {flag.dependsOn.length > 0 && (
-                            <div className="flex items-center gap-2 text-xs">
-                              <span className="text-muted-foreground">
-                                Dependencies:
-                              </span>
-                              <div className="flex flex-wrap gap-1">
-                                {flag.dependsOn.map((dep) => (
-                                  <Badge
-                                    key={dep}
-                                    variant="secondary"
-                                    className="text-xs"
-                                  >
-                                    {dep}
-                                  </Badge>
-                                ))}
-                              </div>
+                    {categoryFlags.map((flag) => {
+                      const unsatisfiedDependencies =
+                        getUnsatisfiedDependencies(flag);
+                      return (
+                        <div
+                          key={flag.id}
+                          className="flex items-start justify-between gap-4 rounded-lg border p-4 transition-all duration-200"
+                        >
+                          <div className="flex-1 space-y-2">
+                            <div className="flex items-center gap-2">
+                              <h3 className="font-semibold">
+                                {flag.displayName}
+                              </h3>
+                              {getStatusBadge(flag)}
+                              {flag.isSystem && (
+                                <Badge variant="outline" className="text-xs">
+                                  System
+                                </Badge>
+                              )}
                             </div>
-                          )}
 
-                          <div className="text-muted-foreground text-xs">
-                            <span className="font-mono">{flag.name}</span>
+                            <p className="text-muted-foreground text-sm">
+                              {flag.description}
+                            </p>
+
+                            {flag.dependsOn.length > 0 && (
+                              <div className="space-y-1 text-xs">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-muted-foreground">
+                                    Dependencies:
+                                  </span>
+                                  <div className="flex flex-wrap gap-1">
+                                    {flag.dependsOn.map((dep) => (
+                                      <Badge
+                                        key={dep}
+                                        variant="secondary"
+                                        className="text-xs"
+                                      >
+                                        {dep}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                                {unsatisfiedDependencies.length > 0 && (
+                                  <p className="text-destructive">
+                                    Enable {unsatisfiedDependencies.join(", ")}{" "}
+                                    before turning on {flag.displayName}.
+                                  </p>
+                                )}
+                              </div>
+                            )}
+
+                            <div className="text-muted-foreground text-xs">
+                              <span className="font-mono">{flag.name}</span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center">
+                            <FeatureFlagToggle
+                              featureFlag={flag}
+                              blockedDependencies={unsatisfiedDependencies}
+                              onToggleSuccess={(newState) =>
+                                handleToggleSuccess(flag.id, newState)
+                              }
+                            />
                           </div>
                         </div>
-
-                        <div className="flex items-center">
-                          <FeatureFlagToggle
-                            featureFlag={flag}
-                            onToggleSuccess={(newState) =>
-                              handleToggleSuccess(flag.id, newState)
-                            }
-                          />
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </CardContent>
                 </CollapsibleContent>
               </Collapsible>

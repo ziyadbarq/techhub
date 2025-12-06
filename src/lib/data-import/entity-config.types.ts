@@ -9,6 +9,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 
 import type { PermissionKey } from "@/core/domain/value-objects/permission-key";
+import type { FeatureFlagKey } from "@/lib/features/feature-flag-keys";
 
 /**
  * Supported field types for entity configuration
@@ -224,6 +225,7 @@ export interface EntityConfig {
   tableName: string; // Prisma model name
   description: string; // Description for UI
   category: EntityCategory;
+  featureFlag?: FeatureFlagKey; // Feature flag that controls availability
 
   // Permissions
   permission: PermissionKey; // Required permission to import

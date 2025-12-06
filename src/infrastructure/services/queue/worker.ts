@@ -57,6 +57,17 @@ async function initializeDependencies(): Promise<void> {
   );
   await initContainer();
   log.info("initializeDependencies", "Container initialized");
+
+  // Load heavy modules needed by workers
+  const { loadHeavyModule } = await import("@/di/container");
+
+  // Load Intune module for device sync jobs
+  await loadHeavyModule("intune");
+  log.info("initializeDependencies", "Intune module loaded");
+
+  // Load other heavy modules as needed
+  // await loadHeavyModule("service");
+  // await loadHeavyModule("licenses");
 }
 
 /**

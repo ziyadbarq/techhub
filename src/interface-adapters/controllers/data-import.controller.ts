@@ -12,6 +12,8 @@ import { handleControllerError } from "./error-handler";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import type { EntityConfig } from "@/lib/data-import/entity-config.types";
+import type { FeatureFlagKey } from "@/lib/features/feature-flag-keys";
+import { isFeatureEnabled } from "@/lib/features/server";
 
 /**
  * Validate import permission for an entity
@@ -159,6 +161,43 @@ export async function getImportHistoryAction(
       error,
       { function: "getImportHistoryAction", entityKey, limit },
       "Failed to get import history",
+    );
+  }
+}
+
+/**
+ * Ensure the controlling feature flag is enabled before import
+ */
+export async function ensureFeatureEnabledForImportAction(
+  featureFlag?: FeatureFlagKey,
+): Promise<ActionResponse<{ enabled: boolean }>> {
+  try {
+    if (!featureFlag) {
+      return { success: true, data: { enabled: true } };
+    }
+
+    await requirePermission(PERMISSIONS.DATA_IMPORT_MANAGE);
+
+    const enabled = await isFeatureEnabled(featureFlag);
+    if (!enabled) {
+      return {
+        success: false,
+        error: `${featureFlag} is disabled. Enable it before importing.`,
+      };
+    }
+
+    return {
+      success: true,
+      data: { enabled: true },
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      {
+        function: "ensureFeatureEnabledForImportAction",
+        featureFlag,
+      },
+      "Failed to validate feature flag for import",
     );
   }
 }
