@@ -20,6 +20,7 @@ import { format } from "date-fns";
 // import { toast } from "sonner"; // Unused for now
 
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { AuditLogDTO } from "@/interface-adapters/presenters/audit-log.presenter";
@@ -154,6 +155,7 @@ export function AuditLogTable({
       },
       meta: {
         label: "User",
+        hiddenByDefault: true,
       },
     },
     {
@@ -203,13 +205,23 @@ export function AuditLogTable({
       },
       meta: {
         label: "Entity ID",
+        hiddenByDefault: true,
       },
     },
   ];
 
+  // Use enhanced column visibility hook with localStorage persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<AuditLogDTO>({
+      storageKey: "audit-log-table-columns",
+      columns,
+    });
+
   return (
     <div className="space-y-4">
       <DataTable
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
         columns={columns}
         data={data}
         loading={loading}

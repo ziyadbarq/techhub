@@ -15,6 +15,7 @@ import type { AssetKitDTO } from "@/interface-adapters/dtos/generated/asset-kit.
 import { deleteAssetKitAction } from "@/interface-adapters/controllers/asset-kit.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 
 interface AssetKitsTableProps {
@@ -84,6 +85,7 @@ export function AssetKitsTable({
         },
         meta: {
           label: "Description",
+          hiddenByDefault: true,
         },
       },
       {
@@ -146,9 +148,22 @@ export function AssetKitsTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Use enhanced column visibility hook with localStorage persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<AssetKitDTO>({
+      storageKey: "asset-kits-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
-      <DataTable columns={allColumns} data={data} loading={loading} />
+      <DataTable
+        columns={allColumns}
+        data={data}
+        loading={loading}
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
+      />
 
       {/* Delete Confirmation Dialog */}
       <deleteDialog.DialogComponent />

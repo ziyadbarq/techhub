@@ -51,6 +51,7 @@ import { deleteStockMovementAction } from "@/interface-adapters/controllers/stoc
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
 import { usePermissions } from "@/hooks/use-permissions";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 import { MovementDetailSheet } from "./movement-detail-sheet";
 import { VoidMovementDialog } from "./void-movement-dialog";
@@ -295,6 +296,7 @@ export function StockMovementsTable({
         },
         meta: {
           label: "Quantity",
+          hiddenByDefault: true,
         },
       },
       {
@@ -310,6 +312,7 @@ export function StockMovementsTable({
         ),
         meta: {
           label: "From",
+          hiddenByDefault: true,
         },
       },
       {
@@ -325,6 +328,7 @@ export function StockMovementsTable({
         ),
         meta: {
           label: "To",
+          hiddenByDefault: true,
         },
       },
       {
@@ -342,6 +346,7 @@ export function StockMovementsTable({
         },
         meta: {
           label: "Reason",
+          hiddenByDefault: true,
         },
       },
       {
@@ -479,6 +484,13 @@ export function StockMovementsTable({
     </div>
   );
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<StockMovementDTO>({
+      storageKey: "stock-movements-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
       <DataTable
@@ -490,11 +502,8 @@ export function StockMovementsTable({
         searchPlaceholder="Search by asset..."
         selectable
         showColumnToggle
-        initialColumnVisibility={{
-          stockLocationFromName: false,
-          stockLocationToName: false,
-          quantity: false,
-        }}
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
         toolbarActions={toolbarFilters}
         emptyMessage={
           hasActiveFilters

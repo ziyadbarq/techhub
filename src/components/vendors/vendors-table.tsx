@@ -18,6 +18,7 @@ import type { VendorDTO } from "@/interface-adapters/presenters/vendor.presenter
 import { deleteVendorAction } from "@/interface-adapters/controllers/vendor.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 
 interface VendorsTableProps {
@@ -121,6 +122,10 @@ export function VendorsTable({
             </a>
           ) : null;
         },
+        meta: {
+          label: "Website",
+          hiddenByDefault: true,
+        },
       },
       {
         accessorKey: "isActive",
@@ -157,6 +162,7 @@ export function VendorsTable({
         },
         meta: {
           label: "Created",
+          hiddenByDefault: true,
         },
       },
     ],
@@ -190,9 +196,22 @@ export function VendorsTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<VendorDTO>({
+      storageKey: "vendors-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
-      <DataTable columns={allColumns} data={data} loading={loading} />
+      <DataTable
+        columns={allColumns}
+        data={data}
+        loading={loading}
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
+      />
 
       {/* Delete Confirmation Dialog */}
       <deleteDialog.DialogComponent />

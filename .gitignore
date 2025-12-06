@@ -65,3 +65,4 @@ src/infrastructure/database/prisma/*.db-wal
 
 .htaccess
 yarn.lock
+.env.production

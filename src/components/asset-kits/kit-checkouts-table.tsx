@@ -20,6 +20,7 @@ import { Eye, Package, User } from "lucide-react";
 import { formatDate } from "@/lib/utils/date-format";
 import { Button } from "@/components/ui/button";
 import { EntityDisplay } from "@/components/ui/entity-display";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import {
   Table,
   TableBody,
@@ -62,6 +63,9 @@ export function KitCheckoutsTable({
       cell: ({ row }) => (
         <EntityDisplay name={row.original.kitName} icon={Package} />
       ),
+      meta: {
+        label: "Kit",
+      },
     },
     {
       accessorKey: "personName",
@@ -69,6 +73,9 @@ export function KitCheckoutsTable({
       cell: ({ row }) => (
         <EntityDisplay name={row.original.personName} icon={User} />
       ),
+      meta: {
+        label: "Checked Out To",
+      },
     },
     {
       accessorKey: "status",
@@ -81,6 +88,9 @@ export function KitCheckoutsTable({
           </Badge>
         );
       },
+      meta: {
+        label: "Status",
+      },
     },
     {
       accessorKey: "checkoutDate",
@@ -90,6 +100,9 @@ export function KitCheckoutsTable({
           {formatDate(row.getValue<string>("checkoutDate"))}
         </div>
       ),
+      meta: {
+        label: "Checkout Date",
+      },
     },
     {
       accessorKey: "expectedReturnDate",
@@ -100,6 +113,10 @@ export function KitCheckoutsTable({
             "N/A"}
         </div>
       ),
+      meta: {
+        label: "Expected Return",
+        hiddenByDefault: true,
+      },
     },
     {
       accessorKey: "actualReturnDate",
@@ -109,6 +126,10 @@ export function KitCheckoutsTable({
           {formatDate(row.getValue<string | null>("actualReturnDate")) || "-"}
         </div>
       ),
+      meta: {
+        label: "Actual Return",
+        hiddenByDefault: true,
+      },
     },
     {
       id: "actions",
@@ -126,6 +147,13 @@ export function KitCheckoutsTable({
     },
   ];
 
+  // Use enhanced column visibility hook with localStorage persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<AssetKitCheckoutDTO>({
+      storageKey: "kit-checkouts-table-columns",
+      columns,
+    });
+
   const table = useReactTable({
     data,
     columns,
@@ -134,9 +162,15 @@ export function KitCheckoutsTable({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: (updater) => {
+      const newVisibility =
+        typeof updater === "function" ? updater(visibility) : updater;
+      onVisibilityChange(newVisibility);
+    },
     state: {
       sorting,
       columnFilters,
+      columnVisibility: visibility,
     },
   });
 

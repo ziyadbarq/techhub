@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import type { AssetReservation } from "@/core/domain/entities/asset-reservation.entity";
 import type { AssetReservationDTO } from "../dtos/generated/asset-reservation.dto";
 
@@ -10,39 +6,74 @@ export interface AssetReservationEnrichment {
   personName?: string;
 }
 
-export class AssetReservationPresenter {
-  static toDTO(
-    reservation: AssetReservation,
-    enrichment?: AssetReservationEnrichment,
-  ): AssetReservationDTO {
-    return {
-      id: reservation.id,
-      assetId: reservation.assetId,
-      reservedByPersonId: reservation.reservedByPersonId,
-      reservedByOrgUnitId: reservation.reservedByOrgUnitId,
-      startDate: reservation.startDate,
-      endDate: reservation.endDate,
-      status: reservation.status,
-      purpose: reservation.purpose,
-      notes: reservation.notes,
-      confirmationDate: reservation.confirmationDate,
-      confirmedById: reservation.confirmedById,
-      actualStartDate: reservation.actualStartDate,
-      actualEndDate: reservation.actualEndDate,
-      createdAt: reservation.createdAt,
-      updatedAt: reservation.updatedAt,
-      // Display fields
-      assetTag: enrichment?.assetTag,
-      personName: enrichment?.personName,
-    };
-  }
+/**
+ * Converts an AssetReservation entity to a DTO with optional enrichment data
+ */
+export function presentAssetReservation(
+  reservation: AssetReservation,
+  enrichment?: AssetReservationEnrichment,
+): AssetReservationDTO {
+  const now = new Date();
+  const isExpired =
+    reservation.endDate < now &&
+    reservation.status !== "COMPLETED" &&
+    reservation.status !== "CANCELLED";
+  const daysRemaining = Math.ceil(
+    (reservation.endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+  );
+  const isReadyToStart =
+    reservation.status === "CONFIRMED" &&
+    reservation.startDate <= now &&
+    !isExpired;
+  const isOverdue =
+    reservation.status === "ACTIVE" && reservation.endDate < now;
 
-  static toDTOList(
-    reservations: AssetReservation[],
-    enrichmentMap?: Map<string, AssetReservationEnrichment>,
-  ): AssetReservationDTO[] {
-    return reservations.map((reservation) =>
-      this.toDTO(reservation, enrichmentMap?.get(reservation.id)),
-    );
-  }
+  return {
+    id: reservation.id,
+    assetId: reservation.assetId,
+    reservedForPersonId: reservation.reservedForPersonId,
+    reservedForOrgUnitId: reservation.reservedForOrgUnitId,
+    reservedById: reservation.reservedById,
+    startDate: reservation.startDate,
+    endDate: reservation.endDate,
+    status: reservation.status,
+    purpose: reservation.purpose,
+    notes: reservation.note,
+    confirmationDate: reservation.confirmationDate,
+    confirmedById: reservation.confirmedById,
+    createdAt: reservation.createdAt,
+    updatedAt: reservation.updatedAt,
+    // Display fields (enriched from relations)
+    assetTag: enrichment?.assetTag,
+    personName: enrichment?.personName,
+    // Computed fields
+    isExpired,
+    daysRemaining,
+    isReadyToStart,
+    isOverdue,
+  };
+}
+
+/**
+ * Converts an array of AssetReservation entities to DTOs without enrichment
+ * For enriched presentation, use presentAssetReservation individually
+ */
+export function presentAssetReservations(
+  reservations: AssetReservation[],
+): AssetReservationDTO[] {
+  return reservations.map((reservation) =>
+    presentAssetReservation(reservation),
+  );
+}
+
+/**
+ * Converts an array of AssetReservation entities to DTOs with enrichment map
+ */
+export function presentAssetReservationsWithEnrichment(
+  reservations: AssetReservation[],
+  enrichmentMap: Map<string, AssetReservationEnrichment>,
+): AssetReservationDTO[] {
+  return reservations.map((reservation) =>
+    presentAssetReservation(reservation, enrichmentMap.get(reservation.id)),
+  );
 }

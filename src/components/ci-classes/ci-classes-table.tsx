@@ -30,6 +30,7 @@ import type { CIClassDTO } from "@/interface-adapters/presenters/ci-class.presen
 import { deleteCIClassAction } from "@/interface-adapters/controllers/ci-class.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 
 interface CIClassesTableProps {
@@ -118,6 +119,10 @@ export function CIClassesTable({
           const formatted = env.replace(/_/g, " ");
           return <span className="text-sm">{formatted}</span>;
         },
+        meta: {
+          label: "Default Environment",
+          hiddenByDefault: true,
+        },
       },
       {
         accessorKey: "isDiscoverable",
@@ -162,6 +167,13 @@ export function CIClassesTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<CIClassDTO>({
+      storageKey: "ci-classes-table-columns",
+      columns: allColumns,
+    });
+
   const table = useReactTable({
     data,
     columns: allColumns,
@@ -170,8 +182,10 @@ export function CIClassesTable({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onGlobalFilterChange: setGlobalFilter,
+    onColumnVisibilityChange: onVisibilityChange,
     state: {
       globalFilter,
+      columnVisibility: visibility,
     },
     initialState: {
       pagination: {

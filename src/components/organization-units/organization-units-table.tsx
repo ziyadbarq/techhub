@@ -16,6 +16,7 @@ import type { OrganizationUnitDTO } from "@/interface-adapters/presenters/organi
 import { deleteOrganizationUnitAction } from "@/interface-adapters/controllers/organization-unit.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 
 interface OrganizationUnitsTableProps {
@@ -84,6 +85,7 @@ export function OrganizationUnitsTable({
         },
         meta: {
           label: "Cost Center",
+          hiddenByDefault: true,
         },
       },
       {
@@ -121,6 +123,7 @@ export function OrganizationUnitsTable({
         },
         meta: {
           label: "Created",
+          hiddenByDefault: true,
         },
       },
     ],
@@ -154,9 +157,22 @@ export function OrganizationUnitsTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<OrganizationUnitDTO>({
+      storageKey: "organization-units-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
-      <DataTable columns={allColumns} data={data} loading={loading} />
+      <DataTable
+        columns={allColumns}
+        data={data}
+        loading={loading}
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
+      />
 
       {/* Delete Confirmation Dialog */}
       <deleteDialog.DialogComponent />

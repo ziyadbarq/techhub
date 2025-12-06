@@ -17,6 +17,7 @@ import type { VendorContactDTO } from "@/interface-adapters/presenters/vendor-co
 import { deleteVendorContactAction } from "@/interface-adapters/controllers/vendor-contact.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 
 interface VendorContactsTableProps {
@@ -95,6 +96,10 @@ export function VendorContactsTable({
             </div>
           ) : null;
         },
+        meta: {
+          label: "Phone",
+          hiddenByDefault: true,
+        },
       },
       {
         accessorKey: "isPrimary",
@@ -139,6 +144,7 @@ export function VendorContactsTable({
         },
         meta: {
           label: "Created",
+          hiddenByDefault: true,
         },
       },
     ],
@@ -172,6 +178,13 @@ export function VendorContactsTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<VendorContactDTO>({
+      storageKey: "vendor-contacts-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
       <DataTable
@@ -185,6 +198,8 @@ export function VendorContactsTable({
         onSelectionChange={_setSelectedRows}
         showColumnToggle
         emptyMessage="No contacts found. Create one to get started!"
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
       />
 
       {/* Delete Confirmation Dialog */}

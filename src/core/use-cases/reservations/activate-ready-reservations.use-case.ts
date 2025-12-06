@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetReservationRepository } from "@/core/repositories/asset-reservation.repository.interface";
@@ -32,15 +28,15 @@ export class ActivateReadyReservationsUseCase {
 
     for (const reservation of readyReservations) {
       try {
-        reservation.start();
+        reservation.activate();
         await this.reservationRepository.update(reservation);
         activatedIds.push(reservation.id);
       } catch (error) {
         // Log error but continue with other reservations
-        this.logger.error("Failed to activate reservation", {
-          reservationId: reservation.id,
-          error: error instanceof Error ? error.message : String(error),
-        });
+        this.logger.error(
+          "Failed to activate reservation",
+          error instanceof Error ? error : new Error(String(error)),
+        );
       }
     }
 

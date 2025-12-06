@@ -20,6 +20,7 @@ import { deleteWarrantyAction } from "@/interface-adapters/controllers/warranty.
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
 import { useExchangeRates } from "@/hooks/use-exchange-rates";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 import { WarrantyStatusBadge } from "./warranty-status-badge";
 
@@ -214,6 +215,7 @@ export function WarrantiesTable({
         },
         meta: {
           label: "Cost",
+          hiddenByDefault: true,
         },
       },
     ],
@@ -247,6 +249,13 @@ export function WarrantiesTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<WarrantyDTO>({
+      storageKey: "warranties-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
       <DataTable
@@ -260,6 +269,8 @@ export function WarrantiesTable({
         onSelectionChange={_setSelectedRows}
         showColumnToggle
         emptyMessage="No warranties found. Create one to get started!"
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
       />
 
       {/* Delete Confirmation Dialog */}

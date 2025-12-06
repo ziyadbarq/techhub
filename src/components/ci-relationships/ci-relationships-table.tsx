@@ -31,6 +31,7 @@ import { Badge } from "@/components/ui/badge";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { deleteCIRelationshipAction } from "@/interface-adapters/controllers/ci-relationship.controller";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildActionsColumn } from "@/lib/table-utils";
 import { format } from "date-fns";
 
@@ -124,6 +125,10 @@ export function CIRelationshipsTable({
             : "—"}
         </div>
       ),
+      meta: {
+        label: "Valid To",
+        hiddenByDefault: true,
+      },
     },
     buildActionsColumn<CIRelationshipDTO>([
       {
@@ -148,6 +153,13 @@ export function CIRelationshipsTable({
     ]),
   ];
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<CIRelationshipDTO>({
+      storageKey: "ci-relationships-table-columns",
+      columns,
+    });
+
   const table = useReactTable({
     data,
     columns,
@@ -156,9 +168,11 @@ export function CIRelationshipsTable({
     getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: onVisibilityChange,
     state: {
       sorting,
       columnFilters,
+      columnVisibility: visibility,
     },
   });
 

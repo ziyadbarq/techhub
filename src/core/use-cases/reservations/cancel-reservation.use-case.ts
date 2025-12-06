@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetReservationRepository } from "@/core/repositories/asset-reservation.repository.interface";
@@ -9,6 +5,8 @@ import type { AssetReservation } from "@/core/domain/entities/asset-reservation.
 
 export interface CancelReservationRequest {
   reservationId: string;
+  cancelledById: string;
+  reason: string;
 }
 
 @injectable()
@@ -26,7 +24,7 @@ export class CancelReservationUseCase {
       throw new Error(`Reservation with ID ${request.reservationId} not found`);
     }
 
-    reservation.cancel();
+    reservation.cancel(request.cancelledById, request.reason);
 
     return this.reservationRepository.update(reservation);
   }

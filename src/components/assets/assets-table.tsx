@@ -18,6 +18,7 @@ import { deleteAssetAction } from "@/interface-adapters/controllers/asset.contro
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
 import { useExchangeRates } from "@/hooks/use-exchange-rates";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 
 interface AssetsTableProps {
@@ -174,6 +175,7 @@ export function AssetsTable({
         },
         meta: {
           label: "Purchase Date",
+          hiddenByDefault: true,
         },
       },
       {
@@ -225,6 +227,7 @@ export function AssetsTable({
         },
         meta: {
           label: "Created",
+          hiddenByDefault: true,
         },
       },
     ],
@@ -258,6 +261,13 @@ export function AssetsTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Use enhanced column visibility hook with localStorage persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<AssetDTO>({
+      storageKey: "assets-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
       <DataTable
@@ -266,6 +276,8 @@ export function AssetsTable({
         loading={loading}
         onSelectionChange={onSelectionChange}
         selectable={!!onSelectionChange}
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
       />
 
       {/* Delete Confirmation Dialog */}

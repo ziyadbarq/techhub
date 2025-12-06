@@ -33,14 +33,20 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import type { z } from "zod";
-import { createReservationAction } from "@/interface-adapters/controllers/asset-reservation.controller";
+import {
+  createReservationAction,
+  listUnreservedAssetsAction,
+} from "@/interface-adapters/controllers/asset-reservation.controller";
 import { CreateReservationDTO } from "@/interface-adapters/dtos/generated/asset-reservation.dto";
-import { listAssetsAction } from "@/interface-adapters/controllers/asset.controller";
 import { listPersonsAction } from "@/interface-adapters/controllers/person.controller";
 import { listOrganizationUnitsAction } from "@/interface-adapters/controllers/organization-unit.controller";
+import { listAssetCategoriesAction } from "@/interface-adapters/controllers/asset-category.controller";
+import { listAssetModelsByCategoryAction } from "@/interface-adapters/controllers/asset-model.controller";
 import type { AssetDTO } from "@/interface-adapters/presenters/asset.presenter";
 import type { PersonDTO } from "@/interface-adapters/presenters/person.presenter";
 import type { OrganizationUnitDTO } from "@/interface-adapters/presenters/organization-unit.presenter";
+import type { AssetCategoryDTO } from "@/interface-adapters/presenters/asset-category.presenter";
+import type { AssetModelDTO } from "@/interface-adapters/presenters/asset-model.presenter";
 
 interface ReservationFormProps {
   open: boolean;
@@ -56,12 +62,36 @@ export function ReservationForm({
   onOpenChange,
   onSuccess,
 }: ReservationFormProps) {
+  const [categories, setCategories] = useState<AssetCategoryDTO[]>([]);
+  const [models, setModels] = useState<AssetModelDTO[]>([]);
   const [assets, setAssets] = useState<AssetDTO[]>([]);
   const [persons, setPersons] = useState<PersonDTO[]>([]);
   const [orgUnits, setOrgUnits] = useState<OrganizationUnitDTO[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
+  const [selectedModelId, setSelectedModelId] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [loadingModels, setLoadingModels] = useState(false);
+  const [loadingAssets, setLoadingAssets] = useState(false);
 
   // Memoized options for searchable selects
+  const categoryOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      categories.map((category) => ({
+        value: category.id,
+        label: `${category.name} (${category.code})`,
+      })),
+    [categories],
+  );
+
+  const modelOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      models.map((model) => ({
+        value: model.id,
+        label: `${model.name} (${model.code})`,
+      })),
+    [models],
+  );
+
   const assetOptions: SearchableSelectOption[] = useMemo(
     () =>
       assets.map((asset) => ({
@@ -89,15 +119,20 @@ export function ReservationForm({
     [orgUnits],
   );
 
+  const defaultStartDate = new Date();
+  const defaultEndDate = new Date(defaultStartDate);
+  defaultEndDate.setDate(defaultEndDate.getDate() + 30);
+
   const form = useForm<ReservationFormValues, undefined, ReservationFormOutput>(
     {
       resolver: zodResolver(CreateReservationDTO),
       defaultValues: {
         assetId: "",
-        reservedByPersonId: undefined,
-        reservedByOrgUnitId: undefined,
-        startDate: new Date(),
-        endDate: new Date(),
+        reservedForPersonId: undefined,
+        reservedForOrgUnitId: undefined,
+        // reservedById removed - server gets from session
+        startDate: defaultStartDate,
+        endDate: defaultEndDate,
         purpose: "",
         notes: "",
       },
@@ -113,14 +148,15 @@ export function ReservationForm({
   const loadData = async () => {
     setLoading(true);
     try {
-      const [assetsResult, personsResult, orgUnitsResult] = await Promise.all([
-        listAssetsAction(),
-        listPersonsAction(),
-        listOrganizationUnitsAction(),
-      ]);
+      const [categoriesResult, personsResult, orgUnitsResult] =
+        await Promise.all([
+          listAssetCategoriesAction(),
+          listPersonsAction(),
+          listOrganizationUnitsAction(),
+        ]);
 
-      if (assetsResult.success) {
-        setAssets(assetsResult.data);
+      if (categoriesResult.success) {
+        setCategories(categoriesResult.data);
       }
 
       if (personsResult.success) {
@@ -135,6 +171,66 @@ export function ReservationForm({
     } finally {
       setLoading(false);
     }
+  };
+
+  // Load models when category changes
+  const loadModelsByCategory = async (categoryId: string) => {
+    if (!categoryId) {
+      setModels([]);
+      setAssets([]);
+      setSelectedModelId("");
+      form.setValue("assetId", "");
+      return;
+    }
+
+    setLoadingModels(true);
+    try {
+      const result = await listAssetModelsByCategoryAction(categoryId);
+      if (result.success) {
+        setModels(result.data);
+      } else {
+        toast.error("Failed to load asset models");
+        setModels([]);
+      }
+    } catch (_error) {
+      toast.error("Failed to load asset models");
+      setModels([]);
+    } finally {
+      setLoadingModels(false);
+    }
+
+    // Clear downstream selections
+    setAssets([]);
+    setSelectedModelId("");
+    form.setValue("assetId", "");
+  };
+
+  // Load assets when model changes
+  const loadAssetsByModel = async (modelId: string) => {
+    if (!modelId) {
+      setAssets([]);
+      form.setValue("assetId", "");
+      return;
+    }
+
+    setLoadingAssets(true);
+    try {
+      const result = await listUnreservedAssetsAction(modelId);
+      if (result.success) {
+        setAssets(result.data);
+      } else {
+        toast.error("Failed to load assets");
+        setAssets([]);
+      }
+    } catch (_error) {
+      toast.error("Failed to load assets");
+      setAssets([]);
+    } finally {
+      setLoadingAssets(false);
+    }
+
+    // Clear asset selection
+    form.setValue("assetId", "");
   };
 
   const onSubmit = async (data: ReservationFormOutput) => {
@@ -166,6 +262,54 @@ export function ReservationForm({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {/* Asset Category */}
+            <div>
+              <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Asset Category
+              </label>
+              <SearchableSelect
+                options={categoryOptions}
+                value={selectedCategoryId}
+                onValueChange={(value) => {
+                  setSelectedCategoryId(value);
+                  loadModelsByCategory(value);
+                }}
+                placeholder="Select a category"
+                searchPlaceholder="Search categories..."
+                disabled={loading}
+              />
+              <p className="text-muted-foreground mt-2 text-sm">
+                Select the asset category first
+              </p>
+            </div>
+
+            {/* Asset Model */}
+            <div>
+              <label className="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Asset Model
+              </label>
+              <SearchableSelect
+                options={modelOptions}
+                value={selectedModelId}
+                onValueChange={(value) => {
+                  setSelectedModelId(value);
+                  loadAssetsByModel(value);
+                }}
+                placeholder={
+                  selectedCategoryId
+                    ? "Select a model"
+                    : "Select category first"
+                }
+                searchPlaceholder="Search models..."
+                disabled={loading || loadingModels || !selectedCategoryId}
+              />
+              <p className="text-muted-foreground mt-2 text-sm">
+                {selectedCategoryId
+                  ? "Select the asset model"
+                  : "Category required"}
+              </p>
+            </div>
+
             {/* Asset */}
             <FormField
               control={form.control}
@@ -178,24 +322,32 @@ export function ReservationForm({
                       options={assetOptions}
                       value={field.value}
                       onValueChange={field.onChange}
-                      placeholder="Select an asset"
+                      placeholder={
+                        selectedModelId
+                          ? "Select an asset"
+                          : "Select model first"
+                      }
                       searchPlaceholder="Search assets..."
-                      disabled={loading}
+                      disabled={loading || loadingAssets || !selectedModelId}
                     />
                   </FormControl>
-                  <FormDescription>The asset to reserve</FormDescription>
+                  <FormDescription>
+                    {selectedModelId
+                      ? "The asset to reserve"
+                      : "Model required"}
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* Reserved By Person */}
+            {/* Reserved For Person */}
             <FormField
               control={form.control}
-              name="reservedByPersonId"
+              name="reservedForPersonId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Reserved By (Person)</FormLabel>
+                  <FormLabel>Reserved For (Person)</FormLabel>
                   <FormControl>
                     <SearchableSelect
                       options={[
@@ -203,9 +355,14 @@ export function ReservationForm({
                         ...personOptions,
                       ]}
                       value={field.value ?? "__none__"}
-                      onValueChange={(value) =>
-                        field.onChange(value === "__none__" ? undefined : value)
-                      }
+                      onValueChange={(value) => {
+                        field.onChange(
+                          value === "__none__" ? undefined : value,
+                        );
+                        // Clear form-level errors when changing selection
+                        form.clearErrors("reservedForPersonId");
+                        form.clearErrors("reservedForOrgUnitId");
+                      }}
                       placeholder="Select a person"
                       searchPlaceholder="Search persons..."
                       disabled={loading}
@@ -217,13 +374,13 @@ export function ReservationForm({
               )}
             />
 
-            {/* Reserved By Org Unit */}
+            {/* Reserved For Org Unit */}
             <FormField
               control={form.control}
-              name="reservedByOrgUnitId"
+              name="reservedForOrgUnitId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Reserved By (Org Unit)</FormLabel>
+                  <FormLabel>Reserved For (Org Unit)</FormLabel>
                   <FormControl>
                     <SearchableSelect
                       options={[
@@ -231,9 +388,14 @@ export function ReservationForm({
                         ...orgUnitOptions,
                       ]}
                       value={field.value ?? "__none__"}
-                      onValueChange={(value) =>
-                        field.onChange(value === "__none__" ? undefined : value)
-                      }
+                      onValueChange={(value) => {
+                        field.onChange(
+                          value === "__none__" ? undefined : value,
+                        );
+                        // Clear form-level errors when changing selection
+                        form.clearErrors("reservedForPersonId");
+                        form.clearErrors("reservedForOrgUnitId");
+                      }}
                       placeholder="Select an org unit"
                       searchPlaceholder="Search org units..."
                       disabled={loading}

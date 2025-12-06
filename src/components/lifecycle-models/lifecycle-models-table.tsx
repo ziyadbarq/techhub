@@ -15,6 +15,7 @@ import type { LifecycleModelDTO } from "@/interface-adapters/presenters/lifecycl
 import { deleteLifecycleModelAction } from "@/interface-adapters/controllers/lifecycle-model.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 
 interface LifecycleModelsTableProps {
@@ -78,6 +79,7 @@ export function LifecycleModelsTable({
         },
         meta: {
           label: "Created",
+          hiddenByDefault: true,
         },
       },
       {
@@ -95,6 +97,7 @@ export function LifecycleModelsTable({
         },
         meta: {
           label: "Updated",
+          hiddenByDefault: true,
         },
       },
     ],
@@ -128,9 +131,22 @@ export function LifecycleModelsTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<LifecycleModelDTO>({
+      storageKey: "lifecycle-models-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
-      <DataTable columns={allColumns} data={data} loading={loading} />
+      <DataTable
+        columns={allColumns}
+        data={data}
+        loading={loading}
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
+      />
 
       {/* Delete Confirmation Dialog */}
       <deleteDialog.DialogComponent />

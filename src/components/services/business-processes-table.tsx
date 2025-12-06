@@ -15,6 +15,7 @@ import type { BusinessProcessDTO } from "@/interface-adapters/presenters/service
 import { deleteBusinessProcessAction } from "@/interface-adapters/controllers/business-process.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildActionsColumn } from "@/lib/table-utils";
 
 interface BusinessProcessesTableProps {
@@ -109,6 +110,7 @@ export function BusinessProcessesTable({
         },
         meta: {
           label: "Description",
+          hiddenByDefault: true,
         },
       },
     ],
@@ -153,9 +155,22 @@ export function BusinessProcessesTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<BusinessProcessDTO>({
+      storageKey: "business-processes-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
-      <DataTable columns={allColumns} data={data} loading={loading} />
+      <DataTable
+        columns={allColumns}
+        data={data}
+        loading={loading}
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
+      />
 
       {/* Delete Confirmation Dialog */}
       <deleteDialog.DialogComponent />

@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetReservationConflictRepository } from "@/core/repositories/asset-reservation-conflict.repository.interface";
@@ -31,13 +27,19 @@ export class ListConflictsUseCase {
       conflicts = await this.conflictRepository.findInvolvingReservation(
         request.reservationId,
       );
+      // Filter by resolution status if specified
+      if (request.unresolvedOnly) {
+        conflicts = conflicts.filter(
+          (conflict) => conflict.resolvedAt === null,
+        );
+      }
+    } else if (request.unresolvedOnly) {
+      conflicts = await this.conflictRepository.findUnresolved();
     } else {
-      conflicts = await this.conflictRepository.findAll();
-    }
-
-    // Filter by resolution status if specified
-    if (request.unresolvedOnly) {
-      conflicts = conflicts.filter((conflict) => conflict.resolvedAt === null);
+      // Get both resolved and unresolved
+      const unresolved = await this.conflictRepository.findUnresolved();
+      const resolved = await this.conflictRepository.findResolved();
+      conflicts = [...unresolved, ...resolved];
     }
 
     return {

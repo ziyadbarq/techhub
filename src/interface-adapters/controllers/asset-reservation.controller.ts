@@ -23,9 +23,11 @@ import {
   type AssetReservationConflictDTO,
 } from "../dtos/generated/asset-reservation-conflict.dto";
 import {
-  AssetReservationPresenter,
+  presentAssetReservation,
+  presentAssetReservationsWithEnrichment,
   type AssetReservationEnrichment,
 } from "../presenters/asset-reservation.presenter";
+import type { AssetDTO } from "../presenters/asset.presenter";
 import { AssetReservationConflictPresenter } from "../presenters/asset-reservation-conflict.presenter";
 import type {
   CreateReservationUseCase,
@@ -43,10 +45,13 @@ import type {
   ListAvailableAssetsUseCase,
 } from "@/core/use-cases/reservations";
 import type { ListAssetsUseCase } from "@/core/use-cases/asset/asset";
+import type { ListAssetAssignmentsUseCase } from "@/core/use-cases/asset/asset-assignment";
 import type { ListPeopleUseCase } from "@/core/use-cases/foundation/person";
 import type { AssetReservation } from "@/core/domain/entities/asset-reservation.entity";
+import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
 import { requirePermission } from "@/lib/permissions/server";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { getSession } from "@/lib/auth/session";
 
 /**
  * Enrich asset reservations with asset tags and person names
@@ -126,15 +131,35 @@ export async function createReservationAction(
 
     const validated = CreateReservationDTO.parse(data);
 
+    // SECURITY: Get reservedById from authenticated session, not client payload
+    const { user } = await getSession();
+    if (!user?.id) {
+      throw new Error("User must be authenticated to create reservations");
+    }
+
     const container = getContainer();
+    const personRepository = container.get<IPersonRepository>(
+      DI_TOKENS.IPersonRepository,
+    );
+    const person =
+      (await personRepository.findByUserId(user.id)) ||
+      (user.email ? await personRepository.findByEmail(user.email) : null);
+
+    if (!person) {
+      throw new Error(
+        "No Person record linked to current user. Please contact an administrator.",
+      );
+    }
+
     const useCase = container.get<CreateReservationUseCase>(
       DI_TOKENS.CreateReservationUseCase,
     );
 
     const reservation = await useCase.execute({
       assetId: validated.assetId,
-      reservedByPersonId: validated.reservedByPersonId,
-      reservedByOrgUnitId: validated.reservedByOrgUnitId,
+      reservedForPersonId: validated.reservedForPersonId,
+      reservedForOrgUnitId: validated.reservedForOrgUnitId,
+      reservedById: person.id, // Server-resolved from linked person, not from client
       startDate: validated.startDate,
       endDate: validated.endDate,
       purpose: validated.purpose,
@@ -145,7 +170,7 @@ export async function createReservationAction(
 
     return {
       success: true,
-      data: AssetReservationPresenter.toDTO(reservation),
+      data: presentAssetReservation(reservation),
     };
   } catch (error) {
     return handleControllerError(
@@ -174,7 +199,7 @@ export async function listReservationsAction(): Promise<
 
     return {
       success: true,
-      data: AssetReservationPresenter.toDTOList(
+      data: presentAssetReservationsWithEnrichment(
         result.reservations,
         enrichmentMap,
       ),
@@ -206,7 +231,7 @@ export async function listReservationsByAssetAction(
 
     return {
       success: true,
-      data: AssetReservationPresenter.toDTOList(
+      data: presentAssetReservationsWithEnrichment(
         result.reservations,
         enrichmentMap,
       ),
@@ -235,7 +260,7 @@ export async function getReservationAction(
 
     return {
       success: true,
-      data: AssetReservationPresenter.toDTO(reservation),
+      data: presentAssetReservation(reservation),
     };
   } catch (error) {
     return handleControllerError(
@@ -262,9 +287,7 @@ export async function updateReservationAction(
 
     const reservation = await useCase.execute({
       reservationId: id,
-      startDate: validated.startDate,
       endDate: validated.endDate,
-      purpose: validated.purpose,
       notes: validated.notes,
     });
 
@@ -273,7 +296,7 @@ export async function updateReservationAction(
 
     return {
       success: true,
-      data: AssetReservationPresenter.toDTO(reservation),
+      data: presentAssetReservation(reservation),
     };
   } catch (error) {
     return handleControllerError(
@@ -286,23 +309,47 @@ export async function updateReservationAction(
 
 export async function cancelReservationAction(
   id: string,
+  reason: string,
 ): Promise<ActionResponse<AssetReservationDTO>> {
   try {
     await requirePermission(PERMISSIONS.ASSETS_UPDATE);
 
+    // SECURITY: Get cancelledById from authenticated session, not client payload
+    const { user } = await getSession();
+    if (!user?.id) {
+      throw new Error("User must be authenticated to cancel reservations");
+    }
+
     const container = getContainer();
+    const personRepository = container.get<IPersonRepository>(
+      DI_TOKENS.IPersonRepository,
+    );
+    const person =
+      (await personRepository.findByUserId(user.id)) ||
+      (user.email ? await personRepository.findByEmail(user.email) : null);
+
+    if (!person) {
+      throw new Error(
+        "No Person record linked to current user. Please contact an administrator.",
+      );
+    }
+
     const useCase = container.get<CancelReservationUseCase>(
       DI_TOKENS.CancelReservationUseCase,
     );
 
-    const reservation = await useCase.execute({ reservationId: id });
+    const reservation = await useCase.execute({
+      reservationId: id,
+      cancelledById: person.id, // Server-resolved from linked person, not from client
+      reason,
+    });
 
     revalidatePath("/asset-reservations");
     revalidatePath(`/asset-reservations/${id}`);
 
     return {
       success: true,
-      data: AssetReservationPresenter.toDTO(reservation),
+      data: presentAssetReservation(reservation),
     };
   } catch (error) {
     return handleControllerError(
@@ -336,7 +383,7 @@ export async function confirmReservationAction(
 
     return {
       success: true,
-      data: AssetReservationPresenter.toDTO(reservation),
+      data: presentAssetReservation(reservation),
     };
   } catch (error) {
     return handleControllerError(
@@ -365,7 +412,7 @@ export async function startReservationAction(
 
     return {
       success: true,
-      data: AssetReservationPresenter.toDTO(reservation),
+      data: presentAssetReservation(reservation),
     };
   } catch (error) {
     return handleControllerError(
@@ -378,7 +425,6 @@ export async function startReservationAction(
 
 export async function completeReservationAction(
   id: string,
-  actualReturnDate?: Date,
 ): Promise<ActionResponse<AssetReservationDTO>> {
   try {
     await requirePermission(PERMISSIONS.ASSETS_CHECKOUT);
@@ -390,7 +436,6 @@ export async function completeReservationAction(
 
     const reservation = await useCase.execute({
       reservationId: id,
-      actualReturnDate,
     });
 
     revalidatePath("/asset-reservations");
@@ -398,7 +443,7 @@ export async function completeReservationAction(
 
     return {
       success: true,
-      data: AssetReservationPresenter.toDTO(reservation),
+      data: presentAssetReservation(reservation),
     };
   } catch (error) {
     return handleControllerError(
@@ -575,6 +620,81 @@ export async function listAvailableAssetsAction(
       error,
       { function: "listAvailableAssetsAction" },
       "Failed to list available assets",
+    );
+  }
+}
+
+/**
+ * List all assets that do NOT have any active reservations OR active assignments
+ * (Strict policy: asset cannot be both assigned and reserved)
+ */
+export async function listUnreservedAssetsAction(
+  assetModelId?: string,
+): Promise<ActionResponse<AssetDTO[]>> {
+  try {
+    await requirePermission(PERMISSIONS.ASSETS_VIEW);
+
+    const container = getContainer();
+
+    // Get all assets (optionally filtered by model)
+    const listAssetsUseCase = container.get<ListAssetsUseCase>(
+      DI_TOKENS.ListAssetsUseCase,
+    );
+    const allAssets = await listAssetsUseCase.execute(
+      assetModelId ? { assetModelId } : {},
+    );
+
+    // Get all active reservations
+    const listReservationsUseCase = container.get<ListReservationsUseCase>(
+      DI_TOKENS.ListReservationsUseCase,
+    );
+    const reservationsResponse = await listReservationsUseCase.execute({});
+    const allReservations = reservationsResponse.reservations;
+
+    // Find assets that have active reservations (PENDING, CONFIRMED, or ACTIVE)
+    const reservedAssetIds = new Set(
+      allReservations
+        .filter(
+          (r: AssetReservation) =>
+            r.status === "PENDING" ||
+            r.status === "CONFIRMED" ||
+            r.status === "ACTIVE",
+        )
+        .map((r: AssetReservation) => r.assetId),
+    );
+
+    // Get all active assignments to also filter them out
+    const listAssignmentsUseCase = container.get<ListAssetAssignmentsUseCase>(
+      DI_TOKENS.ListAssetAssignmentsUseCase,
+    );
+    const allAssignments = await listAssignmentsUseCase.execute();
+
+    // Find assets that have active assignments
+    const assignedAssetIds = new Set(
+      allAssignments
+        .filter((a) => a.endDate === null || a.endDate > new Date())
+        .map((a) => a.assetId),
+    );
+
+    // Filter out reserved AND assigned assets
+    const availableAssets = allAssets.filter(
+      (asset) =>
+        !reservedAssetIds.has(asset.id) && !assignedAssetIds.has(asset.id),
+    );
+
+    // Enrich with related entity names (reuse existing enrichAssets helper from asset controller)
+    const { presentAsset } = await import("../presenters/asset.presenter");
+    const enrichedAssets = availableAssets.map((asset) => presentAsset(asset));
+
+    return {
+      success: true,
+      data: enrichedAssets,
+    };
+  } catch (error) {
+    return handleControllerError(
+      error,
+      { function: "listUnreservedAssetsAction", assetModelId },
+      "Failed to list unreserved assets",
     );
   }
 }

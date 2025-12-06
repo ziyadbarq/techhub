@@ -18,6 +18,7 @@ import { deleteExchangeRateAction } from "@/interface-adapters/controllers/excha
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { getCurrencySymbol } from "@/lib/utils";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 
 interface FxRatesTableProps {
@@ -129,6 +130,7 @@ export function FxRatesTable({
         },
         meta: {
           label: "Last Updated",
+          hiddenByDefault: true,
         },
       },
     ],
@@ -162,6 +164,13 @@ export function FxRatesTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<ExchangeRateResponseDTO>({
+      storageKey: "fx-rates-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
       <DataTable
@@ -170,6 +179,8 @@ export function FxRatesTable({
         loading={loading}
         searchKey="currency"
         searchPlaceholder="Search currencies..."
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
       />
 
       {/* Delete Confirmation Dialog */}

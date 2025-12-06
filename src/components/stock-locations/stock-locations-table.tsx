@@ -17,6 +17,7 @@ import type { StockLocationDTO } from "@/interface-adapters/presenters/stock-loc
 import { deleteStockLocationAction } from "@/interface-adapters/controllers/stock-location.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 
 interface StockLocationsTableProps {
@@ -115,6 +116,7 @@ export function StockLocationsTable({
         },
         meta: {
           label: "Description",
+          hiddenByDefault: true,
         },
       },
     ],
@@ -148,9 +150,22 @@ export function StockLocationsTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<StockLocationDTO>({
+      storageKey: "stock-locations-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
-      <DataTable columns={allColumns} data={data} loading={loading} />
+      <DataTable
+        columns={allColumns}
+        data={data}
+        loading={loading}
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
+      />
 
       {/* Delete Confirmation Dialog */}
       <deleteDialog.DialogComponent />

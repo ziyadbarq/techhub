@@ -12,6 +12,7 @@ import type { AttachmentDTO } from "@/interface-adapters/presenters/attachment.p
 import { deleteAttachment } from "@/interface-adapters/controllers/attachment.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 import { formatDate } from "@/lib/utils/date-format";
 
@@ -101,6 +102,7 @@ export function AttachmentsTable({
         ),
         meta: {
           label: "Entity Type",
+          hiddenByDefault: true,
         },
       },
       {
@@ -115,6 +117,7 @@ export function AttachmentsTable({
         ),
         meta: {
           label: "Size",
+          hiddenByDefault: true,
         },
       },
       {
@@ -163,6 +166,13 @@ export function AttachmentsTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Use enhanced column visibility hook with localStorage persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<AttachmentDTO>({
+      storageKey: "attachments-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
       <DataTable
@@ -170,6 +180,8 @@ export function AttachmentsTable({
         data={data}
         loading={loading}
         emptyMessage="No attachments found"
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
       />
 
       {/* Delete Confirmation Dialog */}

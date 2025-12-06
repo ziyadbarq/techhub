@@ -11,11 +11,19 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Eye } from "lucide-react";
 
 import type { AssetReservationDTO } from "@/interface-adapters/dtos/generated/asset-reservation.dto";
 import { formatDate } from "@/lib/utils/date-format";
 import { getStatusBadgeClasses } from "@/lib/utils/status-colors";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 
 interface AssetReservationsTableProps {
   data: AssetReservationDTO[];
@@ -37,6 +45,24 @@ export function AssetReservationsTable({
   loading = false,
   onView,
 }: AssetReservationsTableProps) {
+  const [statusFilter, setStatusFilter] = React.useState<string>("PENDING");
+
+  // Filter data by status
+  const filteredData = React.useMemo(() => {
+    if (statusFilter === "ALL") {
+      return data;
+    }
+    return data.filter((item) => item.status === statusFilter);
+  }, [data, statusFilter]);
+
+  // Sort by creation date (most recent first)
+  const sortedData = React.useMemo(() => {
+    return [...filteredData].sort((a, b) => {
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }, [filteredData]);
+
+  // Define columns first (before using them in the hook)
   const columns = React.useMemo<ColumnDef<AssetReservationDTO>[]>(
     () => [
       {
@@ -55,7 +81,7 @@ export function AssetReservationsTable({
       {
         accessorKey: "personName",
         header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Reserved By" />
+          <DataTableColumnHeader column={column} title="Reserved For" />
         ),
         cell: ({ row }) => {
           const personName = row.getValue("personName") as string | undefined;
@@ -66,7 +92,7 @@ export function AssetReservationsTable({
           );
         },
         meta: {
-          label: "Reserved By",
+          label: "Reserved For",
         },
       },
       {
@@ -100,6 +126,7 @@ export function AssetReservationsTable({
         },
         meta: {
           label: "Start Date",
+          hiddenByDefault: true,
         },
       },
       {
@@ -130,6 +157,7 @@ export function AssetReservationsTable({
         },
         meta: {
           label: "Purpose",
+          hiddenByDefault: true,
         },
       },
       {
@@ -149,5 +177,46 @@ export function AssetReservationsTable({
     [onView],
   );
 
-  return <DataTable columns={columns} data={data} loading={loading} />;
+  // Use enhanced column visibility hook with localStorage persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<AssetReservationDTO>({
+      storageKey: "asset-reservations-table-columns",
+      columns,
+    });
+
+  return (
+    <div className="space-y-4">
+      {/* Status Filter */}
+      <div className="flex items-center gap-2">
+        <label htmlFor="status-filter" className="text-sm font-medium">
+          Status:
+        </label>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger id="status-filter" className="w-[180px]">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="PENDING">Pending</SelectItem>
+            <SelectItem value="CONFIRMED">Confirmed</SelectItem>
+            <SelectItem value="ACTIVE">Active</SelectItem>
+            <SelectItem value="COMPLETED">Completed</SelectItem>
+            <SelectItem value="CANCELLED">Cancelled</SelectItem>
+            <SelectItem value="ALL">All Statuses</SelectItem>
+          </SelectContent>
+        </Select>
+        <span className="text-muted-foreground text-sm">
+          ({sortedData.length} reservation{sortedData.length !== 1 ? "s" : ""})
+        </span>
+      </div>
+
+      {/* Table */}
+      <DataTable
+        columns={columns}
+        data={sortedData}
+        loading={loading}
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
+      />
+    </div>
+  );
 }

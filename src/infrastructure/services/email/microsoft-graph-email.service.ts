@@ -362,6 +362,32 @@ export class MicrosoftGraphEmailService implements IEmailService {
           </body>
         </html>
       `,
+      "reservation-reminder": `
+        <html>
+          <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #1a1a1a; margin-bottom: 10px;">Asset Reservation Reminder</h1>
+            </div>
+            <p style="color: #333; font-size: 16px;">Hi {{reservedForName}},</p>
+            <p style="color: #333; font-size: 16px;">This is a friendly reminder about your upcoming asset reservation:</p>
+            <div style="background-color: #f5f5f5; border-left: 4px solid #FFD100; padding: 16px; margin: 20px 0;">
+              <p style="margin: 0 0 8px 0; color: #333;"><strong>Asset:</strong> {{assetTag}}</p>
+              <p style="margin: 0 0 8px 0; color: #333;"><strong>Start Date:</strong> {{startDate}}</p>
+              <p style="margin: 0 0 8px 0; color: #333;"><strong>End Date:</strong> {{endDate}}</p>
+              <p style="margin: 0; color: #333;"><strong>Purpose:</strong> {{purpose}}</p>
+            </div>
+            <p style="color: #333; font-size: 16px;">Please make sure you're ready to receive the asset on the start date.</p>
+            <p style="text-align: center; margin: 30px 0;">
+              <a href="{{reservationLink}}" style="background-color: #FFD100; color: #1a1a1a; padding: 14px 28px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
+                View Reservation
+              </a>
+            </p>
+            <p style="color: #666; font-size: 14px;">If you need to modify or cancel this reservation, please contact the IT Asset Management team.</p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+            <p style="color: #999; font-size: 12px; text-align: center;">barq TechHub - IT Asset Management</p>
+          </body>
+        </html>
+      `,
     };
 
     let template =

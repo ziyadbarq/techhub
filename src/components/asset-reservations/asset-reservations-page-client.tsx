@@ -5,17 +5,15 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Calendar } from "lucide-react";
+import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { AssetReservationDTO } from "@/interface-adapters/dtos/generated/asset-reservation.dto";
 import { listReservationsAction } from "@/interface-adapters/controllers/asset-reservation.controller";
 import { AssetReservationsTable } from "./asset-reservations-table";
 import { ReservationForm } from "./reservation-form";
 import { ReservationDetail } from "./reservation-detail";
-import { AvailabilityChecker } from "./availability-checker";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
@@ -64,7 +62,8 @@ export function AssetReservationsPageClient({
         <div>
           <h2 className="text-2xl font-bold">Asset Reservations</h2>
           <p className="text-muted-foreground">
-            {reservations.length} reservation
+            Pre-assignment holds for new hires - {reservations.length}{" "}
+            reservation
             {reservations.length !== 1 ? "s" : ""}
           </p>
         </div>
@@ -76,42 +75,19 @@ export function AssetReservationsPageClient({
               className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90 gap-2"
             >
               <Plus className="h-4 w-4" />
-              New Reservation
+              Reserve Asset
             </Button>
           </PermissionGuard>
         </div>
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="list" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="list">List View</TabsTrigger>
-          <TabsTrigger value="calendar" className="gap-2">
-            <Calendar className="h-4 w-4" />
-            Calendar View
-          </TabsTrigger>
-          <TabsTrigger value="availability">Check Availability</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="list" className="space-y-4">
-          <AssetReservationsTable
-            data={reservations}
-            loading={isLoading}
-            onView={handleView}
-            onRefresh={handleSuccess}
-          />
-        </TabsContent>
-
-        <TabsContent value="calendar" className="space-y-4">
-          <div className="text-muted-foreground rounded-lg border p-8 text-center">
-            Calendar view will be implemented here
-          </div>
-        </TabsContent>
-
-        <TabsContent value="availability" className="space-y-4">
-          <AvailabilityChecker />
-        </TabsContent>
-      </Tabs>
+      {/* Reservations Table */}
+      <AssetReservationsTable
+        data={reservations}
+        loading={isLoading}
+        onView={handleView}
+        onRefresh={handleSuccess}
+      />
 
       {/* Reservation Form Dialog */}
       <ReservationForm

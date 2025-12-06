@@ -19,6 +19,8 @@ import type {
 import type { IAssetMovementService } from "@/core/services/asset-movement.service.interface";
 import type { UpdateAssetUseCase } from "@/core/use-cases/asset/asset";
 import type { IPersonRepository } from "@/core/repositories/person.repository.interface";
+import type { IAssetReservationRepository } from "@/core/repositories/asset-reservation.repository.interface";
+import type { CancelReservationUseCase } from "@/core/use-cases/reservations/cancel-reservation.use-case";
 import {
   presentAssetAssignment,
   type AssetAssignmentDTO,
@@ -87,6 +89,33 @@ export async function assignAssetToEmployeeAction(data: {
 
     const now = new Date();
 
+    // Auto-cancel any active reservations for this asset before assignment
+    const reservationRepository = container.get<IAssetReservationRepository>(
+      DI_TOKENS.IAssetReservationRepository,
+    );
+    const cancelReservationUseCase = container.get<CancelReservationUseCase>(
+      DI_TOKENS.CancelReservationUseCase,
+    );
+
+    const existingReservations = await reservationRepository.findByAssetId(
+      data.assetId,
+    );
+    const activeReservations = existingReservations.filter(
+      (r) =>
+        r.status === "PENDING" ||
+        r.status === "CONFIRMED" ||
+        r.status === "ACTIVE",
+    );
+
+    // Cancel all active reservations since asset is being assigned
+    for (const reservation of activeReservations) {
+      await cancelReservationUseCase.execute({
+        reservationId: reservation.id,
+        cancelledById: personId,
+        reason: "Asset assigned - reservation automatically cancelled",
+      });
+    }
+
     // 1. Create assignment
     const createAssignmentUseCase = container.get<CreateAssetAssignmentUseCase>(
       DI_TOKENS.CreateAssetAssignmentUseCase,
@@ -138,6 +167,7 @@ export async function assignAssetToEmployeeAction(data: {
     revalidatePath(`/assets/${updatedAsset.assetTag}`);
     revalidatePath("/asset-assignments");
     revalidatePath("/stock-movements");
+    revalidatePath("/asset-reservations");
 
     return {
       success: true,

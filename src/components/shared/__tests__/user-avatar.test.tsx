@@ -13,6 +13,7 @@
  */
 
 import "@testing-library/jest-dom/vitest";
+import type { ImgHTMLAttributes, ReactNode } from "react";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { UserAvatar } from "@/components/shared/user-avatar";
@@ -36,33 +37,57 @@ vi.mock("next/image", () => ({
 }));
 
 // Mock Radix UI Avatar to simplify testing
-vi.mock("@/components/ui/avatar", () => ({
-  Avatar: ({
+vi.mock("@/components/ui/avatar", () => {
+  const Avatar = ({
     children,
     className,
   }: {
-    children: React.ReactNode;
+    children: ReactNode;
     className?: string;
   }) => (
     <div className={className} data-testid="avatar-root">
       {children}
     </div>
-  ),
-  AvatarImage: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="avatar-image">{children}</div>
-  ),
-  AvatarFallback: ({
+  );
+
+  const AvatarImage = ({
+    children,
+    className,
+    asChild,
+    ...props
+  }: {
+    children?: ReactNode;
+    className?: string;
+    asChild?: boolean;
+  } & ImgHTMLAttributes<HTMLImageElement>) => {
+    if (asChild && children) {
+      return <>{children}</>;
+    }
+
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img data-testid="avatar-image" className={className} {...props} />
+    );
+  };
+
+  const AvatarFallback = ({
     children,
     className,
   }: {
-    children: React.ReactNode;
+    children: ReactNode;
     className?: string;
   }) => (
     <div className={className} data-testid="avatar-fallback">
       {children}
     </div>
-  ),
-}));
+  );
+
+  return {
+    Avatar,
+    AvatarImage,
+    AvatarFallback,
+  };
+});
 
 describe("UserAvatar", () => {
   beforeEach(() => {
@@ -180,7 +205,7 @@ describe("UserAvatar", () => {
 
       const img = screen.getByAltText("John Doe");
       expect(img).toBeInTheDocument();
-      expect(img).toHaveAttribute("src", "/uploads/avatars/user123/48.webp"); // md = 48px
+      expect(img).toHaveAttribute("src", "/uploads/avatars/user123/96.webp"); // md = 48px (2x retina)
     });
 
     it("should use correct size variant for xs", () => {
@@ -193,7 +218,7 @@ describe("UserAvatar", () => {
       );
 
       const img = screen.getByAltText("John Doe");
-      expect(img).toHaveAttribute("src", "/uploads/avatars/user123/24.webp");
+      expect(img).toHaveAttribute("src", "/uploads/avatars/user123/48.webp");
     });
 
     it("should use correct size variant for sm", () => {
@@ -206,7 +231,7 @@ describe("UserAvatar", () => {
       );
 
       const img = screen.getByAltText("John Doe");
-      expect(img).toHaveAttribute("src", "/uploads/avatars/user123/32.webp");
+      expect(img).toHaveAttribute("src", "/uploads/avatars/user123/64.webp");
     });
 
     it("should use correct size variant for lg", () => {
@@ -219,7 +244,7 @@ describe("UserAvatar", () => {
       );
 
       const img = screen.getByAltText("John Doe");
-      expect(img).toHaveAttribute("src", "/uploads/avatars/user123/64.webp");
+      expect(img).toHaveAttribute("src", "/uploads/avatars/user123/128.webp");
     });
 
     it("should use correct size variant for xl", () => {
@@ -232,7 +257,7 @@ describe("UserAvatar", () => {
       );
 
       const img = screen.getByAltText("John Doe");
-      expect(img).toHaveAttribute("src", "/uploads/avatars/user123/128.webp");
+      expect(img).toHaveAttribute("src", "/uploads/avatars/user123/256.webp");
     });
 
     it("should pass through SSO image URL unchanged", () => {
@@ -296,7 +321,7 @@ describe("UserAvatar", () => {
 
       const img = screen.getByAltText("Jane Smith");
       expect(img).toBeInTheDocument();
-      expect(img).toHaveAttribute("src", "/uploads/avatars/user456/48.webp");
+      expect(img).toHaveAttribute("src", "/uploads/avatars/user456/96.webp");
     });
 
     it("should handle user object with null values", () => {

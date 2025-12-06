@@ -31,6 +31,7 @@ import {
   getOwnershipTypeLabel,
   getOwnershipTypeColor,
 } from "@/interface-adapters/presenters/intune-device.presenter";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { formatDate } from "@/lib/utils/date-format";
 
 interface IntuneDevicesTableProps {
@@ -140,6 +141,10 @@ export function IntuneDevicesTable({
             {row.getValue("serialNumber") ?? "-"}
           </span>
         ),
+        meta: {
+          label: "Serial Number",
+          hiddenByDefault: true,
+        },
       },
       {
         accessorKey: "operatingSystem",
@@ -237,6 +242,10 @@ export function IntuneDevicesTable({
             </Link>
           );
         },
+        meta: {
+          label: "Linked Asset",
+          hiddenByDefault: true,
+        },
       },
       {
         accessorKey: "lastSyncDateTime",
@@ -247,6 +256,10 @@ export function IntuneDevicesTable({
           const date = row.getValue("lastSyncDateTime") as string | null;
           if (!date) return <span className="text-muted-foreground">-</span>;
           return <span className="text-sm">{formatDate(date)}</span>;
+        },
+        meta: {
+          label: "Last Sync",
+          hiddenByDefault: true,
         },
       },
       {
@@ -295,6 +308,13 @@ export function IntuneDevicesTable({
     [selectable],
   );
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<IntuneDeviceDTO>({
+      storageKey: "intune-devices-table-columns",
+      columns,
+    });
+
   return (
     <DataTable
       columns={columns}
@@ -303,12 +323,8 @@ export function IntuneDevicesTable({
       selectable={selectable}
       onSelectionChange={onSelectionChange}
       showColumnToggle
-      initialColumnVisibility={{
-        serialNumber: false,
-        lastSyncDateTime: false,
-        linkedAssetTag: false,
-        actions: false,
-      }}
+      initialColumnVisibility={visibility}
+      onColumnVisibilityChange={onVisibilityChange}
       pagination={{
         pageSize,
         pageIndex: currentPage - 1,

@@ -19,6 +19,7 @@ import type { ContractDTO } from "@/interface-adapters/presenters/contract.prese
 import { deleteContract } from "@/interface-adapters/controllers/contract.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 
 interface ContractsTableProps {
@@ -170,6 +171,7 @@ export function ContractsTable({
         },
         meta: {
           label: "Value",
+          hiddenByDefault: true,
         },
       },
     ],
@@ -203,9 +205,22 @@ export function ContractsTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<ContractDTO>({
+      storageKey: "contracts-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
-      <DataTable columns={allColumns} data={data} loading={loading} />
+      <DataTable
+        columns={allColumns}
+        data={data}
+        loading={loading}
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
+      />
 
       {/* Delete Confirmation Dialog */}
       <deleteDialog.DialogComponent />

@@ -18,6 +18,7 @@ import type { AssetAssignmentDTO } from "@/interface-adapters/presenters/asset-a
 import { deleteAssetAssignmentAction } from "@/interface-adapters/controllers/asset-assignment.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 
 interface AssetAssignmentsTableProps {
@@ -79,6 +80,7 @@ export function AssetAssignmentsTable({
       },
       meta: {
         label: "Assignee Type",
+        hiddenByDefault: true,
       },
     },
     {
@@ -134,6 +136,7 @@ export function AssetAssignmentsTable({
       },
       meta: {
         label: "End Date",
+        hiddenByDefault: true,
       },
     },
     {
@@ -168,6 +171,7 @@ export function AssetAssignmentsTable({
       },
       meta: {
         label: "Duration",
+        hiddenByDefault: true,
       },
     },
     buildActionsColumn<AssetAssignmentDTO>([
@@ -188,9 +192,22 @@ export function AssetAssignmentsTable({
     ]),
   ];
 
+  // Use enhanced column visibility hook with localStorage persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<AssetAssignmentDTO>({
+      storageKey: "asset-assignments-table-columns",
+      columns,
+    });
+
   return (
     <>
-      <DataTable columns={columns} data={data} loading={loading} />
+      <DataTable
+        columns={columns}
+        data={data}
+        loading={loading}
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
+      />
       <deleteDialog.DialogComponent />
     </>
   );

@@ -17,6 +17,7 @@ import type { FieldDefinitionDTO } from "@/interface-adapters/presenters/field-d
 import { deleteFieldDefinitionAction } from "@/interface-adapters/controllers/field-definition.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 import { FieldDataTypeEnum } from "@/core/domain/value-objects/foundation-enums";
 
@@ -160,6 +161,7 @@ export function FieldDefinitionsTable({
         ),
         meta: {
           label: "Order",
+          hiddenByDefault: true,
         },
       },
       {
@@ -197,6 +199,7 @@ export function FieldDefinitionsTable({
         },
         meta: {
           label: "Created",
+          hiddenByDefault: true,
         },
       },
     ],
@@ -230,9 +233,22 @@ export function FieldDefinitionsTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<FieldDefinitionDTO>({
+      storageKey: "field-definitions-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
-      <DataTable columns={allColumns} data={data} loading={loading} />
+      <DataTable
+        columns={allColumns}
+        data={data}
+        loading={loading}
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
+      />
 
       {/* Delete Confirmation Dialog */}
       <deleteDialog.DialogComponent />

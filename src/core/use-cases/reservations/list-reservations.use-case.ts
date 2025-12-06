@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetReservationRepository } from "@/core/repositories/asset-reservation.repository.interface";
@@ -9,8 +5,8 @@ import type { AssetReservation } from "@/core/domain/entities/asset-reservation.
 
 export interface ListReservationsRequest {
   assetId?: string;
-  reservedByPersonId?: string;
-  reservedByOrgUnitId?: string;
+  reservedForPersonId?: string;
+  reservedForOrgUnitId?: string;
   status?: "PENDING" | "CONFIRMED" | "ACTIVE" | "COMPLETED" | "CANCELLED";
   startDate?: Date;
   endDate?: Date;
@@ -37,14 +33,14 @@ export class ListReservationsUseCase {
       reservations = await this.reservationRepository.findByAssetId(
         request.assetId,
       );
-    } else if (request.reservedByPersonId) {
+    } else if (request.reservedForPersonId) {
       reservations = await this.reservationRepository.findByReserver(
-        request.reservedByPersonId,
+        request.reservedForPersonId,
         "person",
       );
-    } else if (request.reservedByOrgUnitId) {
+    } else if (request.reservedForOrgUnitId) {
       reservations = await this.reservationRepository.findByReserver(
-        request.reservedByOrgUnitId,
+        request.reservedForOrgUnitId,
         "orgunit",
       );
     } else if (request.startDate && request.endDate) {

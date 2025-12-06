@@ -22,6 +22,7 @@ import { listLicenseProducts } from "@/interface-adapters/controllers/license-pr
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
 import { useExchangeRates } from "@/hooks/use-exchange-rates";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 
 interface LicenseEntitlementsTableProps {
@@ -189,6 +190,10 @@ export function LicenseEntitlementsTable({
             />
           );
         },
+        meta: {
+          label: "Unit Cost",
+          hiddenByDefault: true,
+        },
       },
       {
         accessorKey: "totalCost",
@@ -266,6 +271,13 @@ export function LicenseEntitlementsTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<LicenseEntitlementDTO>({
+      storageKey: "license-entitlements-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
       <DataTable
@@ -275,6 +287,8 @@ export function LicenseEntitlementsTable({
         searchable
         searchPlaceholder="Search entitlements..."
         searchKey="licenseProductId"
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
       />
 
       {/* Delete Confirmation Dialog */}

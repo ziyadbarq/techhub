@@ -8,7 +8,7 @@ Layer 3 extends the base asset management system with 4 specialized modules prov
 
 1. **Asset Disposals** - End-of-life asset management with approval workflows
 2. **Asset Kits** - Predefined asset bundles for streamlined deployment
-3. **Asset Reservations** - Future asset booking with conflict prevention
+3. **Asset Reservations** - Pre-assignment workflow for holding assets before employee assignment
 4. **CMDB** - Configuration Management Database for IT infrastructure tracking
 
 All modules follow Clean Architecture patterns with complete separation of concerns, comprehensive permission systems, and production-ready implementations.
@@ -32,7 +32,7 @@ All modules follow Clean Architecture patterns with complete separation of conce
 
 - 3 Disposal entities with workflow state management
 - 4 Kit entities with inventory tracking
-- 2 Reservation entities with conflict detection
+- 2 Reservation entities with pre-assignment workflow
 - 3 CMDB entities with dependency management
 
 ### Use Case Layer
@@ -41,7 +41,7 @@ All modules follow Clean Architecture patterns with complete separation of conce
 
 - 12 Disposal use cases (approval workflow, certificate generation)
 - 18 Kit use cases (builder, checkout, partial returns)
-- 16 Reservation use cases (conflict detection, availability checks)
+- 16 Reservation use cases (pre-assignment workflow, availability checks, auto-cancellation)
 - 16 CMDB use cases (CRUD + dependency graph foundation)
 
 ### Interface Adapters
@@ -214,15 +214,25 @@ PENDING_APPROVAL → APPROVED → IN_PROGRESS → SANITIZED → COMPLETED
                             ↘ CANCELLED
 ```
 
-### Conflict Detection
+### Pre-Assignment Workflow
 
-Asset Reservations check for overlapping bookings:
+Asset Reservations enforce strict one-at-a-time policy:
 
 ```typescript
-if (existingReservation.overlaps(newReservation)) {
-  createConflict(existingReservation, newReservation);
-  throw new ConflictError();
+// Block if asset already reserved or assigned
+const activeReservations = await reservationRepository.findByAssetId(assetId);
+const activeAssignments = await assignmentRepository.findActiveByAsset(assetId);
+
+if (activeReservations.length > 0 || activeAssignments.length > 0) {
+  throw new Error("Asset already reserved or assigned");
 }
+
+// Auto-cancel reservation when assigned
+await cancelReservationUseCase.execute({
+  reservationId: reservation.id,
+  cancelledById: personId,
+  reason: "Asset assigned - reservation automatically cancelled",
+});
 ```
 
 ### Dependency Tracking
@@ -250,7 +260,7 @@ The Asset detail page provides a comprehensive view of all related data across t
 | **Warranties** | Active and historical warranty records | Warranty entity |
 | **Assignments** | Current and past employee assignments | AssetAssignment entity |
 | **Movements** | Stock movement history between locations | StockMovement entity |
-| **Reservations** | Future bookings and reservation history | AssetReservation entity |
+| **Reservations** | Pre-assignment holds and reservation history | AssetReservation entity |
 
 ### Permission-Gated Tabs
 

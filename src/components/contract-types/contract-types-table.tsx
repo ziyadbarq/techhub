@@ -16,6 +16,7 @@ import type { ContractTypeDTO } from "@/interface-adapters/presenters/contract-t
 import { deleteContractType } from "@/interface-adapters/controllers/contract-type.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 
 interface ContractTypesTableProps {
@@ -77,6 +78,7 @@ export function ContractTypesTable({
         },
         meta: {
           label: "Description",
+          hiddenByDefault: true,
         },
       },
       {
@@ -111,6 +113,7 @@ export function ContractTypesTable({
         },
         meta: {
           label: "Created",
+          hiddenByDefault: true,
         },
       },
     ],
@@ -144,9 +147,22 @@ export function ContractTypesTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Use enhanced column visibility hook with localStorage persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<ContractTypeDTO>({
+      storageKey: "contract-types-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
-      <DataTable columns={allColumns} data={data} loading={loading} />
+      <DataTable
+        columns={allColumns}
+        data={data}
+        loading={loading}
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
+      />
 
       {/* Delete Confirmation Dialog */}
       <deleteDialog.DialogComponent />

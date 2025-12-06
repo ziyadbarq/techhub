@@ -16,6 +16,7 @@ import type { LicenseProductDTO } from "@/interface-adapters/presenters/license-
 import { deleteLicenseProduct } from "@/interface-adapters/controllers/license-product.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 
 interface LicenseProductsTableProps {
@@ -104,6 +105,7 @@ export function LicenseProductsTable({
         },
         meta: {
           label: "Description",
+          hiddenByDefault: true,
         },
       },
       {
@@ -121,6 +123,7 @@ export function LicenseProductsTable({
         },
         meta: {
           label: "Created",
+          hiddenByDefault: true,
         },
       },
     ],
@@ -154,9 +157,22 @@ export function LicenseProductsTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<LicenseProductDTO>({
+      storageKey: "license-products-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
-      <DataTable columns={allColumns} data={data} loading={loading} />
+      <DataTable
+        columns={allColumns}
+        data={data}
+        loading={loading}
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
+      />
 
       {/* Delete Confirmation Dialog */}
       <deleteDialog.DialogComponent />

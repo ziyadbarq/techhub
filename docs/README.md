@@ -71,7 +71,7 @@ Advanced IT Asset Management features:
 - [ITAM Features Overview](./features/ITAM_FEATURES.md) - Complete guide to all advanced ITAM modules
 - [Asset Disposals](./features/ASSET_DISPOSALS.md) - Multi-step disposal workflow with approval chain and PDF certificate generation
 - [Asset Kits](./features/ASSET_KITS.md) - Predefined asset bundles with checkout tracking
-- [Asset Reservations](./features/ASSET_RESERVATIONS.md) - Future asset reservations with conflict detection and automated background jobs
+- [Asset Reservations](./features/ASSET_RESERVATIONS.md) - Pre-assignment workflow for holding assets before employee assignment with auto-cancellation on assignment
 - [CMDB Guide](./features/CMDB_GUIDE.md) - Configuration Management Database with dependency tracking
 - Contract Management - Contract types, contract lifecycle, and polymorphic asset/CI linking (see [Layer 3 Overview](./features/LAYER3_OVERVIEW.md#6-contract-management))
 - [License Management](./features/LICENSE_MANAGEMENT.md) - License products, entitlements, allocations, cost tracking with multi-currency support, and addon management
@@ -135,11 +135,11 @@ Cross-cutting features and utilities:
 #### UI & Real-time Features
 
 - [UI Components Guide](./guides/UI_COMPONENTS.md) - Advanced UI patterns with TanStack Table, React Hook Form, and CSV
+- [Table Components Guide](./guides/TABLE_COMPONENTS_GUIDE.md) - Complete guide to standardized tables with hooks, column visibility, filtering, and DRY patterns
 - [UI/UX Improvements](./guides/UI_UX_IMPROVEMENTS.md) - User experience enhancements and navigation improvements
 - [Sidebar Features](./guides/SIDEBAR_FEATURES.md) - Advanced sidebar features including collapsible groups, nested navigation, permissions, animations, and real-time badges
 - **[MISSING]** Theme System (User Guide) - Using and customizing the OKLCH color space theme system
 - **[MISSING]** Form Patterns - React Hook Form integration, validation, and error handling
-- **[MISSING]** Table Patterns - TanStack Table v8 usage, sorting, filtering, and pagination
 - [Real-time Features Guide](./guides/REALTIME.md) - Server-Sent Events (SSE) and Partykit WebSocket integration
 - [Background Jobs Guide](./guides/BACKGROUND_JOBS.md) - BullMQ job queue system for background processing
 
@@ -173,13 +173,15 @@ Operational documentation and deployment resources:
 - [TechHub Risk Assessment](./operations/TechHub-Risk-Assessment.md) - Comprehensive risk assessment for CMDB and IT asset management platform
 - [Auth Security Testing Guide](./testing/AUTH_SECURITY_TESTING_GUIDE.md) - Security testing procedures and validation
 
-## 📦 Releases & Archive
+## 📦 Releases, Migrations & Archive
 
-Release notes and archived documentation:
+Release notes, migration guides, and archived documentation:
 
 - [Release Notes](./releases/) - Version release notes and changelogs
   - [v1.2.0](./releases/RELEASE_NOTES_v1.2.0.md)
   - [v1.3.0](./releases/RELEASE_NOTES_v1.3.0.md)
+- [Migrations](./migrations/) - Feature migration and upgrade guides
+  - [Column Visibility Migration](./migrations/COLUMN_VISIBILITY_MIGRATION.md) - Completed: App-wide column visibility with localStorage persistence (Dec 2024)
 - [Archive](./archive/) - Historical documentation and completed implementation summaries
   - [Person-Role Removal](./archive/PERSON_ROLE_REMOVAL.md) - Completed implementation (Dec 2025)
   - [Phase 3 DI Modularization](./archive/PHASE_3_SUMMARY.md) - DI container refactoring summary

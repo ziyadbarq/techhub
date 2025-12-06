@@ -30,6 +30,7 @@ import type { RelationshipTypeDTO } from "@/interface-adapters/dtos/generated/re
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { deleteRelationshipTypeAction } from "@/interface-adapters/controllers/relationship-type.controller";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildActionsColumn } from "@/lib/table-utils";
 
 interface RelationshipTypesTableProps {
@@ -119,6 +120,10 @@ export function RelationshipTypesTable({
           {row.original.description || "—"}
         </div>
       ),
+      meta: {
+        label: "Description",
+        hiddenByDefault: true,
+      },
     },
     buildActionsColumn<RelationshipTypeDTO>([
       {
@@ -143,6 +148,13 @@ export function RelationshipTypesTable({
     ]),
   ];
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<RelationshipTypeDTO>({
+      storageKey: "relationship-types-table-columns",
+      columns,
+    });
+
   const table = useReactTable({
     data,
     columns,
@@ -151,9 +163,11 @@ export function RelationshipTypesTable({
     getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: onVisibilityChange,
     state: {
       sorting,
       columnFilters,
+      columnVisibility: visibility,
     },
   });
 

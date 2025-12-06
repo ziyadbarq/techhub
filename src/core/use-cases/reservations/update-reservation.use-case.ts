@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetReservationRepository } from "@/core/repositories/asset-reservation.repository.interface";
@@ -11,9 +7,7 @@ import { AssetReservationConflict } from "@/core/domain/entities/asset-reservati
 
 export interface UpdateReservationRequest {
   reservationId: string;
-  startDate?: Date;
-  endDate?: Date;
-  purpose?: string;
+  endDate?: Date; // Can only extend end date
   notes?: string;
 }
 
@@ -34,28 +28,15 @@ export class UpdateReservationUseCase {
       throw new Error(`Reservation with ID ${request.reservationId} not found`);
     }
 
-    if (reservation.status === "ACTIVE" || reservation.status === "COMPLETED") {
-      throw new Error("Cannot update active or completed reservations");
-    }
-
     let datesChanged = false;
 
-    if (request.startDate !== undefined) {
-      reservation.updateStartDate(request.startDate);
-      datesChanged = true;
-    }
-
     if (request.endDate !== undefined) {
-      reservation.updateEndDate(request.endDate);
+      reservation.extendEndDate(request.endDate);
       datesChanged = true;
-    }
-
-    if (request.purpose !== undefined) {
-      reservation.updatePurpose(request.purpose);
     }
 
     if (request.notes !== undefined) {
-      reservation.updateNotes(request.notes);
+      reservation.updateNote(request.notes);
     }
 
     const updatedReservation =

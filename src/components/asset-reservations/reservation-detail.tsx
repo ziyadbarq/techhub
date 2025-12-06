@@ -21,8 +21,11 @@ import {
   startReservationAction,
   completeReservationAction,
 } from "@/interface-adapters/controllers/asset-reservation.controller";
-import { Play, CheckCircle2, X } from "lucide-react";
+import { assignAssetToEmployeeAction } from "@/interface-adapters/controllers/asset-workflow.controller";
+import { Play, CheckCircle2, X, UserPlus } from "lucide-react";
 import { formatDate } from "@/lib/utils/date-format";
+import { PermissionGuard } from "@/components/auth/PermissionGuard";
+import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 
 interface ReservationDetailProps {
   reservation: AssetReservationDTO;
@@ -80,9 +83,14 @@ export function ReservationDetail({
   };
 
   const handleCancel = async () => {
+    // TODO: Add dialog to collect cancellation reason from user
+    // For now, using placeholder reason
     setIsSubmitting(true);
     try {
-      const result = await cancelReservationAction(reservation.id);
+      const result = await cancelReservationAction(
+        reservation.id,
+        "Cancelled by user", // Placeholder reason - cancelledById comes from server session
+      );
       if (result.success) {
         toast.success("Reservation cancelled");
         onSuccess();
@@ -96,10 +104,47 @@ export function ReservationDetail({
     }
   };
 
+  const handleAssignAsset = async () => {
+    // Check if we have a person to assign to
+    if (!reservation.reservedForPersonId) {
+      toast.error("Cannot assign: No person specified for this reservation");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const result = await assignAssetToEmployeeAction({
+        assetId: reservation.assetId,
+        personId: reservation.reservedForPersonId,
+        stockLocationFromId: null, // Asset is being reserved, location will be set during assignment
+        note: `Assigned from reservation: ${reservation.purpose || "N/A"}`,
+      });
+
+      if (result.success) {
+        toast.success(
+          `Asset assigned to ${reservation.personName}! Reservation automatically cancelled.`,
+        );
+        onClose();
+        onSuccess();
+      } else {
+        toast.error(result.error);
+      }
+    } catch (_error) {
+      toast.error("Failed to assign asset");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const canStart = reservation.status === "CONFIRMED";
   const canComplete = reservation.status === "ACTIVE";
   const canCancel =
     reservation.status === "PENDING" || reservation.status === "CONFIRMED";
+  const canAssign =
+    (reservation.status === "PENDING" ||
+      reservation.status === "CONFIRMED" ||
+      reservation.status === "ACTIVE") &&
+    reservation.reservedForPersonId != null; // Can only assign to a person, not org unit
 
   return (
     <Dialog open onOpenChange={onClose}>
@@ -127,19 +172,19 @@ export function ReservationDetail({
                   {reservation.assetTag || reservation.assetId}
                 </span>
               </div>
-              {reservation.reservedByPersonId && (
+              {reservation.reservedForPersonId && (
                 <div className="grid grid-cols-3 gap-2">
-                  <span className="text-muted-foreground">Reserved By:</span>
+                  <span className="text-muted-foreground">Reserved For:</span>
                   <span className="col-span-2">
-                    {reservation.personName || reservation.reservedByPersonId}
+                    {reservation.personName || reservation.reservedForPersonId}
                   </span>
                 </div>
               )}
-              {reservation.reservedByOrgUnitId && (
+              {reservation.reservedForOrgUnitId && (
                 <div className="grid grid-cols-3 gap-2">
                   <span className="text-muted-foreground">Org Unit:</span>
                   <span className="col-span-2">
-                    {reservation.reservedByOrgUnitId}
+                    {reservation.reservedForOrgUnitId}
                   </span>
                 </div>
               )}
@@ -174,10 +219,28 @@ export function ReservationDetail({
 
           {/* Actions */}
           <div className="flex flex-wrap gap-2">
+            {/* Primary action: Assign Asset (completes the pre-assignment workflow) */}
+            {canAssign && (
+              <PermissionGuard
+                permission={PERMISSIONS.ASSET_ASSIGNMENTS_CREATE}
+              >
+                <Button
+                  onClick={handleAssignAsset}
+                  disabled={isSubmitting}
+                  className="bg-barq-yellow text-barq-black hover:bg-barq-yellow/90 gap-2"
+                >
+                  <UserPlus className="h-4 w-4" />
+                  Assign Asset to {reservation.personName || "Employee"}
+                </Button>
+              </PermissionGuard>
+            )}
+
+            {/* Secondary actions: Reservation lifecycle states */}
             {canStart && (
               <Button
                 onClick={handleStart}
                 disabled={isSubmitting}
+                variant="outline"
                 className="gap-2"
               >
                 <Play className="h-4 w-4" />
@@ -189,23 +252,29 @@ export function ReservationDetail({
               <Button
                 onClick={handleComplete}
                 disabled={isSubmitting}
-                className="gap-2 bg-green-600 text-white hover:bg-green-700"
+                variant="outline"
+                className="gap-2"
               >
                 <CheckCircle2 className="h-4 w-4" />
                 Complete Reservation
               </Button>
             )}
 
+            {/* Cancel action */}
             {canCancel && (
-              <Button
-                onClick={handleCancel}
-                disabled={isSubmitting}
-                variant="destructive"
-                className="gap-2"
+              <PermissionGuard
+                permission={PERMISSIONS.ASSET_RESERVATIONS_CANCEL}
               >
-                <X className="h-4 w-4" />
-                Cancel Reservation
-              </Button>
+                <Button
+                  onClick={handleCancel}
+                  disabled={isSubmitting}
+                  variant="destructive"
+                  className="gap-2"
+                >
+                  <X className="h-4 w-4" />
+                  Cancel Reservation
+                </Button>
+              </PermissionGuard>
             )}
 
             <Button variant="outline" onClick={onClose}>

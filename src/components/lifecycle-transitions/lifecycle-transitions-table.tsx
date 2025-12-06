@@ -16,6 +16,7 @@ import type { LifecycleTransitionDTO } from "@/interface-adapters/presenters/lif
 import { deleteLifecycleTransitionAction } from "@/interface-adapters/controllers/lifecycle-transition.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 
 interface LifecycleTransitionsTableProps {
@@ -154,6 +155,13 @@ export function LifecycleTransitionsTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<LifecycleTransitionDTO>({
+      storageKey: "lifecycle-transitions-table-columns",
+      columns,
+    });
+
   return (
     <>
       <DataTable
@@ -167,6 +175,8 @@ export function LifecycleTransitionsTable({
         onSelectionChange={_setSelectedRows}
         showColumnToggle
         emptyMessage="No transitions found. Create one to get started!"
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
       />
 
       {/* Delete Confirmation Dialog */}

@@ -45,6 +45,7 @@ import { deleteVerificationCampaign } from "@/interface-adapters/controllers/ver
 import { listVerificationItems } from "@/interface-adapters/controllers/verification-item.controller";
 import { PermissionGuard } from "@/components/auth/PermissionGuard";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -204,6 +205,10 @@ export function VerificationCampaignsTable({
           {formatDate(row.getValue<Date | null>("scheduledEnd")) || "-"}
         </div>
       ),
+      meta: {
+        label: "Scheduled End",
+        hiddenByDefault: true,
+      },
     },
     {
       id: "status",
@@ -310,6 +315,13 @@ export function VerificationCampaignsTable({
     },
   ];
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<CampaignWithProgress>({
+      storageKey: "verification-campaigns-table-columns",
+      columns,
+    });
+
   const table = useReactTable({
     data: campaignsWithProgress,
     columns,
@@ -318,9 +330,11 @@ export function VerificationCampaignsTable({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: onVisibilityChange,
     state: {
       sorting,
       columnFilters,
+      columnVisibility: visibility,
     },
   });
 

@@ -12,6 +12,7 @@ import type { AttachmentTypeDTO } from "@/interface-adapters/presenters/attachme
 import { deleteAttachmentType } from "@/interface-adapters/controllers/attachment-type.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 
 interface AttachmentTypesTableProps {
@@ -93,6 +94,7 @@ export function AttachmentTypesTable({
         },
         meta: {
           label: "Allowed Extensions",
+          hiddenByDefault: true,
         },
         enableSorting: false,
       },
@@ -107,6 +109,7 @@ export function AttachmentTypesTable({
         },
         meta: {
           label: "Max Size (MB)",
+          hiddenByDefault: true,
         },
       },
       {
@@ -141,6 +144,7 @@ export function AttachmentTypesTable({
         },
         meta: {
           label: "Created",
+          hiddenByDefault: true,
         },
       },
     ],
@@ -174,9 +178,22 @@ export function AttachmentTypesTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Use enhanced column visibility hook with localStorage persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<AttachmentTypeDTO>({
+      storageKey: "attachment-types-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
-      <DataTable columns={allColumns} data={data} loading={loading} />
+      <DataTable
+        columns={allColumns}
+        data={data}
+        loading={loading}
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
+      />
 
       {/* Delete Confirmation Dialog */}
       <deleteDialog.DialogComponent />

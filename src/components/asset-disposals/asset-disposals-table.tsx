@@ -38,6 +38,7 @@ import {
 import type { AssetDisposalDTO } from "@/interface-adapters/dtos/generated/asset-disposal.dto";
 import { Badge } from "@/components/ui/badge";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { deleteAssetDisposalAction } from "@/interface-adapters/controllers/asset-disposal.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
@@ -92,6 +93,9 @@ export function AssetDisposalsTable({
       cell: ({ row }) => (
         <EntityDisplay name={row.original.assetTag} icon={Tag} />
       ),
+      meta: {
+        label: "Asset",
+      },
     },
     {
       accessorKey: "disposalType",
@@ -104,6 +108,9 @@ export function AssetDisposalsTable({
       ),
       filterFn: (row, id, value) => {
         return value === "all" || row.getValue(id) === value;
+      },
+      meta: {
+        label: "Type",
       },
     },
     {
@@ -120,6 +127,9 @@ export function AssetDisposalsTable({
       filterFn: (row, id, value) => {
         return value === "all" || row.getValue(id) === value;
       },
+      meta: {
+        label: "Status",
+      },
     },
     {
       accessorKey: "reason",
@@ -129,6 +139,10 @@ export function AssetDisposalsTable({
           {row.getValue<string>("reason")}
         </div>
       ),
+      meta: {
+        label: "Reason",
+        hiddenByDefault: true,
+      },
     },
     {
       accessorKey: "createdAt",
@@ -138,6 +152,10 @@ export function AssetDisposalsTable({
           {formatDate(row.getValue<string>("createdAt"))}
         </div>
       ),
+      meta: {
+        label: "Created",
+        hiddenByDefault: true,
+      },
     },
     // Actions column using reusable builder
     buildActionsColumn<AssetDisposalDTO>([
@@ -157,6 +175,13 @@ export function AssetDisposalsTable({
     ]),
   ];
 
+  // Use enhanced column visibility hook with localStorage persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<AssetDisposalDTO>({
+      storageKey: "asset-disposals-table-columns",
+      columns,
+    });
+
   const table = useReactTable({
     data,
     columns,
@@ -165,9 +190,15 @@ export function AssetDisposalsTable({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: (updater) => {
+      const newVisibility =
+        typeof updater === "function" ? updater(visibility) : updater;
+      onVisibilityChange(newVisibility);
+    },
     state: {
       sorting,
       columnFilters,
+      columnVisibility: visibility,
     },
   });
 

@@ -6,7 +6,7 @@
 
 The table system provides a consistent, DRY approach to building tables across the application. It consists of:
 
-- **5 Custom Hooks** - State management, filtering, URL sync, presets
+- **6 Custom Hooks** - State management, filtering, URL sync, presets, column visibility
 - **Enhanced DataTable Component** - Controlled state support, preset filters slot
 - **3 Filter Components** - Search, select dropdowns, preset buttons
 
@@ -376,6 +376,120 @@ const columnVis = useColumnVisibility({
 columnVis.toggleColumn('email');
 columnVis.showAll();
 columnVis.resetToDefaults();
+```
+
+### useColumnVisibilityEnhanced (Recommended)
+
+**Purpose**: Enhanced column visibility with automatic `hiddenByDefault` extraction and localStorage persistence.
+
+**Features**:
+- Automatically extracts `hiddenByDefault` from column meta
+- localStorage persistence with unique storage key per table
+- DRY approach - define visibility once in column definitions
+- SOLID principles - Single Responsibility Principle
+- Compatible with DataTable component
+
+**Why Use This**:
+- **DRY**: Define hidden columns once in column meta instead of repeating in multiple places
+- **Persistent**: User preferences saved to localStorage automatically
+- **Consistent**: Same behavior across all tables in the app
+- **Type-safe**: Full TypeScript support with generics
+
+**API**:
+```typescript
+const { visibility, onVisibilityChange } = useColumnVisibilityEnhanced<TData>({
+  storageKey: string;           // Required - unique key for localStorage
+  columns: ColumnDef<TData>[];  // Required - your column definitions
+  initialVisibility?: VisibilityState; // Optional override
+});
+```
+
+**Example**:
+```typescript
+import { useColumnVisibilityEnhanced } from "@/hooks";
+import { DataTable, DataTableColumnHeader } from "@/components/ui/data-table";
+
+export function MyTable({ data }) {
+  const columns = React.useMemo<ColumnDef<MyData>[]>(() => [
+    {
+      accessorKey: "id",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
+      meta: { label: "ID" },
+    },
+    {
+      accessorKey: "details",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Details" />,
+      meta: {
+        label: "Details",
+        hiddenByDefault: true, // ✅ This column hidden by default
+      },
+    },
+    {
+      accessorKey: "notes",
+      header: ({ column }) => <DataTableColumnHeader column={column} title="Notes" />,
+      meta: {
+        label: "Notes",
+        hiddenByDefault: true, // ✅ This column hidden by default
+      },
+    },
+  ], []);
+
+  // Hook automatically extracts hiddenByDefault from column meta
+  const { visibility, onVisibilityChange } = useColumnVisibilityEnhanced({
+    storageKey: "my-table-columns", // Unique key for this table
+    columns,
+  });
+
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
+      initialColumnVisibility={visibility}
+      onColumnVisibilityChange={onVisibilityChange}
+    />
+  );
+}
+```
+
+**How It Works**:
+1. Hook scans columns for `meta.hiddenByDefault = true`
+2. Creates initial visibility state: `{ details: false, notes: false }`
+3. Merges with localStorage (if exists) - user preference takes priority
+4. Returns visibility state and change handler for DataTable
+5. User toggles via "Columns" dropdown → saved to localStorage
+6. Next visit: User's preference loaded automatically
+
+**Migration from Manual Approach**:
+
+❌ **Before** (Manual, not DRY):
+```typescript
+// Repeated in multiple places, no persistence
+<DataTable
+  columns={columns}
+  data={data}
+  initialColumnVisibility={{
+    details: false,
+    notes: false,
+  }}
+/>
+```
+
+✅ **After** (DRY, persistent):
+```typescript
+// Define once in column meta
+const columns = [...]; // with meta.hiddenByDefault
+
+const { visibility, onVisibilityChange } = useColumnVisibilityEnhanced({
+  storageKey: "my-table-columns",
+  columns,
+});
+
+<DataTable
+  columns={columns}
+  data={data}
+  initialColumnVisibility={visibility}
+  onColumnVisibilityChange={onVisibilityChange}
+/>
 ```
 
 ### usePresetFilters

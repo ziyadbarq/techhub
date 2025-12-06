@@ -16,6 +16,7 @@ import type { AssetCategoryDTO } from "@/interface-adapters/presenters/asset-cat
 import { deleteAssetCategoryAction } from "@/interface-adapters/controllers/asset-category.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 
 interface AssetCategoriesTableProps {
@@ -82,6 +83,7 @@ export function AssetCategoriesTable({
         },
         meta: {
           label: "Description",
+          hiddenByDefault: true,
         },
       },
       {
@@ -99,6 +101,7 @@ export function AssetCategoriesTable({
         },
         meta: {
           label: "Created",
+          hiddenByDefault: true,
         },
       },
     ],
@@ -132,9 +135,22 @@ export function AssetCategoriesTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Use enhanced column visibility hook with localStorage persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<AssetCategoryDTO>({
+      storageKey: "asset-categories-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
-      <DataTable columns={allColumns} data={data} loading={loading} />
+      <DataTable
+        columns={allColumns}
+        data={data}
+        loading={loading}
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
+      />
 
       {/* Delete Confirmation Dialog */}
       <deleteDialog.DialogComponent />

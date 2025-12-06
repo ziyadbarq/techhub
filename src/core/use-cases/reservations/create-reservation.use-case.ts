@@ -1,18 +1,17 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-// TODO: Fix type errors - this is WIP code
-
 import { injectable, inject } from "inversify";
 import { DI_TOKENS } from "@/di/types";
 import type { IAssetReservationRepository } from "@/core/repositories/asset-reservation.repository.interface";
 import type { IAssetReservationConflictRepository } from "@/core/repositories/asset-reservation-conflict.repository.interface";
-import type { AssetReservation } from "@/core/domain/entities/asset-reservation.entity";
-import { AssetReservationConflict } from "@/core/domain/entities/asset-reservation-conflict.entity";
+import type { IAssetAssignmentRepository } from "@/core/repositories/asset-assignment.repository.interface";
+import type { ILoggerService } from "@/core/services/logger.service.interface";
+import { AssetReservation } from "@/core/domain/entities/asset-reservation.entity";
+import { LogExecution } from "@/lib/decorators";
 
 export interface CreateReservationRequest {
   assetId: string;
-  reservedByPersonId?: string;
-  reservedByOrgUnitId?: string;
+  reservedForPersonId?: string;
+  reservedForOrgUnitId?: string;
+  reservedById: string;
   startDate: Date;
   endDate: Date;
   purpose?: string;
@@ -26,41 +25,83 @@ export class CreateReservationUseCase {
     private readonly reservationRepository: IAssetReservationRepository,
     @inject(DI_TOKENS.IAssetReservationConflictRepository)
     private readonly conflictRepository: IAssetReservationConflictRepository,
+    @inject(DI_TOKENS.IAssetAssignmentRepository)
+    private readonly assignmentRepository: IAssetAssignmentRepository,
+    @inject(DI_TOKENS.ILoggerService)
+    private readonly logger: ILoggerService,
   ) {}
 
+  @LogExecution("reservation.create")
   async execute(request: CreateReservationRequest): Promise<AssetReservation> {
-    // Create the reservation
+    // Business rule validation
+    if (request.endDate <= request.startDate) {
+      throw new Error("End date must be after start date");
+    }
+
+    // CRITICAL: Block reservation if asset already has an active assignment
+    const activeAssignments = await this.assignmentRepository.findActiveByAsset(
+      request.assetId,
+    );
+
+    if (activeAssignments.length > 0) {
+      this.logger.warn("Reservation blocked - asset has active assignment", {
+        assetId: request.assetId,
+        activeAssignmentCount: activeAssignments.length,
+      });
+
+      throw new Error(
+        "This asset is currently assigned and cannot be reserved. Please return the asset to inventory before creating a reservation.",
+      );
+    }
+
+    // CRITICAL: Check if asset has ANY active reservation (strict one-at-a-time policy)
+    // First check: Get ALL reservations for this asset
+    const existingReservations = await this.reservationRepository.findByAssetId(
+      request.assetId,
+    );
+
+    // Block if there's ANY active reservation, regardless of dates
+    const activeReservations = existingReservations.filter(
+      (r) =>
+        r.status === "PENDING" ||
+        r.status === "CONFIRMED" ||
+        r.status === "ACTIVE",
+    );
+
+    if (activeReservations.length > 0) {
+      const conflictDetails = activeReservations
+        .map(
+          (r) =>
+            `${r.startDate.toISOString().split("T")[0]} to ${r.endDate.toISOString().split("T")[0]} (${r.status})`,
+        )
+        .join(", ");
+
+      this.logger.warn("Reservation blocked - asset has active reservation", {
+        assetId: request.assetId,
+        requestedStart: request.startDate,
+        requestedEnd: request.endDate,
+        activeReservationCount: activeReservations.length,
+      });
+
+      throw new Error(
+        `This asset already has an active reservation and cannot be reserved again. Existing reservation: ${conflictDetails}`,
+      );
+    }
+
+    // Create the reservation (only if no conflicts)
     const reservation = AssetReservation.create({
       assetId: request.assetId,
-      reservedByPersonId: request.reservedByPersonId,
-      reservedByOrgUnitId: request.reservedByOrgUnitId,
+      reservedForPersonId: request.reservedForPersonId,
+      reservedForOrgUnitId: request.reservedForOrgUnitId,
+      reservedById: request.reservedById,
       startDate: request.startDate,
       endDate: request.endDate,
       purpose: request.purpose,
-      notes: request.notes,
+      note: request.notes,
     });
 
     const createdReservation =
       await this.reservationRepository.create(reservation);
-
-    // Check for conflicts with existing reservations
-    const overlapping =
-      await this.reservationRepository.findAssetReservationsOverlapping(
-        request.assetId,
-        request.startDate,
-        request.endDate,
-      );
-
-    // Create conflict records for any overlapping reservations
-    for (const existingReservation of overlapping) {
-      if (existingReservation.id !== createdReservation.id) {
-        const conflict = AssetReservationConflict.create({
-          reservationId: createdReservation.id,
-          conflictingReservationId: existingReservation.id,
-        });
-        await this.conflictRepository.create(conflict);
-      }
-    }
 
     return createdReservation;
   }

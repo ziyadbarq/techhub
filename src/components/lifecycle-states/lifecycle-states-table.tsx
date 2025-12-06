@@ -16,6 +16,7 @@ import type { LifecycleStateDTO } from "@/interface-adapters/presenters/lifecycl
 import { deleteLifecycleStateAction } from "@/interface-adapters/controllers/lifecycle-state.controller";
 import { PERMISSIONS } from "@/core/domain/value-objects/permission-key";
 import { useDeleteDialog } from "@/hooks/use-delete-dialog";
+import { useColumnVisibilityEnhanced } from "@/hooks";
 import { buildSelectColumn, buildActionsColumn } from "@/lib/table-utils";
 
 interface LifecycleStatesTableProps {
@@ -112,6 +113,7 @@ export function LifecycleStatesTable({
         },
         meta: {
           label: "Created",
+          hiddenByDefault: true,
         },
       },
     ],
@@ -145,6 +147,13 @@ export function LifecycleStatesTable({
     return [...baseColumns, actionsColumn];
   }, [baseColumns, actionsColumn]);
 
+  // Column visibility with persistence
+  const { visibility, onVisibilityChange } =
+    useColumnVisibilityEnhanced<LifecycleStateDTO>({
+      storageKey: "lifecycle-states-table-columns",
+      columns: allColumns,
+    });
+
   return (
     <>
       <DataTable
@@ -157,6 +166,8 @@ export function LifecycleStatesTable({
         selectable
         showColumnToggle
         emptyMessage="No lifecycle states found. Create one to get started!"
+        initialColumnVisibility={visibility}
+        onColumnVisibilityChange={onVisibilityChange}
       />
 
       {/* Delete Confirmation Dialog */}
